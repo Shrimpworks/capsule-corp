@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:profile:v0",
+  "title": "Capsule Runtime Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "name",
+    "status",
+    "runtime",
+    "packages",
+    "hardening",
+    "defaultLimits"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "capsule.dev/v0"
+    },
+    "kind": {
+      "const": "RuntimeProfile"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*@[1-9][0-9]*$",
+      "maxLength": 128
+    },
+    "status": {
+      "enum": ["draft", "active", "retired"]
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "enum": ["bun", "node", "deno"]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "imageDigest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "reviewStatus"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 214
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "reviewStatus": {
+            "enum": ["pending", "approved", "rejected"]
+          }
+        }
+      }
+    },
+    "hardening": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automaticInstall",
+        "environmentFileLoading",
+        "macros",
+        "nativeAddons",
+        "ffi",
+        "subprocesses"
+      ],
+      "properties": {
+        "automaticInstall": {
+          "const": false
+        },
+        "environmentFileLoading": {
+          "const": false
+        },
+        "macros": {
+          "const": false
+        },
+        "nativeAddons": {
+          "const": false
+        },
+        "ffi": {
+          "const": false
+        },
+        "subprocesses": {
+          "const": false
+        }
+      }
+    },
+    "defaultLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wallTimeMs", "memoryBytes", "pids", "artifactBytes"],
+      "properties": {
+        "wallTimeMs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "memoryBytes": {
+          "type": "integer",
+          "minimum": 16777216
+        },
+        "pids": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifactBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "active"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "runtime": {
+            "type": "object",
+            "required": ["imageDigest"],
+            "properties": {
+              "imageDigest": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

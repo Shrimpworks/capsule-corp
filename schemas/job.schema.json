@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:job:v0",
+  "title": "Capsule Job",
+  "description": "A requested, bounded JS/TS execution job. Authorization is evaluated separately.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "runtime",
+    "source",
+    "inputs",
+    "capabilities",
+    "limits",
+    "results"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "capsule.dev/v0"
+    },
+    "kind": {
+      "const": "Job"
+    },
+    "runtime": {
+      "$ref": "#/$defs/runtimeSelector"
+    },
+    "source": {
+      "$ref": "#/$defs/sourceBundle"
+    },
+    "inputs": {
+      "$ref": "#/$defs/inputs"
+    },
+    "capabilities": {
+      "$ref": "#/$defs/capabilities"
+    },
+    "limits": {
+      "$ref": "#/$defs/limits"
+    },
+    "results": {
+      "$ref": "#/$defs/results"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 256
+      },
+      "maxProperties": 32
+    }
+  },
+  "$defs": {
+    "runtimeSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "profile"],
+      "properties": {
+        "name": {
+          "enum": ["bun", "node", "deno"]
+        },
+        "profile": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*@[1-9][0-9]*$",
+          "maxLength": 128
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "sourceBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entrypoint", "files"],
+      "properties": {
+        "entrypoint": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*\\.(?:js|mjs|cjs|ts|mts|cts|tsx)$",
+          "maxLength": 512
+        },
+        "files": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 128,
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$",
+            "maxLength": 512
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 1048576
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inline", "capabilities"],
+      "properties": {
+        "inline": {
+          "description": "JSON-compatible inline values made available to the guest.",
+          "type": "object",
+          "maxProperties": 64
+        },
+        "capabilities": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/inputCapability"
+          }
+        }
+      }
+    },
+    "inputCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "mountPath", "access"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^cap_[A-Za-z0-9_-]{16,128}$"
+        },
+        "kind": {
+          "enum": ["file"]
+        },
+        "mountPath": {
+          "type": "string",
+          "pattern": "^/input/[A-Za-z0-9][A-Za-z0-9._/-]*$",
+          "maxLength": 512
+        },
+        "access": {
+          "const": "read"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "subprocesses",
+        "environment",
+        "nativeAddons",
+        "ffi",
+        "packageInstallation"
+      ],
+      "properties": {
+        "network": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/networkGrant"
+          }
+        },
+        "subprocesses": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+            "maxLength": 128
+          }
+        },
+        "environment": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z_][A-Z0-9_]*$",
+            "maxLength": 128
+          }
+        },
+        "nativeAddons": {
+          "type": "boolean"
+        },
+        "ffi": {
+          "type": "boolean"
+        },
+        "packageInstallation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "networkGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "ports"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 253
+        },
+        "ports": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          }
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wallTimeMs",
+        "cpuTimeMs",
+        "memoryBytes",
+        "temporaryStorageBytes",
+        "pids",
+        "logBytes",
+        "artifactBytes"
+      ],
+      "properties": {
+        "wallTimeMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "cpuTimeMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "memoryBytes": {
+          "type": "integer",
+          "minimum": 16777216,
+          "maximum": 17179869184
+        },
+        "temporaryStorageBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182400
+        },
+        "pids": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1024
+        },
+        "logBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10485760
+        },
+        "artifactBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182400
+        }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["structured", "artifacts"],
+      "properties": {
+        "structured": {
+          "$ref": "#/$defs/structuredResult"
+        },
+        "artifacts": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/artifactContract"
+          }
+        }
+      }
+    },
+    "structuredResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "maxBytes", "exposure"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10485760
+        },
+        "exposure": {
+          "$ref": "#/$defs/exposure"
+        }
+      }
+    },
+    "artifactContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guestPath", "name", "mediaType", "maxBytes", "validation", "exposure"],
+      "properties": {
+        "guestPath": {
+          "type": "string",
+          "pattern": "^/output/[A-Za-z0-9][A-Za-z0-9._/-]*$",
+          "maxLength": 512
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "maxLength": 255
+        },
+        "mediaType": {
+          "enum": ["application/json", "application/x-ndjson", "text/csv", "text/plain"]
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 107374182400
+        },
+        "validation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["regularFileOnly", "symlinks", "mustParse"],
+          "properties": {
+            "regularFileOnly": {
+              "const": true
+            },
+            "symlinks": {
+              "const": "deny"
+            },
+            "mustParse": {
+              "type": "boolean"
+            },
+            "jsonSchema": {
+              "type": "object"
+            }
+          }
+        },
+        "exposure": {
+          "$ref": "#/$defs/exposure"
+        }
+      }
+    },
+    "exposure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["user", "agent"],
+      "properties": {
+        "user": {
+          "enum": ["none", "metadata", "full"]
+        },
+        "agent": {
+          "enum": ["none", "metadata", "preview", "full"]
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

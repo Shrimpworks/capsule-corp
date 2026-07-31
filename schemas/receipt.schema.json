@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:receipt:v0",
+  "title": "Capsule Execution Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "jobId",
+    "sourceDigest",
+    "runtime",
+    "backend",
+    "effectiveCapabilities",
+    "limits",
+    "status",
+    "artifacts",
+    "violations",
+    "startedAt",
+    "finishedAt"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "capsule.dev/v0"
+    },
+    "kind": {
+      "const": "ExecutionReceipt"
+    },
+    "jobId": {
+      "type": "string",
+      "pattern": "^job_[A-Za-z0-9_-]{16,128}$"
+    },
+    "sourceDigest": {
+      "$ref": "#/$defs/sha256"
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "profile", "digest"],
+      "properties": {
+        "name": {
+          "enum": ["bun", "node", "deno"]
+        },
+        "version": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "backend": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "tier"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "tier": {
+          "enum": ["development", "authoritative-local", "hosted-hardened", "high-assurance"]
+        }
+      }
+    },
+    "effectiveCapabilities": {
+      "type": "object"
+    },
+    "limits": {
+      "type": "object"
+    },
+    "status": {
+      "enum": ["succeeded", "failed", "timed-out", "cancelled", "policy-denied"]
+    },
+    "exitCode": {
+      "type": ["integer", "null"]
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wallTimeMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cpuTimeMs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peakMemoryBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "mediaType", "bytes", "digest", "exposure"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "mediaType": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "digest": {
+            "$ref": "#/$defs/sha256"
+          },
+          "exposure": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "violations": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 2048
+          }
+        }
+      }
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finishedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

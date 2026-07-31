@@ -1,0 +1,34 @@
+name: Feature request
+description: Propose a capability, runtime, backend, or workflow
+title: "proposal: "
+labels: [proposal]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Which bounded agent task cannot be expressed today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: capability
+    attributes:
+      label: Requested authority
+      description: What new filesystem, network, process, package, or egress authority is required?
+    validations:
+      required: true
+
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Security boundary
+      description: How should Capsule grant, constrain, audit, and revoke this authority?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Could the task be expressed using a narrower existing capability?

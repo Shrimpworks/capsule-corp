@@ -1,0 +1,46 @@
+{
+  "apiVersion": "capsule.dev/v0",
+  "kind": "RuntimeProfile",
+  "name": "bun-data@1",
+  "status": "draft",
+  "runtime": {
+    "name": "bun",
+    "version": "1.3.14"
+  },
+  "packages": [
+    {
+      "name": "csv-parse",
+      "version": "pending-review",
+      "reviewStatus": "pending"
+    },
+    {
+      "name": "csv-stringify",
+      "version": "pending-review",
+      "reviewStatus": "pending"
+    },
+    {
+      "name": "ajv",
+      "version": "pending-review",
+      "reviewStatus": "pending"
+    },
+    {
+      "name": "date-fns",
+      "version": "pending-review",
+      "reviewStatus": "pending"
+    }
+  ],
+  "hardening": {
+    "automaticInstall": false,
+    "environmentFileLoading": false,
+    "macros": false,
+    "nativeAddons": false,
+    "ffi": false,
+    "subprocesses": false
+  },
+  "defaultLimits": {
+    "wallTimeMs": 30000,
+    "memoryBytes": 536870912,
+    "pids": 4,
+    "artifactBytes": 26214400
+  }
+}

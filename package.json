@@ -1,0 +1,28 @@
+{
+  "name": "capsule-corp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Capability-controlled JS/TS task runtime for AI agents",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "build": "pnpm --recursive build",
+    "check": "pnpm build && pnpm --recursive check",
+    "clean": "pnpm --recursive clean",
+    "codex:links": "node scripts/setup-codex-links.mjs",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome check .",
+    "test": "pnpm --recursive test",
+    "verify:schemas": "node scripts/verify-schemas.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@types/node": "^22.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.8.0"
+  }
+}

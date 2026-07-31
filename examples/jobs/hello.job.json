@@ -1,0 +1,51 @@
+{
+  "apiVersion": "capsule.dev/v0",
+  "kind": "Job",
+  "runtime": {
+    "name": "bun",
+    "profile": "bun-data@1"
+  },
+  "source": {
+    "entrypoint": "main.ts",
+    "files": {
+      "main.ts": "const input = { message: 'hello' };\nconsole.log(JSON.stringify(input));\n"
+    }
+  },
+  "inputs": {
+    "inline": {
+      "message": "hello"
+    },
+    "capabilities": []
+  },
+  "capabilities": {
+    "network": [],
+    "subprocesses": [],
+    "environment": [],
+    "nativeAddons": false,
+    "ffi": false,
+    "packageInstallation": false
+  },
+  "limits": {
+    "wallTimeMs": 5000,
+    "cpuTimeMs": 3000,
+    "memoryBytes": 134217728,
+    "temporaryStorageBytes": 16777216,
+    "pids": 2,
+    "logBytes": 65536,
+    "artifactBytes": 1048576
+  },
+  "results": {
+    "structured": {
+      "enabled": true,
+      "maxBytes": 65536,
+      "exposure": {
+        "user": "full",
+        "agent": "metadata"
+      }
+    },
+    "artifacts": []
+  },
+  "labels": {
+    "example": "hello"
+  }
+}

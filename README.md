@@ -3,6 +3,10 @@
 Capsule is an experimental, capability-controlled JavaScript and TypeScript task runtime for
 AI agents.
 
+[Project site](https://dills122.github.io/capsule-corp/) ·
+[Architecture](docs/ARCHITECTURE.md) ·
+[Threat model](docs/security/THREAT_MODEL.md)
+
 An agent proposes source code, inputs, capabilities, resource limits, and expected outputs.
 Capsule applies host policy, runs the task inside a disposable externally enforced sandbox, and
 returns only policy-approved results and artifacts.

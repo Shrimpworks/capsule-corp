@@ -2,10 +2,13 @@
 
 Status: draft; not executable or approved.
 
-This profile is the first reference environment for bounded Bun/TypeScript data tasks. It will
-contain a small, pinned, reviewed set of packages for CSV, JSON, JSONL, schema, date, and text work.
+This pre-freeze profile scaffold explores a later bounded Bun/TypeScript data environment with a
+small, pinned, reviewed package set. It is **not** the first executable v0 bundle under the current
+plan. Capsule must first prove a dependency-free JSON-in/JSON-out bundle and the profile evidence
+model before activating curated packages.
 
-The package versions in `profile.json` are intentionally marked `pending-review`. Before activation:
+The package versions in `profile.json` are intentionally marked `pending-review`. The object shape
+itself may change during protocol/profile freeze. Before any later activation:
 
 1. Select exact versions.
 2. Review lifecycle scripts, native code, maintainers, and transitive dependencies.

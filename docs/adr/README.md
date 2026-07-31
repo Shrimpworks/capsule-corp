@@ -11,7 +11,8 @@ Status values:
 - `Rejected`
 
 Accepted ADRs are historical records. Replace an outdated decision with a new ADR instead of
-silently editing its conclusion.
+silently rewriting its conclusion. A later ADR may refine an accepted decision without superseding
+its core conclusion.
 
 ## Index
 
@@ -19,10 +20,23 @@ silently editing its conclusion.
 - [ADR-0002: External isolation is mandatory](0002-external-isolation.md)
 - [ADR-0003: Bun-first, runtime-neutral protocol](0003-bun-first.md)
 - [ADR-0004: Guest output is controlled egress](0004-controlled-egress.md)
-- [ADR-0005: Go for the initial trusted control plane](0005-go-control-plane.md)
+- [ADR-0005: Go for the initial trusted control plane](0005-go-control-plane.md) — refined by
+  ADR-0018
 - [ADR-0006: Signed execution plans and per-device identity](0006-signed-plans-and-device-identity.md)
+  — superseded by ADR-0010, ADR-0011, and ADR-0014
 - [ADR-0007: Regular-file capabilities reference immutable snapshots](0007-snapshot-file-capabilities.md)
 - [ADR-0008: Apple Container and gVisor are independent backend targets](0008-apple-container-and-gvisor-backends.md)
+  — refined by ADR-0011 and ADR-0018
 - [ADR-0009: Resource policy is user-owned and exact](0009-user-owned-exact-resource-limits.md)
+  — refined by ADR-0011
+- [ADR-0010: Separate planning, trusted-host approval/content, and execution authority](0010-separate-planning-approval-content-and-execution.md)
+- [ADR-0011: Execute only Supervisor-registered immutable plans](0011-supervisor-registered-plans-and-one-use-attempts.md)
+- [ADR-0012: Installation Trust Domain, signed manifests, and trust epochs](0012-installation-trust-domain-and-epochs.md)
+- [ADR-0013: Runtime integrity uses authenticated IPC and point-in-time assessments](0013-point-in-time-runtime-integrity.md)
+- [ADR-0014: TUF anchors external trust; DIDs are optional identifiers](0014-tuf-trust-and-optional-dids.md)
+- [ADR-0015: Supervisor transcripts and composed execution receipts](0015-supervisor-transcripts-and-composed-receipts.md)
+- [ADR-0016: Runtime bundle, review, activation, and backend validation are separate](0016-separate-runtime-profile-evidence.md)
+- [ADR-0017: V0 omits unsupported authority and uses logical resource slots](0017-narrow-v0-proposal-and-logical-slots.md)
+- [ADR-0018: Platform-specific trusted components use least privilege](0018-platform-specific-trusted-components.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -1,308 +1,418 @@
 # Threat Model
 
-Status: draft
+Status: intended repository-wide model. The current scaffold does not implement or satisfy these
+properties.
 
-This document describes the intended security boundary. The current scaffold does not yet implement
-or satisfy these properties.
+## Overview
 
-## Security objective
+Capsule is a local-first trusted execution platform for bounded JS/TS jobs proposed by AI agents.
+Its security objective is to contain hostile generated code, prevent an agent-facing compromise
+from becoming user authorization or backend launch authority, limit resources and data flows, and
+produce honest attributable evidence about the exact approved attempt.
 
-Contain an AI-generated JS/TS task so that it can exercise only authority explicitly granted by a
-trusted user, host application, or policy, while bounding resource consumption and controlling all
-data returned from the guest.
+The target architecture has three principal local authorities:
 
-Capsule must also ensure that the plan executed by a backend is the exact immutable plan approved
-by the user, that approval cannot be replayed or substituted across devices or jobs, and that every
-security-relevant handoff has verifiable identity, integrity, purpose, audience, and freshness.
+- the agent-facing daemon proposes and plans;
+- the Trusted Host Broker owns user presence and user content;
+- the Execution Supervisor alone creates hostile guests and signs enforcement transcripts.
 
-## Assets
+The initial executable workload is dependency-free inline JSON in and bounded JSON out. File
+snapshots, broader output formats, stronger backend posture, and production updates follow only
+after their evidence gates.
 
-- Host filesystem and user data not granted to the job
-- Host and AI-client credentials
-- Control-plane process and configuration
-- Device root, approval, receipt, and transport private keys
-- Local DID trust registry, revocation state, and policy identities
-- Execution plans, approval grants, nonces, and approval-consumption state
-- Other jobs and their inputs, outputs, and state
-- Immutable input snapshots and their retention metadata
-- Runtime profile registry and signing trust roots
-- Integrity of runtime-profile review attestations
-- Integrity of the effective plan, artifact manifest, and execution receipt
-- Host availability and bounded resource use
-- Confidentiality of guest output not approved for the agent
+### Security objectives
 
-## Adversaries and untrusted inputs
+1. A guest receives only exact authority approved for one immutable registered plan.
+2. One approval creates at most one attempt and cannot be replayed after crash/restart.
+3. A compromised agent or daemon cannot approve, directly launch, retrieve user-only content, reset
+   trust state, or forge Supervisor terminal success.
+4. The Supervisor independently rejects unsupported power and refuses backends unable to enforce
+   exact required controls.
+5. Inputs and outputs cross bounded content-addressed interfaces rather than ambient paths.
+6. Runtime/component identity and trust transitions fail closed on mismatch or indeterminate state.
+7. Receipts distinguish attributable claims from independent attestation and record limitations.
+
+### Assets
+
+- Host filesystem, credentials, environment, sockets, processes, and services not granted to a job
+- User-selected input and produced output content
+- Agent-client and host-application credentials
+- Installation root, Approval, Supervisor evidence, and future transport/delegation private keys
+- Installation manifest, component identities, trust epochs, policy, and quarantine state
+- Pinned TUF roots, verified metadata checkpoints, local trust snapshots, and revocation state
+- Registered plan bytes/digests, approvals, nonces, and grant-consumption ledger
+- Backend handles, cleanup leases, guest configuration, and management channels
+- Other jobs' source, inputs, outputs, state, and cached data
+- Runtime bundles, review attestations, registry activation, and backend validation records
+- Artifact manifests, enforcement transcripts, receipt composition, and witness checkpoints
+- Host availability and bounded CPU, memory, processes, storage, time, log, and output consumption
+- Confidentiality of data not approved for the agent audience
+
+## Threat Model, Trust Boundaries, and Assumptions
+
+### Adversaries and attacker-controlled inputs
 
 Capsule assumes the following may be malicious:
 
-- AI-generated source code
-- Prompts and model output
-- Submitted source bundles
-- User-selected input content
-- Third-party dependencies
-- Runtime parsers and libraries
-- Signed envelopes from unenrolled, revoked, expired, or wrong-purpose keys
-- DID strings, verification-method identifiers, nonces, timestamps, signatures, and claims supplied
-  by clients
-- Guest stdout, stderr, filenames, structured results, and artifacts
-- A client attempting to request more authority than the user intended
-- A client attempting to substitute, replay, race, or reuse an approval
-- Malicious OCI images, manifests, archives, registries, or profile metadata before trust
-  verification
+- AI-generated source, prompts, model output, labels, and source bundles;
+- the agent/MCP/SDK client and authenticated agent requests;
+- a compromised agent-facing daemon;
+- a same-user local process attempting IPC, file, key, or component impersonation;
+- user-selected file bytes and third-party data;
+- Bun, parsers, libraries, dependencies, and guest-controlled runtime behavior;
+- all guest stdout, stderr, filenames, metadata, structured results, files, timings, and exit state;
+- signed envelopes from unknown, revoked, expired, replaced, wrong-purpose, wrong-audience,
+  wrong-installation, wrong-epoch, or compromised keys;
+- DID strings, verification methods, headers, nonces, timestamps, signatures, and claims;
+- OCI images, manifests, archives, registries, runtime/profile metadata, and backend reports before
+  trust verification;
+- external mirrors/services serving stale, equivocated, rollback, malformed, or malicious data;
+- partial/corrupt local update, restored stores, stale components, and crash-replayed messages.
 
-The trusted user, local operating-system administrator, trusted-host application, Capsule daemon,
-enrolled policy, and authoritative backend operator are trusted in the initial model. Defending
-against a compromised host kernel, Secure Enclave, hypervisor, or authorized backend operator is out
-of scope for local execution.
+Authentication identifies a caller; it does not make its content trusted or authorize every
+operation. A valid signature supports attribution to an enrolled key for a checked object; it does
+not establish truth, human understanding, exclusive key control, or correct signer logic.
 
-The agent-facing client is not trusted to perform user actions merely because it is authenticated.
-An enrolled signature authenticates control of a key; it does not prove that the signed source is
-safe, that a claim is true, or that the signer is authorized for every purpose.
+### Trusted assumptions
 
-## Trust boundaries
+For validated-local posture, Capsule initially trusts:
 
-### Client to daemon
+- the intended user for approval and trust-changing ceremonies;
+- the local operating-system administrator;
+- the macOS kernel, code-signing/Keychain/LocalAuthentication services, Secure Enclave where used,
+  virtualization stack, and hardware;
+- the enrolled Broker and Supervisor logic and their protected keys;
+- accepted trust roots, release processes, reviewers, and exact validation records within their
+  delegated scopes;
+- the exact isolation backend implementation/configuration after it passes required evidence.
 
-Trusted-host and agent-facing credentials have separate authority. An agent-facing client may
-propose jobs and inspect policy-approved metadata but cannot issue capabilities, approve plans,
-administer identity, or read user-only content.
+The daemon is trusted for plan correctness in ordinary operation, but the design explicitly limits
+what its compromise can authorize or disclose.
 
-Every client request remains untrusted after authentication. A syntactically valid or correctly
-signed request is not automatically authorized.
+Defending against a compromised administrator, kernel, hypervisor, Secure Enclave, hardware, or
+authorized Supervisor is outside local containment guarantees. An optional independent witness may
+detect some historical inconsistency; it does not restore complete local protection.
 
-### Device identity and signed handoffs
+### Agent to daemon
 
-Each installation has a per-device root identity enrolled in a local trust registry. v0 accepts
-only offline P-256 `did:key` resolution. The registry assigns purpose, validity, status, and
-replacement state to root and operational keys.
+The agent-facing transport exposes proposal, fixed status, authorized cancellation, and fixed
+summary operations. Agent credentials cannot call approval, file selection, content redemption,
+trust administration, quarantine reset, or backend control.
 
-Approval, receipt, and transport signing purposes are separated. Unknown DID methods, resolver
-plugins, algorithms, keys, purposes, audiences, installations, or envelope versions fail closed.
-Job authorization never depends on live network DID resolution.
+Raw input is bounded before ordinary decoding. Unknown versions, fields, powers, and malformed
+content fail closed.
 
-Signed objects bind their type, version, subject digest, issuer, purpose, audience, installation,
-nonce, and validity period. Verification precedes state transition. A single-use grant is consumed
-atomically before execution.
+### Daemon to Supervisor
 
-### Proposal to execution
+The daemon sends exact canonical plan bytes through code-identity-authenticated local IPC. The
+Supervisor independently repeats raw/schema validation and applies non-overridable v0 hard-safety
+rules before durable registration.
 
-The daemon resolves all source, input, profile, policy, limit, output, audience, and backend values
-into one immutable execution plan. The trusted host displays a human-readable summary derived from
-that model. The user approves its exact digest.
+Attempt APIs accept only a registration ID. No API accepts replacement plan bytes, backend flags,
+images, mounts, guest paths, or policy overrides at execute time.
 
-No value may be defaulted, clamped, substituted, or widened after approval. A changed plan requires
-new approval. A backend that cannot enforce the exact plan refuses the job.
+### Broker to Supervisor
 
-### Capability issuance
+The Broker fetches registered bytes directly, independently validates/hashes/renders them, and signs
+an attempt-bound approval after user presence. It transfers only attempt-scoped content handles.
 
-Only trusted user or host actions may turn a host resource into a capability. An agent may reference
-an issued capability but may not mint one from a path, URL, environment variable, or identifier it
-invented.
+Trusted UI must safely render untrusted labels, sizes, and source/content metadata. It never claims
+that the user understood generated source merely because presence was proven.
 
-A regular-file capability references a private immutable snapshot. The broker safely opens a
-user-selected regular file, copies and hashes its bytes, detects material mutation, records a
-snapshot manifest, and stages the snapshot read-only. The original host path is not part of the
-agent or guest contract.
+### Local process and storage boundary
 
-### Daemon to isolation backend
+Separate authorities require proven macOS enforcement: XPC peer code requirements, effective user/
+session and exact build/epoch checks, Keychain access-group separation, protected storage
+containers, relevant entitlements, and Supervisor-only backend control.
 
-The daemon passes a fully resolved effective policy to the launcher. Backend configuration is
-generated from trusted code and must not contain guest-controlled shell interpolation, mount flags,
-image references, or seccomp rules.
+PID, path, process name, same-user mode bits, or a diagram alone do not establish identity or
+containment. Broad shared app groups are disallowed.
 
-The backend receives only an approved plan. Runtime images, kernels, init environments, management
-channels, OCI configuration, and backend binaries are pinned trusted inputs. VM sockets, container
-engine sockets, and launcher control channels are not guest capabilities.
+### Supervisor to backend
+
+Backend configuration is generated from trusted typed data and contains no guest-controlled shell
+interpolation, path, image, flag, mount, socket, seccomp, or management channel.
+
+The Supervisor matches every required control against an exact capability report and accepted
+validation record. A backend that cannot enforce a required value refuses the attempt.
 
 ### Guest to host
 
-The guest is hostile. Its syscalls, filesystem access, process creation, IPC, and network access are
-controlled externally. Runtime permission systems are supplemental only.
+The guest is hostile. External isolation controls syscalls, filesystem, processes, IPC, network,
+resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs
+untrusted Bun directly on the host.
 
-### Guest output to user or agent
+### Content and egress
 
-All guest-controlled output crosses an egress broker. Content delivery is separate from metadata
-delivery and follows an explicit audience policy.
+The Broker owns persisted user content. The Supervisor receives only transient attempt-scoped
+handles needed for staging and collection. The daemon receives no user-only content by default.
 
-Execution approval and content-access approval are distinct signed grants. Structured results and
-logs do not bypass artifact policy.
+The Supervisor first applies filesystem safety; the Broker then applies bounded content validation
+and user delivery. The agent receives a smaller fixed summary, not a redacted full receipt.
 
-## Mandatory security properties
+### External trust and updates
 
-### Identity, approval, and integrity
+Pinned TUF root metadata anchors distribution. A network-capable updater verifies full external
+metadata and produces a compact local trust snapshot. Live execution performs no trust-service
+call, arbitrary DID resolution, or general TUF/network parsing.
 
-- A hash is never treated as proof of origin without an independently trusted expected value or
-  signature.
-- Device root keys are non-exportable where supported and operational signing purposes are
-  separated.
-- Approval requires explicit user action for every v0 execution plan.
-- Approval binds the exact plan digest, installation, audience, job, purpose, nonce, and expiry.
-- Unknown, revoked, suspended, replaced, expired, wrong-purpose, wrong-audience, and
-  wrong-installation keys or grants are rejected.
-- Single-use approvals and content grants are consumed atomically and cannot be replayed after
-  daemon restart.
-- Human-readable approval views and signed plans derive from the same typed model.
-- Network DID resolution, arbitrary DID methods, dynamic resolver plugins, and unpinned contexts
-  are not used in v0 authorization.
-- Signatures authenticate enrolled assertions; policy still validates the requested action and
-  resource.
+Component-changing updates use a prepared, authorized, crash-safe trust transition. Partial state
+enters `repair-required` rather than accepting whichever components start.
 
-### Isolation
+### Mandatory security properties
 
-- The guest cannot read or write arbitrary host paths.
-- Inputs are immutable snapshots staged with the exact granted read-only access.
-- The guest never receives the original host path or a live user-file mount.
-- The runtime root is immutable during a job.
-- Scratch and output storage are isolated and size-limited.
-- Host environment variables, open descriptors, sockets, and credentials are not inherited.
-- Guest processes cannot signal, inspect, or attach to host or other-job processes.
-- Guest state is destroyed after completion or cancellation.
-- A teardown failure is reported distinctly and is never treated as successful cleanup.
-- Capsule does not execute untrusted Bun directly on the host.
+#### Identity and key authority
 
-### Network and IPC
+- Normative local identity is installation ID plus locally authorized public keys.
+- Installation-root, Approval, and Supervisor evidence keys are purpose-separated and inaccessible
+  to the daemon.
+- Approval requires fresh user presence for every v0 plan.
+- Unknown, revoked, suspended, replaced, expired, wrong-purpose, wrong-type, wrong-audience,
+  wrong-installation, and wrong-epoch keys/objects fail closed.
+- DIDs identify principals or verification methods but never grant authority.
+- Local v0 authorization uses no live DID resolution, arbitrary method, plugin, or remote context.
 
-- Network is externally denied by default.
-- DNS, loopback, link-local, metadata services, and Unix sockets are included in the denial.
-- v0 backend configuration provisions no usable network interface rather than depending on broken
-  connectivity.
-- Future network access must use either an isolated network policy or a broker that revalidates
-  destinations and redirects.
-- Container-engine, agent, SSH, credential, display, and host-service sockets are never inherited.
-- VM management and vsock channels are minimized, authenticated, and tested as hostile guest attack
-  surfaces.
+#### Plan and approval integrity
 
-### Resource control
+- Hashes are byte identities, not origin proof without a trusted binding.
+- Broker approval and Supervisor registration bind the same canonical plan digest/bytes.
+- Approval binds registration, installation, epoch, expected Supervisor, attempt nonce, purpose,
+  audience, and expiry.
+- Approval is atomically consumed with attempt creation before backend side effects.
+- A changed plan, content, profile, policy, limit, audience, backend requirement, or epoch requires a
+  new plan/registration/approval.
+- The Supervisor independently enforces v0 hard-safety rules.
 
-- Wall time and CPU time are bounded independently.
-- Memory, PIDs, temporary storage, output count, and output bytes are bounded externally.
-- Output flooding cannot exhaust daemon memory.
-- Cancellation terminates the complete guest process tree.
-- Trusted user policy supplies explicit defaults and ceilings.
-- Requests above user ceilings are denied rather than silently clamped.
-- The exact approved values are enforced or the backend refuses execution.
-- Request, source, inline input, snapshot input, log, per-artifact, and total artifact bytes are
-  independently bounded.
+#### Isolation and resources
 
-### Runtime hardening
+- No arbitrary host path, live user-file mount, credential, environment, descriptor, or host socket
+  reaches the guest.
+- Root is immutable; input, scratch, and output are separate and bounded.
+- Network denial includes TCP, UDP, DNS, IPv4/IPv6, loopback expectations, metadata services, Unix
+  sockets, vsock/management channels, and inherited host IPC.
+- Process isolation prevents host/other-job signal, inspect, attach, and state reuse.
+- Required wall/CPU semantics, memory, process/PID, storage, log, output, and cancellation controls
+  are externally enforced exactly or rejected.
+- Every post-create path reaches terminate/destroy/reconcile; teardown failure is distinct.
 
-- Bun automatic installation and `.env` loading are disabled.
-- Native addons, FFI, dynamic package installation, macros, subprocesses, and inspector access are
-  disabled unless a future profile explicitly grants them.
-- Profiles are selected from a trusted registry and resolved to immutable digests.
-- Active profiles have pinned images, dependency manifests, SBOMs, publisher signatures, and
-  separate review attestations.
-- Profile signing authenticates origin and integrity but does not replace policy review.
+#### Content and observations
 
-### Egress
+- Agents cannot mint authority from paths, URLs, environment names, DIDs, or arbitrary identifiers.
+- File capability is exact immutable regular-file data-fork bytes, never the original path.
+- Only declared fixed output slots, regular files, and bounded byte counts reach content parsing.
+- Rich parsing occurs in a future disposable parser sandbox, not the daemon or Supervisor.
+- Agent summary contains no guest-controlled strings, artifact names/sizes, paths, timings, rich
+  violations, or full metrics by default.
+- Metadata minimization reduces but cannot eliminate state/timing/covert-channel leakage.
 
-- stdout and stderr are capped and not automatically exposed in full to the agent.
-- Only declared artifacts from the dedicated output volume are considered.
-- v0 artifacts must be regular files with exact paths, allowed types, and bounded sizes.
-- Symlinks, hard-link tricks, device files, sockets, FIFOs, sparse-file abuse, and archives are
-  rejected in v0.
-- Agent content access requires an audience grant separate from user delivery.
-- Structured results use the same controlled validation and exposure path.
-- Artifact and log metadata cannot disclose original host paths or unbounded guest strings.
+#### Runtime and installation integrity
 
-### Durability and recovery
+- Trusted IPC checks code identity, effective user/session, exact enrolled build, relevant
+  entitlements, and common epoch using supported OS mechanisms.
+- Debugged, dynamically invalid, mismatched, stale, or partially updated components cannot claim
+  validated posture.
+- The daemon cannot clear degraded/quarantined/repair-required/compromised state.
+- Trust epochs are sequence-ordered and never described as rollback-proof without an additional
+  anchor/witness.
+- An integrity failure after grant consumption burns the approval, quarantines output as needed,
+  and cannot become success-with-warning.
 
-- Job, approval-consumption, trust-registry, capability, cleanup, and receipt state is durable before
-  hostile execution is enabled.
-- State transitions are atomic, monotonic, and idempotent.
-- After restart, nonterminal jobs are reconciled and their backends are reaped or explicitly
-  reported as unresolved.
+#### External trust
+
+- Pinned TUF roots, not URLs or DIDs, anchor release/profile trust.
+- Versions, delegated scope, expiration, hashes, snapshot consistency, and rollback checkpoints are
+  verified before producing a local trust snapshot.
+- TUF carries Capsule-defined revocation/disable records; Capsule policy defines their semantics.
+- Offline/unavailable service never causes acceptance of unsigned or rollback state.
+
+#### Persistence and recovery
+
+- Grant consumption, attempt identity, trust/quarantine state, backend handles/cleanup leases, and
+  content release state are durable before dependent side effects.
+- Cross-store messages are authenticated, bounded, idempotent, and attempt/epoch/content-bound.
 - Missing backend state is not assumed to prove destruction.
-- Snapshot and artifact retention follows bounded access-controlled policy.
+- Collected content is not released while integrity/teardown state is indeterminate.
+- Repair preserves or explicitly replaces trust, grant, attempt, cleanup, and evidence history.
 
-## Non-guarantees
+#### Evidence
 
-Capsule does not prove:
+- A user receipt composes Broker approval and Supervisor enforcement evidence bound to the same
+  plan/registration/attempt/installation/epoch.
+- The daemon cannot forge either embedded authority claim.
+- Posture retains isolation, runtime-integrity, trust-freshness, and distribution dimensions.
+- Receipts state observation/claim limitations and do not imply independent attestation.
 
-- That guest code performs the requested task correctly
-- That a signed assertion or verifiable credential contains a true claim
-- That an approved output does not contain copied or encoded input data
-- That secret-pattern redaction can identify every sensitive value
-- That a supported runtime or host kernel contains no unknown vulnerability
-- That Apple Container, gVisor, a hypervisor, a Secure Enclave, or a cryptographic implementation
-  contains no unknown vulnerability
-- That a signature protects against compromise of its private key or an already trusted signer
-- That a receipt proves behavior independently of the trusted component that signed it
-- That source written for one runtime behaves identically on another
-- That inputs supplied through an AI client's normal attachment flow remain outside model context
+## Attack Surface, Mitigations, and Attacker Stories
 
-## Abuse cases and required tests
+### Public protocol and canonicalization
 
-The authoritative backend must cover at least:
+Risks include parser differentials, duplicate keys, Unicode/numeric disagreement, oversized input,
+type confusion, algorithm confusion, and cross-object signature reuse. Mitigations are strict
+pre-schema decoding, canonical-on-wire rules, protected-header allowlists, purpose/type separation,
+safe numeric constraints, and shared Go/Swift/TypeScript negative fixtures.
+
+Attacker story: the daemon and Broker interpret two spellings of a plan differently. Capsule must
+reject non-canonical or duplicate-key input before any approval/state transition.
+
+### Daemon compromise
+
+The daemon can propose a malicious plan or lie in unsigned metadata. It must still be unable to use
+Approval/Supervisor keys, access Broker content, bypass Supervisor hard safety, replace registered
+bytes, launch a backend, reset grant/quarantine state, or forge terminal enforcement evidence.
+
+Attacker story: a malicious MCP payload obtains code execution in the daemon and tries to run a
+networked guest. Independent Supervisor schema/hard-safety validation and Supervisor-only backend
+control must deny it without relying on the compromised daemon.
+
+### Same-user impersonation and component substitution
+
+Risks include connecting under an expected process name, copied/stale binaries, same-team wrong
+components, debugger attachment, shared Keychain groups, broad app groups, restored stores, and
+partial update. Mitigations depend on proven XPC code requirements, Keychain/access-container
+separation, exact build/epoch checks, dynamic validation, and repair-required transitions.
+
+### Approval/UI abuse
+
+Risks include daemon-supplied prose, hidden fields, truncated/bidi labels, deceptive provenance,
+approval fatigue, stale sessions, wrong Supervisor, and replay. The Broker renders Supervisor-
+registered typed data with bounded safe UI and fresh user presence; the Supervisor consumes the
+grant once.
+
+The Broker can produce a signature whose local key operation was gated by configured user-presence
+controls. A remote verifier can check key attribution, but cannot independently verify user
+presence, comprehension, or correct UI logic.
+
+### Guest/backend attack surface
+
+Risks include filesystem escape, process breakout, network/metadata access, management-channel use,
+runtime bugs, fork/output/disk/memory exhaustion, cancellation escape, writable cache reuse, and
+orphaned guests. External backend mechanisms, fresh state, exact capability matching, durable
+handles, and a retained attack corpus are mandatory.
+
+Apple Container remains development posture until its no-network/resource/storage/management/
+recovery semantics are proven. gVisor validation binds its host cgroup/OCI configuration as well as
+the `runsc` binary.
+
+### Input and output content
+
+Risks include path traversal, symlink/hard-link/special-file races, mutation, archive/parser bugs,
+sparse files, terminal escapes, CSV formula injection, bidi/HTML spoofing, output flood, and content
+release to the agent. v0 snapshots exact regular-file bytes, assigns paths, separates filesystem and
+content gates, bounds parsers, and defers rich formats to another sandbox.
+
+Generated code may intentionally encode complete granted input into allowed output, size, timing,
+state, or repeated calls. Capsule warns users and budgets channels but does not claim
+noninterference.
+
+### Trust service and update attacks
+
+Risks include malicious mirror/service, freeze, rollback, mix-and-match, delegated-role escape,
+expired metadata, compromised publisher/reviewer, partial install, coherent local rollback, and
+repair history reset. Pinned TUF roles, independent review/activation/validation, local snapshots,
+prepared epochs, and fault-injected recovery reduce these risks.
+
+An external witness is optional and privacy-sensitive. It may improve historical rollback evidence
+but does not authorize local execution.
+
+### Component compromise summary
+
+The detailed blast-radius and response matrix is
+[Component Compromise Matrix](COMPONENT_COMPROMISE_MATRIX.md). The highest-impact local compromise
+is the Supervisor because it owns launch authority and enforcement claims. Supervisor compromise is
+not concealed by the presence of a valid user approval.
+
+### Abuse cases and required tests
 
 | Category | Cases |
 | --- | --- |
-| Filesystem | traversal, absolute paths, symlinks, hard links, `/proc`, home and credential reads |
-| Process | fork bomb, worker creation, signals, inspector activation, orphan processes |
-| Network | TCP, UDP, DNS, loopback, IPv6, Unix sockets, metadata endpoints |
-| Runtime | native addons, FFI, Wasm abuse, dynamic imports, Bun auto-install, `.env` loading |
-| Resources | busy loop, heap OOM, native allocation, PID exhaustion, disk fill, output flood |
-| Artifacts | undeclared paths, oversized output, sparse files, devices, FIFOs, archive bombs |
-| Identity | unknown DID methods, key substitution, wrong purpose, revocation, rotation, root replacement |
-| Approval | plan mutation, replay, stale nonce, wrong audience, wrong installation, expiry, double execution |
-| Handoff | digest mismatch, signature mismatch, type confusion, canonicalization differences, partial writes |
-| Isolation | cross-job state, cached writable data, inherited descriptors, environment leakage, management channels |
-| Recovery | cancellation races, daemon crash, orphan backend, replay after restart, teardown failure |
-| Protocol | unknown fields, duplicate identifiers, invalid limits, unsupported capabilities |
+| Protocol | raw byte/depth/count limits, invalid UTF-8, duplicate keys, unsafe numbers, trailing data, unknown fields/versions/powers |
+| Cryptography | non-canonical bytes, wrong type/purpose/audience/epoch, `none`/algorithm confusion, key substitution, malformed DER/raw/high-S handling |
+| Identity/IPC | unsigned/same-team-wrong-ID/stale/debugged peer, wrong user/session, Keychain/store access, PID/path/name substitution |
+| Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume |
+| Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
+| Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |
+| Process/runtime | workers/fork bomb, signals, inspector, orphan processes, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse |
+| Resources | busy loop, CPU semantics, heap/native OOM, PID exhaustion, disk/log/output flood, cancellation tree kill |
+| Isolation | host credentials/env/files, cross-job state, writable caches, backend escape, malicious runtime/image/config |
+| Egress | undeclared/oversized/malformed output, agent content access, metadata/timing channels, guest strings in errors/logs |
+| Trust/update | TUF freeze/rollback/mix-and-match/delegation, revoked profile, partial component update, restored state, coherent rollback |
+| Recovery | crash at every saga/side-effect boundary, orphan enumeration, missing handle, teardown failure, repair history preservation |
+| Evidence | daemon-forged success, swapped/removed grant or transcript, cross-attempt receipt, overstated posture/attestation |
 
-## Security tiers
+### Existing and planned mitigations
 
-- **Development:** fake backend or unvalidated local sandbox; useful for development, not an
-  authoritative claim.
-- **Authoritative local:** a pinned Apple Container or Linux/gVisor configuration that has passed
-  the mandatory local attack corpus.
-- **Hosted hardened:** gVisor or stronger boundary plus signed profiles, tenant isolation,
-  monitoring, and hosted operational controls.
-- **High assurance:** future microVM backend with dedicated tenant boundaries.
+The current repository implements only schema/tooling scaffolding. All runtime security controls are
+planned. The authoritative claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md);
+each row begins `proposed` and advances only with exact retained evidence.
 
-Every receipt and user-facing status should identify the backend tier used.
+### Non-guarantees
 
-## Open questions
+Capsule does not prove:
 
-- Canonical signed-envelope representation and maintained Go and TypeScript implementations
-- Exact approval user-presence and short-lived session policy
-- Device-root recovery and trusted replacement ceremony
-- Windows local-isolation strategy
-- Safe handling of user-approved network access
-- Retention and encryption policy for receipts and staged artifacts
-- Quantitative performance and resource budgets
+- guest code performs the intended task correctly or is aligned;
+- a signed claim or DID/credential describes a true real-world identity;
+- user presence means the user understood source or every consequence;
+- permitted outputs/metadata/timing contain no copied or encoded input;
+- pattern redaction finds every sensitive value;
+- supported runtime, parser, kernel, backend, hypervisor, Secure Enclave, or cryptographic library
+  has no unknown vulnerability;
+- a signature remains trustworthy after private-key or signer-logic compromise;
+- trust epochs defeat coherent rollback without a stronger checkpoint;
+- receipt claims are independently true merely because signatures verify;
+- source behaves identically across runtimes/platforms;
+- inputs already supplied through an AI client's attachment flow were never in model context.
 
-## Severity calibration
+## Severity Calibration
+
+Severity assumes the vulnerable path is reachable in the documented deployment. Development-only
+spike failures without product authority may be lower, but a false production security claim can
+raise impact.
 
 ### Critical
 
-- Execution of an unapproved or substituted plan through approval bypass, signature confusion, or
-  replay
-- Guest escape to arbitrary host code execution or unrestricted host filesystem and credential
-  access
-- Agent-facing authority to issue file capabilities, approve plans, or read user-only content
-- Cross-job or cross-user compromise in a hosted authoritative backend
+- Guest escape to arbitrary host code execution, credentials, or filesystem access
+- Supervisor compromise or a non-Supervisor route to create hostile guests
+- Agent/daemon ability to approve plans, use Approval keys, or reset consumed grants
+- Execution of substituted/unregistered bytes through approval, canonicalization, or replay bypass
+- Agent/daemon retrieval of arbitrary user-only input/output content
+- Forged validated receipt/terminal success that defeats both Broker and Supervisor evidence
+- Cross-user/cross-tenant compromise in a future hosted authoritative deployment
 
 ### High
 
-- Reliable network or host-service access when the approved plan denies network
-- Acceptance of a revoked, wrong-purpose, wrong-installation, or wrong-audience approval
-- Live host-file mounts or path races that expose content beyond the selected snapshot
-- Resource-control bypass capable of materially affecting host availability
-- Teardown failure hidden as success, leaving hostile execution active
+- Reliable unauthorized network, metadata-service, host-IPC, or management-channel access
+- Acceptance of revoked/wrong-purpose/wrong-installation/wrong-epoch approval or trust state
+- Live host-file mounts or content-handle confusion exposing more than granted bytes
+- Resource-control bypass materially affecting host availability outside approved budgets
+- Runtime component substitution, partial update, or debug state accepted as validated posture
+- Teardown failure hidden as success while hostile execution may remain active
+- User-only artifact release from an integrity-failed or indeterminate attempt
 
 ### Medium
 
-- Receipt, metric, or artifact metadata integrity failures that materially weaken auditability
-  without expanding guest authority
-- Bounded disclosure of guest output to the wrong audience
-- Denial of service confined to one local job and its configured resource budget
-- Profile provenance or review-status confusion that does not activate an untrusted profile
+- Bounded output/metadata disclosure to the wrong audience without broader authority
+- Receipt, metric, profile-state, or transcript-integrity defect that materially weakens
+  auditability but does not authorize execution
+- Denial of service confined to one local job and approved resource budget
+- TUF/profile freshness misclassification that downgrades evidence without activating untrusted code
+- Unsafe approval rendering that misleads but still requires separate exploitation of authority
 
 ### Low
 
-- Non-sensitive diagnostic inaccuracies with no effect on authorization, isolation, egress, or
-  cleanup
-- Development-only availability failures that cannot execute guest code or alter production
-  evidence
-- Documentation or metadata defects that do not overstate an implemented security tier
+- Non-sensitive diagnostic or documentation inaccuracy with no effect on authorization, isolation,
+  content, trust, posture, or cleanup
+- Development-only availability failure that cannot execute guest code or alter production evidence
+- Harmless metadata mismatch rejected closed
+
+## Security posture
+
+Posture is multidimensional rather than one “secure” tier:
+
+- isolation assurance;
+- runtime-integrity evidence mode;
+- trust freshness;
+- distribution identity.
+
+Only exact pinned configurations with complete required rows in the control-evidence matrix may use
+`validated-local` or stronger isolation language. Every receipt and UI preserves the underlying
+dimensions and known limitations.

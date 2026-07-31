@@ -9,13 +9,17 @@ security-sensitive.
 Read these documents before changing behavior:
 
 1. `docs/PROJECT.md`
-2. `docs/TECHNICAL_DESIGN.md`
-3. `docs/ARCHITECTURE.md`
+2. `docs/ARCHITECTURE.md`
+3. `docs/TECHNICAL_DESIGN.md`
 4. `docs/security/THREAT_MODEL.md`
-5. the relevant ADRs in `docs/adr/`
+5. `docs/FEASIBILITY_SPIKES.md` for pre-freeze or platform work
+6. the relevant ADRs in `docs/adr/`
 
-The JSON Schemas in `schemas/` are the canonical wire contracts. Keep examples,
-TypeScript types, API behavior, and documentation consistent with them.
+The JSON Schemas in `schemas/` are canonical for the current scaffold but are
+explicitly pre-freeze. Do not extend their mixed `Job` authority model as a
+shortcut. Follow `docs/protocol/OBJECT_MODEL.md` and the feasibility gates before
+replacing them; keep current examples, TypeScript types, behavior, and schemas
+consistent until that coordinated replacement.
 
 ## AI Central context
 
@@ -31,10 +35,22 @@ licenses, and refresh workflow.
 ## Working rules
 
 - Preserve deny-by-default capabilities.
-- Preserve the exact, signed execution-plan boundary: never silently rewrite an
-  approved plan or reuse an approval.
+- Only the Execution Supervisor may authorize and own creation, termination,
+  destruction, or reconciliation of a hostile guest. A narrowly enrolled helper
+  may perform a required platform operation only from a sealed Supervisor
+  descriptor. Do not add a daemon-to-backend or daemon-to-helper path.
+- Execute by Supervisor-issued registration ID only. Never accept replacement
+  plan bytes, backend flags, images, mounts, or guest paths at execute time.
+- The daemon must not possess Approval, installation-root, or Supervisor evidence
+  private keys; issue user-content authority; retrieve user-only content; reset
+  grants; or clear quarantine, repair, or trust-epoch state.
+- The Approval Broker renders Supervisor-registered typed plan data, not
+  daemon-supplied display text, and approval remains one-use and attempt-bound.
 - Treat device identifiers as identifiers, not trust. Trust comes from explicit
-  local key authorization and purpose binding.
+  local key authorization, purpose binding, installation identity, and trust
+  epoch. DIDs never grant authority.
+- Do not add live network DID resolution, arbitrary DID methods/resolvers, remote
+  JSON-LD contexts, or full TUF/network parsing to approval or execution paths.
 - Do not treat an in-process JavaScript sandbox as the host security boundary.
 - Do not add unrestricted filesystem, network, process, environment, or artifact
   access to make an example easier.
@@ -44,9 +60,16 @@ licenses, and refresh workflow.
   approval, reject limits above the user ceiling, and enforce the approved
   values exactly or refuse the job.
 - Keep runtime adapters separate from the isolation backend.
+- Keep rich document, archive, spreadsheet, PDF, image, media, and preview parsing
+  out of the daemon and Execution Supervisor. Use bounded Broker validators or a
+  future disposable parser sandbox.
+- Treat spike code as non-production. Product packages must not import it; retain
+  reproducible fixtures/evidence and record the resulting decision before reuse.
+- Do not add a new Supervisor responsibility or privileged helper without an ADR.
 - Record consequential architecture decisions in an ADR.
-- Never claim a backend, profile, or control is secure or production-ready unless
-  the implementation and adversarial tests support that claim.
+- Never claim a backend, profile, control, integrity mode, or security tier is
+  implemented, validated, secure, continuous, attested, or production-ready unless
+  its exact mechanism and retained adversarial evidence support that claim.
 
 ## Verification
 

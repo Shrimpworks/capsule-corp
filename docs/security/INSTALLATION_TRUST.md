@@ -1,0 +1,135 @@
+# Installation Trust
+
+Status: intended design; Gate B and Gate F must validate platform behavior.
+
+## Installation identity
+
+Each installation has:
+
+- a random opaque `installationId` used as the normative internal identity;
+- one hardware-backed installation root public key where supported;
+- purpose-separated operational public keys and authorizations;
+- optional DID representations for interoperability/export;
+- a signed `InstallationManifest`;
+- a sequence-ordered trust-epoch chain;
+- a verified external-trust checkpoint and bounded local `TrustSnapshot`.
+
+Loss of the installation root creates a new installation identity. Ordinary backup/restore does not
+silently migrate private installation keys.
+
+## InstallationManifest
+
+The signed manifest records at least:
+
+- schema version and manifest sequence;
+- installation ID and installation-root public-key identity;
+- platform, architecture, and distribution authority;
+- expected daemon, Broker, Supervisor, updater, and optional Guardian roles;
+- signing identifiers, team IDs, peer code requirements, exact active code-directory hashes, and
+  relevant entitlements;
+- Approval Broker and Supervisor evidence-key authorizations;
+- policy-bundle and runtime-profile-registry digests;
+- pinned TUF root identity and accepted metadata checkpoint;
+- component and storage-format versions;
+- previous manifest/epoch digest;
+- transition reason: install, update, repair, recovery, or authority change.
+
+The manifest is configuration evidence, not proof that signed code is logically correct.
+
+## Trust epochs
+
+Every successful component- or active-policy-changing transition creates an immutable trust epoch.
+Trusted component IPC, plan registration, approval, attempt creation, and receipts bind the same
+epoch number and digest.
+
+Epoch checks detect:
+
+- partial component update;
+- old daemon with new Supervisor or the reverse;
+- stale Broker or updater process;
+- restored policy/profile state;
+- enrolled component replacement;
+- many downgrade or partial-state rollback conditions.
+
+The chain is **sequence-ordered**, not inherently monotonic. If an attacker with privileged local
+state access coherently restores an older manifest, keys, stores, and checkpoint, local signature
+verification alone may accept that older world. Stronger rollback evidence requires at least one of:
+
+- a platform non-rollbackable counter/anchor with suitable semantics;
+- an independently protected latest checkpoint;
+- a privacy-reviewed external witness or transparency service.
+
+Receipts must state which mechanism, if any, was active.
+
+## Storage and access
+
+| Data | Owner/location | Required property |
+| --- | --- | --- |
+| Root and operational key references | Component-specific Keychain/access group | Daemon excluded; user presence on trust-changing/approval keys |
+| Current epoch checkpoint | Supervisor protected state plus narrow Keychain checkpoint where feasible | Atomic update and rollback comparison |
+| Complete manifest/epoch chain | Supervisor-owned store | Hash-linked, bounded, recoverable |
+| Verified public trust metadata | Updater/trust cache | Pinned roots and rollback/freshness checkpoint |
+| Optional witnessed digest | External or independent protected store | No job content; privacy-reviewed correlation |
+
+A general shared app group is not used merely for convenience. Cross-component data moves through
+authenticated typed IPC or narrow handles.
+
+## Development builds
+
+Unsigned, ad-hoc, locally signed, or unrecognized builds default to local `development`
+distribution posture. A custom pinned trust repository can enroll custom signed builds for testing,
+but receipts identify the custom authority and never call them official Capsule production builds.
+
+Debugged or signature-invalid processes cannot claim validated runtime-integrity posture.
+
+## TrustSnapshot
+
+A network-capable updater/trust verifier produces a compact signed local snapshot containing only
+the release/profile/review/validation/revocation state required by local policy. It binds:
+
+- pinned TUF root identity and accepted role versions;
+- snapshot/timestamp freshness classification;
+- active component release identities;
+- active runtime bundle and review/validation identities;
+- Capsule-defined revocation/disable records;
+- local organization/administrator policy checkpoint;
+- creation and expiry/freshness bounds;
+- prior local snapshot checkpoint where applicable.
+
+The Supervisor parses this bounded object rather than general TUF metadata during execution.
+
+## Transition states
+
+```text
+stable
+  → preparing-update
+  → pending-verification
+  → finalizing-epoch
+  → stable
+
+failure paths:
+  → repair-required
+  → quarantined
+```
+
+No attempt starts while a component-changing transition is incomplete. The daemon cannot clear
+`repair-required` or authorize an epoch transition.
+
+## Key lifecycle
+
+- Operational-key rotation creates a new authorization sequence and marks the old key replaced or
+  revoked.
+- Installation-root use is rare, explicit, and auditable.
+- Approval keys require fresh user presence for each v0 approval.
+- Supervisor evidence keys are background-usable only by the enrolled Supervisor identity.
+- A revoked or replaced key never regains authority because a stale daemon cached it.
+- `did:key` identity changes when its key changes; Capsule replacement records provide local
+  continuity rather than pretending the old DID was updated.
+
+## Recovery limitations
+
+An interrupted transition must not fall back to ordinary execution because some binaries happen to
+start. A trusted installer can restore exact current components or authorize a new epoch, but does
+not reset the grant ledger, trust history, or pending backend reconciliation.
+
+See [Update and Recovery](../UPDATE_AND_RECOVERY.md) for the transition protocol.

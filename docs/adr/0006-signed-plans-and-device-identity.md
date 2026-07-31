@@ -1,6 +1,6 @@
 # ADR-0006: Signed execution plans and per-device identity
 
-- Status: Accepted
+- Status: Superseded by ADR-0010, ADR-0011, and ADR-0014
 - Date: 2026-07-30
 
 ## Context

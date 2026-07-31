@@ -2,55 +2,69 @@
 
 ## Summary
 
-Capsule is a local-first, capability-controlled JavaScript and TypeScript task runtime for AI
-agents. It accepts a bounded job declaration, applies user and host policy, executes generated code
-inside a disposable external sandbox, controls every result channel, and destroys the environment.
+Capsule is a local-first trusted execution platform for bounded JavaScript and TypeScript jobs
+proposed by AI agents. It separates untrusted planning, trusted human authorization, user-content
+custody, and hostile-guest execution so that compromising the agent-facing service does not also
+grant approval, content, or launch authority.
 
-The task—not the container, VM, shell, or development environment—is the unit of abstraction.
+The task—not the container, VM, shell, or development environment—is the public abstraction.
+
+## Current status
+
+Capsule is an architecture and buildable scaffold. It does not yet implement the intended security
+boundary and must not be used to execute hostile code without another trusted sandbox.
+
+The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
+the repository's current API surface, but they intentionally do not define the target v0 protocol.
+Blocking feasibility spikes must determine what the platform can actually enforce before those
+contracts are replaced and frozen.
 
 ## Problem
 
 Agents frequently need to perform work that is more reliable as code: transform data, validate
 configuration, analyze source, generate reports, call an approved API, or run bounded checks.
-Executing generated code directly on a user's machine gives it excessive ambient authority. Generic
-cloud sandboxes can be opaque, heavyweight, old, or disconnected from local workflows.
+Executing generated code directly on a user's machine gives it excessive ambient authority.
+Generic cloud sandboxes can be opaque, heavyweight, old, or disconnected from local workflows.
 
-Capsule aims to make constrained execution fast and understandable enough to become the default
-place for agent-generated JS/TS tasks.
+Capsule aims to make constrained local execution understandable and testable enough to become the
+default place for agent-generated JS/TS tasks.
 
 ## Goal
 
-Provide a fast, testable execution boundary in which:
+Provide a fast execution boundary in which:
 
-- The agent can propose source code and requested capabilities.
-- Trusted host or organizational policy can deny or narrow requested authority; the user explicitly
-  approves the resulting immutable, digest-bound execution plan in v0.
-- Every installation has a device-scoped identity and purpose-separated signing keys.
+- The agent-facing daemon can propose and plan work but cannot approve or launch it.
+- A trusted native Broker owns user presence, file selection, and user-only content.
+- A small Execution Supervisor independently validates registered plans and is the only component
+  allowed to create a hostile guest.
+- Every approval authorizes one exact, immutable plan registration and at most one attempt.
+- Every installation has an enrolled trust domain with purpose-separated keys and sequence-ordered
+  component identity.
+- DIDs can represent Capsule principals externally without becoming the local authorization root.
 - Modern runtimes are replaceable, pinned artifacts rather than control-plane dependencies.
-- Isolation backends can evolve without changing the job protocol.
+- Isolation backends can evolve without changing public job semantics.
 - User-defined limits are exact, visible, and never silently expanded or rewritten.
 - Results and artifacts have explicit validation and audience policies.
-- Every execution produces evidence of the effective boundary.
+- Every execution produces attributable approval and enforcement evidence with honest limitations.
 
 ## Product scope and initial wedge
 
 The platform scope is broader than file processing: it is intended for bounded agent-generated
-JS/TS tasks. The first vertical slice is deliberately smaller:
+JS/TS tasks. The first executable slice is deliberately smaller:
 
-- Local desktop control experience
+- Local macOS control experience
 - Bun and TypeScript
-- One-shot execution
-- Explicit prepare, human-readable approval, and execute phases
-- Per-installation identity with offline verification
-- Explicitly granted regular-file or inline JSON inputs
-- Immutable, digest-bound snapshots instead of live host-file mounts
-- Curated dependencies
-- No network, subprocesses, native addons, FFI, or dynamic installation
-- Validated CSV, JSON, JSONL, or text artifacts
-- User-full and agent-metadata-only artifact delivery by default
+- One-shot, dependency-free execution
+- Inline JSON input and bounded JSON output
+- Explicit prepare, register, human-readable approval, attempt, and execute phases
+- Per-installation identity with offline local authorization
+- No network, subprocesses, environment inheritance, native addons, FFI, macros, inspector, or
+  dynamic installation
+- A fixed, low-bandwidth agent summary; full output remains user-only by default
+- Development posture until the exact backend configuration passes its retained attack corpus
 
-This wedge exercises the essential security architecture without turning Capsule into a complete
-coding-agent computer.
+Regular-file snapshots and JSONL, text, and CSV artifacts follow only after the inline JSON slice
+exercises the authority boundaries successfully.
 
 ## Primary users
 
@@ -59,61 +73,87 @@ coding-agent computer.
 - Teams introducing policy around generated code
 - Tool authors who need a vendor-neutral execution contract
 
-## Non-goals for the first release
+## Non-goals for v0
 
 - General remote shell access
 - Long-lived development environments
 - Browser automation
 - Docker-in-Docker
-- Arbitrary languages
-- Arbitrary package installation during a task
+- Arbitrary languages or package installation
+- Network access, subprocesses, secrets, or environment inheritance
+- Arbitrary directories, repositories, archives, devices, sockets, or special files
 - Background services and public preview URLs
 - Multi-tenant hosted scheduling
+- Portable multi-device identity or automated recovery
 - Proof that guest code is correct or aligned with user intent
+- Proof that the local kernel, Secure Enclave, hypervisor, or correctly signed program logic is
+  uncompromised
+- Proof that permitted outputs, metadata, or timing cannot encode granted input data
 
 ## Principles
 
 1. **No ambient authority.** Every external effect requires an explicit grant.
-2. **Fail closed.** Unknown capabilities, profiles, paths, and output types are rejected.
-3. **External isolation is mandatory.** Language permissions are supplemental hardening.
-4. **Egress is a capability.** Logs, structured results, and artifacts are untrusted output.
-5. **Jobs are disposable.** Guest state is never reused across trust boundaries.
-6. **Approval is exact.** The user approves one immutable execution-plan digest, not a mutable job.
-7. **Identity is scoped.** Device, approval, receipt, and transport authority are explicit and
-   purpose limited.
-8. **Versions are evidence.** Source, profiles, runtimes, policy, inputs, and outputs are hashed;
-   trusted handoffs are signed.
-9. **Limits belong to the user.** Defaults and ceilings come from trusted user policy and are not
-   silently clamped.
-10. **Portability is contractual.** Job semantics are portable; source compatibility is not
-    promised.
-11. **Security claims are testable.** The attack corpus is part of the product.
+2. **Separate authorities.** Planning, approval/content custody, and execution enforcement do not
+   share one compromise boundary.
+3. **Fail closed.** Unknown capabilities, identities, profiles, transitions, and backend controls
+   are rejected.
+4. **External isolation is mandatory.** Language permissions are supplemental hardening.
+5. **Approval is exact and attempt-bound.** The user approves typed registered plan bytes; a grant
+   can produce at most one attempt.
+6. **Data authority uses handles.** Agents cannot turn paths, URLs, names, or identifiers into
+   authority.
+7. **Identity is not authorization.** Installation policy gives enrolled keys narrow purposes; a
+   DID is an optional interoperable identifier.
+8. **Trust changes are explicit.** Component identities and policy are bound into signed,
+   sequence-ordered trust epochs with crash-safe update and repair rules.
+9. **Egress is a capability.** Logs, structured results, filenames, metrics, and artifacts are
+   untrusted and observable channels.
+10. **Limits belong to the user.** Defaults and ceilings come from trusted policy and are enforced
+    exactly or the attempt is refused.
+11. **Evidence is attributable, not magical.** Receipts compose signed claims and retained test
+    evidence; they are not independent platform attestation.
+12. **Security claims are testable.** No backend, profile, or component posture advances without
+    exact mechanisms, adversarial tests, and retained evidence.
 
-## Agreed v0 decisions
+## Agreed v0 direction
 
-- An untrusted proposal is resolved into an immutable execution plan before approval.
-- Explicit user approval is required for every v0 plan.
-- Approval binds the plan digest, device installation, audience, nonce, and expiry.
-- Each installation uses a per-device P-256 DID identity with offline `did:key` resolution.
-- Device root, approval, receipt, and transport signing purposes are separated.
-- File capabilities identify private immutable snapshots, never agent-supplied or live host paths.
-- Resource requests above user-owned ceilings are rejected rather than silently reduced.
-- Apple Container is the macOS integration candidate; OCI plus gVisor is the Linux reference
-  backend.
-- Backends remain development tier until their exact pinned implementations pass the required
-  adversarial corpus.
-- A blockchain is not required. Content addressing, signed operations, replay protection, and
-  receipts borrow useful distributed-system patterns without introducing consensus.
+- The agent-facing Go daemon performs strict proposal validation and planning only.
+- A native macOS Trusted Host Broker contains logically separate Approval and Content Broker
+  interfaces and has no agent-facing endpoint.
+- The Execution Supervisor is the sole hostile-guest launch authority and independently enforces
+  non-overridable hard-safety rules.
+- Execute operations accept a Supervisor-issued registration identifier, never replacement plan
+  bytes.
+- Approval binds the plan digest, registration, installation, trust epoch, expected Supervisor,
+  attempt nonce, purpose, audience, and expiry.
+- The normative local identity is a random installation ID plus locally authorized public keys.
+  DIDs are first-class optional representations for interoperability and exported evidence.
+- External release and profile trust uses pinned TUF roots. Live execution consumes a compact,
+  verified local trust snapshot and performs no network trust lookup.
+- Apple Container is the macOS candidate and OCI plus gVisor is the Linux reference, but both stay
+  development-only until exact enforceable controls are proven.
+- Go remains the daemon language; Swift is preferred for the native Broker. Supervisor language and
+  privilege remain gated by the macOS feasibility results.
 
 ## Success criteria
 
-The first milestone succeeds when a client can submit the same job contract through CLI and MCP,
-resolve it into a stable plan, obtain explicit device-bound approval, run it with Bun in a
-disposable environment, enforce deny-by-default capabilities and exact user-owned limits, deliver
-audience-controlled artifacts, prove teardown, and produce a signed receipt.
+The first functional milestone succeeds when a client can submit a dependency-free inline JSON
+job, obtain a Supervisor registration, receive explicit user-presence approval from the Broker,
+consume that grant for one attempt, run Bun in a disposable development backend, release only a
+fixed agent summary, record backend-specific teardown evidence, and compose a receipt from Broker
+approval evidence and a Supervisor enforcement transcript.
 
-The first reference demonstration transforms inline JSON or one user-selected regular-file snapshot
-into declared JSON, JSONL, CSV, or text artifacts with no network or ambient authority.
+The first validated-local milestone additionally requires the exact backend, runtime bundle,
+component identities, and host configuration to survive the documented adversarial corpus. An
+unresolved teardown or integrity state fails closed and cannot be reported as ordinary success.
 
-An authoritative milestone additionally requires the exact backend and runtime profile to survive
-the documented adversarial corpus before Capsule presents them as a security boundary.
+## Near-term method
+
+Before freezing target schemas or building broad product functionality, Capsule will run disposable
+feasibility spikes for cryptographic interoperability, macOS authority separation, backend control
+coverage, content-handle transfer, Supervisor language/privilege, and crash-safe trust transitions.
+Prototype code may be discarded. Fixtures, measurements, limitations, and the resulting ADR
+decisions are durable project evidence.
+
+See [Feasibility Spikes](FEASIBILITY_SPIKES.md), [Technical Design](TECHNICAL_DESIGN.md), and the
+[Roadmap](ROADMAP.md).

@@ -50,12 +50,32 @@ AI Central skill catalog—including Caveman and Hallmark—remain local and are
 
 ## Packages
 
-- `@capsule-corp/protocol` contains TypeScript views of the canonical JSON protocol.
+- `@capsule-corp/protocol` contains TypeScript views of the current canonical, pre-freeze JSON
+  scaffold.
 - `@capsule-corp/sdk` is a thin client for the trusted daemon.
 - `@capsule-corp/mcp-server` will translate MCP tool calls into SDK requests.
 
-JSON Schemas remain canonical. TypeScript and Go representations must be tested against schema
-fixtures once code generation or validation is introduced.
+Current JSON Schemas remain canonical for current tests, but they are not the intended v0 object
+model. Do not extend the mixed `Job` capability union. The replacement must update schemas,
+TypeScript/Go/Swift views, examples, SDK behavior, and shared fixtures together after the blocking
+spikes. See [Schema status](../schemas/README.md).
+
+## Feasibility spike workflow
+
+Blocking macOS, backend, cryptographic, content-handle, privilege, and update prototypes may be
+one-off and are not required to resemble final product structure.
+
+If spike code is retained in the repository:
+
+- place it under `experiments/` with a development-only README;
+- state its hypothesis, exact environment, privileges/entitlements, and pass/fail criteria;
+- include reproducible positive, negative, misuse, and failure-injection commands;
+- prevent production packages from importing it;
+- retain fixtures/evidence and record the ADR consequence;
+- name the condition under which the prototype is removed or replaced.
+
+A successful spike can conclude that a backend/control is unsuitable. See
+[Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
 ## Local daemon
 
@@ -74,19 +94,23 @@ It does not execute guest code yet.
 
 Ordinary Go and TypeScript development does not require Linux. The planned backend workflow is:
 
-- Native unit, contract, and fake-backend tests on macOS and CI
-- Apple Container integration tests on supported Apple silicon and macOS versions
+- Native unit and contract tests on macOS and CI
+- Registered-plan and recovery tests against a fake backend before hostile guest execution
+- Disposable Apple Container capability probes on exact supported Apple silicon/macOS versions
 - OCI plus gVisor tests on Linux CI or a dedicated Linux worker
 
-Apple Container creates the Linux lightweight VM for an individual job; contributors do not
-normally manage a permanent Linux VM. No development backend may execute untrusted Bun directly on
-the host. Until an exact backend configuration passes the documented attack corpus, receipts and
-user interfaces must label it `development`.
+Apple Container may create the Linux lightweight VM for an individual job; contributors do not
+normally manage a permanent Linux VM. Its required no-network, resource, storage, management-
+channel, orphan-recovery, and teardown semantics are not assumed until the spike proves them. No
+development backend may execute untrusted Bun directly on the host. Until an exact backend
+configuration passes the documented attack corpus, receipts and UI must label its isolation posture
+`development`.
 
 ## Security-sensitive changes
 
 Before changing identity, signatures, approval, capability resolution, path handling, process
-spawning, output collection, profile resolution, persistence, recovery, or backend configuration:
+spawning, output collection, profile resolution, persistence, recovery, trusted IPC, updater/trust,
+or backend configuration:
 
 1. State the security property being preserved.
 2. Add positive and negative tests.

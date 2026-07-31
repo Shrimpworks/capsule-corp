@@ -1,0 +1,16 @@
+{
+  "date": "2026-07-30",
+  "font_stack": "none",
+  "palette": "none",
+  "motion": "motion-cut",
+  "spacing": "none",
+  "framework": "vanilla HTML",
+  "preserve": [],
+  "introduce": [
+    "two-family technical typography",
+    "dark OKLCH token system",
+    "4-point spacing scale",
+    "Marquee Hero macrostructure",
+    "Terminal microinteraction discipline"
+  ]
+}

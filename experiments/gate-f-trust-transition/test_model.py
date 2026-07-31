@@ -22,6 +22,10 @@ class ModelTest(unittest.TestCase):
         self.tmp.cleanup()
 
     def restart(self):
+        try:
+            self.model.close()
+        except sqlite3.ProgrammingError:  # already closed by injected crash
+            pass
         self.model = GateFModel(self.root)
         return self.model.recover()
 

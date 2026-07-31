@@ -11,7 +11,7 @@ storage/install mechanism. Keep `RESULTS.md` and translated fixtures as durable 
 
 ## Purpose
 
-This executable specification tests whether the intended `PreparedUpdate` →
+This executable specification and child-process harness test whether the intended `PreparedUpdate` →
 `pending-verification` → epoch finalization → repair protocol can fail closed across durable writes
 and non-transactional effects. It models protocol logic only. It does not test signatures,
 Keychain/Secure Enclave access, XPC peer requirements, real installers, filesystem flush behavior,
@@ -46,6 +46,12 @@ On restart, every incomplete trust transition becomes `repair-required`. Re-enab
 separate final transaction after all enrolled component roles accept the exact epoch digest from
 their current process incarnation.
 
+`crash_worker.py` and `test_process_crash.py` additionally start a real Python child process,
+pause it immediately after a named durable SQLite/external-effect checkpoint, send `SIGKILL` to the
+exact observed PID, and open both databases in a fresh process context for reconciliation. This
+tests operating-system process death and WAL recovery. It still does not simulate sudden power
+loss, torn storage, or APFS snapshot rollback.
+
 ## Run
 
 From the repository root:
@@ -59,4 +65,3 @@ database state.
 
 See `RESULTS.md` for hypothesis, environment, observations, decision, proposed document changes,
 and limitations.
-

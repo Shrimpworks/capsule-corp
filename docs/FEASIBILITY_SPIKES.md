@@ -1,6 +1,9 @@
 # Feasibility Spikes
 
-Status: planned decision work. Spike code is non-production and may be discarded.
+Status: first-wave and license-free follow-up evidence completed on 2026-07-31. Spike code remains
+non-production and may be discarded. See
+[License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
+decisions, credential-gated work, and next slice.
 
 ## Purpose
 

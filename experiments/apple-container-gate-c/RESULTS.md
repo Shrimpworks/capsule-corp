@@ -8,6 +8,12 @@ adapter over the lower-level Containerization API. Pivot again to another backen
 cannot durably enumerate and force-reap runtime helpers after controller loss, or cannot apply and
 report exact PID and storage limits without a broad fork or private API.
 
+Later license-free follow-up: the lower-level package was subsequently compiled and run directly
+with Command Line Tools and local ad-hoc signing. The follow-up enforced PID limits with a retained
+small patch and improved controller-crash behavior, but still lacks supported durable helper/VM
+identity. See [`../apple-containerization-direct/RESULTS.md`](../apple-containerization-direct/RESULTS.md).
+This report otherwise retains the original CLI/API observations unchanged.
+
 This is a disposable research result, not a production-readiness claim. It applies only to the
 versions and host below. `Observed` means measured on this host or read from the exact installed
 source revision. `Inference` is an architectural conclusion drawn from those observations.

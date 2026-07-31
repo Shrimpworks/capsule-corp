@@ -46,6 +46,7 @@ Run:
 
 ```sh
 ./experiments/macos-authority-separation/run.sh --with-debugger
+./experiments/macos-authority-separation/run-xpc.sh
 ```
 
 Derived binaries remain ignored under `build/`. The Keychain probe uses unique process-scoped tags,
@@ -69,6 +70,13 @@ signing identifiers.
 | Apple-chain plus identifier requirement against ad-hoc code | denied |
 | Exact Broker v1 code-directory hash | v1 matched; v2 denied |
 | Exact copy of Broker v1 | matched both identifier and exact-hash requirements |
+| Running Broker v1 dynamic-code object checked by exact hash | matched |
+| Concurrent running stale Broker v2 checked by v1 exact hash | denied |
+| Live XPC listener requiring exact ad-hoc client v1 hash | v1 and exact copy accepted; stale v2 denied before delivery |
+| Message-derived sender identity on accepted XPC request | exact requirement matched through `SecCodeCreateWithXPCMessage` |
+| Cross-process XPC read-only descriptor | exact bytes received; write rejected |
+| Unsigned live XPC fixture | OS killed the fixture; no request was accepted |
+| Authenticated client with unknown operation | typed protocol denial; descriptor not consumed |
 | `get-task-allow` present | denied by an explicit entitlement-absent requirement |
 
 Interpretation:
@@ -82,6 +90,12 @@ Interpretation:
   and protected installation/storage rules rather than a path check.
 - Trust epoch is not a code-signing fact. The XPC/channel check must be combined with typed epoch
   binding and fail-closed protocol state.
+- The running-peer observation proves that exact requirements apply to a live dynamic-code object,
+  not that a PID is a safe IPC identity. PID reuse and lookup substitution remain reasons to use
+  `SecCodeCreateWithXPCMessage` or an OS-enforced XPC peer requirement in product code.
+- The launchd harness directly proves those two message-bound mechanisms compose with XPC FD
+  transfer under ad-hoc exact-build enrollment. It does not prove Team ID, distribution channel,
+  entitlement, effective-session, or product-installation checks.
 
 ### Dynamic validity and debugging
 
@@ -211,9 +225,9 @@ A user can authorize another app, and a privileged administrator/kernel remains 
 
 | Required case | Result |
 | --- | --- |
-| Unsigned peer | static requirement denial observed; live XPC denial pending signed harness |
+| Unsigned peer | static denial observed; live fixture was killed by the OS and delivered no XPC request |
 | Same-team wrong signing identifier | API/platform support substantiated; no local team identity, so live test pending |
-| Stale build | identifier-only acceptance and exact-hash denial observed; epoch protocol pending |
+| Stale build | identifier-only acceptance plus static, live dynamic, and live XPC exact-hash denial observed; epoch protocol pending |
 | Copied binary / PID/path/name substitution | exact copy accepted by design; message-derived `SecCode` is the required identity mechanism |
 | Debug/development signing | `get-task-allow` denial and live `debugged=true` observation passed; Apple dev vs distribution channel matrix pending |
 | Wrong entitlement / Keychain group | unentitled access-group operation denied with `-34018`; positive provisioned group pending |
@@ -306,8 +320,10 @@ No broad architecture files were edited in this spike. Apply these focused chang
    remain unknown for Capsule UX.
 4. **Hardware absence/failure:** Intel without suitable hardware, virtual machines, disabled or
    failed token services, OS restore, and hardware replacement were not available locally.
-5. **Actual XPC lifecycle:** launchd registration, listener/client symmetric requirements, stale
-   service activation, reconnect/replay, malformed first message, and process death were not run.
+5. **Remaining XPC lifecycle:** per-user launchd registration, listener exact-hash enforcement,
+   message-derived identity, stale/unsigned rejection, a malformed operation, descriptor transfer,
+   and clean bootout were run. Symmetric production requirements, reconnect/replay, service crash,
+   activation races, session switching, and upgrade replacement remain untested.
 6. **Backend authority:** the Supervisor/launcher privilege and Apple Container control endpoint
    remain gated by Gates C and E.
 7. **Migration:** Secure Enclave keys do not migrate; access-group/team changes and app-container

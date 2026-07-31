@@ -4,7 +4,10 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"io"
+	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sync"
 	"syscall"
@@ -108,6 +111,71 @@ func TestSnapshotAndDescriptorTransferStagesExactBytes(t *testing.T) {
 	}
 }
 
+func TestDescriptorTransferCrossesRealProcessBoundary(t *testing.T) {
+	const expected = "cross-process-exact-read-only-bytes"
+	path := filepath.Join(t.TempDir(), "snapshot")
+	if err := os.WriteFile(path, []byte(expected), 0o400); err != nil {
+		t.Fatal(err)
+	}
+	content, err := os.Open(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer content.Close()
+
+	sockets, err := syscall.Socketpair(syscall.AF_UNIX, syscall.SOCK_STREAM, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	parentSocket := sockets[0]
+	childSocket := os.NewFile(uintptr(sockets[1]), "gate-d-child-socket")
+	defer syscall.Close(parentSocket)
+
+	cmd := exec.Command(os.Args[0], "-test.run=^TestDescriptorReceiverHelper$")
+	cmd.Env = append(os.Environ(), "CAPSULE_GATE_D_DESCRIPTOR_HELPER=1")
+	cmd.ExtraFiles = []*os.File{childSocket}
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		childSocket.Close()
+		t.Fatal(err)
+	}
+	if err := childSocket.Close(); err != nil {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+		t.Fatal(err)
+	}
+	if err := SendFD(parentSocket, content); err != nil {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+		t.Fatal(err)
+	}
+	if err := cmd.Wait(); err != nil {
+		t.Fatalf("descriptor receiver process failed: %v", err)
+	}
+}
+
+func TestDescriptorReceiverHelper(t *testing.T) {
+	if os.Getenv("CAPSULE_GATE_D_DESCRIPTOR_HELPER") != "1" {
+		t.Skip("helper subprocess only")
+	}
+	received, err := ReceiveFD(3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer received.Close()
+	actual, err := io.ReadAll(received)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(actual) != "cross-process-exact-read-only-bytes" {
+		t.Fatalf("received %q", actual)
+	}
+	if _, err := received.Write([]byte("mutate")); err == nil {
+		t.Fatal("received descriptor unexpectedly allowed writes")
+	}
+}
+
 func TestOriginalMutationDoesNotChangeSnapshot(t *testing.T) {
 	b, c := setupBroker(t)
 	ref, source := snapshot(t, b, c, []byte("approved bytes"))
@@ -157,6 +225,53 @@ func TestRejectsSymlinkDirectoryAndFIFO(t *testing.T) {
 	}
 	if _, err := b.SnapshotRegularFile(fifo, 1024, c.now.Add(time.Hour)); !errors.Is(err, ErrNotRegular) {
 		t.Fatalf("FIFO error = %v, want ErrNotRegular", err)
+	}
+}
+
+func TestRejectsDeviceSocketAndOversizedSparseFile(t *testing.T) {
+	b, c := setupBroker(t)
+	if _, err := b.SnapshotRegularFile("/dev/null", 1024, c.now.Add(time.Hour)); err == nil {
+		t.Fatal("character device snapshot unexpectedly succeeded")
+	}
+
+	t.Run("unix-socket", func(t *testing.T) {
+		socketPlaceholder, err := os.CreateTemp("/tmp", "capsule-gate-d-*.sock")
+		if err != nil {
+			t.Fatal(err)
+		}
+		socketPath := socketPlaceholder.Name()
+		if err := socketPlaceholder.Close(); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Remove(socketPath); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = os.Remove(socketPath) })
+		listener, err := net.Listen("unix", socketPath)
+		if errors.Is(err, syscall.EPERM) {
+			t.Skip("managed test sandbox denies Unix-socket bind")
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer listener.Close()
+		if _, err := b.SnapshotRegularFile(socketPath, 1024, c.now.Add(time.Hour)); err == nil {
+			t.Fatal("Unix socket snapshot unexpectedly succeeded")
+		}
+	})
+
+	sparsePath := filepath.Join(t.TempDir(), "oversized-sparse")
+	if err := os.WriteFile(sparsePath, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Truncate(sparsePath, 2048); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := b.SnapshotRegularFile(sparsePath, 1024, c.now.Add(time.Hour)); !errors.Is(err, ErrLimitExceeded) {
+		t.Fatalf("oversized sparse file error = %v, want ErrLimitExceeded", err)
+	}
+	if _, err := b.SnapshotRegularFile(sparsePath, 0, c.now.Add(time.Hour)); !errors.Is(err, ErrLimitExceeded) {
+		t.Fatalf("zero-byte policy limit error = %v, want ErrLimitExceeded", err)
 	}
 }
 

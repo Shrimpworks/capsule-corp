@@ -21,9 +21,12 @@ ad-hoc signing cannot substantiate the production boundary.
 
 ## Reproduction
 
-Run `./run.sh --with-debugger` on macOS. The script creates only derived files under `build/`. The
-key probe creates ephemeral Keychain keys/items and deletes them before exit. It deliberately
-suppresses interactive authentication; it must not satisfy the approval-key user-presence policy.
+Run `./run.sh --with-debugger` and `./run-xpc.sh` on macOS. Both create only derived files under
+`build/`. The XPC runner temporarily bootstraps the exact per-user
+`dev.capsule.gate-b.license-free` LaunchAgent, refuses to replace an existing service, and boots it
+out on exit. The key probe creates ephemeral Keychain keys/items and deletes them before exit. It
+deliberately suppresses interactive authentication; it must not satisfy the approval-key
+user-presence policy.
 
 The retained source covers:
 
@@ -32,6 +35,12 @@ The retained source covers:
 - an ad-hoc impostor with the expected identifier;
 - two builds with the same identifier;
 - an exact copied binary;
+- Security-framework validation of two concurrently running peer processes by
+  exact code-directory hash, accepting v1 and denying stale v2;
+- a live launchd XPC service whose listener enforces the exact ad-hoc client hash before message
+  delivery, plus message-derived `SecCode` revalidation and read-only FD transfer;
+- live acceptance of an exact copy, stale-build rejection, unsigned-fixture rejection, and typed
+  protocol rejection after successful peer authentication;
 - rejection of ad-hoc code by an Apple-chain requirement;
 - rejection of the development-only `get-task-allow` entitlement;
 - point-in-time dynamic-valid and sticky debugger-attached status;
@@ -39,9 +48,12 @@ The retained source covers:
 - Secure Enclave P-256 creation, background signing, a persistent-key export branch when
   entitlement-backed persistence succeeds, and noninteractive user-presence denial.
 
-It does not claim to be an end-to-end XPC test. That requires three Apple Development or
-distribution identities, validated entitlements/provisioning profiles, installed launchd/XPC
-services, protected containers, and interactive user presence.
+The running-peer check uses `SecCodeCopyGuestWithAttributes` and a kernel PID only to exercise
+dynamic-code validation; it must not be used as the product peer identity path. The separate XPC
+harness does use both an OS-enforced listener peer requirement and
+`SecCodeCreateWithXPCMessage`, but only with ad-hoc exact hashes. The final production matrix still
+requires three Apple Development and distribution identities, validated entitlements/provisioning
+profiles, installed product services, protected containers, and interactive user presence.
 
 See [RESULTS.md](RESULTS.md) for the evidence/limitation split, Gate B decision, proposed document
 changes, and next test.

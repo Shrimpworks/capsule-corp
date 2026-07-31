@@ -16,7 +16,7 @@ Upstream pins:
 binary_bytes=73000 path=.../.build/swift-platform-probe
 ok capsule.local/capsule/experiments/gate-e-supervisor-topology/go-platform-probe 0.275s
 {"language":"go-cgo","validCodeRequirementStatus":0,"malformedCodeRequirementStatus":22,"sameTeamRequirementStatus":0,"selfDynamicCodeValidityStatus":0}
-binary_bytes=1911378 path=.../.build/go-platform-probe
+binary_bytes=1729074 path=.../.build/go-platform-probe
 ```
 
 Peak RSS from `/usr/bin/time -l`:
@@ -71,3 +71,21 @@ PASS exact Apple sources retain the tested privilege and client-authentication s
 These results are spike evidence only. They are not backend validation, platform attestation, or a
 production security claim.
 
+## License-free direct-backend addendum
+
+A later same-host follow-up invalidated the earlier assumption that full Xcode was necessary to
+obtain any dynamic direct-backend evidence. Exact `apple/containerization` 0.33.3 compiled with
+Command Line Tools, accepted a local ad-hoc `com.apple.security.virtualization` entitlement, and
+ran real VM-backed containers without an Apple developer account.
+
+Observed direct results include no guest network interface, uid/gid 1000, no-new-privileges, empty
+capabilities, read-only root, bounded tmpfs, exact 256 MiB memory, bounded output with kill on
+overflow, and disappearance of the newly observed Virtualization helper after controller
+`SIGKILL`. The unmodified public API did not set `pids.max`; a retained four-hunk patch then
+enforced `pids.max=16` against root and non-root fork attacks. The package still exposes no
+supported durable VM/helper enumeration identity for restart reconciliation. Gate E therefore
+still selects an unprivileged direct Swift Supervisor provisionally, while Gate C remains failed
+for production.
+
+Full evidence and limitations:
+[`../apple-containerization-direct/RESULTS.md`](../apple-containerization-direct/RESULTS.md).

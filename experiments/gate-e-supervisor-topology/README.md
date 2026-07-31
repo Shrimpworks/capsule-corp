@@ -20,10 +20,12 @@ Adopt the following **provisional macOS v0 default**:
   Supervisor-only backend-control boundary.
 
 This is a conditional pass, not a language freeze. The privilege question has enough evidence for
-"per-user, not root." The Swift selection remains provisional because this host lacks full Xcode
-26, Gate C has not yet proved the exact backend contract, and this spike did not run a signed direct
-`Containerization` lifecycle. A final ADR requires the discriminating signed experiment described
-below.
+"per-user, not root." A license-free follow-up subsequently built and ran the pinned direct
+`Containerization` lifecycle using Command Line Tools and an ad-hoc virtualization entitlement;
+see [`../apple-containerization-direct/RESULTS.md`](../apple-containerization-direct/RESULTS.md).
+The Swift selection remains provisional because Gate C still lacks exact PID control and durable
+helper/VM identity and recovery evidence. A final ADR requires those remaining discriminating
+results and the production-signed matrix.
 
 A Go Supervisor with in-process native bindings is not the v0 default: Go can reach XPC and
 Security through cgo, but Apple exposes the supported container library in Swift and no maintained
@@ -85,9 +87,10 @@ Observed on 2026-07-31 in America/Toronto:
 | Test privilege | Ordinary user. Escalation escaped the Codex workspace sandbox only; no command ran as root |
 | Test entitlements | Probes were ad-hoc/linker signed with no Team ID and no custom entitlements |
 
-The official Containerization source says a supported source build requires Apple silicon, macOS
-26, and Xcode 26. Full Xcode was therefore a real missing prerequisite for building the pinned
-package, even though small Swift SDK probes compiled with Command Line Tools. See the pinned
+The official Containerization source says its supported source-build configuration requires Apple
+silicon, macOS 26, and Xcode 26. The license-free follow-up nevertheless observed that the exact
+0.33.3 package compiled and ran on this host with Command Line Tools alone. That is useful
+feasibility evidence, but it does not override upstream support requirements. See the pinned
 [Containerization requirements](https://github.com/apple/containerization/blob/0.33.3/README.md#L34-L42).
 
 ## External primary evidence
@@ -211,6 +214,22 @@ for a small platform check.
   server was not running or registered. No container, image, volume, or network was created or
   deleted by this spike.
 
+### Direct Containerization follow-up
+
+The separate license-free follow-up compiled a 75,443,168-byte debug probe from exact
+Containerization 0.33.3, ad-hoc signed it with only the virtualization entitlement, and ran real
+VM-backed containers without an Apple developer account. It observed `networking: false` with no
+guest `eth0`, uid/gid 1000, `no_new_privileges`, no capabilities, a read-only root, bounded tmpfs,
+an exact 256 MiB memory limit, bounded output with kill-on-overflow, and prompt helper disappearance
+after controller `SIGKILL`.
+
+The unmodified API left `pids.max` unlimited. A retained four-hunk patch subsequently exposed the
+existing OCI control and dynamically enforced `pids.max=16` against both root and non-root fork
+attacks. That resolves local mechanism feasibility, not dependency governance or upstream support.
+Counterevidence remains decisive on recovery: a restarted manager cannot enumerate or reopen the
+exact VM/helper through a supported durable identity. The direct path is viable for one focused
+identity/recovery spike, not a validated backend.
+
 ### Footprint and dependency observations
 
 These are measurements, not estimates of a finished Supervisor:
@@ -218,7 +237,11 @@ These are measurements, not estimates of a finished Supervisor:
 | Artifact | Release file size | Maximum resident set in one no-op probe run |
 | --- | ---: | ---: |
 | Swift platform probe | 73,000 bytes | 7,880,704 bytes |
-| Go+cgo platform probe | 1,911,378 bytes | 10,862,592 bytes |
+| Go+cgo platform probe | 1,729,074 bytes on the final rerun | 10,862,592 bytes in the original measured run |
+
+The separate direct-Containerization debug probe was 75,443,168 bytes after ad-hoc signing. That
+non-optimized package build is not comparable to the two no-op release probes, but it confirms that
+the backend dependency—not Capsule's small platform adapter—dominates the executable footprint.
 
 The installed Apple 1.0.0 executables measured approximately 52.9–59.9 MB each: CLI, API server,
 runtime helper, image helper, and network helper. Tagged source contained 20,971 physical Swift
@@ -286,8 +309,10 @@ What prevents a full pass:
 - Gate C has not established the exact enforceable backend contract;
 - Gate B has not demonstrated signed peer rejection, Keychain/storage separation, or the daemon's
   mandatory sandbox profile;
-- the direct pinned Containerization package was not built or run because full Xcode 26 is absent;
-- no direct-Swift versus Go-plus-native-helper crash/recovery comparison exists;
+- the upstream direct package still omits guest PID control; the retained local patch works but is
+  not yet an accepted, governed dependency;
+- no supported durable identity/enumeration surface can reconcile the exact VM/helper after a
+  Supervisor restart, and no direct-Swift versus helper recovery comparison exists;
 - no signed release footprint, entitlement, update, or orphan-reconciliation result exists.
 
 The safe fallback remains the fake backend, which creates no guest. Apple execution stays
@@ -378,4 +403,3 @@ Selection rule:
 
 Until that experiment and Gate C pass, keep the language choice explicitly provisional and the
 Apple backend development-only.
-

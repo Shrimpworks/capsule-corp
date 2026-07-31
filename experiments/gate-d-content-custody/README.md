@@ -216,7 +216,8 @@ COMMIT;
 - `custody.go`: standard-library Go model for Broker snapshotting, opaque references, one-use
   handles, descriptor transfer via `SCM_RIGHTS`, post-stage digest verification, bounded output
   pipes, release gating, atomic-file state persistence, and GC/tombstones.
-- `custody_test.go`: positive, adversarial, misuse, and failure-injection cases.
+- `custody_test.go`: positive, adversarial, misuse, and failure-injection cases, including a real
+  child process receiving a read-only descriptor over `SCM_RIGHTS`.
 - `xpc-probe/xpc_fd_probe.c`: native libxpc descriptor boxing/duplication probe.
 - `custody-state.sql`: proposed SQLite rows, checks, legal transitions, and output-release trigger.
 - `verify.sh`: reproducible race, repetition, native XPC, and SQLite-constraint runner.
@@ -238,8 +239,9 @@ Observed on the environment above:
 | Case | Result |
 | --- | --- |
 | Broker snapshot and descriptor-based staging | Pass; exact bytes staged, no public path, received input FD rejected writes |
+| Real child-process descriptor transfer | Pass; child received exact bytes over a Unix-domain socket after process spawn and could not write the FD |
 | Original file changed after snapshot | Pass; staged bytes remained the approved snapshot |
-| Symlink, directory, FIFO | Pass; all rejected without blocking on FIFO |
+| Symlink, directory, FIFO, device, Unix socket | Pass; all rejected without blocking on FIFO; oversized sparse file and zero-byte policy limit also denied |
 | Daemon role, cross-attempt binding, path-like forged ID | Pass; all denied |
 | Expiry and explicit revocation | Pass; stale/revoked redemption denied |
 | Concurrent duplicate redemption | Pass; 1 of 24 contenders succeeded, 23 received already-redeemed |
@@ -252,14 +254,15 @@ Observed on the environment above:
 | Oversized returned output | Pass; bounded pipe rejected the commit and removed the partial object |
 | Exact duplicate output commit | Pass; idempotent; mismatched duplicate denied |
 | Garbage collection | Pass; live content retained, expired authority tombstoned, tombstone later collected |
-| Go race detector | Pass across all 14 top-level tests |
-| Repetition | Pass across 20 suite runs (280 top-level test executions) |
+| Go race detector | Pass across all 16 top-level tests; helper-only subprocess entry skipped in the parent process as designed |
+| Repetition | Pass across 20 suite runs (320 top-level test executions) |
 | Native libxpc FD object | Pass; exact bytes and read-only access survived sender close; repeated five times separately |
 | SQLite contract fixture | Pass; illegal state resurrection and pre-commit output release rejected |
 
-No unexpected race detector finding occurred. These are observations of the disposable prototype,
-not proof of a production XPC deployment, process boundary, APFS power-loss outcome, or guest
-backend.
+No unexpected race detector finding occurred. The descriptor custody semantics now crossed a real
+process boundary, but over a Unix-domain socket rather than authenticated XPC. These are
+observations of the disposable prototype, not proof of a production XPC deployment, authenticated
+peer boundary, APFS power-loss outcome, or guest backend.
 
 ## Gate decision
 
@@ -270,14 +273,18 @@ recipient-selected paths; post-stage verification catches substitution/partial t
 attempt bindings and consume-before-send make duplicate/crash behavior fail closed; a bounded
 write-only pipe plus terminal commit gates output; and tombstones permit replay-safe GC.
 
-Gate D does **not** pass outright because the required authenticated cross-process authority and
-storage separation were not executable in this environment:
+Gate D does **not** pass outright because production-authenticated component authority and
+protected storage separation were not executable in this environment. A combined license-free
+Gate B follow-up did exercise exact-ad-hoc-hash XPC authentication and descriptor transfer, which
+removes the basic mechanism uncertainty but not the shipping identity/storage requirements:
 
 - there is no separately signed Broker/Supervisor/daemon target, Apple signing identity, installed
   XPC service, App Sandbox container, or component entitlement set;
 - the Go prototype's `PeerRole` is a logical authorization input, not OS authentication;
-- the libxpc probe exercises descriptor semantics in one process, not a peer-requirement-protected
-  Broker-to-Supervisor message;
+- this directory's libxpc probe exercises descriptor semantics in one process and its child probe
+  uses `SCM_RIGHTS`; the combined Gate B follow-up now proves a live exact-ad-hoc-hash-protected XPC
+  message with message-derived identity and read-only FD transfer, but not a Team-ID/distribution-
+  signed Broker-to-Supervisor deployment;
 - the Go state model uses atomic `fsync`/rename JSON, not a reviewed SQLite transaction under
   multi-process crash/power-loss injection;
 - no Apple Container stage/import path was tested, so absence of a live host mount in the guest is

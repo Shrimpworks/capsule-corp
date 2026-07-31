@@ -73,7 +73,8 @@ Not implemented or observed:
 - macOS installer/package-manager atomicity, APFS behavior, power-cut durability, Keychain,
   Secure Enclave, entitlements, code signing, or XPC;
 - actual storage migration or forward/backward parser compatibility;
-- actual Broker and Supervisor stores or cross-process authenticated messaging;
+- actual Broker and Supervisor stores or cross-process authenticated messaging (the retained
+  harness uses real child-process death around the model stores, not product components);
 - a real backend's create/enumerate/destroy semantics;
 - a non-rollbackable platform counter or independent witness.
 
@@ -85,7 +86,8 @@ Command:
 python3 -m unittest discover -s experiments/gate-f-trust-transition -p 'test_*.py' -v
 ```
 
-Result: **29 tests passed, 0 failed** on the environment above.
+Result: **31 unittest methods passed, 0 failed** on the environment above. Those include the
+original 29 model tests plus 43 real child-process `SIGKILL`/restart executions.
 
 The retained tests observed:
 
@@ -104,11 +106,18 @@ The retained tests observed:
 - preservation of grant, attempt, cleanup, and event history through repair;
 - authorized completion of a partially swapped target;
 - refusal to rewind a committed epoch, an irreversible migration, or a transition followed by a
-  newly completed external effect.
+  newly completed external effect;
+- exact-PID `SIGKILL` after 23 named durable checkpoints spanning grant use, backend creation,
+  result release, component swaps, epoch commit, component acceptance, and attempt re-enable;
+- ten repeated real-process kills after externally visible guest creation and ten after externally
+  visible result release, with restart reconciliation preserving cleanup or completed-release
+  state on every run.
 
-Each injected crash closes both SQLite connections immediately after the named committed write or
-external action, then creates a fresh model instance and runs boot recovery. This is process-crash
-simulation, not sudden-power-loss testing.
+The original injected-crash cases close both SQLite connections after the named committed write or
+external action. The added harness instead pauses a child immediately after the same callback,
+publishes its exact PID, sends uncatchable `SIGKILL` without closing either connection, and opens
+the WAL-backed stores in a fresh process context. This now exercises real process death and SQLite
+recovery, but still is not sudden-power-loss testing.
 
 Repository verification also passed under Node 22.22.1: `pnpm install`, `pnpm check`, `pnpm lint`,
 `pnpm test`, `pnpm verify:schemas`, `go test ./...`, `go vet ./...`, and `go build ./...`.
@@ -156,9 +165,9 @@ These are design inferences, not observations of Capsule or macOS:
   current when this spike ran.
 - `digest()` stands in for a signature over strict canonical bytes. It demonstrates binding only;
   it is not authentication and must not be reused as product cryptography.
-- The model serializes one writer and does not test concurrent component launches, multi-process DB
-  locks, disk-full, torn/corrupt database pages, rollback-journal/WAL deletion, clock failure, or
-  malicious privileged store editing.
+- The model serializes one writer. The child harness tests process death but not concurrent
+  component writers, lock contention, disk-full, torn/corrupt database pages,
+  rollback-journal/WAL deletion, clock failure, or malicious privileged store editing.
 - The external effect table is stronger than many real APIs. When completion cannot be queried,
   replay safety depends on the remote system honoring the same durable idempotency key.
 
@@ -264,9 +273,9 @@ Normative rules to add:
 
 ## Next smallest test
 
-Build a two-process macOS harness around the selected Supervisor store layout and a fake installer/
-backend. Use a parent process to kill the Supervisor or machine VM after each fsync, rename/swap,
-WAL checkpoint, migration, epoch-pointer commit, peer restart, guest-create response, and Broker
-release response. Retain before/after disk images and independently enumerated guest/effect state.
-This directly tests the largest unproven assumption here: that the selected macOS storage and
-installer primitives realize the model's durable commit points under real process and power loss.
+Move the now-proven exact-PID kill pattern onto the selected Supervisor store layout and fake
+installer/backend processes. Add kill points around explicit file `fsync`, rename/swap, WAL
+checkpoint, migration, peer restart, and IPC response boundaries; then retain before/after APFS
+images and independently enumerated guest/effect state. A separate VM power-cut campaign is still
+required to test whether the selected macOS storage and installer primitives realize these commit
+points under sudden power loss.

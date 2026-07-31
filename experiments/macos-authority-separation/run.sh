@@ -47,6 +47,12 @@ build_role broker_v2 broker v2
 build_role broker_impostor impostor v1
 build_role broker_debug broker v1-debug
 
+clang -Wall -Wextra -Werror \
+  "$experiment_dir/Sources/peer_check.c" \
+  -framework CoreFoundation \
+  -framework Security \
+  -o "$build_dir/peer_check"
+
 codesign --force --sign - --identifier dev.capsule.gate-b.daemon "$build_dir/daemon"
 codesign --force --sign - --identifier dev.capsule.gate-b.broker "$build_dir/broker_v1"
 codesign --force --sign - --identifier dev.capsule.gate-b.broker "$build_dir/broker_v2"
@@ -86,6 +92,39 @@ exact_build_requirement="cdhash H\"$broker_v1_cdhash\""
 expect_pass exact-build-v1 "$exact_build_requirement" "$build_dir/broker_v1"
 expect_deny exact-build-rejects-v2 "$exact_build_requirement" "$build_dir/broker_v2"
 expect_pass exact-build-allows-copy "$exact_build_requirement" "$build_dir/broker_copy"
+
+broker_v1_pid=''
+broker_v2_pid=''
+cleanup_peers() {
+  if [ -n "$broker_v1_pid" ]; then
+    kill "$broker_v1_pid" 2>/dev/null || true
+    wait "$broker_v1_pid" 2>/dev/null || true
+  fi
+  if [ -n "$broker_v2_pid" ]; then
+    kill "$broker_v2_pid" 2>/dev/null || true
+    wait "$broker_v2_pid" 2>/dev/null || true
+  fi
+}
+trap cleanup_peers EXIT HUP INT TERM
+
+"$build_dir/broker_v1" --wait >/dev/null &
+broker_v1_pid=$!
+"$build_dir/broker_v2" --wait >/dev/null &
+broker_v2_pid=$!
+
+"$build_dir/peer_check" "$broker_v1_pid" "$exact_build_requirement" |
+  rg -q '^peer.validity-status=0$'
+printf 'PASS running exact-build-v1 peer\n'
+if "$build_dir/peer_check" "$broker_v2_pid" "$exact_build_requirement" >/dev/null; then
+  printf 'FAIL running stale-build peer unexpectedly matched\n'
+  exit 1
+else
+  printf 'PASS running stale-build peer denied\n'
+fi
+cleanup_peers
+broker_v1_pid=''
+broker_v2_pid=''
+trap - EXIT HUP INT TERM
 
 runtime_release_output=$("$build_dir/runtime_release")
 runtime_debug_output=$("$build_dir/runtime_debug")

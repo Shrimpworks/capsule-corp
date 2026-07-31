@@ -6,8 +6,8 @@
       "!!**/node_modules",
       "!!**/dist",
       "!!**/coverage",
-      "!!experiments/gate-a-signing-canonicalization/swift/.build",
-      "!!experiments/gate-a-signing-canonicalization/typescript/.build",
+      "!!experiments/**/.build",
+      "!!experiments/**/.swiftpm",
       "!!**/.codex/skills",
       "!!.codex/steering/javascript-esm-steering.md"
     ]

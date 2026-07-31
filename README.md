@@ -4,6 +4,7 @@ Capsule is an experimental, capability-controlled JavaScript and TypeScript task
 AI agents.
 
 [Project site](https://dills122.github.io/capsule-corp/) ·
+[Technical design](docs/TECHNICAL_DESIGN.md) ·
 [Architecture](docs/ARCHITECTURE.md) ·
 [Threat model](docs/security/THREAT_MODEL.md)
 
@@ -17,13 +18,18 @@ returns only policy-approved results and artifacts.
 
 ## Core rule
 
-> The model proposes code and capabilities. The user or host grants authority. Capsule controls
-> execution and egress.
+> The model proposes work. The trusted host resolves the exact authority. The user approves that
+> immutable plan. Capsule controls execution, egress, and the signed receipt.
 
 ## Current direction
 
 - Runtime-neutral job protocol with a Bun-first implementation.
-- Local-first control experience backed by an isolated Linux execution target.
+- Prepare, explicit human-readable approval, and execution bound to one immutable plan digest.
+- Per-installation P-256 device identity with offline DID verification and purpose-separated keys.
+- Local-first control experience with Apple Container on macOS and OCI plus gVisor on Linux as
+  independent backend candidates.
+- Immutable regular-file snapshots instead of live host paths or bind mounts.
+- User-owned resource defaults and ceilings with no silent clamping.
 - No ambient filesystem, network, environment, subprocess, native-addon, or package-installation
   authority.
 - Separate input/capability and artifact/egress brokers.
@@ -52,8 +58,11 @@ docs/                  Project, architecture, security, ADRs, and roadmap
 - Go for the trusted daemon, policy, lifecycle, and isolation orchestration.
 - TypeScript for the protocol package, SDK, CLI, MCP adapter, and initial guest programs.
 - JSON Schema Draft 2020-12 for canonical wire contracts.
+- SHA-256 content identities and signed, replay-resistant trust envelopes.
+- P-256 per-device identity with Secure Enclave support on compatible Apple hardware.
 - Bun as the first guest runtime, with Node and Deno deferred.
-- OCI plus gVisor as the first authoritative isolation target.
+- Apple Container for on-demand macOS lightweight-VM execution and OCI plus gVisor as the Linux
+  reference backend.
 - pnpm, TypeScript, Biome, Go tooling, Make, and GitHub Actions for development and CI.
 - Local AI Central links for reviewed skills and shared steering under `.codex/`.
 
@@ -67,13 +76,16 @@ guest runtimes.
 
 Planned implementation order:
 
-1. Freeze the job, capability, egress, and receipt contracts.
-2. Build a minimal Bun runner with deny-by-default capabilities.
-3. Complete the first local input-to-artifact workflow.
-4. Validate the authoritative OCI + gVisor backend against the attack corpus.
-5. Add Node as the portability proof and Deno later.
+1. Freeze plan, identity, approval, capability, egress, receipt, error, and lifecycle contracts.
+2. Build per-device trust, exact policy resolution, and immutable plan generation.
+3. Prove the durable lifecycle and signed receipts with a fake backend.
+4. Build a minimal Bun runner on the Apple Container development backend.
+5. Complete the regular-file snapshot-to-artifact workflow through CLI and MCP.
+6. Validate Apple Container and OCI plus gVisor independently against the attack corpus.
+7. Add Node as the portability proof and Deno later.
 
-See [Project](docs/PROJECT.md), [Architecture](docs/ARCHITECTURE.md),
+See [Documentation](docs/README.md), [Project](docs/PROJECT.md),
+[Technical design](docs/TECHNICAL_DESIGN.md), [Architecture](docs/ARCHITECTURE.md),
 [Security model](docs/security/THREAT_MODEL.md), and [Roadmap](docs/ROADMAP.md).
 
 ## Development

@@ -16,10 +16,15 @@ The authoritative backend is expected to enforce:
 - No inherited host credentials or environment
 - No network unless explicitly granted
 - No subprocess, native addon, or FFI authority unless explicitly granted
-- Bounded CPU, memory, process count, storage, time, logs, and artifacts
+- Per-device identity, purpose-separated signing keys, and offline trust verification
+- Explicit approval bound to one immutable execution-plan digest
+- Replay, wrong-audience, wrong-installation, expiry, and revocation checks
+- Immutable file snapshots instead of live host paths
+- Exact user-owned CPU, memory, process count, storage, time, log, and artifact limits
 - Fresh execution state and forced teardown
 - Controlled, audience-aware egress
-- An auditable receipt describing the effective policy and runtime identity
+- A signed auditable receipt describing the approved plan, effective policy, runtime identity, and
+  teardown outcome
 
 See the [threat model](docs/security/THREAT_MODEL.md) for scope and non-guarantees.
 

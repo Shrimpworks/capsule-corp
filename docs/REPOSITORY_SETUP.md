@@ -23,7 +23,8 @@ Protect `main` with:
 - Administrator bypass limited and auditable.
 
 Add `.github/CODEOWNERS` after the responsible GitHub team or maintainers are known. Require review
-from those owners for `schemas/`, `internal/`, `profiles/`, `docs/security/`, and `docs/adr/`.
+from those owners for `schemas/`, `internal/`, `profiles/`, `docs/TECHNICAL_DESIGN.md`,
+`docs/security/`, and `docs/adr/`.
 
 ## Security settings
 

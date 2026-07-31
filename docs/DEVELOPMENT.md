@@ -70,10 +70,23 @@ curl http://127.0.0.1:7777/v1/runtimes
 
 It does not execute guest code yet.
 
+## Backend development
+
+Ordinary Go and TypeScript development does not require Linux. The planned backend workflow is:
+
+- Native unit, contract, and fake-backend tests on macOS and CI
+- Apple Container integration tests on supported Apple silicon and macOS versions
+- OCI plus gVisor tests on Linux CI or a dedicated Linux worker
+
+Apple Container creates the Linux lightweight VM for an individual job; contributors do not
+normally manage a permanent Linux VM. No development backend may execute untrusted Bun directly on
+the host. Until an exact backend configuration passes the documented attack corpus, receipts and
+user interfaces must label it `development`.
+
 ## Security-sensitive changes
 
-Before changing capability resolution, path handling, process spawning, output collection, profile
-resolution, or backend configuration:
+Before changing identity, signatures, approval, capability resolution, path handling, process
+spawning, output collection, profile resolution, persistence, recovery, or backend configuration:
 
 1. State the security property being preserved.
 2. Add positive and negative tests.

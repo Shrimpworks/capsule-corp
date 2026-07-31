@@ -1,3 +1,9 @@
+/**
+ * Pre-freeze protocol scaffold used by current examples and tests.
+ *
+ * The target v0 protocol will replace this mixed Job authority model after the
+ * blocking feasibility gates. See docs/protocol/OBJECT_MODEL.md.
+ */
 export const API_VERSION = "capsule.dev/v0" as const;
 
 export type RuntimeName = "bun" | "node" | "deno";
@@ -60,6 +66,7 @@ export interface ArtifactContract {
   exposure: ExposurePolicy;
 }
 
+/** @deprecated Pre-freeze scaffold; do not extend with additional authority. */
 export interface Job {
   apiVersion: typeof API_VERSION;
   kind: "Job";

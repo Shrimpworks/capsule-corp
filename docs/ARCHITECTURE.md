@@ -1,205 +1,268 @@
 # Architecture
 
+Status: intended architecture; none of these boundaries is implemented or validated yet.
+
 ## System context
 
 ```text
-Untrusted agent                      Trusted user / host
-      │ proposal                         │ file selection,
-      │ MCP / SDK                        │ policy and approval
-      ▼                                  ▼
-                 Trusted Capsule daemon
-                 ├── identity and trust registry
-                 ├── proposal validation and planning
-                 ├── policy and approval verification
-                 ├── input/capability broker
-                 ├── runtime/profile registry
-                 ├── durable job lifecycle
-                 ├── artifact/egress broker
-                 └── signed receipt generation
-                                │ exact approved plan
-                                ▼
-                       Isolation backend
-                       ├── Apple Container VM
-                       └── OCI + gVisor sandbox
-                                │
-                                ▼
-                        Disposable runtime
+                         Public or configured trust
+                  ┌─────────────────────────────────┐
+                  │ TUF trust repository            │
+                  │ releases, profiles, revocations │
+                  └───────────────┬─────────────────┘
+                                  │ install, update, explicit refresh
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Local installation                          │
+│                                                                     │
+│  Untrusted agent / MCP / SDK                                        │
+│             │ proposal, status, cancellation                        │
+│             ▼                                                       │
+│  Agent-facing Capsule daemon (Go)                                   │
+│  ├── strict public protocol boundary                                │
+│  ├── proposal and source handling                                   │
+│  ├── policy resolution and immutable planning                       │
+│  └── no approval key, backend launch, or user-only content          │
+│             │ register exact plan / request registered attempt      │
+│             ▼                                                       │
+│  Execution Supervisor                                               │
+│  ├── independently validates and stores exact plan bytes            │
+│  ├── enforces hard-safety invariants                                │
+│  ├── owns approval ledger and attempt lifecycle                     │
+│  ├── owns backend handles, cleanup, and enforcement transcript      │
+│  └── sole authority allowed to create a hostile guest               │
+│       ▲                              │                               │
+│       │ plan fetch, approval,        ▼                               │
+│       │ job-scoped content handles  Isolation backend               │
+│       │                         ├── Apple Container candidate        │
+│  Trusted Host Broker          ├── OCI + gVisor reference            │
+│  ├── native approval UI       └── future microVM                    │
+│  ├── user-presence key                 │                             │
+│  ├── file selection                    ▼                             │
+│  ├── user-content store          Disposable Bun guest               │
+│  └── fixed agent summary                                             │
+│                                                                     │
+│  Optional Runtime Guardian                                          │
+│  └── observes relevant events; never authorizes execution           │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-The daemon, trusted-host UI, enrolled policy, trust registry, and isolation launcher are trusted.
-Agent-generated source, proposals, guest processes, selected input content, dependencies, and all
-guest-controlled output are untrusted. Authentication identifies a caller; it does not make request
-content trusted or authorized.
+TUF processing, software downloads, DID resolution, and other network trust work do not occur in
+the live execution path. A dedicated updater or trust verifier reduces verified external metadata
+to a compact signed local `TrustSnapshot` consumed by the Supervisor.
+
+## Authority model
+
+The architecture deliberately splits three authorities:
+
+| Component | May do | Must not do |
+| --- | --- | --- |
+| Agent-facing daemon | Authenticate agents, validate proposals, resolve policy, construct plans, register plans, request attempts, expose fixed status | Use approval/evidence keys, launch a backend, replace registered plan bytes, retrieve user-only content, clear quarantine or grant state |
+| Trusted Host Broker | Render registered plans, require user presence, sign one-use approvals, select files, own user content, release fixed summaries | Expose agent endpoints, launch a guest, accept daemon display prose as authoritative, make enforcement claims |
+| Execution Supervisor | Independently validate registered plans, enforce hard safety, consume approvals, create attempts, manage backend lifecycle, sign enforcement transcripts | Parse the public agent protocol, author general policy, select files, perform rich parsing, fetch network trust data |
+
+Combining Approval and Content Broker responsibilities in one native process is an accepted v0
+deployment simplification, not a conceptual collapse. Their interfaces, keys, and persisted records
+remain separable so a later high-assurance deployment can split them.
 
 ## Components
 
-### Proposal, plan, and approval protocol
+### Agent-facing daemon
 
-An agent proposal declares source, runtime profile, references to previously issued capabilities,
-requested capabilities, resource limits, expected artifacts, and audience rules. JSON Schemas in
-`schemas/` are canonical.
+The daemon remains the product-facing orchestration and planning service, implemented initially in
+Go. It treats every proposal as untrusted after authentication. It resolves a narrow proposal,
+trusted policy, content manifests, a runtime bundle, and required backend controls into canonical
+`ExecutionPlan` bytes.
 
-The protocol does not accept arbitrary container flags, host paths from an agent, or arbitrary
-runtime images.
+The daemon cannot authorize its own plan. It sends exact bytes to the Supervisor for independent
+validation and durable registration. After registration, execute APIs accept only the returned
+registration identifier.
 
-The planner resolves the proposal, immutable inputs, runtime profile, user policy, exact limits,
-output audiences, and backend requirements into an immutable execution plan. The trusted host shows
-a human-readable view derived from that typed plan. The user signs its digest with a purpose-limited
-approval key. Any change produces a new plan that requires new approval.
+### Trusted Host Broker
 
-### Identity and trust registry
+The macOS Broker is a signed native process, preferably Swift because it directly integrates with
+AppKit/SwiftUI, LocalAuthentication, Keychain, XPC, and platform file-selection APIs.
 
-Each Capsule installation has an independent P-256 device root identity. v0 represents it as a
-`did:key` DID and resolves it entirely offline. Enrollment in the local trust registry—not the DID
-syntax itself—grants trust.
+The Approval interface fetches a plan from the Supervisor, independently validates and hashes it,
+renders a bounded and spoof-resistant typed view, requires fresh user presence, and signs one grant
+for one registration and attempt nonce. It never signs daemon-supplied prose or an opaque digest
+alone.
 
-The root authorizes separate keys for user approval, daemon receipt assertions, and transport. The
-registry stores purpose, issuer, validity, revocation, and replacement information. Unknown DID
-methods, algorithms, keys, or purposes are rejected. v0 does not fetch DID documents from a network
-or support portable multi-device user identity.
+The Content interface safely snapshots user-selected regular-file data-fork bytes, stores input and
+user-only output content, and issues opaque job-scoped handles. The Supervisor necessarily receives
+transient read/write handles required for staging and collection; it does not receive ambient
+access to the Broker's content store.
 
-### Policy engine
+### Execution Supervisor
 
-The policy engine converts requested capabilities into an effective plan before approval. It runs
-outside the guest and may deny or explicitly narrow a request while preparing the plan. Nothing may
-change after approval.
+The Supervisor is the primary local execution authority and the smallest, most security-sensitive
+component. It independently enforces both schema validity and versioned non-overridable hard-safety
+rules. For v0 those rules reject network, subprocess, environment, native-addon, FFI, package,
+untrusted-image, arbitrary-path, and unsupported authority regardless of daemon policy.
 
-Trusted user policy owns defaults and ceilings. Requests above a ceiling are rejected rather than
-silently clamped. Missing values resolve to explicit user defaults in the plan. A backend that
-cannot enforce an exact approved value must refuse execution.
+It owns exact registered plan bytes, approval consumption, attempt state, runtime-integrity state,
+backend capability matching, backend handles, cleanup leases, staged-digest verification, safe
+filesystem collection, and a hash-linked enforcement transcript.
 
-### Input and capability broker
+The language and privilege model are not frozen. A feasibility spike will compare native Swift,
+Go plus narrow platform bindings, and a hybrid with a tiny privileged launcher if one is genuinely
+required. No design assumes a root LaunchDaemon by default.
 
-The broker issues and redeems opaque capabilities. A capability is granted by a trusted user or
-host action and is bound to an audience, operation, expiry, and job or session. An agent may
-reference an existing capability but cannot create one by naming an arbitrary host path.
+See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 
-The first broker supports inline JSON and explicitly selected regular files. A regular-file grant
-is copied into private staging, hashed, recorded in a signed snapshot manifest, and exposed
-read-only to the guest. The grant identifies the immutable snapshot bytes, not the original path.
-Complex parsing occurs inside the guest.
+### Isolation backends
 
-Repository snapshots, directories, archives, network destinations, API operations, secrets, and
-subprocesses are later capability types.
-
-### Runtime profile registry
-
-A runtime profile is a signed manifest identifying an immutable runtime plus its approved modules,
-hardening settings, limits, image digest, provenance, and supported backend controls. Friendly names
-resolve to content digests before execution. The agent cannot supply a registry URL or untrusted
-image.
-
-Profile signing authenticates its publisher and protects integrity. A separate review attestation
-records the policy or security-review verdict; signing alone does not activate a profile.
-
-The first profile is `bun-data@1`. Node and Deno adapters will follow after the job contract is
-proven.
-
-### Isolation backend
-
-The isolation backend enforces the hostile-code boundary. The fake backend exercises lifecycle
-without executing guest code. Apple Container is the macOS integration candidate and gives each job
-a fresh OCI-compatible Linux lightweight VM on supported Apple silicon. OCI plus gVisor is the Linux
-reference backend. Firecracker is a later high-assurance option.
-
-Apple Container and gVisor are independent implementations under one contract. Neither is
-authoritative until its exact pinned implementation, host configuration, and runtime profile pass
-the mandatory attack corpus. Capsule never runs untrusted Bun directly on the host.
-
-Backends implement a conceptual lifecycle:
+Backends implement a durable lifecycle equivalent to:
 
 ```text
-prepare → create → stage → execute → collect → destroy
+probe → prepare → create → stage → start → wait/inspect
+      → terminate → collect → destroy → reconcile
 ```
 
-### Artifact and egress broker
+Apple Container is a macOS feasibility candidate, not an assumed production boundary. OCI plus
+gVisor is the Linux reference. Each exact backend and host configuration reports mechanisms,
+unsupported controls, management channels, recovery behavior, and retained validation evidence.
 
-The broker treats stdout, stderr, structured guest results, filenames, metadata, and files as
-untrusted data. It enforces counts, byte limits, file types, regular-file requirements, symlink
-denial, parsing or schema validation, and audience policy. Structured results use this same
-controlled-object path rather than an implicitly trusted side channel.
+The fake backend creates no guest and exists to test plan registration, approval consumption, state
+transitions, fault recovery, and evidence composition.
 
-Default exposure for user data is full delivery to the user and metadata-only delivery to the
-agent. Agent-readable content requires a separate signed, short-lived content-access grant.
+### Trust verifier and repository
 
-### Receipt generator
+TUF root, targets, snapshot, and timestamp metadata anchor release/profile distribution,
+delegations, and Capsule-defined disable or revocation records. URLs and DIDs do not anchor trust.
+The live Supervisor consumes only a bounded locally verified snapshot, avoiding a general TUF or
+network parser in the execution TCB.
 
-The receipt records hashes and identities for the approved plan, source, runtime profile, policy,
-input snapshots, outputs, approval signer, backend, timings, resource usage, violations, recovery,
-and teardown. It is signed by the receipt key. It is evidence of what trusted Capsule components
-claim to have enforced, not proof that guest computation was correct.
+See [Trust Repositories](TRUST_REPOSITORIES.md).
 
-### Durable lifecycle
+### Optional Runtime Guardian
 
-Job state, approval consumption, identity status, capability metadata, cleanup leases, and receipt
-indexes become durable before Capsule executes hostile code. The expected initial metadata store is
-SQLite behind repository interfaces. Sensitive snapshot and artifact content remains in bounded,
-access-controlled content storage.
+A future Endpoint Security system extension may provide notify-only observations about component
+execution, signature invalidation, debugging, unexpected children, or protected-state changes. It
+never grants authority and is not required for the initial point-in-time integrity posture.
 
-On restart, Capsule reconciles nonterminal jobs, prevents approval replay, attempts backend teardown,
-and records recovery or teardown failure explicitly.
+## Installation Trust Domain
+
+Each installation has:
+
+- a random normative `installationId`;
+- a hardware-backed installation root public key where supported;
+- purpose-separated Approval and Supervisor evidence keys;
+- optional DID representations for interoperability and exported evidence;
+- a signed `InstallationManifest`;
+- a sequence-ordered chain of trust epochs;
+- component-specific code requirements, entitlements, storage, IPC, and Keychain access.
+
+A trust epoch detects partial updates, stale peers, restored state, and enrolled-component mismatch.
+It does not by itself prove global monotonicity or defeat coherent rollback by a privileged local
+administrator. Stronger rollback evidence needs a non-rollbackable anchor or external witness.
+
+See [Installation Trust](security/INSTALLATION_TRUST.md).
+
+## Local process boundaries
+
+Separate processes become separate authorities only when macOS controls support the distinction.
+The feasibility work must prove:
+
+- OS-enforced XPC peer code-signing requirements;
+- expected effective user and session;
+- component-specific Keychain access groups and user-presence rules;
+- separate app/app-group containers and file permissions;
+- no shared app group unless a narrow capability requires it;
+- exact build/epoch validation and dynamic code checks;
+- no daemon access to Broker or Supervisor keys and stores;
+- no daemon access to backend launch interfaces.
+
+Same-user mode bits alone are not sufficient containment against a compromised same-user process.
+
+## Storage ownership
+
+| Store | Owner | Contents |
+| --- | --- | --- |
+| Daemon store | Daemon | Proposals, agent source, planning state, plan references, fixed agent summaries, non-authoritative receipt indexes |
+| Broker store | Trusted Host Broker | Input snapshots, original-path/user labels, user-only artifacts, retention policy, approval audit records, Approval key reference |
+| Supervisor store | Execution Supervisor | Registered plan bytes, grant ledger, attempts, integrity/quarantine state, backend handles, cleanup leases, transcript chain, evidence-key reference, trust-epoch checkpoint |
+| Trust cache | Updater/trust verifier | Pinned roots, verified TUF metadata, profile/review/revocation material, signed local trust snapshots |
+
+Cross-store operations use explicit idempotent saga states. No component treats another store's
+absence as proof that approval was unused, a backend was destroyed, or content was released.
+
+## End-to-end control flow
+
+```text
+select/snapshot input (Broker)
+        ↓ opaque content identity
+propose and plan (daemon)
+        ↓ exact canonical bytes
+independently validate/register (Supervisor)
+        ↓ registration ID
+fetch/render/user-presence approve (Broker ↔ Supervisor)
+        ↓ attempt-bound ApprovalGrant
+preflight integrity + atomically consume (Supervisor)
+        ↓ one ExecutionAttempt
+stage/start/wait/collect/destroy (Supervisor ↔ backend)
+        ↓ EnforcementTranscript + ArtifactManifest
+validate/release content (Broker)
+        ↓
+composed user receipt + fixed agent summary
+```
 
 ## Trust boundaries
 
-```text
-Trusted                                Untrusted
-─────────────────────────────────────  ──────────────────────────────
-Trusted user and host UI               Agent proposal and source
-Enrolled device and operational keys   Agent-facing MCP client
-Capsule daemon and policy              Guest runtime process
-Capability issuance UI/CLI             User-selected input content
-Signed profile registry metadata       Third-party dependencies
-Isolation launcher                     stdout and stderr
-Artifact validators                    Structured guest results
-                                       Output files and filenames
-```
+- **Agent to daemon:** authenticated content remains untrusted; strict raw and schema limits apply.
+- **Daemon to Supervisor:** authenticated peer plus exact registered bytes; Supervisor repeats
+  structural and hard-safety validation.
+- **Broker to Supervisor:** code-identity-authenticated IPC; approval and content handles are
+  purpose-, epoch-, registration-, and attempt-bound.
+- **Supervisor to backend:** generated typed configuration; no guest-controlled shell, paths,
+  images, flags, or management channels.
+- **Guest to host:** hostile syscalls, process, filesystem, IPC, network, and resource behavior.
+- **Guest output to Broker/user/agent:** filesystem safety precedes bounded content parsing; the
+  agent receives a minimized fixed-shape summary by default.
+- **External trust to local install:** pinned TUF roots and verified snapshots; never a live
+  execution authorization call.
 
-Important internal boundaries remain:
+## Identity and DIDs
 
-- Agent-facing credentials cannot call trusted-host issuance, approval, identity-administration, or
-  user-content operations.
-- The approval key cannot be replaced by the noninteractive receipt key.
-- The daemon passes only an exact approved plan to a backend.
-- Backend management channels, including VM sockets, are never guest capabilities.
-- Content delivery authority is separate from execution authority.
+DIDs remain a first-class interoperability feature. They can identify public organizations,
+reviewers, workers, receipt signers, and verification methods. They do not grant Capsule authority.
+Local key authorization binds installation, purpose, status, sequence, validity, and replacement.
+
+`did:key` may render an operational public key offline, but its lack of update and deactivation
+makes it unsuitable as the only long-lived installation recovery mechanism. Network DID resolution,
+arbitrary methods, resolver plugins, and remote JSON-LD contexts do not enter local v0 approval or
+execution.
+
+## Evidence and posture
+
+The user-facing receipt composes a cryptographically attributable Approval Broker claim, a
+cryptographically attributable Supervisor enforcement transcript, the registered plan, and the
+artifact manifest. These signatures do not independently attest that the host, UI, or signer logic
+was uncompromised.
+
+Posture is multidimensional:
+
+- isolation assurance;
+- runtime-integrity evidence mode;
+- trust freshness;
+- distribution authority.
+
+No single `secure` or `authoritative` label hides unsupported dimensions.
 
 ## Portability
 
-There are three independent adapter boundaries:
+The independent adapter boundaries are:
 
-- **Client adapter:** MCP, CLI, SDK, or HTTP
-- **Runtime adapter:** Bun, Node, or Deno
-- **Isolation backend:** fake lifecycle, Apple Container, OCI/gVisor, or Firecracker
-- **Platform key provider:** Apple Secure Enclave/Keychain or another OS-backed implementation
+- client adapter: MCP, CLI, SDK, or future HTTP;
+- runtime adapter: Bun, Node, or Deno;
+- isolation backend: fake lifecycle, Apple Container, OCI/gVisor, or future microVM;
+- platform key/UI/IPC provider: native macOS first, later other operating systems;
+- external trust provider: default Capsule TUF repository or pinned self-hosted authorities.
 
-The protocol should remain stable while these implementations evolve. Source programs may use
-runtime-specific APIs and are not required to run unchanged on every runtime.
-
-## Execution state
-
-Every job receives fresh guest state. Immutable verified images and dependency artifacts may be
-cached. Previously used guest processes, writable filesystems, module caches, temporary
-directories, network state, and connection pools must not cross job trust boundaries.
-
-The control lifecycle is:
-
-```text
-submitted
-  → validating
-  → awaiting-approval
-  → prepared
-  → staging
-  → running
-  → collecting
-  → destroying
-  → terminal
-```
-
-Once guest resources exist, success, failure, timeout, cancellation, collection failure, and daemon
-recovery all pass through destruction. A teardown failure is a distinct terminal classification.
+Public job semantics should remain portable. Source compatibility, platform controls, and security
+posture are not assumed identical.
 
 ## Detailed design
 
-See [Technical Design](TECHNICAL_DESIGN.md) for signed-envelope requirements, plan contents,
-resource-policy semantics, input snapshotting, backend constraints, lifecycle recovery, error
-taxonomy, and the ordered implementation plan.
+See [Technical Design](TECHNICAL_DESIGN.md), [Threat Model](security/THREAT_MODEL.md),
+[Trust Architecture](security/TRUST_ARCHITECTURE.md), and [Protocol Object Model](protocol/OBJECT_MODEL.md).

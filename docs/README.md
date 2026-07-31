@@ -1,17 +1,32 @@
 # Documentation
 
-Capsule is a security boundary under design. Read the documents in this order before changing
-protocol, policy, execution, identity, inputs, outputs, runtimes, or backends:
+Capsule is a security boundary under design. Read these documents before changing protocol,
+policy, execution, identity, content, runtimes, backends, updates, or evidence:
 
-1. [Project definition](PROJECT.md) — product scope, principles, and success criteria
-2. [Technical design](TECHNICAL_DESIGN.md) — agreed v0 trust, execution, and implementation design
-3. [Architecture](ARCHITECTURE.md) — component and trust-boundary map
-4. [Threat model](security/THREAT_MODEL.md) — adversaries, mandatory properties, and security claims
-5. [Roadmap](ROADMAP.md) — ordered delivery and evidence gates
-6. [Architecture decisions](adr/README.md) — accepted decisions and their consequences
+1. [Project definition](PROJECT.md) — scope, principles, agreed direction, and success criteria
+2. [Architecture](ARCHITECTURE.md) — daemon/Broker/Supervisor authority and storage boundaries
+3. [Technical design](TECHNICAL_DESIGN.md) — integrated v0 protocol, trust, lifecycle, and evidence
+4. [Threat model](security/THREAT_MODEL.md) — adversaries, invariants, attack surface, and severity
+5. [Feasibility spikes](FEASIBILITY_SPIKES.md) — disposable evidence gates before schema freeze
+6. [Roadmap](ROADMAP.md) — risk-reduction order and phase exit evidence
+7. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
 
-The JSON Schemas in `../schemas/` remain the canonical wire contracts. Design text that is not yet
-represented in a schema is a Phase 0 requirement, not implemented behavior.
+## Detailed authority and trust documents
+
+- [Trust architecture](security/TRUST_ARCHITECTURE.md)
+- [Installation trust](security/INSTALLATION_TRUST.md)
+- [Runtime integrity](security/RUNTIME_INTEGRITY.md)
+- [Component compromise matrix](security/COMPONENT_COMPROMISE_MATRIX.md)
+- [Control evidence matrix](security/CONTROL_EVIDENCE_MATRIX.md)
+- [Execution Supervisor](EXECUTION_SUPERVISOR.md)
+- [Trust repositories](TRUST_REPOSITORIES.md)
+- [Update and recovery](UPDATE_AND_RECOVERY.md)
+- [Protocol object model](protocol/OBJECT_MODEL.md)
+
+The JSON Schemas in `../schemas/` and current TypeScript types remain canonical for the buildable
+scaffold and tests, but they are explicitly **pre-freeze**. They are not the target v0 contract.
+The blocking spikes determine honest platform/control semantics before a coordinated schema/type/
+example/API replacement. See [Schema status](../schemas/README.md).
 
 Development setup is documented in [Development](DEVELOPMENT.md). GitHub configuration and public
 release checks are documented in [Repository setup](REPOSITORY_SETUP.md).

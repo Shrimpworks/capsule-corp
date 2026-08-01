@@ -1,7 +1,8 @@
 # Phase 2B boundary-decision specification
 
-Status: proposed specification for human review. No validator or authority-bearing behavior is
-implemented by this document.
+Status: Tasks 2.1 and 2.2 implemented as a passive fixture-integrity foundation. ADR-0023 remains
+Proposed; no protocol decoder, semantic planner, registration store, or authority-bearing behavior
+is activated.
 
 ## Objective
 
@@ -67,6 +68,9 @@ ADR-0023 proposes exact rules for:
 
 ### Task 2.1: Define the conformance manifest schema
 
+Implementation status: complete. The closed schema, integrity verifier, and verifier tests live in
+`schemas/conformance/v0/` and `scripts/verify-contract-conformance*.mjs`.
+
 Each case records a stable case ID, object, wire format/media type, exact fixture path/hash, context,
 expected decision/classification/owner, authority-state oracle, and applicable implementations.
 
@@ -81,14 +85,18 @@ and one verifier test. Estimated scope: medium.
 
 ### Task 2.2: Add shared raw/scalar fixtures
 
+Implementation status: complete. The generated manifest retains 37 rules, 105 cases, and 91 unique
+fixtures across media types, raw JSON, shared scalars, and both deterministic-CBOR predecoders.
+Language decoder assertions remain explicitly pending.
+
 Seed exact/max/cap-plus-one cases for media type, empty/trailing/duplicate/UTF-8 JSON, deterministic
 CBOR, depths/counts/text budgets, integer grammar/range, ID widths/zero, and digest widths/domain.
 
 Acceptance:
 
 - every independently reachable ADR-0023 raw/scalar rule has one accept and at least one focused
-  reject case; the derived JSON-node cap has an exact-maximum accept and a cap-plus-one reject that
-  explicitly records its unavoidable collection-cap overlap;
+  reject case; the derived JSON-node and structurally overlapping registration item/map caps have
+  exact-maximum accepts and cap-plus-one rejects that explicitly record their unavoidable overlap;
 - escaped-equivalent duplicate keys and noncanonical CBOR are retained byte-exact;
 - each rejection owns no authority-bearing state.
 
@@ -125,6 +133,10 @@ Likely files: `schemas/conformance/v0/{execution-plan,plan-registration,contexts
 medium.
 
 ### Task 2.5: Add one repository conformance runner
+
+Implementation status: foundation complete. `pnpm verify:schemas` now enforces the manifest schema,
+fixture inventory, exact lengths/hashes, rule coverage, and no-state-change rejection oracle. Later
+tasks replace pending language targets with decoder/semantic/state assertions.
 
 The initial runner verifies manifest completeness, raw fixture hashes, structural candidate
 expectations, exact known-answer bytes/digests, and explicitly marks semantic/registration cases

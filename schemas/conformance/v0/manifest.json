@@ -375,6 +375,186 @@
           "variant": "wrong-domain"
         }
       ]
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Raw deterministic-CBOR payload is at most 65536 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.depth",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR data-item depth is at most 8 including the root.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.items",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR contains at most 256 total data items.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.map-entries",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR map contains at most 64 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.array-elements",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR array contains at most 8 elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.deterministic",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Accept only the bounded deterministic-CBOR profile before object decoding.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Raw deterministic-CBOR payload is at most 4096 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.depth",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR data-item depth is at most 4 including the root.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.items",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR contains at most 33 total data items.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.map-entries",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR map contains at most 16 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.array-elements",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR array contains at most 0 elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.deterministic",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Accept only the bounded deterministic-CBOR profile before object decoding.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
     }
   ],
   "cases": [
@@ -2395,6 +2575,1246 @@
         "decision": "reject",
         "classification": "DOMAIN",
         "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes.exact-maximum",
+      "description": "Accept the exact raw bytes maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.raw-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-raw-bytes-exact.bin",
+        "sha256": "7bf061f0ab15411993a9a9fecfe3a17c436087bbe01e37e9e79817faa5d16bc0",
+        "byteLength": 65536
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes.cap-plus-one",
+      "description": "Reject raw bytes at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.raw-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-raw-bytes-over.bin",
+        "sha256": "cc91037a7f01ef779eb7c8b65784e3058d6b2350323652f4333348cb64cd3fd0",
+        "byteLength": 65537
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.depth.exact-maximum",
+      "description": "Accept the exact depth maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.depth"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-depth-exact.bin",
+        "sha256": "24a4a7d4ae347d2a27e5c9c8f6214e3e7b9f953c17af578288d2799e73663334",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.depth.cap-plus-one",
+      "description": "Reject depth at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.depth"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-depth-over.bin",
+        "sha256": "f6a762f642a796310d56df2d5d80aed071edea39d2c303b309094c98e404f8ae",
+        "byteLength": 9
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.items.exact-maximum",
+      "description": "Accept the exact items maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.items"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-items-exact.bin",
+        "sha256": "ce855c74c9b73e84c9536805fa6457ccd3a6789cb669604508b73af69d96e1b3",
+        "byteLength": 297
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.items.cap-plus-one",
+      "description": "Reject items at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.items"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-items-over.bin",
+        "sha256": "60adbbdc0946d6b94cd45a57aa9bf37580e2ccd1a0117cc3c28923650fee8f2f",
+        "byteLength": 298
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.map-entries.exact-maximum",
+      "description": "Accept the exact map entries maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.map-entries"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-map-entries-exact.bin",
+        "sha256": "8c98b82039eec62d6b02c1a8b07db89df7fc9e94fc0f07b5b4bf975a18ec50bc",
+        "byteLength": 170
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.map-entries.cap-plus-one",
+      "description": "Reject map entries at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.map-entries"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-map-entries-over.bin",
+        "sha256": "894e6dc0f9018889446cedd4199dba3b336d89c30044736a9917e44a0c28a601",
+        "byteLength": 173
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.array-elements.exact-maximum",
+      "description": "Accept the exact array elements maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.array-elements"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-array-elements-exact.bin",
+        "sha256": "b30aabc5fec39cb28de20e3d9d6345753a68303607eb321e71b00d86b1219bba",
+        "byteLength": 9
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.array-elements.cap-plus-one",
+      "description": "Reject array elements at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.array-elements"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-array-elements-over.bin",
+        "sha256": "807c4621f3e2a18c00d2bc78859138db34f98b4a2a50d09c72aaf849c6bc2924",
+        "byteLength": 10
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.canonical-map",
+      "description": "Accept a definite, preferred, canonically ordered CBOR map.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/cbor-profile-canonical-map.bin",
+        "sha256": "d834dba22a162024b0403cc47d78988d1c0cf9f2f842ae1d37879b09e9a7dae8",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.indefinite-container",
+      "description": "Reject an indefinite-length array.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-indefinite-container.bin",
+        "sha256": "589da4f671f78804e9e5342b1c8598e8a28e543b32b3146bedd0d6496a696954",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.float",
+      "description": "Reject a floating-point value.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-float.bin",
+        "sha256": "d823dcdc2d6aaab28aef32ce978988f5108ff31130f79d7f77117826d2cebc15",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.bignum",
+      "description": "Reject a bignum tag.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-bignum.bin",
+        "sha256": "99fba1135d8655851490d39b04b2286c07039808e890b87eaa1adb262a304106",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.tag",
+      "description": "Reject an arbitrary semantic tag.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-tag.bin",
+        "sha256": "e9aff84fdb699ca706c0a1fed47bb095cb25e3c95aa5d1c5d216ff2cfbcd4998",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.duplicate-key",
+      "description": "Reject duplicate decoded map keys.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-duplicate-key.bin",
+        "sha256": "a3db7ccede7c9c9509d650308bcfd4fbb929f71e40a9e92299023b040395128a",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.trailing-data",
+      "description": "Reject data after the first CBOR item.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-trailing-data.bin",
+        "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.nonpreferred-integer",
+      "description": "Reject a nonpreferred integer encoding.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-nonpreferred-integer.bin",
+        "sha256": "78a23af8da46b1b37e8767921a2d3f528fdc8eca37cea8aea775fd2b283d3776",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.invalid-utf8",
+      "description": "Reject invalid UTF-8 in a text string.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-invalid-utf8.bin",
+        "sha256": "8dd06b5ab6b594257e41b7d8dd440a4062eddc67fdab5c13b4dc300176896f6e",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.map-order",
+      "description": "Reject noncanonical deterministic map order.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-map-order.bin",
+        "sha256": "e46ac75752367a5949ea7ea6283f63d6cbdaaf90668af9000d8a1908b7443434",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes.exact-maximum",
+      "description": "Accept the exact raw bytes maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.raw-bytes"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-raw-bytes-exact.bin",
+        "sha256": "2c242a8e87779cd52a3612d55252800be9b16b85eadcc4460e384c52a4d2eff0",
+        "byteLength": 4096
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes.cap-plus-one",
+      "description": "Reject raw bytes at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.raw-bytes"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-raw-bytes-over.bin",
+        "sha256": "dbe4595954b8552cc1f808dd3c35e52f092fa67bbbb456f0fa70dbb849d0c91d",
+        "byteLength": 4097
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.depth.exact-maximum",
+      "description": "Accept the exact depth maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.depth"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-depth-exact.bin",
+        "sha256": "af2174db8fe97d87882fb4bbee1e98b5eedabb5876b4984935c5fe8f0fabfc5f",
+        "byteLength": 4
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.depth.cap-plus-one",
+      "description": "Reject depth at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.depth"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-depth-over.bin",
+        "sha256": "2f4b2f7ef2620c62454734179d08dadfcb870000945accb72d0b71ede68c0a11",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.items.exact-maximum",
+      "description": "Accept the exact items maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.items"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-items-exact.bin",
+        "sha256": "59cadb551398360174a44ddeedb45ee8bcbdb714be511bfa4a33920ed0ef8163",
+        "byteLength": 33
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.items.cap-plus-one",
+      "description": "Reject items at cap plus one. The 34-item rejection also exceeds the zero-array-element cap.",
+      "ruleIds": [
+        "plan-registration.cbor.items"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-items-over.bin",
+        "sha256": "1c5444e1f27b5ed4b02c6f4ede1d5e3f9bf523ec24d4721d44aa2998c732576b",
+        "byteLength": 34
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.map-entries.exact-maximum",
+      "description": "Accept the exact map entries maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.map-entries"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-map-entries-exact.bin",
+        "sha256": "59cadb551398360174a44ddeedb45ee8bcbdb714be511bfa4a33920ed0ef8163",
+        "byteLength": 33
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.map-entries.cap-plus-one",
+      "description": "Reject map entries at cap plus one. The 17-entry rejection also exceeds the 33-item aggregate cap.",
+      "ruleIds": [
+        "plan-registration.cbor.map-entries"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-map-entries-over.bin",
+        "sha256": "1834ba6b034ed7789cc338d0e8eac4397313d615a8fbc1e89374398a59276cc9",
+        "byteLength": 35
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.array-elements.exact-maximum",
+      "description": "Accept the exact array elements maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.array-elements"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-array-elements-exact.bin",
+        "sha256": "76be8b528d0075f7aae98d6fa57a6d3c83ae480a8469e668d7b0af968995ac71",
+        "byteLength": 1
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.array-elements.cap-plus-one",
+      "description": "Reject array elements at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.array-elements"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-array-elements-over.bin",
+        "sha256": "9037f92bc91fdcc764a89d9144c341d887ffc83351cc8cf0530555c89920a47d",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.canonical-map",
+      "description": "Accept a definite, preferred, canonically ordered CBOR map.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/cbor-profile-canonical-map.bin",
+        "sha256": "d834dba22a162024b0403cc47d78988d1c0cf9f2f842ae1d37879b09e9a7dae8",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.indefinite-container",
+      "description": "Reject an indefinite-length array.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-indefinite-container.bin",
+        "sha256": "589da4f671f78804e9e5342b1c8598e8a28e543b32b3146bedd0d6496a696954",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.float",
+      "description": "Reject a floating-point value.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-float.bin",
+        "sha256": "d823dcdc2d6aaab28aef32ce978988f5108ff31130f79d7f77117826d2cebc15",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.bignum",
+      "description": "Reject a bignum tag.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-bignum.bin",
+        "sha256": "99fba1135d8655851490d39b04b2286c07039808e890b87eaa1adb262a304106",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.tag",
+      "description": "Reject an arbitrary semantic tag.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-tag.bin",
+        "sha256": "e9aff84fdb699ca706c0a1fed47bb095cb25e3c95aa5d1c5d216ff2cfbcd4998",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.duplicate-key",
+      "description": "Reject duplicate decoded map keys.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-duplicate-key.bin",
+        "sha256": "a3db7ccede7c9c9509d650308bcfd4fbb929f71e40a9e92299023b040395128a",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.trailing-data",
+      "description": "Reject data after the first CBOR item.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-trailing-data.bin",
+        "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.nonpreferred-integer",
+      "description": "Reject a nonpreferred integer encoding.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-nonpreferred-integer.bin",
+        "sha256": "78a23af8da46b1b37e8767921a2d3f528fdc8eca37cea8aea775fd2b283d3776",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.invalid-utf8",
+      "description": "Reject invalid UTF-8 in a text string.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-invalid-utf8.bin",
+        "sha256": "8dd06b5ab6b594257e41b7d8dd440a4062eddc67fdab5c13b4dc300176896f6e",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.map-order",
+      "description": "Reject noncanonical deterministic map order.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-map-order.bin",
+        "sha256": "e46ac75752367a5949ea7ea6283f63d6cbdaaf90668af9000d8a1908b7443434",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
         "authorityStateChanged": false
       },
       "implementations": {

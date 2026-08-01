@@ -18,6 +18,7 @@ const ordinaryRequirements = [
 ];
 const rawImplementations = implementationStatus("pending", "pending", "not-applicable");
 const scalarImplementations = implementationStatus("pending", "pending", "pending");
+const cborImplementations = implementationStatus("pending", "pending", "pending");
 const rules = [];
 const cases = [];
 const fixtures = new Map();
@@ -25,6 +26,7 @@ const fixtures = new Map();
 addMediaTypeRulesAndCases();
 addJsonRulesAndCases();
 addScalarRulesAndCases();
+addCborRulesAndCases();
 
 await mkdir(sharedDirectory, { recursive: true });
 for (const [path, bytes] of [...fixtures].sort(([left], [right]) => left.localeCompare(right))) {
@@ -324,6 +326,172 @@ function addJsonCase(options) {
   });
 }
 
+function addCborRulesAndCases() {
+  const profiles = [
+    {
+      slug: "execution-plan",
+      object: "ExecutionPlan",
+      mediaType: executionPlanMediaType,
+      owner: "supervisor-plan-predecoder",
+      rawBytes: 65_536,
+      depth: 8,
+      items: 256,
+      mapEntries: 64,
+      arrayElements: 8,
+    },
+    {
+      slug: "plan-registration",
+      object: "PlanRegistration",
+      mediaType: planRegistrationMediaType,
+      owner: "supervisor-registration-predecoder",
+      rawBytes: 4_096,
+      depth: 4,
+      items: 33,
+      mapEntries: 16,
+      arrayElements: 0,
+    },
+  ];
+  for (const profile of profiles) {
+    for (const [dimension, description] of [
+      ["raw-bytes", `Raw deterministic-CBOR payload is at most ${profile.rawBytes} bytes.`],
+      ["depth", `CBOR data-item depth is at most ${profile.depth} including the root.`],
+      ["items", `CBOR contains at most ${profile.items} total data items.`],
+      ["map-entries", `One CBOR map contains at most ${profile.mapEntries} entries.`],
+      ["array-elements", `One CBOR array contains at most ${profile.arrayElements} elements.`],
+    ]) {
+      addRule(
+        `${profile.slug}.cbor.${dimension}`,
+        "ADR-0023#internal-cbor-predecoder-budgets",
+        description,
+        boundaryRequirements,
+      );
+    }
+    addRule(
+      `${profile.slug}.cbor.deterministic`,
+      "ADR-0023#internal-cbor-predecoder-budgets",
+      "Accept only the bounded deterministic-CBOR profile before object decoding.",
+      ordinaryRequirements,
+    );
+
+    addCborBoundary(
+      profile,
+      "raw-bytes",
+      cborByteStringWithTotalLength(profile.rawBytes),
+      cborByteStringWithTotalLength(profile.rawBytes + 1),
+    );
+    addCborBoundary(
+      profile,
+      "depth",
+      cborEncode(nestedCborArray(profile.depth)),
+      cborEncode(nestedCborArray(profile.depth + 1)),
+    );
+    addCborBoundary(
+      profile,
+      "items",
+      profile.object === "ExecutionPlan"
+        ? cborEncode(planItemBoundary(false))
+        : cborEncode(registrationItemBoundary(false)),
+      profile.object === "ExecutionPlan"
+        ? cborEncode(planItemBoundary(true))
+        : cborEncode(registrationItemBoundary(true)),
+      profile.object === "PlanRegistration"
+        ? "The 34-item rejection also exceeds the zero-array-element cap."
+        : undefined,
+    );
+    addCborBoundary(
+      profile,
+      "map-entries",
+      cborEncode(numberedMap(profile.mapEntries)),
+      cborEncode(numberedMap(profile.mapEntries + 1)),
+      profile.object === "PlanRegistration"
+        ? "The 17-entry rejection also exceeds the 33-item aggregate cap."
+        : undefined,
+    );
+    addCborBoundary(
+      profile,
+      "array-elements",
+      cborEncode(Array.from({ length: profile.arrayElements }, () => 0)),
+      cborEncode(Array.from({ length: profile.arrayElements + 1 }, () => 0)),
+    );
+    addCborDeterministicCases(profile);
+  }
+}
+
+function addCborBoundary(profile, dimension, exactBytes, overBytes, overlap) {
+  const ruleId = `${profile.slug}.cbor.${dimension}`;
+  addCborCase(profile, {
+    id: `${ruleId}.exact-maximum`,
+    description: `Accept the exact ${dimension.replaceAll("-", " ")} maximum at the predecoder.`,
+    ruleIds: [ruleId],
+    variant: "exact-maximum",
+    path: `shared/cbor-${profile.slug}-${dimension}-exact.bin`,
+    bytes: exactBytes,
+  });
+  addCborCase(profile, {
+    id: `${ruleId}.cap-plus-one`,
+    description: `Reject ${dimension.replaceAll("-", " ")} at cap plus one.${overlap ? ` ${overlap}` : ""}`,
+    ruleIds: [ruleId],
+    variant: "cap-plus-one",
+    path: `shared/cbor-${profile.slug}-${dimension}-over.bin`,
+    bytes: overBytes,
+    decision: "reject",
+    classification: malformed,
+  });
+}
+
+function addCborDeterministicCases(profile) {
+  const ruleId = `${profile.slug}.cbor.deterministic`;
+  addCborCase(profile, {
+    id: `${ruleId}.canonical-map`,
+    description: "Accept a definite, preferred, canonically ordered CBOR map.",
+    ruleIds: [ruleId],
+    variant: "ordinary",
+    path: "shared/cbor-profile-canonical-map.bin",
+    bytes: Uint8Array.of(0xa1, 0x01, 0x00),
+  });
+  for (const [suffix, description, bytes] of [
+    ["indefinite-container", "Reject an indefinite-length array.", Uint8Array.of(0x9f, 0x00, 0xff)],
+    ["float", "Reject a floating-point value.", Uint8Array.of(0xf9, 0x3c, 0x00)],
+    ["bignum", "Reject a bignum tag.", Uint8Array.of(0xc2, 0x41, 0x01)],
+    ["tag", "Reject an arbitrary semantic tag.", Uint8Array.of(0xc0, 0x00)],
+    [
+      "duplicate-key",
+      "Reject duplicate decoded map keys.",
+      Uint8Array.of(0xa2, 0x01, 0x00, 0x01, 0x01),
+    ],
+    ["trailing-data", "Reject data after the first CBOR item.", Uint8Array.of(0x00, 0x00)],
+    ["nonpreferred-integer", "Reject a nonpreferred integer encoding.", Uint8Array.of(0x18, 0x00)],
+    ["invalid-utf8", "Reject invalid UTF-8 in a text string.", Uint8Array.of(0x61, 0xff)],
+    [
+      "map-order",
+      "Reject noncanonical deterministic map order.",
+      Uint8Array.of(0xa2, 0x02, 0x00, 0x01, 0x00),
+    ],
+  ]) {
+    addCborCase(profile, {
+      id: `${ruleId}.${suffix}`,
+      description,
+      ruleIds: [ruleId],
+      variant: "malformed",
+      path: `shared/cbor-profile-${suffix}.bin`,
+      bytes,
+      decision: "reject",
+      classification: malformed,
+    });
+  }
+}
+
+function addCborCase(profile, options) {
+  addCase({
+    object: profile.object,
+    wireFormat: "cbor",
+    mediaType: profile.mediaType,
+    owner: profile.owner,
+    implementations: cborImplementations,
+    ...options,
+  });
+}
+
 function addScalarRulesAndCases() {
   addRule(
     "candidate-id.width",
@@ -583,6 +751,99 @@ function numberedObject(count) {
 
 function jsonBytes(value) {
   return utf8(JSON.stringify(value));
+}
+
+function cborByteStringWithTotalLength(totalLength) {
+  for (const headerLength of [1, 2, 3, 5]) {
+    const payloadLength = totalLength - headerLength;
+    if (payloadLength >= 0 && encodeCborArgument(2, payloadLength).length === headerLength) {
+      return concatenate([encodeCborArgument(2, payloadLength), new Uint8Array(payloadLength)]);
+    }
+  }
+  throw new Error(`cannot construct CBOR byte string of ${totalLength} total bytes`);
+}
+
+function nestedCborArray(depth) {
+  let value = 0;
+  for (let current = 1; current < depth; current += 1) {
+    value = [value];
+  }
+  return value;
+}
+
+function planItemBoundary(over) {
+  const value = new Map();
+  for (let index = 0; index < 64; index += 1) {
+    const elementCount = over || index < 63 ? 2 : 1;
+    value.set(
+      index,
+      Array.from({ length: elementCount }, () => 0),
+    );
+  }
+  return value;
+}
+
+function registrationItemBoundary(over) {
+  const value = numberedMap(16);
+  if (over) {
+    value.set(0, [0]);
+  }
+  return value;
+}
+
+function numberedMap(count) {
+  return new Map(Array.from({ length: count }, (_, index) => [index, 0]));
+}
+
+function cborEncode(value) {
+  if (value instanceof Uint8Array) {
+    return concatenate([encodeCborArgument(2, value.length), value]);
+  }
+  if (typeof value === "number") {
+    if (!Number.isSafeInteger(value)) {
+      throw new Error(`CBOR integer is outside the safe range: ${value}`);
+    }
+    return value >= 0 ? encodeCborArgument(0, value) : encodeCborArgument(1, -1 - value);
+  }
+  if (Array.isArray(value)) {
+    return concatenate([
+      encodeCborArgument(4, value.length),
+      ...value.map((child) => cborEncode(child)),
+    ]);
+  }
+  if (value instanceof Map) {
+    const entries = [...value].map(([key, child]) => [cborEncode(key), cborEncode(child)]);
+    entries.sort(([left], [right]) =>
+      left.length === right.length ? Buffer.compare(left, right) : left.length - right.length,
+    );
+    return concatenate([encodeCborArgument(5, entries.length), ...entries.flat()]);
+  }
+  throw new Error(`unsupported CBOR fixture value: ${String(value)}`);
+}
+
+function encodeCborArgument(majorType, argument) {
+  if (!Number.isSafeInteger(argument) || argument < 0) {
+    throw new Error(`CBOR argument is outside the safe unsigned range: ${argument}`);
+  }
+  if (argument < 24) {
+    return Uint8Array.of((majorType << 5) | argument);
+  }
+  if (argument <= 0xff) {
+    return Uint8Array.of((majorType << 5) | 24, argument);
+  }
+  if (argument <= 0xffff) {
+    return Uint8Array.of((majorType << 5) | 25, argument >> 8, argument & 0xff);
+  }
+  if (argument <= 0xffffffff) {
+    return Uint8Array.of(
+      (majorType << 5) | 26,
+      Math.floor(argument / 0x1000000) & 0xff,
+      Math.floor(argument / 0x10000) & 0xff,
+      Math.floor(argument / 0x100) & 0xff,
+      argument & 0xff,
+    );
+  }
+  throw new Error(`CBOR fixture argument is too large: ${argument}`);
 }
 
 function utf8(value) {

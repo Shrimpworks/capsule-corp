@@ -166,6 +166,11 @@ every container, every map key and value, and every array element. Map-entry and
 maxima apply to each individual container; the total-data-item cap bounds their aggregate. A
 16-entry outer `PlanRegistration` map therefore contains exactly 33 data items.
 
+A 17-entry outer `PlanRegistration` map necessarily contains at least 35 data items, so its map-cap
+plus-one fixture also exceeds the total-item cap. Conversely, increasing a valid 33-item map by one
+item requires a container with one child; under the closed profile that uses a one-element array and
+also exceeds the zero-array-element cap. The corpus records both unavoidable overlaps.
+
 ### Scalar zero rules
 
 - Installation, registration, and Supervisor IDs are distinct 16-byte roles and reject the all-zero

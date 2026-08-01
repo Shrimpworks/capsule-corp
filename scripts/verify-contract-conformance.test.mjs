@@ -9,10 +9,10 @@ import { verifyConformanceCorpus } from "./verify-contract-conformance.mjs";
 const schemaPath = new URL("../schemas/conformance/v0/manifest.schema.json", import.meta.url);
 const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 
-test("verifies the checked-in raw JSON and scalar corpus", async () => {
+test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 65, fixtureCount: 61, ruleCount: 25 });
+  assert.deepEqual(result, { caseCount: 105, fixtureCount: 91, ruleCount: 37 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -42,6 +42,59 @@ test("retains exact JSON boundary values and their cap-plus-one pairs", async ()
   await assertJsonMetric("json-decoded-text", "decodedTextBytes", 1_572_864, 1_572_865);
   await assertJsonMetric("json-key-bytes", "maxKeyBytes", 128, 129);
   await assertJsonMetric("json-string-bytes", "maxStringBytes", 65_536, 65_537);
+});
+
+test("retains exact CBOR predecoder boundaries for both candidate objects", async () => {
+  for (const [slug, limits] of [
+    [
+      "execution-plan",
+      { rawBytes: 65_536, depth: 8, items: 256, mapEntries: 64, arrayElements: 8 },
+    ],
+    [
+      "plan-registration",
+      { rawBytes: 4_096, depth: 4, items: 33, mapEntries: 16, arrayElements: 0 },
+    ],
+  ]) {
+    assert.equal((await fixtureBytes(`cbor-${slug}-raw-bytes-exact.bin`)).length, limits.rawBytes);
+    assert.equal(
+      (await fixtureBytes(`cbor-${slug}-raw-bytes-over.bin`)).length,
+      limits.rawBytes + 1,
+    );
+    await assertCborMetric(slug, "depth", "maxDepth", limits.depth, limits.depth + 1);
+    await assertCborMetric(slug, "items", "items", limits.items, limits.items + 1);
+    await assertCborMetric(
+      slug,
+      "map-entries",
+      "maxMapEntries",
+      limits.mapEntries,
+      limits.mapEntries + 1,
+    );
+    await assertCborMetric(
+      slug,
+      "array-elements",
+      "maxArrayElements",
+      limits.arrayElements,
+      limits.arrayElements + 1,
+    );
+  }
+});
+
+test("retains representative noncanonical CBOR bytes without decoding and re-encoding", async () => {
+  const expectedHex = new Map([
+    ["cbor-profile-canonical-map.bin", "a10100"],
+    ["cbor-profile-indefinite-container.bin", "9f00ff"],
+    ["cbor-profile-float.bin", "f93c00"],
+    ["cbor-profile-bignum.bin", "c24101"],
+    ["cbor-profile-tag.bin", "c000"],
+    ["cbor-profile-duplicate-key.bin", "a201000101"],
+    ["cbor-profile-trailing-data.bin", "0000"],
+    ["cbor-profile-nonpreferred-integer.bin", "1800"],
+    ["cbor-profile-invalid-utf8.bin", "61ff"],
+    ["cbor-profile-map-order.bin", "a202000100"],
+  ]);
+  for (const [name, hex] of expectedHex) {
+    assert.equal((await fixtureBytes(name)).toString("hex"), hex, name);
+  }
 });
 
 test("verifies a closed, complete, byte-exact conformance corpus", async (t) => {
@@ -193,6 +246,13 @@ async function assertJsonMetric(prefix, property, exact, over) {
   assert.equal(measureJson(await fixtureJson(`${prefix}-over.bin`))[property], over);
 }
 
+async function assertCborMetric(slug, dimension, property, exact, over) {
+  const exactMetrics = measureCbor(await fixtureBytes(`cbor-${slug}-${dimension}-exact.bin`));
+  const overMetrics = measureCbor(await fixtureBytes(`cbor-${slug}-${dimension}-over.bin`));
+  assert.equal(exactMetrics[property], exact);
+  assert.equal(overMetrics[property], over);
+}
+
 async function fixtureJson(name) {
   return JSON.parse(await fixtureBytes(name));
 }
@@ -240,5 +300,61 @@ function measureJson(value) {
         visit(child, depth + 1);
       }
     }
+  }
+}
+
+function measureCbor(bytes) {
+  const metrics = { items: 0, maxArrayElements: 0, maxDepth: 0, maxMapEntries: 0 };
+  let offset = 0;
+  visit(1);
+  assert.equal(offset, bytes.length, "accepted CBOR boundary fixture must contain one data item");
+  return metrics;
+
+  function visit(depth) {
+    metrics.items += 1;
+    metrics.maxDepth = Math.max(metrics.maxDepth, depth);
+    const initial = bytes[offset];
+    offset += 1;
+    const majorType = initial >> 5;
+    const argument = readArgument(initial & 0x1f);
+    if (majorType === 0 || majorType === 1) {
+      return;
+    }
+    if (majorType === 2 || majorType === 3) {
+      offset += argument;
+      assert.ok(offset <= bytes.length, "CBOR string length must stay inside retained bytes");
+      return;
+    }
+    if (majorType === 4) {
+      metrics.maxArrayElements = Math.max(metrics.maxArrayElements, argument);
+      for (let index = 0; index < argument; index += 1) {
+        visit(depth + 1);
+      }
+      return;
+    }
+    if (majorType === 5) {
+      metrics.maxMapEntries = Math.max(metrics.maxMapEntries, argument);
+      for (let index = 0; index < argument * 2; index += 1) {
+        visit(depth + 1);
+      }
+      return;
+    }
+    assert.fail(`unsupported accepted CBOR fixture major type: ${majorType}`);
+  }
+
+  function readArgument(additionalInformation) {
+    if (additionalInformation < 24) {
+      return additionalInformation;
+    }
+    const byteLength = { 24: 1, 25: 2, 26: 4, 27: 8 }[additionalInformation];
+    assert.ok(byteLength, "accepted CBOR fixture must use a definite integer argument");
+    assert.ok(offset + byteLength <= bytes.length, "CBOR argument must stay inside retained bytes");
+    let value = 0;
+    for (let index = 0; index < byteLength; index += 1) {
+      value = value * 256 + bytes[offset + index];
+      assert.ok(Number.isSafeInteger(value), "CBOR fixture argument must remain a safe integer");
+    }
+    offset += byteLength;
+    return value;
   }
 }

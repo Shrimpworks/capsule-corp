@@ -4,6 +4,8 @@
  * The target v0 protocol will replace this mixed Job authority model after the
  * blocking feasibility gates. See docs/protocol/OBJECT_MODEL.md.
  */
+
+export * from "./internal-contract-candidates.js";
 export * from "./job-proposal.js";
 
 export const API_VERSION = "capsule.dev/v0" as const;

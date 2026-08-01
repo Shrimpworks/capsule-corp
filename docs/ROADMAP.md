@@ -81,7 +81,8 @@ byte-exact fixtures, and Go/TypeScript decoded views. They are not frozen or act
 lane first closes the strict-decoder, conformance-corpus, and registration-semantics decisions
 needed by the registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice,
 an atomic consumer migration, and removal of the dormant direct-execution scaffold. See the
-[Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
+[Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
+[Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 
 - Replace the mixed `Job` schema with narrow `JobProposal` semantics.
 - Add schemas for plan, registration, approval, attempt, trust snapshot, integrity assessment,

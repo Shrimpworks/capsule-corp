@@ -20,6 +20,8 @@ The first backend-independent implementation record is
 [Phase 2A contract foundation](PHASE_2A_CONTRACT_FOUNDATION.md). Its three independent contract,
 migration, and conformance reviews are consolidated in
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
+The proposed exact validator and registration rules for the next slice are in
+[Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 
 ## Detailed authority and trust documents
 

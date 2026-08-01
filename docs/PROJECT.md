@@ -133,11 +133,13 @@ exercises the authority boundaries successfully.
 - Direct Apple Containerization is retained only as a macOS development backend after failing the
   durable identity/recovery gate. A follow-up libkrun/Hypervisor.framework spike conditionally
   passed exact-process lifecycle, isolation, App Sandbox, controller-crash, and Bun checks, making
-  it the preferred native Apple candidate. Its five readiness tracks found that immutable disk
-  custody, the block-root `NullFs` surface, typed completion, bounded output parsing, and release
-  admission must close before one exact development profile freezes. OCI plus gVisor remains an
-  independent unvalidated candidate and contingency until both exact profiles run the shared
-  attack corpus.
+  it the preferred native Apple candidate. Its readiness tracks and the subsequent independent P0
+  review found that runtime-authority closure, immutable runtime-root custody, the block-root
+  `NullFs` surface, typed port transport/completion, and complete installed-bundle admission must
+  close before one exact development profile freezes. Source/input and bounded inline JSON can use
+  attempt-bound virtio-console ports in the first slice; an ext4/raw-image parser is deferred until
+  file artifacts. OCI plus gVisor remains an independent unvalidated candidate and contingency
+  until both exact profiles run the shared attack corpus.
 - Go remains the daemon language; Swift is preferred for the native Broker. Supervisor language and
   privilege remain gated by the backend adapter; the current macOS service evidence supports an
   unprivileged per-user Swift component with no root helper.
@@ -156,11 +158,12 @@ unresolved teardown or integrity state fails closed and cannot be reported as or
 
 ## Near-term method
 
-Before freezing target schemas or building broad product functionality, Capsule will run disposable
-feasibility spikes for cryptographic interoperability, macOS authority separation, backend control
-coverage, content-handle transfer, Supervisor language/privilege, and crash-safe trust transitions.
-Prototype code may be discarded. Fixtures, measurements, limitations, and the resulting ADR
-decisions are durable project evidence.
+The first feasibility program is complete. Capsule now proceeds on two bounded lanes: implement
+backend-independent contracts, registration, approval consumption, fake-backend recovery, evidence,
+and inline JSON; and close only the remaining fail-fast P0 gates before connecting user bytes to a
+real libkrun adapter. Prototype code may be discarded. Fixtures, measurements, limitations, and the
+resulting ADR decisions remain durable project evidence.
 
 See [Feasibility Spikes](FEASIBILITY_SPIKES.md), [Technical Design](TECHNICAL_DESIGN.md), and the
-[Roadmap](ROADMAP.md).
+[Roadmap](ROADMAP.md). The exact branch point is recorded in the
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).

@@ -11,6 +11,11 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 6. [Roadmap](ROADMAP.md) — risk-reduction order and phase exit evidence
 7. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
 
+The completed Gate C tracks are synthesized in
+[Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and
+the exact pre-user-byte branch point are recorded in
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
+
 ## Detailed authority and trust documents
 
 - [Trust architecture](security/TRUST_ARCHITECTURE.md)

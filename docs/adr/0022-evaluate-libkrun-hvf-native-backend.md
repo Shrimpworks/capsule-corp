@@ -3,6 +3,7 @@
 - Status: Accepted
 - Date: 2026-07-31
 - Readiness synthesis: 2026-07-31
+- P0 reconciliation: 2026-07-31
 - Refines: ADR-0020
 
 ## Context
@@ -33,15 +34,24 @@ block-root API added a guest-visible `NullFs` virtiofs device even though no hos
 configured or mounted. Runner exit zero was also ambiguous across corrupt roots, guest panics, and
 missing executables. The current runtime bytes failed the development admission checklist.
 
+A subsequent independent adversarial review and targeted source research refined the remaining
+work without promoting the candidate. libkrun 1.19.4 exposes generic multiport console APIs, so the
+first inline slice can test port-based source/input and typed inline results rather than requiring
+user-data disks. A genuine inherited read-only descriptor exposed as `/dev/fd/N` is the first
+runtime-root custody candidate. The same review found that stock Bun's subprocess and FFI APIs do
+not satisfy the documented prohibited-power contract merely because the binary is pinned. All
+three conclusions remain P0 hypotheses until their exact installed corpora pass.
+
 ## Decision
 
-- libkrun/HVF becomes the preferred **native Apple production-backend candidate** for the next
+- libkrun/HVF becomes the preferred **native Apple backend candidate** for the next
   implementation and validation slice. This is a candidate selection, not a posture promotion.
 - The five readiness tracks do not admit a real libkrun adapter for user bytes yet. Before freezing
-  one development profile, Capsule must close immutable block custody, explicitly accept and
-  validate or remove the `NullFs` device, implement typed attempt-bound guest completion, replace
-  the experiment extractor with a bounded disposable parser, and produce an admissible runtime
-  bundle.
+  one development profile, Capsule must close the exact Bun runtime-authority restrictions,
+  immutable runtime-root custody, independent acceptance or removal of the `NullFs` device, typed
+  attempt-bound port transport/completion with bounded inline JSON, and an admissible complete
+  installed bundle. A bounded disposable filesystem-image parser is mandatory before later file
+  artifacts, not before the inline JSON slice.
 - OCI plus gVisor remains an independent candidate and contingency. Final selection compares the
   completed exact profiles rather than assuming either backend is secure by reputation.
 - Apple Containerization remains development-only; this ADR does not reverse ADR-0020's conclusion
@@ -52,12 +62,19 @@ missing executables. The current runtime bytes failed the development admission 
 - V0 compiles only required libkrun device features. It exposes no network, implicit vsock/TSI,
   host-backed virtiofs directory, host socket, arbitrary image format, GPU, or sound device. The
   current block-root path's `NullFs` device is unresolved and must not be described as absent.
-- Runtime and source/input disks use a closed raw format and require immutable, digest-bound
-  custody. Guest read-only flags and post-stop hashing do not make a same-user mutable pathname
-  immutable. Writable scratch/output uses a fresh bounded disposable raw block device.
+- The first custody campaign tests protected creation and a genuine read-only descriptor inherited
+  directly into the runner and exposed to libkrun as `/dev/fd/N`; a narrow FD-native API change is
+  the fallback. Guest read-only flags and post-stop hashing do not make a same-user mutable
+  pathname immutable. First-slice source/input bytes use bounded dedicated console ports; later
+  file storage must pass its own immutable custody and parsing gates. Writable scratch uses a fresh
+  bounded disposable raw block device.
 - The trusted guest launcher is part of the reviewed runtime bundle, not an invocation of `su` or a
-  host UID setter. Ordinary success requires a typed attempt-bound completion record plus output,
-  integrity, and teardown evidence; runner exit status alone is never success.
+  host UID setter. It retains the completion descriptor while dropping the workload without that
+  authority. Ordinary success requires a typed attempt-bound completion/result frame plus input,
+  result-validation, integrity, and teardown evidence; runner exit status alone is never success.
+- Pinning Bun proves byte identity, not absence of runtime powers. Until the exact profile refuses
+  subprocess, FFI, native-addon, inspector, macro, environment-file, and package-install paths,
+  execution requiring that contract is unsupported. A contract change requires a separate ADR.
 - Host capture retains at most the exact approved prefix per stream while continuously draining.
   Wall/cancel actions remain independent of guest cooperation, and revalidated exact-process
   `SIGKILL` is the required fallback because graceful eventfd shutdown did not pass.
@@ -82,8 +99,9 @@ and are bound by an accepted `BackendValidationRecord`.
   identity on recovery. PID, path, name, or process scans alone remain non-authoritative.
 - App Sandbox materially narrows VMM-compromise impact, but the VMM and Hypervisor boundary still
   require malicious-guest testing and security-update ownership.
-- Per-attempt block-image construction/extraction and bounded console capture become explicit TCB
-  components that need their own custody, parsing, quota, and crash-recovery designs.
+- Runtime-root custody, bounded port framing, and console capture become explicit TCB components
+  with their own ownership, quota, and crash-recovery designs. Block-image extraction joins that
+  TCB only when file artifacts are introduced and must run in a disposable bounded parser sandbox.
 - Installed recovery depends on an exact enrolled launch profile. The experiment's
   `AbandonProcessGroup=true` allowed exact reparent/reap recovery; changing it changed orphan
   behavior. The complete Supervisor/helper/LaunchAgent package, notarization, Gatekeeper, session,
@@ -106,3 +124,4 @@ and are bound by an accepted `BackendValidationRecord`.
 - [`experiments/gate-c-libkrun-adversarial/RESULTS.md`](../../experiments/gate-c-libkrun-adversarial/RESULTS.md)
 - [`experiments/gate-c-libkrun-supply-chain/RESULTS.md`](../../experiments/gate-c-libkrun-supply-chain/RESULTS.md)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
+- [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)

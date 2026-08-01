@@ -1,9 +1,10 @@
 # Execution Supervisor
 
 Status: intended v0 authority and interface; unprivileged per-user macOS topology is feasible. The
-native libkrun/HVF adapter is the preferred Apple candidate, while immutable block custody,
-`NullFs` disposition, typed completion, bounded output parsing, release admission, and the
-OCI/gVisor comparison remain gated by backend validation.
+native libkrun/HVF adapter is the preferred Apple candidate, while stock-Bun runtime authority,
+immutable runtime-root custody, `NullFs` disposition, typed port transport/completion, complete
+installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded filesystem-image
+parsing is a later gate before file artifacts.
 
 Implementation note: `internal/execution.SupervisorCore` now exercises exact-byte registration,
 approval binding/one-use consumption, transition fencing/component acceptance, and cleanup
@@ -86,7 +87,8 @@ of:
 - resource values the exact backend cannot enforce.
 
 Unsupported powers fail as unsupported protocol. They are not accepted merely because policy says
-`false`.
+`false`. The runtime profile must also refuse those powers in execution; the current stock Bun
+profile has not evidenced non-bypassable subprocess/FFI denial.
 
 ## Durable lifecycle
 
@@ -151,9 +153,12 @@ list/inspect/kill/delete reconciliation across Supervisor, engine/containerd, an
 A missing response or local process is never authoritative absence.
 
 The VMM's exit status is never authoritative guest completion. The tested runner returned zero for
-corrupt roots, guest kernel failures, and missing executables. A backend reports runner lifecycle,
-typed attempt-bound guest completion, staged-input integrity, output/parser disposition, and
-teardown as separate evidence. Any missing required element blocks ordinary success.
+corrupt roots, guest kernel failures, and missing executables. The first-slice backend uses bounded
+dedicated virtio-console ports for source/input and exactly one typed attempt-bound completion frame
+containing inline JSON. A backend reports runner lifecycle, typed guest completion, input integrity,
+applicable result validation/parser disposition, and teardown as separate evidence. Any missing
+required element blocks ordinary success. The trusted launcher, not the unprivileged workload,
+retains completion authority; a compromised guest kernel remains outside what this record attests.
 
 `BackendCapabilityReport` identifies exact mechanisms and unsupported controls. A plan proceeds
 only when all its required controls match. Capability discovery does not self-certify validation;
@@ -166,7 +171,9 @@ output while staging/collecting. The security property is scoped capability, not
 
 Handles bind installation, epoch, registration, attempt, content identity, direction, operation,
 byte limit, expiry, and redemption state. The daemon cannot redeem them. The Supervisor never gets
-an original host path or ambient access to the Broker store.
+an original host path or ambient access to the Broker store. In the first inline slice the
+Supervisor writes the redeemed exact bytes through bounded attempt-bound ports rather than making
+user data a guest block device. Later file staging requires its separate custody/parser gates.
 
 ## Evidence transcript
 

@@ -5,7 +5,7 @@
 - Go 1.23 or newer, as declared by `go.mod`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`
-- Bun 1.3.14 for runtime-profile experiments
+- Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile
 
 The runtime version used to execute guest jobs is independent of the Node.js version used for
 repository tooling.
@@ -109,10 +109,13 @@ the backend cannot produce ordinary success or release artifacts after ambiguity
 backend may execute untrusted Bun directly on the host. The libkrun/HVF follow-up is the preferred
 native candidate after conditionally passing its first isolation and lifecycle corpus, but its
 follow-up tracks found unresolved immutable block custody and a guest-visible `NullFs` device.
-Typed completion, safe output parsing, release-byte admission, and composed validation also remain.
-The retained spike runners are not a product development backend. Until one exact candidate profile
-passes the complete documented corpus, receipts and UI must label every executable backend posture
-`development`.
+The P0 reconciliation additionally requires stock-Bun authority closure, narrows custody to the
+runtime root for the first slice, and proposes bounded console ports for source/input and typed
+inline JSON completion. Safe filesystem-image output parsing remains required before file artifacts,
+while complete release-byte admission and composed validation remain open. The retained spike
+runners are not a product development backend. Until one exact candidate profile passes the
+complete documented corpus, receipts and UI must label every executable backend posture
+`development`. See [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
 ## Security-sensitive changes
 

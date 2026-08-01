@@ -58,15 +58,18 @@ per-user services, content custody, and trust-transition ordering passed conditi
 Apple Container and direct Containerization failed the production lifecycle gate. libkrun/HVF
 remains the preferred native candidate, and its readiness tracks passed several mechanics, but the
 exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
-completion, safe output parsing, installed distribution, and release-byte admission also remain
-open. OCI plus gVisor remains independent; only its surrounding OCI/runc harness has run, so gVisor
-itself is unvalidated.
+completion, installed distribution, and release-byte admission also remain open. The post-track P0
+reconciliation adds stock-Bun authority closure, proposes bounded console ports for source/input
+and inline results, and defers filesystem-image output parsing until file artifacts. OCI plus
+gVisor remains independent; only its surrounding OCI/runc harness has run, so gVisor itself is
+unvalidated.
 
 Gate C now permits freezing backend-independent identifiers, exact-or-refused limits, typed
 admission and terminal classifications, and a fake backend that creates no guest. It does not
 permit freezing libkrun paths/devices, arbitrary CPU or memory semantics, runner-exit success, the
 current runtime manifest, or a stronger posture. See the
-[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md).
+[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md) and
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
 See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
@@ -123,11 +126,13 @@ Exit evidence:
 
 ## Phase 5: dependency-free Bun development execution
 
-- Close the five P0 Gate C campaigns: immutable block custody, `NullFs` disposition, typed guest
-  completion, a disposable bounded output parser, and an admissible development bundle.
+- Close the five reconciled P0 Gate C campaigns: stock-Bun runtime-authority closure, immutable
+  runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
+  bounded inline JSON, and an admissible complete installed development bundle.
 - Build one exact package-free runtime bundle.
 - Execute one JSON-in/JSON-out job through the libkrun/HVF candidate in explicit development
-  posture, including its durable-record-before-start lifecycle and bounded console/output path.
+  posture, including its durable-record-before-start lifecycle, inherited read-only root custody,
+  and bounded console-port data path.
 - Deny network and all ambient host resources using the proven mechanisms.
 - Bind source, input, runtime, backend, controls, output, integrity evidence, and teardown into the
   attempt transcript.
@@ -136,8 +141,10 @@ Exit evidence:
 
 - Concurrent same-user mutation cannot change approved bytes observed by the guest, and the exact
   accepted device surface has a retained disposition and corpus.
-- Guest success does not depend on VMM exit status, and no artifact is released without bounded
-  post-stop parsing and complete terminal evidence.
+- Guest success does not depend on VMM exit status, and no inline result is released without a
+  valid attempt-bound frame, bounded JSON validation, and complete terminal evidence.
+- The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
+  environment-file, and package-install path in the accepted corpus.
 - The exact configuration passes the minimum development attack suite.
 - Unsupported controls refuse execution rather than being silently approximated.
 - The backend remains clearly labeled development until its exact profile validation record passes.
@@ -146,7 +153,8 @@ Exit evidence:
 
 - Implement native file selection and immutable regular-file data-fork snapshots.
 - Transfer job-scoped handles to the Supervisor without daemon content access.
-- Add bounded scratch/output storage and JSON/JSONL/text artifacts, then CSV.
+- Add bounded scratch/output storage and a disposable bounded filesystem-image parser before
+  JSON/JSONL/text artifacts, then CSV.
 - Add audience-controlled release and separate content grants.
 - Complete CLI and MCP adapters over the same daemon protocol.
 
@@ -159,7 +167,8 @@ Exit evidence:
 ## Phase 7: authoritative validation
 
 - Compose the native libkrun/HVF candidate's independently observed storage, console, timeout,
-  installed-recovery, hostile-guest, completion, parser, and release controls in one exact profile.
+  installed-recovery, hostile-guest, completion, runtime-authority, parser, and release controls in
+  the applicable exact profiles.
 - Inject process death, ENOSPC/I/O failure, corruption, and partial completion at every durable and
   external side-effect edge; add real APFS/power-interruption, sleep/wake, logout/login, reboot,
   fast-user-switch, locked-Keychain, update, and clean-host cases.

@@ -21,11 +21,14 @@ The combined decision is:
   exact host CPU/memory quotas, or safe output extraction.
 
 The candidate solved Apple Containerization's hidden-helper lifecycle problem, but the follow-ups
-found two profile blockers and three release/composition blockers. Immutable input custody is not
+found two profile blockers and three release/composition blockers. Immutable block custody is not
 enforced through libkrun's pathname disk API, and the block-root path exposes an unexpected
 guest-visible `NullFs` virtiofs device. Typed guest completion, a production-safe output parser,
-and admissible signed/notarized runtime bytes are also not complete. Those are actionable findings,
-not a failure of the overall architecture.
+and admissible signed/notarized runtime bytes were also incomplete. A subsequent independent review
+and targeted source research narrowed the first inline slice: source/input and bounded inline JSON
+may use dedicated virtio-console ports, making filesystem-image parsing a later artifact gate, while
+stock Bun's subprocess/FFI surface adds a P0 runtime-authority blocker. Those are actionable
+findings, not a failure of the overall architecture.
 
 ## Completed tracks
 
@@ -51,7 +54,8 @@ not a failure of the overall architecture.
   storage with equivalent evidence, or a reviewed libkrun API/fork that accepts the required
   immutable handle semantics.
 - The shell/`debugfs`/Docker collector is an experiment oracle, not a product parser. It must be
-  replaced by a purpose-built, disposable, bounded parser sandbox before artifact release.
+  replaced by a purpose-built, disposable, bounded parser sandbox before filesystem artifact
+  release. It does not block the first bounded inline-JSON result path.
 
 ### Console, resource limits, and termination
 
@@ -72,8 +76,8 @@ not a failure of the overall architecture.
 - Several malformed roots, guest panics, a missing executable, and an intentional guest crash
   still produced host runner status zero. Runner exit status is lifecycle evidence, not guest
   success evidence.
-- Ordinary success requires an exact attempt-bound typed completion record plus expected output,
-  input-integrity, parser, and teardown evidence.
+- Ordinary success requires an exact attempt-bound typed completion record plus expected result,
+  input-integrity, applicable bounded validation/parser, and teardown evidence.
 - A Developer ID-signed, hardened, App-Sandboxed runner read a sealed bundle-local root without a
   temporary path entitlement. With `AbandonProcessGroup=true`, six runners survived Supervisor
   `SIGKILL`, reparented to PID 1, and were exactly recovered using PID/start/user/path/code identity
@@ -109,8 +113,24 @@ not a failure of the overall architecture.
 - Both Capsule patches require a governed fork and review until they are upstreamed and the exact
   released profile is revalidated. Update, rollback, disable, revocation, and corresponding-source
   workflows are designs, not exercised product mechanisms.
+- Pinning Bun 1.3.14 proved that the runtime executed the fixture; it did not prove the documented
+  no-subprocess/no-FFI contract. The stock runtime exposes those APIs and no non-bypassable disable
+  profile has been evidenced, so the current runtime profile must refuse admission until P0 closes
+  or an explicit ADR changes the contract.
 - The planning floor remains Apple silicon/macOS 14+ only as a provisional source/platform target.
   It is not a claim about the current package or a validated supported-host range.
+
+## Post-synthesis independent review
+
+An independent read-only adversarial review challenged the P0 premises, threat coverage, and
+dependency order. Its viable `/dev/fd/N` direction and conditional-parser finding were accepted;
+its use of post-spawn `SCM_RIGHTS` transfer was refined to direct Supervisor-to-runner inheritance
+as the smaller first topology. Targeted research then found libkrun 1.19.4's generic multiport
+console APIs and the unresolved stock-Bun authority mismatch.
+
+The durable disposition, exact hypotheses, pass/fail branches, first-slice data path, and prohibited
+claims are in the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). These are research and
+planning conclusions, not additions to the completed spike evidence above.
 
 ## Contract consequences
 
@@ -125,7 +145,7 @@ The following backend-independent vocabulary is ready to implement and test with
 - distinguish configured guest RAM from host/VMM-memory accounting, and vCPU topology from CPU
   quotas;
 - distinguish physical scratch-image bytes, artifact count, per-artifact logical bytes, total
-  logical bytes, console prefix bytes, and parser limits;
+  logical bytes, console prefix bytes, bounded port-frame bytes, and parser limits;
 - keep guest completion, runner lifecycle, input integrity, output validation, teardown, and
   terminal classification as separate evidence;
 - preserve `cleanup-required`, `unresolved`, `integrity-failed`, `unsafe-output`, and quarantine
@@ -133,8 +153,9 @@ The following backend-independent vocabulary is ready to implement and test with
 - require `CreatesGuest() == false` for the fake backend and a hard fence between fake tests and
   any VMM launch path.
 
-The following libkrun-specific values are not frozen: mutable host paths, arbitrary resource
-values, a claim that virtiofs is absent, graceful-only cancellation, runner-zero success,
+The following libkrun-specific values are not frozen: runtime-root descriptor/path mechanics,
+console-port framing and guest permissions, arbitrary resource values, a claim that virtiofs is
+absent, graceful-only cancellation, runner-zero success, stock-Bun authority restrictions,
 temporary App Sandbox path exceptions, the current runtime byte manifest, and a macOS 14 package
 claim.
 
@@ -142,27 +163,35 @@ claim.
 
 ### P0 — before a libkrun development adapter handles user bytes
 
-1. **Immutable block custody:** compare file-descriptor/handle APIs, component-owned immutable
-   storage, and a narrowly governed libkrun change. Pass only if concurrent same-user mutation and
-   pathname substitution cannot change bytes observed by the guest.
-2. **`NullFs` disposition:** either remove the device and rerun the full corpus or define the exact
-   accepted device, independently review/fuzz it, and show that no host-backed share can be
-   selected through the product surface.
-3. **Typed completion channel:** implement an attempt-bound completion/result record that survives
-   guest crash, corrupt root, missing executable, output flood, and runner-zero ambiguity without
-   adding ambient network/vsock authority.
-4. **Disposable output parser:** build a purpose-specific bounded ext4/raw-image parser sandbox and
-   exercise malformed superblocks, journals, extents, directory entries, sparse/overlap cases,
-   parser crash, timeout, cleanup, and partial-copy boundaries.
-5. **Admissible development bundle:** pin all build inputs, govern the patches, produce a complete
-   manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, sign/notarize the
-   complete installed topology, and run clean-host Gatekeeper/readback checks.
+1. **Runtime-authority closure:** prove that the exact Bun/launcher profile refuses subprocess,
+   FFI, native-addon, inspector, macro, environment-file, and package-install paths. If stock Bun
+   cannot do so, choose a governed patch/alternate runtime or explicitly revise the contract in a
+   new ADR.
+2. **Immutable runtime-root custody:** test protected exclusive creation, a distinct genuine
+   read-only descriptor, closure of every writable alias/mapping, unlink, direct runner inheritance,
+   and `/dev/fd/N` under the exact installed App Sandbox profile. Include same-user pre-custody,
+   pathname, hard-link, mapping, debugger/task-port, crash, and recovery cases. A narrow FD-native
+   libkrun change is the fallback; failure of both reopens the native/no-root decision.
+3. **`NullFs` disposition:** independently remove or validate the unexpected device and rerun the
+   exact device/cross-job corpus. Do not couple this admission decision to custody merely because
+   one fork could touch both mechanisms.
+4. **Typed port transport and completion:** use dedicated bounded attempt-bound virtio-console
+   ports for source/input and one typed completion frame containing bounded inline JSON. Prove
+   descriptor/node isolation, framing, backpressure, forgery resistance, launcher failure,
+   stale/duplicate attempts, and separate integrity/teardown dispositions without network/vsock.
+5. **Admissible complete development bundle:** pin all build inputs, govern patches, produce the
+   complete manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, and
+   sign/notarize/staple/read back the complete Supervisor/runner/runtime/per-user-service topology
+   on clean hosts. A runner-only ticket does not pass.
+
+The disposable bounded ext4/raw-image parser is deferred to the regular-file/file-artifact slice;
+it remains mandatory before any filesystem artifact is released.
 
 ### P1 — before `validated-local` or production claims
 
 1. **End-to-end composition and fault injection:** compose registration, approval, custody,
-   staging, start, completion, parsing, release, cleanup, and receipt; kill processes or inject
-   storage failure at every durable/side-effect edge.
+   staging/port transfer, start, completion, applicable parsing, release, cleanup, and receipt;
+   kill processes or inject storage failure at every durable/side-effect edge.
 2. **Real installed lifecycle matrix:** test sleep/wake, logout/login, fast user switching, locked
    Keychain, reboot recovery with explicit human coordination, update/replacement, quarantine,
    first launch, multiple supported macOS versions, and clean machines.

@@ -187,7 +187,8 @@ enters `repair-required` rather than accepting whichever components start.
 
 - No arbitrary host path, live user-file mount, credential, environment, descriptor, or host socket
   reaches the guest.
-- Root is immutable; input, scratch, and output are separate and bounded.
+- Root is immutable under host custody; first-slice source/input and completion/result ports,
+  scratch, and later artifact output are separate and bounded.
 - Network denial includes TCP, UDP, DNS, IPv4/IPv6, loopback expectations, metadata services, Unix
   sockets, vsock/management channels, and inherited host IPC.
 - Process isolation prevents host/other-job signal, inspect, attach, and state reuse.
@@ -297,7 +298,11 @@ hidden-helper risk but does not trust PID/path alone or prove safety against a m
 VMM exploit, output flood, or untested disk/recovery path. Its readiness corpus additionally found
 that a same-user process could mutate a live raw backing image and that the block-root path exposed
 a `NullFs` virtiofs device without a host-backed share. Those are unresolved custody and VMM-surface
-risks, not evidence of an observed escape. gVisor validation must bind its
+risks, not evidence of an observed escape. The reconciled first slice also treats stock Bun's
+subprocess and FFI surfaces as an unresolved authority mismatch and proposes bounded dedicated
+virtio-console ports for source/input and typed inline completion. The pinned guest kernel and
+trusted launcher are part of that profile's TCB; an in-guest completion record is not attestation
+against a compromised guest kernel. gVisor validation must bind its
 host/outer-VM, engine, cgroup/OCI configuration, Sentry/gofer identity, management endpoints, and
 exact `runsc` binary. The existing runc control run validates only the surrounding harness, not
 gVisor's isolation boundary.
@@ -307,7 +312,9 @@ gVisor's isolation boundary.
 Risks include path traversal, symlink/hard-link/special-file races, mutation, archive/parser bugs,
 sparse files, terminal escapes, CSV formula injection, bidi/HTML spoofing, output flood, and content
 release to the agent. v0 snapshots exact regular-file bytes, assigns paths, separates filesystem and
-content gates, bounds parsers, and defers rich formats to another sandbox.
+content gates, bounds parsers, and defers rich formats to another sandbox. The first inline JSON
+slice avoids a guest filesystem-image parser by returning one bounded typed result frame; that does
+not waive parser isolation before file artifacts are supported.
 
 Generated code may intentionally encode complete granted input into allowed output, size, timing,
 state, or repeated calls. Capsule warns users and budgets channels but does not claim
@@ -340,7 +347,7 @@ not concealed by the presence of a valid user approval.
 | Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume |
 | Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
 | Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |
-| Process/runtime | workers/fork bomb, signals, inspector, orphan processes, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse |
+| Process/runtime | workers/fork bomb, signals, inspector, orphan processes, subprocess APIs, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse, completion-descriptor forgery |
 | Resources | busy loop, CPU semantics, heap/native OOM, PID exhaustion, disk/log/output flood, cancellation tree kill |
 | Isolation | host credentials/env/files, cross-job state, writable caches, backend escape, malicious runtime/image/config |
 | Egress | undeclared/oversized/malformed output, agent content access, metadata/timing channels, guest strings in errors/logs |

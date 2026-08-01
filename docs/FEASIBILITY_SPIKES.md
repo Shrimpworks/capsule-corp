@@ -4,8 +4,10 @@ Status: first-wave, Apple-credentialed, second-wave, and five Gate C implementat
 tracks completed on 2026-07-31. Spike code remains non-production and may be discarded. Gate C
 failed Apple Containerization as a production backend; libkrun/Hypervisor.framework remains the
 preferred native candidate, but its exact profile has unresolved custody and `NullFs` blockers and
-the current runtime bytes are not admissible. OCI/gVisor remains an independent comparison and
-contingency. See
+the current runtime bytes are not admissible. A post-track independent review and source-research
+reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until file artifacts,
+and added stock-Bun runtime authority as a blocker. OCI/gVisor remains an independent comparison
+and contingency. See the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 
@@ -125,7 +127,10 @@ Decision: conditional pass as the preferred native candidate. Five subsequent re
 proved bounded scratch/output mechanics, console capture, exact forced teardown, and same-machine
 installed recovery, while also finding a mutable-path input race, an unexpected `NullFs` virtiofs
 device, ambiguous runner-zero completion, incomplete output parsing/distribution, and a no-go for
-the current runtime bytes. See
+the current runtime bytes. Subsequent review found that libkrun's multiport console API may remove
+source/input and inline results from the raw-block path, while stock Bun's subprocess/FFI surface
+adds an earlier runtime-authority admission question. Both are hypotheses until exact spikes pass.
+See
 [`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
 
 ### Gate C implementation-readiness follow-ups
@@ -147,10 +152,12 @@ without turning spike code into product code:
 
 Each track owns a separate directory under `experiments/` and records observed evidence separately
 from inference. Their integration permits backend-independent contract and fake-backend work, not
-implementation of the real adapter against user bytes. The mutable-path race, `NullFs` disposition,
-typed completion, bounded parser, and admissible-bundle campaigns must close before freezing one
-exact development profile. Passing those campaigns still would not by itself justify a
-`validated-local` or production claim.
+implementation of the real adapter against user bytes. The reconciled pre-user-byte gates are
+runtime-authority closure, immutable runtime-root custody, independent `NullFs` disposition, typed
+port transport/completion with bounded inline JSON, and an admissible complete installed bundle.
+The bounded filesystem-image parser moves to the file-artifact gate rather than disappearing.
+Passing these campaigns still would not by itself justify a `validated-local` or production claim.
+See [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) for exit criteria and explicit pivots.
 
 ## Gate D: content handles and custody
 

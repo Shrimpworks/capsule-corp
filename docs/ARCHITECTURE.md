@@ -124,11 +124,14 @@ found no supported durable host-side VM/helper identity or restart enumeration. 
 native candidate is now one libkrun/Hypervisor.framework VMM process per attempt, gated by a
 durable-record-before-start handshake and verified with a PID/start/code-identity tuple. Its spike
 passed lifecycle mechanics conditionally, but the integrated readiness result found unresolved
-same-user block-image mutation and a guest-visible `NullFs` virtiofs device. Typed completion,
-bounded output parsing, complete installed distribution, and admissible release bytes also remain
-open. OCI plus gVisor remains an independent candidate and contingency. Each exact backend reports
-mechanisms, unsupported controls, management channels, recovery behavior, and retained validation
-evidence.
+same-user block-image mutation and a guest-visible `NullFs` virtiofs device. The reconciled first
+slice proposes genuine read-only descriptor custody for the trusted root plus bounded
+virtio-console ports for source, inline input, completion, and inline JSON output. Those mechanisms,
+stock-Bun authority restrictions, complete installed distribution, and admissible release bytes
+remain P0 hypotheses, not validated controls. Filesystem-image output parsing is deferred until
+file artifacts. OCI plus gVisor remains an independent candidate and contingency. Each exact
+backend reports mechanisms, unsupported controls, management channels, recovery behavior, and
+retained validation evidence.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.

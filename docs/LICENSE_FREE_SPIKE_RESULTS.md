@@ -28,7 +28,10 @@ adversarial corpus, and reproducible-build feasibility. They also found a live m
 race, an unexpected block-root `NullFs` virtiofs device, ambiguous runner-zero completion,
 non-product output parsing, incomplete distribution, and a no-go for the current runtime bytes.
 libkrun/HVF remains the preferred native candidate; OCI plus gVisor remains an independent
-comparison and contingency. Neither has a production posture.
+comparison and contingency. Neither has a production posture. A later independent P0 review and
+targeted source research narrowed the first inline slice to port-based source/input/results,
+deferred filesystem-image parsing until file artifacts, and added stock-Bun runtime-authority
+closure as a pre-user-byte blocker.
 
 ## Current gate position
 
@@ -37,7 +40,7 @@ comparison and contingency. Neither has a production posture.
 | A: JCS/JWS | RFC 8785 JSON failed because the Swift/Foundation number representation differed and no maintained strict Swift JCS path passed. ES256 itself interoperated. | **Fail the original format.** | Do not revive generic JCS/JWS without new evidence. |
 | A2: deterministic CBOR/COSE | A second hardening run retained 90 cases across `ApprovalGrant` and a mutually exclusive transcript shape. Go, Swift, and TypeScript agreed on all 4 accepts and 86 rejects, and every producer verified through every verifier. | **Conditional pass strengthened; no format pivot.** | Freeze object-specific CDDL/bounds, independently review wrappers, run sustained fuzzing, and prove exact-byte retention in product registration/rendering. |
 | B: macOS authority separation | Exact signed XPC, installed per-user LaunchAgents, current UID/session checks, service crash reactivation, stale client/service denial, disjoint Keychain groups, Secure Enclave keys, interactive approval, and protected stores passed. Fresh groups/keys per identity-changing security epoch passed 14 modeled and 8 provisioned process-kill checkpoints. | **Conditional pass strengthened; security-epoch groups are the preferred key design.** | Complete Developer ID package/update/session matrices, remaining notarizations, locked-Keychain/restore faults, and signed target-key authorization. |
-| C: execution backend | Stock Apple Container and direct Containerization failed lifecycle authority. libkrun/HVF made one signed VMM process the VM; readiness tracks observed fixed raw scratch, bounded console, wall/cancel handling, exact forced teardown, installed reparent/reap, adversarial cases, and build controls. Live backing-file mutation and an unexpected `NullFs` virtiofs device block the exact profile; typed completion/parser/distribution are incomplete and current bytes are no-go. | **Containerization fails; libkrun/HVF remains the preferred candidate but is not ready to freeze or admit. gVisor remains independent.** | Close immutable custody, `NullFs` disposition, typed completion, disposable output parsing, and release-byte admission before a user-byte development adapter; then run composition, installed-host, durability, hostile-workload, supply-chain, soak, and exact gVisor campaigns. |
+| C: execution backend | Stock Apple Container and direct Containerization failed lifecycle authority. libkrun/HVF made one signed VMM process the VM; readiness tracks observed fixed raw scratch, bounded console, wall/cancel handling, exact forced teardown, installed reparent/reap, adversarial cases, and build controls. Live backing-file mutation and an unexpected `NullFs` virtiofs device block the exact profile; typed completion/distribution are incomplete and current bytes are no-go. Stock Bun also lacks an evidenced no-subprocess/no-FFI profile. | **Containerization fails; libkrun/HVF remains the preferred candidate but is not ready to freeze or admit. gVisor remains independent.** | Before a user-byte adapter, close runtime authority, immutable root custody, `NullFs`, typed port transport/completion with inline JSON, and complete bundle admission. Require disposable output parsing later before file artifacts; then run composition, installed-host, durability, hostile-workload, supply-chain, soak, and exact gVisor campaigns. |
 | D: content custody | The original snapshot/descriptor cases passed, followed by a real multi-process SQLite ledger with atomic one-use races, crash/restart reconciliation, bounded pipes, exact idempotent commits, quarantine, tombstones, and guarded GC. | **Strong conditional pass.** | Compose the ledger with distribution-signed XPC/protected storage and the selected backend; add ENOSPC/I/O/corruption/migration/power-loss and signed cross-store saga tests. |
 | E: Supervisor topology | Unprivileged per-user service activation and exact authenticated XPC work without a root helper. The direct Swift Containerization controller remains useful for development, but Gate C invalidated it as the production backend authority. | **Per-user/no-root topology retained; production backend language split reopened.** | Define the narrow local macOS Supervisor versus Linux OCI/gVisor worker boundary after the gVisor run. Keep Go for portable lifecycle/policy code and Swift for necessary macOS APIs. |
 | F: trust transition/recovery | The original state model/process-kill corpus passed. A durability follow-up added writer/CAS races, simulated disk-full, WAL/checkpoint damage, corruption, partial/coherent restores, clock failure, atomic replacement, and installer/backend effect crashes; 17 tests including 18 exact-PID kills passed fail-closed. | **Conditional pass strengthened for process/storage ordering.** | Port to the real Supervisor store; add real APFS capacity/I/O, installed-package, Keychain anchor, backend, migration, and VM power-cut campaigns. Coherent rollback still needs an independent anchor. |
@@ -82,7 +85,8 @@ conditional candidate result, not a validation record. The follow-up tracks clos
 mechanical questions but proved that guest-read-only is not immutable host custody, runner exit is
 not workload success, and the exact block-root surface includes `NullFs`. The full comparison and
 P0/P1 campaigns are in the
-[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md).
+[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md) and its
+[P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
 ### The authority and custody design composes locally
 
@@ -163,10 +167,12 @@ Still open:
    atomic in-memory one-use consumption, transition fencing/acceptance, create-intent cleanup, and
    authoritative-absence/ambiguous-outcome reconciliation. Durable storage, release intent,
    production crypto/IPC, and real process-crash testing remain.
-3. Before a real libkrun adapter handles user bytes, close immutable block custody, the `NullFs`
-   accept/remove decision, typed guest completion, the bounded disposable output parser, and the
-   exact development-bundle admission checklist. Retain the observed durable-record-before-start,
-   console, forced-teardown, raw-scratch, and installed-recovery mechanics as spike inputs only.
+3. Before a real libkrun adapter handles user bytes, close stock-Bun runtime authority, immutable
+   runtime-root custody, the independent `NullFs` accept/remove decision, typed port transport and
+   completion with bounded inline JSON, and the complete installed-bundle admission checklist.
+   Defer the bounded disposable filesystem-image parser only until file artifacts. Retain the
+   observed durable-record-before-start, console, forced-teardown, raw-scratch, and installed-
+   recovery mechanics as spike inputs only.
 4. Run the retained OCI harness with a checksum-pinned `runsc`/shim on a disposable Linux worker,
    including engine/containerd/outer-VM death and Bun compatibility, then compare exact profiles.
 5. Port the proven custody ledger and Gate F ordering into durable product stores behind fake
@@ -190,6 +196,7 @@ Still open:
 - Gate C libkrun installed recovery: [`../experiments/gate-c-libkrun-installed-recovery/RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md)
 - Gate C libkrun adversarial: [`../experiments/gate-c-libkrun-adversarial/RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md)
 - Gate C libkrun supply chain: [`../experiments/gate-c-libkrun-supply-chain/RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md)
+- Gate C P0 review/research reconciliation: [`GATE_C_P0_RECONCILIATION.md`](GATE_C_P0_RECONCILIATION.md)
 - Gate D: [`../experiments/gate-d-content-custody/README.md`](../experiments/gate-d-content-custody/README.md)
 - Gate D ledger: [`../experiments/gate-d-custody-ledger/RESULTS.md`](../experiments/gate-d-custody-ledger/RESULTS.md)
 - Gate E: [`../experiments/gate-e-supervisor-topology/RESULTS.md`](../experiments/gate-e-supervisor-topology/RESULTS.md)

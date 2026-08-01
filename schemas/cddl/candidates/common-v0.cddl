@@ -1,0 +1,7 @@
+; Shared scalar candidates for Phase 2 internal objects.
+
+capsule-id-v0 = bstr .size 16
+capsule-sha256-v0 = bstr .size 32
+capsule-uint53-v0 = 0..9007199254740991
+capsule-positive-uint53-v0 = 1..9007199254740991
+capsule-unix-seconds-v0 = capsule-uint53-v0

@@ -72,6 +72,51 @@ assertHexEqual(
 
 process.stdout.write(`validated ${fixtureUrl.pathname}\n`);
 
+const registrationFixtureUrl = new URL(
+  "../schemas/fixtures/plan-registration-v0.json",
+  import.meta.url,
+);
+const registrationFixture = JSON.parse(await readFile(registrationFixtureUrl, "utf8"));
+
+assertExactKeys(registrationFixture, [
+  "epochDigestHex",
+  "epochSequence",
+  "expiresAt",
+  "installationIdHex",
+  "objectType",
+  "objectVersion",
+  "payloadHex",
+  "planDigestHex",
+  "registrationIdHex",
+  "registrationSequence",
+  "supervisorIdHex",
+]);
+assertEqual(registrationFixture.objectType, "capsule.plan-registration", "object type");
+assertEqual(registrationFixture.objectVersion, 0, "object version");
+assertSafeUnsigned(registrationFixture.registrationSequence, "registrationSequence");
+assertSafeUnsigned(registrationFixture.epochSequence, "epochSequence");
+assertSafeUnsigned(registrationFixture.expiresAt, "expiresAt");
+
+const registrationPayload = new Map([
+  [1, registrationFixture.objectType],
+  [2, registrationFixture.objectVersion],
+  [3, decodeFixedHex(registrationFixture.registrationIdHex, 16, "registrationIdHex")],
+  [4, registrationFixture.registrationSequence],
+  [5, decodeFixedHex(registrationFixture.planDigestHex, 32, "planDigestHex")],
+  [6, decodeFixedHex(registrationFixture.installationIdHex, 16, "installationIdHex")],
+  [7, registrationFixture.epochSequence],
+  [8, decodeFixedHex(registrationFixture.epochDigestHex, 32, "epochDigestHex")],
+  [9, decodeFixedHex(registrationFixture.supervisorIdHex, 16, "supervisorIdHex")],
+  [10, registrationFixture.expiresAt],
+]);
+
+assertHexEqual(
+  encodeDeterministicCbor(registrationPayload),
+  registrationFixture.payloadHex,
+  "PlanRegistration payload",
+);
+process.stdout.write(`validated ${registrationFixtureUrl.pathname}\n`);
+
 function encodeDeterministicCbor(value) {
   if (value instanceof Uint8Array) {
     return concatenate([encodeArgument(2, value.length), value]);

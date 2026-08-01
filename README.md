@@ -29,7 +29,7 @@ agent-facing Go daemon
 Execution Supervisor ◄──── trusted native Broker
         │                   approval + scoped content handles
         ▼
-Apple Container or gVisor candidate
+native libkrun/HVF candidate
         │
         ▼
 disposable Bun / TypeScript guest
@@ -61,21 +61,25 @@ The initial product slice is deliberately narrow:
 
 Regular-file snapshots and broader outputs follow after the authority and content boundaries work.
 
-## Near-term work: evidence before product code
+## Near-term work: contracts plus fail-fast evidence
 
-Before freezing the target schemas, Capsule will build disposable one-off prototypes for:
+The first architecture and feasibility program is complete. It selected a bounded deterministic-
+CBOR/COSE direction, proved important macOS authority and recovery mechanics, rejected Apple
+Containerization as a production backend, and retained libkrun/HVF as the lead native candidate
+under evaluation without admitting it.
 
-1. Go/Swift/TypeScript canonical JSON and ES256 interoperability.
-2. macOS XPC, Keychain, Secure Enclave, protected-storage, and exact peer-identity separation.
-3. Apple Container no-network, filesystem, resource, management-channel, recovery, and teardown
-   behavior.
-4. Broker-to-Supervisor attempt-scoped content handles without daemon content access.
-5. Supervisor language and least-privilege topology.
-6. Crash-safe installation/trust-epoch transitions and repair.
+Work now proceeds on two lanes:
 
-Prototype code may be thrown away. Reproducible fixtures, observations, limitations, and ADR
-decisions are retained. See [Feasibility Spikes](docs/FEASIBILITY_SPIKES.md) and the
-[Roadmap](docs/ROADMAP.md).
+1. Freeze and implement backend-independent contracts, registered-plan/one-use approval state,
+   fake-backend recovery/evidence, and bounded inline JSON.
+2. Before libkrun handles user bytes, close stock-Bun runtime authority, immutable runtime-root
+   custody, the `NullFs` surface, typed port transport/completion, and complete installed-bundle
+   admission.
+
+Filesystem-image parsing is deferred until file artifacts, not removed. Prototype code may be
+thrown away; reproducible fixtures, observations, limitations, and ADR decisions are retained. See
+[Feasibility Spikes](docs/FEASIBILITY_SPIKES.md), the
+[Gate C P0 reconciliation](docs/GATE_C_P0_RECONCILIATION.md), and the [Roadmap](docs/ROADMAP.md).
 
 ## Repository layout
 
@@ -96,13 +100,15 @@ site/                  Minimal project overview site
 
 - Go for the agent-facing daemon and orchestration.
 - Swift/native macOS for the Trusted Host Broker.
-- Supervisor language and privilege model selected by feasibility evidence; no root assumption.
+- Supervisor language and privilege model selected by feasibility evidence; no host-root assumption.
 - TypeScript for the protocol package, clients, adapters, and initial guest programs.
 - JSON Schema Draft 2020-12 for wire contracts after replacement/freeze.
-- Proposed SHA-256 + RFC 8785 + JWS ES256 profile, gated by cross-language fixtures.
+- Proposed SHA-256 + bounded deterministic CBOR/COSE Sign1 profile, gated by object-specific
+  cross-language fixtures and review.
 - Secure Enclave/Keychain and XPC code requirements for compatible macOS authority boundaries.
-- Bun as the first dependency-free guest runtime.
-- Apple Container as a macOS candidate and OCI plus gVisor as the Linux reference.
+- Bun as the intended first dependency-free guest runtime, contingent on the P0 authority corpus.
+- Native libkrun/HVF as the lead Apple candidate under evaluation, Apple Containerization as
+  development-only, and OCI plus gVisor as an independent comparison/contingency.
 - TUF-style release/profile trust with compact verified local trust snapshots.
 - pnpm, TypeScript, Biome, Go tooling, Make, and GitHub Actions for development and CI.
 
@@ -116,15 +122,15 @@ The repository contains specifications and buildable scaffolding. It does not st
 Current schemas/types remain canonical for current tests but are explicitly not the intended final
 v0 protocol; see [Schema status](schemas/README.md).
 
-The ordered path is:
+The ordered path is now:
 
-1. Align architecture and claims.
-2. Run the blocking disposable spikes.
-3. Freeze contracts using evidence.
-4. Prove registered-plan/approval/recovery with a fake backend.
-5. Add inline JSON content separation and fixed agent summaries.
-6. Run dependency-free Bun in development posture.
-7. Add file snapshots, validate exact backends, and only then strengthen posture.
+1. Reconcile the completed spike evidence and freeze backend-independent contracts.
+2. Prove registered-plan/approval/recovery with a fake backend.
+3. Add inline JSON content separation and fixed agent summaries.
+4. Close the five fail-fast P0 gates before connecting user bytes to libkrun.
+5. Run one dependency-free Bun inline-JSON slice in development posture.
+6. Add file snapshots and disposable bounded artifact parsing.
+7. Compare and validate exact backends before strengthening posture.
 
 See [Documentation](docs/README.md) for the complete design set.
 
@@ -135,7 +141,7 @@ Prerequisites:
 - Go 1.23 or newer
 - Node.js 22.22.1 for repository tooling
 - pnpm 10.28.2
-- Bun 1.3.14 for future runtime-profile work
+- Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile
 
 ```bash
 pnpm install

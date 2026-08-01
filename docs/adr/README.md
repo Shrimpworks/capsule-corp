@@ -26,7 +26,7 @@ its core conclusion.
   — superseded by ADR-0010, ADR-0011, and ADR-0014
 - [ADR-0007: Regular-file capabilities reference immutable snapshots](0007-snapshot-file-capabilities.md)
 - [ADR-0008: Apple Container and gVisor are independent backend targets](0008-apple-container-and-gvisor-backends.md)
-  — refined by ADR-0011 and ADR-0018
+  — superseded by ADR-0020
 - [ADR-0009: Resource policy is user-owned and exact](0009-user-owned-exact-resource-limits.md)
   — refined by ADR-0011
 - [ADR-0010: Separate planning, trusted-host approval/content, and execution authority](0010-separate-planning-approval-content-and-execution.md)
@@ -38,5 +38,10 @@ its core conclusion.
 - [ADR-0016: Runtime bundle, review, activation, and backend validation are separate](0016-separate-runtime-profile-evidence.md)
 - [ADR-0017: V0 omits unsupported authority and uses logical resource slots](0017-narrow-v0-proposal-and-logical-slots.md)
 - [ADR-0018: Platform-specific trusted components use least privilege](0018-platform-specific-trusted-components.md)
+- [ADR-0019: Use bounded deterministic CBOR and object-specific COSE profiles](0019-bounded-deterministic-cbor-and-cose.md)
+- [ADR-0020: Pivot the production backend from Apple Containerization](0020-pivot-production-backend-from-apple-containerization.md)
+  — refined by ADR-0022
+- [ADR-0021: Scope operational Keychain groups to security epochs](0021-security-epoch-keychain-groups.md)
+- [ADR-0022: Evaluate libkrun/HVF as the native Apple backend candidate](0022-evaluate-libkrun-hvf-native-backend.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -136,7 +136,7 @@ agent-facing Go daemon
 Execution Supervisor ◄──── trusted native Broker
     │                       approval + scoped content
     ▼
-Apple Container or gVisor candidate
+native libkrun/HVF candidate
     │  disposable state
     ▼
 Bun / TypeScript guest
@@ -167,7 +167,7 @@ composed approval + enforcement receipt</code></pre>
           <div class="foundation__item">
             <dt>First guest</dt>
             <dd>Bun + TypeScript</dd>
-            <dd class="foundation__note">Dependency-free JSON in / JSON out</dd>
+            <dd class="foundation__note">Dependency-free JSON; contingent on P0 authority evidence</dd>
           </div>
         </dl>
       </section>
@@ -203,7 +203,7 @@ composed approval + enforcement receipt</code></pre>
           </a>
           <a href="https://github.com/dills122/capsule-corp/blob/main/docs/ROADMAP.md">
             <span>Roadmap</span>
-            <span>Disposable feasibility gates before contracts and implementation</span>
+            <span>Backend-independent implementation plus fail-fast P0 gates</span>
             <span aria-hidden="true">↗</span>
           </a>
           <a
@@ -211,6 +211,13 @@ composed approval + enforcement receipt</code></pre>
           >
             <span>Feasibility spikes</span>
             <span>One-off prototypes, adversarial checks, and decision criteria</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            href="https://github.com/dills122/capsule-corp/blob/main/docs/GATE_C_P0_RECONCILIATION.md"
+          >
+            <span>Gate C P0 reconciliation</span>
+            <span>Independent review, exact branch point, and pre-user-byte exit criteria</span>
             <span aria-hidden="true">↗</span>
           </a>
         </nav>

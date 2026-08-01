@@ -37,6 +37,8 @@ The first complete workflow is intentionally narrow:
    one `ExecutionAttempt` before any hostile side effect.
 6. Bun executes in a disposable development backend with no network, ambient environment,
    subprocesses, native addons, FFI, macros, inspector, package installation, or live host path.
+   The exact runtime profile must prove those restrictions; stock Bun 1.3.14 does not currently
+   satisfy the subprocess/FFI claim merely by being pinned.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an
@@ -253,19 +255,38 @@ A failure after this transaction burns the approval. Retrying requires a new app
 
 ### 7. Stage and execute
 
-The Supervisor assigns all fixed guest paths, obtains attempt-scoped content handles, stages exact
-bytes into dedicated volumes, verifies digests, verifies the runtime/backend identities, creates a
-fresh guest, and starts the declared entrypoint without shell interpolation.
+The Supervisor assigns all fixed guest paths, obtains attempt-scoped content handles, verifies exact
+bytes and digests, verifies the runtime/backend identities, creates a fresh guest, and starts the
+declared entrypoint without shell interpolation. In the first inline slice it delivers registered
+source and input through dedicated bounded attempt-bound virtio-console ports. Later file slices may
+stage dedicated volumes only after their custody and parser gates pass.
 
-The root is read-only. Input, scratch, and output storage are separate and bounded. The Supervisor
-observes time, resources, cancellation, backend state, and transcript events.
+The trusted runtime root is immutable under a proven host-custody mechanism, not only guest-read-
+only. For the libkrun candidate, P0 separately proves stable attachment identity, frozen-object
+construction, and adversarial end-to-end custody. The finalized root digest is computed through the
+exact retained genuine read-only descriptor only after every writable alias/mapping is closed and
+the sole pathname is unlinked. Input transport, scratch, completion/result transport, and any later
+artifact output are separate and bounded. The Supervisor observes time, resources, cancellation,
+backend state, and transcript events.
 
 ### 8. Collect and release
 
-The Supervisor filesystem gate accepts only declared fixed output slots, bounded counts/bytes,
-regular files, safe fixed paths, and expected storage semantics. It rejects symlinks, hard-link
-tricks, devices, sockets, FIFOs, sparse-file abuse, and undeclared output. It calculates content
-digests and never delivers content directly to the agent.
+For the first slice, a trusted launcher writes exactly one fixed-cap typed attempt-bound completion
+frame containing bounded inline JSON to a dedicated port that the unprivileged workload cannot own.
+Before implementation, the protocol freezes separate exact source, canonical-input, completion-
+frame, and JSON-payload caps plus per-channel role, version, attempt, registration/plan, runtime-
+profile, length, digest, terminal-status, and commit-trailer semantics. The launcher writes the
+commit trailer only after the complete payload; every channel fails rather than resizing. The host
+continuously drains cap-plus-one and never treats stream EOF as completion. The Supervisor validates
+framing, binding, limits, JSON, and the separate runtime, input, runner-lifecycle, result, and
+teardown dispositions. Runner exit status is never workload success, and the accepted record is
+guest-reported completion—not attestation of an uncompromised guest kernel or correct execution.
+
+When file artifacts are added, the Supervisor filesystem gate accepts only declared fixed output
+slots, bounded counts/bytes, regular files, safe fixed paths, and expected storage semantics. A
+disposable bounded filesystem-image parser rejects symlinks, hard-link tricks, devices, sockets,
+FIFOs, sparse-file abuse, malformed metadata, and undeclared output. The Supervisor never delivers
+content directly to the agent.
 
 The Broker content gate performs bounded UTF-8/JSON and later JSONL/text/CSV validation, protects UI
 rendering from formula, terminal, bidi, and HTML hazards, stores user content, and returns either a
@@ -305,30 +326,40 @@ See [Protocol Object Model](protocol/OBJECT_MODEL.md).
 
 ## Cryptographic and serialization profile
 
-The proposed baseline, subject to Gate A, is:
+Gate A rejected the tested RFC 8785/JWS direction after a real Swift/Foundation number
+representation disagreement. Gate A2 conditionally passed a bounded deterministic-CBOR/COSE_Sign1
+profile across Go, Swift, and TypeScript. ADR-0019 therefore proposes this internal security-object
+baseline, subject to its production hardening conditions:
 
 - SHA-256 content identities;
 - hardware-backed P-256 ECDSA keys where supported;
-- ES256 JWS semantics with fixed 64-byte `R || S` signatures on the wire;
-- RFC 8785 JSON Canonicalization Scheme over strict I-JSON-compatible objects;
-- JWS JSON serialization with a protected-header allowlist;
-- explicit object/media type, schema version, key ID, algorithm, purpose, audience, installation,
-  epoch, and state binding.
+- RFC 8949 deterministic CBOR with closed, object-specific CDDL maps;
+- tagged RFC 9052 COSE_Sign1 envelopes with embedded payloads;
+- ES256 with exact 64-byte `R || S` signatures on the wire;
+- exact protected headers for algorithm, object/version media type, and bounded byte-string key ID;
+- an empty unprotected-header map and no dynamic key-discovery headers;
+- explicit object type, schema version, purpose, audience, installation, epoch, and state binding.
 
 Mandatory rules include:
 
-- reject duplicate keys before ordinary object decoding;
+- reject duplicate keys, indefinite lengths, invalid UTF-8, unknown tags/fields, floats, and
+  non-preferred encodings before ordinary object processing;
 - verify canonical-on-wire payload bytes rather than silently normalizing alternate encodings;
 - constrain integers to an exactly interoperable range or encode large counters as canonical
   decimal strings;
-- reject `none`, algorithm mismatch, unknown `crit`, `jku`, `x5u`, embedded `jwk`, and unrelated
-  key-discovery mechanisms;
-- specify Swift/CryptoKit DER-to-raw conversion and one accepted high-S policy;
+- reject algorithm mismatch, unprotected headers, detached payloads, embedded keys/certificates,
+  URLs, DIDs, and unrelated key-discovery mechanisms;
+- reject DER signatures, accept either mathematically valid ECDSA S form, and never use signature
+  bytes as object or replay identity;
 - keep mutually exclusive signed object schemas and object-specific signing purposes;
-- use shared Unicode, numeric, signature, malformed, and cross-object confusion fixtures.
+- use shared byte-exact, numeric, signature, malformed, resource-bound, and cross-object confusion
+  fixtures;
+- retain exact registered payload bytes as authoritative instead of replacing them with
+  decode-and-re-encode output.
 
-Capsule will not implement ECDSA primitives. If maintained library behavior cannot meet these
-rules, a reviewed COSE/deterministic-CBOR profile is the leading fallback and requires an ADR.
+Capsule will not implement ECDSA primitives. The narrow CBOR/COSE wrappers and their dependencies
+must be reviewed and fuzzed before ADR-0019 can become Accepted. The public agent API remains strict
+JSON with a separate decoder and schema boundary.
 
 Not every content-addressed object is signed. Source, plan, policy, and artifact manifests can use
 hash identity because signed/registered parent objects bind them. Distributed runtime bundles,
@@ -439,9 +470,13 @@ resolve to trusted defaults during planning. Requests above a ceiling are reject
 clamped. The exact resolved values appear in the plan and approval view. A backend enforces each
 value exactly or refuses execution.
 
-The final v0 limit vocabulary is frozen only after Gate C. Candidate dimensions include raw
-request, source, inline input, wall time, enforceable CPU control, memory, process tree/PIDs,
-scratch/output storage, logs, artifact count, per-artifact bytes, and total artifact bytes.
+The Gate C readiness corpus supports a narrow limit vocabulary: exact wall time, per-stream retained
+console prefix, integer vCPU topology, closed workload-specific guest-RAM profiles, bounded port
+frames, physical scratch-image bytes, and—only for later file artifacts—artifact count,
+per-artifact logical bytes, total artifact logical bytes, and separate parser limits. CPU
+percentage/time, arbitrary RAM, and exact total host/VMM memory are unsupported. Backend-independent
+vocabulary can freeze before the remaining P0 gates; exact libkrun values freeze only after their
+mechanisms pass.
 
 ## Runtime bundles and profile evidence
 
@@ -453,8 +488,9 @@ Profile trust uses separate objects:
   evidence, with verdict, date, expiry, and limitations;
 - `ProfileRegistryEntry`: mutable local alias, activation state, accepted review authorities,
   limits, and backend compatibility;
-- `BackendValidationRecord`: exact bundle/backend/host/configuration control claims backed by
-  retained evidence.
+- `BackendValidationRecord`: explicit validation verdict and posture ceiling for exact bundle/
+  backend/host/configuration claims, known limitations, expiry/invalidation triggers, and retained
+  evidence. A P0 `development-admitted` verdict cannot authorize `validated-local`.
 
 Verifying a bundle signature attributes the exact manifest to an accepted publisher key; it does
 not activate or validate the bundle. The first bundle contains no third-party guest packages.
@@ -467,9 +503,23 @@ immutability, resource controls, process-tree kill, storage quotas, orphan disco
 evidence, management channels, unsupported controls, and validation-record digests.
 
 The Supervisor matches the plan to supported mechanisms; the backend cannot self-assert an
-authoritative tier. gVisor resource limits bind host cgroup/OCI configuration as well as `runsc`.
-Apple Container remains development posture until Gate C resolves its no-network, resource,
-transfer, management-channel, recovery, and teardown behavior.
+authoritative tier. The native libkrun/HVF candidate binds one signed App-Sandboxed VMM process to
+one attempt, records and verifies its PID/start/code identity before authorizing VM start, compiles
+out network, and disables implicit vsock. Its current spike is conditional evidence only: the
+pathname disk API has an unresolved same-user mutation race, the block-root path creates a
+`NullFs` virtiofs device, stock Bun lacks an evidenced no-subprocess/no-FFI profile, and current
+runtime bytes are not admissible. P0 will test a genuine inherited read-only root descriptor
+through `/dev/fd/N` and dedicated virtio-console ports for source/input and fixed-cap typed inline
+results. Root custody must separately pass attachment identity, frozen-object construction, and
+end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism. Runner exit is
+never guest success; guest-reported completion, input integrity, result validation, and teardown
+remain distinct evidence. The pinned multiport implementation's unchecked guest port IDs, non-stop-
+aware output wait, undocumented directional-FD convention, shared-status mutation, and partial-
+then-error handling are explicit P0 hazards, not trusted stream semantics. Filesystem-image parsing
+is a later artifact gate. gVisor resource limits bind the outer Linux worker, engine, host cgroup/OCI
+configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
+development-only because it has no supported durable VM/helper identity or restart reconciliation
+surface.
 
 Posture is recorded across independent dimensions:
 
@@ -534,9 +584,11 @@ Agent-visible classifications come from a smaller fixed allowlist than user/admi
 
 ## Verification strategy
 
-The immediate work is the disposable spike program, not production functionality. Each spike has a
-security hypothesis, exact environment, adversarial cases, pass/fail criteria, retained evidence,
-contract consequence, ADR decision, and disposal rule.
+The immediate work has two lanes: backend-independent product implementation against a hard-fenced
+fake backend, and the bounded fail-fast P0 program in the
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). Each remaining spike has a security
+hypothesis, exact environment, adversarial cases, pass/fail criteria, retained evidence, contract
+consequence, ADR decision, and disposal rule.
 
 After contract freeze, every implementation layer uses shared positive and negative fixtures.
 Every backend candidate then runs the same corpus across filesystem, process, network/IPC,
@@ -548,16 +600,20 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 
 ## Ordered implementation plan
 
-1. Finish the architecture and claim baseline.
-2. Run the blocking cryptographic, macOS authority, Apple Container, content-handle, Supervisor
-   language/privilege, and trust-transition spikes.
-3. Freeze contracts using the measured results.
-4. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
+1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
+2. Freeze backend-independent contracts using the measured results.
+3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-6. Add dependency-free Bun execution in development posture.
-7. Add immutable regular-file snapshots and broader bounded outputs.
-8. Validate exact Apple and gVisor configurations before stronger posture.
+4. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
+5. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
+   and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
+6. Add one dependency-free Bun inline-JSON vertical slice through the admitted libkrun/HVF
+   development profile, preserving Apple Containerization only as a regression fixture.
+7. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
+   bounded outputs.
+8. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
+   Containerization explicitly development-only unless a future supported lifecycle API reopens
+   its gate.
 9. Operationalize production TUF/update infrastructure.
 10. Evaluate optional Guardian and external witness mechanisms.
 
@@ -565,10 +621,13 @@ See [Roadmap](ROADMAP.md) for exit evidence.
 
 ## Blocking decisions
 
-- Final JCS/JWS versus fallback serialization profile
-- Exact macOS process, storage, IPC, Keychain, and privilege topology
-- Supervisor implementation language
-- Apple Container enforceable network/resource/storage/recovery mechanisms
+- Production review and freeze of the bounded deterministic-CBOR/object-specific COSE profiles
+- Distribution-package/session validation of the per-user macOS process, storage, XPC, Keychain,
+  and privilege topology
+- Exact libkrun/HVF runtime-authority restrictions, immutable root custody, `NullFs` disposition,
+  typed port transport/completion, resource, App Sandbox, installed-bundle, identity, and recovery
+  mechanisms before user bytes; disposable filesystem-image parsing before file artifacts
+- Exact OCI/gVisor worker, engine, runtime, resource, management, identity, and recovery mechanisms
 - Broker-to-Supervisor content-handle mechanism
 - Non-rollbackable or externally witnessed trust checkpoint, if required
 - Retention, encryption, garbage collection, and secure-deletion limitations

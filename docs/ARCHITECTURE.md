@@ -34,9 +34,9 @@ Status: intended architecture; none of these boundaries is implemented or valida
 │       ▲                              │                               │
 │       │ plan fetch, approval,        ▼                               │
 │       │ job-scoped content handles  Isolation backend               │
-│       │                         ├── Apple Container candidate        │
-│  Trusted Host Broker          ├── OCI + gVisor reference            │
-│  ├── native approval UI       └── future microVM                    │
+│       │                         ├── Apple Container dev backend      │
+│  Trusted Host Broker          ├── native libkrun/HVF candidate      │
+│  ├── native approval UI       └── OCI + gVisor comparison/fallback  │
 │  ├── user-presence key                 │                             │
 │  ├── file selection                    ▼                             │
 │  ├── user-content store          Disposable Bun guest               │
@@ -119,9 +119,19 @@ probe → prepare → create → stage → start → wait/inspect
       → terminate → collect → destroy → reconcile
 ```
 
-Apple Container is a macOS feasibility candidate, not an assumed production boundary. OCI plus
-gVisor is the Linux reference. Each exact backend and host configuration reports mechanisms,
-unsupported controls, management channels, recovery behavior, and retained validation evidence.
+Direct Apple Containerization is a macOS development backend, not a production boundary: Gate C
+found no supported durable host-side VM/helper identity or restart enumeration. The preferred
+native candidate is now one libkrun/Hypervisor.framework VMM process per attempt, gated by a
+durable-record-before-start handshake and verified with a PID/start/code-identity tuple. Its spike
+passed lifecycle mechanics conditionally, but the integrated readiness result found unresolved
+same-user block-image mutation and a guest-visible `NullFs` virtiofs device. The reconciled first
+slice proposes genuine read-only descriptor custody for the trusted root plus bounded
+virtio-console ports for source, inline input, completion, and inline JSON output. Those mechanisms,
+stock-Bun authority restrictions, complete installed distribution, and admissible release bytes
+remain P0 hypotheses, not validated controls. Filesystem-image output parsing is deferred until
+file artifacts. OCI plus gVisor remains an independent candidate and contingency. Each exact
+backend reports mechanisms, unsupported controls, management channels, recovery behavior, and
+retained validation evidence.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
@@ -255,7 +265,8 @@ The independent adapter boundaries are:
 
 - client adapter: MCP, CLI, SDK, or future HTTP;
 - runtime adapter: Bun, Node, or Deno;
-- isolation backend: fake lifecycle, Apple Container, OCI/gVisor, or future microVM;
+- isolation backend: fake lifecycle, Apple development-only Containerization, native
+  libkrun/Hypervisor.framework candidate, OCI/gVisor comparison/contingency, or future microVM;
 - platform key/UI/IPC provider: native macOS first, later other operating systems;
 - external trust provider: default Capsule TUF repository or pinned self-hosted authorities.
 

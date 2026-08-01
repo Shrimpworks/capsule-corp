@@ -1,6 +1,7 @@
 # Installation Trust
 
-Status: intended design; Gate B and Gate F must validate platform behavior.
+Status: intended design; Gate B/F mechanism and process-fault evidence is observed, while product
+store, installer, distribution, and power-loss validation remain pending.
 
 ## Installation identity
 
@@ -74,6 +75,18 @@ Receipts must state which mechanism, if any, was active.
 A general shared app group is not used merely for convenience. Cross-component data moves through
 authenticated typed IPC or narrow handles.
 
+A stable data-protection Keychain access group is a Team/profile/entitlement boundary, not an
+exact-build or trust-epoch boundary. Gate B demonstrated that a stale same-team Broker rejected by
+an enrolled code-directory hash could still read a new group item and use a new Secure Enclave key
+in its historical group. Exact XPC requirements do not revoke Keychain membership.
+
+The preferred v0 design therefore creates a fresh group and non-migrated key for every
+identity-changing security epoch. Old/new cross-use denial, create-if-absent fingerprint binding,
+logical replacement, physical retirement, rollback/forward-repair boundaries, component
+acceptance, and modeled/provisioned process death passed. Shipping adoption remains conditional on
+the installed Developer ID package, profile capacity, locked-Keychain, restore, migration, and
+power-loss matrices. See ADR-0021.
+
 ## Development builds
 
 Unsigned, ad-hoc, locally signed, or unrecognized builds default to local `development`
@@ -103,8 +116,11 @@ The Supervisor parses this bounded object rather than general TUF metadata durin
 ```text
 stable
   → preparing-update
+  → prepared
+  → swapping
   → pending-verification
   → finalizing-epoch
+  → awaiting-component-acceptance
   → stable
 
 failure paths:
@@ -117,8 +133,10 @@ No attempt starts while a component-changing transition is incomplete. The daemo
 
 ## Key lifecycle
 
-- Operational-key rotation creates a new authorization sequence and marks the old key replaced or
-  revoked.
+- An identity-changing security epoch creates a fresh component access group, fresh non-migrated
+  Secure Enclave key, and exact public-key authorization. The old key is logically rejected at the
+  epoch commit, physically retired before attempts re-enable, and never replaced inside a stale
+  component's historical group.
 - Installation-root use is rare, explicit, and auditable.
 - Approval keys require fresh user presence for each v0 approval.
 - Supervisor evidence keys are background-usable only by the enrolled Supervisor identity.

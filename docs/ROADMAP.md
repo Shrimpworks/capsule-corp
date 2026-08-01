@@ -22,13 +22,21 @@ Exit evidence:
 
 ## Phase 1: blocking feasibility spikes
 
+Status: initial decision spikes and all five Gate C implementation-readiness tracks completed for
+the currently available host/account environment. Gate C produced a required backend pivot and a
+conditional native candidate, plus explicit blockers for the exact native profile. Session, MDM,
+power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
+rather than reasons to delay backend-independent contract implementation.
+
 Run bounded, disposable prototypes in parallel where practical:
 
-- Go/Swift/TypeScript RFC 8785 plus JWS ES256 interoperability and strict-decoder behavior.
+- Go/Swift/TypeScript canonical signing interoperability: record the RFC 8785/JWS failure and test
+  the bounded deterministic-CBOR/COSE fallback.
 - macOS XPC peer requirements, dynamic validation, Keychain/access-group isolation, and protected
   storage separation.
-- Apple Container network, filesystem, resource, management-channel, orphan-recovery, and teardown
-  controls.
+- Apple Container and direct Containerization network, filesystem, resource, management-channel,
+  orphan-recovery, identity, and teardown controls; a libkrun/HVF native follow-up; and an
+  OCI/gVisor contingency harness.
 - Broker-to-Supervisor immutable content-handle transfer without daemon content access or live user
   mounts.
 - Supervisor language, per-user versus privileged process model, and need for any tiny launcher.
@@ -39,9 +47,29 @@ Exit evidence:
 - Every spike has recorded setup, exact platform/tool versions, adversarial cases, results,
   limitations, and a decision.
 - Daemon key/content/backend access attempts fail in the macOS prototype.
+- Stale same-team access to replacement operational keys is either denied by a retained mechanism
+  or explicitly blocks the affected update/rotation posture.
 - Exact enforceable backend controls and unsupported limits are known.
 - Cryptographic implementations agree or a documented alternative is selected.
 - Resulting ADRs and contract vocabulary are updated before schema freeze.
+
+Recorded outcome: bounded CBOR/COSE, macOS authority separation, release-key transitions, installed
+per-user services, content custody, and trust-transition ordering passed conditionally. Both stock
+Apple Container and direct Containerization failed the production lifecycle gate. libkrun/HVF
+remains the lead native candidate under evaluation, and its readiness tracks passed mechanics, but
+the exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
+completion, installed distribution, and release-byte admission also remain open. The post-track P0
+reconciliation adds stock-Bun authority closure, proposes bounded console ports for source/input
+and inline results, and defers filesystem-image output parsing until file artifacts. OCI plus
+gVisor remains independent; only its surrounding OCI/runc harness has run, so gVisor itself is
+unvalidated.
+
+Gate C now permits freezing backend-independent identifiers, exact-or-refused limits, typed
+admission and terminal classifications, and a fake backend that creates no guest. It does not
+permit freezing libkrun paths/devices, arbitrary CPU or memory semantics, runner-exit success, the
+current runtime manifest, or a stronger posture. See the
+[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md) and
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
 See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
@@ -50,6 +78,8 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 - Replace the mixed `Job` schema with narrow `JobProposal` semantics.
 - Add schemas for plan, registration, approval, attempt, trust snapshot, integrity assessment,
   transcript, artifact manifest, agent summary, and composed receipt.
+- Add closed CDDL and byte-exact fixtures for every canonically registered or signed internal
+  security object; do not generalize from the first `ApprovalGrant` candidate.
 - Define semantic source-path canonicalization and logical input/output slots.
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
@@ -96,23 +126,50 @@ Exit evidence:
 
 ## Phase 5: dependency-free Bun development execution
 
+- Close the five reconciled P0 Gate C campaigns: stock-Bun runtime-authority closure, immutable
+  runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
+  bounded inline JSON, and an admissible complete installed development bundle.
+- Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
+  and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
+  trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
+  EOF, or inferring success from runner exit.
+- Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
+  distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
+  allowlist before any real-backend implementation.
 - Build one exact package-free runtime bundle.
-- Execute one JSON-in/JSON-out job through the selected macOS backend path.
+- Execute one JSON-in/JSON-out job through the libkrun/HVF candidate in explicit development
+  posture, including its durable-record-before-start lifecycle, inherited read-only root custody,
+  and bounded console-port data path.
 - Deny network and all ambient host resources using the proven mechanisms.
 - Bind source, input, runtime, backend, controls, output, integrity evidence, and teardown into the
   attempt transcript.
 
 Exit evidence:
 
+- Concurrent same-user mutation cannot change approved bytes observed by the guest, and the exact
+  accepted device surface has a retained disposition and corpus. Runtime-root custody separately
+  passes stable attachment identity, frozen-object construction, and adversarial end-to-end
+  custody; `/dev/fd/N` alone does not pass.
+- Guest success does not depend on VMM exit status, and no inline result is released without a
+  valid attempt-bound frame, bounded JSON validation, and complete terminal evidence.
+- The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
+  environment-file, and package-install path through a construction-level closure argument, source
+  review, deliberate capability-restoration mutations, and the accepted adversarial corpus.
 - The exact configuration passes the minimum development attack suite.
 - Unsupported controls refuse execution rather than being silently approximated.
-- The backend remains clearly labeled development.
+- The backend remains clearly labeled development until its exact profile validation record passes.
+- No v0 profile depends on host-root execution, a separate-owner host service, or a privileged host
+  helper; failure to close no-host-root custody rejects libkrun for v0 rather than silently
+  expanding the boundary.
+- An early installed harness informs topology, but final admission rebuilds the selected mechanisms
+  and reruns every affected P0 gate on the exact signed/notarized bytes.
 
 ## Phase 6: regular-file snapshot vertical slice
 
 - Implement native file selection and immutable regular-file data-fork snapshots.
 - Transfer job-scoped handles to the Supervisor without daemon content access.
-- Add bounded scratch/output storage and JSON/JSONL/text artifacts, then CSV.
+- Add bounded scratch/output storage and a disposable bounded filesystem-image parser before
+  JSON/JSONL/text artifacts, then CSV.
 - Add audience-controlled release and separate content grants.
 - Complete CLI and MCP adapters over the same daemon protocol.
 
@@ -124,11 +181,22 @@ Exit evidence:
 
 ## Phase 7: authoritative validation
 
-- Implement the OCI plus gVisor Linux backend.
-- Run the complete shared attack corpus against exact Apple and gVisor configurations.
-- Build runtime SBOM, provenance, review attestation, registry, and backend validation records.
-- Test runtime-integrity failure, update, repair, cancellation, restart, orphan, and teardown paths.
-- Measure startup, CPU, memory, storage, I/O, and cleanup behavior.
+- Compose the native libkrun/HVF candidate's independently observed storage, console, timeout,
+  installed-recovery, hostile-guest, completion, runtime-authority, parser, and release controls in
+  the applicable exact profiles.
+- Inject process death, ENOSPC/I/O failure, corruption, and partial completion at every durable and
+  external side-effect edge; add real APFS/power-interruption, sleep/wake, logout/login, reboot,
+  fast-user-switch, locked-Keychain, update, and clean-host cases.
+- Run the complete shared attack corpus against the exact Linux worker, engine, OCI, cgroup,
+  `runsc`/shim, network, storage, output, and recovery configuration for independent comparison.
+- Retain Apple Containerization only as a separately labeled development backend and regression
+  target unless a future supported durable lifecycle API reopens its gate.
+- Build runtime SBOM, two-builder provenance, corresponding-source/license publication, review
+  attestation, registry, and backend validation records; exercise disable, revocation, update,
+  repair, and explicit rollback.
+- Test runtime-integrity failure, cancellation, restart, orphan, parser failure, teardown ambiguity,
+  repeated concurrency, cross-job state, and long-run cleanup paths.
+- Measure startup, thermal/CPU/RSS, storage, I/O, descriptor/process leakage, and cleanup behavior.
 
 Exit evidence:
 

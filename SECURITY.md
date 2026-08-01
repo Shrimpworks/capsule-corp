@@ -37,7 +37,8 @@ certification, implementation, or guarantees. Current schemas/types are pre-free
 - Inputs are immutable content identities and scoped handles rather than live host paths.
 - Exact user-owned resource values are enforced or the attempt is refused.
 - Every post-create path terminates/destroys/reconciles the guest; unknown teardown is not success.
-- Filesystem safety and bounded content validation gate all guest output.
+- Bounded typed validation gates inline results; filesystem safety and disposable bounded parsing
+  additionally gate later file artifacts.
 - User content stays Broker-owned; the agent receives a fixed minimized summary by default.
 - Rich parsing stays out of the daemon and Supervisor.
 

@@ -12,3 +12,7 @@ Do not extend the current `Job` capability union as a shortcut. The replacement 
 schema-freeze gates are documented in
 [Protocol Object Model](../docs/protocol/OBJECT_MODEL.md) and
 [Feasibility Spikes](../docs/FEASIBILITY_SPIKES.md).
+
+The [`cddl/`](cddl/) directory now contains the first candidate canonical-CBOR contract derived
+from Gate A2. Those files are internal security-object profiles, not replacements for the public
+JSON API, and remain pre-freeze while ADR-0019 is Proposed.

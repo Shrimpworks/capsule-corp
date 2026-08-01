@@ -93,6 +93,22 @@ Defending against a compromised administrator, kernel, hypervisor, Secure Enclav
 authorized Supervisor is outside local containment guarantees. An optional independent witness may
 detect some historical inconsistency; it does not restore complete local protection.
 
+### Same-user attacker tiers
+
+`Same-user` is not a complete claim without naming the authority already held by the attacker.
+Capsule separates three tiers:
+
+| Tier | Included capability | Claim treatment |
+| --- | --- | --- |
+| Baseline same-user attacker | Arbitrary unprivileged process under the same login; ordinary same-UID pathname/directory access; races, links, replacement, and observation; retained writable descriptors/mappings to original user files; malformed IPC; component impersonation and attach attempts | The v0 boundary must resist it. A new custody object is not custodied while this attacker can acquire or retain writable authority to it. |
+| Elevated user-granted attacker | Successful task-port/debug attachment, Full Disk Access, explicit foreign-container consent, private VFS privilege, or another broad user-authorized capability | Separate elevated-adversary posture. Shipping denial/fail-closed cases remain required, but Capsule makes no general resistance claim without exact evidence for that capability. |
+| Trusted-platform compromise | Malicious root/administrator, SIP bypass, kernel/hypervisor compromise, or an authorized compromised Supervisor | Outside local containment guarantees. |
+
+The baseline attacker may retain writable authority to an original selected file. Broker snapshotting
+must create a new object for which that authority cannot be acquired. Shipping enrolled components
+use hardened runtime without `com.apple.security.get-task-allow`; attempted attachment belongs in
+the exact installed corpus, while a successful task port moves the case to the elevated tier.
+
 ### Agent to daemon
 
 The agent-facing transport exposes proposal, fixed status, authorized cancellation, and fixed
@@ -142,6 +158,31 @@ The guest is hostile. External isolation controls syscalls, filesystem, processe
 resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs
 untrusted Bun directly on the host.
 
+### Guest completion evidence scope
+
+For host containment, the entire guest—including its kernel—is hostile and must remain inside the
+VMM boundary. For ordinary completion semantics, the exact admitted guest kernel and trusted
+launcher are part of the runtime TCB. They may report one syntactically valid attempt-bound
+completion envelope; Capsule does not claim that report survives guest-kernel compromise.
+
+Attempt/profile binding, length/digest checks, and commit-trailer framing reject stale, torn, or
+ordinary user-process-forged records. They are not attestation: a malicious guest kernel can observe
+or misuse guest-held authority. The Supervisor transcript therefore records host-observed profile,
+device/port topology, limits, runner lifecycle, envelope validity, bounded-result disposition, and
+teardown, with the explicit limitation that workload completion is guest-reported. It does not
+prove correct execution, user intent, or an uncompromised guest kernel.
+
+The launcher is a distinct admitted guest process, not the current experiment's `exec`-and-replace
+shim. It fully verifies source/input before starting Bun, withholds the completion endpoint and node,
+uses a fixed child FD/argv/environment/cwd manifest, bounds the child result, waits for the exact
+child tree, and writes the commit trailer last. The host runner separately starts with an exact
+role-specific FD allowlist because a VMM compromise acquires any ambient descriptor it inherits.
+
+The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
+framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/
+open/close ordering, or cancellation/backpressure behavior. The exact pinned implementation and any
+fixes require their own sanitizer/coverage corpus and fail-closed teardown evidence.
+
 ### Content and egress
 
 The Broker owns persisted user content. The Supervisor receives only transient attempt-scoped
@@ -187,7 +228,8 @@ enters `repair-required` rather than accepting whichever components start.
 
 - No arbitrary host path, live user-file mount, credential, environment, descriptor, or host socket
   reaches the guest.
-- Root is immutable; input, scratch, and output are separate and bounded.
+- Root is immutable under host custody; first-slice source/input and completion/result ports,
+  scratch, and later artifact output are separate and bounded.
 - Network denial includes TCP, UDP, DNS, IPv4/IPv6, loopback expectations, metadata services, Unix
   sockets, vsock/management channels, and inherited host IPC.
 - Process isolation prevents host/other-job signal, inspect, attach, and state reuse.
@@ -289,16 +331,31 @@ runtime bugs, fork/output/disk/memory exhaustion, cancellation escape, writable 
 orphaned guests. External backend mechanisms, fresh state, exact capability matching, durable
 handles, and a retained attack corpus are mandatory.
 
-Apple Container remains development posture until its no-network/resource/storage/management/
-recovery semantics are proven. gVisor validation binds its host cgroup/OCI configuration as well as
-the `runsc` binary.
+Apple Containerization remains development-only after Gate C found no supported durable host-side
+VM/helper identity or restart enumeration; ambiguous controller loss cannot produce ordinary
+success or capability release. The native libkrun/HVF candidate makes one signed VMM process the
+VM lifecycle object and gates start on a durable PID/start/code-identity record. That reduces the
+hidden-helper risk but does not trust PID/path alone or prove safety against a malicious guest,
+VMM exploit, output flood, or untested disk/recovery path. Its readiness corpus additionally found
+that a same-user process could mutate a live raw backing image and that the block-root path exposed
+a `NullFs` virtiofs device without a host-backed share. Those are unresolved custody and VMM-surface
+risks, not evidence of an observed escape. The reconciled first slice also treats stock Bun's
+subprocess and FFI surfaces as an unresolved authority mismatch and proposes bounded dedicated
+virtio-console ports for source/input and typed inline completion. The pinned guest kernel and
+trusted launcher are part of that profile's TCB; an in-guest completion record is not attestation
+against a compromised guest kernel. gVisor validation must bind its
+host/outer-VM, engine, cgroup/OCI configuration, Sentry/gofer identity, management endpoints, and
+exact `runsc` binary. The existing runc control run validates only the surrounding harness, not
+gVisor's isolation boundary.
 
 ### Input and output content
 
 Risks include path traversal, symlink/hard-link/special-file races, mutation, archive/parser bugs,
 sparse files, terminal escapes, CSV formula injection, bidi/HTML spoofing, output flood, and content
 release to the agent. v0 snapshots exact regular-file bytes, assigns paths, separates filesystem and
-content gates, bounds parsers, and defers rich formats to another sandbox.
+content gates, bounds parsers, and defers rich formats to another sandbox. The first inline JSON
+slice avoids a guest filesystem-image parser by returning one bounded typed result frame; that does
+not waive parser isolation before file artifacts are supported.
 
 Generated code may intentionally encode complete granted input into allowed output, size, timing,
 state, or repeated calls. Capsule warns users and budgets channels but does not claim
@@ -331,7 +388,7 @@ not concealed by the presence of a valid user approval.
 | Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume |
 | Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
 | Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |
-| Process/runtime | workers/fork bomb, signals, inspector, orphan processes, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse |
+| Process/runtime | workers/fork bomb, signals, inspector, orphan processes, subprocess APIs, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse, completion-descriptor forgery |
 | Resources | busy loop, CPU semantics, heap/native OOM, PID exhaustion, disk/log/output flood, cancellation tree kill |
 | Isolation | host credentials/env/files, cross-job state, writable caches, backend escape, malicious runtime/image/config |
 | Egress | undeclared/oversized/malformed output, agent content access, metadata/timing channels, guest strings in errors/logs |

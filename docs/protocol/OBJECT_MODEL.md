@@ -22,6 +22,11 @@ Known mismatches include:
 Do not extend the current unions to add more future authority. Phase 2 replaces them after the
 blocking spikes establish the exact feasible vocabulary.
 
+Gate A2 has produced a first candidate CDDL contract for `ApprovalGrant` v0 under
+[`schemas/cddl/`](../../schemas/cddl/). It fixes the tested deterministic-CBOR/COSE shape but does
+not freeze the final field set or promote the experiment to production code. ADR-0019 records the
+remaining acceptance conditions.
+
 ## Object inventory
 
 ### Untrusted/public request objects
@@ -152,7 +157,7 @@ Guest paths never carry authority and do not appear in approval as agent-selecte
 | RuntimeBundleManifest | Publisher signature | Distributed artifact origin/integrity |
 | ProfileReviewAttestation | Reviewer signature | Independent verdict for exact bundle |
 | ProfileRegistryEntry | Local policy identity/digest | Mutable activation must remain separate from bundle |
-| BackendValidationRecord | Validation authority signature | Exact backend/bundle/host claim backed by evidence |
+| BackendValidationRecord | Validation authority signature | Explicit verdict/posture ceiling for exact backend/bundle/host/configuration claims, limitations, expiry, invalidation triggers, and evidence; `development-admitted` never implies `validated-local` |
 | KeyAuthorization | Installation/trust-authority signature | Grants purpose to a public key |
 | InstallationManifest/epoch | Installation-root-authorized signature | Local component/trust continuity |
 | ApprovalGrant | Approval-key signature | Human-authorization claim |

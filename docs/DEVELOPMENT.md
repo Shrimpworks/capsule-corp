@@ -5,7 +5,7 @@
 - Go 1.23 or newer, as declared by `go.mod`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`
-- Bun 1.3.14 for runtime-profile experiments
+- Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile
 
 The runtime version used to execute guest jobs is independent of the Node.js version used for
 repository tooling.
@@ -96,15 +96,27 @@ Ordinary Go and TypeScript development does not require Linux. The planned backe
 
 - Native unit and contract tests on macOS and CI
 - Registered-plan and recovery tests against a fake backend before hostile guest execution
-- Disposable Apple Container capability probes on exact supported Apple silicon/macOS versions
+- Disposable direct Apple Containerization development runs on exact supported Apple silicon/macOS
+  versions
+- Native libkrun/Hypervisor.framework development runs only after an exact pinned, signed,
+  App-Sandboxed Apple-silicon profile closes its P0 readiness blockers
 - OCI plus gVisor tests on Linux CI or a dedicated Linux worker
 
-Apple Container may create the Linux lightweight VM for an individual job; contributors do not
-normally manage a permanent Linux VM. Its required no-network, resource, storage, management-
-channel, orphan-recovery, and teardown semantics are not assumed until the spike proves them. No
-development backend may execute untrusted Bun directly on the host. Until an exact backend
-configuration passes the documented attack corpus, receipts and UI must label its isolation posture
-`development`.
+Apple Containerization may create a lightweight Linux VM for a development job, but Gate C failed
+it as a production authority because a restarted Supervisor cannot durably identify or enumerate
+the exact VM/helper through supported public APIs. Controller loss therefore remains unresolved;
+the backend cannot produce ordinary success or release artifacts after ambiguity. No development
+backend may execute untrusted Bun directly on the host. The libkrun/HVF follow-up is the lead native
+candidate under evaluation after conditionally passing its first isolation and lifecycle corpus,
+but its follow-up tracks found unresolved immutable block custody and a guest-visible `NullFs`
+device.
+The P0 reconciliation additionally requires stock-Bun authority closure, narrows custody to the
+runtime root for the first slice, and proposes bounded console ports for source/input and typed
+inline JSON completion. Safe filesystem-image output parsing remains required before file artifacts,
+while complete release-byte admission and composed validation remain open. The retained spike
+runners are not a product development backend. Until one exact candidate profile passes the
+complete documented corpus, receipts and UI must label every executable backend posture
+`development`. See [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
 ## Security-sensitive changes
 

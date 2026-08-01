@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:conformance-manifest:v0",
+  "title": "Capsule contract conformance manifest v0",
+  "description": "Closed manifest for byte-exact passive contract fixtures. It grants no runtime authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifestVersion", "rules", "cases"],
+  "properties": {
+    "manifestVersion": {
+      "const": "capsule.conformance/v0"
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "stableName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"
+    },
+    "decision": {
+      "enum": ["accept", "reject"]
+    },
+    "variant": {
+      "enum": [
+        "ordinary",
+        "exact-maximum",
+        "cap-plus-one",
+        "malformed",
+        "nonzero",
+        "all-zero",
+        "wrong-domain"
+      ]
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "variant"],
+      "properties": {
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "variant": {
+          "$ref": "#/$defs/variant"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "source", "description", "requiredCases"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableName"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "requiredCases": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/requirement"
+          }
+        }
+      }
+    },
+    "fixtureReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "byteLength"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "^[a-z0-9](?:[a-z0-9._/-]{0,254}[a-z0-9._-])?$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "scalarRole": {
+      "enum": [
+        "installation",
+        "registration",
+        "supervisor",
+        "source-manifest",
+        "inline-input",
+        "execution-plan",
+        "trust-epoch"
+      ]
+    },
+    "context": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "const": "none"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "scalarKind", "expectedRole", "providedRole"],
+          "properties": {
+            "kind": {
+              "const": "scalar-role"
+            },
+            "scalarKind": {
+              "enum": ["id", "digest"]
+            },
+            "expectedRole": {
+              "$ref": "#/$defs/scalarRole"
+            },
+            "providedRole": {
+              "$ref": "#/$defs/scalarRole"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "fixture"],
+          "properties": {
+            "kind": {
+              "const": "fixture"
+            },
+            "fixture": {
+              "$ref": "#/$defs/fixtureReference"
+            }
+          }
+        }
+      ]
+    },
+    "classification": {
+      "enum": [
+        "MALFORMED",
+        "UNSUPPORTED",
+        "SCHEMA",
+        "SEMANTIC",
+        "POLICY",
+        "BINDING",
+        "CONTROL",
+        "DOMAIN",
+        "AUTHENTICATION",
+        "STALE",
+        "CAPACITY"
+      ]
+    },
+    "owner": {
+      "enum": [
+        "media-type-parser",
+        "public-raw-decoder",
+        "job-proposal-schema",
+        "job-proposal-semantic-validator",
+        "supervisor-plan-predecoder",
+        "supervisor-registration-predecoder",
+        "shared-scalar-validator",
+        "role-binding-validator",
+        "supervisor-registration-state",
+        "channel-authentication"
+      ]
+    },
+    "expectedAccept": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "classification", "owner", "authorityStateChanged"],
+      "properties": {
+        "decision": {
+          "const": "accept"
+        },
+        "classification": {
+          "type": "null"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "authorityStateChanged": {
+          "type": "boolean"
+        }
+      }
+    },
+    "expectedReject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "classification", "owner", "authorityStateChanged"],
+      "properties": {
+        "decision": {
+          "const": "reject"
+        },
+        "classification": {
+          "$ref": "#/$defs/classification"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "authorityStateChanged": {
+          "type": "boolean"
+        }
+      }
+    },
+    "implementationStatus": {
+      "enum": ["verified", "pending", "not-applicable"]
+    },
+    "implementations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture-integrity", "go", "typescript", "swift"],
+      "properties": {
+        "fixture-integrity": {
+          "const": "verified"
+        },
+        "go": {
+          "$ref": "#/$defs/implementationStatus"
+        },
+        "typescript": {
+          "$ref": "#/$defs/implementationStatus"
+        },
+        "swift": {
+          "$ref": "#/$defs/implementationStatus"
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "ruleIds",
+        "object",
+        "wireFormat",
+        "mediaType",
+        "variant",
+        "fixture",
+        "context",
+        "expected",
+        "implementations"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/stableName"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "ruleIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/stableName"
+          }
+        },
+        "object": {
+          "enum": [
+            "JobProposal",
+            "ExecutionPlan",
+            "PlanRegistration",
+            "CandidateId",
+            "Sha256Digest"
+          ]
+        },
+        "wireFormat": {
+          "enum": ["json", "cbor", "media-type", "raw-bytes"]
+        },
+        "mediaType": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "variant": {
+          "$ref": "#/$defs/variant"
+        },
+        "fixture": {
+          "$ref": "#/$defs/fixtureReference"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "expected": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/expectedAccept"
+            },
+            {
+              "$ref": "#/$defs/expectedReject"
+            }
+          ]
+        },
+        "implementations": {
+          "$ref": "#/$defs/implementations"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "expected": {
+                "type": "object",
+                "properties": {
+                  "decision": {
+                    "const": "reject"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "ruleIds": {
+                "type": "array",
+                "maxItems": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

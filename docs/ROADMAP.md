@@ -56,8 +56,8 @@ Exit evidence:
 Recorded outcome: bounded CBOR/COSE, macOS authority separation, release-key transitions, installed
 per-user services, content custody, and trust-transition ordering passed conditionally. Both stock
 Apple Container and direct Containerization failed the production lifecycle gate. libkrun/HVF
-remains the preferred native candidate, and its readiness tracks passed several mechanics, but the
-exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
+remains the lead native candidate under evaluation, and its readiness tracks passed mechanics, but
+the exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
 completion, installed distribution, and release-byte admission also remain open. The post-track P0
 reconciliation adds stock-Bun authority closure, proposes bounded console ports for source/input
 and inline results, and defers filesystem-image output parsing until file artifacts. OCI plus
@@ -129,6 +129,13 @@ Exit evidence:
 - Close the five reconciled P0 Gate C campaigns: stock-Bun runtime-authority closure, immutable
   runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
   bounded inline JSON, and an admissible complete installed development bundle.
+- Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
+  and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
+  trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
+  EOF, or inferring success from runner exit.
+- Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
+  distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
+  allowlist before any real-backend implementation.
 - Build one exact package-free runtime bundle.
 - Execute one JSON-in/JSON-out job through the libkrun/HVF candidate in explicit development
   posture, including its durable-record-before-start lifecycle, inherited read-only root custody,
@@ -140,14 +147,22 @@ Exit evidence:
 Exit evidence:
 
 - Concurrent same-user mutation cannot change approved bytes observed by the guest, and the exact
-  accepted device surface has a retained disposition and corpus.
+  accepted device surface has a retained disposition and corpus. Runtime-root custody separately
+  passes stable attachment identity, frozen-object construction, and adversarial end-to-end
+  custody; `/dev/fd/N` alone does not pass.
 - Guest success does not depend on VMM exit status, and no inline result is released without a
   valid attempt-bound frame, bounded JSON validation, and complete terminal evidence.
 - The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
-  environment-file, and package-install path in the accepted corpus.
+  environment-file, and package-install path through a construction-level closure argument, source
+  review, deliberate capability-restoration mutations, and the accepted adversarial corpus.
 - The exact configuration passes the minimum development attack suite.
 - Unsupported controls refuse execution rather than being silently approximated.
 - The backend remains clearly labeled development until its exact profile validation record passes.
+- No v0 profile depends on host-root execution, a separate-owner host service, or a privileged host
+  helper; failure to close no-host-root custody rejects libkrun for v0 rather than silently
+  expanding the boundary.
+- An early installed harness informs topology, but final admission rebuilds the selected mechanisms
+  and reruns every affected P0 gate on the exact signed/notarized bytes.
 
 ## Phase 6: regular-file snapshot vertical slice
 

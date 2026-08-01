@@ -93,6 +93,22 @@ Defending against a compromised administrator, kernel, hypervisor, Secure Enclav
 authorized Supervisor is outside local containment guarantees. An optional independent witness may
 detect some historical inconsistency; it does not restore complete local protection.
 
+### Same-user attacker tiers
+
+`Same-user` is not a complete claim without naming the authority already held by the attacker.
+Capsule separates three tiers:
+
+| Tier | Included capability | Claim treatment |
+| --- | --- | --- |
+| Baseline same-user attacker | Arbitrary unprivileged process under the same login; ordinary same-UID pathname/directory access; races, links, replacement, and observation; retained writable descriptors/mappings to original user files; malformed IPC; component impersonation and attach attempts | The v0 boundary must resist it. A new custody object is not custodied while this attacker can acquire or retain writable authority to it. |
+| Elevated user-granted attacker | Successful task-port/debug attachment, Full Disk Access, explicit foreign-container consent, private VFS privilege, or another broad user-authorized capability | Separate elevated-adversary posture. Shipping denial/fail-closed cases remain required, but Capsule makes no general resistance claim without exact evidence for that capability. |
+| Trusted-platform compromise | Malicious root/administrator, SIP bypass, kernel/hypervisor compromise, or an authorized compromised Supervisor | Outside local containment guarantees. |
+
+The baseline attacker may retain writable authority to an original selected file. Broker snapshotting
+must create a new object for which that authority cannot be acquired. Shipping enrolled components
+use hardened runtime without `com.apple.security.get-task-allow`; attempted attachment belongs in
+the exact installed corpus, while a successful task port moves the case to the elevated tier.
+
 ### Agent to daemon
 
 The agent-facing transport exposes proposal, fixed status, authorized cancellation, and fixed
@@ -141,6 +157,31 @@ validation record. A backend that cannot enforce a required value refuses the at
 The guest is hostile. External isolation controls syscalls, filesystem, processes, IPC, network,
 resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs
 untrusted Bun directly on the host.
+
+### Guest completion evidence scope
+
+For host containment, the entire guest—including its kernel—is hostile and must remain inside the
+VMM boundary. For ordinary completion semantics, the exact admitted guest kernel and trusted
+launcher are part of the runtime TCB. They may report one syntactically valid attempt-bound
+completion envelope; Capsule does not claim that report survives guest-kernel compromise.
+
+Attempt/profile binding, length/digest checks, and commit-trailer framing reject stale, torn, or
+ordinary user-process-forged records. They are not attestation: a malicious guest kernel can observe
+or misuse guest-held authority. The Supervisor transcript therefore records host-observed profile,
+device/port topology, limits, runner lifecycle, envelope validity, bounded-result disposition, and
+teardown, with the explicit limitation that workload completion is guest-reported. It does not
+prove correct execution, user intent, or an uncompromised guest kernel.
+
+The launcher is a distinct admitted guest process, not the current experiment's `exec`-and-replace
+shim. It fully verifies source/input before starting Bun, withholds the completion endpoint and node,
+uses a fixed child FD/argv/environment/cwd manifest, bounds the child result, waits for the exact
+child tree, and writes the commit trailer last. The host runner separately starts with an exact
+role-specific FD allowlist because a VMM compromise acquires any ambient descriptor it inherits.
+
+The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
+framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/
+open/close ordering, or cancellation/backpressure behavior. The exact pinned implementation and any
+fixes require their own sanitizer/coverage corpus and fail-closed teardown evidence.
 
 ### Content and egress
 

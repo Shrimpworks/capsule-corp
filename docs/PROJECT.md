@@ -133,7 +133,7 @@ exercises the authority boundaries successfully.
 - Direct Apple Containerization is retained only as a macOS development backend after failing the
   durable identity/recovery gate. A follow-up libkrun/Hypervisor.framework spike conditionally
   passed exact-process lifecycle, isolation, App Sandbox, controller-crash, and Bun checks, making
-  it the preferred native Apple candidate. Its readiness tracks and the subsequent independent P0
+  it the lead native Apple candidate under evaluation. Its readiness tracks and the subsequent P0
   review found that runtime-authority closure, immutable runtime-root custody, the block-root
   `NullFs` surface, typed port transport/completion, and complete installed-bundle admission must
   close before one exact development profile freezes. Source/input and bounded inline JSON can use
@@ -142,7 +142,7 @@ exercises the authority boundaries successfully.
   until both exact profiles run the shared attack corpus.
 - Go remains the daemon language; Swift is preferred for the native Broker. Supervisor language and
   privilege remain gated by the backend adapter; the current macOS service evidence supports an
-  unprivileged per-user Swift component with no root helper.
+  unprivileged per-user Swift component with no host-root helper.
 
 ## Success criteria
 

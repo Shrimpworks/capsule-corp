@@ -1,6 +1,7 @@
 # Gate C implementation-readiness synthesis
 
 Date: 2026-07-31
+P0 plan last reconciled: 2026-08-01
 
 Status: completed cross-track synthesis. This document records spike decisions and coordination
 history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
@@ -15,7 +16,8 @@ directories remain ignored and disposable.
 The combined decision is:
 
 - continue backend-independent registered-plan, fake-backend, custody-ledger, and contract work;
-- retain libkrun/HVF as the preferred native Apple candidate for one eventual development profile;
+- retain libkrun/HVF as the lead native Apple candidate under evaluation for one eventual
+  development profile;
 - do not admit the currently built runtime bytes or freeze a libkrun execution profile yet; and
 - do not claim `validated-local`, production readiness, absence of a host share, graceful shutdown,
   exact host CPU/memory quotas, or safe output extraction.
@@ -132,6 +134,33 @@ The durable disposition, exact hypotheses, pass/fail branches, first-slice data 
 claims are in the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). These are research and
 planning conclusions, not additions to the completed spike evidence above.
 
+### Final preimplementation source review
+
+A fresh-context issues-only review of the reconciled plan and pinned upstream source completed on
+2026-08-01. It preserved the decision to begin backend-independent Phase 2–4 work and found four
+additional blockers before a real libkrun adapter receives user bytes:
+
+- pinned virtio-console control handling uses guest-supplied port IDs to index VMM port/queue state
+  without an evidenced bounds check, so P0-3 now includes the hostile control/queue/descriptor path;
+- the retained experiment launcher replaces itself with the workload, while the planned trusted
+  launcher must remain distinct, withhold completion authority, and commit only after exact child-
+  tree termination;
+- the host VMM runner needs an exact role-specific descriptor allowlist because App Sandbox does not
+  revoke ambient inherited descriptors; and
+- pinned console TX backpressure/shutdown and partial-error behavior cannot supply the required
+  bounded failure semantics without an exact fail-closed corpus or a governed patch.
+
+The same review corrected evidence sequencing: an early installed harness may test topology, but
+final admission rebuilds selected mechanisms and reruns affected P0 gates on final signed/notarized
+bytes. A P0 record is explicitly `development-admitted`, never `validated-local`. Bun denial now
+requires construction-level source/mechanism closure rather than a finite API corpus alone.
+
+Suspected impossibilities that source did not support were rejected: pinned implementation can
+construct one-directional ports when the unused FD is negative, raw block data uses positional I/O,
+both block opens use the configured `/dev/fd/N` string, and the ext4 parser remains correctly
+deferred until file artifacts. Directionality is still undocumented public behavior and therefore
+requires a pinned canary or governed API.
+
 ## Contract consequences
 
 The following backend-independent vocabulary is ready to implement and test with a fake backend:
@@ -168,24 +197,44 @@ claim.
    cannot do so, choose a governed patch/alternate runtime or explicitly revise the contract in a
    new ADR.
 2. **Immutable runtime-root custody:** test protected exclusive creation, a distinct genuine
-   read-only descriptor, closure of every writable alias/mapping, unlink, direct runner inheritance,
-   and `/dev/fd/N` under the exact installed App Sandbox profile. Include same-user pre-custody,
-   pathname, hard-link, mapping, debugger/task-port, crash, and recovery cases. A narrow FD-native
-   libkrun change is the fallback; failure of both reopens the native/no-root decision.
+   read-only descriptor, closure of every writable alias/mapping, unlink, final digest through that
+   exact descriptor, direct runner inheritance, and `/dev/fd/N` under the exact installed App
+   Sandbox profile. Separately pass stable attachment identity, frozen-object construction, and
+   adversarial end-to-end custody, including FD reuse/shared-state, same-user pre-custody, pathname,
+   hard-link, mapping, debugger/task-port attempt, crash, and recovery cases. A narrow FD-native
+   libkrun change is the fallback; failure of both rejects libkrun for v0.
 3. **`NullFs` disposition:** independently remove or validate the unexpected device and rerun the
-   exact device/cross-job corpus. Do not couple this admission decision to custody merely because
-   one fork could touch both mechanisms.
+   exact device/cross-job corpus. Accepted residual surface requires the complete guest-reachable
+   virtiofs/FUSE/queue/worker path, sanitizer fuzzing, retained coverage/limitations, and zero
+   unresolved high-severity findings—not a claim that fuzzing proved the surface bug-free. Do not
+   couple this admission decision to custody merely because one fork could touch both mechanisms.
 4. **Typed port transport and completion:** use dedicated bounded attempt-bound virtio-console
-   ports for source/input and one typed completion frame containing bounded inline JSON. Prove
-   descriptor/node isolation, framing, backpressure, forgery resistance, launcher failure,
-   stale/duplicate attempts, and separate integrity/teardown dispositions without network/vsock.
+   ports for source/input and one typed completion frame containing bounded inline JSON. Freeze
+   separate source, canonical-input, physical-frame, and JSON-payload caps plus per-channel role,
+   version, attempt, plan/profile, length/digest, and completion commit-trailer semantics before
+   implementation. Prove descriptor/node isolation, framing without EOF dependence, cap-plus-one
+   draining, partial writes, backpressure, reader death/stall, invalid/swapped descriptors, bounded
+   shutdown/forced teardown, forgery resistance, launcher failure, stale/duplicate attempts, and
+   separate integrity/teardown dispositions without network/vsock. Pinned upstream has known
+   unchecked guest port IDs, non-stop-aware transmit waiting, undocumented directional behavior,
+   shared-status mutation, and partial-then-error assumptions; patch or reject the transport if the
+   exact VMM/control/queue/descriptor and stream corpus cannot fail closed. Freeze a distinct
+   launcher that verifies inputs before child start, withholds completion authority, uses a closed
+   child manifest, waits for child-tree termination, and commits last. Start the host runner with an
+   exact descriptor allowlist and reject every unexpected inherited authority.
 5. **Admissible complete development bundle:** pin all build inputs, govern patches, produce the
    complete manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, and
    sign/notarize/staple/read back the complete Supervisor/runner/runtime/per-user-service topology
-   on clean hosts. A runner-only ticket does not pass.
+   on clean hosts. Use an early installed harness for topology assumptions, then rebuild and rerun
+   affected P0 gates on final bytes after the mechanisms are selected. A runner-only ticket or
+   early harness does not pass.
 
 The disposable bounded ext4/raw-image parser is deferred to the regular-file/file-artifact slice;
 it remains mandatory before any filesystem artifact is released.
+
+Host-root execution, a separate-owner host service, and a privileged host helper are prohibited for
+v0. If no-host-root custody cannot close, a future exception requires a new ADR; the spike may not
+silently widen privilege or the supported attacker tier.
 
 ### P1 — before `validated-local` or production claims
 

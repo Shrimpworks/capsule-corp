@@ -65,8 +65,8 @@ Regular-file snapshots and broader outputs follow after the authority and conten
 
 The first architecture and feasibility program is complete. It selected a bounded deterministic-
 CBOR/COSE direction, proved important macOS authority and recovery mechanics, rejected Apple
-Containerization as a production backend, and retained libkrun/HVF as the preferred native
-candidate without admitting it.
+Containerization as a production backend, and retained libkrun/HVF as the lead native candidate
+under evaluation without admitting it.
 
 Work now proceeds on two lanes:
 
@@ -100,15 +100,15 @@ site/                  Minimal project overview site
 
 - Go for the agent-facing daemon and orchestration.
 - Swift/native macOS for the Trusted Host Broker.
-- Supervisor language and privilege model selected by feasibility evidence; no root assumption.
+- Supervisor language and privilege model selected by feasibility evidence; no host-root assumption.
 - TypeScript for the protocol package, clients, adapters, and initial guest programs.
 - JSON Schema Draft 2020-12 for wire contracts after replacement/freeze.
 - Proposed SHA-256 + bounded deterministic CBOR/COSE Sign1 profile, gated by object-specific
   cross-language fixtures and review.
 - Secure Enclave/Keychain and XPC code requirements for compatible macOS authority boundaries.
 - Bun as the intended first dependency-free guest runtime, contingent on the P0 authority corpus.
-- Native libkrun/HVF as the preferred Apple candidate, Apple Containerization as development-only,
-  and OCI plus gVisor as an independent comparison/contingency.
+- Native libkrun/HVF as the lead Apple candidate under evaluation, Apple Containerization as
+  development-only, and OCI plus gVisor as an independent comparison/contingency.
 - TUF-style release/profile trust with compact verified local trust snapshots.
 - pnpm, TypeScript, Biome, Go tooling, Make, and GitHub Actions for development and CI.
 

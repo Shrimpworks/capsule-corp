@@ -262,16 +262,25 @@ source and input through dedicated bounded attempt-bound virtio-console ports. L
 stage dedicated volumes only after their custody and parser gates pass.
 
 The trusted runtime root is immutable under a proven host-custody mechanism, not only guest-read-
-only. Input transport, scratch, completion/result transport, and any later artifact output are
-separate and bounded. The Supervisor observes time, resources, cancellation, backend state, and
-transcript events.
+only. For the libkrun candidate, P0 separately proves stable attachment identity, frozen-object
+construction, and adversarial end-to-end custody. The finalized root digest is computed through the
+exact retained genuine read-only descriptor only after every writable alias/mapping is closed and
+the sole pathname is unlinked. Input transport, scratch, completion/result transport, and any later
+artifact output are separate and bounded. The Supervisor observes time, resources, cancellation,
+backend state, and transcript events.
 
 ### 8. Collect and release
 
-For the first slice, a trusted launcher writes exactly one typed attempt-bound completion frame
-containing bounded inline JSON to a dedicated port that the unprivileged workload cannot own. The
-Supervisor validates framing, binding, limits, JSON, and the separate runtime/input/teardown
-dispositions; runner exit status is never workload success.
+For the first slice, a trusted launcher writes exactly one fixed-cap typed attempt-bound completion
+frame containing bounded inline JSON to a dedicated port that the unprivileged workload cannot own.
+Before implementation, the protocol freezes separate exact source, canonical-input, completion-
+frame, and JSON-payload caps plus per-channel role, version, attempt, registration/plan, runtime-
+profile, length, digest, terminal-status, and commit-trailer semantics. The launcher writes the
+commit trailer only after the complete payload; every channel fails rather than resizing. The host
+continuously drains cap-plus-one and never treats stream EOF as completion. The Supervisor validates
+framing, binding, limits, JSON, and the separate runtime, input, runner-lifecycle, result, and
+teardown dispositions. Runner exit status is never workload success, and the accepted record is
+guest-reported completion—not attestation of an uncompromised guest kernel or correct execution.
 
 When file artifacts are added, the Supervisor filesystem gate accepts only declared fixed output
 slots, bounded counts/bytes, regular files, safe fixed paths, and expected storage semantics. A
@@ -479,8 +488,9 @@ Profile trust uses separate objects:
   evidence, with verdict, date, expiry, and limitations;
 - `ProfileRegistryEntry`: mutable local alias, activation state, accepted review authorities,
   limits, and backend compatibility;
-- `BackendValidationRecord`: exact bundle/backend/host/configuration control claims backed by
-  retained evidence.
+- `BackendValidationRecord`: explicit validation verdict and posture ceiling for exact bundle/
+  backend/host/configuration claims, known limitations, expiry/invalidation triggers, and retained
+  evidence. A P0 `development-admitted` verdict cannot authorize `validated-local`.
 
 Verifying a bundle signature attributes the exact manifest to an accepted publisher key; it does
 not activate or validate the bundle. The first bundle contains no third-party guest packages.
@@ -499,10 +509,14 @@ out network, and disables implicit vsock. Its current spike is conditional evide
 pathname disk API has an unresolved same-user mutation race, the block-root path creates a
 `NullFs` virtiofs device, stock Bun lacks an evidenced no-subprocess/no-FFI profile, and current
 runtime bytes are not admissible. P0 will test a genuine inherited read-only root descriptor
-through `/dev/fd/N` and dedicated virtio-console ports for source/input and typed inline results.
-Runner exit is never guest success; completion, input integrity, result validation, and teardown
-remain distinct evidence. Filesystem-image parsing is a later artifact gate. gVisor resource
-limits bind the outer Linux worker, engine, host cgroup/OCI
+through `/dev/fd/N` and dedicated virtio-console ports for source/input and fixed-cap typed inline
+results. Root custody must separately pass attachment identity, frozen-object construction, and
+end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism. Runner exit is
+never guest success; guest-reported completion, input integrity, result validation, and teardown
+remain distinct evidence. The pinned multiport implementation's unchecked guest port IDs, non-stop-
+aware output wait, undocumented directional-FD convention, shared-status mutation, and partial-
+then-error handling are explicit P0 hazards, not trusted stream semantics. Filesystem-image parsing
+is a later artifact gate. gVisor resource limits bind the outer Linux worker, engine, host cgroup/OCI
 configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
 development-only because it has no supported durable VM/helper identity or restart reconciliation
 surface.

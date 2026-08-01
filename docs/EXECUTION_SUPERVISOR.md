@@ -1,7 +1,7 @@
 # Execution Supervisor
 
 Status: intended v0 authority and interface; unprivileged per-user macOS topology is feasible. The
-native libkrun/HVF adapter is the preferred Apple candidate, while stock-Bun runtime authority,
+native libkrun/HVF adapter is the lead Apple candidate under evaluation, while stock-Bun authority,
 immutable runtime-root custody, `NullFs` disposition, typed port transport/completion, complete
 installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded filesystem-image
 parsing is a later gate before file artifacts.
@@ -154,15 +154,33 @@ A missing response or local process is never authoritative absence.
 
 The VMM's exit status is never authoritative guest completion. The tested runner returned zero for
 corrupt roots, guest kernel failures, and missing executables. The first-slice backend uses bounded
-dedicated virtio-console ports for source/input and exactly one typed attempt-bound completion frame
-containing inline JSON. A backend reports runner lifecycle, typed guest completion, input integrity,
-applicable result validation/parser disposition, and teardown as separate evidence. Any missing
-required element blocks ordinary success. The trusted launcher, not the unprivileged workload,
-retains completion authority; a compromised guest kernel remains outside what this record attests.
+dedicated virtio-console ports for source/input and exactly one fixed-cap typed attempt-bound
+completion frame containing inline JSON. Before implementation, separate exact source, canonical-
+input, completion-frame, and JSON-payload caps plus per-channel role, version, attempt,
+registration/plan, profile, length, digest, terminal-status, and commit-trailer semantics are frozen.
+Each channel fails rather than resizing; the host continuously drains cap-plus-one and never uses
+EOF as completion; the commit trailer is written only after the complete payload. A backend reports
+runner lifecycle, guest-reported completion, input integrity, applicable result validation/parser
+disposition, and teardown as separate evidence.
+Any missing required element blocks ordinary success. The trusted launcher, not the unprivileged
+workload, retains completion authority. It remains a distinct process instead of replacing itself
+with Bun, verifies complete source/input before child start, gives the child a fixed argv/
+environment/cwd/FD manifest without the completion endpoint or node, caps the child result, waits
+for exact child-tree termination, and commits completion last. A compromised guest kernel remains
+outside what this record attests.
+
+The host runner starts from a fail-closed role-specific descriptor allowlist. After exec it may hold
+only the finalized read-only runtime root, dedicated directional port endpoints, and indispensable
+runtime/control descriptors. Unexpected database, key, XPC, log, temporary, writable, or inherited
+descriptors reject start. Port validation includes hostile virtio control IDs, queues and descriptor
+chains plus pinned upstream backpressure, partial-error, directionality, and shared-status behavior;
+application framing alone does not admit the device.
 
 `BackendCapabilityReport` identifies exact mechanisms and unsupported controls. A plan proceeds
 only when all its required controls match. Capability discovery does not self-certify validation;
-the local trust snapshot separately identifies accepted `BackendValidationRecord` digests.
+the local trust snapshot separately identifies accepted `BackendValidationRecord` digests and
+enforces each record's explicit verdict/posture ceiling. A `development-admitted` record never
+authorizes `validated-local`.
 
 ## Content access
 
@@ -196,16 +214,19 @@ Supervisor claim, not independent proof that each event was true or that the hos
 ## Language and privilege decision
 
 Installed-service evidence supports an unprivileged per-user macOS component with purpose-specific
-authenticated XPC and no root helper. Swift remains the preferred implementation where direct
-macOS Security, XPC, LocalAuthentication, or lifecycle APIs materially reduce bindings.
+authenticated XPC and no host-root helper. Host-root execution, a separate-owner host service, and
+a privileged host helper are prohibited for v0. If the lead candidate cannot close custody without
+one, it fails the v0 profile; any later exception requires a new ADR. Swift remains the preferred
+implementation where direct macOS Security, XPC, LocalAuthentication, or lifecycle APIs materially
+reduce bindings.
 
 Gate C invalidated direct Swift Containerization as the production backend authority. The
 libkrun/HVF candidate has a narrow C ABI and direct macOS process/code-identity needs; the next
 slice compares a Go-owned lifecycle adapter with narrow native Security bindings against a small
 native launcher surface. The possible Linux OCI/gVisor worker remains a separate boundary. Go
-continues to own portable policy/state-machine/backend-contract code. A privileged helper is
-introduced only if a proven required operation cannot be performed safely otherwise; it never
-receives public parsing, approval, content, or general engine authority.
+continues to own portable policy/state-machine/backend-contract code. A post-v0 privileged helper
+may be considered only under the separate ADR above and must never receive public parsing,
+approval, content, or general engine authority.
 
 ## Acceptance tests
 

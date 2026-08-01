@@ -3,11 +3,12 @@
 Status: first-wave, Apple-credentialed, second-wave, and five Gate C implementation-readiness
 tracks completed on 2026-07-31. Spike code remains non-production and may be discarded. Gate C
 failed Apple Containerization as a production backend; libkrun/Hypervisor.framework remains the
-preferred native candidate, but its exact profile has unresolved custody and `NullFs` blockers and
-the current runtime bytes are not admissible. A post-track independent review and source-research
-reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until file artifacts,
-and added stock-Bun runtime authority as a blocker. OCI/gVisor remains an independent comparison
-and contingency. See the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
+lead native candidate under evaluation, but its exact profile has unresolved custody and `NullFs`
+blockers and the current runtime bytes are not admissible. A post-track independent review and
+source-research reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until
+file artifacts, and added stock-Bun runtime authority as a blocker. OCI/gVisor remains an
+independent comparison and contingency. See the
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 
@@ -123,14 +124,14 @@ the same-Team runner under App Sandbox. It also tested live Security.framework p
 concurrent exact cancellation, a durable-record-before-start pipe across three controller
 `SIGKILL` points, and digest-pinned Bun 1.3.14.
 
-Decision: conditional pass as the preferred native candidate. Five subsequent readiness tracks
-proved bounded scratch/output mechanics, console capture, exact forced teardown, and same-machine
-installed recovery, while also finding a mutable-path input race, an unexpected `NullFs` virtiofs
-device, ambiguous runner-zero completion, incomplete output parsing/distribution, and a no-go for
-the current runtime bytes. Subsequent review found that libkrun's multiport console API may remove
-source/input and inline results from the raw-block path, while stock Bun's subprocess/FFI surface
-adds an earlier runtime-authority admission question. Both are hypotheses until exact spikes pass.
-See
+Decision: conditional pass as the lead native candidate under evaluation. Five subsequent
+readiness tracks proved bounded scratch/output mechanics, console capture, exact forced teardown,
+and same-machine installed recovery, while also finding a mutable-path input race, an unexpected
+`NullFs` virtiofs device, ambiguous runner-zero completion, incomplete output parsing/distribution,
+and a no-go for the current runtime bytes. Subsequent review found that libkrun's multiport console
+API may remove source/input and inline results from the raw-block path, while stock Bun's
+subprocess/FFI surface adds an earlier runtime-authority admission question. Both are hypotheses
+until exact spikes pass. See
 [`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
 
 ### Gate C implementation-readiness follow-ups

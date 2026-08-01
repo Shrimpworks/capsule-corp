@@ -3,7 +3,7 @@
 - Status: Accepted
 - Date: 2026-07-31
 - Readiness synthesis: 2026-07-31
-- P0 reconciliation: 2026-07-31
+- P0 reconciliation: 2026-08-01
 - Refines: ADR-0020
 
 ## Context
@@ -44,8 +44,9 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
 
 ## Decision
 
-- libkrun/HVF becomes the preferred **native Apple backend candidate** for the next
-  implementation and validation slice. This is a candidate selection, not a posture promotion.
+- libkrun/HVF becomes the **lead native Apple candidate under evaluation** for the next
+  implementation and validation slice. This prioritizes evidence collection; it is not backend
+  admission, final selection, or a posture promotion.
 - The five readiness tracks do not admit a real libkrun adapter for user bytes yet. Before freezing
   one development profile, Capsule must close the exact Bun runtime-authority restrictions,
   immutable runtime-root custody, independent acceptance or removal of the `NullFs` device, typed
@@ -64,14 +65,25 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   current block-root path's `NullFs` device is unresolved and must not be described as absent.
 - The first custody campaign tests protected creation and a genuine read-only descriptor inherited
   directly into the runner and exposed to libkrun as `/dev/fd/N`; a narrow FD-native API change is
-  the fallback. Guest read-only flags and post-stop hashing do not make a same-user mutable
-  pathname immutable. First-slice source/input bytes use bounded dedicated console ports; later
-  file storage must pass its own immutable custody and parsing gates. Writable scratch uses a fresh
-  bounded disposable raw block device.
+  the fallback. It must separately pass stable attachment identity, frozen-object construction, and
+  adversarial end-to-end custody. Final digest/length are computed through the exact retained
+  descriptor whose `F_GETFL` access mode is exactly `O_RDONLY`, only after every writable alias/
+  mapping is closed and its sole pathname is unlinked. Guest read-only flags and post-stop hashing
+  do not make a same-user mutable pathname immutable. First-slice source/input bytes use bounded
+  dedicated console ports; later file storage must pass its own immutable custody and parsing gates.
+  Writable scratch uses a fresh bounded disposable raw block device.
 - The trusted guest launcher is part of the reviewed runtime bundle, not an invocation of `su` or a
-  host UID setter. It retains the completion descriptor while dropping the workload without that
-  authority. Ordinary success requires a typed attempt-bound completion/result frame plus input,
-  result-validation, integrity, and teardown evidence; runner exit status alone is never success.
+  host UID setter. It remains distinct instead of replacing itself with Bun, retains the completion
+  descriptor while dropping and spawning the workload without that authority, verifies complete
+  source/input before child start, uses a fixed child FD/argv/environment manifest, waits for exact
+  child-tree termination, and commits completion last. Ordinary success requires that typed attempt-
+  bound frame plus input, result-validation, integrity, and teardown evidence; runner exit status
+  alone is never success.
+- Port admission includes the guest-facing virtio control/queue/descriptor implementation and a
+  closed host-runner FD manifest, not only application framing. Pinned unchecked guest port IDs,
+  non-stop-aware transmit waiting, undocumented negative-FD directionality, shared `O_NONBLOCK`
+  status mutation, and partial-then-error handling must be patched or pass an exact fail-closed
+  corpus. The host continuously drains to cap-plus-one and never uses EOF as completion.
 - Pinning Bun proves byte identity, not absence of runtime powers. Until the exact profile refuses
   subprocess, FFI, native-addon, inspector, macro, environment-file, and package-install paths,
   execution requiring that contract is unsupported. A contract change requires a separate ADR.
@@ -83,18 +95,30 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   host/VMM memory are unsupported.
 - Apple silicon and macOS 14+ are a provisional source/platform target only. The complete package
   has not passed a macOS 14 clean-host floor, and the current runner/firmware metadata declares
-  macOS 26. Intel support requires a separately selected and validated backend.
+  macOS 26. macOS 14 code-signature protection for sandbox app data containers must be tested
+  directly; Capsule does not substitute macOS 15 app-group-container behavior or a broad shared app
+  group for that evidence. Intel support requires a separately selected and validated backend.
+- Host-root execution, a separate-owner host service, and a privileged host helper are prohibited
+  for the v0 milestone. If no-host-root custody fails, libkrun fails that profile. Any later
+  exception requires a new ADR covering authorization, installation, update, recovery, compromise
+  radius, supported macOS floor, and comparison with memory-backed storage or another backend.
 - Capsule must upstream the two patches or maintain a governed fork with exact source publication,
   SBOM/provenance, advisories, and LGPL/GPL source-compliance handling for libkrunfw and its kernel.
+- An early signed installed harness may test App Sandbox, service, descriptor, identity, and minimum-
+  OS assumptions, but it cannot admit the backend. After P0 selects mechanisms and patches, Capsule
+  rebuilds the complete final app and reruns every affected gate on those signed/notarized bytes;
+  affected byte, entitlement, topology, or OS-floor changes invalidate earlier evidence.
 
 No backend may claim `validated-local` until the exact distributed runner, libraries, firmware,
 runtime disks, entitlements, host version, limits, and recovery configuration pass the full corpus
-and are bound by an accepted `BackendValidationRecord`.
+and are bound by an accepted `BackendValidationRecord` with that verdict. P0 may produce only a
+`development-admitted` verdict with an explicit posture ceiling, limitations, expiry, and
+invalidation triggers; it cannot be relabeled for `validated-local`.
 
 ## Consequences
 
 - The immediate product path can remain native on Apple silicon without adding a Linux VM, OCI
-  engine endpoint, or root helper solely to obtain the first real backend.
+  engine endpoint, or host-root helper solely to obtain the first real backend.
 - The backend adapter must preserve the record-before-start handshake and compare PID/start/code
   identity on recovery. PID, path, name, or process scans alone remain non-authoritative.
 - App Sandbox materially narrows VMM-compromise impact, but the VMM and Hypervisor boundary still

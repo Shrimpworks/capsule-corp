@@ -1,9 +1,10 @@
 # Example status
 
-The examples in this directory exercise the repository's current canonical, pre-freeze schemas.
-They are build/test fixtures, not examples of the intended final v0 protocol.
+`jobs/hello.job.json` exercises the repository's current canonical, pre-freeze scaffold.
+`jobs/hello.proposal.json` exercises the passive Phase 2A `JobProposal` candidate. Neither is an
+activated production API example.
 
-The target contracts will separate proposals, registered plans, approvals, attempts, transcripts,
-receipts, and fixed agent summaries after the blocking feasibility spikes. See
+The coordinated cutover will replace the mixed scaffold only after the proposal planner,
+registered-plan lifecycle, consumers, and conformance boundaries are ready together. See
 [Protocol Object Model](../docs/protocol/OBJECT_MODEL.md) and
 [Schema status](../schemas/README.md).

@@ -78,8 +78,10 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
 byte-exact fixtures, and Go/TypeScript decoded views. They are not frozen or activated. The next
-slice is the registered-plan/fake-backend lifecycle; public cutover waits for an atomic consumer
-migration and removal of the dormant direct-execution scaffold.
+lane first closes the strict-decoder, conformance-corpus, and registration-semantics decisions
+needed by the registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice,
+an atomic consumer migration, and removal of the dormant direct-execution scaffold. See the
+[Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
 
 - Replace the mixed `Job` schema with narrow `JobProposal` semantics.
 - Add schemas for plan, registration, approval, attempt, trust snapshot, integrity assessment,

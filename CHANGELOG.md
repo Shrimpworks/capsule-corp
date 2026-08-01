@@ -17,3 +17,5 @@ but it has not selected a public versioning or release policy yet.
 - GitHub publication checklist, support policy, ADR template, and Go control-plane decision.
 - Repo-owned AI Central link setup for the full reviewed local skill catalog, including Caveman and
   Hallmark, while keeping symlinks out of Git.
+- Passive Phase 2A `JobProposal`, minimum `ExecutionPlan`, and `PlanRegistration` candidates with
+  byte-exact fixtures, Go/TypeScript decoded views, and explicit non-activation boundaries.

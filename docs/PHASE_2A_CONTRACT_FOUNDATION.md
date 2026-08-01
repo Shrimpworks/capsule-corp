@@ -20,6 +20,9 @@ The user-approved implementation sequence is contract first, registered-plan/fak
 lifecycle second, and inline-content ownership third. This document does not freeze approval,
 attempt, receipt, runtime-bundle, backend-specific transport, or cryptographic-wrapper contracts.
 
+The three independent contract-shape, migration, and fail-closed reviews are reconciled in
+[Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
+
 ## Delivered foundation
 
 - A closed passive `JobProposal` JSON Schema, example, TypeScript projection, branded scalar

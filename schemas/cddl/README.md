@@ -15,6 +15,11 @@ payload candidates plus their shared scalar definitions. Their byte-exact fixtur
 there is no product CBOR codec or registration endpoint in this slice. The minimum execution plan
 omits unresolved resource and backend-transport values and cannot authorize execution.
 
+Candidate installation, registration, and Supervisor IDs are distinct semantic domains and reject
+the all-zero 16-byte value. CDDL expresses their byte width; object-specific semantic validators
+own the nonzero and domain-binding rules. Digest zero-value policy remains an explicit freeze
+decision.
+
 CDDL describes the data model, not every acceptance rule. Implementations must additionally:
 
 - reject non-deterministic encodings, duplicate keys, indefinite lengths, invalid UTF-8, unknown

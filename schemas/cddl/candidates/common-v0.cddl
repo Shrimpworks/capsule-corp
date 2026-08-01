@@ -1,5 +1,6 @@
 ; Shared scalar candidates for Phase 2 internal objects.
 
+; CDDL owns width. Candidate semantic validators additionally reject all-zero IDs.
 capsule-id-v0 = bstr .size 16
 capsule-sha256-v0 = bstr .size 32
 capsule-uint53-v0 = 0..9007199254740991

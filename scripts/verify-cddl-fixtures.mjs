@@ -100,13 +100,13 @@ assertSafeUnsigned(registrationFixture.expiresAt, "expiresAt");
 const registrationPayload = new Map([
   [1, registrationFixture.objectType],
   [2, registrationFixture.objectVersion],
-  [3, decodeFixedHex(registrationFixture.registrationIdHex, 16, "registrationIdHex")],
+  [3, decodeCandidateIdHex(registrationFixture.registrationIdHex, "registrationIdHex")],
   [4, registrationFixture.registrationSequence],
   [5, decodeFixedHex(registrationFixture.planDigestHex, 32, "planDigestHex")],
-  [6, decodeFixedHex(registrationFixture.installationIdHex, 16, "installationIdHex")],
+  [6, decodeCandidateIdHex(registrationFixture.installationIdHex, "installationIdHex")],
   [7, registrationFixture.epochSequence],
   [8, decodeFixedHex(registrationFixture.epochDigestHex, 32, "epochDigestHex")],
-  [9, decodeFixedHex(registrationFixture.supervisorIdHex, 16, "supervisorIdHex")],
+  [9, decodeCandidateIdHex(registrationFixture.supervisorIdHex, "supervisorIdHex")],
   [10, registrationFixture.expiresAt],
 ]);
 
@@ -171,7 +171,7 @@ for (const field of ["wallTimeMs", "outputMaxJsonBytes"]) {
 const planPayload = new Map([
   [1, planFixture.objectType],
   [2, planFixture.objectVersion],
-  [3, decodeFixedHex(planFixture.installationIdHex, 16, "installationIdHex")],
+  [3, decodeCandidateIdHex(planFixture.installationIdHex, "installationIdHex")],
   [4, planFixture.epochSequence],
   [5, decodeFixedHex(planFixture.epochDigestHex, 32, "epochDigestHex")],
   [6, decodeFixedHex(planFixture.sourceManifestDigestHex, 32, "sourceManifestDigestHex")],
@@ -226,6 +226,13 @@ assertHexEqual(
   "ExecutionPlan payload",
 );
 process.stdout.write(`validated ${planFixtureUrl.pathname}\n`);
+
+assertRejects(
+  () => decodeCandidateIdHex("00".repeat(16), "candidateIdHex"),
+  /nonzero/u,
+  "all-zero candidate ID",
+);
+process.stdout.write("rejected invalid internal candidate ID: all-zero value\n");
 
 function encodeDeterministicCbor(value) {
   if (value instanceof Uint8Array) {
@@ -307,6 +314,14 @@ function decodeFixedHex(value, byteLength, label) {
   return decoded;
 }
 
+function decodeCandidateIdHex(value, label) {
+  const decoded = decodeFixedHex(value, 16, label);
+  if (decoded.every((byte) => byte === 0)) {
+    throw new Error(`${label} must encode a nonzero candidate ID`);
+  }
+  return decoded;
+}
+
 function decodeHex(value, label) {
   if (typeof value !== "string" || !/^(?:[0-9a-f]{2})+$/u.test(value)) {
     throw new Error(`${label} must be nonempty canonical lowercase hexadecimal`);
@@ -335,6 +350,18 @@ function assertExactKeys(value, expected) {
   if (actual.length !== wanted.length || actual.some((key, index) => key !== wanted[index])) {
     throw new Error(`fixture keys differ: got ${actual.join(", ")}, want ${wanted.join(", ")}`);
   }
+}
+
+function assertRejects(operation, pattern, label) {
+  try {
+    operation();
+  } catch (error) {
+    if (error instanceof Error && pattern.test(error.message)) {
+      return;
+    }
+    throw new Error(`${label}: rejected with an unexpected error`, { cause: error });
+  }
+  throw new Error(`${label}: invalid value was accepted`);
 }
 
 function assertHexEqual(actual, expected, label) {

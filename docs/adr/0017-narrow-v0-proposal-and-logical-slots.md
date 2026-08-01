@@ -30,3 +30,9 @@ slot/content mappings in the plan.
   consequential.
 - Current schemas and TypeScript types remain pre-freeze scaffold until replaced after feasibility
   evidence.
+
+## Implementation evidence
+
+- [Phase 2A contract foundation](../PHASE_2A_CONTRACT_FOUNDATION.md) adds a closed passive
+  `JobProposal` candidate for inline JSON with fixed `primary-data` and `transformed-json` slots.
+  The candidate is not an activated endpoint and does not replace the current scaffold.

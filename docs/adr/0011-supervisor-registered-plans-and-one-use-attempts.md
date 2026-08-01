@@ -33,3 +33,10 @@ after consumption does not restore the grant.
 - Approval can be burned by a post-consumption failure; safe retry requires new user approval.
 - Exact backend capability matching happens before attempt launch; unsupported controls refuse the
   attempt rather than being clamped or approximated.
+
+## Implementation evidence
+
+- [Phase 2A contract foundation](../PHASE_2A_CONTRACT_FOUNDATION.md) defines a passive minimum
+  `ExecutionPlan` and Supervisor-issued `PlanRegistration` candidate with no replacement plan bytes.
+  This is contract evidence only; registration, durable storage, approval, and execution remain
+  unimplemented product behavior.

@@ -19,6 +19,11 @@ models capabilities that v0 will not support. The current receipt also lacks com
 Supervisor evidence. Phase 2 replaces these contracts after the platform and interoperability
 spikes determine honest enforceable semantics.
 
+The Phase 2A contract-foundation slice now provides passive candidates for a narrow first
+`JobProposal` and minimum `ExecutionPlan`/`PlanRegistration` payloads. Their fixtures and decoded
+Go/TypeScript views are verification artifacts only: no product endpoint consumes them, and the
+minimum plan omits unresolved controls and cannot authorize execution.
+
 ## Reference workflow
 
 The first complete workflow is intentionally narrow:

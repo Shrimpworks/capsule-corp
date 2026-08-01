@@ -13,6 +13,11 @@ schema-freeze gates are documented in
 [Protocol Object Model](../docs/protocol/OBJECT_MODEL.md) and
 [Feasibility Spikes](../docs/FEASIBILITY_SPIKES.md).
 
-The [`cddl/`](cddl/) directory now contains the first candidate canonical-CBOR contract derived
-from Gate A2. Those files are internal security-object profiles, not replacements for the public
-JSON API, and remain pre-freeze while ADR-0019 is Proposed.
+[`candidates/`](candidates/) contains the first passive `JobProposal` replacement candidate. It is
+verified with an example and fail-closed cases, but no daemon, SDK, or MCP endpoint accepts it. The
+mixed `Job` scaffold therefore remains the current public scaffold until an atomic consumer
+cutover.
+
+[`cddl/`](cddl/) contains candidate canonical-CBOR contracts derived from Gate A2 and Phase 2A.
+Those files are internal security-object profiles, not replacements for the public JSON API, and
+remain pre-freeze while ADR-0019 is Proposed.

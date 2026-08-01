@@ -75,6 +75,12 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
 ## Phase 2: contract and cryptographic freeze
 
+Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
+`JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
+byte-exact fixtures, and Go/TypeScript decoded views. They are not frozen or activated. The next
+slice is the registered-plan/fake-backend lifecycle; public cutover waits for an atomic consumer
+migration and removal of the dormant direct-execution scaffold.
+
 - Replace the mixed `Job` schema with narrow `JobProposal` semantics.
 - Add schemas for plan, registration, approval, attempt, trust snapshot, integrity assessment,
   transcript, artifact manifest, agent summary, and composed receipt.

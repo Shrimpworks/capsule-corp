@@ -86,11 +86,11 @@ thrown away; reproducible fixtures, observations, limitations, and ADR decisions
 ```text
 cmd/capsuled/          Go daemon scaffold
 internal/              Current trusted control-plane scaffold
-packages/protocol/     Pre-freeze TypeScript protocol types
+packages/protocol/     Pre-freeze scaffold and passive candidate TypeScript views
 packages/sdk/          TypeScript client SDK
 packages/mcp-server/   MCP adapter scaffold
 profiles/              Draft runtime profile declarations
-schemas/               Current canonical, pre-freeze JSON Schemas
+schemas/               Current scaffold plus passive JSON/CDDL candidates and fixtures
 experiments/           Disposable non-production feasibility spikes
 docs/                  Project, design, security, ADRs, spikes, and roadmap
 site/                  Minimal project overview site

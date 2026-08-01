@@ -19,6 +19,10 @@ the repository's current API surface, but they intentionally do not define the t
 Blocking feasibility spikes must determine what the platform can actually enforce before those
 contracts are replaced and frozen.
 
+Phase 2A now includes verified passive candidates for the first narrow `JobProposal`, minimum
+`ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
+decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
+
 ## Problem
 
 Agents frequently need to perform work that is more reliable as code: transform data, validate

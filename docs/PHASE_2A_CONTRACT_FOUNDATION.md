@@ -1,6 +1,7 @@
 # Phase 2A contract foundation
 
-Status: implementation specification for the first Phase 2 contract slice.
+Status: implemented passive-candidate foundation for the first Phase 2 contract slice. Nothing in
+this slice is an activated endpoint or a frozen production wire contract.
 
 ## Objective
 
@@ -18,6 +19,21 @@ This slice establishes four rules in executable fixtures:
 The user-approved implementation sequence is contract first, registered-plan/fake-backend
 lifecycle second, and inline-content ownership third. This document does not freeze approval,
 attempt, receipt, runtime-bundle, backend-specific transport, or cryptographic-wrapper contracts.
+
+## Delivered foundation
+
+- A closed passive `JobProposal` JSON Schema, example, TypeScript projection, branded scalar
+  constructors, and fail-closed structural corpus.
+- Closed minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates with byte-exact
+  deterministic-CBOR fixtures.
+- Role-specific decoded candidate views in TypeScript and Go. These are deliberately not codecs,
+  parsers, execution adapters, or authority-bearing product integrations.
+- Fixture verification for exact object keys, identifier/digest widths, safe numeric domains,
+  fixed logical slots, deterministic bytes, and the currently admitted proposal rejections.
+
+The mixed `Job` scaffold remains canonical only for existing scaffold consumers. Public cutover is
+deferred until the proposal planner, registration path, SDK/MCP consumers, and dormant bypass-shaped
+surfaces can migrate atomically.
 
 ## Existing decisions
 
@@ -47,8 +63,8 @@ attempt, receipt, runtime-bundle, backend-specific transport, or cryptographic-w
 - positive fixtures and fail-closed cases for unknown fields, unsupported powers, wrong object
   types/versions, unsafe numbers, invalid source paths, invalid slots, digest/identifier confusion,
   and replacement-plan attempts;
-- documentation that distinguishes frozen public JSON, candidate internal CBOR, semantic policy
-  validation, and deferred objects.
+- documentation that distinguishes the current public scaffold, passive candidate JSON, candidate
+  internal CBOR, semantic policy validation, and deferred objects.
 
 ### Excluded
 
@@ -106,10 +122,11 @@ JSON Schema and CDDL do not decide trusted policy. The following remain semantic
 
 - `schemas/*.schema.json`: current public JSON scaffold contracts.
 - `schemas/candidates/`: passive Phase 2 candidate contracts that are not agent endpoints.
-- `schemas/cddl/*.cddl`: candidate canonical internal-object contracts.
+- `schemas/cddl/candidates/*.cddl`: Phase 2 candidate canonical internal-object contracts.
 - `schemas/fixtures/`: human-readable fixture descriptions and byte-exact known-answer values.
 - `examples/jobs/`: current scaffold and passive proposal examples until atomic cutover.
 - `packages/protocol/src/`: TypeScript projections and small boundary helpers.
+- `internal/protocol/v0candidate/`: passive Go decoded views and scalar constructors.
 - `internal/execution/`: existing OS-neutral fake lifecycle; no real backend is connected here.
 - `scripts/verify-schemas.mjs`: JSON Schema positive and negative conformance checks.
 - `scripts/verify-cddl-fixtures.mjs`: deterministic fixture-byte checks, not a production codec.
@@ -214,7 +231,8 @@ These are decided before a corresponding field is marked frozen:
   arbitrary RAM, PID, scratch, log, and artifact semantics from the old scaffold;
 - source-bundle aggregate raw-byte/depth limits beyond the candidate's per-field structural bounds;
 - the complete `ExecutionPlan` reference set and whether any counters require decimal strings;
-- registration sequence and expiry representation and their relationship to trust epoch changes;
+- registration-sequence and expiry semantics across trust-epoch changes, replay, and retention; the
+  candidate scalar encoding is an unsigned safe integer and registration sequence is positive;
 - which shared objects require Swift participation in this slice versus the later production
   canonical-wrapper slice.
 

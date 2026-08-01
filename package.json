@@ -17,7 +17,7 @@
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
     "test": "pnpm --recursive test",
-    "verify:schemas": "node scripts/verify-schemas.mjs"
+    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

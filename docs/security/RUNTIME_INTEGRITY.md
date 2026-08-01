@@ -1,6 +1,8 @@
 # Runtime Integrity
 
-Status: intended point-in-time macOS design; feasibility evidence is pending.
+Status: intended point-in-time macOS design; signed mechanism and installed per-user lifecycle
+feasibility is observed, while distribution, cross-session, and product-store validation remains
+pending.
 
 ## Claim boundary
 
@@ -18,6 +20,7 @@ Trusted local IPC uses OS-enforced XPC peer code requirements where available. A
 checks:
 
 - expected signing/team identity;
+- expected distribution/certificate channel;
 - component signing identifier;
 - purpose-specific entitlement or code requirement where useful;
 - expected effective user and session;
@@ -26,6 +29,17 @@ checks:
 
 Each component accepts only the peers and operations required by its authority. The Broker does not
 expose an agent endpoint; the backend-control endpoint is Supervisor-only.
+
+On the tested macOS 26 host, listener peer requirements and `SecCodeCreateWithXPCMessage` composed
+in both directions with exact Team/channel/identifier/code-directory-hash predicates. Three
+unprivileged per-user LaunchAgents then exercised four purpose-specific channels, effective UID and
+audit-session agreement, stale client/service denial, and activation of a fresh Supervisor after
+`SIGKILL`. This remains Apple Development spike evidence: distribution packaging, cross-user/fast-
+user switching, logout/login, in-flight retry, and a real durable epoch store remain pending.
+
+Keychain access-group membership must not be inferred from an exact peer result. Gate B observed a
+stale exact-hash-denied build use its stable group key; the follow-up security-epoch group/key
+transition is the separate key-use boundary.
 
 ## Dynamic validation
 

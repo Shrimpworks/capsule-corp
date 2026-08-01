@@ -1,5 +1,10 @@
 # Retained observed results
 
+Follow-up disposition: the unprivileged per-user/no-root topology remains supported, but the
+production backend language split is reopened. Gate C later failed direct Containerization as the
+production lifecycle authority and moved primary evaluation to OCI/gVisor; see
+[`../gate-c-identity-recovery/RESULTS.md`](../gate-c-identity-recovery/RESULTS.md) and ADR-0020.
+
 Date: 2026-07-31 (America/Toronto)
 
 Repository baseline: `9bfd2acedbccfbe851f797edc06eb447733188e3`

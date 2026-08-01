@@ -1,7 +1,16 @@
 # Execution Supervisor
 
-Status: intended v0 authority and interface; implementation language/privilege is gated by the
-macOS feasibility spikes.
+Status: intended v0 authority and interface; unprivileged per-user macOS topology is feasible. The
+native libkrun/HVF adapter is the preferred Apple candidate, while immutable block custody,
+`NullFs` disposition, typed completion, bounded output parsing, release admission, and the
+OCI/gVisor comparison remain gated by backend validation.
+
+Implementation note: `internal/execution.SupervisorCore` now exercises exact-byte registration,
+approval binding/one-use consumption, transition fencing/component acceptance, and cleanup
+obligations against an in-memory store and a no-guest development lifecycle. It is an executable
+contract, not a deployed Supervisor: the store is non-durable, approval/integrity checks are ports,
+the lifecycle is forbidden from creating a guest, and no macOS IPC, code identity, Keychain,
+protected storage, or production cryptography is present.
 
 ## Purpose
 
@@ -131,6 +140,21 @@ probe → prepare → create → stage → start → wait/inspect
 Each operation accepts bounded typed data, is idempotent or has a documented reconciliation key,
 and returns a stable machine-readable result. Backend handles are never guest or agent authority.
 
+Direct Apple Containerization cannot currently supply the required durable handle after controller
+death and is development-only. The libkrun/HVF candidate instead uses one signed VMM process per
+attempt. The Supervisor persists and verifies PID, start time, live code identity/CDHash, expected
+path, and attempt state before a private inherited pipe authorizes VM start. EOF before
+authorization makes the runner exit without starting a VM. Recovery still treats a mismatched
+tuple as unresolved, never as authority to kill an arbitrary PID. The OCI/gVisor candidate must
+persist an engine-issued identity and exact attempt labels before create, then prove
+list/inspect/kill/delete reconciliation across Supervisor, engine/containerd, and outer-VM failure.
+A missing response or local process is never authoritative absence.
+
+The VMM's exit status is never authoritative guest completion. The tested runner returned zero for
+corrupt roots, guest kernel failures, and missing executables. A backend reports runner lifecycle,
+typed attempt-bound guest completion, staged-input integrity, output/parser disposition, and
+teardown as separate evidence. Any missing required element blocks ordinary success.
+
 `BackendCapabilityReport` identifies exact mechanisms and unsupported controls. A plan proceeds
 only when all its required controls match. Capability discovery does not self-certify validation;
 the local trust snapshot separately identifies accepted `BackendValidationRecord` digests.
@@ -164,13 +188,17 @@ Supervisor claim, not independent proof that each event was true or that the hos
 
 ## Language and privilege decision
 
-Gate E compares native Swift, Go plus narrow native bindings, and a hybrid design. Selection
-criteria are platform API coverage, privilege, parsing/IPC TCB, memory/runtime footprint, update
-complexity, recovery, testability, and developer cost.
+Installed-service evidence supports an unprivileged per-user macOS component with purpose-specific
+authenticated XPC and no root helper. Swift remains the preferred implementation where direct
+macOS Security, XPC, LocalAuthentication, or lifecycle APIs materially reduce bindings.
 
-The default is an unprivileged per-user component. A privileged helper is introduced only if a
-proven required backend operation cannot be performed safely otherwise. That helper accepts only a
-sealed launch descriptor and owns no policy, approval, content, or public parser.
+Gate C invalidated direct Swift Containerization as the production backend authority. The
+libkrun/HVF candidate has a narrow C ABI and direct macOS process/code-identity needs; the next
+slice compares a Go-owned lifecycle adapter with narrow native Security bindings against a small
+native launcher surface. The possible Linux OCI/gVisor worker remains a separate boundary. Go
+continues to own portable policy/state-machine/backend-contract code. A privileged helper is
+introduced only if a proven required operation cannot be performed safely otherwise; it never
+receives public parsing, approval, content, or general engine authority.
 
 ## Acceptance tests
 

@@ -1,7 +1,11 @@
 # Feasibility Spikes
 
-Status: first-wave and license-free follow-up evidence completed on 2026-07-31. Spike code remains
-non-production and may be discarded. See
+Status: first-wave, Apple-credentialed, second-wave, and five Gate C implementation-readiness
+tracks completed on 2026-07-31. Spike code remains non-production and may be discarded. Gate C
+failed Apple Containerization as a production backend; libkrun/Hypervisor.framework remains the
+preferred native candidate, but its exact profile has unresolved custody and `NullFs` blockers and
+the current runtime bytes are not admissible. OCI/gVisor remains an independent comparison and
+contingency. See
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 
@@ -79,10 +83,13 @@ Required attacks:
 - daemon attempts to sign with Approval and Supervisor keys;
 - daemon attempts to open Broker/Supervisor stores;
 - replayed connection identity and PID/path/name substitution.
+- stale same-team code denied by exact IPC but retaining a historical Keychain group, including use
+  of a replacement Secure Enclave key.
 
 Pass condition: the operating system and protocol jointly deny unauthorized peers, key use, and
-storage access. A conditional pass must identify which separation relies on the trusted local
-administrator assumption.
+storage access. Stable access-group membership must not be described as exact-build/epoch key
+isolation. A conditional pass must identify which separation relies on the trusted local
+administrator assumption and which update/key-rotation mitigation remains unproven.
 
 ## Gate C: Apple Container capability coverage
 
@@ -102,6 +109,48 @@ Prototype one dependency-free Bun JSON job and probe:
 Pass condition: every required control is enforceable and distinguishable from best-effort
 accounting. Unsupported controls are removed from the v0 contract or cause a backend pivot before
 schema freeze. Network inconvenience is not evidence of network denial.
+
+### Gate C native follow-up: libkrun/HVF
+
+Question: can one signed libkrun VMM process per attempt remove Containerization's hidden-helper
+lifecycle ambiguity while preserving a native Apple hardware-VM boundary?
+
+The retained follow-up compiled out network, disabled implicit vsock, booted a raw immutable block
+root, used a trusted non-root/no-capability guest launcher, exercised resource limits, and packaged
+the same-Team runner under App Sandbox. It also tested live Security.framework process identity,
+concurrent exact cancellation, a durable-record-before-start pipe across three controller
+`SIGKILL` points, and digest-pinned Bun 1.3.14.
+
+Decision: conditional pass as the preferred native candidate. Five subsequent readiness tracks
+proved bounded scratch/output mechanics, console capture, exact forced teardown, and same-machine
+installed recovery, while also finding a mutable-path input race, an unexpected `NullFs` virtiofs
+device, ambiguous runner-zero completion, incomplete output parsing/distribution, and a no-go for
+the current runtime bytes. See
+[`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
+
+### Gate C implementation-readiness follow-ups
+
+The completed comparison, coordination failures, retained evidence, contract consequences, and
+remaining risk campaigns are recorded in the
+[Gate C implementation-readiness synthesis](GATE_C_READINESS_CHECKPOINT.md).
+
+The native work was split into independently reproducible tracks so evidence could be collected
+without turning spike code into product code:
+
+| Track | Decision | Evidence |
+| --- | --- | --- |
+| Block storage and egress | Conditional pass for raw-block mechanics; live same-user mutation means immutable input custody failed | [`RESULTS.md`](../experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
+| Console, timeout, and resources | Conditional pass for 4 KiB prefixes, wall/cancel scheduling, exact forced kill, and closed vCPU/RAM profiles; graceful shutdown and host CPU/memory quotas unsupported | [`RESULTS.md`](../experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
+| Installed lifecycle and recovery | Conditional same-host mechanics pass; full distribution, authority separation, session/reboot cases, and corrupt-root terminal integrity remain open | [`RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
+| Adversarial VMM validation | Conditional fail for the exact profile because block-root adds a guest-visible `NullFs` virtiofs device | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md) |
+| Runtime supply chain | Conditional feasibility pass; current bytes fail the development admission checklist | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
+
+Each track owns a separate directory under `experiments/` and records observed evidence separately
+from inference. Their integration permits backend-independent contract and fake-backend work, not
+implementation of the real adapter against user bytes. The mutable-path race, `NullFs` disposition,
+typed completion, bounded parser, and admissible-bundle campaigns must close before freezing one
+exact development profile. Passing those campaigns still would not by itself justify a
+`validated-local` or production claim.
 
 ## Gate D: content handles and custody
 

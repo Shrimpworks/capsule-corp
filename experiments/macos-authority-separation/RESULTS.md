@@ -2,7 +2,51 @@
 
 Date: 2026-07-31  
 Authoritative repository baseline: `9bfd2ac` (`Document hardened architecture and spike plan (#7)`)  
-Decision: **conditional-pass for feasibility; Gate B is not yet validated for a shipping configuration**
+Decision: **conditional-pass strengthened by Apple-credentialed evidence; Gate B is not yet
+validated for a shipping configuration**
+
+## Apple-credentialed follow-up
+
+After the original license-free run, Xcode 26.6 and valid Apple Development and Developer ID
+Application identities for Team `3DDR84M4JS` became available. The retained follow-up ran on the
+same macOS 26.5.2 (25F84), arm64 host.
+
+| Area | Observation |
+| --- | --- |
+| Apple Development identity | Exact Apple chain, Team ID, certificate-class OID, role identifier, Hardened Runtime, no-debug predicate, and active code-directory hash accepted. Same-team wrong-role, unsigned, stale-hash, and debug-entitled fixtures were denied. |
+| Developer ID identity | The same static, live-process, and live-XPC matrix passed with the Developer ID certificate-class OID and Hardened Runtime. This was not a notarization result. |
+| Symmetric live XPC | Apple-signed client and Broker each enforced the other side's exact Team/channel/identifier/hash/no-debug requirement and revalidated the actual message sender. Exact FD bytes crossed read-only; stale, same-team wrong-role, and unsigned clients were denied before protocol handling. |
+| Protocol epoch | An exact authenticated client with `epoch-0` reached the protocol and was denied before descriptor redemption; `epoch-1` passed. This is harness evidence, not durable epoch-state validation. |
+| Provisioning | Xcode registered the Mac and produced development profiles for distinct Broker and Supervisor app identifiers and Keychain groups. The daemon carried no operational group. |
+| Keychain groups | Broker and Supervisor could add/query only their own data-protection group. Every sibling and daemon cross-group query failed with `errSecMissingEntitlement` (`-34018`). |
+| Secure Enclave | Persistent P-256 Approval and evidence keys were created in their provisioned groups. Supervisor evidence signing succeeded without UI. Daemon/sibling use failed with `-34018`. Broker approval signing failed noninteractively with LocalAuthentication `-1004` and succeeded after interactive user presence. |
+| Protected stores | Broker and Supervisor wrote inside distinct sandbox app containers. Own reads succeeded; both siblings and the daemon received permission denial for the other container. |
+| Stale same-team residual | A newly compiled stale Broker with the same Team ID, identifier, profile, and access-group entitlement had a different code-directory hash and failed the exact-build requirement. It nevertheless read a newly created group item and signed with a newly created Secure Enclave key in that stable group. |
+| Per-release group mitigation | A replacement Broker with the same Team/identifier but only a new `approval.release2` group created and used its new Secure Enclave key. The old Broker received `-34018` for the new group, and the replacement received `-34018` for the old group. Both remained valid release identities with different code-directory hashes. |
+| Three-role Developer ID export | Broker, Supervisor, and daemon exported with Developer ID, Hardened Runtime, secure timestamps, and no `get-task-allow`. Broker/Supervisor direct-distribution profiles admitted only their release-scoped groups; both created/used Secure Enclave keys and the daemon received `-34018`. Gatekeeper reported exactly `Unnotarized Developer ID`. |
+| Notarization submission | The `capsule-notary` credential profile authenticated successfully. Independent Broker, Supervisor, and daemon archives passed notarytool preflight and uploaded as submissions `15da95fc-f0ab-45aa-a50b-dcdb454e1035`, `cf692b34-d907-4566-a07a-cc004eced78e`, and `d133b8e1-7c3d-4080-9783-ce7b2729119e`. Supervisor reached `Accepted`; its ticket stapled and validated, Gatekeeper reported `source=Notarized Developer ID`, and strict code-signature verification remained valid. Broker and daemon remained `In Progress`; their acceptance is not yet claimed. |
+
+Reproduce the follow-up with:
+
+```sh
+./experiments/macos-authority-separation/run-apple-signed.sh development
+./experiments/macos-authority-separation/run-apple-signed.sh developer-id
+./experiments/macos-authority-separation/Provisioned/run-provisioned.sh
+./experiments/macos-authority-separation/Provisioned/run-provisioned.sh --interactive
+./experiments/macos-authority-separation/Provisioned/run-stale-keygroup.sh
+./experiments/macos-authority-separation/Provisioned/run-rotated-keygroup.sh
+./experiments/macos-authority-separation/Provisioned/run-developer-id-export.sh
+./experiments/macos-authority-separation/Provisioned/run-notarization.sh \
+  ./experiments/macos-authority-separation/build/developer-id-run.XXXXXX
+```
+
+The stale-build result confirms that XPC exact-build enrollment and Keychain membership enforce
+different identities. A stable access group is component/release scoped; it cannot revoke an old
+already signed build or bind a private-key operation to the active trust epoch. Operational key
+rotation is incomplete with a stable group. The per-release-group candidate prevented old/new
+cross-use under development signing and produced functional restricted-group Developer ID exports.
+It remains conditional until crash-safe install/key-authorization/rollback transitions pass; a
+signing mediator remains an alternative if that operational model proves unacceptable.
 
 ## Hypothesis and gate
 
@@ -12,10 +56,12 @@ containers to form real authorities. Trust epoch, plan, attempt, and migration s
 Capsule protocol responsibilities.
 
 Gate B requires the operating system and protocol jointly to deny unauthorized peers, key use, and
-storage access. The local spike establishes that the required primitive families exist and exercises
-several critical negative cases. It cannot establish the complete gate because the host has no Apple
-Development, Developer ID, or Mac App Store signing identity and therefore cannot create validated
-production entitlements or a representative installed three-component XPC topology.
+storage access. The original local spike established that the required primitive families exist
+and exercised several critical negative cases. At that time the host had no Apple signing
+identity. The follow-up closes the Apple Development/Developer ID, development provisioning,
+disjoint group, protected-container, and interactive-presence questions, while installed product
+services, final notarization/stapling, session/lifecycle coverage, and stale-group mitigation remain
+open.
 
 ## Environment and tools
 
@@ -226,17 +272,17 @@ A user can authorize another app, and a privileged administrator/kernel remains 
 | Required case | Result |
 | --- | --- |
 | Unsigned peer | static denial observed; live fixture was killed by the OS and delivered no XPC request |
-| Same-team wrong signing identifier | API/platform support substantiated; no local team identity, so live test pending |
+| Same-team wrong signing identifier | Apple Development and Developer ID static/live XPC denial observed |
 | Stale build | identifier-only acceptance plus static, live dynamic, and live XPC exact-hash denial observed; epoch protocol pending |
 | Copied binary / PID/path/name substitution | exact copy accepted by design; message-derived `SecCode` is the required identity mechanism |
-| Debug/development signing | `get-task-allow` denial and live `debugged=true` observation passed; Apple dev vs distribution channel matrix pending |
-| Wrong entitlement / Keychain group | unentitled access-group operation denied with `-34018`; positive provisioned group pending |
-| Daemon use of Approval/Supervisor keys | negative entitlement path observed; actual three-bundle cross-group test pending |
-| Broker/Supervisor store access | current Apple protection substantiated; actual signed containers and deny/cancel prompt cases pending |
+| Debug/development signing | `get-task-allow` and live-debug denial observed; Apple Development and Developer ID channel-specific requirements passed; notarization submitted, with acceptance/stapling pending |
+| Wrong entitlement / Keychain group | provisioned positive own-group use and sibling/daemon `-34018` denial observed |
+| Daemon use of Approval/Supervisor keys | provisioned persistent-key queries failed with `-34018`; Broker/Supervisor own-key operations passed |
+| Broker/Supervisor store access | distinct signed sandbox-container own access passed and cross-role access was denied |
 | Migration/team change | documentation evidence only; no signing identities or alternate team available |
 | Unavailable Secure Enclave | documentation evidence and test plan only; current hardware has a working enclave |
-| User-presence unavailable/noninteractive | noninteractive use denied; not-enrolled, lockout, password fallback, cancel, and successful interactive cases pending |
-| Wrong trust epoch | protocol design only; no Gate F lifecycle implementation exists |
+| User-presence unavailable/noninteractive | noninteractive use denied and interactive user-presence signing succeeded; cancel, lockout, no-enrollment, password fallback, lock/switch cases pending |
+| Wrong trust epoch | exact authenticated XPC client with wrong epoch denied before FD redemption; durable product epoch lifecycle pending |
 
 ## Decision and conditions
 
@@ -309,21 +355,23 @@ No broad architecture files were edited in this spike. Apply these focused chang
 
 ## Open risks
 
-1. **Stale same-team key use:** access groups do not encode an exact build. A retained old component
-   with the same validated group entitlement may remain able to query group keys. Protocol key
-   revocation alone is insufficient if the stale process can find the replacement private key.
+1. **Stale same-team key use:** access groups do not encode an exact build. The retained attack
+   confirmed that an old same-team component with the same validated group entitlement can query a
+   new item and use a new Secure Enclave key even while its code-directory hash is rejected by the
+   exact-build requirement. Protocol key revocation alone is insufficient.
 2. **Container user override:** protected container access can be user-authorized; the UX and
    behavior under Full Disk Access, MDM, fast user switching, and unattended launch agents need
    adversarial testing.
-3. **Interactive approval:** only noninteractive denial was exercised. Successful user presence,
-   cancel, lockout, no enrollment, password fallback, session switching, and screen-lock behavior
+3. **Interactive approval:** successful user presence and noninteractive denial were exercised.
+   Cancel, lockout, no enrollment, password fallback, session switching, and screen-lock behavior
    remain unknown for Capsule UX.
 4. **Hardware absence/failure:** Intel without suitable hardware, virtual machines, disabled or
    failed token services, OS restore, and hardware replacement were not available locally.
-5. **Remaining XPC lifecycle:** per-user launchd registration, listener exact-hash enforcement,
-   message-derived identity, stale/unsigned rejection, a malformed operation, descriptor transfer,
-   and clean bootout were run. Symmetric production requirements, reconnect/replay, service crash,
-   activation races, session switching, and upgrade replacement remain untested.
+5. **Remaining XPC lifecycle:** per-user launchd registration, symmetric Apple-signed exact-peer
+   enforcement, message-derived identity, stale/unsigned/wrong-role rejection, malformed and
+   wrong-epoch operations, descriptor transfer, and clean bootout were run. Product-service
+   packaging, reconnect/replay, service crash, activation races, session switching, and upgrade
+   replacement remain untested.
 6. **Backend authority:** the Supervisor/launcher privilege and Apple Container control endpoint
    remain gated by Gates C and E.
 7. **Migration:** Secure Enclave keys do not migrate; access-group/team changes and app-container
@@ -332,26 +380,33 @@ No broad architecture files were edited in this spike. Apply these focused chang
 
 ## Next smallest test
 
-Build one minimal Xcode workspace on a Mac with an Apple Development team:
+The first provisioned Xcode workspace and cross-role matrix now exist. The next Gate B work is:
 
-- a sandboxed Go daemon embedded in a signed bundle or XPC/login-item host;
-- a native Broker app with an Approval Keychain group and private app container;
-- an unprivileged Supervisor app-like launch agent with its own evidence group and one-member
-  protected app-group container;
-- one echo-only XPC method in each required direction, with exact message-derived peer validation;
-- v1/v2 and wrong-role targets signed by the same team, plus unsigned/ad-hoc/debug variants;
-- cross-group key/store probes and an epoch mismatch field.
-
-Run the full wrong-peer, stale-build, debug attach, key-use, container prompt-deny, reconnect, and
-session matrix first under Apple Development signing. Then export the same topology under the chosen
-distribution channel and repeat it. This is the smallest test that can turn the present
-conditional-pass into a real Gate B decision.
+1. carry the now-positive development and Developer ID per-release Keychain-group strategy through
+   crash-safe install/key-authorization/rollback transitions; compare a signing mediator only if
+   that operational model is too costly;
+2. package the three-role topology as installed per-user services and exercise reconnect, service
+   replacement, activation races, effective UID/audit session, fast-user-switching, and screen-lock
+   cases;
+3. collect the submitted Apple notarization results, staple/assess accepted exports, and rerun the
+   packaged matrix;
+4. exercise approval cancel, lockout/no-enrollment/password fallback and protected-container user
+   override/Full Disk Access behavior; and
+5. bind the real durable Gate F epoch store instead of a constant harness field.
 
 ## Verification
 
 Passed on the environment above:
 
 - `./experiments/macos-authority-separation/run.sh --with-debugger`
+- `./experiments/macos-authority-separation/run-xpc.sh`
+- `./experiments/macos-authority-separation/run-apple-signed.sh development`
+- `./experiments/macos-authority-separation/run-apple-signed.sh developer-id`
+- `./experiments/macos-authority-separation/Provisioned/run-provisioned.sh`
+- `./experiments/macos-authority-separation/Provisioned/run-provisioned.sh --interactive`
+- `./experiments/macos-authority-separation/Provisioned/run-stale-keygroup.sh`
+- `./experiments/macos-authority-separation/Provisioned/run-rotated-keygroup.sh`
+- `./experiments/macos-authority-separation/Provisioned/run-developer-id-export.sh`
 - `sh -n experiments/macos-authority-separation/run.sh`
 - `pnpm install --frozen-lockfile` under Node 22.22.1 / pnpm 10.28.2
 - `pnpm check`

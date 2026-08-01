@@ -130,10 +130,17 @@ exercises the authority boundaries successfully.
   DIDs are first-class optional representations for interoperability and exported evidence.
 - External release and profile trust uses pinned TUF roots. Live execution consumes a compact,
   verified local trust snapshot and performs no network trust lookup.
-- Apple Container is the macOS candidate and OCI plus gVisor is the Linux reference, but both stay
-  development-only until exact enforceable controls are proven.
+- Direct Apple Containerization is retained only as a macOS development backend after failing the
+  durable identity/recovery gate. A follow-up libkrun/Hypervisor.framework spike conditionally
+  passed exact-process lifecycle, isolation, App Sandbox, controller-crash, and Bun checks, making
+  it the preferred native Apple candidate. Its five readiness tracks found that immutable disk
+  custody, the block-root `NullFs` surface, typed completion, bounded output parsing, and release
+  admission must close before one exact development profile freezes. OCI plus gVisor remains an
+  independent unvalidated candidate and contingency until both exact profiles run the shared
+  attack corpus.
 - Go remains the daemon language; Swift is preferred for the native Broker. Supervisor language and
-  privilege remain gated by the macOS feasibility results.
+  privilege remain gated by the backend adapter; the current macOS service evidence supports an
+  unprivileged per-user Swift component with no root helper.
 
 ## Success criteria
 

@@ -10,6 +10,12 @@ Supervisor-owned bounded output. A retained four-hunk patch successfully adds th
 `pids.max` control. A supported durable identity/enumeration surface for the Virtualization helper
 is still absent, so the backend does not satisfy the full gate.
 
+Follow-up disposition: the focused identity/recovery spike completed and failed direct
+Containerization as a production backend because the public API exposes no durable host-side
+VM/helper identity or restart enumeration. This document remains historical positive-mechanism
+evidence; see [`../gate-c-identity-recovery/RESULTS.md`](../gate-c-identity-recovery/RESULTS.md) and
+ADR-0020 for the superseding backend decision.
+
 This is exact-host development evidence, not a secure-backend or production-readiness claim.
 
 ## Environment and provenance

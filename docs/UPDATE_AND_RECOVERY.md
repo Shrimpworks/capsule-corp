@@ -1,6 +1,7 @@
 # Update and Recovery
 
-Status: intended crash-safe model; trust-transition behavior requires Gate F.
+Status: intended crash-safe model; Gate F process/storage-ordering evidence is positive, while the
+real Supervisor store, installer, backend, Keychain anchor, and power-loss behavior remain pending.
 
 ## Objectives
 
@@ -32,13 +33,18 @@ The intended v0 flow is:
    profile checkpoint, storage migration, and recovery plan.
 7. Require user/admin authorization for the v0 trust-changing transition.
 8. Install/swap through the supported platform mechanism.
-9. Start the new Supervisor in `pending-verification` with execution disabled.
-10. Validate all installed components, key access, stores, and migrations against the prepared
-    record.
-11. Create and sign epoch N+1, linking the prior epoch and transition reason.
-12. Atomically commit the current epoch checkpoint and local trust snapshot reference.
-13. Optionally witness the new digest.
-14. Re-enable attempts only after every required component accepts the same epoch.
+9. Enter `swapping` with execution disabled and record every installer, migration, and Keychain
+   effect through durable intent plus observation/reconciliation state.
+10. Start the new Supervisor in `pending-verification` and validate all installed components, key
+    access, stores, and migrations against the prepared record.
+11. Enter `finalizing-epoch`; stage and sign epoch N+1, linking the prior epoch and transition
+    reason.
+12. Atomically commit the authoritative epoch pointer, execution-disabled state, policy/profile/
+    trust references, and storage version.
+13. Enter `awaiting-component-acceptance`; optionally witness the new digest and require every
+    exact current component process to accept the same transition and epoch.
+14. Re-enable attempts only in the final transaction after all required acceptances and a fresh
+    self-check.
 
 No continuously running daemon or Supervisor receives installation-root authority merely to make
 background updates convenient.
@@ -55,6 +61,11 @@ Recovery reads the prepared record and determines whether it can:
 - require an explicit repair/reinstall ceremony.
 
 It never invents a new epoch, resets grants, or marks unknown backends destroyed.
+
+Before the N+1 commit, repair may restore the exact prior world only when the prepared transition
+declared that path reversible and no later external effect makes it unsafe. After the commit,
+repair is forward-only: older bytes or authority become a newly authorized N+2 transition rather
+than rewinding the current pointer.
 
 ## Repair
 
@@ -86,6 +97,17 @@ On Supervisor restart:
 
 A missing process, VM, container, or handle is not alone proof of successful destruction.
 
+Direct Apple Containerization cannot currently satisfy this recovery step through supported public
+APIs because it exposes no durable host VM/helper identity or restart enumeration. It therefore
+remains development-only and unresolved after ambiguous controller loss. The libkrun/HVF candidate
+uses a durable-record-before-start handshake and a live PID/start/code-identity tuple; its spike
+passed controller death before record, after record, and after start. A same-host installed
+follow-up exactly recovered six reparented runners, but that depended on the enrolled
+`AbandonProcessGroup=true` launch profile and did not cover complete distribution, logout/login,
+sleep/wake, reboot, pressure, failed-signal races, or power interruption. Those cases and product
+store composition remain required before claiming ordinary terminal cleanup. The OCI/gVisor
+candidate must independently demonstrate exact engine/runtime identity and recovery.
+
 ## Multi-store saga
 
 Cross-component operations cannot use one database transaction. Each message is idempotent and
@@ -108,6 +130,29 @@ Important saga checkpoints include:
 
 Replay, duplicate, out-of-order, and missing messages produce stable no-op or recovery states—not a
 wider authorization.
+
+## Durable store requirements
+
+Gate F process and fault-injection evidence makes these v0 requirements explicit:
+
+- one authoritative Supervisor writer, with `BUSY`, `LOCKED`, `FULL`, `IOERR`, `CORRUPT`, and
+  failed commit treated as refusal outcomes;
+- expected state sequence, epoch digest, transition ID, and execution-enable compare-and-swap on
+  every security transition;
+- a cleanup/reconciliation intent committed before every external backend, installer, Keychain,
+  migration, or release effect;
+- no automatic recreation of a missing, corrupt, truncated, schema-incompatible, or checkpoint-
+  mismatched authoritative store;
+- an explicitly tested SQLite journal/WAL/checkpoint, sync, backup, restore, and migration policy;
+- same-volume verified temporary files, file sync, atomic rename, and directory sync for critical
+  standalone state;
+- explicit fail-closed clock rollback/unavailability handling; and
+- bounded store growth and enough already-durable recovery identity to survive capacity exhaustion
+  after an external effect.
+
+A database plus ordinary sidecar on the same rollback domain detects partial restore but not a
+coherent older world. If coherent rollback detection is required, the latest checkpoint must be
+bound to a suitably independent Keychain/platform anchor or external witness.
 
 ## Lost root, OS reinstall, and machine replacement
 

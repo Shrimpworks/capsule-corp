@@ -289,9 +289,18 @@ runtime bugs, fork/output/disk/memory exhaustion, cancellation escape, writable 
 orphaned guests. External backend mechanisms, fresh state, exact capability matching, durable
 handles, and a retained attack corpus are mandatory.
 
-Apple Container remains development posture until its no-network/resource/storage/management/
-recovery semantics are proven. gVisor validation binds its host cgroup/OCI configuration as well as
-the `runsc` binary.
+Apple Containerization remains development-only after Gate C found no supported durable host-side
+VM/helper identity or restart enumeration; ambiguous controller loss cannot produce ordinary
+success or capability release. The native libkrun/HVF candidate makes one signed VMM process the
+VM lifecycle object and gates start on a durable PID/start/code-identity record. That reduces the
+hidden-helper risk but does not trust PID/path alone or prove safety against a malicious guest,
+VMM exploit, output flood, or untested disk/recovery path. Its readiness corpus additionally found
+that a same-user process could mutate a live raw backing image and that the block-root path exposed
+a `NullFs` virtiofs device without a host-backed share. Those are unresolved custody and VMM-surface
+risks, not evidence of an observed escape. gVisor validation must bind its
+host/outer-VM, engine, cgroup/OCI configuration, Sentry/gofer identity, management endpoints, and
+exact `runsc` binary. The existing runc control run validates only the surrounding harness, not
+gVisor's isolation boundary.
 
 ### Input and output content
 

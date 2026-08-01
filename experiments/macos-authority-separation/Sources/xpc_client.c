@@ -1,7 +1,10 @@
-/* Development-only client for the ad-hoc XPC authority/descriptor probe. */
+/* Development-only client for the XPC authority/descriptor probe. */
 
+#include <CoreFoundation/CoreFoundation.h>
+#include <Security/Security.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,11 +15,33 @@
 #define BUILD "unspecified"
 #endif
 
-static const char service_name[] = "dev.capsule.gate-b.license-free";
+#ifndef SERVICE_NAME
+#define SERVICE_NAME "dev.capsule.gate-b.license-free"
+#endif
+
+static const char service_name[] = SERVICE_NAME;
 static const char expected_bytes[] = "exact-cross-process-xpc-bytes";
 
 int main(int argc, char **argv) {
-    bool malformed = argc == 2 && strcmp(argv[1], "--malformed") == 0;
+    bool malformed = false;
+    bool wrong_epoch = false;
+    const char *server_requirement = NULL;
+    for (int index = 1; index < argc; index++) {
+        if (strcmp(argv[index], "--malformed") == 0) {
+            malformed = true;
+        } else if (strcmp(argv[index], "--wrong-epoch") == 0) {
+            wrong_epoch = true;
+        } else if (strcmp(argv[index], "--server-requirement") == 0 &&
+                   index + 1 < argc) {
+            server_requirement = argv[++index];
+        } else {
+            fprintf(stderr,
+                    "usage: %s [--malformed] [--wrong-epoch] "
+                    "[--server-requirement REQUIREMENT]\n",
+                    argv[0]);
+            return 64;
+        }
+    }
     char path[] = "/tmp/capsule-gate-b-xpc.XXXXXX";
     int writable = mkstemp(path);
     if (writable < 0 ||
@@ -34,6 +59,16 @@ int main(int argc, char **argv) {
 
     xpc_connection_t connection = xpc_connection_create_mach_service(
         service_name, NULL, 0);
+    if (server_requirement != NULL) {
+        int requirement_status = xpc_connection_set_peer_code_signing_requirement(
+            connection, server_requirement);
+        if (requirement_status != 0) {
+            fprintf(stderr, "server peer requirement setter failed: %d\n",
+                    requirement_status);
+            xpc_release(connection);
+            return 65;
+        }
+    }
     xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
         (void)event;
     });
@@ -42,6 +77,7 @@ int main(int argc, char **argv) {
     xpc_dictionary_set_string(
         request, "operation", malformed ? "forged-operation" : "transfer-input");
     xpc_dictionary_set_string(request, "build", BUILD);
+    xpc_dictionary_set_string(request, "epoch", wrong_epoch ? "epoch-0" : "epoch-1");
     xpc_dictionary_set_fd(request, "content", content);
     close(content);
 
@@ -77,16 +113,40 @@ int main(int argc, char **argv) {
     bool identity = xpc_dictionary_get_bool(reply, "messageDerivedIdentityValid");
     bool read_only = xpc_dictionary_get_bool(reply, "fdReadOnly");
     bool bytes_exact = xpc_dictionary_get_bool(reply, "bytesExact");
+    bool server_identity = server_requirement == NULL;
+    if (server_requirement != NULL) {
+        CFStringRef requirement_text = CFStringCreateWithCString(
+            kCFAllocatorDefault, server_requirement, kCFStringEncodingUTF8);
+        SecRequirementRef requirement = NULL;
+        SecCodeRef sender = NULL;
+        OSStatus requirement_status = requirement_text == NULL
+            ? errSecParam
+            : SecRequirementCreateWithString(
+                requirement_text, kSecCSDefaultFlags, &requirement);
+        OSStatus sender_status = requirement_status == errSecSuccess
+            ? SecCodeCreateWithXPCMessage(reply, kSecCSDefaultFlags, &sender)
+            : requirement_status;
+        server_identity = sender_status == errSecSuccess &&
+            SecCodeCheckValidity(sender, kSecCSStrictValidate, requirement) == errSecSuccess;
+        if (sender != NULL) CFRelease(sender);
+        if (requirement != NULL) CFRelease(requirement);
+        if (requirement_text != NULL) CFRelease(requirement_text);
+    }
     const char *reason = xpc_dictionary_get_string(reply, "reason");
-    printf("xpc.status=%lld build=%s identity=%s fdReadOnly=%s bytesExact=%s reason=%s\n",
+    printf("xpc.status=%lld build=%s identity=%s serverIdentity=%s "
+           "fdReadOnly=%s bytesExact=%s reason=%s\n",
            (long long)status, BUILD, identity ? "true" : "false",
+           server_identity ? "true" : "false",
            read_only ? "true" : "false", bytes_exact ? "true" : "false",
            reason == NULL ? "none" : reason);
     xpc_release(reply);
     xpc_connection_cancel(connection);
     xpc_release(connection);
     if (malformed) {
-        return status == 10 ? 0 : 5;
+        return status == 10 && identity && server_identity ? 0 : 5;
     }
-    return status == 0 && identity && read_only && bytes_exact ? 0 : 6;
+    if (wrong_epoch) {
+        return status == 13 && identity && server_identity ? 0 : 7;
+    }
+    return status == 0 && identity && server_identity && read_only && bytes_exact ? 0 : 6;
 }

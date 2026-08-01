@@ -1,0 +1,211 @@
+# Gate C implementation-readiness synthesis
+
+Date: 2026-07-31
+
+Status: completed cross-track synthesis. This document records spike decisions and coordination
+history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
+hostile/user workloads with the retained experiment code.
+
+## Bottom line
+
+All five libkrun/HVF implementation-readiness tracks completed and their retained source,
+documentation, and selected evidence are now in this repository. Generated `.build/` and `.runs/`
+directories remain ignored and disposable.
+
+The combined decision is:
+
+- continue backend-independent registered-plan, fake-backend, custody-ledger, and contract work;
+- retain libkrun/HVF as the preferred native Apple candidate for one eventual development profile;
+- do not admit the currently built runtime bytes or freeze a libkrun execution profile yet; and
+- do not claim `validated-local`, production readiness, absence of a host share, graceful shutdown,
+  exact host CPU/memory quotas, or safe output extraction.
+
+The candidate solved Apple Containerization's hidden-helper lifecycle problem, but the follow-ups
+found two profile blockers and three release/composition blockers. Immutable input custody is not
+enforced through libkrun's pathname disk API, and the block-root path exposes an unexpected
+guest-visible `NullFs` virtiofs device. Typed guest completion, a production-safe output parser,
+and admissible signed/notarized runtime bytes are also not complete. Those are actionable findings,
+not a failure of the overall architecture.
+
+## Completed tracks
+
+| Track | Task ID | Decision | Retained evidence |
+| --- | --- | --- | --- |
+| Storage, scratch/output, and egress | `019fb9e7-25ec-78b2-8bf2-6558a2a9f250` | Conditional pass for development-only raw-block staging; immutable same-user host custody remains failed | [`gate-c-libkrun-storage-egress/RESULTS.md`](../experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
+| Console, timeout, cancellation, CPU, and memory | `019fb9e7-25ec-78b2-8bf2-659ad6ccdef1` | Conditional pass for bounded console, wall/cancel scheduling, exact forced teardown, and closed resource profiles | [`gate-c-libkrun-console-lifecycle/RESULTS.md`](../experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
+| Installed lifecycle and crash recovery | `019fb9e7-25ec-78b2-8bf2-65688a86f41f` | Conditional pass for same-machine installed runner-read and recovery mechanics; distribution and authority closure remain open | [`gate-c-libkrun-installed-recovery/RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
+| Adversarial VMM and cross-job isolation | replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | Conditional fail for the exact profile because of the unexpected `NullFs` virtiofs device | [`gate-c-libkrun-adversarial/RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md) |
+| Packaging, provenance, patches, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional feasibility pass; current runtime bytes are no-go for admission | [`gate-c-libkrun-supply-chain/RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
+
+## Cross-track findings
+
+### Storage and output
+
+- Separate raw root/source/input devices were read-only to the guest. A fixed 12,582,912-byte
+  scratch image reached `ENOSPC`, and the spike extractor rejected oversized, sparse, hard-linked,
+  and device outputs.
+- A same-user host process changed the source backing image while the guest device was live.
+  Post-stop hashing detected the mutation too late to prove the guest executed approved bytes.
+- `chmod`, path secrecy, advisory locks, App Sandbox on only the runner, and post-stop hashes do not
+  close this race. Product use needs an already-open immutable object, OS-enforced component
+  storage with equivalent evidence, or a reviewed libkrun API/fork that accepts the required
+  immutable handle semantics.
+- The shell/`debugfs`/Docker collector is an experiment oracle, not a product parser. It must be
+  replaced by a purpose-built, disposable, bounded parser sandbox before artifact release.
+
+### Console, resource limits, and termination
+
+- Per-stream 4,096-byte stdout/stderr prefixes, explicit truncation, and continuous draining stayed
+  bounded under output flood, backpressure, reader stalls, concurrency, and controller recovery.
+- Wall timeout and cancellation were scheduled outside the guest. Revalidated exact-process
+  `SIGKILL` is the only evidenced non-cooperative teardown path.
+- The tested shutdown eventfd did not stop the guest within three seconds. Graceful shutdown is
+  bounded best effort, never the sole cleanup mechanism.
+- Supported resource vocabulary is narrow: integer vCPU topology and closed RAM profiles. The
+  minimal fixture passed at one vCPU/64 MiB; 32 MiB, 48 MiB, and 96 MiB failed in different ways.
+  The smallest evidenced Bun profile remains one vCPU/256 MiB.
+- CPU percentages, CPU-time ceilings, arbitrary RAM, and exact total host/VMM memory are
+  unsupported and must be rejected rather than approximated.
+
+### Completion and lifecycle
+
+- Several malformed roots, guest panics, a missing executable, and an intentional guest crash
+  still produced host runner status zero. Runner exit status is lifecycle evidence, not guest
+  success evidence.
+- Ordinary success requires an exact attempt-bound typed completion record plus expected output,
+  input-integrity, parser, and teardown evidence.
+- A Developer ID-signed, hardened, App-Sandboxed runner read a sealed bundle-local root without a
+  temporary path entitlement. With `AbandonProcessGroup=true`, six runners survived Supervisor
+  `SIGKILL`, reparented to PID 1, and were exactly recovered using PID/start/user/path/code identity
+  and installed-byte identity. Disabling that launchd property removed the child with the job.
+- Corrupt records, live binary replacement, identity-helper failure, a second cooperating
+  Supervisor, and durable record-write failure all failed closed in the tested mechanics.
+- This is one-host cooperating-process evidence. The notary submission
+  `1a67daee-ec4e-4572-ad9a-1a1fa3f63bcf` was still `In Progress`; the tested topology has no accepted
+  ticket, staple, Gatekeeper/clean-machine result, logout/login, sleep/wake, reboot, or macOS-floor
+  validation. The upload covers only the runner app, not the complete installed topology.
+
+### VMM surface
+
+- The reviewed adversarial report contains 36 VMM cases, four identity cases, 11 findings, one
+  limitation, and one failing assertion. Every recorded runner was gone at collection time.
+- The failing assertion is real: `krun_set_root_disk_remount` creates a guest-visible virtiofs
+  device backed by `NullFs` with `shared_dir: None`. No host directory was configured or mounted,
+  but the device and its VMM-side attack surface are present.
+- Integration must either accept and independently validate that exact `NullFs` surface or remove
+  it in a governed libkrun change and rerun the corpus. Until then the exact profile is not frozen.
+- Optional virtiofs, vsock, GPU, sound, duplicate-disk, and missing-disk calls can return success
+  before start even when the compiled feature is absent. A closed typed runner surface—not libkrun
+  return codes—defines allowed capability.
+
+### Runtime and supply chain
+
+- Unsigned libkrun/libkrunfw outputs matched across two controlled local source directories only
+  after locked/offline dependency resolution, path remapping, and an explicit macOS 14 deployment
+  target. This is reproducibility feasibility, not an independent two-builder claim.
+- The default build was path-dependent. Current runner/firmware metadata declares macOS 26, the
+  sysroot and complete kernel/source materials are not fully pinned, the 115-component SBOM is only
+  an input inventory, and final signed/notarized-byte identity is incomplete.
+- Both Capsule patches require a governed fork and review until they are upstreamed and the exact
+  released profile is revalidated. Update, rollback, disable, revocation, and corresponding-source
+  workflows are designs, not exercised product mechanisms.
+- The planning floor remains Apple silicon/macOS 14+ only as a provisional source/platform target.
+  It is not a claim about the current package or a validated supported-host range.
+
+## Contract consequences
+
+The following backend-independent vocabulary is ready to implement and test with a fake backend:
+
+- execute only by Supervisor-issued registration ID; never accept replacement plan or backend
+  bytes at execute time;
+- bind immutable runtime/profile/validation references before approval and resolve mutable aliases
+  before registration;
+- use a closed capability/admission result; unsupported controls refuse execution;
+- resolve exact limits before approval and never clamp or substitute them;
+- distinguish configured guest RAM from host/VMM-memory accounting, and vCPU topology from CPU
+  quotas;
+- distinguish physical scratch-image bytes, artifact count, per-artifact logical bytes, total
+  logical bytes, console prefix bytes, and parser limits;
+- keep guest completion, runner lifecycle, input integrity, output validation, teardown, and
+  terminal classification as separate evidence;
+- preserve `cleanup-required`, `unresolved`, `integrity-failed`, `unsafe-output`, and quarantine
+  states across recovery; and
+- require `CreatesGuest() == false` for the fake backend and a hard fence between fake tests and
+  any VMM launch path.
+
+The following libkrun-specific values are not frozen: mutable host paths, arbitrary resource
+values, a claim that virtiofs is absent, graceful-only cancellation, runner-zero success,
+temporary App Sandbox path exceptions, the current runtime byte manifest, and a macOS 14 package
+claim.
+
+## Remaining spike campaigns
+
+### P0 — before a libkrun development adapter handles user bytes
+
+1. **Immutable block custody:** compare file-descriptor/handle APIs, component-owned immutable
+   storage, and a narrowly governed libkrun change. Pass only if concurrent same-user mutation and
+   pathname substitution cannot change bytes observed by the guest.
+2. **`NullFs` disposition:** either remove the device and rerun the full corpus or define the exact
+   accepted device, independently review/fuzz it, and show that no host-backed share can be
+   selected through the product surface.
+3. **Typed completion channel:** implement an attempt-bound completion/result record that survives
+   guest crash, corrupt root, missing executable, output flood, and runner-zero ambiguity without
+   adding ambient network/vsock authority.
+4. **Disposable output parser:** build a purpose-specific bounded ext4/raw-image parser sandbox and
+   exercise malformed superblocks, journals, extents, directory entries, sparse/overlap cases,
+   parser crash, timeout, cleanup, and partial-copy boundaries.
+5. **Admissible development bundle:** pin all build inputs, govern the patches, produce a complete
+   manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, sign/notarize the
+   complete installed topology, and run clean-host Gatekeeper/readback checks.
+
+### P1 — before `validated-local` or production claims
+
+1. **End-to-end composition and fault injection:** compose registration, approval, custody,
+   staging, start, completion, parsing, release, cleanup, and receipt; kill processes or inject
+   storage failure at every durable/side-effect edge.
+2. **Real installed lifecycle matrix:** test sleep/wake, logout/login, fast user switching, locked
+   Keychain, reboot recovery with explicit human coordination, update/replacement, quarantine,
+   first launch, multiple supported macOS versions, and clean machines.
+3. **Real storage/durability pressure:** test APFS ENOSPC, I/O errors, fsync/power interruption,
+   corruption, migration/restore, concurrent attempts, and long-run cross-job remanence.
+4. **Hostile runtime/workload corpus:** exercise the exact Bun/launcher surface, disabled process/
+   FFI/native-addon/inspector/package powers, kernel and memory pressure, malformed inputs, and
+   repeated concurrent hostile guests.
+5. **Independent OCI/gVisor comparison:** run checksum-pinned `runsc`/shim on a disposable Linux
+   worker through engine, containerd, cgroup, network, storage, log, Bun, crash, and outer-VM
+   failure cases. The existing runc harness makes no gVisor isolation claim.
+6. **Release/update response drill:** use independent builders, complete source/license publication,
+   vulnerability review, TUF-backed activation, emergency disable/revocation, partial update,
+   rollback to an explicitly supported prior bundle, and repair-required recovery.
+7. **Soak and quantitative budgets:** measure startup, thermal/CPU/RSS/disk/I/O pressure, descriptor
+   and process leakage, cleanup latency, concurrency, and repeated controller/VMM failure.
+
+### P2 — only if stronger claims require them
+
+- external/non-rollbackable witnessing for coherent local rollback detection;
+- Endpoint Security Guardian feasibility without granting approval or content authority;
+- Full Disk Access, MDM, restore/migration, and enterprise deployment matrices;
+- Intel Mac support through a separately selected backend; and
+- rich document/media/archive parsing in separate disposable parser sandboxes.
+
+No finite spike list can prove that every possible pitfall is absent. These campaigns close the
+known claim-critical gaps and add composition, mutation, fault-injection, independent-backend, and
+long-run testing specifically to discover unknown interactions.
+
+## Coordination failure history
+
+The original coordinator task `019fb58b-04a8-7121-98c9-82d304cf82a5` ended in `systemError` after
+creating the five tracks. The original adversarial task
+`019fb9e7-2692-7cb0-a5c2-cebb9378e07f` then ended in `systemError` twice. The replacement task was
+scoped explicitly to local, bounded VMM configuration validation and completed normally as
+`019fba17-9659-74f1-ab6f-82bfb72bc991`.
+
+Those failures were Codex task/app lifecycle failures, not evidence loss and not a product security
+finding. Keeping every retained result in the repository, with task IDs and explicit integration
+state here, removes chat history as a project dependency.
+
+## Verification record
+
+Each isolated task recorded its own experiment and repository verification. The integrated branch
+must also pass the repository-required Node 22/pnpm/Go suite before handoff; the resulting commit
+and draft PR are the authoritative integration checkpoint.

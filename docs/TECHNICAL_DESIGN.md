@@ -305,30 +305,40 @@ See [Protocol Object Model](protocol/OBJECT_MODEL.md).
 
 ## Cryptographic and serialization profile
 
-The proposed baseline, subject to Gate A, is:
+Gate A rejected the tested RFC 8785/JWS direction after a real Swift/Foundation number
+representation disagreement. Gate A2 conditionally passed a bounded deterministic-CBOR/COSE_Sign1
+profile across Go, Swift, and TypeScript. ADR-0019 therefore proposes this internal security-object
+baseline, subject to its production hardening conditions:
 
 - SHA-256 content identities;
 - hardware-backed P-256 ECDSA keys where supported;
-- ES256 JWS semantics with fixed 64-byte `R || S` signatures on the wire;
-- RFC 8785 JSON Canonicalization Scheme over strict I-JSON-compatible objects;
-- JWS JSON serialization with a protected-header allowlist;
-- explicit object/media type, schema version, key ID, algorithm, purpose, audience, installation,
-  epoch, and state binding.
+- RFC 8949 deterministic CBOR with closed, object-specific CDDL maps;
+- tagged RFC 9052 COSE_Sign1 envelopes with embedded payloads;
+- ES256 with exact 64-byte `R || S` signatures on the wire;
+- exact protected headers for algorithm, object/version media type, and bounded byte-string key ID;
+- an empty unprotected-header map and no dynamic key-discovery headers;
+- explicit object type, schema version, purpose, audience, installation, epoch, and state binding.
 
 Mandatory rules include:
 
-- reject duplicate keys before ordinary object decoding;
+- reject duplicate keys, indefinite lengths, invalid UTF-8, unknown tags/fields, floats, and
+  non-preferred encodings before ordinary object processing;
 - verify canonical-on-wire payload bytes rather than silently normalizing alternate encodings;
 - constrain integers to an exactly interoperable range or encode large counters as canonical
   decimal strings;
-- reject `none`, algorithm mismatch, unknown `crit`, `jku`, `x5u`, embedded `jwk`, and unrelated
-  key-discovery mechanisms;
-- specify Swift/CryptoKit DER-to-raw conversion and one accepted high-S policy;
+- reject algorithm mismatch, unprotected headers, detached payloads, embedded keys/certificates,
+  URLs, DIDs, and unrelated key-discovery mechanisms;
+- reject DER signatures, accept either mathematically valid ECDSA S form, and never use signature
+  bytes as object or replay identity;
 - keep mutually exclusive signed object schemas and object-specific signing purposes;
-- use shared Unicode, numeric, signature, malformed, and cross-object confusion fixtures.
+- use shared byte-exact, numeric, signature, malformed, resource-bound, and cross-object confusion
+  fixtures;
+- retain exact registered payload bytes as authoritative instead of replacing them with
+  decode-and-re-encode output.
 
-Capsule will not implement ECDSA primitives. If maintained library behavior cannot meet these
-rules, a reviewed COSE/deterministic-CBOR profile is the leading fallback and requires an ADR.
+Capsule will not implement ECDSA primitives. The narrow CBOR/COSE wrappers and their dependencies
+must be reviewed and fuzzed before ADR-0019 can become Accepted. The public agent API remains strict
+JSON with a separate decoder and schema boundary.
 
 Not every content-addressed object is signed. Source, plan, policy, and artifact manifests can use
 hash identity because signed/registered parent objects bind them. Distributed runtime bundles,
@@ -439,9 +449,12 @@ resolve to trusted defaults during planning. Requests above a ceiling are reject
 clamped. The exact resolved values appear in the plan and approval view. A backend enforces each
 value exactly or refuses execution.
 
-The final v0 limit vocabulary is frozen only after Gate C. Candidate dimensions include raw
-request, source, inline input, wall time, enforceable CPU control, memory, process tree/PIDs,
-scratch/output storage, logs, artifact count, per-artifact bytes, and total artifact bytes.
+The Gate C readiness corpus supports a narrow limit vocabulary: exact wall time, per-stream retained
+console prefix, integer vCPU topology, closed workload-specific guest-RAM profiles, physical
+scratch-image bytes, artifact count, per-artifact logical bytes, total artifact logical bytes, and
+separate parser limits. CPU percentage/time, arbitrary RAM, and exact total host/VMM memory are
+unsupported. The final v0 vocabulary freezes only after the remaining custody, completion, parser,
+and exact-profile campaigns and the OCI/gVisor comparison is run or explicitly deferred.
 
 ## Runtime bundles and profile evidence
 
@@ -467,9 +480,16 @@ immutability, resource controls, process-tree kill, storage quotas, orphan disco
 evidence, management channels, unsupported controls, and validation-record digests.
 
 The Supervisor matches the plan to supported mechanisms; the backend cannot self-assert an
-authoritative tier. gVisor resource limits bind host cgroup/OCI configuration as well as `runsc`.
-Apple Container remains development posture until Gate C resolves its no-network, resource,
-transfer, management-channel, recovery, and teardown behavior.
+authoritative tier. The native libkrun/HVF candidate binds one signed App-Sandboxed VMM process to
+one attempt, records and verifies its PID/start/code identity before authorizing VM start, compiles
+out network, disables implicit vsock, and uses raw block devices. Its current spike is conditional
+evidence only: the pathname disk API has an unresolved same-user mutation race, the block-root path
+creates a `NullFs` virtiofs device, and current runtime bytes are not admissible. Runner exit is
+never guest success; completion, input integrity, output parsing, and teardown remain distinct
+evidence. gVisor resource limits bind the outer Linux worker, engine, host cgroup/OCI
+configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
+development-only because it has no supported durable VM/helper identity or restart reconciliation
+surface.
 
 Posture is recorded across independent dimensions:
 
@@ -549,15 +569,19 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 ## Ordered implementation plan
 
 1. Finish the architecture and claim baseline.
-2. Run the blocking cryptographic, macOS authority, Apple Container, content-handle, Supervisor
-   language/privilege, and trust-transition spikes.
+2. Run the blocking cryptographic, macOS authority, backend, content-handle, Supervisor
+   language/privilege, and trust-transition spikes; retain their pass, fail, and pivot decisions.
 3. Freeze contracts using the measured results.
 4. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
 5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-6. Add dependency-free Bun execution in development posture.
+6. Add dependency-free Bun execution through the native libkrun/HVF candidate in development
+   posture, preserving Apple Containerization only as a regression fixture and validating
+   OCI/gVisor independently.
 7. Add immutable regular-file snapshots and broader bounded outputs.
-8. Validate exact Apple and gVisor configurations before stronger posture.
+8. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
+   Containerization explicitly development-only unless a future supported lifecycle API reopens
+   its gate.
 9. Operationalize production TUF/update infrastructure.
 10. Evaluate optional Guardian and external witness mechanisms.
 
@@ -565,10 +589,12 @@ See [Roadmap](ROADMAP.md) for exit evidence.
 
 ## Blocking decisions
 
-- Final JCS/JWS versus fallback serialization profile
-- Exact macOS process, storage, IPC, Keychain, and privilege topology
-- Supervisor implementation language
-- Apple Container enforceable network/resource/storage/recovery mechanisms
+- Production review and freeze of the bounded deterministic-CBOR/object-specific COSE profiles
+- Distribution-package/session validation of the per-user macOS process, storage, XPC, Keychain,
+  and privilege topology
+- Exact libkrun/HVF immutable custody, `NullFs` disposition, completion, parser, runtime admission,
+  resource, App Sandbox, installed-session, identity, and recovery mechanisms
+- Exact OCI/gVisor worker, engine, runtime, resource, management, identity, and recovery mechanisms
 - Broker-to-Supervisor content-handle mechanism
 - Non-rollbackable or externally witnessed trust checkpoint, if required
 - Retention, encryption, garbage collection, and secure-deletion limitations

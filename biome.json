@@ -6,7 +6,9 @@
       "!!**/node_modules",
       "!!**/dist",
       "!!**/coverage",
+      "!!experiments/**/build",
       "!!experiments/**/.build",
+      "!!experiments/**/.runs",
       "!!experiments/**/.swiftpm",
       "!!**/.codex/skills",
       "!!.codex/steering/javascript-esm-steering.md"

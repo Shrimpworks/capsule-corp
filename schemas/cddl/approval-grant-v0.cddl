@@ -1,0 +1,43 @@
+; Capsule ApprovalGrant v0 candidate contract.
+;
+; This is the first Gate A2-derived profile, not a frozen production contract.
+; Decoders must also enforce deterministic CBOR on the received bytes, reject
+; trailing data, and apply the semantic/key-authorization checks in ADR-0019.
+
+capsule-approval-grant-envelope-v0 = #6.18([
+  protected: bstr .cbor capsule-approval-grant-protected-v0,
+  unprotected: {},
+  payload: bstr .cbor capsule-approval-grant-v0,
+  signature: bstr .size 64,
+])
+
+capsule-approval-grant-protected-v0 = {
+  1: -7, ; COSE algorithm: ES256
+  3: "application/capsule.approval-grant+cbor;v=0", ; content type/version
+  4: capsule-key-id, ; authorized key selector
+}
+
+capsule-approval-grant-v0 = {
+  1: "capsule.approval-grant", ; objectType
+  2: 0, ; objectVersion
+  3: capsule-installation-id, ; installationId
+  4: capsule-sha256, ; epochDigest
+  5: capsule-registration-id, ; registrationId
+  6: capsule-sha256, ; planDigest
+  7: capsule-supervisor-id, ; supervisorId
+  8: capsule-attempt-nonce, ; attemptNonce
+  9: "capsule.plan.approve", ; purpose
+  10: "capsule.execution-supervisor", ; audience
+  11: capsule-unix-seconds, ; issuedAt
+  12: capsule-unix-seconds, ; expiresAt
+}
+
+capsule-key-id = bstr .size (1..64)
+capsule-installation-id = bstr .size 16
+capsule-registration-id = bstr .size 16
+capsule-supervisor-id = bstr .size 16
+capsule-attempt-nonce = bstr .size 16
+capsule-sha256 = bstr .size 32
+
+; Keep timestamps in the exactly interoperable nonnegative integer range.
+capsule-unix-seconds = 0..9007199254740991

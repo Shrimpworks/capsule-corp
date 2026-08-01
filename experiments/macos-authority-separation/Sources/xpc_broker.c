@@ -1,4 +1,4 @@
-/* Development-only, ad-hoc-signed XPC authority/descriptor probe. */
+/* Development-only XPC authority/descriptor probe. */
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <Security/Security.h>
@@ -8,8 +8,13 @@
 #include <unistd.h>
 #include <xpc/xpc.h>
 
-static const char service_name[] = "dev.capsule.gate-b.license-free";
+#ifndef SERVICE_NAME
+#define SERVICE_NAME "dev.capsule.gate-b.license-free"
+#endif
+
+static const char service_name[] = SERVICE_NAME;
 static const char expected_bytes[] = "exact-cross-process-xpc-bytes";
+static const char expected_epoch[] = "epoch-1";
 
 static void handle_message(
     xpc_connection_t peer,
@@ -45,6 +50,15 @@ static void handle_message(
     if (operation == NULL || strcmp(operation, "transfer-input") != 0) {
         xpc_dictionary_set_int64(reply, "status", 10);
         xpc_dictionary_set_string(reply, "reason", "unknown operation");
+        xpc_connection_send_message(peer, reply);
+        xpc_release(reply);
+        return;
+    }
+
+    const char *epoch = xpc_dictionary_get_string(message, "epoch");
+    if (epoch == NULL || strcmp(epoch, expected_epoch) != 0) {
+        xpc_dictionary_set_int64(reply, "status", 13);
+        xpc_dictionary_set_string(reply, "reason", "epoch mismatch");
         xpc_connection_send_message(peer, reply);
         xpc_release(reply);
         return;

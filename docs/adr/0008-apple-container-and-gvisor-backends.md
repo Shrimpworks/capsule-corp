@@ -1,8 +1,10 @@
 # ADR-0008: Apple Container and gVisor are independent backend targets
 
-- Status: Accepted
+- Status: Superseded by ADR-0020
 - Date: 2026-07-30
 - Refined by: ADR-0011 and ADR-0018
+- Superseded by: ADR-0020 after Gate C failed both the stock Apple Container service and direct
+  Containerization as production lifecycle authorities
 
 ## Context
 

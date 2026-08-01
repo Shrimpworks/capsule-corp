@@ -15,9 +15,11 @@ fi
 
 clang -fblocks -Wall -Wextra -Werror \
   -DBUILD='"v1"' "$experiment_dir/Sources/xpc_client.c" \
+  -framework CoreFoundation -framework Security \
   -o "$build_dir/xpc_client_v1"
 clang -fblocks -Wall -Wextra -Werror \
   -DBUILD='"v2"' "$experiment_dir/Sources/xpc_client.c" \
+  -framework CoreFoundation -framework Security \
   -o "$build_dir/xpc_client_v2"
 clang -fblocks -Wall -Wextra -Werror \
   "$experiment_dir/Sources/xpc_broker.c" -framework CoreFoundation -framework Security \
@@ -58,6 +60,8 @@ echo 'PASS exact ad-hoc client accepted over live XPC'
 echo 'PASS exact copied client accepted over live XPC'
 "$build_dir/xpc_client_v1" --malformed
 echo 'PASS authenticated peer malformed operation denied by protocol'
+"$build_dir/xpc_client_v1" --wrong-epoch
+echo 'PASS authenticated peer wrong epoch denied by protocol'
 
 if "$build_dir/xpc_client_v2"; then
   echo 'FAIL stale client unexpectedly accepted over live XPC' >&2

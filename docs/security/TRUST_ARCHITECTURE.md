@@ -43,6 +43,17 @@ The v0 separation depends on feasibility evidence for:
 The local administrator and kernel remain trusted. These controls primarily contain an untrusted
 agent, hostile guest, and compromised ordinary same-user process within the documented assumption.
 
+Gate B found a deliberate boundary between IPC and key custody: exact-build XPC requirements can
+reject a stale component, while a stable data-protection Keychain group still recognizes that
+component's historical Team/profile/entitlement. Therefore operational keys are not considered
+epoch-isolated merely because their component channel is exact-build authenticated.
+
+The proposed v0 mitigation is a fresh access group and fresh non-migrated key for every identity-
+changing security epoch. Modeled and provisioned process-death tests support its fence, exact
+fingerprint authorization, old-key retirement, rollback/forward-repair, component-acceptance, and
+re-enable ordering. Shipping claims still require installed distribution/profile/Keychain/restore
+validation. See ADR-0021.
+
 ## Local key hierarchy
 
 | Key | Custodian | Authorized purpose | Availability |

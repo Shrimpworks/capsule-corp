@@ -43,5 +43,7 @@ its core conclusion.
   — refined by ADR-0022
 - [ADR-0021: Scope operational Keychain groups to security epochs](0021-security-epoch-keychain-groups.md)
 - [ADR-0022: Evaluate libkrun/HVF as the native Apple backend candidate](0022-evaluate-libkrun-hvf-native-backend.md)
+- [ADR-0023: Bound protocol decoding and registration semantics](0023-bound-protocol-decoding-and-registration.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -71,6 +71,9 @@ Record the raw caps/media types, path and inline-JSON identity rules, ID/digest 
 registration replay/expiry semantics, and internal error classifications in the relevant ADRs or an
 explicit addendum. Do not complete the launch-capable plan vocabulary with unevidenced fields.
 
+Proposed resolution: [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md) and
+[ADR-0023](adr/0023-bound-protocol-decoding-and-registration.md).
+
 Acceptance:
 
 - every value needed by a raw decoder or registration-state test is exact;

@@ -86,7 +86,9 @@ CBOR, depths/counts/text budgets, integer grammar/range, ID widths/zero, and dig
 
 Acceptance:
 
-- every ADR-0023 raw/scalar rule has one accept and at least one focused reject case;
+- every independently reachable ADR-0023 raw/scalar rule has one accept and at least one focused
+  reject case; the derived JSON-node cap has an exact-maximum accept and a cap-plus-one reject that
+  explicitly records its unavoidable collection-cap overlap;
 - escaped-equivalent duplicate keys and noncanonical CBOR are retained byte-exact;
 - each rejection owns no authority-bearing state.
 

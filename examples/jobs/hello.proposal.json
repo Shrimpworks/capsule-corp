@@ -1,0 +1,31 @@
+{
+  "apiVersion": "capsule.dev/v0",
+  "kind": "JobProposal",
+  "source": {
+    "entrypoint": "main.ts",
+    "files": {
+      "main.ts": "const input = { message: 'hello' };\nconsole.log(JSON.stringify(input));\n"
+    }
+  },
+  "runtimeProfile": "bun-data@1",
+  "input": {
+    "slot": "primary-data",
+    "kind": "inline-json",
+    "value": {
+      "message": "hello"
+    }
+  },
+  "requestedLimits": {
+    "wallTimeMs": 5000
+  },
+  "outputs": [
+    {
+      "slot": "transformed-json",
+      "kind": "inline-json",
+      "maxBytes": 65536
+    }
+  ],
+  "labels": {
+    "example": "hello"
+  }
+}

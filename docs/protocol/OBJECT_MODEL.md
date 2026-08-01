@@ -1,7 +1,8 @@
 # Protocol Object Model
 
-Status: target inventory for Phase 2 contract freeze. No target object in this document is an
-implemented or frozen wire contract unless a schema later says so.
+Status: target inventory for Phase 2 contract freeze. Phase 2A now has verified passive candidates,
+but no target object in this document is an activated or frozen production wire contract unless a
+later accepted schema and ADR say so.
 
 ## Current scaffold warning
 
@@ -22,10 +23,17 @@ Known mismatches include:
 Do not extend the current unions to add more future authority. Phase 2 replaces them after the
 blocking spikes establish the exact feasible vocabulary.
 
-Gate A2 has produced a first candidate CDDL contract for `ApprovalGrant` v0 under
-[`schemas/cddl/`](../../schemas/cddl/). It fixes the tested deterministic-CBOR/COSE shape but does
-not freeze the final field set or promote the experiment to production code. ADR-0019 records the
-remaining acceptance conditions.
+Phase 2A adds a closed passive `JobProposal` candidate under
+[`schemas/candidates/`](../../schemas/candidates/) and minimum `ExecutionPlan` and
+`PlanRegistration` candidates under [`schemas/cddl/candidates/`](../../schemas/cddl/candidates/).
+They have examples, byte-exact fixtures, and Go/TypeScript decoded views, but no daemon, SDK, MCP,
+Broker, Supervisor, or backend integration. The minimum plan intentionally omits unresolved
+resource and transport values and cannot authorize execution.
+
+Gate A2 also produced the candidate CDDL contract for `ApprovalGrant` v0 under
+[`schemas/cddl/`](../../schemas/cddl/). These candidates fix only their tested shapes; they do not
+freeze final field sets or promote experiment code to production. ADR-0019 records the remaining
+canonical-wrapper acceptance conditions.
 
 ## Object inventory
 
@@ -102,7 +110,8 @@ identity.
 
 ## V0 proposal shape
 
-The exact schema is pending, but v0 proposals contain only:
+The final frozen schema is pending. The passive first-slice candidate is narrower than this target
+inventory; v0 proposals contain only:
 
 - API/object version;
 - source bundle/entrypoint under semantic canonical path rules;

@@ -72,6 +72,168 @@ assertHexEqual(
 
 process.stdout.write(`validated ${fixtureUrl.pathname}\n`);
 
+const registrationFixtureUrl = new URL(
+  "../schemas/fixtures/plan-registration-v0.json",
+  import.meta.url,
+);
+const registrationFixture = JSON.parse(await readFile(registrationFixtureUrl, "utf8"));
+
+assertExactKeys(registrationFixture, [
+  "epochDigestHex",
+  "epochSequence",
+  "expiresAt",
+  "installationIdHex",
+  "objectType",
+  "objectVersion",
+  "payloadHex",
+  "planDigestHex",
+  "registrationIdHex",
+  "registrationSequence",
+  "supervisorIdHex",
+]);
+assertEqual(registrationFixture.objectType, "capsule.plan-registration", "object type");
+assertEqual(registrationFixture.objectVersion, 0, "object version");
+assertSafePositive(registrationFixture.registrationSequence, "registrationSequence");
+assertSafeUnsigned(registrationFixture.epochSequence, "epochSequence");
+assertSafeUnsigned(registrationFixture.expiresAt, "expiresAt");
+
+const registrationPayload = new Map([
+  [1, registrationFixture.objectType],
+  [2, registrationFixture.objectVersion],
+  [3, decodeCandidateIdHex(registrationFixture.registrationIdHex, "registrationIdHex")],
+  [4, registrationFixture.registrationSequence],
+  [5, decodeFixedHex(registrationFixture.planDigestHex, 32, "planDigestHex")],
+  [6, decodeCandidateIdHex(registrationFixture.installationIdHex, "installationIdHex")],
+  [7, registrationFixture.epochSequence],
+  [8, decodeFixedHex(registrationFixture.epochDigestHex, 32, "epochDigestHex")],
+  [9, decodeCandidateIdHex(registrationFixture.supervisorIdHex, "supervisorIdHex")],
+  [10, registrationFixture.expiresAt],
+]);
+
+assertHexEqual(
+  encodeDeterministicCbor(registrationPayload),
+  registrationFixture.payloadHex,
+  "PlanRegistration payload",
+);
+process.stdout.write(`validated ${registrationFixtureUrl.pathname}\n`);
+
+const planFixtureUrl = new URL("../schemas/fixtures/execution-plan-v0.json", import.meta.url);
+const planFixture = JSON.parse(await readFile(planFixtureUrl, "utf8"));
+
+assertExactKeys(planFixture, [
+  "backendConfigurationDigestHex",
+  "backendValidationRecordDigestHex",
+  "epochDigestHex",
+  "epochSequence",
+  "expiresAt",
+  "inlineInputByteLength",
+  "inlineInputDigestHex",
+  "inputSlot",
+  "installationIdHex",
+  "objectType",
+  "objectVersion",
+  "outputMaxJsonBytes",
+  "outputSlot",
+  "payloadHex",
+  "policyDecisionDigestHex",
+  "profileRegistryEntryDigestHex",
+  "profileReviewAttestationDigestsHex",
+  "runtimeBundleManifestDigestHex",
+  "runtimeProfileAlias",
+  "sourceByteLength",
+  "sourceEntrypoint",
+  "sourceManifestDigestHex",
+  "trustSnapshotDigestHex",
+  "wallTimeMs",
+  "wallTimeOrigin",
+]);
+assertEqual(planFixture.objectType, "capsule.execution-plan", "object type");
+assertEqual(planFixture.objectVersion, 0, "object version");
+assertEqual(planFixture.inputSlot, "primary-data", "input slot");
+assertEqual(planFixture.outputSlot, "transformed-json", "output slot");
+if (!["requested", "trusted-default"].includes(planFixture.wallTimeOrigin)) {
+  throw new Error("wallTimeOrigin is unsupported");
+}
+if (
+  !Array.isArray(planFixture.profileReviewAttestationDigestsHex) ||
+  planFixture.profileReviewAttestationDigestsHex.length < 1 ||
+  planFixture.profileReviewAttestationDigestsHex.length > 8
+) {
+  throw new Error("profileReviewAttestationDigestsHex must contain 1 through 8 digests");
+}
+for (const field of ["epochSequence", "sourceByteLength", "inlineInputByteLength", "expiresAt"]) {
+  assertSafeUnsigned(planFixture[field], field);
+}
+for (const field of ["wallTimeMs", "outputMaxJsonBytes"]) {
+  assertSafePositive(planFixture[field], field);
+}
+
+const planPayload = new Map([
+  [1, planFixture.objectType],
+  [2, planFixture.objectVersion],
+  [3, decodeCandidateIdHex(planFixture.installationIdHex, "installationIdHex")],
+  [4, planFixture.epochSequence],
+  [5, decodeFixedHex(planFixture.epochDigestHex, 32, "epochDigestHex")],
+  [6, decodeFixedHex(planFixture.sourceManifestDigestHex, 32, "sourceManifestDigestHex")],
+  [7, planFixture.sourceEntrypoint],
+  [8, planFixture.sourceByteLength],
+  [9, planFixture.inputSlot],
+  [10, decodeFixedHex(planFixture.inlineInputDigestHex, 32, "inlineInputDigestHex")],
+  [11, planFixture.inlineInputByteLength],
+  [12, planFixture.runtimeProfileAlias],
+  [
+    13,
+    decodeFixedHex(
+      planFixture.runtimeBundleManifestDigestHex,
+      32,
+      "runtimeBundleManifestDigestHex",
+    ),
+  ],
+  [
+    14,
+    planFixture.profileReviewAttestationDigestsHex.map((value, index) =>
+      decodeFixedHex(value, 32, `profileReviewAttestationDigestsHex[${index}]`),
+    ),
+  ],
+  [
+    15,
+    decodeFixedHex(planFixture.profileRegistryEntryDigestHex, 32, "profileRegistryEntryDigestHex"),
+  ],
+  [
+    16,
+    decodeFixedHex(
+      planFixture.backendValidationRecordDigestHex,
+      32,
+      "backendValidationRecordDigestHex",
+    ),
+  ],
+  [
+    17,
+    decodeFixedHex(planFixture.backendConfigurationDigestHex, 32, "backendConfigurationDigestHex"),
+  ],
+  [18, decodeFixedHex(planFixture.trustSnapshotDigestHex, 32, "trustSnapshotDigestHex")],
+  [19, decodeFixedHex(planFixture.policyDecisionDigestHex, 32, "policyDecisionDigestHex")],
+  [20, planFixture.wallTimeMs],
+  [21, planFixture.wallTimeOrigin],
+  [22, planFixture.outputSlot],
+  [23, planFixture.outputMaxJsonBytes],
+  [24, planFixture.expiresAt],
+]);
+
+assertHexEqual(
+  encodeDeterministicCbor(planPayload),
+  planFixture.payloadHex,
+  "ExecutionPlan payload",
+);
+process.stdout.write(`validated ${planFixtureUrl.pathname}\n`);
+
+assertRejects(
+  () => decodeCandidateIdHex("00".repeat(16), "candidateIdHex"),
+  /nonzero/u,
+  "all-zero candidate ID",
+);
+process.stdout.write("rejected invalid internal candidate ID: all-zero value\n");
+
 function encodeDeterministicCbor(value) {
   if (value instanceof Uint8Array) {
     return concatenate([encodeArgument(2, value.length), value]);
@@ -85,6 +247,12 @@ function encodeDeterministicCbor(value) {
       throw new Error(`CBOR integer is outside the safe range: ${value}`);
     }
     return value >= 0 ? encodeArgument(0, value) : encodeArgument(1, -1 - value);
+  }
+  if (Array.isArray(value)) {
+    return concatenate([
+      encodeArgument(4, value.length),
+      ...value.map((child) => encodeDeterministicCbor(child)),
+    ]);
   }
   if (value instanceof Map) {
     const encodedEntries = [...value.entries()].map(([key, child]) => [
@@ -146,6 +314,14 @@ function decodeFixedHex(value, byteLength, label) {
   return decoded;
 }
 
+function decodeCandidateIdHex(value, label) {
+  const decoded = decodeFixedHex(value, 16, label);
+  if (decoded.every((byte) => byte === 0)) {
+    throw new Error(`${label} must encode a nonzero candidate ID`);
+  }
+  return decoded;
+}
+
 function decodeHex(value, label) {
   if (typeof value !== "string" || !/^(?:[0-9a-f]{2})+$/u.test(value)) {
     throw new Error(`${label} must be nonempty canonical lowercase hexadecimal`);
@@ -159,6 +335,12 @@ function assertSafeUnsigned(value, label) {
   }
 }
 
+function assertSafePositive(value, label) {
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${label} must be a positive safe integer`);
+  }
+}
+
 function assertExactKeys(value, expected) {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("fixture object is malformed");
@@ -168,6 +350,18 @@ function assertExactKeys(value, expected) {
   if (actual.length !== wanted.length || actual.some((key, index) => key !== wanted[index])) {
     throw new Error(`fixture keys differ: got ${actual.join(", ")}, want ${wanted.join(", ")}`);
   }
+}
+
+function assertRejects(operation, pattern, label) {
+  try {
+    operation();
+  } catch (error) {
+    if (error instanceof Error && pattern.test(error.message)) {
+      return;
+    }
+    throw new Error(`${label}: rejected with an unexpected error`, { cause: error });
+  }
+  throw new Error(`${label}: invalid value was accepted`);
 }
 
 function assertHexEqual(actual, expected, label) {

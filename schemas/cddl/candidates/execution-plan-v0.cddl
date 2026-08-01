@@ -1,0 +1,34 @@
+; Capsule ExecutionPlan v0 passive candidate payload.
+; Evaluate with common-v0.cddl. SHA-256 over the exact received canonical
+; payload bytes is the plan identity; no caller-supplied planDigest appears here.
+;
+; This minimum candidate intentionally omits unfrozen RAM, vCPU, scratch,
+; console, port-frame, and backend-transport values. It cannot authorize
+; execution until later contract versions bind every applicable resolved value.
+
+capsule-execution-plan-v0 = {
+  1: "capsule.execution-plan", ; objectType
+  2: 0, ; objectVersion
+  3: capsule-id-v0, ; installationId (role: installation)
+  4: capsule-uint53-v0, ; trust epoch sequence
+  5: capsule-sha256-v0, ; epochDigest (role: trust epoch)
+  6: capsule-sha256-v0, ; sourceManifestDigest
+  7: tstr .size (1..256), ; canonical source entrypoint
+  8: capsule-uint53-v0, ; complete source byte length
+  9: "primary-data", ; fixed logical input slot
+  10: capsule-sha256-v0, ; canonical inline-input digest
+  11: capsule-uint53-v0, ; canonical inline-input byte length
+  12: tstr .size (1..128), ; non-authoritative runtime-profile alias
+  13: capsule-sha256-v0, ; RuntimeBundleManifest digest
+  14: [1*8 capsule-sha256-v0], ; accepted ProfileReviewAttestation digests
+  15: capsule-sha256-v0, ; ProfileRegistryEntry digest
+  16: capsule-sha256-v0, ; BackendValidationRecord digest
+  17: capsule-sha256-v0, ; BackendConfiguration digest
+  18: capsule-sha256-v0, ; TrustSnapshot digest
+  19: capsule-sha256-v0, ; PolicyDecision digest
+  20: capsule-positive-uint53-v0, ; exact resolved wallTimeMs
+  21: "requested" / "trusted-default", ; wall-time origin
+  22: "transformed-json", ; fixed logical output slot
+  23: capsule-positive-uint53-v0, ; maximum JSON payload bytes
+  24: capsule-unix-seconds-v0, ; plan expiresAt
+}

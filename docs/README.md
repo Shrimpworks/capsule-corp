@@ -16,6 +16,11 @@ The completed Gate C tracks are synthesized in
 the exact pre-user-byte branch point are recorded in
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
 
+The first backend-independent implementation record is
+[Phase 2A contract foundation](PHASE_2A_CONTRACT_FOUNDATION.md). Its three independent contract,
+migration, and conformance reviews are consolidated in
+[Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
+
 ## Detailed authority and trust documents
 
 - [Trust architecture](security/TRUST_ARCHITECTURE.md)
@@ -28,10 +33,11 @@ the exact pre-user-byte branch point are recorded in
 - [Update and recovery](UPDATE_AND_RECOVERY.md)
 - [Protocol object model](protocol/OBJECT_MODEL.md)
 
-The JSON Schemas in `../schemas/` and current TypeScript types remain canonical for the buildable
-scaffold and tests, but they are explicitly **pre-freeze**. They are not the target v0 contract.
-The blocking spikes determine honest platform/control semantics before a coordinated schema/type/
-example/API replacement. See [Schema status](../schemas/README.md).
+The top-level JSON Schemas and current mixed `Job` TypeScript types remain canonical for the
+buildable scaffold and tests, but they are explicitly **pre-freeze**. Passive Phase 2A proposal and
+internal-object candidates are verified separately and are not activated target contracts. The
+blocking evidence and contract decisions determine honest semantics before a coordinated
+schema/type/example/API replacement. See [Schema status](../schemas/README.md).
 
 Development setup is documented in [Development](DEVELOPMENT.md). GitHub configuration and public
 release checks are documented in [Repository setup](REPOSITORY_SETUP.md).

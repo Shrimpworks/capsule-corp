@@ -7,7 +7,9 @@ authorization boundary, runtime-integrity system, or authoritative receipt and m
 upon to contain hostile code.
 
 Security statements in design documents are intended falsifiable properties—not current
-certification, implementation, or guarantees. Current schemas/types are pre-freeze scaffolding.
+certification, implementation, or guarantees. Current schemas/types are pre-freeze scaffolding;
+the verified Phase 2A candidates are passive and do not implement an authorization or execution
+boundary.
 
 ## Intended authorization properties
 

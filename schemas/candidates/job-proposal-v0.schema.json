@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:candidate:job-proposal:v0",
+  "title": "Capsule JobProposal v0 candidate",
+  "description": "Passive Phase 2 candidate for one dependency-free inline-JSON proposal. This schema is not an activated public endpoint.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "source",
+    "runtimeProfile",
+    "input",
+    "requestedLimits",
+    "outputs"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "capsule.dev/v0"
+    },
+    "kind": {
+      "const": "JobProposal"
+    },
+    "source": {
+      "$ref": "#/$defs/sourceBundleProposal"
+    },
+    "runtimeProfile": {
+      "$ref": "#/$defs/runtimeProfileAlias"
+    },
+    "input": {
+      "$ref": "#/$defs/inlineInput"
+    },
+    "requestedLimits": {
+      "$ref": "#/$defs/requestedLimits"
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/inlineOutput"
+      }
+    },
+    "labels": {
+      "type": "object",
+      "maxProperties": 8,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]{0,31}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[ -~]{0,128}$"
+      }
+    }
+  },
+  "$defs": {
+    "sourceBundleProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entrypoint", "files"],
+      "properties": {
+        "entrypoint": {
+          "$ref": "#/$defs/sourceEntrypoint"
+        },
+        "files": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 32,
+          "propertyNames": {
+            "$ref": "#/$defs/sourcePath"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 262144
+          }
+        }
+      }
+    },
+    "sourcePath": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}(?:/[A-Za-z0-9][A-Za-z0-9._-]{0,63})*$",
+      "maxLength": 256
+    },
+    "sourceEntrypoint": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9][A-Za-z0-9._-]{0,63}/)*[A-Za-z0-9][A-Za-z0-9._-]{0,55}\\.(?:js|mjs|cjs|ts|mts|cts)$",
+      "maxLength": 256
+    },
+    "runtimeProfileAlias": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*@[1-9][0-9]*$",
+      "maxLength": 128
+    },
+    "inlineInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "kind", "value"],
+      "properties": {
+        "slot": {
+          "const": "primary-data"
+        },
+        "kind": {
+          "const": "inline-json"
+        },
+        "value": {
+          "$ref": "#/$defs/jsonValue"
+        }
+      }
+    },
+    "requestedLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "wallTimeMs": {
+          "$ref": "#/$defs/positiveSafeInteger"
+        }
+      }
+    },
+    "inlineOutput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "kind", "maxBytes"],
+      "properties": {
+        "slot": {
+          "const": "transformed-json"
+        },
+        "kind": {
+          "const": "inline-json"
+        },
+        "maxBytes": {
+          "$ref": "#/$defs/positiveSafeInteger"
+        }
+      }
+    },
+    "positiveSafeInteger": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "jsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "string",
+          "maxLength": 65536
+        },
+        {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "maxProperties": 256,
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/jsonValue"
+          }
+        }
+      ]
+    }
+  }
+}

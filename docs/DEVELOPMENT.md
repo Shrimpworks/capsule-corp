@@ -51,14 +51,16 @@ AI Central skill catalog—including Caveman and Hallmark—remain local and are
 ## Packages
 
 - `@capsule-corp/protocol` contains TypeScript views of the current canonical, pre-freeze JSON
-  scaffold.
+  scaffold plus passive Phase 2A candidate views that no product endpoint consumes.
 - `@capsule-corp/sdk` is a thin client for the trusted daemon.
 - `@capsule-corp/mcp-server` will translate MCP tool calls into SDK requests.
 
 Current JSON Schemas remain canonical for current tests, but they are not the intended v0 object
 model. Do not extend the mixed `Job` capability union. The replacement must update schemas,
 TypeScript/Go/Swift views, examples, SDK behavior, and shared fixtures together after the blocking
-spikes. See [Schema status](../schemas/README.md).
+spikes. Phase 2A candidate schemas and Go/TypeScript decoded views now establish the first narrow
+shape without activating it; see [Phase 2A contract foundation](PHASE_2A_CONTRACT_FOUNDATION.md)
+and [Schema status](../schemas/README.md).
 
 ## Feasibility spike workflow
 

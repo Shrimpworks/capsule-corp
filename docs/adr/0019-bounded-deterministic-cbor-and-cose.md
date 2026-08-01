@@ -94,3 +94,7 @@ This ADR stays Proposed until all of the following hold:
 - [Gate A failure](../../experiments/gate-a-signing-canonicalization/README.md)
 - [Gate A2 deterministic CBOR/COSE result](../../experiments/gate-a2-cbor-cose/README.md)
 - [Gate A2 retained vectors](../../experiments/gate-a2-cbor-cose/fixtures/go-vectors.json)
+- [Phase 2A contract foundation](../PHASE_2A_CONTRACT_FOUNDATION.md), including passive minimum
+  `ExecutionPlan` and `PlanRegistration` CDDL candidates and byte-exact fixtures. These add object
+  coverage but do not satisfy the production-wrapper, Swift, fuzzing, or integration acceptance
+  conditions above.

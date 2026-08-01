@@ -5,7 +5,10 @@ import addFormats from "ajv-formats";
 
 const schemaDirectory = new URL("../schemas/", import.meta.url);
 const entries = await readdir(schemaDirectory);
-const schemaFiles = entries.filter((entry) => entry.endsWith(".schema.json"));
+const schemaFiles = [
+  ...entries.filter((entry) => entry.endsWith(".schema.json")),
+  "candidates/job-proposal-v0.schema.json",
+];
 const schemas = new Map();
 
 if (schemaFiles.length === 0) {
@@ -37,6 +40,10 @@ for (const schema of schemas.values()) {
 
 const fixtures = [
   ["job.schema.json", new URL("../examples/jobs/hello.job.json", import.meta.url)],
+  [
+    "candidates/job-proposal-v0.schema.json",
+    new URL("../examples/jobs/hello.proposal.json", import.meta.url),
+  ],
   ["profile.schema.json", new URL("../profiles/bun-data/profile.json", import.meta.url)],
 ];
 
@@ -50,4 +57,51 @@ for (const [schemaName, fixtureUrl] of fixtures) {
   }
 
   process.stdout.write(`validated ${fixtureUrl.pathname}\n`);
+}
+
+const proposalSchema = schemas.get("candidates/job-proposal-v0.schema.json");
+const validateProposal = ajv.getSchema(proposalSchema.$id);
+const validProposal = JSON.parse(
+  await readFile(new URL("../examples/jobs/hello.proposal.json", import.meta.url), "utf8"),
+);
+const invalidProposals = [
+  ["unknown object version", { ...validProposal, apiVersion: "capsule.dev/v1" }],
+  ["unsupported capability union", { ...validProposal, capabilities: { network: [] } }],
+  [
+    "agent-selected runtime digest",
+    {
+      ...validProposal,
+      runtimeProfile: { alias: "bun-data@1", digest: `sha256:${"0".repeat(64)}` },
+    },
+  ],
+  [
+    "agent-selected guest output path",
+    {
+      ...validProposal,
+      outputs: [{ ...validProposal.outputs[0], guestPath: "/output/result.json" }],
+    },
+  ],
+  [
+    "absolute source path",
+    { ...validProposal, source: { ...validProposal.source, entrypoint: "/main.ts" } },
+  ],
+  [
+    "wrong input slot role",
+    { ...validProposal, input: { ...validProposal.input, slot: "transformed-json" } },
+  ],
+  [
+    "unsafe requested integer",
+    { ...validProposal, requestedLimits: { wallTimeMs: 9_007_199_254_740_992 } },
+  ],
+  [
+    "fractional inline JSON number",
+    { ...validProposal, input: { ...validProposal.input, value: { ratio: 1.5 } } },
+  ],
+];
+
+for (const [name, fixture] of invalidProposals) {
+  if (validateProposal(fixture)) {
+    throw new Error(`invalid JobProposal fixture was accepted: ${name}`);
+  }
+  process.stdout.write(`rejected invalid JobProposal: ${name}\n`);
 }

@@ -75,7 +75,7 @@ export interface PlanRegistrationCandidate {
   objectType: "capsule.plan-registration";
   objectVersion: 0;
   registrationId: CandidateRegistrationId;
-  registrationSequence: CandidateUInt53;
+  registrationSequence: CandidatePositiveUInt53;
   planDigest: CandidateDigest<"execution-plan">;
   installationId: CandidateInstallationId;
   epochSequence: CandidateUInt53;

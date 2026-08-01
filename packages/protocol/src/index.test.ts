@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   asCandidateDigest,
   asCandidateInstallationId,
+  asCandidatePositiveUInt53,
   asCandidateRegistrationId,
   asCandidateSupervisorId,
   asCandidateUInt53,
@@ -78,7 +79,7 @@ test("PlanRegistration candidate keeps identity domains distinct", () => {
     objectType: "capsule.plan-registration",
     objectVersion: 0,
     registrationId: asCandidateRegistrationId(Uint8Array.from({ length: 16 }, () => 0x77)),
-    registrationSequence: asCandidateUInt53(1),
+    registrationSequence: asCandidatePositiveUInt53(1),
     planDigest: asCandidateDigest(
       Uint8Array.from({ length: 32 }, () => 0x88),
       "execution-plan",

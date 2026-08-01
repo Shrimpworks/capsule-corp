@@ -117,6 +117,120 @@ assertHexEqual(
 );
 process.stdout.write(`validated ${registrationFixtureUrl.pathname}\n`);
 
+const planFixtureUrl = new URL("../schemas/fixtures/execution-plan-v0.json", import.meta.url);
+const planFixture = JSON.parse(await readFile(planFixtureUrl, "utf8"));
+
+assertExactKeys(planFixture, [
+  "backendConfigurationDigestHex",
+  "backendValidationRecordDigestHex",
+  "epochDigestHex",
+  "epochSequence",
+  "expiresAt",
+  "inlineInputByteLength",
+  "inlineInputDigestHex",
+  "inputSlot",
+  "installationIdHex",
+  "objectType",
+  "objectVersion",
+  "outputMaxJsonBytes",
+  "outputSlot",
+  "payloadHex",
+  "policyDecisionDigestHex",
+  "profileRegistryEntryDigestHex",
+  "profileReviewAttestationDigestsHex",
+  "runtimeBundleManifestDigestHex",
+  "runtimeProfileAlias",
+  "sourceByteLength",
+  "sourceEntrypoint",
+  "sourceManifestDigestHex",
+  "trustSnapshotDigestHex",
+  "wallTimeMs",
+  "wallTimeOrigin",
+]);
+assertEqual(planFixture.objectType, "capsule.execution-plan", "object type");
+assertEqual(planFixture.objectVersion, 0, "object version");
+assertEqual(planFixture.inputSlot, "primary-data", "input slot");
+assertEqual(planFixture.outputSlot, "transformed-json", "output slot");
+if (!["requested", "trusted-default"].includes(planFixture.wallTimeOrigin)) {
+  throw new Error("wallTimeOrigin is unsupported");
+}
+if (
+  !Array.isArray(planFixture.profileReviewAttestationDigestsHex) ||
+  planFixture.profileReviewAttestationDigestsHex.length < 1 ||
+  planFixture.profileReviewAttestationDigestsHex.length > 8
+) {
+  throw new Error("profileReviewAttestationDigestsHex must contain 1 through 8 digests");
+}
+for (const field of [
+  "epochSequence",
+  "sourceByteLength",
+  "inlineInputByteLength",
+  "wallTimeMs",
+  "outputMaxJsonBytes",
+  "expiresAt",
+]) {
+  assertSafeUnsigned(planFixture[field], field);
+}
+
+const planPayload = new Map([
+  [1, planFixture.objectType],
+  [2, planFixture.objectVersion],
+  [3, decodeFixedHex(planFixture.installationIdHex, 16, "installationIdHex")],
+  [4, planFixture.epochSequence],
+  [5, decodeFixedHex(planFixture.epochDigestHex, 32, "epochDigestHex")],
+  [6, decodeFixedHex(planFixture.sourceManifestDigestHex, 32, "sourceManifestDigestHex")],
+  [7, planFixture.sourceEntrypoint],
+  [8, planFixture.sourceByteLength],
+  [9, planFixture.inputSlot],
+  [10, decodeFixedHex(planFixture.inlineInputDigestHex, 32, "inlineInputDigestHex")],
+  [11, planFixture.inlineInputByteLength],
+  [12, planFixture.runtimeProfileAlias],
+  [
+    13,
+    decodeFixedHex(
+      planFixture.runtimeBundleManifestDigestHex,
+      32,
+      "runtimeBundleManifestDigestHex",
+    ),
+  ],
+  [
+    14,
+    planFixture.profileReviewAttestationDigestsHex.map((value, index) =>
+      decodeFixedHex(value, 32, `profileReviewAttestationDigestsHex[${index}]`),
+    ),
+  ],
+  [
+    15,
+    decodeFixedHex(planFixture.profileRegistryEntryDigestHex, 32, "profileRegistryEntryDigestHex"),
+  ],
+  [
+    16,
+    decodeFixedHex(
+      planFixture.backendValidationRecordDigestHex,
+      32,
+      "backendValidationRecordDigestHex",
+    ),
+  ],
+  [
+    17,
+    decodeFixedHex(planFixture.backendConfigurationDigestHex, 32, "backendConfigurationDigestHex"),
+  ],
+  [18, decodeFixedHex(planFixture.trustSnapshotDigestHex, 32, "trustSnapshotDigestHex")],
+  [19, decodeFixedHex(planFixture.policyDecisionDigestHex, 32, "policyDecisionDigestHex")],
+  [20, planFixture.wallTimeMs],
+  [21, planFixture.wallTimeOrigin],
+  [22, planFixture.outputSlot],
+  [23, planFixture.outputMaxJsonBytes],
+  [24, planFixture.expiresAt],
+]);
+
+assertHexEqual(
+  encodeDeterministicCbor(planPayload),
+  planFixture.payloadHex,
+  "ExecutionPlan payload",
+);
+process.stdout.write(`validated ${planFixtureUrl.pathname}\n`);
+
 function encodeDeterministicCbor(value) {
   if (value instanceof Uint8Array) {
     return concatenate([encodeArgument(2, value.length), value]);
@@ -130,6 +244,12 @@ function encodeDeterministicCbor(value) {
       throw new Error(`CBOR integer is outside the safe range: ${value}`);
     }
     return value >= 0 ? encodeArgument(0, value) : encodeArgument(1, -1 - value);
+  }
+  if (Array.isArray(value)) {
+    return concatenate([
+      encodeArgument(4, value.length),
+      ...value.map((child) => encodeDeterministicCbor(child)),
+    ]);
   }
   if (value instanceof Map) {
     const encodedEntries = [...value.entries()].map(([key, child]) => [

@@ -93,7 +93,7 @@ assertExactKeys(registrationFixture, [
 ]);
 assertEqual(registrationFixture.objectType, "capsule.plan-registration", "object type");
 assertEqual(registrationFixture.objectVersion, 0, "object version");
-assertSafeUnsigned(registrationFixture.registrationSequence, "registrationSequence");
+assertSafePositive(registrationFixture.registrationSequence, "registrationSequence");
 assertSafeUnsigned(registrationFixture.epochSequence, "epochSequence");
 assertSafeUnsigned(registrationFixture.expiresAt, "expiresAt");
 
@@ -161,15 +161,11 @@ if (
 ) {
   throw new Error("profileReviewAttestationDigestsHex must contain 1 through 8 digests");
 }
-for (const field of [
-  "epochSequence",
-  "sourceByteLength",
-  "inlineInputByteLength",
-  "wallTimeMs",
-  "outputMaxJsonBytes",
-  "expiresAt",
-]) {
+for (const field of ["epochSequence", "sourceByteLength", "inlineInputByteLength", "expiresAt"]) {
   assertSafeUnsigned(planFixture[field], field);
+}
+for (const field of ["wallTimeMs", "outputMaxJsonBytes"]) {
+  assertSafePositive(planFixture[field], field);
 }
 
 const planPayload = new Map([
@@ -321,6 +317,12 @@ function decodeHex(value, label) {
 function assertSafeUnsigned(value, label) {
   if (!Number.isSafeInteger(value) || value < 0) {
     throw new Error(`${label} must be a nonnegative safe integer`);
+  }
+}
+
+function assertSafePositive(value, label) {
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${label} must be a positive safe integer`);
   }
 }
 

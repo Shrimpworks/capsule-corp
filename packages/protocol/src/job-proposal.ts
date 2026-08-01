@@ -12,6 +12,7 @@ declare const sourcePathBrand: unique symbol;
 declare const sourceEntrypointBrand: unique symbol;
 declare const runtimeProfileAliasBrand: unique symbol;
 declare const positiveSafeIntegerBrand: unique symbol;
+declare const safeJsonIntegerBrand: unique symbol;
 
 export type SourcePath = string & { readonly [sourcePathBrand]: "SourcePath" };
 export type SourceEntrypoint = string & {
@@ -23,11 +24,14 @@ export type RuntimeProfileAlias = string & {
 export type PositiveSafeInteger = number & {
   readonly [positiveSafeIntegerBrand]: "PositiveSafeInteger";
 };
+export type SafeJsonInteger = number & {
+  readonly [safeJsonIntegerBrand]: "SafeJsonInteger";
+};
 
 export type InlineJsonValue =
   | null
   | boolean
-  | number
+  | SafeJsonInteger
   | string
   | readonly InlineJsonValue[]
   | { readonly [key: string]: InlineJsonValue };
@@ -96,4 +100,11 @@ export function asPositiveSafeInteger(value: number): PositiveSafeInteger {
     throw new TypeError("value must be a positive safe integer");
   }
   return value as PositiveSafeInteger;
+}
+
+export function asSafeJsonInteger(value: number): SafeJsonInteger {
+  if (!Number.isSafeInteger(value)) {
+    throw new TypeError("value must be a safe JSON integer");
+  }
+  return value as SafeJsonInteger;
 }

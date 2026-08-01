@@ -10,6 +10,7 @@ import {
   asCandidateUInt53,
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
+  asSafeJsonInteger,
   asSourceEntrypoint,
   asSourcePath,
   createDenyByDefaultCapabilities,
@@ -72,6 +73,7 @@ test("candidate scalar constructors reject ambiguous or unsafe values", () => {
   assert.throws(() => asRuntimeProfileAlias("Bun@latest"), /runtime profile alias/u);
   assert.throws(() => asPositiveSafeInteger(0), /positive safe integer/u);
   assert.throws(() => asPositiveSafeInteger(Number.MAX_SAFE_INTEGER + 1), /positive safe integer/u);
+  assert.throws(() => asSafeJsonInteger(1.5), /safe JSON integer/u);
 });
 
 test("PlanRegistration candidate keeps identity domains distinct", () => {

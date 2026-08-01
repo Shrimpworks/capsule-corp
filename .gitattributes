@@ -6,3 +6,4 @@
 *.webp binary
 *.pdf binary
 *.capture binary
+schemas/conformance/v0/shared/*.bin binary

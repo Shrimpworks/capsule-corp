@@ -14,10 +14,11 @@
     "codex:links": "node scripts/setup-codex-links.mjs",
     "format": "biome format --write .",
     "format:check": "biome format .",
+    "generate:conformance": "node scripts/generate-contract-conformance-fixtures.mjs",
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
     "test": "pnpm --recursive test && node --test scripts/verify-contract-conformance.test.mjs",
-    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs"
+    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/verify-contract-conformance.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

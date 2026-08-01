@@ -84,6 +84,9 @@ The decoder additionally:
 Raw limits count UTF-8 bytes, not JavaScript UTF-16 code units, Swift grapheme clusters, Unicode
 scalar count, or JSON escape spelling.
 
+JSON value depth assigns the root value depth 1 and adds one for each object-member value or array
+element traversed. Object keys do not add depth.
+
 Every non-root JSON value is exactly one object-member value or array element. The 8,193-node
 ceiling is therefore the derived defense-in-depth maximum of one root plus 4,096 members plus 4,096
 elements. Its cap-plus-one case necessarily also exceeds at least one collection-total cap; that

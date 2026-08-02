@@ -91,7 +91,7 @@ that attach attempts fail against the exact enrolled components.
 
 ### P0-0: runtime-authority closure
 
-Goal: preserve the documented dependency-free Bun profile with no subprocess, FFI, native addon,
+Goal: preserve the documented dependency-free JS/TS v0 profile with no subprocess, FFI, native addon,
 inspector, macro, environment-file, or package-install authority.
 
 Required evidence includes direct APIs, aliases, workers, child-process creation, native/FFI
@@ -106,7 +106,7 @@ bypass structurally unavailable. Any runtime update invalidates this evidence.
 
 Pass: an exact pinned mechanism refuses every prohibited power. Fail: choose a governed runtime
 patch or alternate runtime, or explicitly revise the product contract in a new ADR. Do not keep
-building around a stock Bun profile that contradicts the plan shown to the user.
+building around a runtime profile that contradicts the plan shown to the user.
 
 The 2026-08-02 exact-stock investigation failed this hypothesis. Bun 1.3.14 commit
 `0d9b296af33f2b851fcbf4df3e9ec89751734ba4` exposed direct and aliased subprocess, `execve`, FFI,
@@ -128,6 +128,20 @@ isolation, but cannot close Worker or native loading while preserving Bun/JSC la
 P0-0 is closed as a Bun NO-GO; alternate-runtime investigation and an ADR-0003 superseding decision
 are now required. See the
 [construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
+
+Deno-family decision (2026-08-02): **DENO-FAMILY-NO-GO**. Under the exact full-Deno v2.9.4
+profile, the initial static graph bypassed read/import denial, blob Workers executed, SIGUSR1
+activated a loopback inspector, Node compatibility remained constructed, and runtime-managed web
+storage APIs remained available outside ordinary read/write permissions (with state confined to
+disposable tmpfs). A smaller Capsule-owned `deno_core` 0.409.0 prototype had no module
+loader or ambient extensions and used V8 `--jitless`, but `JsRuntime` still physically registered
+99 built-in core ops before middleware disabled 96. `deno_core` also has no TypeScript pipeline;
+preserving exact approved-byte semantics requires a separately pinned pre-approval transformation
+and coordinated plan/schema/ADR binding. Neither construction is selected, no Proposed ADR
+supersedes ADR-0003, and `RUNTIME-001` continues to refuse. The retained next experiment is a
+governed `deno_core` fork that physically omits nonessential built-ins before snapshot, external
+seal, or TypeScript work. See the
+[retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md).
 
 ### P0-1: immutable runtime-root custody
 

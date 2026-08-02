@@ -45,11 +45,14 @@ independently predecodes, role-binds, hashes, and retains the 530-byte known ans
 product IPC implementation: Swift, authenticated cross-process transport, consumers, and endpoints
 remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
-checkpoint rejects both stock Bun 1.3.14 and its governed-construction branch for the required
-runtime-authority contract; alternate-runtime selection and an ADR-0003 superseding decision are
-now required. The exact libkrun block-root profile also remains unsupported because the smallest
-`NullFs` removal prevents guest bootstrap. See the
+checkpoint rejects stock Bun 1.3.14, its governed-construction branch, hardened full Deno v2.9.4,
+and the tested minimal `deno_core` 0.409.0 construction for the required runtime-authority contract.
+No first runtime is selected, `RUNTIME-001` remains unsupported, and the next bounded runtime
+experiment must retain the unchanged prohibited-power contract. The exact libkrun block-root
+profile also remains unsupported because the smallest `NullFs` removal prevents guest bootstrap.
+See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
+and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 
 ## Problem
@@ -86,7 +89,7 @@ The platform scope is broader than file processing: it is intended for bounded a
 JS/TS tasks. The first executable slice is deliberately smaller:
 
 - Local macOS control experience
-- Bun and TypeScript
+- A pinned JS/TS runtime selected only after P0-0 authority closure
 - One-shot, dependency-free execution
 - Inline JSON input and bounded JSON output
 - Explicit prepare, register, human-readable approval, attempt, and execute phases

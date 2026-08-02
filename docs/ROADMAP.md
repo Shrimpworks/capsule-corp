@@ -26,7 +26,9 @@ Exit evidence:
 
 Status: initial decision spikes and all five Gate C implementation-readiness tracks completed for
 the currently available host/account environment. Gate C produced a required backend pivot and a
-conditional native candidate, plus explicit blockers for the exact native profile. Session, MDM,
+conditional native candidate, plus explicit blockers for the exact native profile. Runtime P0-0
+has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions; no
+runtime is selected and `RUNTIME-001` remains unsupported. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
 rather than reasons to delay backend-independent contract implementation.
 
@@ -61,7 +63,7 @@ Apple Container and direct Containerization failed the production lifecycle gate
 remains the lead native candidate under evaluation, and its readiness tracks passed mechanics, but
 the exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
 completion, installed distribution, and release-byte admission also remain open. The post-track P0
-reconciliation adds stock-Bun authority closure, proposes bounded console ports for source/input
+reconciliation adds runtime-authority closure, proposes bounded console ports for source/input
 and inline results, and defers filesystem-image output parsing until file artifacts. OCI plus
 gVisor remains independent; only its surrounding OCI/runc harness has run, so gVisor itself is
 unvalidated.
@@ -165,11 +167,11 @@ Exit evidence:
 
 ## Phase 5: dependency-free runtime development execution
 
-- Close the five reconciled P0 Gate C campaigns: investigate and select an alternate runtime under
-  the unchanged authority contract after both stock Bun and the governed-construction branch failed,
-  then close immutable
-  runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
-  bounded inline JSON, and an admissible complete installed development bundle.
+- Close the five reconciled P0 Gate C campaigns: continue the bounded runtime investigation under
+  the unchanged authority contract after stock/governed Bun and tested full-Deno/minimal-`deno_core`
+  constructions failed, selecting a runtime only after construction-level closure; then close
+  immutable runtime-root custody, independent `NullFs` disposition, typed port transport/completion
+  with bounded inline JSON, and an admissible complete installed development bundle.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on

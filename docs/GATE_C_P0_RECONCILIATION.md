@@ -183,6 +183,16 @@ unresolved high-severity findings, and residual limitations. Describe the surfac
 absent or proven bug-free. Custody and `NullFs` remain independent decisions even if one libkrun
 patch eventually changes both areas.
 
+Evidence checkpoint (2026-08-02): the bounded replacement investigation found no independent
+virtiofs feature toggle and confirmed that `krun_set_root_disk_remount` always adds `NullFs` in the
+exact retained block-root route. Removing only that device built but failed before init because the
+dummy virtiofs root supplies the bootstrap file and mount points. This falsifies the smallest
+removal, not all alternate-bootstrap designs. The existing 47-device-test/one-libkrun-test suites
+and Go profile fuzzing do not cover the complete FUSE/queue/worker/overlay path, and the pinned tree
+has no relevant fuzz target or retained sanitizer/coverage corpus. P0-2 therefore remains open and
+the current profile remains unsupported. See the
+[P0-2 investigation](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md).
+
 ### P0-3: typed port transport and completion
 
 Goal: move only exact bounded source/input bytes into the guest and receive exactly one

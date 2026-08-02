@@ -146,6 +146,7 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
 - [`experiments/gate-c-libkrun-console-lifecycle/RESULTS.md`](../../experiments/gate-c-libkrun-console-lifecycle/RESULTS.md)
 - [`experiments/gate-c-libkrun-installed-recovery/RESULTS.md`](../../experiments/gate-c-libkrun-installed-recovery/RESULTS.md)
 - [`experiments/gate-c-libkrun-adversarial/RESULTS.md`](../../experiments/gate-c-libkrun-adversarial/RESULTS.md)
+- [`experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md`](../../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md)
 - [`experiments/gate-c-libkrun-supply-chain/RESULTS.md`](../../experiments/gate-c-libkrun-supply-chain/RESULTS.md)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)

@@ -23,3 +23,8 @@ Counterevidence narrows but does not suppress the finding: no host directory was
 observed mounted. The remaining proof gap is an explicit accept/remove decision plus independent
 validation of the exact accepted `NullFs` implementation, or a device-removal change followed by a
 corpus rerun.
+
+Follow-up: the 2026-08-02 [P0-2 investigation](NULLFS_P0_2.md) falsified only the smallest removal.
+Removing the internal fs-device construction prevented bootstrap before init, while the control
+booted and exposed virtiofs. The finding and proof gap survive; no residual-surface acceptance,
+installed-profile evidence, or posture promotion resulted.

@@ -123,6 +123,30 @@ experiments/gate-c-libkrun-adversarial/.runs/adversarial.RnxjWW/
 No corpus rerun was required for this consolidation. Verification commands and results are recorded
 in [HANDOFF.md](HANDOFF.md).
 
+## P0-2 replacement investigation (2026-08-02)
+
+A fresh bounded source inspection found that virtiofs has no independent build feature in the
+pinned libkrun tree. `NullFs` is not instantiated merely by loading the library, but it is
+unconditional after the exact runner calls `krun_set_root_disk_remount`: the helper always adds
+`/dev/root` with `shared_dir: None`. Default `init-blob` controls the virtual bootstrap file, not
+device creation. The dylib also exports host-backed `krun_set_root`/`krun_add_virtiofs*` routes,
+although the retained runner does not import them.
+
+The smallest falsifiable change removed only that internal fs-device construction while preserving
+the block-root configuration. The same feature build succeeded, but the guest produced no
+completion or inventory and panicked before init because it had no bootstrap root. The unmodified
+control booted `/dev/vda` read-only and again exposed the virtiofs device. Thus a simple removal is
+rejected; a different bootstrap mechanism is required. This does not prove that every removal
+design is impossible.
+
+The residual guest-facing path includes generic virtio-mmio/queue/descriptor processing, the full
+FUSE decoder and opcode dispatcher, worker/reset/concurrency handling, the `AugmentFs` bootstrap
+overlay, and the small `NullFs` leaf. Existing unit tests and the Go profile-validator fuzz target
+do not exercise that full path, and the pinned tree has no virtiofs/`NullFs` fuzz target or retained
+sanitizer/coverage corpus. The exact profile therefore remains unsupported for P0-2. See
+[NULLFS_P0_2.md](NULLFS_P0_2.md) for observed evidence, the bounded surface, required malformed
+corpus, signing limitation, and prohibited claims.
+
 ## Limitations and prohibited claims
 
 - The corpus is development-only spike evidence against exact retained bytes and one local host.
@@ -137,3 +161,6 @@ in [HANDOFF.md](HANDOFF.md).
   original run fixture remains sparse. The report and auxiliary evidence copied byte-for-byte.
 - This result does not support production readiness, `validated-local`, full backend-contract
   freeze, vulnerability absence, or release of the current runtime bytes into a validation record.
+- The P0-2 replacement boot comparison used non-hardened ad-hoc signing because the host had no
+  valid Developer ID identity. It is bootstrap evidence only and does not update installed-profile
+  identity, App Sandbox, attach-denial, or distribution claims.

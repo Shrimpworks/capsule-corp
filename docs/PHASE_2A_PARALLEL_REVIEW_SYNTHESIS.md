@@ -97,6 +97,10 @@ Acceptance:
 
 Dependencies: Task 1 for cases whose exact oracle is currently undecided.
 
+Implementation progress: Phase 2B Tasks 2.1 and 2.2 now provide the closed manifest, repository
+integrity runner, and foundational raw/media/scalar/CBOR fixture corpus. Proposal/source/input and
+plan/registration state cases remain Tasks 2.3 and 2.4.
+
 ### Task 3: Implement strict proposal decoding and semantic planning as an unwired library
 
 Implement the public raw-decoder boundary and semantic `JobProposal` validation without adding a

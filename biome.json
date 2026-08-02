@@ -10,6 +10,7 @@
       "!!experiments/**/.build",
       "!!experiments/**/.runs",
       "!!experiments/**/.swiftpm",
+      "!!schemas/conformance/v0/manifest.json",
       "!!**/.codex/skills",
       "!!.codex/steering/javascript-esm-steering.md"
     ]

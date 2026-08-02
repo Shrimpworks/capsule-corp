@@ -48,7 +48,7 @@ The first candidate uses these exact denial-of-service budgets:
 | --- | ---: |
 | Raw JSON document | 2,097,152 bytes |
 | Nesting depth, counting the root | 32 |
-| Total JSON value nodes | 16,384 |
+| Total JSON value nodes | 8,193 |
 | Total object members | 4,096 |
 | Members in one object | 256 |
 | Total array elements | 4,096 |
@@ -83,6 +83,14 @@ The decoder additionally:
 
 Raw limits count UTF-8 bytes, not JavaScript UTF-16 code units, Swift grapheme clusters, Unicode
 scalar count, or JSON escape spelling.
+
+JSON value depth assigns the root value depth 1 and adds one for each object-member value or array
+element traversed. Object keys do not add depth.
+
+Every non-root JSON value is exactly one object-member value or array element. The 8,193-node
+ceiling is therefore the derived defense-in-depth maximum of one root plus 4,096 members plus 4,096
+elements. Its cap-plus-one case necessarily also exceeds at least one collection-total cap; that
+overlap is recorded rather than misrepresented as an independently reachable limit.
 
 ### Source path and source-manifest identity
 
@@ -146,12 +154,22 @@ these object-specific raw budgets:
 | Object | Raw bytes | Nesting depth | Total data items | Maximum map entries | Maximum array elements |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `ExecutionPlan` | 65,536 | 8 | 256 | 64 | 8 |
-| `PlanRegistration` | 4,096 | 4 | 32 | 16 | 0 |
+| `PlanRegistration` | 4,096 | 4 | 33 | 16 | 0 |
 
 Definite lengths, preferred integer/length encodings, deterministic map order, strict UTF-8, closed
 integer labels, and the CDDL field bounds are mandatory. Indefinite containers, floats, bignums,
 arbitrary tags, duplicate keys, trailing data, and decoded string/byte totals above the raw cap are
 rejected before ordinary object allocation. Exact received plan bytes remain authoritative.
+
+CBOR nesting depth counts the outermost data item as one. Total data items count that outermost item,
+every container, every map key and value, and every array element. Map-entry and array-element
+maxima apply to each individual container; the total-data-item cap bounds their aggregate. A
+16-entry outer `PlanRegistration` map therefore contains exactly 33 data items.
+
+A 17-entry outer `PlanRegistration` map necessarily contains at least 35 data items, so its map-cap
+plus-one fixture also exceeds the total-item cap. Conversely, increasing a valid 33-item map by one
+item requires a container with one child; under the closed profile that uses a one-element array and
+also exceeds the zero-array-element cap. The corpus records both unavoidable overlaps.
 
 ### Scalar zero rules
 

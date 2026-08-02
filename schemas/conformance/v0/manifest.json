@@ -1,0 +1,3828 @@
+{
+  "manifestVersion": "capsule.conformance/v0",
+  "rules": [
+    {
+      "id": "job-proposal.media-type",
+      "source": "ADR-0023#boundary-ownership-and-media-types",
+      "description": "JobProposal uses only its versioned object-specific media type.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.media-type",
+      "source": "ADR-0023#boundary-ownership-and-media-types",
+      "description": "ExecutionPlan uses only its versioned object-specific media type.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.media-type",
+      "source": "ADR-0023#boundary-ownership-and-media-types",
+      "description": "PlanRegistration uses only its versioned object-specific media type.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Raw JSON is at most 2,097,152 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.depth",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "JSON value depth is at most 32 including the root value.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.nodes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "JSON contains at most the derived 8,193 value nodes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.total-members",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "JSON contains at most 4,096 object members.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.object-members",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One JSON object contains at most 256 members.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.total-elements",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "JSON contains at most 4,096 array elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.array-elements",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One JSON array contains at most 256 elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.decoded-text",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Decoded keys and values contain at most 1,572,864 UTF-8 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.key-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One decoded object key contains at most 128 UTF-8 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.string-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One non-source string contains at most 65,536 UTF-8 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.single-document",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Accept exactly one JSON document with only trailing whitespace.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.utf8",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Accept only shortest-form valid UTF-8.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.bom",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Reject a UTF-8 BOM.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.surrogate",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Reject unpaired UTF-16 surrogate escapes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.duplicate-keys",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Reject duplicate decoded object keys.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Accept only the restricted base-10 integer token grammar.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.raw.integer-range",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Accept integers only inside the inclusive cross-language safe range.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "candidate-id.width",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "Candidate IDs are exactly 16 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "candidate-id.nonzero",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "Candidate IDs reject the all-zero value.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "nonzero"
+        },
+        {
+          "decision": "reject",
+          "variant": "all-zero"
+        }
+      ]
+    },
+    {
+      "id": "sha256-digest.width",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "SHA-256 digest fields are exactly 32 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "sha256-digest.bit-pattern",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "Every 32-byte digest bit pattern is structurally valid, including all zeroes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "all-zero"
+        },
+        {
+          "decision": "accept",
+          "variant": "nonzero"
+        }
+      ]
+    },
+    {
+      "id": "sha256-digest.domain",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "Digest width never substitutes for the required nominal role.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Raw deterministic-CBOR payload is at most 65536 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.depth",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR data-item depth is at most 8 including the root.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.items",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR contains at most 256 total data items.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.map-entries",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR map contains at most 64 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.array-elements",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR array contains at most 8 elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.cbor.deterministic",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Accept only the bounded deterministic-CBOR profile before object decoding.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Raw deterministic-CBOR payload is at most 4096 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.depth",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR data-item depth is at most 4 including the root.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.items",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "CBOR contains at most 33 total data items.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.map-entries",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR map contains at most 16 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.array-elements",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "One CBOR array contains at most 0 elements.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.cbor.deterministic",
+      "source": "ADR-0023#internal-cbor-predecoder-budgets",
+      "description": "Accept only the bounded deterministic-CBOR profile before object decoding.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "job-proposal.media-type.exact",
+      "description": "Accept the exact JobProposal media type.",
+      "ruleIds": [
+        "job-proposal.media-type"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-job-proposal-exact.txt",
+        "sha256": "b2f700bdd30ce458ccfc7fe2b7d4a410943e46add337e3bcb6c4fa2237c49489",
+        "byteLength": 41
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.media-type.case-insensitive-type",
+      "description": "Accept ASCII case differences in the JobProposal type and subtype.",
+      "ruleIds": [
+        "job-proposal.media-type"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "media-type",
+      "mediaType": "APPLICATION/CAPSULE.JOB-PROPOSAL+JSON;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-job-proposal-uppercase.txt",
+        "sha256": "35bdb5ebcc83c3a6a5edd11036dec90984e0f30e98980369c6ecb2433fd68727",
+        "byteLength": 41
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.media-type.missing-version",
+      "description": "Reject missing version for JobProposal.",
+      "ruleIds": [
+        "job-proposal.media-type"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.job-proposal+json",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-job-proposal-missing-version.txt",
+        "sha256": "272ef702d5642a4d720137cdd13b21d4a06e11d915e26232b92318a542b59d43",
+        "byteLength": 37
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.media-type.additional-parameter",
+      "description": "Reject additional parameter for JobProposal.",
+      "ruleIds": [
+        "job-proposal.media-type"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.job-proposal+json;v=0;charset=utf-8",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-job-proposal-additional-parameter.txt",
+        "sha256": "0c8a658bf76e268d340bc6081afef4670e7efd319e0e9c16bd19b817eda02a1b",
+        "byteLength": 55
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.media-type.unknown-version",
+      "description": "Reject unknown version for JobProposal.",
+      "ruleIds": [
+        "job-proposal.media-type"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.job-proposal+json;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-job-proposal-unknown-version.txt",
+        "sha256": "f7d538d6015399fc94c63a237a7cb8989730be98599b7413916da05a579ec876",
+        "byteLength": 41
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.media-type.exact",
+      "description": "Accept the exact ExecutionPlan media type.",
+      "ruleIds": [
+        "execution-plan.media-type"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-execution-plan-exact.txt",
+        "sha256": "b791cd8f886c5fffe78db408c1522088fddfee6904f723cb1465fcea7d182703",
+        "byteLength": 43
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.media-type.case-insensitive-type",
+      "description": "Accept ASCII case differences in the ExecutionPlan type and subtype.",
+      "ruleIds": [
+        "execution-plan.media-type"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "media-type",
+      "mediaType": "APPLICATION/CAPSULE.EXECUTION-PLAN+CBOR;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-execution-plan-uppercase.txt",
+        "sha256": "0b05224388eea440fd33e3f94f4400ed9209a55636215444490148e42baa33b5",
+        "byteLength": 43
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.media-type.missing-version",
+      "description": "Reject missing version for ExecutionPlan.",
+      "ruleIds": [
+        "execution-plan.media-type"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.execution-plan+cbor",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-execution-plan-missing-version.txt",
+        "sha256": "831efaffb5b20bba85edd98c1d3ee029e944b84c60d0373dfcfa5d6ba6791039",
+        "byteLength": 39
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.media-type.additional-parameter",
+      "description": "Reject additional parameter for ExecutionPlan.",
+      "ruleIds": [
+        "execution-plan.media-type"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0;charset=utf-8",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-execution-plan-additional-parameter.txt",
+        "sha256": "da3ffdc701847908f9b94dca1554da1298591731cd8800cd6a6331581088076d",
+        "byteLength": 57
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.media-type.unknown-version",
+      "description": "Reject unknown version for ExecutionPlan.",
+      "ruleIds": [
+        "execution-plan.media-type"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.execution-plan+cbor;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-execution-plan-unknown-version.txt",
+        "sha256": "9df0da5b0b8a1bbe7490516d3ee7a082957cc35467f66066713b667c3b170fb7",
+        "byteLength": 43
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "plan-registration.media-type.exact",
+      "description": "Accept the exact PlanRegistration media type.",
+      "ruleIds": [
+        "plan-registration.media-type"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-plan-registration-exact.txt",
+        "sha256": "3db8130e0fbf9162a7c1b0ef7d729571366d7f15a1e12e3a45cdb8998860b88a",
+        "byteLength": 46
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "plan-registration.media-type.case-insensitive-type",
+      "description": "Accept ASCII case differences in the PlanRegistration type and subtype.",
+      "ruleIds": [
+        "plan-registration.media-type"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "media-type",
+      "mediaType": "APPLICATION/CAPSULE.PLAN-REGISTRATION+CBOR;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/media-plan-registration-uppercase.txt",
+        "sha256": "edb646d429fea5f152780688f541c569cf68db88e2a28ef45995bff874754975",
+        "byteLength": 46
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "plan-registration.media-type.missing-version",
+      "description": "Reject missing version for PlanRegistration.",
+      "ruleIds": [
+        "plan-registration.media-type"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.plan-registration+cbor",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-plan-registration-missing-version.txt",
+        "sha256": "6fd7e2298e5afcf766d7be22c9bb8f93095ded68afabf36a56312c8d82767c65",
+        "byteLength": 42
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "plan-registration.media-type.additional-parameter",
+      "description": "Reject additional parameter for PlanRegistration.",
+      "ruleIds": [
+        "plan-registration.media-type"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0;charset=utf-8",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-plan-registration-additional-parameter.txt",
+        "sha256": "32ebe8ec21797a9522a7ea0827f911ad042faa11e19e1adb2627b8ff3686baee",
+        "byteLength": 60
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "plan-registration.media-type.unknown-version",
+      "description": "Reject unknown version for PlanRegistration.",
+      "ruleIds": [
+        "plan-registration.media-type"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.plan-registration+cbor;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/media-plan-registration-unknown-version.txt",
+        "sha256": "8f72cddc203d4223ad83f12deacae343f69c47b37e15b830b96d89d28e02379f",
+        "byteLength": 46
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "media-type-parser",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.bytes.exact-maximum",
+      "description": "Accept the exact raw bytes maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-raw-bytes-exact.bin",
+        "sha256": "d67b18148ff8ecc6e75a0697c29c84bfed6b137394252c3a384590ffcc5d8fbf",
+        "byteLength": 2097152
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.bytes.cap-plus-one",
+      "description": "Reject raw bytes at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-raw-bytes-over.bin",
+        "sha256": "cbe71ca2c1892a08857a0837b001f3a78014f8176689cdd655f86bb83a006b5d",
+        "byteLength": 2097153
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.depth.exact-maximum",
+      "description": "Accept the exact depth maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.depth"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-depth-exact.bin",
+        "sha256": "aa6b4827b4b9b0503263d3a0f1b0cc38801d46f505e7899a109d8210c34fd537",
+        "byteLength": 63
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.depth.cap-plus-one",
+      "description": "Reject depth at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.depth"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-depth-over.bin",
+        "sha256": "4e04cac422d9ecd4a5f6221653eeb4eaf29077cf3f588cd36bf6dc8ead76971f",
+        "byteLength": 65
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.nodes.exact-maximum",
+      "description": "Accept the exact nodes maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.nodes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-nodes-exact.bin",
+        "sha256": "6246d6a7ffa52b79bc9f201c4b0b0499e69c39b151ba40cb1a412a7546a453e0",
+        "byteLength": 48787
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.nodes.cap-plus-one",
+      "description": "Reject 8,194 nodes; the derived limit necessarily co-triggers the total-element cap.",
+      "ruleIds": [
+        "job-proposal.raw.nodes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-nodes-over.bin",
+        "sha256": "fa74bb3f7b9be5bfd1f1205d497c06d6fa69ce652c079158dd299cfbabf58e31",
+        "byteLength": 48789
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.total-members.exact-maximum",
+      "description": "Accept the exact total members maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.total-members"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-total-members-exact.bin",
+        "sha256": "4ac9839de770a43f5ae4b3d8002121341ddb57de3303ef1f3de5b5df809b9e26",
+        "byteLength": 35029
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.total-members.cap-plus-one",
+      "description": "Reject total members at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.total-members"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-total-members-over.bin",
+        "sha256": "6caa9a9b2f12350c6fb103d14fd600cb5b7b96fe1aca93c4a3264c45f5573b2b",
+        "byteLength": 35038
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.object-members.exact-maximum",
+      "description": "Accept the exact object members maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.object-members"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-object-members-exact.bin",
+        "sha256": "d7c12d3f035910597d48841e7d3fa96e4f621acb2c7e8c073f445a1339542eac",
+        "byteLength": 2195
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.object-members.cap-plus-one",
+      "description": "Reject object members at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.object-members"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-object-members-over.bin",
+        "sha256": "d5986dfb2da232439b1f069c30a3ed6d9f289fc4a90e9014899183db5d603306",
+        "byteLength": 2204
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.total-elements.exact-maximum",
+      "description": "Accept the exact total elements maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.total-elements"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-total-elements-exact.bin",
+        "sha256": "21037b8978327d4f3385d4c8e1ae4a0f9114551969ef674cadc102ac9b42df66",
+        "byteLength": 8193
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.total-elements.cap-plus-one",
+      "description": "Reject total elements at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.total-elements"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-total-elements-over.bin",
+        "sha256": "fd62456370986a1c507bbf72e1f6310ebdd3318baee9f0f0189e4fc2ce2cecb8",
+        "byteLength": 8195
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.array-elements.exact-maximum",
+      "description": "Accept the exact array elements maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.array-elements"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-array-elements-exact.bin",
+        "sha256": "2d673de942048a8b5ede075bd8fc7c56c7d9cce7335d5be36ef4b87dbb16cb82",
+        "byteLength": 513
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.array-elements.cap-plus-one",
+      "description": "Reject array elements at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.array-elements"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-array-elements-over.bin",
+        "sha256": "c03edf94542c06d1ce116d3f0cf964b1c19e2571c07c42a52b3a2b07e3682a18",
+        "byteLength": 515
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.decoded-text.exact-maximum",
+      "description": "Accept the exact decoded text maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.decoded-text"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-decoded-text-exact.bin",
+        "sha256": "493ce1bb327298525a5d31a547be6a626ef3eae53a247496d5b6f14a500d36f9",
+        "byteLength": 1572937
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.decoded-text.cap-plus-one",
+      "description": "Reject decoded text at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.decoded-text"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-decoded-text-over.bin",
+        "sha256": "0de2e6aaba4697c7845e6b21ddd293ddc2eeef75d56a2111e29a1001e23b0bf3",
+        "byteLength": 1572941
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.key-bytes.exact-maximum",
+      "description": "Accept the exact key bytes maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-key-bytes-exact.bin",
+        "sha256": "12041e0817b9902de606a325cef8d457d0905c44173068f56541065a8786ccb4",
+        "byteLength": 134
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.key-bytes.cap-plus-one",
+      "description": "Reject key bytes at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-key-bytes-over.bin",
+        "sha256": "d4dcdd23a30cd8d2d6a156288b48e93ffc44bc21b6455e2864d5ad0804a40812",
+        "byteLength": 135
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.string-bytes.exact-maximum",
+      "description": "Accept the exact string bytes maximum at the raw boundary.",
+      "ruleIds": [
+        "job-proposal.raw.string-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-string-bytes-exact.bin",
+        "sha256": "201fb98a7c4428f1fcabb656e811f387fc61987e76488abc192f00ba85d02921",
+        "byteLength": 65538
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.string-bytes.cap-plus-one",
+      "description": "Reject string bytes at cap plus one.",
+      "ruleIds": [
+        "job-proposal.raw.string-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-string-bytes-over.bin",
+        "sha256": "a4d2223fe35ea08c3f5a7e896c230c0af867743ec790dcc5ae64d00a5896d719",
+        "byteLength": 65539
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.ordinary.accept",
+      "description": "Accept valid UTF-8 JSON with whitespace, reordered keys, paired scalars, and safe zero.",
+      "ruleIds": [
+        "job-proposal.raw.single-document",
+        "job-proposal.raw.utf8",
+        "job-proposal.raw.bom",
+        "job-proposal.raw.surrogate",
+        "job-proposal.raw.duplicate-keys",
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/json-ordinary-accept.bin",
+        "sha256": "f8b4abc9e4025cffd28bf504fa05479654277eebaa4bca7aeb3c653805de2a2f",
+        "byteLength": 34
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.single-document.empty",
+      "description": "Reject empty JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.single-document"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-empty.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "byteLength": 0
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.single-document.trailing-data",
+      "description": "Reject trailing data JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.single-document"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-trailing-data.bin",
+        "sha256": "82985617ce795510ad965737efe6b5a76411b26a6d7453ff4ba680e856377bc8",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.single-document.second-document",
+      "description": "Reject second document JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.single-document"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-second-document.bin",
+        "sha256": "2cec2bbf1a64ea5249e8a7ab9ecc782fa48be13f0b35ad5f52bdea741841a230",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.utf8.invalid-continuation",
+      "description": "Reject invalid continuation JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.utf8"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-invalid-continuation.bin",
+        "sha256": "34055271592b3fa7a8c2617f65d0698fe1dc51a6db72fb63e28886da0115845e",
+        "byteLength": 4
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.utf8.overlong",
+      "description": "Reject overlong JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.utf8"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-overlong.bin",
+        "sha256": "bfc25cfd85c49686ec04294e6de47c5dd57651e75084d1c08d3d124cd1dd471d",
+        "byteLength": 4
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.bom.utf8-bom",
+      "description": "Reject utf8 bom JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.bom"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-utf8-bom.bin",
+        "sha256": "aa25e978046d680ef8740d837e6de5bc1e2a2dc6089dbda1012544b538d53f65",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.surrogate.unpaired-surrogate",
+      "description": "Reject unpaired surrogate JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.surrogate"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-unpaired-surrogate.bin",
+        "sha256": "8c0c59dd0d275aadcd462a5fe12eb352cbdfeaf961eae4f85a4660521df7d2f5",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.duplicate-keys.escaped-equivalent",
+      "description": "Reject escaped equivalent JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.duplicate-keys"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-escaped-equivalent.bin",
+        "sha256": "e7bc308c6a553b1d3b8eeff3e94f661ab5be5ba6acf85fd947d1f434c0818608",
+        "byteLength": 24
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar.fraction",
+      "description": "Reject fraction JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-fraction.bin",
+        "sha256": "d0ff5974b6aa52cf562bea5921840c032a860a91a3512f7fe8f768f6bbe005f6",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar.exponent",
+      "description": "Reject exponent JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-exponent.bin",
+        "sha256": "bcac40fbed4ed4e1042a0c9dafbe9cdd58447415f19a11e59add45fdc083e2f5",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar.leading-plus",
+      "description": "Reject leading plus JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-leading-plus.bin",
+        "sha256": "c59dc4e44ff99288156d4dff2168f6ac7ddee6b1fc7ccc0754656ffaa6d351ea",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar.leading-zero",
+      "description": "Reject leading zero JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-leading-zero.bin",
+        "sha256": "938db8c9f82c8cb58d3f3ef4fd250036a48d26a712753d2fde5abd03a85cabf4",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-grammar.negative-zero",
+      "description": "Reject negative zero JSON bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/json-negative-zero.bin",
+        "sha256": "ed79f26d03f412bde3db206601a698e0bb451bea9e3cc25289636ac17ea74b0a",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-range.safe-positive",
+      "description": "Accept safe positive integer bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-range"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-integer-safe-positive.bin",
+        "sha256": "f40b423c2dd95ff2b2f027e22208f438cf7242862e5e746860e697308c9add26",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-range.unsafe-positive",
+      "description": "Reject unsafe positive integer bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-range"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-integer-unsafe-positive.bin",
+        "sha256": "c681da39d7273a6a24c15c9cac3a75526ff2ecf8ba4ee60346a0c70c8163bdb2",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-range.safe-negative",
+      "description": "Accept safe negative integer bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-range"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/json-integer-safe-negative.bin",
+        "sha256": "4c933a456bb8f2e9894b2d0b26480439cd72d52fb8a27cbf8fd7f323f22c7815",
+        "byteLength": 17
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.raw.integer-range.unsafe-negative",
+      "description": "Reject unsafe negative integer bytes.",
+      "ruleIds": [
+        "job-proposal.raw.integer-range"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/json-integer-unsafe-negative.bin",
+        "sha256": "83e109bfd7fb4984b47a46f363627c18dbbd7e57e36b05a04cd162d304df72e9",
+        "byteLength": 17
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "public-raw-decoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "candidate-id.width.exact",
+      "description": "Accept exactly 16 candidate-ID bytes.",
+      "ruleIds": [
+        "candidate-id.width"
+      ],
+      "object": "CandidateId",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/id-nonzero-16.bin",
+        "sha256": "5dfbabeedf318bf33c0927c43d7630f51b82f351740301354fa3d7fc51f0132e",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "candidate-id.width.short",
+      "description": "Reject short CandidateId bytes.",
+      "ruleIds": [
+        "candidate-id.width"
+      ],
+      "object": "CandidateId",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/id-short.bin",
+        "sha256": "5322fecfc92a5e3248a297a3df3eddfb9bd9049504272e4f572b87fa36d4b3bd",
+        "byteLength": 15
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "candidate-id.width.long",
+      "description": "Reject long CandidateId bytes.",
+      "ruleIds": [
+        "candidate-id.width"
+      ],
+      "object": "CandidateId",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/id-long.bin",
+        "sha256": "0a88111852095cae045340ea1f0b279944b2a756a213d9b50107d7489771e159",
+        "byteLength": 17
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "candidate-id.nonzero.accept",
+      "description": "Accept a nonzero 16-byte candidate ID.",
+      "ruleIds": [
+        "candidate-id.nonzero"
+      ],
+      "object": "CandidateId",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "nonzero",
+      "fixture": {
+        "path": "shared/id-nonzero-16.bin",
+        "sha256": "5dfbabeedf318bf33c0927c43d7630f51b82f351740301354fa3d7fc51f0132e",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "candidate-id.nonzero.reject-zero",
+      "description": "Reject an all-zero 16-byte candidate ID.",
+      "ruleIds": [
+        "candidate-id.nonzero"
+      ],
+      "object": "CandidateId",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "all-zero",
+      "fixture": {
+        "path": "shared/id-zero-16.bin",
+        "sha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.width.exact",
+      "description": "Accept exactly 32 digest bytes.",
+      "ruleIds": [
+        "sha256-digest.width"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/digest-nonzero-32.bin",
+        "sha256": "ae216c2ef5247a3782c135efa279a3e4cdc61094270f5d2be58c6204b7a612c9",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.width.short",
+      "description": "Reject short Sha256Digest bytes.",
+      "ruleIds": [
+        "sha256-digest.width"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/digest-short.bin",
+        "sha256": "fd08be957bda07dc529ad8100df732f9ce12ae3e42bcda6acabe12c02dfd6989",
+        "byteLength": 31
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.width.long",
+      "description": "Reject long Sha256Digest bytes.",
+      "ruleIds": [
+        "sha256-digest.width"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/digest-long.bin",
+        "sha256": "7f9c9e31ac8256ca2f258583df262dbc7d6f68f2a03043d5c99a4ae5a7396ce9",
+        "byteLength": 33
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.bit-pattern.zero",
+      "description": "Accept an all-zero digest structurally.",
+      "ruleIds": [
+        "sha256-digest.bit-pattern"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "all-zero",
+      "fixture": {
+        "path": "shared/digest-zero-32.bin",
+        "sha256": "66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.bit-pattern.nonzero",
+      "description": "Accept a nonzero digest structurally.",
+      "ruleIds": [
+        "sha256-digest.bit-pattern"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "nonzero",
+      "fixture": {
+        "path": "shared/digest-nonzero-32.bin",
+        "sha256": "ae216c2ef5247a3782c135efa279a3e4cdc61094270f5d2be58c6204b7a612c9",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "shared-scalar-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.domain.match",
+      "description": "Accept digest bytes in their expected nominal role.",
+      "ruleIds": [
+        "sha256-digest.domain"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/digest-nonzero-32.bin",
+        "sha256": "ae216c2ef5247a3782c135efa279a3e4cdc61094270f5d2be58c6204b7a612c9",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "source-manifest",
+        "providedRole": "source-manifest"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "sha256-digest.domain.substitution",
+      "description": "Reject correct-width digest bytes supplied in the wrong nominal role.",
+      "ruleIds": [
+        "sha256-digest.domain"
+      ],
+      "object": "Sha256Digest",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "shared/digest-nonzero-32.bin",
+        "sha256": "ae216c2ef5247a3782c135efa279a3e4cdc61094270f5d2be58c6204b7a612c9",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "source-manifest",
+        "providedRole": "inline-input"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes.exact-maximum",
+      "description": "Accept the exact raw bytes maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.raw-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-raw-bytes-exact.bin",
+        "sha256": "7bf061f0ab15411993a9a9fecfe3a17c436087bbe01e37e9e79817faa5d16bc0",
+        "byteLength": 65536
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.raw-bytes.cap-plus-one",
+      "description": "Reject raw bytes at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.raw-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-raw-bytes-over.bin",
+        "sha256": "cc91037a7f01ef779eb7c8b65784e3058d6b2350323652f4333348cb64cd3fd0",
+        "byteLength": 65537
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.depth.exact-maximum",
+      "description": "Accept the exact depth maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.depth"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-depth-exact.bin",
+        "sha256": "24a4a7d4ae347d2a27e5c9c8f6214e3e7b9f953c17af578288d2799e73663334",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.depth.cap-plus-one",
+      "description": "Reject depth at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.depth"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-depth-over.bin",
+        "sha256": "f6a762f642a796310d56df2d5d80aed071edea39d2c303b309094c98e404f8ae",
+        "byteLength": 9
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.items.exact-maximum",
+      "description": "Accept the exact items maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.items"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-items-exact.bin",
+        "sha256": "ce855c74c9b73e84c9536805fa6457ccd3a6789cb669604508b73af69d96e1b3",
+        "byteLength": 297
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.items.cap-plus-one",
+      "description": "Reject items at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.items"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-items-over.bin",
+        "sha256": "60adbbdc0946d6b94cd45a57aa9bf37580e2ccd1a0117cc3c28923650fee8f2f",
+        "byteLength": 298
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.map-entries.exact-maximum",
+      "description": "Accept the exact map entries maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.map-entries"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-map-entries-exact.bin",
+        "sha256": "8c98b82039eec62d6b02c1a8b07db89df7fc9e94fc0f07b5b4bf975a18ec50bc",
+        "byteLength": 170
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.map-entries.cap-plus-one",
+      "description": "Reject map entries at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.map-entries"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-map-entries-over.bin",
+        "sha256": "894e6dc0f9018889446cedd4199dba3b336d89c30044736a9917e44a0c28a601",
+        "byteLength": 173
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.array-elements.exact-maximum",
+      "description": "Accept the exact array elements maximum at the predecoder.",
+      "ruleIds": [
+        "execution-plan.cbor.array-elements"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-array-elements-exact.bin",
+        "sha256": "b30aabc5fec39cb28de20e3d9d6345753a68303607eb321e71b00d86b1219bba",
+        "byteLength": 9
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.array-elements.cap-plus-one",
+      "description": "Reject array elements at cap plus one.",
+      "ruleIds": [
+        "execution-plan.cbor.array-elements"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-execution-plan-array-elements-over.bin",
+        "sha256": "807c4621f3e2a18c00d2bc78859138db34f98b4a2a50d09c72aaf849c6bc2924",
+        "byteLength": 10
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.canonical-map",
+      "description": "Accept a definite, preferred, canonically ordered CBOR map.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/cbor-profile-canonical-map.bin",
+        "sha256": "d834dba22a162024b0403cc47d78988d1c0cf9f2f842ae1d37879b09e9a7dae8",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.indefinite-container",
+      "description": "Reject an indefinite-length array.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-indefinite-container.bin",
+        "sha256": "589da4f671f78804e9e5342b1c8598e8a28e543b32b3146bedd0d6496a696954",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.float",
+      "description": "Reject a floating-point value.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-float.bin",
+        "sha256": "d823dcdc2d6aaab28aef32ce978988f5108ff31130f79d7f77117826d2cebc15",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.bignum",
+      "description": "Reject a bignum tag.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-bignum.bin",
+        "sha256": "99fba1135d8655851490d39b04b2286c07039808e890b87eaa1adb262a304106",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.tag",
+      "description": "Reject an arbitrary semantic tag.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-tag.bin",
+        "sha256": "e9aff84fdb699ca706c0a1fed47bb095cb25e3c95aa5d1c5d216ff2cfbcd4998",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.duplicate-key",
+      "description": "Reject duplicate decoded map keys.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-duplicate-key.bin",
+        "sha256": "a3db7ccede7c9c9509d650308bcfd4fbb929f71e40a9e92299023b040395128a",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.trailing-data",
+      "description": "Reject data after the first CBOR item.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-trailing-data.bin",
+        "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.nonpreferred-integer",
+      "description": "Reject a nonpreferred integer encoding.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-nonpreferred-integer.bin",
+        "sha256": "78a23af8da46b1b37e8767921a2d3f528fdc8eca37cea8aea775fd2b283d3776",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.invalid-utf8",
+      "description": "Reject invalid UTF-8 in a text string.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-invalid-utf8.bin",
+        "sha256": "8dd06b5ab6b594257e41b7d8dd440a4062eddc67fdab5c13b4dc300176896f6e",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.cbor.deterministic.map-order",
+      "description": "Reject noncanonical deterministic map order.",
+      "ruleIds": [
+        "execution-plan.cbor.deterministic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-map-order.bin",
+        "sha256": "e46ac75752367a5949ea7ea6283f63d6cbdaaf90668af9000d8a1908b7443434",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes.exact-maximum",
+      "description": "Accept the exact raw bytes maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.raw-bytes"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-raw-bytes-exact.bin",
+        "sha256": "2c242a8e87779cd52a3612d55252800be9b16b85eadcc4460e384c52a4d2eff0",
+        "byteLength": 4096
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.raw-bytes.cap-plus-one",
+      "description": "Reject raw bytes at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.raw-bytes"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-raw-bytes-over.bin",
+        "sha256": "dbe4595954b8552cc1f808dd3c35e52f092fa67bbbb456f0fa70dbb849d0c91d",
+        "byteLength": 4097
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.depth.exact-maximum",
+      "description": "Accept the exact depth maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.depth"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-depth-exact.bin",
+        "sha256": "af2174db8fe97d87882fb4bbee1e98b5eedabb5876b4984935c5fe8f0fabfc5f",
+        "byteLength": 4
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.depth.cap-plus-one",
+      "description": "Reject depth at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.depth"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-depth-over.bin",
+        "sha256": "2f4b2f7ef2620c62454734179d08dadfcb870000945accb72d0b71ede68c0a11",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.items.exact-maximum",
+      "description": "Accept the exact items maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.items"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-items-exact.bin",
+        "sha256": "59cadb551398360174a44ddeedb45ee8bcbdb714be511bfa4a33920ed0ef8163",
+        "byteLength": 33
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.items.cap-plus-one",
+      "description": "Reject items at cap plus one. The 34-item rejection also exceeds the zero-array-element cap.",
+      "ruleIds": [
+        "plan-registration.cbor.items"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-items-over.bin",
+        "sha256": "1c5444e1f27b5ed4b02c6f4ede1d5e3f9bf523ec24d4721d44aa2998c732576b",
+        "byteLength": 34
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.map-entries.exact-maximum",
+      "description": "Accept the exact map entries maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.map-entries"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-map-entries-exact.bin",
+        "sha256": "59cadb551398360174a44ddeedb45ee8bcbdb714be511bfa4a33920ed0ef8163",
+        "byteLength": 33
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.map-entries.cap-plus-one",
+      "description": "Reject map entries at cap plus one. The 17-entry rejection also exceeds the 33-item aggregate cap.",
+      "ruleIds": [
+        "plan-registration.cbor.map-entries"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-map-entries-over.bin",
+        "sha256": "1834ba6b034ed7789cc338d0e8eac4397313d615a8fbc1e89374398a59276cc9",
+        "byteLength": 35
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.array-elements.exact-maximum",
+      "description": "Accept the exact array elements maximum at the predecoder.",
+      "ruleIds": [
+        "plan-registration.cbor.array-elements"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-array-elements-exact.bin",
+        "sha256": "76be8b528d0075f7aae98d6fa57a6d3c83ae480a8469e668d7b0af968995ac71",
+        "byteLength": 1
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.array-elements.cap-plus-one",
+      "description": "Reject array elements at cap plus one.",
+      "ruleIds": [
+        "plan-registration.cbor.array-elements"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "shared/cbor-plan-registration-array-elements-over.bin",
+        "sha256": "9037f92bc91fdcc764a89d9144c341d887ffc83351cc8cf0530555c89920a47d",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.canonical-map",
+      "description": "Accept a definite, preferred, canonically ordered CBOR map.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "shared/cbor-profile-canonical-map.bin",
+        "sha256": "d834dba22a162024b0403cc47d78988d1c0cf9f2f842ae1d37879b09e9a7dae8",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.indefinite-container",
+      "description": "Reject an indefinite-length array.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-indefinite-container.bin",
+        "sha256": "589da4f671f78804e9e5342b1c8598e8a28e543b32b3146bedd0d6496a696954",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.float",
+      "description": "Reject a floating-point value.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-float.bin",
+        "sha256": "d823dcdc2d6aaab28aef32ce978988f5108ff31130f79d7f77117826d2cebc15",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.bignum",
+      "description": "Reject a bignum tag.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-bignum.bin",
+        "sha256": "99fba1135d8655851490d39b04b2286c07039808e890b87eaa1adb262a304106",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.tag",
+      "description": "Reject an arbitrary semantic tag.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-tag.bin",
+        "sha256": "e9aff84fdb699ca706c0a1fed47bb095cb25e3c95aa5d1c5d216ff2cfbcd4998",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.duplicate-key",
+      "description": "Reject duplicate decoded map keys.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-duplicate-key.bin",
+        "sha256": "a3db7ccede7c9c9509d650308bcfd4fbb929f71e40a9e92299023b040395128a",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.trailing-data",
+      "description": "Reject data after the first CBOR item.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-trailing-data.bin",
+        "sha256": "96a296d224f285c67bee93c30f8a309157f0daa35dc5b87e410b78630a09cfc7",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.nonpreferred-integer",
+      "description": "Reject a nonpreferred integer encoding.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-nonpreferred-integer.bin",
+        "sha256": "78a23af8da46b1b37e8767921a2d3f528fdc8eca37cea8aea775fd2b283d3776",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.invalid-utf8",
+      "description": "Reject invalid UTF-8 in a text string.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-invalid-utf8.bin",
+        "sha256": "8dd06b5ab6b594257e41b7d8dd440a4062eddc67fdab5c13b4dc300176896f6e",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.cbor.deterministic.map-order",
+      "description": "Reject noncanonical deterministic map order.",
+      "ruleIds": [
+        "plan-registration.cbor.deterministic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "shared/cbor-profile-map-order.bin",
+        "sha256": "e46ac75752367a5949ea7ea6283f63d6cbdaaf90668af9000d8a1908b7443434",
+        "byteLength": 5
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+application/capsule.plan-registration+cbor;v=1

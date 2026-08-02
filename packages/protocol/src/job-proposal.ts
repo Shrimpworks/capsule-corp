@@ -13,6 +13,7 @@ declare const sourceEntrypointBrand: unique symbol;
 declare const runtimeProfileAliasBrand: unique symbol;
 declare const positiveSafeIntegerBrand: unique symbol;
 declare const safeJsonIntegerBrand: unique symbol;
+declare const decodedJobProposalCandidateBrand: unique symbol;
 
 export type SourcePath = string & { readonly [sourcePathBrand]: "SourcePath" };
 export type SourceEntrypoint = string & {
@@ -37,36 +38,45 @@ export type InlineJsonValue =
   | { readonly [key: string]: InlineJsonValue };
 
 export interface SourceBundleProposal {
-  entrypoint: SourceEntrypoint;
-  files: Readonly<Record<SourcePath, string>>;
+  readonly entrypoint: SourceEntrypoint;
+  readonly files: Readonly<Record<SourcePath, string>>;
 }
 
 export interface InlineJsonInputProposal {
-  slot: typeof PRIMARY_DATA_INPUT_SLOT;
-  kind: "inline-json";
-  value: InlineJsonValue;
+  readonly slot: typeof PRIMARY_DATA_INPUT_SLOT;
+  readonly kind: "inline-json";
+  readonly value: InlineJsonValue;
 }
 
 export interface RequestedLimits {
-  wallTimeMs?: PositiveSafeInteger;
+  readonly wallTimeMs?: PositiveSafeInteger;
 }
 
 export interface InlineJsonOutputProposal {
-  slot: typeof TRANSFORMED_JSON_OUTPUT_SLOT;
-  kind: "inline-json";
-  maxBytes: PositiveSafeInteger;
+  readonly slot: typeof TRANSFORMED_JSON_OUTPUT_SLOT;
+  readonly kind: "inline-json";
+  readonly maxBytes: PositiveSafeInteger;
 }
 
 export interface JobProposal {
-  apiVersion: typeof JOB_PROPOSAL_API_VERSION;
-  kind: typeof JOB_PROPOSAL_KIND;
-  source: SourceBundleProposal;
-  runtimeProfile: RuntimeProfileAlias;
-  input: InlineJsonInputProposal;
-  requestedLimits: RequestedLimits;
-  outputs: readonly [InlineJsonOutputProposal];
-  labels?: Readonly<Record<string, string>>;
+  readonly apiVersion: typeof JOB_PROPOSAL_API_VERSION;
+  readonly kind: typeof JOB_PROPOSAL_KIND;
+  readonly source: SourceBundleProposal;
+  readonly runtimeProfile: RuntimeProfileAlias;
+  readonly input: InlineJsonInputProposal;
+  readonly requestedLimits: RequestedLimits;
+  readonly outputs: readonly [InlineJsonOutputProposal];
+  readonly labels?: Readonly<Record<string, string>>;
 }
+
+/**
+ * A passive candidate produced only after the Task 3A raw and closed-schema
+ * boundaries accept caller-owned bytes. It is not semantically resolved
+ * authority and cannot be used as an ExecutionPlan.
+ */
+export type DecodedJobProposalCandidate = JobProposal & {
+  readonly [decodedJobProposalCandidateBrand]: "DecodedJobProposalCandidate";
+};
 
 const SOURCE_PATH_PATTERN =
   /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}(?:\/[A-Za-z0-9][A-Za-z0-9._-]{0,63})*$/u;

@@ -1,6 +1,7 @@
-// Package v0candidate contains decoded views of passive Phase 2A contract
-// candidates. It does not provide a wire codec or authorize execution. Exact
-// received deterministic-CBOR bytes remain authoritative.
+// Package v0candidate contains strict, unwired wrappers and decoded views of
+// passive Phase 2 contract candidates. It does not persist registrations,
+// activate SupervisorCore, or authorize execution. Exact received
+// deterministic-CBOR bytes remain authoritative.
 package v0candidate
 
 import "fmt"
@@ -154,14 +155,14 @@ func NewPolicyDecisionDigest(value []byte) (PolicyDecisionDigest, error) {
 
 func NewUInt53(value uint64) (UInt53, error) {
 	if value > MaxSafeInteger {
-		return 0, fmt.Errorf("value must not exceed %d", MaxSafeInteger)
+		return 0, schema(fmt.Sprintf("value must not exceed %d", MaxSafeInteger))
 	}
 	return UInt53(value), nil
 }
 
 func NewPositiveUInt53(value uint64) (PositiveUInt53, error) {
 	if value == 0 || value > MaxSafeInteger {
-		return 0, fmt.Errorf("value must be between 1 and %d", MaxSafeInteger)
+		return 0, schema(fmt.Sprintf("value must be between 1 and %d", MaxSafeInteger))
 	}
 	return PositiveUInt53(value), nil
 }
@@ -169,11 +170,11 @@ func NewPositiveUInt53(value uint64) (PositiveUInt53, error) {
 func newIdentifier[T ~[16]byte](value []byte, role string) (T, error) {
 	var result T
 	if len(value) != len(result) {
-		return result, fmt.Errorf("%s ID must contain exactly 16 bytes", role)
+		return result, schema(fmt.Sprintf("%s ID must contain exactly 16 bytes", role))
 	}
 	copy(result[:], value)
 	if result == (T{}) {
-		return T{}, fmt.Errorf("%s ID must be nonzero", role)
+		return T{}, schema(fmt.Sprintf("%s ID must be nonzero", role))
 	}
 	return result, nil
 }
@@ -181,7 +182,7 @@ func newIdentifier[T ~[16]byte](value []byte, role string) (T, error) {
 func newDigest[T ~[32]byte](value []byte, role string) (T, error) {
 	var result T
 	if len(value) != len(result) {
-		return result, fmt.Errorf("%s SHA-256 digest must contain exactly 32 bytes", role)
+		return result, schema(fmt.Sprintf("%s SHA-256 digest must contain exactly 32 bytes", role))
 	}
 	copy(result[:], value)
 	return result, nil

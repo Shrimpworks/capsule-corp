@@ -7,6 +7,7 @@
 
 export * from "./internal-contract-candidates.js";
 export * from "./job-proposal.js";
+export * from "./job-proposal-decoder.js";
 
 export const API_VERSION = "capsule.dev/v0" as const;
 

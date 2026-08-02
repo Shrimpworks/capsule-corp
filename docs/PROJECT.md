@@ -25,7 +25,10 @@ decoded views. They do not replace the scaffold, activate an endpoint, or author
 
 Phase 2B Tasks 2.1 through 2.4 now retain a closed 67-rule, 206-case, 278-fixture conformance corpus
 for raw decoding, proposal/source/input semantics, exact plan and registration bytes, and
-registration-state transitions. Language implementations remain pending. The latest local Gate C
+registration-state transitions. The first unwired implementation slice now verifies 62 TypeScript
+raw/schema proposal targets and 81 Go internal-CBOR/wrapper targets; semantic planning, registration
+state, Swift, consumers, and endpoints remain pending. See the
+[unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint also rejects stock Bun 1.3.14 for the required runtime-authority contract and keeps the
 exact libkrun block-root profile unsupported because the smallest `NullFs` removal prevents guest
 bootstrap. See the

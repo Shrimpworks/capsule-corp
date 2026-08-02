@@ -18,9 +18,16 @@ const ordinaryRequirements = [
   { decision: "reject", variant: "malformed" },
 ];
 const rawImplementations = implementationStatus("pending", "pending", "not-applicable");
-const scalarImplementations = implementationStatus("pending", "pending", "pending");
-const cborImplementations = implementationStatus("pending", "pending", "pending");
+const jsonRawImplementations = implementationStatus("pending", "verified", "not-applicable");
+const internalMediaTypeImplementations = implementationStatus(
+  "verified",
+  "pending",
+  "not-applicable",
+);
+const scalarImplementations = implementationStatus("verified", "pending", "pending");
+const cborImplementations = implementationStatus("verified", "pending", "pending");
 const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
+const proposalSchemaImplementations = implementationStatus("pending", "verified", "not-applicable");
 const rules = [];
 const cases = [];
 const fixtures = new Map();
@@ -60,6 +67,8 @@ function addMediaTypeRulesAndCases() {
     ["plan-registration", "PlanRegistration", planRegistrationMediaType],
   ];
   for (const [slug, object, mediaType] of profiles) {
+    const implementations =
+      object === "JobProposal" ? rawImplementations : internalMediaTypeImplementations;
     const ruleId = `${slug}.media-type`;
     addRule(
       ruleId,
@@ -78,7 +87,7 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-exact.txt`,
       bytes: mediaType,
       owner: "media-type-parser",
-      implementations: rawImplementations,
+      implementations,
     });
     const uppercaseType = `${mediaType.slice(0, mediaType.indexOf(";")).toUpperCase()};v=0`;
     addCase({
@@ -92,9 +101,17 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-uppercase.txt`,
       bytes: uppercaseType,
       owner: "media-type-parser",
-      implementations: rawImplementations,
+      implementations,
     });
-    addMediaTypeReject(slug, object, ruleId, mediaType.split(";")[0], "missing-version", malformed);
+    addMediaTypeReject(
+      slug,
+      object,
+      ruleId,
+      mediaType.split(";")[0],
+      "missing-version",
+      malformed,
+      implementations,
+    );
     addMediaTypeReject(
       slug,
       object,
@@ -102,6 +119,7 @@ function addMediaTypeRulesAndCases() {
       `${mediaType};charset=utf-8`,
       "additional-parameter",
       malformed,
+      implementations,
     );
     addMediaTypeReject(
       slug,
@@ -110,11 +128,20 @@ function addMediaTypeRulesAndCases() {
       mediaType.replace("v=0", "v=1"),
       "unknown-version",
       "UNSUPPORTED",
+      implementations,
     );
   }
 }
 
-function addMediaTypeReject(slug, object, ruleId, mediaType, suffix, classification) {
+function addMediaTypeReject(
+  slug,
+  object,
+  ruleId,
+  mediaType,
+  suffix,
+  classification,
+  implementations,
+) {
   addCase({
     id: `${ruleId}.${suffix}`,
     description: `Reject ${suffix.replaceAll("-", " ")} for ${object}.`,
@@ -128,7 +155,7 @@ function addMediaTypeReject(slug, object, ruleId, mediaType, suffix, classificat
     decision: "reject",
     classification,
     owner: "media-type-parser",
-    implementations: rawImplementations,
+    implementations,
   });
 }
 
@@ -332,7 +359,7 @@ function addJsonCase(options) {
     wireFormat: "json",
     mediaType: jobProposalMediaType,
     owner: "public-raw-decoder",
-    implementations: rawImplementations,
+    implementations: jsonRawImplementations,
     ...options,
   });
 }
@@ -393,8 +420,16 @@ function addCborRulesAndCases() {
     addCborBoundary(
       profile,
       "depth",
-      cborEncode(nestedCborArray(profile.depth)),
-      cborEncode(nestedCborArray(profile.depth + 1)),
+      cborEncode(
+        profile.object === "PlanRegistration"
+          ? nestedCborMap(profile.depth)
+          : nestedCborArray(profile.depth),
+      ),
+      cborEncode(
+        profile.object === "PlanRegistration"
+          ? nestedCborMap(profile.depth + 1)
+          : nestedCborArray(profile.depth + 1),
+      ),
     );
     addCborBoundary(
       profile,
@@ -1230,13 +1265,15 @@ function addProposalRulesAndCases() {
   });
 
   function addProposalCase({ proposal: caseProposal, ...options }) {
+    const owner = options.owner ?? "job-proposal-semantic-validator";
     addCase({
       object: "JobProposal",
       wireFormat: "json",
       mediaType: jobProposalMediaType,
       context: resolverContext(),
-      owner: "job-proposal-semantic-validator",
-      implementations: proposalImplementations,
+      owner,
+      implementations:
+        owner === "job-proposal-schema" ? proposalSchemaImplementations : proposalImplementations,
       bytes: caseProposal === undefined ? options.bytes : jsonDocument(caseProposal),
       ...options,
     });
@@ -1344,7 +1381,7 @@ function addLabelCases(proposal) {
       mediaType: jobProposalMediaType,
       context: { kind: "none" },
       owner: "job-proposal-schema",
-      implementations: proposalImplementations,
+      implementations: proposalSchemaImplementations,
       bytes: jsonDocument({ ...proposal, labels }),
       ...entry,
     });
@@ -1611,6 +1648,14 @@ function nestedCborArray(depth) {
   let value = 0;
   for (let current = 1; current < depth; current += 1) {
     value = [value];
+  }
+  return value;
+}
+
+function nestedCborMap(depth) {
+  let value = 0;
+  for (let current = 1; current < depth; current += 1) {
+    value = new Map([[0, value]]);
   }
   return value;
 }

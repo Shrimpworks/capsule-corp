@@ -10,6 +10,10 @@ The consolidated outcomes, exact known answers, application status, combined ver
 next dependency boundary for the latest group are recorded in the
 [Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 
+The first product implementation follow-up, including task provenance, executable language
+coverage, the corrected PlanRegistration depth fixture, verification, and next interfaces, is
+recorded in the [Phase 2 unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md).
+
 ## Purpose and authority
 
 Capsule used parallel Codex tasks, external read-only reviews, retained experiments, and several

@@ -48,10 +48,11 @@ The first complete workflow is intentionally narrow:
    one attempt-bound `ApprovalGrant`.
 5. The Supervisor performs runtime-integrity preflight, atomically consumes the grant, and creates
    one `ExecutionAttempt` before any hostile side effect.
-6. Bun executes in a disposable development backend with no network, ambient environment,
-   subprocesses, native addons, FFI, macros, inspector, package installation, or live host path.
-   The exact runtime profile must prove those restrictions; stock Bun 1.3.14 does not currently
-   satisfy the subprocess/FFI claim merely by being pinned.
+6. The selected runtime executes in a disposable development backend with no network, ambient
+   environment, subprocesses, native addons, FFI, macros, inspector, package installation, or live
+   host path. The exact runtime profile must prove those restrictions. Stock Bun 1.3.14 and its
+   governed-construction branch both failed P0-0, so alternate-runtime selection is required before
+   this step can use a real runtime.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an

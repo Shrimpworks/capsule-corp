@@ -2,10 +2,35 @@
 
 Date: 2026-08-02
 
-Decision: **the original fail-fast campaign remains a recorded NO-GO, but the user-authorized
-toolchain follow-up removed its environmental blocker. The exact stock release baseline now builds
-and runs locally in a development-only Linux/arm64 container. Authority closure remains unproven;
-do not weaken the v0 contract and do not admit runtime or backend bytes.**
+Decision: **NO-GO for the governed Bun construction branch.** The toolchain follow-up removed the
+environmental blocker, but exact source review found that the minimum honest construction closure
+requires at least 40 hand-authored files and 10 generated outputs. That triggers the explicit
+broad/unreviewable fail-fast rule before a candidate patch or governed build. Capsule must preserve
+the v0 contract, investigate an alternate runtime, and reconsider or supersede ADR-0003. No runtime
+or backend bytes are admitted.
+
+## Governed-construction fail-fast result
+
+The post-toolchain experiment is retained in
+[`CONSTRUCTION_REVIEW.md`](CONSTRUCTION_REVIEW.md). Its read-only inventory expands the prior
+21-file lower bound to 40 hand-authored files plus 10 mandatory generated outputs; changes to the
+duplicated process/native binding tables likely add two further generated LUTs. The surface crosses
+profile propagation, generated registries, duplicate aliases, ESM/CommonJS/native loader dispatch,
+`Bun` and `process` globals, Worker construction, addon/N-API/plugin and SQLite-extension sinks,
+inspector, macro/preload/configuration discovery, and package resolution/install.
+
+A narrow TSYNC seccomp self-seal appears conditionally feasible for process-shaped `clone` and
+post-start `exec`, at the seam immediately before `vm.loadEntryPoint()`. It does not solve the
+construction failure: lazy Bun/JSC threads require some `clone`, Worker is indistinguishable from
+required threads at that layer, and no generic `dlopen` syscall filter can be assumed compatible
+with JSC JIT and runtime-owned libraries. Exact release tracing would be required if that mechanism
+were pursued under another bounded construction, but it cannot make this patch small.
+
+The task required stopping at the first fail-fast condition. Consequently no Bun source patch,
+governed binary, governed runtime/JIT run, syscall/descriptor trace, or restoration mutation was
+started. The candidate diff is empty, with SHA-256
+`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`. The prior stock release
+binary and builder identities below remain prerequisite evidence only.
 
 ## Question and defensive boundary
 
@@ -91,7 +116,7 @@ complete construction-level loader removal.
 | Required item | Result |
 | --- | --- |
 | Authored patch size | `0` lines; no patch was authored after the fail-fast trigger |
-| Lower-bound maintenance surface | 21 pinned source units before generated outputs, build-profile wiring, tests, or a Linux self-seal; see `SOURCE_MAP.md` |
+| Lower-bound maintenance surface | 40 hand-authored source files plus 10 mandatory generated outputs; two further generated LUTs are conditional; see `CONSTRUCTION_REVIEW.md` and `SOURCE_MAP.md` |
 | Build and final binary digest | Unmodified release baseline produced: `c06708363d3903ee3e2fd11622ca14175784acaf4006b5d372bbb5588b31d52b`; no governed binary exists |
 | JIT/runtime breakage | Both Nix LLVM 21.1.1 and exact LLVM 21.1.8 debug builds aborted on the owned fixture at JSC `FreeListInlines.h(63)`; exact-LLVM release passed |
 | Descriptor inheritance | Not rerun; retained stock evidence still shows main VM and Worker reading inherited FD 3, so a closed exact manifest remains mandatory |
@@ -100,17 +125,15 @@ complete construction-level loader removal.
 
 ## Decision and next action
 
-`RUNTIME-001` remains unsupported and execution requiring it must refuse. The toolchain follow-up
-now provides a testable release construction, but the governed Bun patch has not been authored or
-tested. Its lower-bound maintenance surface still spans native registry, C++, Zig, generated JS
-modules, resolver/configuration, JSC lifecycle, and Linux syscall enforcement.
+`RUNTIME-001` remains unsupported and execution requiring it must refuse. The next fail-fast review
+found that the minimum honest Bun construction spans at least 40 hand-authored files and 10
+generated outputs. The governed Bun patch is therefore rejected as broad and unreviewable; it was
+not authored or built.
 
-The immediate next experiment can now apply the smallest governed release-profile construction and
-run Capsule's probes and restoration mutations. If that patch is broad or unreviewable, breaks the
-release runtime/JIT, or cannot establish structural closure, stop and make the already-recorded next
-decision: alternate-runtime investigation and ADR-0003 reconsideration. The parent orchestrator
-must not interpret buildability as authority to weaken the profile or admit current Bun/libkrun
-bytes.
+The required next experiment is alternate-runtime investigation under the same authority contract,
+followed by an ADR that supersedes ADR-0003's Bun-first implementation choice. The parent
+orchestrator must not interpret stock buildability or the narrow process/exec self-seal seam as
+authority to weaken the profile or admit current Bun/libkrun bytes.
 
 ## Limitations
 
@@ -121,9 +144,9 @@ bytes.
 - The debug profile aborts during JavaScript evaluation in both tested toolchains. Only the
   stock-equivalent release profile is a passing baseline.
 - No governed source patch, authority probe suite, syscall trace, descriptor rerun, or restoration
-  mutation has yet been performed against the local build.
-- The 21-file surface is a reviewed lower bound, not a line-count estimate or proof that a safe
-  patch is impossible.
+  mutation was performed because the earlier reviewability fail-fast condition terminated them.
+- The expanded 40-hand-authored plus 10-generated-output surface is a conservative lower bound, not
+  proof that a safe patch can never exist.
 - The syscall-seal analysis is a construction constraint, not validated seccomp/LSM evidence.
 - The result decides this governed-Bun campaign under the explicit fail-fast rule; it does not
   select or validate the alternate runtime.
@@ -133,10 +156,12 @@ bytes.
 Focused evidence checks passed:
 
 ```sh
+sh -n experiments/gate-c-bun-runtime-authority/governed-closure/review-construction-surface.sh
 sh -n experiments/gate-c-bun-runtime-authority/governed-closure/check-inputs.sh
 sh -n experiments/gate-c-bun-runtime-authority/governed-closure/container/run-baseline.sh
 sh -n experiments/gate-c-bun-runtime-authority/governed-closure/container/run-baseline-llvm.sh
-shellcheck experiments/gate-c-bun-runtime-authority/governed-closure/check-inputs.sh \
+shellcheck experiments/gate-c-bun-runtime-authority/governed-closure/review-construction-surface.sh \
+  experiments/gate-c-bun-runtime-authority/governed-closure/check-inputs.sh \
   experiments/gate-c-bun-runtime-authority/governed-closure/container/run-baseline.sh \
   experiments/gate-c-bun-runtime-authority/governed-closure/container/run-baseline-llvm.sh \
   experiments/gate-c-bun-runtime-authority/governed-closure/container/toolchain-bin/clang \
@@ -145,9 +170,11 @@ shellcheck experiments/gate-c-bun-runtime-authority/governed-closure/check-input
   /private/tmp/capsule-gate-c-p0-0-bun-src-network
 ./experiments/gate-c-bun-runtime-authority/governed-closure/check-inputs.sh \
   /private/tmp/capsule-gate-c-p0-0-bun-src-network
-CAPSULE_ALLOW_BUILD_NETWORK=1 CAPSULE_BUILD_JOBS=4 CAPSULE_BUILD_PROFILE=release \
-  ./experiments/gate-c-bun-runtime-authority/governed-closure/container/run-baseline-llvm.sh \
-  /private/tmp/capsule-gate-c-p0-0-bun-src-network
+diff -u \
+  experiments/gate-c-bun-runtime-authority/governed-closure/evidence/2026-08-02/construction-review.txt \
+  <(experiments/gate-c-bun-runtime-authority/governed-closure/review-construction-surface.sh \
+    /private/tmp/capsule-gate-c-p0-0-bun-src-network)
+git diff --check
 ```
 
 Repository-required verification passed with Node 22.22.1, pnpm 10.28.2, and Go 1.26.5:
@@ -158,6 +185,7 @@ pnpm check
 pnpm lint
 pnpm test
 pnpm verify:schemas
+pnpm format:check
 go test ./...
 go vet ./...
 go build ./...

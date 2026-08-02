@@ -114,10 +114,20 @@ SQLite native loading, workload-started inspector, Worker, and inherited-descrip
 all relevant stock deny flags. Addon, macro, and environment/config mutations showed that those
 individual flags were active, but no stock `--no-spawn` or `--no-ffi` closure exists. See the
 [retained P0-0 result](../experiments/gate-c-bun-runtime-authority/RESULTS.md). `RUNTIME-001`
-therefore remains unsupported and execution requiring it must refuse. P0-0 remains open only for a
-governed construction-level patch plus an exact external enforcement mechanism; failure of that
-branch requires an alternate runtime and an ADR-0003 update. This finding does not admit runtime or
-backend bytes.
+therefore remains unsupported and execution requiring it must refuse. That result left P0-0 open
+only for a governed construction-level patch plus an exact external enforcement mechanism; failure
+of that branch required an alternate runtime and an ADR-0003 update. This finding did not admit
+runtime or backend bytes.
+
+Governed-branch decision (2026-08-02): **NO-GO**. Exact source review found a conservative minimum
+surface of 40 hand-authored files plus 10 generated outputs, spanning independent registries,
+loader dispatch, native sinks, globals, configuration/resolution, build identity, and restoration
+backstops. That triggered the campaign's broad/unreviewable fail-fast rule before a candidate diff
+or governed binary existed. A narrow post-initialization process/exec self-seal remains plausible in
+isolation, but cannot close Worker or native loading while preserving Bun/JSC lazy threads and JIT.
+P0-0 is closed as a Bun NO-GO; alternate-runtime investigation and an ADR-0003 superseding decision
+are now required. See the
+[construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
 
 ### P0-1: immutable runtime-root custody
 

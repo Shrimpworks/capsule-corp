@@ -52,6 +52,7 @@ product finding. Every completed track result was recovered into the repository 
 | Adversarial VMM and cross-job isolation | original `019fb9e7-2692-7cb0-a5c2-cebb9378e07f`; completed replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | The original task failed at the task/app layer. The bounded replacement verified and preserved the existing report. The exact profile conditionally failed because `NullFs` remains guest-visible even without a configured host directory. | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md), [`VALIDATION_RECEIPT.md`](../experiments/gate-c-libkrun-adversarial/VALIDATION_RECEIPT.md), and Gate C synthesis |
 | Runtime packaging, provenance, patch governance, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional build/release feasibility pass; current bytes are no-go for admission. Controlled same-host equality is not two-builder provenance, and the complete final signed/notarized topology is not available. | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md), [`HANDOFF.md`](../experiments/gate-c-libkrun-supply-chain/HANDOFF.md), and Gate C synthesis |
 | P0-0 exact stock Bun runtime authority | `019fc2e6-cf9f-7482-82b5-240992c79419`, delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` | Failed for stock Bun 1.3.14: process, `execve`, FFI/native-loader, inspector, Worker, and descriptor authority remain reachable. `RUNTIME-001` stays unsupported; only a governed patched/external branch or alternate runtime remains. | [`RESULTS.md`](../experiments/gate-c-bun-runtime-authority/RESULTS.md), source inventory, synthetic probes, and selected evidence |
+| P0-0 governed Bun construction | Delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` after merged PR #33 | NO-GO under the explicit broad/unreviewable stop rule. Exact review found a conservative 40-hand-authored plus 10-generated-output minimum before a patch or governed build; a narrow process/exec self-seal cannot independently close Worker or native loading. Alternate-runtime investigation and an ADR-0003 superseding decision are required. | [`CONSTRUCTION_REVIEW.md`](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md), reproducible inventory, exact source hashes, and selected evidence |
 | P0-2 `NullFs` disposition replacement | `019fc2e8-445e-7cb2-b4c2-54d84282c3fe`, replacing task `019fc2e6-cf9d-7210-b2f3-f3bf2244e83a` after an app-layer failure | The smallest removal built but prevented guest bootstrap; no independent feature toggle or retained sanitizer/coverage corpus closes the residual path. The exact block-root profile remains unsupported and barred from user bytes. | [`NULLFS_P0_2.md`](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md), audit script, patch, and selected evidence |
 
 The retained generated `.build/` and `.runs/` directories are intentionally disposable and ignored.
@@ -82,10 +83,10 @@ rejected, or narrowed conclusion is retained in
   coverage; and
 - early topology testing followed by final signed/notarized-byte rebuild and revalidation.
 
-The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. The exact
-stock-runtime branch of P0-0 is now closed as a failure; its governed patch/external mechanism
-branch remains open. The reviews and experiment found no architecture-killing contradiction and
-did not authorize libkrun to handle user bytes.
+The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. Both the
+stock-runtime and governed-construction branches of Bun P0-0 are closed as failures. The runtime
+path is now alternate-runtime investigation plus an ADR-0003 superseding decision. The reviews and
+experiments did not authorize libkrun to handle user bytes.
 
 ## Phase 2 parallel-task reconciliation
 

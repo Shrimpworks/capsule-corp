@@ -52,10 +52,11 @@ The exact Bun 1.3.14 investigation observed reachable subprocess, executable rep
 FFI/native-loading, inspector, Worker, and inherited-descriptor authority despite all relevant
 stock deny flags. Stock flags cannot satisfy the advertised v0 runtime contract.
 
-The remaining branch is a governed construction-level Bun patch plus exact external enforcement.
-If that branch cannot preserve the required runtime behavior while closing and mutation-testing
-every prohibited primitive, Capsule must choose an alternate runtime and update ADR-0003.
-Execution requiring `RUNTIME-001` refuses throughout.
+The governed construction-level branch also failed its explicit reviewability gate: its minimum
+honest closure spans at least 40 hand-authored files plus 10 generated outputs, while a narrow
+process/exec self-seal cannot independently close Worker or native loading. Capsule must now choose
+an alternate runtime and supersede ADR-0003's Bun-first implementation choice. Execution requiring
+`RUNTIME-001` refuses throughout.
 
 ### `NullFs`
 

@@ -4,6 +4,7 @@
 - Date: 2026-07-30
 - Gate C refinement: 2026-07-31
 - P0-0 stock-runtime refinement: 2026-08-02
+- P0-0 governed-construction refinement: 2026-08-02
 
 ## Context
 
@@ -35,6 +36,20 @@ P0-0. Until then `RUNTIME-001` is unsupported and execution requiring it refuses
 branch fails, Capsule selects an alternate runtime and updates this ADR; it does not weaken the
 prohibited-power contract implicitly.
 
+The governed-construction branch has now failed its explicit reviewability gate. Exact source
+review expanded the minimum closure from the prior 21-file lower bound to at least 40 hand-authored
+files and 10 generated outputs across build identity, registries, loaders, native sinks, globals,
+configuration, resolution, and restoration backstops. A narrow process/exec self-seal cannot close
+Worker or native loading while preserving required lazy runtime/JIT threads. The experiment stopped
+before authoring or building a partial patch, as required by its fail-fast rule. See the
+[governed-construction review](../../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
+
+Therefore the runtime-neutral protocol portion of this ADR remains accepted, but **Bun is no longer
+the selected first implementation candidate**. `RUNTIME-001` remains unsupported. The next runtime
+decision must compare alternate runtimes under the unchanged prohibited-power contract and must
+supersede this ADR's Bun-first implementation choice. Until that decision is accepted, no real
+runtime profile is selected for the first executable slice.
+
 ## Consequences
 
 - The initial product has a clear technical wedge.
@@ -43,3 +58,5 @@ prohibited-power contract implicitly.
 - The external isolation boundary must carry the primary security guarantee.
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
+- Alternate-runtime investigation is now blocking; Capsule does not relax the advertised authority
+  contract to preserve Bun-first sequencing.

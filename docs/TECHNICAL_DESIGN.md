@@ -24,6 +24,14 @@ The Phase 2A contract-foundation slice now provides passive candidates for a nar
 Go/TypeScript views are verification artifacts only: no product endpoint consumes them, and the
 minimum plan omits unresolved controls and cannot authorize execution.
 
+The current unwired implementation also retains an exact plan-registration conformance handoff.
+TypeScript prepares only a defensive copy of provenance-bearing constructed plan bytes plus a
+complete separately issued role-binding set. A local test command passes those inert values to the
+Go `registrationstate` component, which independently predecodes, strictly decodes, role-binds,
+hashes, registers, and re-reads the exact bytes. The command's JSON wrapper is test serialization,
+not a local IPC contract or product transport. No authenticated TypeScript/Go process seam, daemon
+consumer, Broker, approval, real backend, or guest is connected.
+
 ## Reference workflow
 
 The first complete workflow is intentionally narrow:

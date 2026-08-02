@@ -5,7 +5,8 @@ Date: 2026-08-02
 Status: integrated implementation checkpoint. The code remains backend-independent and unwired.
 It does not accept ADR-0019 or ADR-0023, activate an endpoint or consumer, authorize execution,
 handle user content, or create a guest. The fixed Task 4B file store is limited to test/development
-conformance and cannot be activated before archival/compaction review.
+conformance and cannot be activated before archival/compaction review. The cross-language
+handoff uses a local conformance command only; its JSON wrapper is not an IPC or product transport.
 
 ## Integrated tasks
 
@@ -17,6 +18,8 @@ conformance and cannot be activated before archival/compaction review.
 | PlanRegistration depth-fixture correction | coordinator `019fc2de-552d-77a0-aa47-35ac39d02edc` | `b7940ad` | Replaced array-based depth fixtures with contract-valid nested-map fixtures without changing any limit or decision |
 | Task 4B exact registration state | `019fc343-699c-7e70-9175-37bdce364c2a` | `43cc268` | 40 Go registration-state cases: 18 accept and 22 reject, with exact post-state fixtures |
 | Task 3C exact `ExecutionPlan` construction | focused unwired follow-up | focused branch | 6 TypeScript builder tests, including the 530-byte cross-language known answer |
+| Task 5 registered fake lifecycle | PR #19 | `ac3f852` | ID-only registered-plan resolution, fault-injectable lifecycle transitions, and a fake backend that refuses guest creation |
+| Task 3D exact registration handoff | `019fc2de-552d-77a0-aa47-35ac39d02edc` delegated user-visible task | focused branch | 2 focused TypeScript handoff tests plus the local TypeScript-to-Go registration conformance path |
 
 The manifest remains 67 rules, 206 cases, and 278 fixtures. It now records 80 verified TypeScript
 targets: 62 Task 3A raw/schema targets plus all 18 Task 3B semantic-resolution targets. It records
@@ -106,6 +109,31 @@ wrapper independently accepts that same fixture with complete trusted role bindi
 does not decode received plans, register bytes, call `SupervisorCore`, create approval or attempt
 authority, retrieve content, invoke a runtime/backend, or create a guest.
 
+## Task 3D outcome
+
+`prepareExecutionPlanRegistrationHandoff` accepts only a constructor-issued
+`ConstructedExecutionPlan` and a separately constructor-issued complete Task 4A role-binding set.
+It checks producer provenance, checks the plan's retained digest against a fresh hash of copied
+bytes, verifies every role binding against the constructed typed view, and retains its own private
+copies. The handoff exposes only `copyExactPlanBytes()` and immutable copied role bindings; it does
+not expose a registration identifier, approval, attempt, content, backend, or guest authority.
+
+The local-only `conformancehandoff` Go command exists solely to exercise the implementation-domain
+boundary in tests. It bounds and decodes a closed JSON test wrapper, supplies its own authenticated
+daemon call context, trusted clock, installation state, Supervisor identity, and registration ID,
+then calls `registrationstate.Component.RegisterPlan` with only the copied exact bytes and complete
+role bindings. The component independently performs the existing bounded CBOR predecode, strict
+decode, role binding, SHA-256 computation, durable registration, and ID-only re-read. The success
+case retains the exact 530 received bytes and the known digest in both the stored record and wire
+registration. Wrong, missing, and exact-plan-mutated bindings refuse before state changes; caller
+buffer mutations do not alter retained handoff bytes; and a digest-corrupted fixed store refuses
+restart.
+
+This conformance command is intentionally not shared product code, a general transport, or evidence
+that authenticated cross-process IPC exists. It does not activate or extend
+`SupervisorCore.RegisterPlan`, and it is not reachable from the daemon, SDK, MCP server, Broker, or
+any backend.
+
 ## Fixture correction
 
 The initial Task 4A pass identified that the retained PlanRegistration depth-exact fixture used
@@ -137,12 +165,15 @@ The restricted Go run used a task-specific cache under `/tmp`; all listed comman
 
 ## Next dependency boundary
 
-The exact next plan-registration handoff is an unwired adapter that passes only
-`ConstructedExecutionPlan.copyExactBytes()` plus complete trusted Task 4A role bindings into
-`registrationstate.Component.RegisterPlan`. That component must independently decode, bind, hash, and
-durably retain the copied bytes; the builder result itself grants no registration authority.
+The retained harness closes implementation conformance, not product integration. The exact missing
+product seam is a reviewed authenticated typed local IPC method, chosen with the Supervisor
+language/privilege topology, that carries the same two values—defensively copied exact plan bytes
+and complete separately trusted role bindings—into `registrationstate.Component.RegisterPlan`.
+The test JSON wrapper must not be promoted into that transport by convenience, and execute-time
+operations must continue to accept registration ID only.
 
-In parallel, an unwired registered-plan/fault-injectable fake-backend slice can consume only the
-Task 4B `RegistrationResolver` ID-only interface. Consumer activation remains blocked on the
-separately reviewed Supervisor archival/compaction design. Public daemon, SDK, and MCP cutover
-remains later and atomic.
+The next backend-independent authority boundary is direct Broker approval plus durable one-use
+grant consumption and attempt creation against the registered ID. Consumer activation remains
+blocked on authenticated IPC, separately reviewed Supervisor archival/compaction, and the daemon
+aggregate service envelope. Public daemon, SDK, and MCP cutover remains later and atomic; approval,
+content, real backend, and guest wiring remain absent.

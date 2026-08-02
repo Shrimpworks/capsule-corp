@@ -47,6 +47,7 @@ export async function verifyConformanceCorpus({ rootDirectory = defaultRootDirec
       listedFixtures.add(entry.expected.stateDelta.after.path);
     }
     assertProposalResolutionContext(entry);
+    await assertApprovalAttemptStateContext(root, entry);
     await assertRegistrationStateContext(root, entry);
   }
 
@@ -180,6 +181,16 @@ function contextFixtures(context) {
     return [["context", context.fixture]];
   }
   if (context.kind !== "proposal-resolution") {
+    if (context.kind === "approval-attempt-state") {
+      return [
+        ["approval/attempt operation", context.operation],
+        ["approval/attempt pre-state", context.before],
+        ...(context.payload ? [["approval payload", context.payload]] : []),
+        ...(context.protectedHeader
+          ? [["approval protected header", context.protectedHeader]]
+          : []),
+      ];
+    }
     return context.kind === "registration-state"
       ? [
           ["registration operation", context.operation],
@@ -201,7 +212,7 @@ function contextFixtures(context) {
 
 async function assertRegistrationStateContext(root, entry) {
   if (entry.context.kind !== "registration-state") {
-    if (entry.expected.stateDelta) {
+    if (entry.context.kind !== "approval-attempt-state" && entry.expected.stateDelta) {
       throw new Error(`non-state case ${entry.id} cannot retain a registration state delta`);
     }
     return;
@@ -339,6 +350,147 @@ async function assertRegistrationStateContext(root, entry) {
     record.retentionState !== "retained"
   ) {
     throw new Error(`accepted registration-state case ${entry.id} has an invalid stored record`);
+  }
+}
+
+async function assertApprovalAttemptStateContext(root, entry) {
+  if (entry.context.kind !== "approval-attempt-state") {
+    return;
+  }
+  if (entry.expected.stateDelta?.kind !== "exact") {
+    throw new Error(`approval/attempt case ${entry.id} requires an exact post-state`);
+  }
+  for (const field of [
+    "timeHighWaterChanged",
+    "trustStateTightened",
+    "fakeBackendEffectPermitted",
+  ]) {
+    if (entry.expected[field] !== false) {
+      throw new Error(`passive Slice A case ${entry.id} must set ${field} to false`);
+    }
+  }
+  if (entry.expected.authorityStateChanged) {
+    throw new Error(`passive Slice A case ${entry.id} cannot change authority state`);
+  }
+
+  const operation = await readFixtureJson(root, entry.context.operation, `${entry.id} operation`);
+  const before = await readFixtureJson(root, entry.context.before, `${entry.id} pre-state`);
+  const after = await readFixtureJson(
+    root,
+    entry.expected.stateDelta.after,
+    `${entry.id} post-state`,
+  );
+  assertApprovalAttemptOperation(entry.id, operation);
+  assertApprovalAttemptState(entry.id, "pre-state", before);
+  assertApprovalAttemptState(entry.id, "post-state", after);
+  if (JSON.stringify(before) !== JSON.stringify(after)) {
+    throw new Error(`passive Slice A case ${entry.id} changed approval or attempt state`);
+  }
+}
+
+function assertApprovalAttemptOperation(caseId, operation) {
+  if (
+    operation?.contextType !== "capsule.conformance.approval-attempt-operation" ||
+    operation.contextVersion !== 0 ||
+    !["identifier", "reference", "classification-vocabulary", "fixture-verifier"].includes(
+      operation.mode,
+    )
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has an invalid operation context`);
+  }
+  const keysByMode = {
+    identifier: ["contextType", "contextVersion", "mode", "expectedDomain", "providedDomain"],
+    reference: ["contextType", "contextVersion", "mode", "referenceKind", "providedDomain"],
+    "classification-vocabulary": ["contextType", "contextVersion", "mode"],
+    "fixture-verifier": [
+      "contextType",
+      "contextVersion",
+      "mode",
+      "vector",
+      "bindingMutation",
+      "callerMutation",
+    ],
+  };
+  assertExactKeys(operation, keysByMode[operation.mode], `${caseId} approval/attempt operation`);
+  const domains = ["approval", "attempt", "attempt-nonce"];
+  if (
+    operation.mode === "identifier" &&
+    (!domains.includes(operation.expectedDomain) || !domains.includes(operation.providedDomain))
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has invalid identifier roles`);
+  }
+  if (
+    operation.mode === "reference" &&
+    (!domains.includes(operation.providedDomain) ||
+      !["approval-reference", "attempt-reference"].includes(operation.referenceKind))
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has invalid reference roles`);
+  }
+  if (
+    operation.mode === "fixture-verifier" &&
+    (typeof operation.vector !== "string" ||
+      typeof operation.bindingMutation !== "string" ||
+      typeof operation.callerMutation !== "boolean")
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has invalid verifier context`);
+  }
+}
+
+function assertApprovalAttemptState(caseId, label, state) {
+  assertExactKeys(
+    state,
+    [
+      "contextType",
+      "contextVersion",
+      "installationIdHex",
+      "supervisorIdHex",
+      "epochSequence",
+      "epochDigestHex",
+      "trustPhase",
+      "trustReason",
+      "attemptsEnabled",
+      "recoveryFence",
+      "timeHighWaterUnixSeconds",
+      "approvalPopulation",
+      "attemptPopulation",
+      "materializedApprovals",
+      "materializedAttempts",
+    ],
+    `${caseId} ${label}`,
+  );
+  if (
+    state.contextType !== "capsule.conformance.approval-attempt-state" ||
+    state.contextVersion !== 0 ||
+    !/^[0-9a-f]{32}$/u.test(state.installationIdHex) ||
+    !/^[0-9a-f]{32}$/u.test(state.supervisorIdHex) ||
+    !/^[0-9a-f]{64}$/u.test(state.epochDigestHex) ||
+    !Number.isSafeInteger(state.epochSequence) ||
+    state.epochSequence < 0 ||
+    !["stable", "transition-fenced", "repair-required"].includes(state.trustPhase) ||
+    !(state.trustReason === null || typeof state.trustReason === "string") ||
+    typeof state.attemptsEnabled !== "boolean" ||
+    typeof state.recoveryFence !== "boolean" ||
+    !Number.isSafeInteger(state.timeHighWaterUnixSeconds) ||
+    state.timeHighWaterUnixSeconds < 0 ||
+    !Array.isArray(state.materializedApprovals) ||
+    !Array.isArray(state.materializedAttempts)
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has invalid ${label} scalars`);
+  }
+  assertPopulation(state.approvalPopulation, "usableCount", `${caseId} ${label} approvals`);
+  assertPopulation(state.attemptPopulation, "nonterminalCount", `${caseId} ${label} attempts`);
+}
+
+function assertPopulation(population, liveField, label) {
+  assertExactKeys(population, [liveField, "retainedCount", "setDigest"], label);
+  if (
+    !Number.isSafeInteger(population[liveField]) ||
+    population[liveField] < 0 ||
+    !Number.isSafeInteger(population.retainedCount) ||
+    population.retainedCount < population[liveField] ||
+    !/^[0-9a-f]{64}$/u.test(population.setDigest)
+  ) {
+    throw new Error(`${label} is invalid`);
   }
 }
 

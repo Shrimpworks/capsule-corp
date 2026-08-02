@@ -1,0 +1,8 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "fixture-verifier",
+  "vector": "ordinary",
+  "bindingMutation": "registration",
+  "callerMutation": false
+}

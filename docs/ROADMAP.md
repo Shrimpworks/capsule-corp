@@ -79,17 +79,20 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
-byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B Tasks 2.1 through 2.4 now provide the
-closed conformance manifest, integrity runner, and 67-rule/206-case/278-fixture corpus, including
-proposal/source/input and exact plan/registration-state oracles. They are not frozen or activated;
+byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B now provides the closed conformance
+manifest, integrity runner, and 78-rule/250-case/350-fixture corpus, including proposal/source/input,
+exact plan/registration-state, and passive approval/attempt Slice A oracles. They are not frozen or
+activated;
 the unwired slices now implement strict TypeScript raw/schema proposal decoding, all 18 retained
 TypeScript semantic-resolution cases, exact TypeScript minimum-plan construction/encoding, strict
-Go exact-byte plan/registration wrappers, and all 40 retained Go registration-state cases. Swift
-remains pending. A focused local-only conformance handoff now carries copied TypeScript
-`ConstructedExecutionPlan` bytes and complete role bindings into the real Go `registrationstate`
-component; the registered-plan/fault-injectable fake lifecycle is also retained. Neither is a
-product-language/IPC seam or public consumer. The next work is authenticated typed local IPC and
-the approval/grant-consumption boundary. Public cutover waits for those boundaries, reviewed
+Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, and 44
+passive Go approval/attempt contract cases. Swift remains pending. A focused local-only conformance
+handoff now carries copied TypeScript `ConstructedExecutionPlan` bytes and complete role bindings
+into the real Go `registrationstate` component; the registered-plan/fault-injectable fake lifecycle
+is also retained. Neither is a
+product-language/IPC seam or public consumer. The next approval work is the fixed durable
+approval/attempt store; authenticated typed local IPC remains separate. Public cutover waits for
+those boundaries, reviewed
 Supervisor archival/compaction, an atomic consumer migration, and removal of the dormant
 direct-execution scaffold. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed

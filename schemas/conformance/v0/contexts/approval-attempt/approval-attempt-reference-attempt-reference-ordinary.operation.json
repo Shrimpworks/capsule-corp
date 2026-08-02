@@ -1,0 +1,7 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "reference",
+  "referenceKind": "attempt-reference",
+  "providedDomain": "attempt"
+}

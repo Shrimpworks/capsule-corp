@@ -177,15 +177,35 @@
         }
       }
     },
+    "exactStateDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "after"],
+      "properties": {
+        "kind": {
+          "const": "exact"
+        },
+        "after": {
+          "$ref": "#/$defs/fixtureReference"
+        }
+      }
+    },
     "scalarRole": {
       "enum": [
+        "backend-configuration",
+        "backend-validation-record",
         "installation",
         "registration",
         "supervisor",
         "source-manifest",
         "inline-input",
         "execution-plan",
-        "trust-epoch"
+        "policy-decision",
+        "profile-registry-entry",
+        "profile-review-attestation",
+        "runtime-bundle-manifest",
+        "trust-epoch",
+        "trust-snapshot"
       ]
     },
     "context": {
@@ -250,6 +270,22 @@
               "$ref": "#/$defs/proposalResolutionOracle"
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "operation", "before"],
+          "properties": {
+            "kind": {
+              "const": "registration-state"
+            },
+            "operation": {
+              "$ref": "#/$defs/fixtureReference"
+            },
+            "before": {
+              "$ref": "#/$defs/fixtureReference"
+            }
+          }
         }
       ]
     },
@@ -265,7 +301,9 @@
         "DOMAIN",
         "AUTHENTICATION",
         "STALE",
-        "CAPACITY"
+        "CAPACITY",
+        "LOCAL_FAILURE",
+        "TRUST_STATE"
       ]
     },
     "owner": {
@@ -298,6 +336,9 @@
         },
         "authorityStateChanged": {
           "type": "boolean"
+        },
+        "stateDelta": {
+          "$ref": "#/$defs/exactStateDelta"
         }
       }
     },
@@ -317,6 +358,9 @@
         },
         "authorityStateChanged": {
           "type": "boolean"
+        },
+        "stateDelta": {
+          "$ref": "#/$defs/exactStateDelta"
         }
       }
     },

@@ -1,0 +1,18 @@
+{
+  "contextType": "capsule.conformance.registration-operation",
+  "contextVersion": 0,
+  "method": "register-plan",
+  "caller": {
+    "authenticated": true,
+    "role": "daemon",
+    "purpose": "register-plan"
+  },
+  "trustedClockObservationUnixSeconds": 1785456000,
+  "concurrentHighWaterUnixSeconds": 1785456300,
+  "identifier": {
+    "kind": "value",
+    "valueHex": "77777777777777777777777777777777"
+  },
+  "mutation": "none",
+  "fault": null
+}

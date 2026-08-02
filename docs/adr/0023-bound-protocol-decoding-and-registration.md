@@ -226,6 +226,54 @@ The stored Supervisor record contains the wire registration, exact plan bytes, t
 digest, registration time, and recovery metadata. Exact plan bytes do not appear inside the wire
 `PlanRegistration` payload.
 
+### Proposed Task 2.4 registration-oracle addendum
+
+This addendum remains part of this Proposed ADR. It defines only internal conformance oracles for
+the unwired first registration slice; it does not define public errors, activate an endpoint, admit
+a backend, or promote either this ADR or ADR-0019.
+
+- The complete positive `UInt53` registration-sequence range is usable. A successful registration
+  may receive sequence `9007199254740991`. Exhaustion occurs only when that value is already
+  committed and another registration is requested. That request is rejected as `STALE`, creates no
+  registration, consumes no sequence, and enters `repair-required` with reason
+  `registration-sequence-exhausted`. This fail-closed transition is not authority creation.
+- `CAPACITY` remains limited to fixed object and store budgets, including the 256-unexpired and
+  4,096-stored registration ceilings. Sequence exhaustion is `STALE`, not `CAPACITY`.
+- `LOCAL_FAILURE` is an internal-only conformance classification for failure of a Supervisor-owned
+  prerequisite required for safe registration: trusted-clock observation or high-water
+  persistence, fresh nonzero identifier generation, or a confirmed-abort atomic store transaction.
+  It is not a request defect, capacity result, policy result, or backend-control result.
+- `TRUST_STATE` is an internal-only conformance classification for an operation denied because the
+  Supervisor-owned installation state is quarantined or `repair-required`. Transition fencing
+  remains `STALE`; a referenced installation or epoch mismatch remains `BINDING`.
+- Trusted clock observations use nonnegative `UInt53` Unix seconds. Subsecond observations use the
+  Unix second containing the observation. Channel authentication and complete byte/object
+  validation happen before trusted-time persistence. The Supervisor then durably sets the
+  high-water mark to `max(previousHighWater, observation)` before stateful binding, trust, expiry,
+  capacity, sequence, and identifier admission. Failure of that write is `LOCAL_FAILURE`.
+- The final registration transaction re-reads the durable high-water mark and uses it as
+  `effectiveNow`; a concurrent later observation can therefore expire a plan early. A successful
+  record's `registeredAtUnixSeconds` equals that final `effectiveNow`. A later rejection or
+  confirmed-abort registration transaction never moves the high-water mark backward.
+- Authentication, malformed-byte, predecoder, schema, and unsupported-object failures occur before
+  trusted-time persistence and change no durable state. Stateful `BINDING`, `STALE`, `CAPACITY`,
+  `TRUST_STATE`, and identifier/commit `LOCAL_FAILURE` results may leave only the separately
+  committed high-water observation. They never append a registration, advance the registration
+  sequence, evict a record, resurrect authority, or widen trust.
+- A confirmed-abort registration transaction exposes neither its counter advancement nor a partial
+  record. A complete commit exposes both together. A process failure after a complete commit but
+  before response delivery is recovery of a committed registration, not the transaction-failure
+  oracle.
+- The minimum closed first-slice stored registration record contains exact deterministic-CBOR wire
+  registration bytes, exact received deterministic-CBOR plan bytes, SHA-256 recomputed from those
+  exact plan bytes, `registeredAtUnixSeconds`, `storageFormatVersion` exactly `0`, and
+  `retentionState` exactly `retained`. The stored digest equals the wire plan digest. Incomplete
+  records are never visible; archival, deletion, and tombstone transitions remain unsupported.
+- `authorityStateChanged` means authority was created or widened. Successful registration sets it
+  to `true`; every rejection sets it to `false`, including a time-only high-water update or a
+  fail-closed transition to `repair-required`. Registration-state cases additionally retain an
+  exact post-state fixture so non-authority durable changes remain explicit.
+
 ### Conformance classifications
 
 The first corpus uses a fixed internal oracle vocabulary. These classifications identify the first
@@ -244,10 +292,13 @@ owning boundary and are not yet the smaller public `ErrorCode` or agent-summary 
 | `AUTHENTICATION` | Local channel peer/session/purpose is not authorized for the operation |
 | `STALE` | Expired, replayed, superseded, fenced, or sequence-invalid state |
 | `CAPACITY` | A fixed local object/store budget is exhausted without evicting authority/evidence |
+| `LOCAL_FAILURE` | A trusted local registration prerequisite fails before authority commit |
+| `TRUST_STATE` | Quarantined or repair-required Supervisor-owned installation state denies the operation |
 
-A rejected proposal or registration case asserts `stateChanged: false` for every authority-bearing
-store. Logging or a monotonic clock high-water observation is not authority creation. Human-readable
-messages never carry user content, host paths, approval text, or arbitrary guest strings.
+A rejected proposal or registration case asserts `authorityStateChanged: false` for every
+authority-bearing store. Logging or a monotonic clock high-water observation is not authority
+creation. Human-readable messages never carry user content, host paths, approval text, or arbitrary
+guest strings.
 
 ## Alternatives considered
 

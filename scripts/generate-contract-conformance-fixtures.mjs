@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
+import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
 const sharedDirectory = new URL("shared/", corpusRoot);
@@ -29,6 +30,14 @@ addJsonRulesAndCases();
 addScalarRulesAndCases();
 addCborRulesAndCases();
 addProposalRulesAndCases();
+addPlanRegistrationRulesAndCases({
+  addCase,
+  addRule,
+  cborEncode,
+  jsonDocument,
+  retainFixture,
+  scalarRoleContext,
+});
 
 await mkdir(sharedDirectory, { recursive: true });
 for (const [path, bytes] of [...fixtures].sort(([left], [right]) => left.localeCompare(right))) {
@@ -1497,8 +1506,14 @@ function addCase({
   classification = null,
   owner,
   implementations,
+  authorityStateChanged = false,
+  stateDelta,
 }) {
   const fixture = retainFixture(path, bytes);
+  const expected = { decision, classification, owner, authorityStateChanged };
+  if (stateDelta !== undefined) {
+    expected.stateDelta = stateDelta;
+  }
   cases.push({
     id,
     description,
@@ -1509,7 +1524,7 @@ function addCase({
     variant,
     fixture,
     context,
-    expected: { decision, classification, owner, authorityStateChanged: false },
+    expected,
     implementations,
   });
 }
@@ -1532,8 +1547,8 @@ function implementationStatus(go, typescript, swift) {
   return { "fixture-integrity": "verified", go, typescript, swift };
 }
 
-function scalarRoleContext(expectedRole, providedRole) {
-  return { kind: "scalar-role", scalarKind: "digest", expectedRole, providedRole };
+function scalarRoleContext(expectedRole, providedRole, scalarKind = "digest") {
+  return { kind: "scalar-role", scalarKind, expectedRole, providedRole };
 }
 
 function padJsonToLength(value, length) {
@@ -1675,6 +1690,16 @@ function encodeCborArgument(majorType, argument) {
       Math.floor(argument / 0x100) & 0xff,
       argument & 0xff,
     );
+  }
+  if (argument <= Number.MAX_SAFE_INTEGER) {
+    const bytes = new Uint8Array(9);
+    bytes[0] = (majorType << 5) | 27;
+    let remaining = argument;
+    for (let index = 8; index >= 1; index -= 1) {
+      bytes[index] = remaining % 256;
+      remaining = Math.floor(remaining / 256);
+    }
+    return bytes;
   }
   throw new Error(`CBOR fixture argument is too large: ${argument}`);
 }

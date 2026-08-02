@@ -1,0 +1,24 @@
+{
+  "contextType": "capsule.conformance.wire-stored-separation",
+  "contextVersion": 0,
+  "wireFields": [
+    "objectType",
+    "objectVersion",
+    "registrationId",
+    "registrationSequence",
+    "planDigest",
+    "installationId",
+    "epochSequence",
+    "epochDigest",
+    "supervisorId",
+    "expiresAt"
+  ],
+  "storedRecordFields": [
+    "wireRegistrationHex",
+    "exactPlanHex",
+    "recomputedPlanDigestHex",
+    "registeredAtUnixSeconds",
+    "storageFormatVersion",
+    "retentionState"
+  ]
+}

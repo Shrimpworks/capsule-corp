@@ -113,16 +113,16 @@ Completed and retained:
 - all five Gate C readiness tracks and their P0 reconciliation;
 - Phase 2A passive candidate contracts and three independent reviews;
 - Phase 2B exact proposed decoder/registration decisions;
-- conformance Tasks 2.1 through 2.3: manifest integrity, foundational byte fixtures, fixed proposal
-  resolver contexts, and source/canonical-inline-input known answers.
+- conformance Tasks 2.1 through 2.4: manifest integrity, foundational byte fixtures, fixed proposal
+  resolver contexts, source/canonical-inline-input known answers, and exact
+  plan/registration/domain/state fixtures.
 
 Next backend-independent work:
 
-1. Task 2.4 exact plan/registration/domain/state fixtures.
-2. Unwired strict proposal decoding and semantic planning.
-3. Bounded internal wrappers and exact-byte Supervisor registration.
-4. The registered-plan/fault-injectable fake-backend vertical slice.
-5. Only then, the coordinated public consumer cutover and mixed-`Job` removal.
+1. Unwired strict proposal decoding and semantic planning.
+2. Bounded internal wrappers and exact-byte Supervisor registration.
+3. The registered-plan/fault-injectable fake-backend vertical slice.
+4. Only then, the coordinated public consumer cutover and mixed-`Job` removal.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

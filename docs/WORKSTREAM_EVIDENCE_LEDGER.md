@@ -103,6 +103,23 @@ output is reconciled in
 These reviews were intentionally read-only. Their deliverable was the synthesis and ordered work
 plan, not separate code or experiment directories.
 
+## Phase 2B approval/attempt Slice A-C reconciliation
+
+The approval/attempt work was delivered as three merged, backend-independent slices under parent
+orchestrator task `019fc2de-552d-77a0-aa47-35ac39d02edc`. It is defensive local conformance work,
+not consumer activation or backend admission.
+
+| Slice | Durable implementation checkpoint | Retained evidence and limitation |
+| --- | --- | --- |
+| A: passive contracts | `internal/execution/approvalattempt` defines distinct `ApprovalID`, `AttemptID`, and `AttemptNonce` domains, typed references, three approval states, one created-attempt state, the fixed 12-class vocabulary, defensive byte ownership, and the retained-vector-only verifier. | `TestSliceAConformanceManifest` covers 44 cases (10 accept, 34 reject), the exact 375-byte known answer, 512/256/128 raw budgets, and 431/242/116 calculated maxima. It is not production COSE, signer authorization, or cryptography. |
+| B: fixed authority store | `registrationstate.FixedFileStore` colocates registration, effective-time high-water, approval, and immutable created-attempt state; payload-digest idempotency, retained nonce uniqueness, atomic consume/create, exact replay/concurrency, capacity, recovery fencing, reopen validation, and corruption refusal are implemented locally. | Twelve manifest state-transition cases plus focused component tests retain the exact behavior. The fixed no-eviction file-snapshot store has no production archive/compaction, multi-process locking, backup/restore, or rollback-resistant uniqueness and remains unwired. |
+| C: attempt-keyed fake lifecycle | `ApprovalAttemptComponent` supplies `ResolveCreated` and created-attempt enumeration; `registeredlifecycle` accepts only `AttemptID`, revalidates every copied binding and exact plan before fake prepare, keeps attempts for one registration distinct, and keys replay/fault/recovery state by attempt. | Twelve top-level focused tests cover binding refusal, exact/concurrent replay, startup enumeration, all fake fault moments, and post-effect restart recovery. `FakeBackend.CreatesGuest() == false`; lifecycle `MemoryStore` is bounded single-process memory and non-durable. |
+
+The closed conformance manifest remains 82 rules, 262 cases, and 368 fixtures after Slice C. Its Go
+manifest-backed coverage remains 177 targets: 81 internal-CBOR/wrapper cases, 40 registration-state
+cases, 44 passive approval/attempt cases, and 12 Slice B state transitions. Slice C adds focused Go
+tests rather than manifest cases.
+
 ## Integrated pull-request checkpoints
 
 | Integration | Merge commit | What became durable |
@@ -115,6 +132,9 @@ plan, not separate code or experiment directories.
 | Local Gate C P0-2 evidence integration | `d3be865` | Retained the bounded `NullFs` route/removal investigation and kept the exact profile unsupported. |
 | Local Gate C P0-0 evidence integration | `004c047` | Rejected stock Bun 1.3.14 for `RUNTIME-001` and retained the source/probe evidence and governed-patch-or-alternate decision. |
 | Local Phase 2B Task 2.4 integration | `fd51ac4` | Exact plan/registration/domain/state fixtures and proposed ADR-0023 state addendum; corpus expanded to 67 rules, 206 cases, and 278 fixtures. |
+| PR #32, approval/attempt Slice A | `5891c1d` | Passive typed domains/references/states/classifications, exact approval known answer, bounded retained-vector verifier, defensive copies, and 44 manifest cases; corpus expanded to 78 rules, 250 cases, and 350 fixtures. |
+| PR #36, approval/attempt Slice B | `2adbd5f` | Colocated fixed registration/approval/attempt snapshot, durable effective-time high-water, canonical-payload idempotency, atomic consume/create, capacity, fault/reopen/corruption handling, and 12 state-transition cases; corpus expanded to 82 rules, 262 cases, and 368 fixtures. |
+| PR #37, approval/attempt Slice C | `9955d6b` | `AttemptResolver`/created-attempt enumeration, `AttemptID`-only fake lifecycle and recovery, binding revalidation, distinct attempts per registration, startup enumeration, fault/replay recovery, and explicit no-guest invariant. Manifest counts did not change. |
 
 The merge commits, not the former draft-PR state recorded in task responses, are the integration
 checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
@@ -129,17 +149,31 @@ Completed and retained:
 - Phase 2B exact proposed decoder/registration decisions;
 - conformance Tasks 2.1 through 2.4: manifest integrity, foundational byte fixtures, fixed proposal
   resolver contexts, source/canonical-inline-input known answers, and exact
-  plan/registration/domain/state fixtures.
+  plan/registration/domain/state fixtures; and
+- approval/attempt Slices A-C: passive typed contracts and fixture verifier, the unwired colocated
+  fixed authority store with atomic consume/create, and the `AttemptID`-keyed no-guest fake
+  lifecycle seam.
 
 Next backend-independent work:
 
-1. Replace the local-only exact plan-registration conformance wrapper with reviewed authenticated
-   typed IPC after the Supervisor language/privilege topology is selected; do not promote the test
-   JSON into a product transport.
-2. Implement direct Broker approval and durable one-use grant consumption/attempt creation against
-   registration IDs only.
-3. Complete the Supervisor archival/compaction design and daemon aggregate service envelope.
-4. Only then, perform the coordinated public consumer cutover and mixed-`Job` removal.
+1. Write the required design/ADR for durable Supervisor-internal, `AttemptID`-keyed lifecycle state
+   and startup coordination against `FakeBackend.CreatesGuest() == false`. It must preserve
+   consume/create-before-effect ordering, enumerate only committed created attempts, and decide
+   durable checkpoints, store composition, reopen validation, capacity, and repair behavior before
+   replacing the single-process `MemoryStore`.
+2. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
+   no-eviction authority store is not a continuous-service store.
+3. After the Supervisor language/privilege topology is selected, design authenticated typed IPC
+   and production Approval verification/authorization; do not promote the conformance JSON or
+   injected caller context into a product transport.
+4. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
+   envelope exist may a coordinated public cutover and mixed-`Job` removal be considered.
+
+This checkpoint does not decide IPC topology, authority-store archive/compaction, production
+COSE/Swift/Keychain/user-presence signing, consumer ownership, evidence composition, or public
+cutover. The authority store lacks multi-process locking and rollback-resistant identifier/nonce
+uniqueness; the lifecycle store is single-process and non-durable. Content, evidence, runtime,
+backend, and guest remain absent from the unwired approval/attempt path.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

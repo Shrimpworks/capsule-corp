@@ -31,8 +31,11 @@ verifies 177 Go targets: 81 internal-CBOR/wrapper cases, all 40 registration-sta
 passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact
 candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
-colocated fixed registration/approval/attempt store. It has no consumer, lifecycle integration,
-backend, or guest. A
+colocated fixed registration/approval/attempt store. The no-guest fake lifecycle now resolves and
+recovers only committed `AttemptID` records, revalidates exact plan and copied bindings before fake
+prepare, and retains 12 top-level focused lifecycle tests for binding, replay, concurrency, fault,
+and startup-recovery behavior. Its lifecycle store remains bounded single-process memory. There is
+no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest. A
 focused unwired TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
 bindings. The next

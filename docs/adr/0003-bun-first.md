@@ -5,6 +5,7 @@
 - Gate C refinement: 2026-07-31
 - P0-0 stock-runtime refinement: 2026-08-02
 - P0-0 governed-construction refinement: 2026-08-02
+- Deno-family disposition refinement: 2026-08-02
 
 ## Context
 
@@ -50,6 +51,15 @@ decision must compare alternate runtimes under the unchanged prohibited-power co
 supersede this ADR's Bun-first implementation choice. Until that decision is accepted, no real
 runtime profile is selected for the first executable slice.
 
+The subsequent [Deno-family experiment](../../experiments/gate-c-deno-runtime-authority/RESULTS.md)
+did not produce that superseding decision. Full Deno v2.9.4 retained initial-static-graph, Worker,
+SIGUSR1-inspector, Node-compatibility, and runtime-managed storage routes under the exact deny
+profile. The minimal `deno_core` 0.409.0 construction removed ambient extensions and its module
+loader, but still physically registered 99 built-in core ops before middleware disabled 96, and it
+did not include a TypeScript pipeline. The result is `DENO-FAMILY-NO-GO`: no candidate was
+selected, this ADR is not superseded, its runtime-neutral portion remains accepted, and
+`RUNTIME-001` still refuses.
+
 ## Consequences
 
 - The initial product has a clear technical wedge.
@@ -58,5 +68,5 @@ runtime profile is selected for the first executable slice.
 - The external isolation boundary must carry the primary security guarantee.
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
-- Alternate-runtime investigation is now blocking; Capsule does not relax the advertised authority
-  contract to preserve Bun-first sequencing.
+- Runtime construction investigation remains blocking after the Bun and Deno-family NO-GOs;
+  Capsule does not relax the advertised authority contract to preserve implementation sequencing.

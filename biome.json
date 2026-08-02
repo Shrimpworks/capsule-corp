@@ -10,6 +10,7 @@
       "!!experiments/**/.build",
       "!!experiments/**/.runs",
       "!!experiments/**/.swiftpm",
+      "!!experiments/**/target",
       "!!schemas/conformance/v0/manifest.json",
       "!!schemas/conformance/v0/canonical-inline-input",
       "!!schemas/conformance/v0/contexts",

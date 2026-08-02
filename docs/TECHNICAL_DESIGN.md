@@ -50,9 +50,10 @@ The first complete workflow is intentionally narrow:
    one `ExecutionAttempt` before any hostile side effect.
 6. The selected runtime executes in a disposable development backend with no network, ambient
    environment, subprocesses, native addons, FFI, macros, inspector, package installation, or live
-   host path. The exact runtime profile must prove those restrictions. Stock Bun 1.3.14 and its
-   governed-construction branch both failed P0-0, so alternate-runtime selection is required before
-   this step can use a real runtime.
+   host path. The exact runtime profile must prove those restrictions. Stock Bun 1.3.14, its
+   governed-construction branch, hardened full Deno v2.9.4, and the tested minimal `deno_core`
+   0.409.0 construction failed P0-0. No real runtime may enter this step until another exact
+   construction closes the unchanged authority contract.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an
@@ -533,10 +534,11 @@ authoritative tier. The native libkrun/HVF candidate binds one signed App-Sandbo
 one attempt, records and verifies its PID/start/code identity before authorizing VM start, compiles
 out network, and disables implicit vsock. Its current spike is conditional evidence only: the
 pathname disk API has an unresolved same-user mutation race, the block-root path creates a
-`NullFs` virtiofs device, stock Bun lacks an evidenced no-subprocess/no-FFI profile, and current
-runtime bytes are not admissible. P0 will test a genuine inherited read-only root descriptor
-through `/dev/fd/N` and dedicated virtio-console ports for source/input and fixed-cap typed inline
-results. Root custody must separately pass attachment identity, frozen-object construction, and
+`NullFs` virtiofs device, and neither the Bun nor tested Deno-family constructions close
+`RUNTIME-001`; current runtime bytes are not admissible. P0 will test a genuine inherited read-only
+root descriptor through `/dev/fd/N` and dedicated virtio-console ports for source/input and
+fixed-cap typed inline results. Root custody must separately pass attachment identity, construction
+of a frozen object, and
 end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism. Runner exit is
 never guest success; guest-reported completion, input integrity, result validation, and teardown
 remain distinct evidence. The pinned multiport implementation's unchecked guest port IDs, non-stop-
@@ -640,8 +642,9 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 4. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 5. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
-6. Add one dependency-free Bun inline-JSON vertical slice through the admitted libkrun/HVF
-   development profile, preserving Apple Containerization only as a regression fixture.
+6. After P0-0 selects an admitted runtime by ADR, add one dependency-free inline-JSON vertical
+   slice through the admitted libkrun/HVF development profile, preserving Apple Containerization
+   only as a regression fixture.
 7. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
    bounded outputs.
 8. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple

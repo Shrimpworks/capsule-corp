@@ -6,7 +6,9 @@ failed Apple Containerization as a production backend; libkrun/Hypervisor.framew
 lead native candidate under evaluation, but its exact profile has unresolved custody and `NullFs`
 blockers and the current runtime bytes are not admissible. A post-track independent review and
 source-research reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until
-file artifacts, and added stock-Bun runtime authority as a blocker. OCI/gVisor remains an
+file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
+stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
+`RUNTIME-001` remains unsupported. OCI/gVisor remains an
 independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
@@ -131,7 +133,11 @@ and same-machine installed recovery, while also finding a mutable-path input rac
 and a no-go for the current runtime bytes. Subsequent review found that libkrun's multiport console
 API may remove source/input and inline results from the raw-block path, while stock Bun's
 subprocess/FFI surface adds an earlier runtime-authority admission question. Both are hypotheses
-until exact spikes pass. See
+until exact spikes pass. The later
+[Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md) also reached
+NO-GO: full Deno retained initial-graph, Worker, inspector, compatibility, and persistence routes,
+while `deno_core` physically registered 99 built-in ops and did not supply the TypeScript pipeline.
+See
 [`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
 
 ### Gate C implementation-readiness follow-ups

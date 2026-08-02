@@ -57,6 +57,13 @@ replace the original Developer ID evidence with its ad-hoc boot-only comparison.
 `audit-nullfs-source.sh` is a read-only regression check for the pinned source routes and optional
 runner imports; passing it is not residual-surface validation.
 
+The next fail-fast disposition spike is recorded in
+[NULLFS_P0_2_DISPOSITION.md](NULLFS_P0_2_DISPOSITION.md). A direct-block-root prototype moved the
+same trusted init into the candidate runtime root, booted the pinned internal kernel without constructing an
+fs device, and reran the bounded adversarial corpus without the original `NullFs` failure. The
+decision is `GOVERNED-PATCH`, not final removal or admission; installed route closure, P0-1 custody,
+P0-3 transport, P0-4 packaging, and final signed-byte reruns remain mandatory.
+
 ## Safety boundaries
 
 - Every launched runner has a finite host timeout and exact PID teardown.

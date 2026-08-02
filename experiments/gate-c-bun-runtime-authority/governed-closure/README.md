@@ -1,6 +1,6 @@
 # Gate C P0-0 governed Bun closure follow-up
 
-Status: **development-only fail-fast evidence; NO-GO**. Nothing in this directory is product code,
+Status: **development-only toolchain follow-up complete; original campaign NO-GO retained**. Nothing in this directory is product code,
 an admitted runtime profile, or permission to execute user or runtime/backend bytes.
 
 This follow-up started from the retained stock Bun 1.3.14 failure in the parent directory. It asked
@@ -13,12 +13,15 @@ Owner: the Gate C P0-0 orchestrator task. Removal/replacement condition: retain 
 runtime investigation is reconciled into an ADR-0003 update or superseding decision with its own
 exact construction and mutation evidence.
 
-The task's explicit fail-fast rule applies: the exact source checkout was present, but the local
+The original task's explicit fail-fast rule applied: the exact source checkout was present, but the local
 build inputs were not. The checkout had no initialized build/dependency tree, and the documented
 Bun build prerequisites included missing CMake, Ninja, LLVM 21, and other required tools. No patch
 or mutated runtime could therefore be built or tested from the pinned source. The governed Bun
 branch is a NO-GO for this campaign; the next decision is alternate-runtime investigation and
-ADR-0003 reconsideration.
+ADR-0003 reconsideration. A user-authorized follow-up added a digest-pinned Linux/arm64 builder and
+removed that environmental blocker without installing the full native host toolchain. The exact
+stock release baseline built and ran Capsule's owned fixture; container buildability is only a
+prerequisite and does not establish the governed authority closure.
 
 Run the read-only input check against the retained exact checkout with:
 
@@ -28,4 +31,6 @@ Run the read-only input check against the retained exact checkout with:
 ```
 
 See [RESULTS.md](RESULTS.md) for the decision and [SOURCE_MAP.md](SOURCE_MAP.md) for the pinned
-construction map. Retain this evidence until ADR-0003 selects and records the next runtime path.
+construction map. [TOOLCHAIN.md](TOOLCHAIN.md) documents both the container setup and the complete
+future native macOS installation. Retain this evidence until ADR-0003 selects and records the next
+runtime path.

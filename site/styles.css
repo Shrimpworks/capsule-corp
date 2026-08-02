@@ -1,6 +1,6 @@
 /* Hallmark · macrostructure: Marquee Hero · genre: atmospheric · theme: Terminal
  * tone: technical/austere · anchor hue: cyan · enrichment: none · nav: N8 · footer: Ft2
- * audience: developers evaluating Capsule + contributors · use: understand boundary → docs/GitHub
+ * audience: people evaluating Capsule + contributors · use: understand intent → GitHub
  * pre-emit critique: P5 H5 E5 S5 R5 V4
  * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47)
  * tokens: pass (48) · mobile: pass (34, 49, 50–57) · icons: pass (30)
@@ -190,7 +190,7 @@ h3 {
 }
 
 .status-band__inner p {
-  max-width: 80ch;
+  max-width: 75ch;
   color: var(--color-muted);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -280,56 +280,10 @@ blockquote cite {
   letter-spacing: 0.08em;
 }
 
-.flow-section {
-  border-block: var(--rule-hair) solid var(--color-rule);
-  background: var(--color-paper-2);
-}
-
-.flow-section .shell {
-  padding-block-end: var(--space-4xl);
-}
-
 .head-hang {
   display: grid;
   gap: var(--space-lg);
   padding-block: var(--space-3xl) var(--space-xl);
-}
-
-.steps {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.steps li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-lg);
-  border-block-start: var(--rule-hair) solid var(--color-rule-strong);
-  padding-block: var(--space-xl);
-}
-
-.steps li:last-child {
-  border-block-end: var(--rule-hair) solid var(--color-rule-strong);
-}
-
-.steps__content {
-  display: grid;
-  gap: var(--space-sm);
-}
-
-.steps li p {
-  max-width: 58ch;
-  color: var(--color-muted);
-}
-
-.stage {
-  min-width: 4ch;
-  color: var(--color-accent);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-variant-numeric: tabular-nums;
 }
 
 .boundary {
@@ -495,10 +449,6 @@ blockquote cite {
   .overview {
     grid-template-columns: minmax(0, 1.25fr) minmax(18rem, 0.75fr);
     align-items: start;
-  }
-
-  .steps li {
-    grid-template-columns: 6rem minmax(0, 1fr);
   }
 }
 

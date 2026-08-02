@@ -45,5 +45,7 @@ its core conclusion.
 - [ADR-0022: Evaluate libkrun/HVF as the native Apple backend candidate](0022-evaluate-libkrun-hvf-native-backend.md)
 - [ADR-0023: Bound protocol decoding and registration semantics](0023-bound-protocol-decoding-and-registration.md)
   — Proposed
+- [ADR-0024: Bound approval consumption and attempt creation before effects](0024-approval-consumption-and-attempt-creation.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -6,7 +6,7 @@ behavior is activated.
 
 Integration checkpoints: PR #10 merged the proposed decisions as `e565e6b`; PR #11 merged the
 manifest-driven conformance foundation as `f6de7ec`; Task 2.3 was integrated as `4afbdfa`. Task
-provenance and the complete handoff are indexed in the
+2.4 was integrated as `fd51ac4`. Task provenance and the complete handoff are indexed in the
 [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
 ## Objective

@@ -137,7 +137,8 @@ Exit evidence:
 
 ## Phase 5: dependency-free Bun development execution
 
-- Close the five reconciled P0 Gate C campaigns: stock-Bun runtime-authority closure, immutable
+- Close the five reconciled P0 Gate C campaigns: governed runtime-authority closure or an alternate
+  runtime following the failed stock-Bun branch, immutable
   runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
   bounded inline JSON, and an admissible complete installed development bundle.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,

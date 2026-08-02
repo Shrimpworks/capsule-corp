@@ -40,7 +40,7 @@ func TestCandidateMediaTypeFixtures(t *testing.T) {
 func TestExecutionPlanPredecoderFixtures(t *testing.T) {
 	t.Parallel()
 	tests := append(
-		cborBoundaryFixtures("execution-plan", true),
+		cborBoundaryFixtures("execution-plan"),
 		cborDeterministicFixtures()...,
 	)
 	tests = append(tests, cborFixture{
@@ -60,7 +60,7 @@ func TestExecutionPlanPredecoderFixtures(t *testing.T) {
 func TestPlanRegistrationPredecoderFixtures(t *testing.T) {
 	t.Parallel()
 	tests := append(
-		cborBoundaryFixtures("plan-registration", false),
+		cborBoundaryFixtures("plan-registration"),
 		cborDeterministicFixtures()...,
 	)
 	tests = append(tests, cborFixture{
@@ -354,22 +354,13 @@ type cborFixture struct {
 	classification Classification
 }
 
-func cborBoundaryFixtures(slug string, depthExactAccepted bool) []cborFixture {
+func cborBoundaryFixtures(slug string) []cborFixture {
 	fixtures := make([]cborFixture, 0, 10)
 	for _, dimension := range []string{"raw-bytes", "depth", "items", "map-entries", "array-elements"} {
-		exactClassification := Classification("")
-		if dimension == "depth" && !depthExactAccepted {
-			// The retained PlanRegistration depth fixture is three nested one-element
-			// arrays. ADR-0023 independently sets the per-array maximum to zero, so
-			// the integrated strict profile must fail it closed even though its
-			// depth alone is exactly four.
-			exactClassification = ClassificationMalformed
-		}
 		fixtures = append(fixtures,
 			cborFixture{
-				name:           dimension + " exact maximum",
-				path:           "shared/cbor-" + slug + "-" + dimension + "-exact.bin",
-				classification: exactClassification,
+				name: dimension + " exact maximum",
+				path: "shared/cbor-" + slug + "-" + dimension + "-exact.bin",
 			},
 			cborFixture{
 				name:           dimension + " cap plus one",

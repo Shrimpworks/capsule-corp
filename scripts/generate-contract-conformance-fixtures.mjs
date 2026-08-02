@@ -26,7 +26,6 @@ const internalMediaTypeImplementations = implementationStatus(
 );
 const scalarImplementations = implementationStatus("verified", "pending", "pending");
 const cborImplementations = implementationStatus("verified", "pending", "pending");
-const pendingCborImplementations = implementationStatus("pending", "pending", "pending");
 const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
 const proposalSchemaImplementations = implementationStatus("pending", "verified", "not-applicable");
 const rules = [];
@@ -421,8 +420,16 @@ function addCborRulesAndCases() {
     addCborBoundary(
       profile,
       "depth",
-      cborEncode(nestedCborArray(profile.depth)),
-      cborEncode(nestedCborArray(profile.depth + 1)),
+      cborEncode(
+        profile.object === "PlanRegistration"
+          ? nestedCborMap(profile.depth)
+          : nestedCborArray(profile.depth),
+      ),
+      cborEncode(
+        profile.object === "PlanRegistration"
+          ? nestedCborMap(profile.depth + 1)
+          : nestedCborArray(profile.depth + 1),
+      ),
     );
     addCborBoundary(
       profile,
@@ -465,9 +472,6 @@ function addCborBoundary(profile, dimension, exactBytes, overBytes, overlap) {
     variant: "exact-maximum",
     path: `shared/cbor-${profile.slug}-${dimension}-exact.bin`,
     bytes: exactBytes,
-    ...(profile.object === "PlanRegistration" && dimension === "depth"
-      ? { implementations: pendingCborImplementations }
-      : {}),
   });
   addCborCase(profile, {
     id: `${ruleId}.cap-plus-one`,
@@ -1644,6 +1648,14 @@ function nestedCborArray(depth) {
   let value = 0;
   for (let current = 1; current < depth; current += 1) {
     value = [value];
+  }
+  return value;
+}
+
+function nestedCborMap(depth) {
+  let value = 0;
+  for (let current = 1; current < depth; current += 1) {
+    value = new Map([[0, value]]);
   }
   return value;
 }

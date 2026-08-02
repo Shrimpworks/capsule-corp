@@ -3732,8 +3732,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "shared/cbor-plan-registration-depth-exact.bin",
-        "sha256": "af2174db8fe97d87882fb4bbee1e98b5eedabb5876b4984935c5fe8f0fabfc5f",
-        "byteLength": 4
+        "sha256": "a26d349530ed400ab0dcf176b9e2300e244c9dd5e87bd5fdbba3f5684e259a81",
+        "byteLength": 7
       },
       "context": {
         "kind": "none"
@@ -3746,7 +3746,7 @@
       },
       "implementations": {
         "fixture-integrity": "verified",
-        "go": "pending",
+        "go": "verified",
         "typescript": "pending",
         "swift": "pending"
       }
@@ -3763,8 +3763,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "shared/cbor-plan-registration-depth-over.bin",
-        "sha256": "2f4b2f7ef2620c62454734179d08dadfcb870000945accb72d0b71ede68c0a11",
-        "byteLength": 5
+        "sha256": "b7ff1b1835958fe4262e5cd9467ef93349f03a3232bf60a3fded39befb36abca",
+        "byteLength": 9
       },
       "context": {
         "kind": "none"

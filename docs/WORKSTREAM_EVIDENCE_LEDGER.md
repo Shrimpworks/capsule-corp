@@ -43,6 +43,7 @@ product finding. Every completed track result was recovered into the repository 
 | Installed lifecycle and crash recovery | `019fb9e7-25ec-78b2-8bf2-65688a86f41f` | Conditional same-host pass for enrolled launch mechanics and exact recovery. Complete installed authority, accepted distribution, clean-host, session, reboot, and minimum-OS evidence remain open. | [`RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) and Gate C synthesis |
 | Adversarial VMM and cross-job isolation | original `019fb9e7-2692-7cb0-a5c2-cebb9378e07f`; completed replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | The original task failed at the task/app layer. The bounded replacement verified and preserved the existing report. The exact profile conditionally failed because `NullFs` remains guest-visible even without a configured host directory. | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md), [`VALIDATION_RECEIPT.md`](../experiments/gate-c-libkrun-adversarial/VALIDATION_RECEIPT.md), and Gate C synthesis |
 | Runtime packaging, provenance, patch governance, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional build/release feasibility pass; current bytes are no-go for admission. Controlled same-host equality is not two-builder provenance, and the complete final signed/notarized topology is not available. | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md), [`HANDOFF.md`](../experiments/gate-c-libkrun-supply-chain/HANDOFF.md), and Gate C synthesis |
+| P0-0 exact stock Bun runtime authority | delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` | Failed for stock Bun 1.3.14: process, `execve`, FFI/native-loader, inspector, Worker, and descriptor authority remain reachable. `RUNTIME-001` stays unsupported; only a governed patched/external branch or alternate runtime remains. | [`RESULTS.md`](../experiments/gate-c-bun-runtime-authority/RESULTS.md), source inventory, synthetic probes, and selected evidence |
 
 The retained generated `.build/` and `.runs/` directories are intentionally disposable and ignored.
 The repository keeps the source, reproduction instructions, selected evidence, validation receipts,
@@ -72,9 +73,10 @@ rejected, or narrowed conclusion is retained in
   coverage; and
 - early topology testing followed by final signed/notarized-byte rebuild and revalidation.
 
-The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. The
-reviews found no architecture-killing contradiction and did not authorize libkrun to handle user
-bytes.
+The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. The exact
+stock-runtime branch of P0-0 is now closed as a failure; its governed patch/external mechanism
+branch remains open. The reviews and experiment found no architecture-killing contradiction and
+did not authorize libkrun to handle user bytes.
 
 ## Phase 2 parallel-task reconciliation
 

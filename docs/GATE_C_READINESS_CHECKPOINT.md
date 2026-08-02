@@ -1,7 +1,7 @@
 # Gate C implementation-readiness synthesis
 
 Date: 2026-07-31
-P0 plan last reconciled: 2026-08-01
+P0 plan last reconciled: 2026-08-02
 
 Status: completed cross-track synthesis. This document records spike decisions and coordination
 history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
@@ -116,9 +116,11 @@ findings, not a failure of the overall architecture.
   released profile is revalidated. Update, rollback, disable, revocation, and corresponding-source
   workflows are designs, not exercised product mechanisms.
 - Pinning Bun 1.3.14 proved that the runtime executed the fixture; it did not prove the documented
-  no-subprocess/no-FFI contract. The stock runtime exposes those APIs and no non-bypassable disable
-  profile has been evidenced, so the current runtime profile must refuse admission until P0 closes
-  or an explicit ADR changes the contract.
+  no-subprocess/no-FFI contract. The 2026-08-02 exact-source and local-binary P0-0 investigation
+  confirmed that direct/aliased process, `execve`, FFI, native-loader, inspector, Worker, and
+  descriptor paths survive every relevant stock deny flag. Stock Bun is rejected for this profile;
+  the current runtime must refuse admission while a governed patched/external mechanism remains
+  unevidenced, or until an alternate runtime is selected by ADR.
 - The planning floor remains Apple silicon/macOS 14+ only as a provisional source/platform target.
   It is not a claim about the current package or a validated supported-host range.
 
@@ -192,10 +194,12 @@ claim.
 
 ### P0 — before a libkrun development adapter handles user bytes
 
-1. **Runtime-authority closure:** prove that the exact Bun/launcher profile refuses subprocess,
-   FFI, native-addon, inspector, macro, environment-file, and package-install paths. If stock Bun
-   cannot do so, choose a governed patch/alternate runtime or explicitly revise the contract in a
-   new ADR.
+1. **Runtime-authority closure:** the [exact stock Bun 1.3.14 investigation](../experiments/gate-c-bun-runtime-authority/RESULTS.md)
+   failed, so stock flags are no longer a candidate mechanism. Build and prove a governed
+   construction-level patch plus exact external process/native enforcement that refuses
+   subprocess, FFI, native-addon, inspector, macro, environment-file, and package-install paths,
+   including deliberate capability restoration. If that branch fails, choose an alternate runtime
+   and update ADR-0003. `RUNTIME-001` remains unsupported throughout.
 2. **Immutable runtime-root custody:** test protected exclusive creation, a distinct genuine
    read-only descriptor, closure of every writable alias/mapping, unlink, final digest through that
    exact descriptor, direct runner inheritance, and `/dev/fd/N` under the exact installed App

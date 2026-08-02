@@ -3,6 +3,7 @@
 - Status: Accepted
 - Date: 2026-07-30
 - Gate C refinement: 2026-07-31
+- P0-0 stock-runtime refinement: 2026-08-02
 
 ## Context
 
@@ -25,6 +26,14 @@ no-subprocess/no-FFI profile. Bun therefore remains the intended first runtime o
 [Gate C P0 runtime-authority campaign](../GATE_C_P0_RECONCILIATION.md) passes. Otherwise Capsule
 must use a governed patch/alternate runtime or explicitly revise this decision and the product
 contract.
+
+The subsequent [exact stock-runtime investigation](../../experiments/gate-c-bun-runtime-authority/RESULTS.md)
+rejected stock Bun 1.3.14 for this profile: relevant flags did not remove direct or aliased process,
+`execve`, FFI/native-loader, inspector, Worker, or inherited-descriptor authority. Bun-first now
+means only a governed construction-level patch plus exact external enforcement that later passes
+P0-0. Until then `RUNTIME-001` is unsupported and execution requiring it refuses. If that governed
+branch fails, Capsule selects an alternate runtime and updates this ADR; it does not weaken the
+prohibited-power contract implicitly.
 
 ## Consequences
 

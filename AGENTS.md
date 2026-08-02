@@ -92,6 +92,53 @@ an internal sub-agent assignment, or a research/experiment assignment.
   security claims must be recorded in the repository's canonical documentation
   or ADRs; chat history alone is not retained evidence.
 
+### Pull request publishing
+
+- Write every multiline pull request description to a real temporary or other
+  local body file with real newline bytes. Create or update the pull request with
+  `gh pr create --body-file <path>` or `gh pr edit --body-file <path>`; never pass
+  JSON-escaped multiline text through inline `--body` arguments.
+- After every create or edit, read the stored description back with
+  `gh pr view --json body --jq .body` and inspect the rendered Markdown. The
+  publishing handoff fails if the body is missing its expected real newlines or
+  contains literal `\n` or `\r` escape sequences where Markdown line breaks were
+  intended. Fix the body with `gh pr edit --body-file <path>` and verify it again
+  before reporting the PR.
+- Choose draft or ready state deliberately. Pass `--draft` when creating a draft,
+  omit it only when the PR is intentionally ready, and verify `isDraft` on
+  readback. Change an existing PR with `gh pr ready` or `gh pr ready --undo`
+  rather than assuming that editing its body changes review state.
+
+Safe draft example (the body contains no secrets and the temporary file is
+removed on shell exit):
+
+```bash
+pr_body_file="$(mktemp "${TMPDIR:-/tmp}/capsule-pr-body.XXXXXX")"
+trap 'rm -f "$pr_body_file"' EXIT
+
+cat >"$pr_body_file" <<'EOF'
+## Summary
+
+- Document the pull request publishing invariant.
+
+## Verification
+
+- `make ci`
+EOF
+
+gh pr create --draft --base main --head "$(git branch --show-current)" \
+  --title "docs: harden pull request publishing" \
+  --body-file "$pr_body_file"
+
+pr_body="$(gh pr view --json body --jq .body)"
+printf '%s\n' "$pr_body"
+if [[ "$pr_body" != *$'\n'* || "$pr_body" == *'\n'* || "$pr_body" == *'\r'* ]]; then
+  printf '%s\n' 'pull request body newline verification failed' >&2
+  exit 1
+fi
+gh pr view --json url,isDraft --jq '{url, isDraft}'
+```
+
 ## Working rules
 
 - Preserve deny-by-default capabilities.

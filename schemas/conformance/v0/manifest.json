@@ -1186,6 +1186,66 @@
           "variant": "cap-plus-one"
         }
       ]
+    },
+    {
+      "id": "approval-store.submission-idempotency",
+      "source": "ADR-0024#approval-submission-durable-states-and-replay",
+      "description": "One canonical payload creates one durable usable record; exact replay returns it without mutation.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "attempt-store.atomic-consume-create",
+      "source": "ADR-0024#atomic-consume-and-attempt-creation",
+      "description": "One transaction consumes one usable approval and creates exactly one immutable attempt.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "approval-attempt-store.recovery-fence",
+      "source": "ADR-0024#request-replay-concurrency-and-process-death",
+      "description": "An indeterminate commit fences mutation until reopen validates one coherent pre-state or post-state.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "approval-attempt-store.capacity",
+      "source": "ADR-0024#bounded-first-store-and-retention",
+      "description": "Exact approval and attempt ceilings reject cap-plus-one without eviction or consumption.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
     }
   ],
   "cases": [
@@ -11563,6 +11623,750 @@
             "path": "contexts/approval-attempt/empty.json",
             "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
             "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.submission.first-usable",
+      "description": "Commit one verified candidate as one usable approval.",
+      "ruleIds": [
+        "approval-store.submission-idempotency"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-submission-first-usable.operation.json",
+          "sha256": "3e22dfc62f1bc8996f4c2238377bc302586ad2a5c4b132f7596607b59f0e62c8",
+          "byteLength": 205
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": true,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable.json",
+            "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+            "byteLength": 944
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.submission.exact-replay",
+      "description": "Return the same usable reference for an exact canonical-payload replay.",
+      "ruleIds": [
+        "approval-store.submission-idempotency"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-submission-exact-replay.operation.json",
+          "sha256": "047c64a016fed9b40473b9a0e90544b13df834c13109cb3fd786d37442a2f7ac",
+          "byteLength": 205
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-usable.json",
+          "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+          "byteLength": 944
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable.json",
+            "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+            "byteLength": 944
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.submission.nonce-replay-reject",
+      "description": "Reject a different payload that reuses a retained nonce.",
+      "ruleIds": [
+        "approval-store.submission-idempotency"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-submission-nonce-replay-reject.operation.json",
+          "sha256": "c99c8bc3f6a01916bd9f2baa46e3b445ac5c0c6489ddb4aa1dd13163adc5c04f",
+          "byteLength": 205
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-usable.json",
+          "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+          "byteLength": 944
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "REPLAY",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable.json",
+            "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+            "byteLength": 944
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "attempt-store.consume-create.atomic",
+      "description": "Atomically consume one approval and insert its one created attempt.",
+      "ruleIds": [
+        "attempt-store.atomic-consume-create"
+      ],
+      "object": "attempt-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/attempt-store-consume-create-atomic.operation.json",
+          "sha256": "c6344aadb19db125223c1de4fa999fd7a10e65b19c3ff5bfe304a77a7a0eb887",
+          "byteLength": 206
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-usable.json",
+          "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+          "byteLength": 944
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": true,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-consumed-created.json",
+            "sha256": "11a64d0d2c8bf214238bc12125ffeb72d0f1c89e015d20f0a62ea93a6035d28c",
+            "byteLength": 1044
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "attempt-store.consume-create.exact-replay",
+      "description": "Return the same attempt for an exact request replay without redriving effects.",
+      "ruleIds": [
+        "attempt-store.atomic-consume-create"
+      ],
+      "object": "attempt-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/attempt-store-consume-create-exact-replay.operation.json",
+          "sha256": "abda9c42d2733c26c5ca2aeca1f60a49d6d136871ce66532bf6b7a2494dbe4ad",
+          "byteLength": 205
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-consumed-created.json",
+          "sha256": "11a64d0d2c8bf214238bc12125ffeb72d0f1c89e015d20f0a62ea93a6035d28c",
+          "byteLength": 1044
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-consumed-created.json",
+            "sha256": "11a64d0d2c8bf214238bc12125ffeb72d0f1c89e015d20f0a62ea93a6035d28c",
+            "byteLength": 1044
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "attempt-store.consume-create.confirmed-abort",
+      "description": "A confirmed transaction abort leaves the approval usable and creates no attempt.",
+      "ruleIds": [
+        "attempt-store.atomic-consume-create"
+      ],
+      "object": "attempt-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/attempt-store-consume-create-confirmed-abort.operation.json",
+          "sha256": "751d408b625611752acfdcb10e1b2656656d7f500d8bb32a7cb39ba6e9c4ac1c",
+          "byteLength": 208
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-usable.json",
+          "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+          "byteLength": 944
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable.json",
+            "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+            "byteLength": 944
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.recovery.indeterminate-before-record",
+      "description": "Fence an indeterminate approval commit without granting authority.",
+      "ruleIds": [
+        "approval-attempt-store.recovery-fence"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-recovery-indeterminate-before-record.operation.json",
+          "sha256": "e18cd7b605be91fee715bd8569c6865c5e8c493d38115a25e9c7892d36038c26",
+          "byteLength": 215
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "RECOVERY_REQUIRED",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-recovery-fenced.json",
+            "sha256": "f0261b751e3f12dfac649075e43bb98d7dccbc2125a3a8432a8f3cced3d8965a",
+            "byteLength": 845
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.recovery.indeterminate-after-record",
+      "description": "Fence an indeterminate approval commit whose complete record reached the store.",
+      "ruleIds": [
+        "approval-attempt-store.recovery-fence"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "malformed",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-recovery-indeterminate-after-record.operation.json",
+          "sha256": "5029f85f5da9061bc57524f5cddade123482f423b0a1b1084e41bbdd91defce0",
+          "byteLength": 216
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "RECOVERY_REQUIRED",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable-recovery-fenced.json",
+            "sha256": "f1d809e3f8a5656c987ad7fe5a8f1ef40ecd70729f3dad8602209b38f9c21d80",
+            "byteLength": 943
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.recovery.reopen-usable",
+      "description": "Reopen validates the committed usable record and clears only the transient fence.",
+      "ruleIds": [
+        "approval-attempt-store.recovery-fence"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "ordinary",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-recovery-reopen-usable.operation.json",
+          "sha256": "0252cd2f7c1298066d0feb36985fea65c65805676a289d687160d7b3a717ead7",
+          "byteLength": 209
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-usable-recovery-fenced.json",
+          "sha256": "f1d809e3f8a5656c987ad7fe5a8f1ef40ecd70729f3dad8602209b38f9c21d80",
+          "byteLength": 943
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-usable.json",
+            "sha256": "32a4dabd7d1ee90dc8aa702b72f52e80346f83d7e4bc2d4d144366f52e57ba10",
+            "byteLength": 944
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.capacity.usable-exact",
+      "description": "Retain exactly 256 usable approvals without eviction.",
+      "ruleIds": [
+        "approval-attempt-store.capacity"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-capacity-usable-exact.operation.json",
+          "sha256": "d7fe7a12c4f8761b1f04e9894c6a4c6308cb0a9cc7c44b631305c41a38737d90",
+          "byteLength": 209
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-approval-capacity.json",
+          "sha256": "d2f0c640c2313c24561b924d2b8b88e5d36056218e1b6d8e2233a6fe7bca63e4",
+          "byteLength": 850
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-approval-capacity.json",
+            "sha256": "d2f0c640c2313c24561b924d2b8b88e5d36056218e1b6d8e2233a6fe7bca63e4",
+            "byteLength": 850
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-store.capacity.usable-cap-plus-one",
+      "description": "Reject the 257th usable approval without eviction.",
+      "ruleIds": [
+        "approval-attempt-store.capacity"
+      ],
+      "object": "approval-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-store-capacity-usable-cap-plus-one.operation.json",
+          "sha256": "ce77cd9492a699512acdc5f948741e58e6c8dbbf60325620f9dedf1e2eb3ede4",
+          "byteLength": 212
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-approval-capacity.json",
+          "sha256": "d2f0c640c2313c24561b924d2b8b88e5d36056218e1b6d8e2233a6fe7bca63e4",
+          "byteLength": 850
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "CAPACITY",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-approval-capacity.json",
+            "sha256": "d2f0c640c2313c24561b924d2b8b88e5d36056218e1b6d8e2233a6fe7bca63e4",
+            "byteLength": 850
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "attempt-store.capacity.nonterminal-cap-plus-one",
+      "description": "Reject the 257th nonterminal attempt and leave its approval usable.",
+      "ruleIds": [
+        "approval-attempt-store.capacity"
+      ],
+      "object": "attempt-state",
+      "wireFormat": "raw-bytes",
+      "mediaType": null,
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "approval-grant/ordinary.cose",
+        "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+        "byteLength": 375
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/attempt-store-capacity-nonterminal-cap-plus-one.operation.json",
+          "sha256": "bb5ab37426e87def2a0b82132a999e6701c3d9610df2c843a5f0f9de94d0720a",
+          "byteLength": 217
+        },
+        "before": {
+          "path": "contexts/approval-attempt/store-attempt-capacity.json",
+          "sha256": "71868a399e5eb0c766fa39162d05cdb4370589444cee6618edf2b0ff7ada8aaf",
+          "byteLength": 852
+        },
+        "payload": {
+          "path": "approval-grant/ordinary.payload.cbor",
+          "sha256": "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+          "byteLength": 234
+        },
+        "protectedHeader": {
+          "path": "approval-grant/ordinary.protected.cbor",
+          "sha256": "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+          "byteLength": 68
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "CAPACITY",
+        "owner": "approval-attempt-fixed-store",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/store-attempt-capacity.json",
+            "sha256": "71868a399e5eb0c766fa39162d05cdb4370589444cee6618edf2b0ff7ada8aaf",
+            "byteLength": 852
           }
         }
       },

@@ -80,18 +80,21 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
 byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B now provides the closed conformance
-manifest, integrity runner, and 78-rule/250-case/350-fixture corpus, including proposal/source/input,
-exact plan/registration-state, and passive approval/attempt Slice A oracles. They are not frozen or
+manifest, integrity runner, and 82-rule/262-case/368-fixture corpus, including proposal/source/input,
+exact plan/registration-state, passive approval/attempt Slice A, and unwired fixed-store Slice B
+oracles. They are not frozen or
 activated;
 the unwired slices now implement strict TypeScript raw/schema proposal decoding, all 18 retained
 TypeScript semantic-resolution cases, exact TypeScript minimum-plan construction/encoding, strict
-Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, and 44
-passive Go approval/attempt contract cases. Swift remains pending. A focused local-only conformance
+Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, 44 passive
+Go approval/attempt contract cases, and 12 fixed-store transition cases. Swift remains pending.
+The fixed store now colocates registrations, approval/attempt authority, and the durable time
+high-water; it remains unwired and cannot call a lifecycle or backend. A focused local-only conformance
 handoff now carries copied TypeScript `ConstructedExecutionPlan` bytes and complete role bindings
 into the real Go `registrationstate` component; the registered-plan/fault-injectable fake lifecycle
 is also retained. Neither is a
-product-language/IPC seam or public consumer. The next approval work is the fixed durable
-approval/attempt store; authenticated typed local IPC remains separate. Public cutover waits for
+product-language/IPC seam or public consumer. The next approval work is the attempt-keyed Slice C
+fake-lifecycle seam; authenticated typed local IPC remains separate. Public cutover waits for
 those boundaries, reviewed
 Supervisor archival/compaction, an atomic consumer migration, and removal of the dormant
 direct-execution scaffold. See the

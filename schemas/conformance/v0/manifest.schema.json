@@ -345,7 +345,8 @@
         "role-binding-validator",
         "supervisor-registration-state",
         "channel-authentication",
-        "approval-attempt-contract"
+        "approval-attempt-contract",
+        "approval-attempt-fixed-store"
       ]
     },
     "expectedAccept": {

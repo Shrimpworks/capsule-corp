@@ -14,7 +14,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 250, fixtureCount: 350, ruleCount: 78 });
+  assert.deepEqual(result, { caseCount: 262, fixtureCount: 368, ruleCount: 82 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -278,9 +278,14 @@ test("retains the closed Task 2.4 registration-state matrix and stored record", 
 
 test("retains the closed ADR-0024 passive Slice A matrix and known answer", async () => {
   const manifest = await corpusJson("manifest.json");
-  const sliceCases = manifest.cases.filter(
+  const approvalAttemptCases = manifest.cases.filter(
     (entry) => entry.context.kind === "approval-attempt-state",
   );
+  const sliceCases = [];
+  for (const entry of approvalAttemptCases) {
+    const operation = await corpusJson(entry.context.operation.path);
+    if (operation.mode !== "store-transition") sliceCases.push(entry);
+  }
   assert.equal(sliceCases.length, 44);
   assert.equal(sliceCases.filter((entry) => entry.expected.decision === "accept").length, 10);
   assert.equal(sliceCases.filter((entry) => entry.expected.decision === "reject").length, 34);
@@ -317,6 +322,35 @@ test("retains the closed ADR-0024 passive Slice A matrix and known answer", asyn
   assert.equal((await corpusBytes("approval-grant/calculated-maximum.cose")).length, 431);
   assert.equal((await corpusBytes("approval-grant/calculated-maximum.payload.cbor")).length, 242);
   assert.equal((await corpusBytes("approval-grant/calculated-maximum.protected.cbor")).length, 116);
+});
+
+test("retains the compact ADR-0024 durable Slice B state matrix", async () => {
+  const manifest = await corpusJson("manifest.json");
+  const sliceCases = [];
+  for (const entry of manifest.cases.filter(
+    (candidate) => candidate.context.kind === "approval-attempt-state",
+  )) {
+    const operation = await corpusJson(entry.context.operation.path);
+    if (operation.mode === "store-transition") sliceCases.push({ entry, operation });
+  }
+  assert.equal(sliceCases.length, 12);
+  assert.equal(sliceCases.filter(({ entry }) => entry.expected.decision === "accept").length, 6);
+  assert.equal(sliceCases.filter(({ entry }) => entry.expected.decision === "reject").length, 6);
+  assert.ok(
+    sliceCases.every(
+      ({ entry }) =>
+        entry.implementations.go === "verified" &&
+        entry.expected.fakeBackendEffectPermitted === false,
+    ),
+  );
+  const atomic = sliceCases.find(({ operation }) => operation.scenario === "atomic-commit").entry;
+  const before = await corpusJson(atomic.context.before.path);
+  const after = await corpusJson(atomic.expected.stateDelta.after.path);
+  assert.equal(before.approvalPopulation.usableCount, 1);
+  assert.equal(after.approvalPopulation.usableCount, 0);
+  assert.equal(after.approvalPopulation.retainedCount, 1);
+  assert.equal(after.attemptPopulation.nonterminalCount, 1);
+  assert.equal(after.attemptPopulation.retainedCount, 1);
 });
 
 test("covers every ExecutionPlan and PlanRegistration scalar domain", async () => {

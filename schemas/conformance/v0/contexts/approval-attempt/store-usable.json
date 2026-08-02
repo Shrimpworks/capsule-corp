@@ -1,0 +1,30 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-state",
+  "contextVersion": 0,
+  "installationIdHex": "11111111111111111111111111111111",
+  "supervisorIdHex": "55555555555555555555555555555555",
+  "epochSequence": 7,
+  "epochDigestHex": "2222222222222222222222222222222222222222222222222222222222222222",
+  "trustPhase": "stable",
+  "trustReason": null,
+  "attemptsEnabled": true,
+  "recoveryFence": false,
+  "timeHighWaterUnixSeconds": 1785456000,
+  "approvalPopulation": {
+    "usableCount": 1,
+    "retainedCount": 1,
+    "setDigest": "447ce67920ff79cdda744dadd9ef83032db9c60a20c56ea1ce9fe73393ac2623"
+  },
+  "attemptPopulation": {
+    "nonterminalCount": 0,
+    "retainedCount": 0,
+    "setDigest": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "materializedApprovals": [
+    {
+      "approvalIdHex": "a1000000000000000000000000000000",
+      "state": "usable"
+    }
+  ],
+  "materializedAttempts": []
+}

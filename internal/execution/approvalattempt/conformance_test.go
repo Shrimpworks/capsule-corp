@@ -70,6 +70,10 @@ func TestSliceAConformanceManifest(t *testing.T) {
 		if testCase.Context.Kind != "approval-attempt-state" {
 			continue
 		}
+		operation := readJSON[operationFixture](t, fixturePath(testCase.Context.Operation.Path))
+		if operation.Mode == "store-transition" {
+			continue
+		}
 		caseCount++
 		if testCase.Expected.Decision == "accept" {
 			acceptCount++
@@ -81,7 +85,6 @@ func TestSliceAConformanceManifest(t *testing.T) {
 		}
 		testCase := testCase
 		t.Run(testCase.ID, func(t *testing.T) {
-			operation := readJSON[operationFixture](t, fixturePath(testCase.Context.Operation.Path))
 			before := readBytes(t, testCase.Context.Before)
 			after := readBytes(t, testCase.Expected.StateDelta.After)
 			if !bytes.Equal(before, after) {

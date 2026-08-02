@@ -1,8 +1,8 @@
 # Phase 2B approval-consumption and attempt-creation conformance plan
 
-Status: Slice A passive contracts and fixtures implemented on 2026-08-02. No approval ledger,
-attempt store, consumer, endpoint, lifecycle integration, backend authority, or guest is
-implemented.
+Status: Slice A passive contracts and fixtures and Slice B's unwired fixed durable store were
+implemented on 2026-08-02. No consumer, endpoint, lifecycle integration, backend authority, or
+guest is implemented.
 
 Normative proposal: [ADR-0024](adr/0024-approval-consumption-and-attempt-creation.md).
 
@@ -203,8 +203,8 @@ Observed fixture identities include:
 - payload: SHA-256 `8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea`, 234 bytes; and
 - protected header: SHA-256 `b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf`, 68 bytes.
 
-Slice B remains wholly pending. `registrationstate`, `registeredlifecycle`, and the older in-memory
-`SupervisorCore` remain behaviorally unchanged and do not import the Slice A package.
+Before Slice B, `registrationstate`, `registeredlifecycle`, and the older in-memory
+`SupervisorCore` remained behaviorally unchanged and did not import the Slice A package.
 
 ### Slice B: fixed approval/attempt store
 
@@ -213,6 +213,37 @@ with registration state. Add submission idempotency, nonce/payload indexes, effe
 handling, consume-and-create, reopen validation, and capacity tests.
 
 Acceptance: the matrix through process-death and capacity passes with no fake-backend calls.
+
+Observed checkpoint: `registrationstate.FixedFileStore` now transactionally colocates registrations,
+the shared durable effective-time high-water, approval records, and immutable created-attempt
+records in one versioned snapshot. `ApprovalAttemptComponent` exposes only authenticated
+`SubmitApproval`, authenticated `RequestAttempt`, defensive record inspection, and created-attempt
+enumeration. It injects the Slice A candidate verifier, role-specific identifier sources, a
+point-in-time integrity assessor, and process-boundary checkpoints. It does not call
+`registeredlifecycle`, `FakeBackend`, or another effect.
+
+The store keys semantic replay by SHA-256 of exact canonical payload bytes, retains the first exact
+envelope, rejects nonce reuse by another payload, and copies every byte and binding before commit.
+One transaction changes `usable` to `consumed`, binds the generated `AttemptID`, and inserts the one
+immutable `created` attempt. Exact and concurrent retries return the already committed references.
+Confirmed aborts retain the pre-state. An injected post-rename/pre-directory-durability result
+returns `RECOVERY_REQUIRED` and fences mutation until reopen validates one coherent snapshot.
+Reopen rejects digest, version, capacity, missing-half, duplicate-owner, and cross-link corruption.
+
+The compact manifest now retains 82 rules, 262 cases, and 368 fixtures. Twelve new Go-verified
+Slice B state-transition cases cover first submission, payload/nonce replay, atomic consume/create,
+exact request replay, confirmed abort, both indeterminate recovery outcomes, reopen, and exact/cap-
+plus-one active ceilings. Focused Go tests additionally exercise defensive copies, concurrent lost-
+response retries, time equality/lifetime/rollback, caller and signed bindings, trust/integrity
+fences, identifier collisions, the exact 256 usable-approval and nonterminal-attempt ceilings, and
+4,096 non-evicting retained approvals across reopen without creating thousands of opaque fixtures.
+The 4,096 retained-attempt ceiling is enforced by the store validator; reaching it through normal
+operations remains impossible before Slice C supplies terminal lifecycle disposition, because
+every Slice B-created attempt is intentionally nonterminal.
+
+This is unwired conformance evidence only. It does not accept ADR-0019 or ADR-0024, validate
+production cryptography or signer authorization, provide multi-process locking/archive/compaction,
+or authorize a lifecycle, backend, runtime, content handle, or guest.
 
 ### Slice C: attempt-keyed fake lifecycle integration
 

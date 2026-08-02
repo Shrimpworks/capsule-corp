@@ -22,6 +22,13 @@ type Verifier interface {
 	Verify(context.Context, []byte, ApprovalGrantRoleBindings) (*VerifiedApproval, error)
 }
 
+// CandidateVerifier is the Slice B injection seam. It verifies one exact
+// candidate envelope and resolves its fixture-only signer authorization before
+// the store independently applies registration and active-state bindings.
+type CandidateVerifier interface {
+	VerifyCandidate(context.Context, []byte) (*VerifiedApproval, error)
+}
+
 // FixtureVector is retained test metadata for one exact envelope. It is not a
 // general COSE representation and must never be populated from caller claims.
 type FixtureVector struct {
@@ -146,6 +153,60 @@ func (verifier *FixtureVerifier) Verify(
 		matched.AuthorizationIdentity,
 		bindings,
 	); err != nil {
+		return nil, err
+	}
+	return &VerifiedApproval{
+		envelopeBytes:         envelope,
+		payloadBytes:          bytes.Clone(matched.PayloadBytes),
+		protectedHeaderBytes:  bytes.Clone(matched.ProtectedHeaderBytes),
+		protectedKeyID:        bytes.Clone(matched.ProtectedKeyID),
+		view:                  matched.View,
+		resolvedEpochSequence: matched.ResolvedEpochSequence,
+		authorizationIdentity: matched.AuthorizationIdentity,
+	}, nil
+}
+
+func (verifier *FixtureVerifier) VerifyCandidate(
+	ctx context.Context,
+	received []byte,
+) (*VerifiedApproval, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, classified(ClassificationLocalFailure, "verification-cancelled")
+	}
+	if len(received) == 0 || len(received) > ApprovalEnvelopeRawMaxBytes {
+		return nil, classified(ClassificationMalformed, "envelope-raw-byte-limit")
+	}
+	envelope := bytes.Clone(received)
+	var matched *FixtureVector
+	for index := range verifier.vectors {
+		if bytes.Equal(envelope, verifier.vectors[index].EnvelopeBytes) {
+			vector := cloneFixtureVector(verifier.vectors[index])
+			matched = &vector
+			break
+		}
+	}
+	if matched == nil {
+		return nil, classified(ClassificationUnsupported, "unknown-fixture-envelope")
+	}
+	if len(matched.PayloadBytes) > ApprovalPayloadRawMaxBytes {
+		return nil, classified(ClassificationMalformed, "payload-raw-byte-limit")
+	}
+	if len(matched.ProtectedHeaderBytes) > ApprovalProtectedRawMaxBytes {
+		return nil, classified(ClassificationMalformed, "protected-raw-byte-limit")
+	}
+	if len(envelope) > ApprovalEnvelopeCalculatedMaxBytes ||
+		len(matched.PayloadBytes) > ApprovalPayloadCalculatedMaxBytes ||
+		len(matched.ProtectedHeaderBytes) > ApprovalProtectedCalculatedMaxBytes {
+		return nil, classified(ClassificationSchema, "calculated-candidate-maximum")
+	}
+	if !matched.SignatureAccepted {
+		return nil, classified(ClassificationUnsupported, "fixture-signature-rejected")
+	}
+	if len(matched.ProtectedKeyID) == 0 || len(matched.ProtectedKeyID) > 64 ||
+		matched.AuthorizationIdentity == (ApprovalKeyAuthorizationIdentity{}) {
+		return nil, classified(ClassificationSchema, "fixture-key-authorization-shape")
+	}
+	if err := validateGrantShape(matched.View); err != nil {
 		return nil, err
 	}
 	return &VerifiedApproval{

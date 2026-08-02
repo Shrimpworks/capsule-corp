@@ -360,19 +360,6 @@ async function assertApprovalAttemptStateContext(root, entry) {
   if (entry.expected.stateDelta?.kind !== "exact") {
     throw new Error(`approval/attempt case ${entry.id} requires an exact post-state`);
   }
-  for (const field of [
-    "timeHighWaterChanged",
-    "trustStateTightened",
-    "fakeBackendEffectPermitted",
-  ]) {
-    if (entry.expected[field] !== false) {
-      throw new Error(`passive Slice A case ${entry.id} must set ${field} to false`);
-    }
-  }
-  if (entry.expected.authorityStateChanged) {
-    throw new Error(`passive Slice A case ${entry.id} cannot change authority state`);
-  }
-
   const operation = await readFixtureJson(root, entry.context.operation, `${entry.id} operation`);
   const before = await readFixtureJson(root, entry.context.before, `${entry.id} pre-state`);
   const after = await readFixtureJson(
@@ -383,8 +370,64 @@ async function assertApprovalAttemptStateContext(root, entry) {
   assertApprovalAttemptOperation(entry.id, operation);
   assertApprovalAttemptState(entry.id, "pre-state", before);
   assertApprovalAttemptState(entry.id, "post-state", after);
-  if (JSON.stringify(before) !== JSON.stringify(after)) {
-    throw new Error(`passive Slice A case ${entry.id} changed approval or attempt state`);
+  if (operation.mode !== "store-transition") {
+    for (const field of [
+      "timeHighWaterChanged",
+      "trustStateTightened",
+      "fakeBackendEffectPermitted",
+    ]) {
+      if (entry.expected[field] !== false) {
+        throw new Error(`passive Slice A case ${entry.id} must set ${field} to false`);
+      }
+    }
+    if (entry.expected.authorityStateChanged) {
+      throw new Error(`passive Slice A case ${entry.id} cannot change authority state`);
+    }
+    if (JSON.stringify(before) !== JSON.stringify(after)) {
+      throw new Error(`passive Slice A case ${entry.id} changed approval or attempt state`);
+    }
+    return;
+  }
+  assertDurableApprovalAttemptTransition(entry, operation, before, after);
+}
+
+function assertDurableApprovalAttemptTransition(entry, operation, before, after) {
+  if (entry.expected.fakeBackendEffectPermitted) {
+    throw new Error(`Slice B case ${entry.id} cannot permit a fake-backend effect`);
+  }
+  if (
+    after.installationIdHex !== before.installationIdHex ||
+    after.supervisorIdHex !== before.supervisorIdHex ||
+    after.epochSequence !== before.epochSequence ||
+    after.epochDigestHex !== before.epochDigestHex ||
+    after.timeHighWaterUnixSeconds < before.timeHighWaterUnixSeconds
+  ) {
+    throw new Error(`Slice B case ${entry.id} changed identity or moved time backward`);
+  }
+  const approvalChanged =
+    JSON.stringify(after.approvalPopulation) !== JSON.stringify(before.approvalPopulation) ||
+    JSON.stringify(after.materializedApprovals) !== JSON.stringify(before.materializedApprovals);
+  const attemptChanged =
+    JSON.stringify(after.attemptPopulation) !== JSON.stringify(before.attemptPopulation) ||
+    JSON.stringify(after.materializedAttempts) !== JSON.stringify(before.materializedAttempts);
+  if (entry.expected.decision === "reject" && entry.expected.authorityStateChanged) {
+    throw new Error(`rejected Slice B case ${entry.id} claims an authority change`);
+  }
+  if (
+    entry.expected.classification !== "RECOVERY_REQUIRED" &&
+    entry.expected.authorityStateChanged !== (approvalChanged || attemptChanged)
+  ) {
+    throw new Error(`Slice B case ${entry.id} has a mismatched authority-state oracle`);
+  }
+  if (
+    entry.expected.decision === "reject" &&
+    entry.expected.classification !== "RECOVERY_REQUIRED" &&
+    (approvalChanged || attemptChanged)
+  ) {
+    throw new Error(`rejected Slice B case ${entry.id} changed approval/attempt authority`);
+  }
+  if (operation.recovery !== after.recoveryFence && operation.scenario.includes("indeterminate")) {
+    throw new Error(`indeterminate Slice B case ${entry.id} lacks its recovery fence`);
   }
 }
 
@@ -392,9 +435,13 @@ function assertApprovalAttemptOperation(caseId, operation) {
   if (
     operation?.contextType !== "capsule.conformance.approval-attempt-operation" ||
     operation.contextVersion !== 0 ||
-    !["identifier", "reference", "classification-vocabulary", "fixture-verifier"].includes(
-      operation.mode,
-    )
+    ![
+      "identifier",
+      "reference",
+      "classification-vocabulary",
+      "fixture-verifier",
+      "store-transition",
+    ].includes(operation.mode)
   ) {
     throw new Error(`approval/attempt case ${caseId} has an invalid operation context`);
   }
@@ -410,6 +457,7 @@ function assertApprovalAttemptOperation(caseId, operation) {
       "bindingMutation",
       "callerMutation",
     ],
+    "store-transition": ["contextType", "contextVersion", "mode", "method", "scenario", "recovery"],
   };
   assertExactKeys(operation, keysByMode[operation.mode], `${caseId} approval/attempt operation`);
   const domains = ["approval", "attempt", "attempt-nonce"];
@@ -433,6 +481,14 @@ function assertApprovalAttemptOperation(caseId, operation) {
       typeof operation.callerMutation !== "boolean")
   ) {
     throw new Error(`approval/attempt case ${caseId} has invalid verifier context`);
+  }
+  if (
+    operation.mode === "store-transition" &&
+    (!["submit-approval", "request-attempt"].includes(operation.method) ||
+      typeof operation.scenario !== "string" ||
+      typeof operation.recovery !== "boolean")
+  ) {
+    throw new Error(`approval/attempt case ${caseId} has invalid store transition context`);
   }
 }
 

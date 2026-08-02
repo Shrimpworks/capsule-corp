@@ -5,147 +5,162 @@ import (
 	"crypto/sha256"
 	"errors"
 
+	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/execution/registrationstate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// Component drives only the concrete, no-guest FakeBackend. It is not wired
-// to SupervisorCore, an endpoint, approval, attempts, content, or evidence.
+// Component drives only durable created attempts from the Slice B store into
+// the concrete, no-guest FakeBackend. It is not wired to SupervisorCore, an
+// endpoint, content, evidence, a real backend, or a guest.
 type Component struct {
-	registrations registrationstate.RegistrationResolver
-	roleBindings  PlanRoleBindingResolver
-	store         *MemoryStore
-	backend       *FakeBackend
-	checkpoint    CheckpointHook
+	attempts        AttemptResolver
+	createdAttempts CreatedAttemptEnumerator
+	store           *MemoryStore
+	backend         *FakeBackend
+	checkpoint      CheckpointHook
 }
 
 func New(options Options) (*Component, error) {
-	if options.Registrations == nil || options.RoleBindings == nil ||
+	if options.Attempts == nil || options.CreatedAttempts == nil ||
 		options.Store == nil || options.Backend == nil {
-		return nil, errors.New("registration resolver, role bindings, store, and fake backend are required")
+		return nil, errors.New("attempt resolver, created-attempt enumeration, store, and fake backend are required")
 	}
 	if options.Backend.CreatesGuest() {
 		return nil, errors.New("registered lifecycle requires a no-guest fake backend")
 	}
 	if options.Checkpoint == nil {
-		options.Checkpoint = func(context.Context, Checkpoint, v0candidate.RegistrationID) error {
+		options.Checkpoint = func(context.Context, Checkpoint, approvalattempt.AttemptID) error {
 			return nil
 		}
 	}
 	return &Component{
-		registrations: options.Registrations,
-		roleBindings:  options.RoleBindings,
-		store:         options.Store,
-		backend:       options.Backend,
-		checkpoint:    options.Checkpoint,
+		attempts:        options.Attempts,
+		createdAttempts: options.CreatedAttempts,
+		store:           options.Store,
+		backend:         options.Backend,
+		checkpoint:      options.Checkpoint,
 	}, nil
 }
 
-// Execute accepts only a Supervisor-issued RegistrationID. It resolves and
-// revalidates the Supervisor-retained exact bytes using separately trusted
-// role bindings before creating any lifecycle state. It returns lifecycle
-// disposition only; there is no caller-supplied or backend-supplied job result
-// and no ordinary terminal-success classification.
-func (component *Component) Execute(
+// Drive accepts only a Supervisor-issued AttemptID. It resolves and
+// independently revalidates the already committed created attempt and exact
+// registered plan before creating lifecycle state or calling fake prepare.
+// An existing identical lifecycle record is returned without redriving any
+// effect.
+func (component *Component) Drive(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
-	if registrationID == (v0candidate.RegistrationID{}) {
-		return Snapshot{}, classified(ClassificationBinding, "registration-id-required")
+	if attemptID == (approvalattempt.AttemptID{}) {
+		return Snapshot{}, classified(ClassificationBinding, "attempt-id-required")
 	}
-	record, err := component.registrations.ResolveUsable(ctx, registrationID)
+	created, err := component.attempts.ResolveCreated(ctx, attemptID)
 	if err != nil {
-		return Snapshot{}, mapRegistrationFailure(err)
+		return Snapshot{}, mapAttemptResolutionFailure(err)
 	}
-	bindings, err := component.roleBindings.ResolveExecutionPlanRoleBindings(ctx, registrationID)
-	if err != nil {
-		return Snapshot{}, classified(ClassificationBinding, "trusted-plan-bindings-unavailable")
+	created = cloneCreatedAttempt(created)
+	if err := validateCreatedAttempt(created, attemptID); err != nil {
+		return Snapshot{}, err
 	}
 	decoded, err := v0candidate.DecodeExecutionPlan(
-		record.ExactPlanBytes,
-		cloneRoleBindings(bindings),
+		created.Registration.ExactPlanBytes,
+		cloneRoleBindings(created.PlanRoleBindings),
 	)
 	if err != nil {
 		return Snapshot{}, mapDecodeFailure(err)
 	}
-	computed := v0candidate.ExecutionPlanDigest(sha256.Sum256(record.ExactPlanBytes))
-	if computed != record.RecomputedPlanDigest || decoded.Digest() != record.RecomputedPlanDigest {
+	computed := v0candidate.ExecutionPlanDigest(sha256.Sum256(created.Registration.ExactPlanBytes))
+	if computed != created.Registration.RecomputedPlanDigest ||
+		decoded.Digest() != created.Registration.RecomputedPlanDigest ||
+		decoded.Digest() != created.Attempt.PlanDigest {
 		return Snapshot{}, classified(ClassificationBinding, "stored-plan-digest-mismatch")
 	}
-	if err := component.store.begin(ctx, registrationID, decoded.Digest()); err != nil {
+	record, began, err := component.store.begin(ctx, created)
+	if err != nil {
 		return Snapshot{}, err
 	}
+	if !began {
+		return record.Snapshot, nil
+	}
 
-	if err := component.backend.prepare(ctx, registrationID); err != nil {
-		return component.failAndCleanup(ctx, registrationID, OperationPrepare)
+	if err := component.backend.prepare(ctx, attemptID); err != nil {
+		return component.failAndCleanup(ctx, attemptID, OperationPrepare)
 	}
 	if err := component.afterEffect(
 		ctx,
 		CheckpointAfterPrepareEffect,
-		registrationID,
+		attemptID,
 		OperationPrepare,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.store.transition(ctx, registrationID, StateCreateIntent); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.transition(ctx, attemptID, StateCreateIntent); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	handle, err := component.backend.create(ctx, registrationID)
+	handle, err := component.backend.create(ctx, attemptID)
 	if err != nil || handle == 0 {
-		return component.failAndCleanup(ctx, registrationID, OperationCreate)
+		return component.failAndCleanup(ctx, attemptID, OperationCreate)
 	}
 	if err := component.afterEffect(
 		ctx,
 		CheckpointAfterCreateEffect,
-		registrationID,
+		attemptID,
 		OperationCreate,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.store.retainHandle(ctx, registrationID, handle); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.retainHandle(ctx, attemptID, handle); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.store.transition(ctx, registrationID, StateStarting); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.transition(ctx, attemptID, StateStarting); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.backend.start(ctx, registrationID, handle); err != nil {
-		return component.failAndCleanup(ctx, registrationID, OperationStart)
+	if err := component.backend.start(ctx, attemptID, handle); err != nil {
+		return component.failAndCleanup(ctx, attemptID, OperationStart)
 	}
 	if err := component.afterEffect(
 		ctx,
 		CheckpointAfterStartEffect,
-		registrationID,
+		attemptID,
 		OperationStart,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.store.transition(ctx, registrationID, StateObserving); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.transition(ctx, attemptID, StateObserving); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.backend.observe(ctx, registrationID, handle); err != nil {
-		return component.failAndCleanup(ctx, registrationID, OperationObserve)
+	if err := component.backend.observe(ctx, attemptID, handle); err != nil {
+		return component.failAndCleanup(ctx, attemptID, OperationObserve)
 	}
 	if err := component.afterEffect(
 		ctx,
 		CheckpointAfterObserveEffect,
-		registrationID,
+		attemptID,
 		OperationObserve,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	return component.cleanup(ctx, registrationID)
+	return component.cleanup(ctx, attemptID)
 }
 
-// Recover accepts only the original registration ID. It never re-resolves an
-// expired registration before cleanup: an existing cleanup obligation must
-// survive registration expiry and be reconciled from retained lifecycle state.
+// Recover accepts only the original attempt ID. If no lifecycle record exists,
+// it resolves and drives the durable created attempt. Existing cleanup work is
+// recovered solely from retained lifecycle state, without rechecking approval
+// usability or registration expiry.
 func (component *Component) Recover(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
-	record, err := component.store.snapshot(ctx, registrationID)
+	if attemptID == (approvalattempt.AttemptID{}) {
+		return Snapshot{}, classified(ClassificationBinding, "attempt-id-required")
+	}
+	record, exists, err := component.store.lookup(ctx, attemptID)
 	if err != nil {
 		return Snapshot{}, err
+	}
+	if !exists {
+		return component.Drive(ctx, attemptID)
 	}
 	if record.State == StateDestroyed {
 		return record.Snapshot, nil
@@ -153,23 +168,55 @@ func (component *Component) Recover(
 	if !record.CleanupRequired {
 		return record.Snapshot, classified(ClassificationLocalFailure, "nonterminal-cleanup-state-invalid")
 	}
-	return component.cleanup(ctx, registrationID)
+	return component.cleanup(ctx, attemptID)
+}
+
+// RecoverCreatedAttempts enumerates the durable created-attempt authority
+// store once and drives or recovers each distinct AttemptID. It continues
+// through fixed lifecycle failures so one broken attempt cannot hide later
+// cleanup work, and returns the first fixed error after processing the set.
+func (component *Component) RecoverCreatedAttempts(ctx context.Context) ([]Snapshot, error) {
+	references, err := component.createdAttempts.CreatedAttempts(ctx)
+	if err != nil {
+		return nil, mapAttemptResolutionFailure(err)
+	}
+	seen := make(map[approvalattempt.AttemptID]struct{}, len(references))
+	for _, reference := range references {
+		attemptID := reference.AttemptID()
+		if attemptID == (approvalattempt.AttemptID{}) {
+			return nil, classified(ClassificationRecoveryRequired, "startup-attempt-id-invalid")
+		}
+		if _, duplicate := seen[attemptID]; duplicate {
+			return nil, classified(ClassificationRecoveryRequired, "startup-attempt-id-duplicate")
+		}
+		seen[attemptID] = struct{}{}
+	}
+	results := make([]Snapshot, 0, len(references))
+	var firstErr error
+	for _, reference := range references {
+		snapshot, recoverErr := component.Recover(ctx, reference.AttemptID())
+		results = append(results, snapshot)
+		if firstErr == nil && recoverErr != nil {
+			firstErr = recoverErr
+		}
+	}
+	return results, firstErr
 }
 
 func (component *Component) failAndCleanup(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 ) (Snapshot, error) {
 	if err := component.store.noteFailure(
 		ctx,
-		registrationID,
+		attemptID,
 		ClassificationLifecycleFailure,
 		operation,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	snapshot, cleanupErr := component.cleanup(ctx, registrationID)
+	snapshot, cleanupErr := component.cleanup(ctx, attemptID)
 	if cleanupErr != nil {
 		return snapshot, cleanupErr
 	}
@@ -178,9 +225,9 @@ func (component *Component) failAndCleanup(
 
 func (component *Component) cleanup(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
-	record, err := component.store.snapshot(ctx, registrationID)
+	record, err := component.store.snapshot(ctx, attemptID)
 	if err != nil {
 		return Snapshot{}, err
 	}
@@ -188,88 +235,88 @@ func (component *Component) cleanup(
 		return record.Snapshot, nil
 	}
 	if record.State == StateDestroying {
-		observation, reconcileErr := component.backend.reconcile(ctx, registrationID)
+		observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
 		if reconcileErr != nil || observation.status == fakeUnknown {
-			return component.unresolved(ctx, registrationID)
+			return component.unresolved(ctx, attemptID)
 		}
 		if observation.status == fakeAbsent {
-			if err := component.store.markDestroyed(ctx, registrationID); err != nil {
-				return component.snapshotWithError(ctx, registrationID, err)
+			if err := component.store.markDestroyed(ctx, attemptID); err != nil {
+				return component.snapshotWithError(ctx, attemptID, err)
 			}
-			return component.store.Snapshot(ctx, registrationID)
+			return component.store.Snapshot(ctx, attemptID)
 		}
 	}
 	if record.handle == 0 {
-		observation, reconcileErr := component.backend.reconcile(ctx, registrationID)
+		observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
 		if reconcileErr != nil || observation.status == fakeUnknown {
-			return component.unresolved(ctx, registrationID)
+			return component.unresolved(ctx, attemptID)
 		}
 		switch observation.status {
 		case fakeAbsent:
-			if err := component.store.markDestroyed(ctx, registrationID); err != nil {
-				return component.snapshotWithError(ctx, registrationID, err)
+			if err := component.store.markDestroyed(ctx, attemptID); err != nil {
+				return component.snapshotWithError(ctx, attemptID, err)
 			}
-			return component.store.Snapshot(ctx, registrationID)
+			return component.store.Snapshot(ctx, attemptID)
 		case fakePresent:
 			if observation.handle == 0 {
-				return component.unresolved(ctx, registrationID)
+				return component.unresolved(ctx, attemptID)
 			}
-			if err := component.store.retainHandle(ctx, registrationID, observation.handle); err != nil {
-				return component.snapshotWithError(ctx, registrationID, err)
+			if err := component.store.retainHandle(ctx, attemptID, observation.handle); err != nil {
+				return component.snapshotWithError(ctx, attemptID, err)
 			}
 			record.handle = observation.handle
 		default:
-			return component.unresolved(ctx, registrationID)
+			return component.unresolved(ctx, attemptID)
 		}
 	}
 
-	if err := component.store.transition(ctx, registrationID, StateStopping); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.transition(ctx, attemptID, StateStopping); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	stopErr := component.backend.stop(ctx, registrationID, record.handle)
+	stopErr := component.backend.stop(ctx, attemptID, record.handle)
 	if stopErr != nil {
 		_ = component.store.noteFailure(
 			ctx,
-			registrationID,
+			attemptID,
 			ClassificationLifecycleFailure,
 			OperationStop,
 		)
 	} else if err := component.afterEffect(
 		ctx,
 		CheckpointAfterStopEffect,
-		registrationID,
+		attemptID,
 		OperationStop,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	if err := component.store.transition(ctx, registrationID, StateDestroying); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.transition(ctx, attemptID, StateDestroying); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	destroyErr := component.backend.destroy(ctx, registrationID, record.handle)
+	destroyErr := component.backend.destroy(ctx, attemptID, record.handle)
 	if destroyErr != nil {
 		_ = component.store.noteFailure(
 			ctx,
-			registrationID,
+			attemptID,
 			ClassificationLifecycleFailure,
 			OperationDestroy,
 		)
 	} else if err := component.afterEffect(
 		ctx,
 		CheckpointAfterDestroyEffect,
-		registrationID,
+		attemptID,
 		OperationDestroy,
 	); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
 
-	observation, reconcileErr := component.backend.reconcile(ctx, registrationID)
+	observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
 	if reconcileErr != nil || observation.status != fakeAbsent {
-		return component.unresolved(ctx, registrationID)
+		return component.unresolved(ctx, attemptID)
 	}
-	if err := component.store.markDestroyed(ctx, registrationID); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.markDestroyed(ctx, attemptID); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	snapshot, err := component.store.Snapshot(ctx, registrationID)
+	snapshot, err := component.store.Snapshot(ctx, attemptID)
 	if err != nil {
 		return Snapshot{}, err
 	}
@@ -281,12 +328,12 @@ func (component *Component) cleanup(
 
 func (component *Component) unresolved(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
-	if err := component.store.markUnresolved(ctx, registrationID); err != nil {
-		return component.snapshotWithError(ctx, registrationID, err)
+	if err := component.store.markUnresolved(ctx, attemptID); err != nil {
+		return component.snapshotWithError(ctx, attemptID, err)
 	}
-	snapshot, err := component.store.Snapshot(ctx, registrationID)
+	snapshot, err := component.store.Snapshot(ctx, attemptID)
 	if err != nil {
 		return Snapshot{}, err
 	}
@@ -296,13 +343,13 @@ func (component *Component) unresolved(
 func (component *Component) afterEffect(
 	ctx context.Context,
 	checkpoint Checkpoint,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 ) error {
-	if err := component.checkpoint(ctx, checkpoint, registrationID); err != nil {
+	if err := component.checkpoint(ctx, checkpoint, attemptID); err != nil {
 		_ = component.store.noteFailure(
 			ctx,
-			registrationID,
+			attemptID,
 			ClassificationLocalFailure,
 			operation,
 		)
@@ -313,14 +360,83 @@ func (component *Component) afterEffect(
 
 func (component *Component) snapshotWithError(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	err error,
 ) (Snapshot, error) {
-	snapshot, snapshotErr := component.store.Snapshot(ctx, registrationID)
+	snapshot, snapshotErr := component.store.Snapshot(ctx, attemptID)
 	if snapshotErr != nil {
 		return Snapshot{}, err
 	}
 	return snapshot, err
+}
+
+func validateCreatedAttempt(
+	created registrationstate.CreatedAttempt,
+	expectedAttemptID approvalattempt.AttemptID,
+) error {
+	attempt := created.Attempt
+	approval := created.Approval
+	if attempt.AttemptID != expectedAttemptID ||
+		attempt.State != approvalattempt.AttemptCreated ||
+		attempt.ApprovalID == (approvalattempt.ApprovalID{}) ||
+		attempt.AttemptNonce == (approvalattempt.AttemptNonce{}) ||
+		attempt.RegistrationID == (v0candidate.RegistrationID{}) ||
+		attempt.RegistrationSequence == 0 ||
+		attempt.PlanDigest == (v0candidate.ExecutionPlanDigest{}) ||
+		attempt.InstallationID == (v0candidate.InstallationID{}) ||
+		attempt.EpochDigest == (v0candidate.TrustEpochDigest{}) ||
+		attempt.SupervisorID == (v0candidate.SupervisorID{}) ||
+		attempt.Purpose != approvalattempt.ApprovalGrantPurpose ||
+		attempt.Audience != approvalattempt.ApprovalGrantAudience ||
+		attempt.ApprovalPayloadDigest == (approvalattempt.ApprovalPayloadDigest{}) ||
+		attempt.AuthorizationIdentity == (approvalattempt.ApprovalKeyAuthorizationIdentity{}) ||
+		attempt.StorageFormatVersion != registrationstate.AttemptStoreVersion {
+		return classified(ClassificationBinding, "created-attempt-binding-mismatch")
+	}
+	if approval.State != approvalattempt.ApprovalConsumed ||
+		approval.StorageFormatVersion != registrationstate.ApprovalStoreVersion ||
+		approval.ApprovalID != attempt.ApprovalID ||
+		approval.ConsumedAttemptID != attempt.AttemptID ||
+		approval.AttemptNonce != attempt.AttemptNonce ||
+		approval.RegistrationID != attempt.RegistrationID ||
+		approval.RegistrationSequence != attempt.RegistrationSequence ||
+		approval.PlanDigest != attempt.PlanDigest ||
+		approval.InstallationID != attempt.InstallationID ||
+		approval.EpochSequence != attempt.EpochSequence ||
+		approval.EpochDigest != attempt.EpochDigest ||
+		approval.SupervisorID != attempt.SupervisorID ||
+		approval.Purpose != attempt.Purpose || approval.Audience != attempt.Audience ||
+		approval.PayloadDigest != attempt.ApprovalPayloadDigest ||
+		approval.AuthorizationIdentity != attempt.AuthorizationIdentity {
+		return classified(ClassificationBinding, "created-approval-cross-link-mismatch")
+	}
+	record := created.Registration
+	if record.StorageFormatVersion != registrationstate.StorageFormatVersion ||
+		record.RetentionState != registrationstate.RetentionStateRetained ||
+		record.RegisteredAtUnixSeconds > attempt.CreatedAt ||
+		len(record.ExactPlanBytes) == 0 || len(record.WireRegistrationBytes) == 0 {
+		return classified(ClassificationBinding, "created-registration-record-invalid")
+	}
+	decodedRegistration, err := v0candidate.DecodePlanRegistration(
+		record.WireRegistrationBytes,
+		v0candidate.PlanRegistrationRoleBindings{
+			RegistrationID: attempt.RegistrationID,
+			PlanDigest:     attempt.PlanDigest,
+			InstallationID: attempt.InstallationID,
+			EpochDigest:    attempt.EpochDigest,
+			SupervisorID:   attempt.SupervisorID,
+		},
+	)
+	if err != nil {
+		return classified(ClassificationBinding, "created-registration-wire-invalid")
+	}
+	registration := decodedRegistration.View()
+	if registration.RegistrationSequence != attempt.RegistrationSequence ||
+		registration.EpochSequence != attempt.EpochSequence ||
+		attempt.CreatedAt >= registration.ExpiresAt {
+		return classified(ClassificationBinding, "created-registration-binding-mismatch")
+	}
+	return nil
 }
 
 func mapDecodeFailure(err error) error {

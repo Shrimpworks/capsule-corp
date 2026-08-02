@@ -1,8 +1,8 @@
 # Phase 2B approval-consumption and attempt-creation conformance plan
 
-Status: Slice A passive contracts and fixtures and Slice B's unwired fixed durable store were
-implemented on 2026-08-02. No consumer, endpoint, lifecycle integration, backend authority, or
-guest is implemented.
+Status: Slice A passive contracts and fixtures, Slice B's unwired fixed durable store, and Slice
+C's attempt-keyed no-guest fake lifecycle seam were implemented on 2026-08-02. No consumer,
+endpoint, real-backend authority, or guest is implemented.
 
 Normative proposal: [ADR-0024](adr/0024-approval-consumption-and-attempt-creation.md).
 
@@ -254,6 +254,23 @@ consume/create commit.
 Acceptance: Plan A cannot realize Plan B, one approval cannot create or drive two attempts, two new
 approvals for one registration remain distinct, and every injected post-effect failure is
 destroyed, unresolved, or recovery-fenced.
+
+Observed checkpoint: `registrationstate.ApprovalAttemptComponent` now implements the narrow
+`ResolveCreated(AttemptID)` seam. It validates the complete durable store, consumed-approval/
+created-attempt cross-link, exact retained registration record, and role-bound plan bytes, and
+returns defensive copies without signed approval bytes. `registeredlifecycle.Drive` and `Recover`
+accept only a nonzero `AttemptID`; lifecycle records, fake instances, fault keys, checkpoint hooks,
+idempotency, and recovery are all attempt-keyed while retaining the bound registration and complete
+immutable plan/approval/trust/policy/runtime bindings.
+
+Startup recovery enumerates the committed Slice B `created` attempts once per recovery pass and
+drives a missing lifecycle record or reconciles an existing one. Exact replay returns the retained
+lifecycle record without repeating an effect, and separately approved attempts for one registration
+remain independent. The migrated local corpus covers every fake before/after-effect fault and every
+post-effect interruption checkpoint; outcomes remain destroyed, explicitly unresolved, or
+recovery-fenced. `FakeBackend.CreatesGuest()` remains hard-coded false. This is unwired fake
+lifecycle evidence only: the lifecycle store remains the existing bounded single-process memory
+store, and no consumer, production approval wrapper, content path, real backend, or guest is added.
 
 ### Slice D: documentation checkpoint only
 

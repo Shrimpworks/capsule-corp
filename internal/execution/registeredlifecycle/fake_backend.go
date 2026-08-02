@@ -5,7 +5,7 @@ import (
 	"errors"
 	"sync"
 
-	"capsule.local/capsule/internal/protocol/v0candidate"
+	"capsule.local/capsule/internal/execution/approvalattempt"
 )
 
 var errInjectedFakeFault = errors.New("injected fake lifecycle fault")
@@ -26,9 +26,9 @@ type fakeObservation struct {
 }
 
 type fakeFaultKey struct {
-	registrationID v0candidate.RegistrationID
-	operation      Operation
-	moment         FaultMoment
+	attemptID approvalattempt.AttemptID
+	operation Operation
+	moment    FaultMoment
 }
 
 type fakeInstance struct {
@@ -49,29 +49,29 @@ type fakeInstance struct {
 type FakeBackend struct {
 	mu        sync.Mutex
 	next      fakeHandle
-	instances map[v0candidate.RegistrationID]*fakeInstance
+	instances map[approvalattempt.AttemptID]*fakeInstance
 	faults    map[fakeFaultKey]uint64
 }
 
 func NewFakeBackend() *FakeBackend {
 	return &FakeBackend{
 		next:      1,
-		instances: make(map[v0candidate.RegistrationID]*fakeInstance),
+		instances: make(map[approvalattempt.AttemptID]*fakeInstance),
 		faults:    make(map[fakeFaultKey]uint64),
 	}
 }
 
 func (*FakeBackend) CreatesGuest() bool { return false }
 
-// InjectFault adds one deterministic, registration-scoped fault. The fault is
+// InjectFault adds one deterministic, attempt-scoped fault. The fault is
 // consumed immediately before or immediately after the selected fake effect.
 func (backend *FakeBackend) InjectFault(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 	moment FaultMoment,
 ) error {
-	if registrationID == (v0candidate.RegistrationID{}) {
-		return errors.New("fake fault registration ID is required")
+	if attemptID == (approvalattempt.AttemptID{}) {
+		return errors.New("fake fault attempt ID is required")
 	}
 	if !validOperation(operation) || (moment != FaultBeforeEffect && moment != FaultAfterEffect) {
 		return errors.New("fake fault operation and moment must be closed values")
@@ -81,7 +81,7 @@ func (backend *FakeBackend) InjectFault(
 	if backend.faults == nil {
 		backend.faults = make(map[fakeFaultKey]uint64)
 	}
-	key := fakeFaultKey{registrationID: registrationID, operation: operation, moment: moment}
+	key := fakeFaultKey{attemptID: attemptID, operation: operation, moment: moment}
 	if _, exists := backend.faults[key]; !exists && len(backend.faults) >= maxInjectedFaultKeys {
 		return errors.New("fake fault table reached its fixed capacity")
 	}
@@ -103,11 +103,11 @@ func validOperation(operation Operation) bool {
 }
 
 func (backend *FakeBackend) takeFaultLocked(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 	moment FaultMoment,
 ) bool {
-	key := fakeFaultKey{registrationID: registrationID, operation: operation, moment: moment}
+	key := fakeFaultKey{attemptID: attemptID, operation: operation, moment: moment}
 	remaining := backend.faults[key]
 	if remaining == 0 {
 		return false
@@ -121,39 +121,39 @@ func (backend *FakeBackend) takeFaultLocked(
 }
 
 func (backend *FakeBackend) instanceLocked(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) *fakeInstance {
 	if backend.instances == nil {
-		backend.instances = make(map[v0candidate.RegistrationID]*fakeInstance)
+		backend.instances = make(map[approvalattempt.AttemptID]*fakeInstance)
 	}
 	if backend.next == 0 {
 		backend.next = 1
 	}
-	instance := backend.instances[registrationID]
+	instance := backend.instances[attemptID]
 	if instance == nil {
 		instance = &fakeInstance{calls: make(map[Operation]uint64)}
-		backend.instances[registrationID] = instance
+		backend.instances[attemptID] = instance
 	}
 	return instance
 }
 
 func (backend *FakeBackend) beforeLocked(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 ) (*fakeInstance, error) {
-	instance := backend.instanceLocked(registrationID)
+	instance := backend.instanceLocked(attemptID)
 	instance.calls[operation]++
-	if backend.takeFaultLocked(registrationID, operation, FaultBeforeEffect) {
+	if backend.takeFaultLocked(attemptID, operation, FaultBeforeEffect) {
 		return instance, errInjectedFakeFault
 	}
 	return instance, nil
 }
 
 func (backend *FakeBackend) afterLocked(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	operation Operation,
 ) error {
-	if backend.takeFaultLocked(registrationID, operation, FaultAfterEffect) {
+	if backend.takeFaultLocked(attemptID, operation, FaultAfterEffect) {
 		return errInjectedFakeFault
 	}
 	return nil
@@ -161,31 +161,31 @@ func (backend *FakeBackend) afterLocked(
 
 func (backend *FakeBackend) prepare(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationPrepare)
+	instance, err := backend.beforeLocked(attemptID, OperationPrepare)
 	if err != nil {
 		return err
 	}
 	instance.prepared = true
-	return backend.afterLocked(registrationID, OperationPrepare)
+	return backend.afterLocked(attemptID, OperationPrepare)
 }
 
 func (backend *FakeBackend) create(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (fakeHandle, error) {
 	if err := ctx.Err(); err != nil {
 		return 0, err
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationCreate)
+	instance, err := backend.beforeLocked(attemptID, OperationCreate)
 	if err != nil {
 		return 0, err
 	}
@@ -197,7 +197,7 @@ func (backend *FakeBackend) create(
 		backend.next++
 		instance.created = true
 	}
-	if err := backend.afterLocked(registrationID, OperationCreate); err != nil {
+	if err := backend.afterLocked(attemptID, OperationCreate); err != nil {
 		return 0, err
 	}
 	return instance.handle, nil
@@ -205,7 +205,7 @@ func (backend *FakeBackend) create(
 
 func (backend *FakeBackend) start(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	handle fakeHandle,
 ) error {
 	if err := ctx.Err(); err != nil {
@@ -213,7 +213,7 @@ func (backend *FakeBackend) start(
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationStart)
+	instance, err := backend.beforeLocked(attemptID, OperationStart)
 	if err != nil {
 		return err
 	}
@@ -221,12 +221,12 @@ func (backend *FakeBackend) start(
 		return errors.New("fake start state rejected")
 	}
 	instance.started = true
-	return backend.afterLocked(registrationID, OperationStart)
+	return backend.afterLocked(attemptID, OperationStart)
 }
 
 func (backend *FakeBackend) observe(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	handle fakeHandle,
 ) error {
 	if err := ctx.Err(); err != nil {
@@ -234,7 +234,7 @@ func (backend *FakeBackend) observe(
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationObserve)
+	instance, err := backend.beforeLocked(attemptID, OperationObserve)
 	if err != nil {
 		return err
 	}
@@ -242,12 +242,12 @@ func (backend *FakeBackend) observe(
 		return errors.New("fake observe state rejected")
 	}
 	instance.observed = true
-	return backend.afterLocked(registrationID, OperationObserve)
+	return backend.afterLocked(attemptID, OperationObserve)
 }
 
 func (backend *FakeBackend) stop(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	handle fakeHandle,
 ) error {
 	if err := ctx.Err(); err != nil {
@@ -255,7 +255,7 @@ func (backend *FakeBackend) stop(
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationStop)
+	instance, err := backend.beforeLocked(attemptID, OperationStop)
 	if err != nil {
 		return err
 	}
@@ -263,12 +263,12 @@ func (backend *FakeBackend) stop(
 		return errors.New("fake stop state rejected")
 	}
 	instance.stopped = true
-	return backend.afterLocked(registrationID, OperationStop)
+	return backend.afterLocked(attemptID, OperationStop)
 }
 
 func (backend *FakeBackend) destroy(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	handle fakeHandle,
 ) error {
 	if err := ctx.Err(); err != nil {
@@ -276,7 +276,7 @@ func (backend *FakeBackend) destroy(
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationDestroy)
+	instance, err := backend.beforeLocked(attemptID, OperationDestroy)
 	if err != nil {
 		return err
 	}
@@ -284,19 +284,19 @@ func (backend *FakeBackend) destroy(
 		return errors.New("fake destroy state rejected")
 	}
 	instance.destroyed = true
-	return backend.afterLocked(registrationID, OperationDestroy)
+	return backend.afterLocked(attemptID, OperationDestroy)
 }
 
 func (backend *FakeBackend) reconcile(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (fakeObservation, error) {
 	if err := ctx.Err(); err != nil {
 		return fakeObservation{status: fakeUnknown}, err
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(registrationID, OperationReconcile)
+	instance, err := backend.beforeLocked(attemptID, OperationReconcile)
 	if err != nil {
 		return fakeObservation{status: fakeUnknown}, err
 	}
@@ -304,7 +304,7 @@ func (backend *FakeBackend) reconcile(
 	if instance.created && !instance.destroyed {
 		observation = fakeObservation{status: fakePresent, handle: instance.handle}
 	}
-	if err := backend.afterLocked(registrationID, OperationReconcile); err != nil {
+	if err := backend.afterLocked(attemptID, OperationReconcile); err != nil {
 		return fakeObservation{status: fakeUnknown}, err
 	}
 	return observation, nil
@@ -323,11 +323,11 @@ type BackendSnapshot struct {
 }
 
 func (backend *FakeBackend) Snapshot(
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) BackendSnapshot {
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance := backend.instances[registrationID]
+	instance := backend.instances[attemptID]
 	if instance == nil {
 		return BackendSnapshot{CallCounts: make(map[Operation]uint64)}
 	}

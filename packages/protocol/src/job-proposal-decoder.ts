@@ -1,3 +1,4 @@
+import { retainDecodedJobProposalCandidate } from "./decoded-job-proposal-candidate.js";
 import {
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
@@ -98,7 +99,7 @@ export function decodeJobProposal(bytes: Uint8Array): JobProposalDecodeResult {
   }
 
   try {
-    const proposal = decodeClosedProposal(raw.value);
+    const proposal = retainDecodedJobProposalCandidate(decodeClosedProposal(raw.value));
     return Object.freeze({ ok: true, proposal });
   } catch (error) {
     if (error instanceof SchemaFailure) {

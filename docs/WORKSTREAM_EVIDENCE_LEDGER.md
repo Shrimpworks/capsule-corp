@@ -6,6 +6,10 @@ Status: durable coordination index. This ledger records where completed task con
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
 linked experiment results, synthesis documents, ADRs, or conformance fixtures.
 
+The consolidated outcomes, exact known answers, application status, combined verification, and
+next dependency boundary for the latest group are recorded in the
+[Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+
 ## Purpose and authority
 
 Capsule used parallel Codex tasks, external read-only reviews, retained experiments, and several

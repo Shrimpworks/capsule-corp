@@ -23,6 +23,14 @@ Phase 2A now includes verified passive candidates for the first narrow `JobPropo
 `ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
 decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
 
+Phase 2B Tasks 2.1 through 2.4 now retain a closed 67-rule, 206-case, 278-fixture conformance corpus
+for raw decoding, proposal/source/input semantics, exact plan and registration bytes, and
+registration-state transitions. Language implementations remain pending. The latest local Gate C
+checkpoint also rejects stock Bun 1.3.14 for the required runtime-authority contract and keeps the
+exact libkrun block-root profile unsupported because the smallest `NullFs` removal prevents guest
+bootstrap. See the
+[parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+
 ## Problem
 
 Agents frequently need to perform work that is more reliable as code: transform data, validate

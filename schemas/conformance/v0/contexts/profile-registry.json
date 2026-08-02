@@ -1,0 +1,22 @@
+{
+  "contextType": "capsule.conformance.profile-registry",
+  "contextVersion": 0,
+  "profiles": [
+    {
+      "alias": "fixture-active@1",
+      "status": "active",
+      "exactWallTimeMs": {
+        "minimum": 1,
+        "maximum": 10000
+      }
+    },
+    {
+      "alias": "fixture-inactive@1",
+      "status": "inactive",
+      "exactWallTimeMs": {
+        "minimum": 1,
+        "maximum": 10000
+      }
+    }
+  ]
+}

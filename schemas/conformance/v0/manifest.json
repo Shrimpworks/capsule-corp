@@ -555,6 +555,280 @@
           "variant": "malformed"
         }
       ]
+    },
+    {
+      "id": "job-proposal.schema.authority-omission",
+      "source": "ADR-0017#decision",
+      "description": "The closed proposal omits unsupported authority instead of accepting false placeholders.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.path-grammar",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "Source paths use the exact relative case-sensitive ASCII grammar.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.path-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "One source path contains at most 256 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.segment-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "One source path segment contains at most 64 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.file-count",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "A proposal contains at most 32 source file entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.file-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.manifest-identity",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "The entrypoint exactly equals one source-file key.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.input.canonical-identity",
+      "source": "ADR-0023#canonical-inline-json-identity",
+      "description": "Canonical inline JSON has one exact sorted, escaped, non-normalizing byte identity.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes",
+      "source": "ADR-0023#canonical-inline-json-identity",
+      "description": "Canonical inline-input JSON contains at most 262,144 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles",
+      "source": "ADR-0017#decision",
+      "description": "The first slice uses only primary-data input and transformed-json output roles.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.count",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Labels contain at most 8 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.key-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One label key contains at most 32 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.value-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One label value contains at most 128 printable-ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Label values contain only printable ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.profile.resolution",
+      "source": "PHASE-2B-BOUNDARY-DECISIONS#task-23-add-proposalsourceinput-fixtures",
+      "description": "The requested runtime profile alias resolves to one active fixed-context entry.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.policy.wall-time",
+      "source": "ADR-0009#decision",
+      "description": "Wall time is requested or defaulted exactly, and ceiling plus one rejects without clamping.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
     }
   ],
   "cases": [
@@ -3822,6 +4096,1992 @@
         "go": "pending",
         "typescript": "pending",
         "swift": "pending"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.accept",
+      "description": "Accept the closed first-slice proposal with unsupported authority omitted.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.reject-placeholder",
+      "description": "Reject a false network placeholder because unsupported authority is omitted.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/authority-network-placeholder.json",
+        "sha256": "56f354890feac70c5a70cd42a4e0796bd40c5f018888804388385da798076ee1",
+        "byteLength": 887
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.reject-missing-source",
+      "description": "Reject a proposal that omits the required source field.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/missing-source.json",
+        "sha256": "f34449677dc5a975667ce38e4a9b85a4634f3fa16b24b8bf2ac156b0e02e1003",
+        "byteLength": 634
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-grammar.accept",
+      "description": "Accept case-distinct relative ASCII source paths.",
+      "ruleIds": [
+        "job-proposal.source.path-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-grammar.reject-dot-segment",
+      "description": "Reject a dot-dot source path segment before semantic resolution.",
+      "ruleIds": [
+        "job-proposal.source.path-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/source-path-dot-segment.json",
+        "sha256": "e105058b08e3961cc673ac1fb08273a0deb597552eb2962844d36df113c0be5f",
+        "byteLength": 777
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-bytes.exact-maximum",
+      "description": "Accept an exact 256-byte source path and matching entrypoint.",
+      "ruleIds": [
+        "job-proposal.source.path-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-path-exact.json",
+        "sha256": "889f7c9e053eb4568fa37086ff9cc2e76dda1ea4e2bec0a10296c4786f817632",
+        "byteLength": 1233
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-bytes.cap-plus-one",
+      "description": "Reject a 257-byte source path without truncation or normalization.",
+      "ruleIds": [
+        "job-proposal.source.path-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-path-over.json",
+        "sha256": "bfefff28435f5aaa2f82c446a723275e7ceddb36dc3991c5b5be8f727cb8431a",
+        "byteLength": 1235
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.segment-bytes.exact-maximum",
+      "description": "Accept an exact 64-byte non-entrypoint source path segment.",
+      "ruleIds": [
+        "job-proposal.source.segment-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-segment-exact.json",
+        "sha256": "a6191c65cdb7d83d29eb6c93416cd07bd1496c6842a16496f8fecfbb8d9066f1",
+        "byteLength": 835
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.segment-bytes.cap-plus-one",
+      "description": "Reject a 65-byte source path segment.",
+      "ruleIds": [
+        "job-proposal.source.segment-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-segment-over.json",
+        "sha256": "67c055fe4144eedc83182780124abd24c18254d262eaf165b1a9fdac7b8ba6f5",
+        "byteLength": 836
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-count.exact-maximum",
+      "description": "Accept exactly 32 source file entries.",
+      "ruleIds": [
+        "job-proposal.source.file-count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-file-count-exact.json",
+        "sha256": "3a8597ba4781d312256901fd36667d4109d43cf4e9de79a65bcc7c8e36f00205",
+        "byteLength": 1341
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-count.cap-plus-one",
+      "description": "Reject 33 source file entries.",
+      "ruleIds": [
+        "job-proposal.source.file-count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-file-count-over.json",
+        "sha256": "0ba15d30fa5eb42217ed5f6ee1130e0bb7d5464e4e4e51082239b88201d34420",
+        "byteLength": 1361
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-bytes.exact-maximum",
+      "description": "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+      "ruleIds": [
+        "job-proposal.source.file-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-file-bytes-exact.json",
+        "sha256": "cb2681fd2cb02a1508494de5b18f5c8afc5061c16655e72d37f93869475c8edc",
+        "byteLength": 262867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-bytes.cap-plus-one",
+      "description": "Reject one source file containing 262,145 UTF-8 bytes.",
+      "ruleIds": [
+        "job-proposal.source.file-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-file-bytes-over.json",
+        "sha256": "5642e299e91b7803fd874ba5ae574877ad5f0e928c2a8a20fe163927cb41eb40",
+        "byteLength": 262868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes.exact-maximum",
+      "description": "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
+      "ruleIds": [
+        "job-proposal.source.aggregate-bytes",
+        "job-proposal.source.manifest-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-aggregate-exact.json",
+        "sha256": "0fcb54d8b9c973e2e144cc62f7c4503d9681f4f6931d6e55516cd7aad8f8871a",
+        "byteLength": 1049352
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes.cap-plus-one",
+      "description": "Reject 1,048,577 aggregate source bytes without clamping a file.",
+      "ruleIds": [
+        "job-proposal.source.aggregate-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-aggregate-over.json",
+        "sha256": "aac806c3ecb4274b538258ea1df6149e6a1ce6f623e02809cc6110799c21625d",
+        "byteLength": 1049374
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.manifest-identity.known-answer",
+      "description": "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
+      "ruleIds": [
+        "job-proposal.source.manifest-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership.accept",
+      "description": "Accept an entrypoint that exactly matches a source path.",
+      "ruleIds": [
+        "job-proposal.source.entrypoint-membership"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership.reject-missing",
+      "description": "Reject a valid entrypoint path that is absent from the source map.",
+      "ruleIds": [
+        "job-proposal.source.entrypoint-membership"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/entrypoint-not-member.json",
+        "sha256": "7f8af716a8994a2face2a2937d900bb2a82046a5b18e1f7d35c92e89811d9741",
+        "byteLength": 866
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.known-answer",
+      "description": "Derive the retained canonical inline JSON bytes and SHA-256 digest.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.equivalent-public-json",
+      "description": "Different public key order and escape spelling derive the same canonical bytes.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/equivalent-public-json.json",
+        "sha256": "fabaa21a35f66fd3913055e4e25b5c8cc000fcefe0d1a9fb6b11054a4fe053e2",
+        "byteLength": 659
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.reject-unsupported-key",
+      "description": "Reject a canonical inline-input object key outside the candidate ASCII grammar.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/inline-input-unicode-key.json",
+        "sha256": "4203002310cecb673ec662532409c4920dcd6965d5f0de896006ad6746c51253",
+        "byteLength": 662
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes.exact-maximum",
+      "description": "Accept exactly 262,144 canonical inline-input bytes.",
+      "ruleIds": [
+        "job-proposal.input.canonical-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/inline-input-bytes-exact.json",
+        "sha256": "565ef0885cf28f97e0a2c145c8a68d89993268a11cafb37299a3fb0f15aa5792",
+        "byteLength": 262818
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes.cap-plus-one",
+      "description": "Reject 262,145 canonical inline-input bytes without resizing the cap.",
+      "ruleIds": [
+        "job-proposal.input.canonical-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/inline-input-bytes-over.json",
+        "sha256": "75ded4967796e9a8ba2d967a9a63df63f87f4b439bf21ce29d5cfe374178b591",
+        "byteLength": 262819
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.accept",
+      "description": "Accept the fixed input and output slot roles.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-input-substitution",
+      "description": "Reject the output slot substituted into the input role.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "job-proposal/input-slot-wrong-domain.json",
+        "sha256": "2fb9cbd350aba9caacbbef1c849a6a60a06992b328f3fe850f74abc955fec972",
+        "byteLength": 871
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-unknown",
+      "description": "Reject an unknown logical input slot.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/input-slot-unknown.json",
+        "sha256": "cb57ad861d1935428f34985572e40a8eb16a76f1dd6397ddb9d5d0406413387e",
+        "byteLength": 865
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-output-substitution",
+      "description": "Reject the input slot substituted into the output role.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "job-proposal/output-slot-wrong-domain.json",
+        "sha256": "c42abdbfa7d7aa8745e4f191612faf19afbe3789e350ba9496f77b36953e8003",
+        "byteLength": 863
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.count.exact-maximum",
+      "description": "Accept exactly 8 labels.",
+      "ruleIds": [
+        "job-proposal.labels.count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/labels-count-exact.json",
+        "sha256": "6537d75a0e82b8ab34d6629cf4f7b1660b8c0f07bdc76ac2cf2bacf466600c68",
+        "byteLength": 996
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.count.cap-plus-one",
+      "description": "Reject 9 labels.",
+      "ruleIds": [
+        "job-proposal.labels.count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/labels-count-over.json",
+        "sha256": "ab02f2263cec12b185efa0054c4017aeb273fda6ab04b797c8b89c268c12d147",
+        "byteLength": 1016
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.key-bytes.exact-maximum",
+      "description": "Accept a 32-byte label key.",
+      "ruleIds": [
+        "job-proposal.labels.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/label-key-exact.json",
+        "sha256": "8e228d8bb2e4d0299687ba019765b205e1d52793eb39ef8185cc89537c40cabe",
+        "byteLength": 881
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.key-bytes.cap-plus-one",
+      "description": "Reject a 33-byte label key.",
+      "ruleIds": [
+        "job-proposal.labels.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/label-key-over.json",
+        "sha256": "104ea5c4a8c62a4752decb83e2f97f3a1e4718f583711498f2b28b2e4b862e44",
+        "byteLength": 882
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.value-bytes.exact-maximum",
+      "description": "Accept a 128-byte printable-ASCII label value.",
+      "ruleIds": [
+        "job-proposal.labels.value-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/label-value-exact.json",
+        "sha256": "5bd4e3fa423d922905a7f757259996e076e310295e71eafadd9c8cd5705dcc98",
+        "byteLength": 983
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.value-bytes.cap-plus-one",
+      "description": "Reject a 129-byte label value.",
+      "ruleIds": [
+        "job-proposal.labels.value-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/label-value-over.json",
+        "sha256": "80780f6926b3d29fd94602266ba8086d91cba09dcae787fcfedb088878322720",
+        "byteLength": 984
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii.accept",
+      "description": "Accept printable ASCII label bytes.",
+      "ruleIds": [
+        "job-proposal.labels.printable-ascii"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/label-printable.json",
+        "sha256": "02fb68689c4d17c6e3268b26e35152016ed3adf85d50458bede3e7596708e8ad",
+        "byteLength": 864
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii.reject-control",
+      "description": "Reject a control byte in a label value.",
+      "ruleIds": [
+        "job-proposal.labels.printable-ascii"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/label-control.json",
+        "sha256": "3dd62770d0b42952858e8603ede85c0032f25577b35ad484b1afd254d238d556",
+        "byteLength": 866
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.active",
+      "description": "Resolve the active fixture-only profile from the fixed registry context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.reject-unknown",
+      "description": "Reject a structurally valid alias absent from the fixed profile context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/profile-unknown.json",
+        "sha256": "4d188b67e2c7c1f2d2cfe14d888e749bfabe92db358c23c5a46851cedf5c96d5",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.reject-inactive",
+      "description": "Reject a known but inactive profile under the fixed resolver context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/profile-inactive.json",
+        "sha256": "46892660a451aab92d0af8c9d388bc620cf1b2d4be32b7bb9324fd7175b8e646",
+        "byteLength": 869
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "POLICY",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.requested",
+      "description": "Preserve a requested wall time below the ceiling exactly.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.trusted-default",
+      "description": "Resolve omitted wall time to the unchanged trusted default.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/wall-time-defaulted.json",
+        "sha256": "f04c00bbbc0b44c8e13319633eb135c4af1edc05a0925d9804bbf9ab50b1c0b5",
+        "byteLength": 841
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "trusted-default"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.exact-ceiling",
+      "description": "Accept the exact 10,000 ms trusted ceiling unchanged.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/wall-time-exact-ceiling.json",
+        "sha256": "2698672d4e6d7f2ec91cd311790c3121d1a37e808ee7f5d3d757ea5b40be1e0b",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": {
+            "milliseconds": 10000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.ceiling-plus-one",
+      "description": "Reject 10,001 ms rather than clamping it to the trusted ceiling.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/wall-time-over-ceiling.json",
+        "sha256": "75276c26491af5bd1054a8438ecccda795abd648e9552e0805bd53431976593c",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "POLICY",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
       }
     }
   ]

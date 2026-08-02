@@ -19,6 +19,7 @@ const ordinaryRequirements = [
 const rawImplementations = implementationStatus("pending", "pending", "not-applicable");
 const scalarImplementations = implementationStatus("pending", "pending", "pending");
 const cborImplementations = implementationStatus("pending", "pending", "pending");
+const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
 const rules = [];
 const cases = [];
 const fixtures = new Map();
@@ -27,6 +28,7 @@ addMediaTypeRulesAndCases();
 addJsonRulesAndCases();
 addScalarRulesAndCases();
 addCborRulesAndCases();
+addProposalRulesAndCases();
 
 await mkdir(sharedDirectory, { recursive: true });
 for (const [path, bytes] of [...fixtures].sort(([left], [right]) => left.localeCompare(right))) {
@@ -654,6 +656,828 @@ function addScalarCase({ ruleId, ...options }) {
   });
 }
 
+function addProposalRulesAndCases() {
+  const profileRegistry = retainFixture(
+    "contexts/profile-registry.json",
+    jsonDocument({
+      contextType: "capsule.conformance.profile-registry",
+      contextVersion: 0,
+      profiles: [
+        {
+          alias: "fixture-active@1",
+          status: "active",
+          exactWallTimeMs: { minimum: 1, maximum: 10_000 },
+        },
+        {
+          alias: "fixture-inactive@1",
+          status: "inactive",
+          exactWallTimeMs: { minimum: 1, maximum: 10_000 },
+        },
+      ],
+    }),
+  );
+  const userPolicy = retainFixture(
+    "contexts/user-policy.json",
+    jsonDocument({
+      contextType: "capsule.conformance.user-policy",
+      contextVersion: 0,
+      wallTimeMs: { trustedDefault: 5_000, ceiling: 10_000 },
+    }),
+  );
+  const resolverContext = ({
+    sourceManifest = null,
+    canonicalInlineInput = null,
+    wallTime = null,
+  } = {}) => ({
+    kind: "proposal-resolution",
+    profileRegistry,
+    userPolicy,
+    oracle: {
+      sourceManifest,
+      sourceManifestDigest: sourceManifest?.sha256 ?? null,
+      canonicalInlineInput,
+      inlineInputDigest: canonicalInlineInput?.sha256 ?? null,
+      wallTime,
+    },
+  });
+
+  const proposal = ordinaryProposal();
+  const proposalBytes = jsonDocument(proposal);
+  const proposalPath = "job-proposal/ordinary.json";
+  const sourceManifest = retainFixture(
+    "source-manifest/ordinary.cbor",
+    encodeSourceManifest(proposal.source),
+  );
+  const canonicalInlineInput = retainFixture(
+    "canonical-inline-input/ordinary.json",
+    encodeCanonicalInlineJson(proposal.input.value),
+  );
+  const knownAnswerContext = resolverContext({
+    sourceManifest,
+    canonicalInlineInput,
+    wallTime: { milliseconds: 5_000, origin: "requested" },
+  });
+
+  addRule(
+    "job-proposal.schema.authority-omission",
+    "ADR-0017#decision",
+    "The closed proposal omits unsupported authority instead of accepting false placeholders.",
+    ordinaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.schema.authority-omission.accept",
+    description: "Accept the closed first-slice proposal with unsupported authority omitted.",
+    ruleIds: ["job-proposal.schema.authority-omission"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+    owner: "job-proposal-schema",
+  });
+
+  addProposalCase({
+    id: "job-proposal.schema.authority-omission.reject-placeholder",
+    description: "Reject a false network placeholder because unsupported authority is omitted.",
+    ruleIds: ["job-proposal.schema.authority-omission"],
+    variant: "malformed",
+    path: "job-proposal/authority-network-placeholder.json",
+    proposal: { ...proposal, network: false },
+    decision: "reject",
+    classification: "UNSUPPORTED",
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.schema.authority-omission.reject-missing-source",
+    description: "Reject a proposal that omits the required source field.",
+    ruleIds: ["job-proposal.schema.authority-omission"],
+    variant: "malformed",
+    path: "job-proposal/missing-source.json",
+    proposal: withoutProperty(proposal, "source"),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.source.path-grammar",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "Source paths use the exact relative case-sensitive ASCII grammar.",
+    ordinaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.source.path-grammar.accept",
+    description: "Accept case-distinct relative ASCII source paths.",
+    ruleIds: ["job-proposal.source.path-grammar"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.source.path-grammar.reject-dot-segment",
+    description: "Reject a dot-dot source path segment before semantic resolution.",
+    ruleIds: ["job-proposal.source.path-grammar"],
+    variant: "malformed",
+    path: "job-proposal/source-path-dot-segment.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.ts",
+      files: { "main.ts": "export {};\n", "src/../escape.ts": "export {};\n" },
+    }),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.source.path-bytes",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "One source path contains at most 256 ASCII bytes.",
+    boundaryRequirements,
+  );
+  const exactPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(5)}/${"e".repeat(52)}.ts`;
+  const overPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(6)}/${"e".repeat(52)}.ts`;
+  addProposalCase({
+    id: "job-proposal.source.path-bytes.exact-maximum",
+    description: "Accept an exact 256-byte source path and matching entrypoint.",
+    ruleIds: ["job-proposal.source.path-bytes"],
+    variant: "exact-maximum",
+    path: "job-proposal/source-path-exact.json",
+    proposal: withSource(proposal, {
+      entrypoint: exactPath,
+      files: { [exactPath]: "export {};\n" },
+    }),
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.source.path-bytes.cap-plus-one",
+    description: "Reject a 257-byte source path without truncation or normalization.",
+    ruleIds: ["job-proposal.source.path-bytes"],
+    variant: "cap-plus-one",
+    path: "job-proposal/source-path-over.json",
+    proposal: withSource(proposal, {
+      entrypoint: overPath,
+      files: { [overPath]: "export {};\n" },
+    }),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.source.segment-bytes",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "One source path segment contains at most 64 ASCII bytes.",
+    boundaryRequirements,
+  );
+  const exactSegmentPath = `${"s".repeat(64)}/helper.ts`;
+  const overSegmentPath = `${"s".repeat(65)}/helper.ts`;
+  addProposalCase({
+    id: "job-proposal.source.segment-bytes.exact-maximum",
+    description: "Accept an exact 64-byte non-entrypoint source path segment.",
+    ruleIds: ["job-proposal.source.segment-bytes"],
+    variant: "exact-maximum",
+    path: "job-proposal/source-segment-exact.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.ts",
+      files: { "main.ts": "export {};\n", [exactSegmentPath]: "export {};\n" },
+    }),
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.source.segment-bytes.cap-plus-one",
+    description: "Reject a 65-byte source path segment.",
+    ruleIds: ["job-proposal.source.segment-bytes"],
+    variant: "cap-plus-one",
+    path: "job-proposal/source-segment-over.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.ts",
+      files: { "main.ts": "export {};\n", [overSegmentPath]: "export {};\n" },
+    }),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.source.file-count",
+    "ADR-0023#strict-jobproposal-raw-profile",
+    "A proposal contains at most 32 source file entries.",
+    boundaryRequirements,
+  );
+  const exactFiles = numberedSourceFiles(32);
+  const overFiles = numberedSourceFiles(33);
+  addProposalCase({
+    id: "job-proposal.source.file-count.exact-maximum",
+    description: "Accept exactly 32 source file entries.",
+    ruleIds: ["job-proposal.source.file-count"],
+    variant: "exact-maximum",
+    path: "job-proposal/source-file-count-exact.json",
+    proposal: withSource(proposal, { entrypoint: "f00.ts", files: exactFiles }),
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.source.file-count.cap-plus-one",
+    description: "Reject 33 source file entries.",
+    ruleIds: ["job-proposal.source.file-count"],
+    variant: "cap-plus-one",
+    path: "job-proposal/source-file-count-over.json",
+    proposal: withSource(proposal, { entrypoint: "f00.ts", files: overFiles }),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.source.file-bytes",
+    "ADR-0023#strict-jobproposal-raw-profile",
+    "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+    boundaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.source.file-bytes.exact-maximum",
+    description: "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+    ruleIds: ["job-proposal.source.file-bytes"],
+    variant: "exact-maximum",
+    path: "job-proposal/source-file-bytes-exact.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.ts",
+      files: { "main.ts": "🚀".repeat(65_536) },
+    }),
+  });
+  addProposalCase({
+    id: "job-proposal.source.file-bytes.cap-plus-one",
+    description: "Reject one source file containing 262,145 UTF-8 bytes.",
+    ruleIds: ["job-proposal.source.file-bytes"],
+    variant: "cap-plus-one",
+    path: "job-proposal/source-file-bytes-over.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.ts",
+      files: { "main.ts": `${"🚀".repeat(65_536)}a` },
+    }),
+    decision: "reject",
+    classification: "SEMANTIC",
+  });
+
+  addRule(
+    "job-proposal.source.aggregate-bytes",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
+    boundaryRequirements,
+  );
+  const aggregateFiles = Object.fromEntries(
+    Array.from({ length: 4 }, (_, index) => [`f${index}.ts`, "a".repeat(262_144)]),
+  );
+  addProposalCase({
+    id: "job-proposal.source.aggregate-bytes.exact-maximum",
+    description: "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
+    ruleIds: ["job-proposal.source.aggregate-bytes", "job-proposal.source.manifest-identity"],
+    variant: "exact-maximum",
+    path: "job-proposal/source-aggregate-exact.json",
+    proposal: withSource(proposal, { entrypoint: "f0.ts", files: aggregateFiles }),
+  });
+  addProposalCase({
+    id: "job-proposal.source.aggregate-bytes.cap-plus-one",
+    description: "Reject 1,048,577 aggregate source bytes without clamping a file.",
+    ruleIds: ["job-proposal.source.aggregate-bytes"],
+    variant: "cap-plus-one",
+    path: "job-proposal/source-aggregate-over.json",
+    proposal: withSource(proposal, {
+      entrypoint: "f0.ts",
+      files: { ...aggregateFiles, "over.ts": "a" },
+    }),
+    decision: "reject",
+    classification: "SEMANTIC",
+  });
+
+  addRule(
+    "job-proposal.source.manifest-identity",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
+    [
+      { decision: "accept", variant: "ordinary" },
+      { decision: "accept", variant: "exact-maximum" },
+    ],
+  );
+  addProposalCase({
+    id: "job-proposal.source.manifest-identity.known-answer",
+    description: "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
+    ruleIds: ["job-proposal.source.manifest-identity"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+  });
+
+  addRule(
+    "job-proposal.source.entrypoint-membership",
+    "ADR-0023#source-path-and-source-manifest-identity",
+    "The entrypoint exactly equals one source-file key.",
+    ordinaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.source.entrypoint-membership.accept",
+    description: "Accept an entrypoint that exactly matches a source path.",
+    ruleIds: ["job-proposal.source.entrypoint-membership"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+  });
+  addProposalCase({
+    id: "job-proposal.source.entrypoint-membership.reject-missing",
+    description: "Reject a valid entrypoint path that is absent from the source map.",
+    ruleIds: ["job-proposal.source.entrypoint-membership"],
+    variant: "malformed",
+    path: "job-proposal/entrypoint-not-member.json",
+    proposal: withSource(proposal, { ...proposal.source, entrypoint: "missing.ts" }),
+    decision: "reject",
+    classification: "SEMANTIC",
+  });
+
+  addRule(
+    "job-proposal.input.canonical-identity",
+    "ADR-0023#canonical-inline-json-identity",
+    "Canonical inline JSON has one exact sorted, escaped, non-normalizing byte identity.",
+    ordinaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.input.canonical-identity.known-answer",
+    description: "Derive the retained canonical inline JSON bytes and SHA-256 digest.",
+    ruleIds: ["job-proposal.input.canonical-identity"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+  });
+  const equivalentBytes = utf8(`{
+  "labels": {"example":"known-answer"},
+  "outputs": [{"maxBytes":65536,"kind":"inline-json","slot":"transformed-json"}],
+  "requestedLimits": {"wallTimeMs":5000},
+  "input": {"value":{"z":[3,0,-2,true,null],"a":"quote:\\" slash:/ backslash:\\\\ control:\\u0000\\u001f rocket:\\ud83d\\ude80","A":{"b":false,"a":"\\u00e9"}},"kind":"inline-json","slot":"primary-data"},
+  "runtimeProfile": "fixture-active@1",
+  "source": {"files":{"A.ts":"export const a = 1;\\r\\n","src/main.ts":"import { a } from \\"../A.ts\\";\\nconsole.log(a);\\n","z.ts":"export const z = \\"\\ud83d\\ude80\\";\\n"},"entrypoint":"src/main.ts"},
+  "kind": "JobProposal",
+  "apiVersion": "capsule.dev/v0"
+}
+`);
+  addProposalCase({
+    id: "job-proposal.input.canonical-identity.equivalent-public-json",
+    description: "Different public key order and escape spelling derive the same canonical bytes.",
+    ruleIds: ["job-proposal.input.canonical-identity"],
+    variant: "ordinary",
+    path: "job-proposal/equivalent-public-json.json",
+    bytes: equivalentBytes,
+    context: knownAnswerContext,
+  });
+  addProposalCase({
+    id: "job-proposal.input.canonical-identity.reject-unsupported-key",
+    description: "Reject a canonical inline-input object key outside the candidate ASCII grammar.",
+    ruleIds: ["job-proposal.input.canonical-identity"],
+    variant: "malformed",
+    path: "job-proposal/inline-input-unicode-key.json",
+    proposal: withInputValue(proposal, { é: 1 }),
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+
+  addRule(
+    "job-proposal.input.canonical-bytes",
+    "ADR-0023#canonical-inline-json-identity",
+    "Canonical inline-input JSON contains at most 262,144 bytes.",
+    boundaryRequirements,
+  );
+  const exactCanonicalInput = [
+    "a".repeat(65_536),
+    "b".repeat(65_536),
+    "c".repeat(65_536),
+    "d".repeat(65_523),
+  ];
+  const overCanonicalInput = [...exactCanonicalInput.slice(0, 3), "d".repeat(65_524)];
+  addProposalCase({
+    id: "job-proposal.input.canonical-bytes.exact-maximum",
+    description: "Accept exactly 262,144 canonical inline-input bytes.",
+    ruleIds: ["job-proposal.input.canonical-bytes"],
+    variant: "exact-maximum",
+    path: "job-proposal/inline-input-bytes-exact.json",
+    proposal: withInputValue(proposal, exactCanonicalInput),
+  });
+  addProposalCase({
+    id: "job-proposal.input.canonical-bytes.cap-plus-one",
+    description: "Reject 262,145 canonical inline-input bytes without resizing the cap.",
+    ruleIds: ["job-proposal.input.canonical-bytes"],
+    variant: "cap-plus-one",
+    path: "job-proposal/inline-input-bytes-over.json",
+    proposal: withInputValue(proposal, overCanonicalInput),
+    decision: "reject",
+    classification: "SEMANTIC",
+  });
+
+  addRule(
+    "job-proposal.slots.fixed-roles",
+    "ADR-0017#decision",
+    "The first slice uses only primary-data input and transformed-json output roles.",
+    [
+      { decision: "accept", variant: "ordinary" },
+      { decision: "reject", variant: "wrong-domain" },
+      { decision: "reject", variant: "malformed" },
+    ],
+  );
+  addProposalCase({
+    id: "job-proposal.slots.fixed-roles.accept",
+    description: "Accept the fixed input and output slot roles.",
+    ruleIds: ["job-proposal.slots.fixed-roles"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.slots.fixed-roles.reject-input-substitution",
+    description: "Reject the output slot substituted into the input role.",
+    ruleIds: ["job-proposal.slots.fixed-roles"],
+    variant: "wrong-domain",
+    path: "job-proposal/input-slot-wrong-domain.json",
+    proposal: { ...proposal, input: { ...proposal.input, slot: "transformed-json" } },
+    decision: "reject",
+    classification: "DOMAIN",
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.slots.fixed-roles.reject-unknown",
+    description: "Reject an unknown logical input slot.",
+    ruleIds: ["job-proposal.slots.fixed-roles"],
+    variant: "malformed",
+    path: "job-proposal/input-slot-unknown.json",
+    proposal: { ...proposal, input: { ...proposal.input, slot: "other-data" } },
+    decision: "reject",
+    classification: schema,
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.slots.fixed-roles.reject-output-substitution",
+    description: "Reject the input slot substituted into the output role.",
+    ruleIds: ["job-proposal.slots.fixed-roles"],
+    variant: "wrong-domain",
+    path: "job-proposal/output-slot-wrong-domain.json",
+    proposal: {
+      ...proposal,
+      outputs: [{ ...proposal.outputs[0], slot: "primary-data" }],
+    },
+    decision: "reject",
+    classification: "DOMAIN",
+    owner: "job-proposal-schema",
+  });
+
+  addLabelCases(proposal);
+
+  addRule(
+    "job-proposal.profile.resolution",
+    "PHASE-2B-BOUNDARY-DECISIONS#task-23-add-proposalsourceinput-fixtures",
+    "The requested runtime profile alias resolves to one active fixed-context entry.",
+    ordinaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.profile.resolution.active",
+    description: "Resolve the active fixture-only profile from the fixed registry context.",
+    ruleIds: ["job-proposal.profile.resolution"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+  });
+  addProposalCase({
+    id: "job-proposal.profile.resolution.reject-unknown",
+    description: "Reject a structurally valid alias absent from the fixed profile context.",
+    ruleIds: ["job-proposal.profile.resolution"],
+    variant: "malformed",
+    path: "job-proposal/profile-unknown.json",
+    proposal: { ...proposal, runtimeProfile: "fixture-unknown@1" },
+    decision: "reject",
+    classification: "BINDING",
+  });
+  addProposalCase({
+    id: "job-proposal.profile.resolution.reject-inactive",
+    description: "Reject a known but inactive profile under the fixed resolver context.",
+    ruleIds: ["job-proposal.profile.resolution"],
+    variant: "malformed",
+    path: "job-proposal/profile-inactive.json",
+    proposal: { ...proposal, runtimeProfile: "fixture-inactive@1" },
+    decision: "reject",
+    classification: "POLICY",
+  });
+
+  addRule(
+    "job-proposal.policy.wall-time",
+    "ADR-0009#decision",
+    "Wall time is requested or defaulted exactly, and ceiling plus one rejects without clamping.",
+    boundaryRequirements,
+  );
+  addProposalCase({
+    id: "job-proposal.policy.wall-time.requested",
+    description: "Preserve a requested wall time below the ceiling exactly.",
+    ruleIds: ["job-proposal.policy.wall-time"],
+    variant: "ordinary",
+    path: proposalPath,
+    bytes: proposalBytes,
+    context: knownAnswerContext,
+  });
+  const defaultedProposal = { ...proposal, requestedLimits: {} };
+  addProposalCase({
+    id: "job-proposal.policy.wall-time.trusted-default",
+    description: "Resolve omitted wall time to the unchanged trusted default.",
+    ruleIds: ["job-proposal.policy.wall-time"],
+    variant: "ordinary",
+    path: "job-proposal/wall-time-defaulted.json",
+    proposal: defaultedProposal,
+    context: resolverContext({
+      wallTime: { milliseconds: 5_000, origin: "trusted-default" },
+    }),
+  });
+  const ceilingProposal = {
+    ...proposal,
+    requestedLimits: { wallTimeMs: 10_000 },
+  };
+  addProposalCase({
+    id: "job-proposal.policy.wall-time.exact-ceiling",
+    description: "Accept the exact 10,000 ms trusted ceiling unchanged.",
+    ruleIds: ["job-proposal.policy.wall-time"],
+    variant: "exact-maximum",
+    path: "job-proposal/wall-time-exact-ceiling.json",
+    proposal: ceilingProposal,
+    context: resolverContext({ wallTime: { milliseconds: 10_000, origin: "requested" } }),
+  });
+  addProposalCase({
+    id: "job-proposal.policy.wall-time.ceiling-plus-one",
+    description: "Reject 10,001 ms rather than clamping it to the trusted ceiling.",
+    ruleIds: ["job-proposal.policy.wall-time"],
+    variant: "cap-plus-one",
+    path: "job-proposal/wall-time-over-ceiling.json",
+    proposal: { ...proposal, requestedLimits: { wallTimeMs: 10_001 } },
+    decision: "reject",
+    classification: "POLICY",
+  });
+
+  function addProposalCase({ proposal: caseProposal, ...options }) {
+    addCase({
+      object: "JobProposal",
+      wireFormat: "json",
+      mediaType: jobProposalMediaType,
+      context: resolverContext(),
+      owner: "job-proposal-semantic-validator",
+      implementations: proposalImplementations,
+      bytes: caseProposal === undefined ? options.bytes : jsonDocument(caseProposal),
+      ...options,
+    });
+  }
+}
+
+function addLabelCases(proposal) {
+  for (const [dimension, description] of [
+    ["count", "Labels contain at most 8 entries."],
+    ["key-bytes", "One label key contains at most 32 ASCII bytes."],
+    ["value-bytes", "One label value contains at most 128 printable-ASCII bytes."],
+  ]) {
+    addRule(
+      `job-proposal.labels.${dimension}`,
+      "ADR-0023#strict-jobproposal-raw-profile",
+      description,
+      boundaryRequirements,
+    );
+  }
+  addRule(
+    "job-proposal.labels.printable-ascii",
+    "ADR-0023#strict-jobproposal-raw-profile",
+    "Label values contain only printable ASCII bytes.",
+    ordinaryRequirements,
+  );
+
+  const casesForLabels = [
+    {
+      id: "job-proposal.labels.count.exact-maximum",
+      ruleIds: ["job-proposal.labels.count"],
+      variant: "exact-maximum",
+      path: "job-proposal/labels-count-exact.json",
+      labels: Object.fromEntries(Array.from({ length: 8 }, (_, index) => [`label-${index}`, "v"])),
+      description: "Accept exactly 8 labels.",
+    },
+    {
+      id: "job-proposal.labels.count.cap-plus-one",
+      ruleIds: ["job-proposal.labels.count"],
+      variant: "cap-plus-one",
+      path: "job-proposal/labels-count-over.json",
+      labels: Object.fromEntries(Array.from({ length: 9 }, (_, index) => [`label-${index}`, "v"])),
+      description: "Reject 9 labels.",
+      decision: "reject",
+      classification: schema,
+    },
+    {
+      id: "job-proposal.labels.key-bytes.exact-maximum",
+      ruleIds: ["job-proposal.labels.key-bytes"],
+      variant: "exact-maximum",
+      path: "job-proposal/label-key-exact.json",
+      labels: { [`a${"b".repeat(31)}`]: "v" },
+      description: "Accept a 32-byte label key.",
+    },
+    {
+      id: "job-proposal.labels.key-bytes.cap-plus-one",
+      ruleIds: ["job-proposal.labels.key-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/label-key-over.json",
+      labels: { [`a${"b".repeat(32)}`]: "v" },
+      description: "Reject a 33-byte label key.",
+      decision: "reject",
+      classification: schema,
+    },
+    {
+      id: "job-proposal.labels.value-bytes.exact-maximum",
+      ruleIds: ["job-proposal.labels.value-bytes"],
+      variant: "exact-maximum",
+      path: "job-proposal/label-value-exact.json",
+      labels: { example: "x".repeat(128) },
+      description: "Accept a 128-byte printable-ASCII label value.",
+    },
+    {
+      id: "job-proposal.labels.value-bytes.cap-plus-one",
+      ruleIds: ["job-proposal.labels.value-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/label-value-over.json",
+      labels: { example: "x".repeat(129) },
+      description: "Reject a 129-byte label value.",
+      decision: "reject",
+      classification: schema,
+    },
+    {
+      id: "job-proposal.labels.printable-ascii.accept",
+      ruleIds: ["job-proposal.labels.printable-ascii"],
+      variant: "ordinary",
+      path: "job-proposal/label-printable.json",
+      labels: { example: "AZaz09 !~" },
+      description: "Accept printable ASCII label bytes.",
+    },
+    {
+      id: "job-proposal.labels.printable-ascii.reject-control",
+      ruleIds: ["job-proposal.labels.printable-ascii"],
+      variant: "malformed",
+      path: "job-proposal/label-control.json",
+      labels: { example: "line\nbreak" },
+      description: "Reject a control byte in a label value.",
+      decision: "reject",
+      classification: schema,
+    },
+  ];
+  for (const { labels, ...entry } of casesForLabels) {
+    addCase({
+      object: "JobProposal",
+      wireFormat: "json",
+      mediaType: jobProposalMediaType,
+      context: { kind: "none" },
+      owner: "job-proposal-schema",
+      implementations: proposalImplementations,
+      bytes: jsonDocument({ ...proposal, labels }),
+      ...entry,
+    });
+  }
+}
+
+function ordinaryProposal() {
+  return {
+    apiVersion: "capsule.dev/v0",
+    kind: "JobProposal",
+    source: {
+      entrypoint: "src/main.ts",
+      files: {
+        "z.ts": 'export const z = "🚀";\n',
+        "src/main.ts": 'import { a } from "../A.ts";\nconsole.log(a);\n',
+        "A.ts": "export const a = 1;\r\n",
+      },
+    },
+    runtimeProfile: "fixture-active@1",
+    input: {
+      slot: "primary-data",
+      kind: "inline-json",
+      value: {
+        z: [3, 0, -2, true, null],
+        a: 'quote:" slash:/ backslash:\\ control:\u0000\u001f rocket:🚀',
+        A: { b: false, a: "é" },
+      },
+    },
+    requestedLimits: { wallTimeMs: 5_000 },
+    outputs: [{ slot: "transformed-json", kind: "inline-json", maxBytes: 65_536 }],
+    labels: { example: "known-answer" },
+  };
+}
+
+function withSource(proposal, source) {
+  return { ...proposal, source };
+}
+
+function withInputValue(proposal, value) {
+  return { ...proposal, input: { ...proposal.input, value } };
+}
+
+function withoutProperty(value, property) {
+  const copy = { ...value };
+  delete copy[property];
+  return copy;
+}
+
+function numberedSourceFiles(count) {
+  return Object.fromEntries(
+    Array.from({ length: count }, (_, index) => [`f${String(index).padStart(2, "0")}.ts`, ""]),
+  );
+}
+
+function encodeSourceManifest(source) {
+  const entries = Object.entries(source.files)
+    .sort(([left], [right]) => Buffer.compare(utf8(left), utf8(right)))
+    .map(([path, content]) => {
+      const contentBytes = utf8(content);
+      return [path, sha256Bytes(contentBytes), contentBytes.length];
+    });
+  const aggregateBytes = entries.reduce((total, entry) => total + entry[2], 0);
+  return cborEncode(
+    new Map([
+      [1, "capsule.source-manifest"],
+      [2, 0],
+      [3, source.entrypoint],
+      [4, entries],
+      [5, aggregateBytes],
+    ]),
+  );
+}
+
+function encodeCanonicalInlineJson(value) {
+  if (value === null) {
+    return utf8("null");
+  }
+  if (typeof value === "boolean") {
+    return utf8(value ? "true" : "false");
+  }
+  if (typeof value === "number") {
+    if (!Number.isSafeInteger(value) || Object.is(value, -0)) {
+      throw new Error(`unsupported canonical inline JSON number: ${value}`);
+    }
+    return utf8(String(value));
+  }
+  if (typeof value === "string") {
+    return utf8(escapeCanonicalJsonString(value));
+  }
+  if (Array.isArray(value)) {
+    return concatenate([
+      utf8("["),
+      ...value.flatMap((child, index) => [
+        index === 0 ? new Uint8Array() : utf8(","),
+        encodeCanonicalInlineJson(child),
+      ]),
+      utf8("]"),
+    ]);
+  }
+  if (typeof value === "object") {
+    const entries = Object.entries(value).sort(([left], [right]) =>
+      Buffer.compare(utf8(left), utf8(right)),
+    );
+    return concatenate([
+      utf8("{"),
+      ...entries.flatMap(([key, child], index) => [
+        index === 0 ? new Uint8Array() : utf8(","),
+        utf8(escapeCanonicalJsonString(key)),
+        utf8(":"),
+        encodeCanonicalInlineJson(child),
+      ]),
+      utf8("}"),
+    ]);
+  }
+  throw new Error(`unsupported canonical inline JSON value: ${String(value)}`);
+}
+
+function escapeCanonicalJsonString(value) {
+  let result = '"';
+  for (const scalar of value) {
+    const codePoint = scalar.codePointAt(0);
+    if (scalar === '"') {
+      result += '\\"';
+    } else if (scalar === "\\") {
+      result += "\\\\";
+    } else if (codePoint <= 0x1f) {
+      result += `\\u00${codePoint.toString(16).padStart(2, "0")}`;
+    } else {
+      result += scalar;
+    }
+  }
+  return `${result}"`;
+}
+
+function sha256Bytes(bytes) {
+  return createHash("sha256").update(bytes).digest();
+}
+
+function jsonDocument(value) {
+  return utf8(`${JSON.stringify(value, null, 2)}\n`);
+}
+
 function addRule(id, source, description, requiredCases) {
   rules.push({ id, source, description, requiredCases });
 }
@@ -674,12 +1498,7 @@ function addCase({
   owner,
   implementations,
 }) {
-  const retainedBytes = typeof bytes === "string" ? utf8(bytes) : Buffer.from(bytes);
-  const existing = fixtures.get(path);
-  if (existing && !existing.equals(retainedBytes)) {
-    throw new Error(`fixture path ${path} was assigned different bytes`);
-  }
-  fixtures.set(path, retainedBytes);
+  const fixture = retainFixture(path, bytes);
   cases.push({
     id,
     description,
@@ -688,15 +1507,25 @@ function addCase({
     wireFormat,
     mediaType,
     variant,
-    fixture: {
-      path,
-      sha256: createHash("sha256").update(retainedBytes).digest("hex"),
-      byteLength: retainedBytes.length,
-    },
+    fixture,
     context,
     expected: { decision, classification, owner, authorityStateChanged: false },
     implementations,
   });
+}
+
+function retainFixture(path, bytes) {
+  const retainedBytes = typeof bytes === "string" ? utf8(bytes) : Buffer.from(bytes);
+  const existing = fixtures.get(path);
+  if (existing && !existing.equals(retainedBytes)) {
+    throw new Error(`fixture path ${path} was assigned different bytes`);
+  }
+  fixtures.set(path, retainedBytes);
+  return {
+    path,
+    sha256: createHash("sha256").update(retainedBytes).digest("hex"),
+    byteLength: retainedBytes.length,
+  };
 }
 
 function implementationStatus(go, typescript, swift) {
@@ -804,6 +1633,10 @@ function cborEncode(value) {
       throw new Error(`CBOR integer is outside the safe range: ${value}`);
     }
     return value >= 0 ? encodeCborArgument(0, value) : encodeCborArgument(1, -1 - value);
+  }
+  if (typeof value === "string") {
+    const bytes = utf8(value);
+    return concatenate([encodeCborArgument(3, bytes.length), bytes]);
   }
   if (Array.isArray(value)) {
     return concatenate([

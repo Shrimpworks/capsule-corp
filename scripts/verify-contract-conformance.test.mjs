@@ -4,6 +4,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import Ajv2020 from "ajv/dist/2020.js";
 import { verifyConformanceCorpus } from "./verify-contract-conformance.mjs";
 
 const schemaPath = new URL("../schemas/conformance/v0/manifest.schema.json", import.meta.url);
@@ -12,7 +13,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 105, fixtureCount: 91, ruleCount: 37 });
+  assert.deepEqual(result, { caseCount: 147, fixtureCount: 130, ruleCount: 55 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -97,6 +98,231 @@ test("retains representative noncanonical CBOR bytes without decoding and re-enc
   }
 });
 
+test("retains independently specified source-manifest and canonical-input known answers", async () => {
+  const expectedSourceManifestHex =
+    "a5017763617073756c652e736f757263652d6d616e69666573740200036b7372632f6d61696e2e747304838364412e74735820f8bfa98819f02db4df7eca4c610e70f3f8fa171d31e5abfaaebfe2dfec05f67c15836b7372632f6d61696e2e747358208d154e7e242fc07090f574f7e79237f4f4f1599eea50d98e053a8a2bdcc3be12182d83647a2e74735820e6b6daa9299b27161cefff62532ecd829cd9db9513179a0466be04a74d345593181905185b";
+  const expectedCanonicalInlineInput =
+    '{"A":{"a":"é","b":false},"a":"quote:\\" slash:/ backslash:\\\\ control:\\u0000\\u001f rocket:🚀","z":[3,0,-2,true,null]}';
+  const sourceManifest = await corpusBytes("source-manifest/ordinary.cbor");
+  const canonicalInlineInput = await corpusBytes("canonical-inline-input/ordinary.json");
+
+  assert.equal(sourceManifest.toString("hex"), expectedSourceManifestHex);
+  assert.equal(
+    sha256Hex(sourceManifest),
+    "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+  );
+  assert.equal(canonicalInlineInput.toString("utf8"), expectedCanonicalInlineInput);
+  assert.equal(
+    sha256Hex(canonicalInlineInput),
+    "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+  );
+
+  for (const path of ["job-proposal/ordinary.json", "job-proposal/equivalent-public-json.json"]) {
+    const proposal = JSON.parse(await corpusBytes(path));
+    assert.deepEqual(encodeSourceManifestForTest(proposal.source), sourceManifest, path);
+    assert.deepEqual(canonicalInlineJsonForTest(proposal.input.value), canonicalInlineInput, path);
+  }
+});
+
+test("retains exact proposal semantic boundaries and fixed resolver results", async () => {
+  const ordinaryProposal = await corpusJson("job-proposal/ordinary.json");
+  assert.deepEqual(Object.keys(ordinaryProposal), [
+    "apiVersion",
+    "kind",
+    "source",
+    "runtimeProfile",
+    "input",
+    "requestedLimits",
+    "outputs",
+    "labels",
+  ]);
+
+  const exactPathProposal = await corpusJson("job-proposal/source-path-exact.json");
+  const overPathProposal = await corpusJson("job-proposal/source-path-over.json");
+  assert.equal(Buffer.byteLength(exactPathProposal.source.entrypoint), 256);
+  assert.equal(Buffer.byteLength(overPathProposal.source.entrypoint), 257);
+
+  const exactSegmentProposal = await corpusJson("job-proposal/source-segment-exact.json");
+  const overSegmentProposal = await corpusJson("job-proposal/source-segment-over.json");
+  assert.equal(
+    Buffer.byteLength(Object.keys(exactSegmentProposal.source.files)[1].split("/")[0]),
+    64,
+  );
+  assert.equal(
+    Buffer.byteLength(Object.keys(overSegmentProposal.source.files)[1].split("/")[0]),
+    65,
+  );
+
+  const exactFileCount = await corpusJson("job-proposal/source-file-count-exact.json");
+  const overFileCount = await corpusJson("job-proposal/source-file-count-over.json");
+  assert.equal(Object.keys(exactFileCount.source.files).length, 32);
+  assert.equal(Object.keys(overFileCount.source.files).length, 33);
+
+  const exactFileProposal = await corpusJson("job-proposal/source-file-bytes-exact.json");
+  const overFileProposal = await corpusJson("job-proposal/source-file-bytes-over.json");
+  assert.equal(Buffer.byteLength(exactFileProposal.source.files["main.ts"]), 262_144);
+  assert.equal(Buffer.byteLength(overFileProposal.source.files["main.ts"]), 262_145);
+
+  const exactAggregate = await corpusJson("job-proposal/source-aggregate-exact.json");
+  const overAggregate = await corpusJson("job-proposal/source-aggregate-over.json");
+  assert.equal(sourceAggregateBytes(exactAggregate), 1_048_576);
+  assert.equal(sourceAggregateBytes(overAggregate), 1_048_577);
+
+  const exactInput = await corpusJson("job-proposal/inline-input-bytes-exact.json");
+  const overInput = await corpusJson("job-proposal/inline-input-bytes-over.json");
+  assert.equal(canonicalInlineJsonForTest(exactInput.input.value).length, 262_144);
+  assert.equal(canonicalInlineJsonForTest(overInput.input.value).length, 262_145);
+
+  assert.equal(
+    Object.keys((await corpusJson("job-proposal/labels-count-exact.json")).labels).length,
+    8,
+  );
+  assert.equal(
+    Object.keys((await corpusJson("job-proposal/labels-count-over.json")).labels).length,
+    9,
+  );
+  assert.equal(
+    Buffer.byteLength(
+      Object.keys((await corpusJson("job-proposal/label-key-exact.json")).labels)[0],
+    ),
+    32,
+  );
+  assert.equal(
+    Buffer.byteLength(
+      Object.keys((await corpusJson("job-proposal/label-key-over.json")).labels)[0],
+    ),
+    33,
+  );
+  assert.equal(
+    Buffer.byteLength(
+      Object.values((await corpusJson("job-proposal/label-value-exact.json")).labels)[0],
+    ),
+    128,
+  );
+  assert.equal(
+    Buffer.byteLength(
+      Object.values((await corpusJson("job-proposal/label-value-over.json")).labels)[0],
+    ),
+    129,
+  );
+
+  const profileRegistry = await corpusJson("contexts/profile-registry.json");
+  const userPolicy = await corpusJson("contexts/user-policy.json");
+  assert.deepEqual(profileRegistry.profiles, [
+    {
+      alias: "fixture-active@1",
+      status: "active",
+      exactWallTimeMs: { minimum: 1, maximum: 10_000 },
+    },
+    {
+      alias: "fixture-inactive@1",
+      status: "inactive",
+      exactWallTimeMs: { minimum: 1, maximum: 10_000 },
+    },
+  ]);
+  assert.deepEqual(userPolicy.wallTimeMs, { trustedDefault: 5_000, ceiling: 10_000 });
+
+  const manifest = await corpusJson("manifest.json");
+  const cases = new Map(manifest.cases.map((entry) => [entry.id, entry]));
+  assert.deepEqual(cases.get("job-proposal.policy.wall-time.requested").context.oracle.wallTime, {
+    milliseconds: 5_000,
+    origin: "requested",
+  });
+  assert.deepEqual(
+    cases.get("job-proposal.policy.wall-time.trusted-default").context.oracle.wallTime,
+    { milliseconds: 5_000, origin: "trusted-default" },
+  );
+  assert.deepEqual(
+    cases.get("job-proposal.policy.wall-time.exact-ceiling").context.oracle.wallTime,
+    { milliseconds: 10_000, origin: "requested" },
+  );
+  assert.equal(
+    cases.get("job-proposal.policy.wall-time.ceiling-plus-one").context.oracle.wallTime,
+    null,
+  );
+});
+
+test("assigns Task 2.3 rejections to the first owner without authority change", async () => {
+  const manifest = await corpusJson("manifest.json");
+  const cases = new Map(manifest.cases.map((entry) => [entry.id, entry]));
+  const expectedRejections = new Map([
+    [
+      "job-proposal.schema.authority-omission.reject-placeholder",
+      ["job-proposal-schema", "UNSUPPORTED"],
+    ],
+    ["job-proposal.source.path-grammar.reject-dot-segment", ["job-proposal-schema", "SCHEMA"]],
+    ["job-proposal.source.path-bytes.cap-plus-one", ["job-proposal-schema", "SCHEMA"]],
+    ["job-proposal.source.segment-bytes.cap-plus-one", ["job-proposal-schema", "SCHEMA"]],
+    [
+      "job-proposal.source.entrypoint-membership.reject-missing",
+      ["job-proposal-semantic-validator", "SEMANTIC"],
+    ],
+    [
+      "job-proposal.source.aggregate-bytes.cap-plus-one",
+      ["job-proposal-semantic-validator", "SEMANTIC"],
+    ],
+    [
+      "job-proposal.input.canonical-bytes.cap-plus-one",
+      ["job-proposal-semantic-validator", "SEMANTIC"],
+    ],
+    ["job-proposal.slots.fixed-roles.reject-input-substitution", ["job-proposal-schema", "DOMAIN"]],
+    ["job-proposal.slots.fixed-roles.reject-unknown", ["job-proposal-schema", "SCHEMA"]],
+    [
+      "job-proposal.profile.resolution.reject-unknown",
+      ["job-proposal-semantic-validator", "BINDING"],
+    ],
+    [
+      "job-proposal.profile.resolution.reject-inactive",
+      ["job-proposal-semantic-validator", "POLICY"],
+    ],
+    [
+      "job-proposal.policy.wall-time.ceiling-plus-one",
+      ["job-proposal-semantic-validator", "POLICY"],
+    ],
+  ]);
+  for (const [id, [owner, classification]] of expectedRejections) {
+    const entry = cases.get(id);
+    assert.ok(entry, id);
+    assert.deepEqual(
+      entry.expected,
+      { decision: "reject", classification, owner, authorityStateChanged: false },
+      id,
+    );
+    if (entry.context.kind === "proposal-resolution") {
+      assert.deepEqual(
+        entry.context.oracle,
+        {
+          sourceManifest: null,
+          sourceManifestDigest: null,
+          canonicalInlineInput: null,
+          inlineInputDigest: null,
+          wallTime: null,
+        },
+        id,
+      );
+    }
+  }
+});
+
+test("keeps schema-owned and semantic proposal cases on their documented side of the schema", async () => {
+  const schema = await corpusJson("../../candidates/job-proposal-v0.schema.json");
+  const validate = new Ajv2020({ allErrors: true, strict: true }).compile(schema);
+  const manifest = await corpusJson("manifest.json");
+  const proposalCases = manifest.cases.filter(
+    (entry) => entry.fixture.path.startsWith("job-proposal/") && entry.wireFormat === "json",
+  );
+
+  for (const entry of proposalCases) {
+    const proposal = await corpusJson(entry.fixture.path);
+    const schemaAccepted = validate(proposal);
+    if (entry.expected.decision === "reject" && entry.expected.owner === "job-proposal-schema") {
+      assert.equal(schemaAccepted, false, entry.id);
+    } else {
+      assert.equal(schemaAccepted, true, `${entry.id}: ${JSON.stringify(validate.errors)}`);
+    }
+  }
+});
+
 test("verifies a closed, complete, byte-exact conformance corpus", async (t) => {
   const corpus = await createCorpus(t);
 
@@ -113,6 +339,48 @@ test("rejects an unknown manifest field", async (t) => {
   await assert.rejects(
     verifyConformanceCorpus({ rootDirectory: corpus.root }),
     /manifest schema validation failed/u,
+  );
+});
+
+test("rejects an unknown proposal-resolution oracle field", async (t) => {
+  const corpus = await createCorpus(t, (manifest) => {
+    const fixture = manifest.cases[0].fixture;
+    manifest.cases[0].context = proposalResolutionContextForTest(fixture);
+    manifest.cases[0].context.oracle.unreviewed = true;
+  });
+
+  await assert.rejects(
+    verifyConformanceCorpus({ rootDirectory: corpus.root }),
+    /manifest schema validation failed/u,
+  );
+});
+
+test("rejects a proposal-resolution digest that differs from retained bytes", async (t) => {
+  const corpus = await createCorpus(t, (manifest) => {
+    const fixture = manifest.cases[0].fixture;
+    manifest.cases[0].context = proposalResolutionContextForTest(fixture, {
+      sourceManifest: fixture,
+      sourceManifestDigest: "0".repeat(64),
+    });
+  });
+
+  await assert.rejects(
+    verifyConformanceCorpus({ rootDirectory: corpus.root }),
+    /source manifest digest must match the retained fixture digest/u,
+  );
+});
+
+test("rejects a resolution result attached to a rejected proposal", async (t) => {
+  const corpus = await createCorpus(t, (manifest) => {
+    const fixture = manifest.cases[1].fixture;
+    manifest.cases[1].context = proposalResolutionContextForTest(fixture, {
+      wallTime: { milliseconds: 5_000, origin: "trusted-default" },
+    });
+  });
+
+  await assert.rejects(
+    verifyConformanceCorpus({ rootDirectory: corpus.root }),
+    /rejected proposal case .* cannot retain a resolution result/u,
   );
 });
 
@@ -241,6 +509,22 @@ function reference(path, bytes) {
   };
 }
 
+function proposalResolutionContextForTest(fixture, oracle = {}) {
+  return {
+    kind: "proposal-resolution",
+    profileRegistry: fixture,
+    userPolicy: fixture,
+    oracle: {
+      sourceManifest: null,
+      sourceManifestDigest: null,
+      canonicalInlineInput: null,
+      inlineInputDigest: null,
+      wallTime: null,
+      ...oracle,
+    },
+  };
+}
+
 async function assertJsonMetric(prefix, property, exact, over) {
   assert.equal(measureJson(await fixtureJson(`${prefix}-exact.bin`))[property], exact);
   assert.equal(measureJson(await fixtureJson(`${prefix}-over.bin`))[property], over);
@@ -258,7 +542,141 @@ async function fixtureJson(name) {
 }
 
 async function fixtureBytes(name) {
-  return readFile(new URL(`../schemas/conformance/v0/shared/${name}`, import.meta.url));
+  return corpusBytes(`shared/${name}`);
+}
+
+async function corpusJson(path) {
+  return JSON.parse(await corpusBytes(path));
+}
+
+async function corpusBytes(path) {
+  return readFile(new URL(`../schemas/conformance/v0/${path}`, import.meta.url));
+}
+
+function sha256Hex(bytes) {
+  return createHash("sha256").update(bytes).digest("hex");
+}
+
+function sourceAggregateBytes(proposal) {
+  return Object.values(proposal.source.files).reduce(
+    (total, content) => total + Buffer.byteLength(content),
+    0,
+  );
+}
+
+function encodeSourceManifestForTest(source) {
+  const entries = Object.entries(source.files)
+    .sort(([left], [right]) => Buffer.compare(Buffer.from(left), Buffer.from(right)))
+    .map(([path, content]) => {
+      const bytes = Buffer.from(content);
+      return [path, createHash("sha256").update(bytes).digest(), bytes.length];
+    });
+  return cborForTest(
+    new Map([
+      [1, "capsule.source-manifest"],
+      [2, 0],
+      [3, source.entrypoint],
+      [4, entries],
+      [5, entries.reduce((total, entry) => total + entry[2], 0)],
+    ]),
+  );
+}
+
+function cborForTest(value) {
+  if (Buffer.isBuffer(value) || value instanceof Uint8Array) {
+    const bytes = Buffer.from(value);
+    return Buffer.concat([cborHeadForTest(2, bytes.length), bytes]);
+  }
+  if (typeof value === "string") {
+    const bytes = Buffer.from(value);
+    return Buffer.concat([cborHeadForTest(3, bytes.length), bytes]);
+  }
+  if (typeof value === "number") {
+    assert.ok(Number.isSafeInteger(value));
+    return value >= 0 ? cborHeadForTest(0, value) : cborHeadForTest(1, -1 - value);
+  }
+  if (Array.isArray(value)) {
+    return Buffer.concat([cborHeadForTest(4, value.length), ...value.map(cborForTest)]);
+  }
+  if (value instanceof Map) {
+    const entries = [...value].map(([key, child]) => [cborForTest(key), cborForTest(child)]);
+    entries.sort(([left], [right]) =>
+      left.length === right.length ? Buffer.compare(left, right) : left.length - right.length,
+    );
+    return Buffer.concat([cborHeadForTest(5, entries.length), ...entries.flat()]);
+  }
+  assert.fail(`unsupported test CBOR value: ${String(value)}`);
+}
+
+function cborHeadForTest(majorType, argument) {
+  if (argument < 24) {
+    return Buffer.of((majorType << 5) | argument);
+  }
+  if (argument <= 0xff) {
+    return Buffer.of((majorType << 5) | 24, argument);
+  }
+  if (argument <= 0xffff) {
+    return Buffer.of((majorType << 5) | 25, argument >> 8, argument & 0xff);
+  }
+  if (argument <= 0xffffffff) {
+    return Buffer.of(
+      (majorType << 5) | 26,
+      Math.floor(argument / 0x1000000) & 0xff,
+      Math.floor(argument / 0x10000) & 0xff,
+      Math.floor(argument / 0x100) & 0xff,
+      argument & 0xff,
+    );
+  }
+  assert.fail(`test CBOR argument is too large: ${argument}`);
+}
+
+function canonicalInlineJsonForTest(value) {
+  return Buffer.from(canonicalInlineJsonTextForTest(value));
+}
+
+function canonicalInlineJsonTextForTest(value) {
+  if (value === null) {
+    return "null";
+  }
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+  if (typeof value === "number") {
+    assert.ok(Number.isSafeInteger(value) && !Object.is(value, -0));
+    return String(value);
+  }
+  if (typeof value === "string") {
+    return quoteCanonicalStringForTest(value);
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map(canonicalInlineJsonTextForTest).join(",")}]`;
+  }
+  const entries = Object.entries(value).sort(([left], [right]) =>
+    Buffer.compare(Buffer.from(left), Buffer.from(right)),
+  );
+  return `{${entries
+    .map(
+      ([key, child]) =>
+        `${quoteCanonicalStringForTest(key)}:${canonicalInlineJsonTextForTest(child)}`,
+    )
+    .join(",")}}`;
+}
+
+function quoteCanonicalStringForTest(value) {
+  let result = '"';
+  for (const scalar of value) {
+    const codePoint = scalar.codePointAt(0);
+    if (scalar === '"') {
+      result += '\\"';
+    } else if (scalar === "\\") {
+      result += "\\\\";
+    } else if (codePoint <= 0x1f) {
+      result += `\\u00${codePoint.toString(16).padStart(2, "0")}`;
+    } else {
+      result += scalar;
+    }
+  }
+  return `${result}"`;
 }
 
 function measureJson(value) {

@@ -38,10 +38,11 @@ export async function verifyConformanceCorpus({ rootDirectory = defaultRootDirec
     await verifyFixture(root, entry.fixture, entry.id);
     listedFixtures.add(entry.fixture.path);
 
-    if (entry.context.kind === "fixture") {
-      await verifyFixture(root, entry.context.fixture, `${entry.id} context`);
-      listedFixtures.add(entry.context.fixture.path);
+    for (const [label, fixture] of contextFixtures(entry.context)) {
+      await verifyFixture(root, fixture, `${entry.id} ${label}`);
+      listedFixtures.add(fixture.path);
     }
+    assertProposalResolutionContext(entry);
   }
 
   for (const rule of manifest.rules) {
@@ -166,6 +167,49 @@ function assertScalarRoleContext(entry) {
     sameRole
   ) {
     throw new Error(`DOMAIN case ${entry.id} must substitute a different scalar role`);
+  }
+}
+
+function contextFixtures(context) {
+  if (context.kind === "fixture") {
+    return [["context", context.fixture]];
+  }
+  if (context.kind !== "proposal-resolution") {
+    return [];
+  }
+  return [
+    ["profile registry", context.profileRegistry],
+    ["user policy", context.userPolicy],
+    ...(context.oracle.sourceManifest
+      ? [["source manifest oracle", context.oracle.sourceManifest]]
+      : []),
+    ...(context.oracle.canonicalInlineInput
+      ? [["canonical inline-input oracle", context.oracle.canonicalInlineInput]]
+      : []),
+  ];
+}
+
+function assertProposalResolutionContext(entry) {
+  if (entry.context.kind !== "proposal-resolution") {
+    return;
+  }
+  const { oracle } = entry.context;
+  for (const [label, fixture, digest] of [
+    ["source manifest", oracle.sourceManifest, oracle.sourceManifestDigest],
+    ["canonical inline input", oracle.canonicalInlineInput, oracle.inlineInputDigest],
+  ]) {
+    if ((fixture === null) !== (digest === null)) {
+      throw new Error(`${entry.id} ${label} fixture and digest must be present together`);
+    }
+    if (fixture && fixture.sha256 !== digest) {
+      throw new Error(`${entry.id} ${label} digest must match the retained fixture digest`);
+    }
+  }
+  if (
+    entry.expected.decision === "reject" &&
+    (oracle.sourceManifest || oracle.canonicalInlineInput || oracle.wallTime)
+  ) {
+    throw new Error(`rejected proposal case ${entry.id} cannot retain a resolution result`);
   }
 }
 

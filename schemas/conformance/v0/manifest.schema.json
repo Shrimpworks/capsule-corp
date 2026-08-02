@@ -109,6 +109,74 @@
         }
       }
     },
+    "nullableFixtureReference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/fixtureReference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableSha256": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "proposalResolutionOracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceManifest",
+        "sourceManifestDigest",
+        "canonicalInlineInput",
+        "inlineInputDigest",
+        "wallTime"
+      ],
+      "properties": {
+        "sourceManifest": {
+          "$ref": "#/$defs/nullableFixtureReference"
+        },
+        "sourceManifestDigest": {
+          "$ref": "#/$defs/nullableSha256"
+        },
+        "canonicalInlineInput": {
+          "$ref": "#/$defs/nullableFixtureReference"
+        },
+        "inlineInputDigest": {
+          "$ref": "#/$defs/nullableSha256"
+        },
+        "wallTime": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["milliseconds", "origin"],
+              "properties": {
+                "milliseconds": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991
+                },
+                "origin": {
+                  "enum": ["requested", "trusted-default"]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
     "scalarRole": {
       "enum": [
         "installation",
@@ -161,6 +229,25 @@
             },
             "fixture": {
               "$ref": "#/$defs/fixtureReference"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "profileRegistry", "userPolicy", "oracle"],
+          "properties": {
+            "kind": {
+              "const": "proposal-resolution"
+            },
+            "profileRegistry": {
+              "$ref": "#/$defs/fixtureReference"
+            },
+            "userPolicy": {
+              "$ref": "#/$defs/fixtureReference"
+            },
+            "oracle": {
+              "$ref": "#/$defs/proposalResolutionOracle"
             }
           }
         }

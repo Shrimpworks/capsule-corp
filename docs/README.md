@@ -23,6 +23,9 @@ migration, and conformance reviews are consolidated in
 The proposed exact validator and registration rules for the next slice are in
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 
+The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
+handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+
 ## Detailed authority and trust documents
 
 - [Trust architecture](security/TRUST_ARCHITECTURE.md)

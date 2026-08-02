@@ -77,10 +77,12 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
-byte-exact fixtures, and Go/TypeScript decoded views. They are not frozen or activated. The next
-lane first closes the strict-decoder, conformance-corpus, and registration-semantics decisions
-needed by the registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice,
-an atomic consumer migration, and removal of the dormant direct-execution scaffold. See the
+byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B Tasks 2.1 and 2.2 have also merged the
+closed conformance manifest, integrity runner, and 37-rule/105-case/91-fixture foundational raw,
+media, scalar, and CBOR corpus. They are not frozen or activated. Tasks 2.3 and 2.4 next add the
+proposal/source/input and plan/registration-state oracles needed before unwired strict decoders and
+the registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice, an atomic
+consumer migration, and removal of the dormant direct-execution scaffold. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 

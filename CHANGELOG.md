@@ -19,3 +19,9 @@ but it has not selected a public versioning or release policy yet.
   Hallmark, while keeping symlinks out of Git.
 - Passive Phase 2A `JobProposal`, minimum `ExecutionPlan`, and `PlanRegistration` candidates with
   byte-exact fixtures, Go/TypeScript decoded views, and explicit non-activation boundaries.
+- Retained Gate C libkrun/HVF storage, console/lifecycle, installed-recovery, adversarial, and
+  supply-chain experiments with a reconciled P0 plan and explicit prohibited claims.
+- Proposed Phase 2B decoder/registration bounds plus a manifest-driven conformance foundation with
+  37 rules, 105 cases, and 91 unique raw/media/scalar/CBOR fixtures.
+- A durable workstream/evidence ledger mapping parallel task conclusions and external reviews to
+  retained evidence, synthesis documents, merged integration commits, and remaining work.

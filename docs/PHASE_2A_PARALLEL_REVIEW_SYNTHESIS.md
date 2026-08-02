@@ -1,12 +1,22 @@
 # Phase 2A parallel-review synthesis
 
-Status: reconciled against the passive contract-foundation implementation in draft PR #9.
+Status: reconciled against the passive contract-foundation implementation merged by PR #9 as
+`3a75098`.
 
 ## Sources and verdict
 
 Three independent read-only tasks reviewed the contract shape, deprecated-`Job` migration, and
 fail-closed corpus. They agree on the authority split and do not identify a reason to abandon the
 current direction.
+
+| Review | Task ID |
+| --- | --- |
+| Contract shape | `019fbd6b-0de7-7201-befc-be983552e5ed` |
+| Deprecated mixed-`Job` migration | `019fbd6b-0de5-7003-82b2-40049e07fcb7` |
+| Fail-closed conformance corpus | `019fbd6b-0de5-7003-82b2-3febecc775aa` |
+
+The cross-phase integration history is indexed in the
+[workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
 The passive foundation is the correct stopping point for this PR. It deliberately chooses a
 narrower contract than some review sketches and does not guess unresolved resource, transport, or

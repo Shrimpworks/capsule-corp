@@ -285,5 +285,7 @@ state here, removes chat history as a project dependency.
 ## Verification record
 
 Each isolated task recorded its own experiment and repository verification. The integrated branch
-must also pass the repository-required Node 22/pnpm/Go suite before handoff; the resulting commit
-and draft PR are the authoritative integration checkpoint.
+also passed the repository-required Node 22/pnpm/Go suite before handoff. PR #8 merged as
+`633d249`; that merge commit is the authoritative Gate C integration checkpoint. The broader
+task-to-evidence history is retained in the
+[workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).

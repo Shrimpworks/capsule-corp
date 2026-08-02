@@ -26,6 +26,13 @@ Add `.github/CODEOWNERS` after the responsible GitHub team or maintainers are kn
 from those owners for `schemas/`, `internal/`, `profiles/`, `docs/TECHNICAL_DESIGN.md`,
 `docs/security/`, and `docs/adr/`.
 
+Runtime, guest-kernel, VMM, launcher, security-profile, and security-critical native patch changes
+require at least one independent approval from a designated security owner; the author cannot
+satisfy that approval. If no independent qualified reviewer is available, experiments and evidence
+may record the limitation, but the changed bytes cannot enter an admitted runtime bundle or
+support a new validation claim. Preserve exact reviewed patch/source digests and rerun deliberate
+capability-restoration tests after any affected rebase or rebuild.
+
 ## Security settings
 
 Enable:

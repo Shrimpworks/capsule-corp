@@ -93,6 +93,13 @@ Defending against a compromised administrator, kernel, hypervisor, Secure Enclav
 authorized Supervisor is outside local containment guarantees. An optional independent witness may
 detect some historical inconsistency; it does not restore complete local protection.
 
+Capsule does not currently claim resistance to cross-domain microarchitectural leakage such as
+speculative-execution or shared-cache attacks between a hostile guest, the host, or another job.
+Any stronger posture must bind an exact hardware model, OS/hypervisor build, applicable vendor
+mitigation state, and concurrency/co-residency policy to retained evidence. A hardware model name,
+Hypervisor.framework use, or absence of simultaneous multithreading alone is not evidence of
+noninterference.
+
 ### Same-user attacker tiers
 
 `Same-user` is not a complete claim without naming the authority already held by the attacker.
@@ -101,7 +108,7 @@ Capsule separates three tiers:
 | Tier | Included capability | Claim treatment |
 | --- | --- | --- |
 | Baseline same-user attacker | Arbitrary unprivileged process under the same login; ordinary same-UID pathname/directory access; races, links, replacement, and observation; retained writable descriptors/mappings to original user files; malformed IPC; component impersonation and attach attempts | The v0 boundary must resist it. A new custody object is not custodied while this attacker can acquire or retain writable authority to it. |
-| Elevated user-granted attacker | Successful task-port/debug attachment, Full Disk Access, explicit foreign-container consent, private VFS privilege, or another broad user-authorized capability | Separate elevated-adversary posture. Shipping denial/fail-closed cases remain required, but Capsule makes no general resistance claim without exact evidence for that capability. |
+| Elevated user-granted attacker | Successful task-port/debug attachment, Full Disk Access, Accessibility control, Screen Recording/window automation, explicit foreign-container consent, private VFS privilege, or another broad user-authorized capability | Separate elevated-adversary posture. Shipping denial/fail-closed cases remain required, but Capsule makes no general resistance claim without exact evidence for that capability. |
 | Trusted-platform compromise | Malicious root/administrator, SIP bypass, kernel/hypervisor compromise, or an authorized compromised Supervisor | Outside local containment guarantees. |
 
 The baseline attacker may retain writable authority to an original selected file. Broker snapshotting
@@ -117,6 +124,12 @@ trust administration, quarantine reset, or backend control.
 
 Raw input is bounded before ordinary decoding. Unknown versions, fields, powers, and malformed
 content fail closed.
+
+Per-request parser limits do not establish daemon availability. Before activating the candidate
+public endpoint, the daemon must also enforce a configured aggregate envelope for connections,
+concurrent requests, in-flight bytes, queues, request time, cancellation, and stalled downstream
+work. Overload sheds work with bounded errors and no authority change; it never creates an
+unbounded queue or silently widens an approved job budget.
 
 ### Daemon to Supervisor
 
@@ -134,6 +147,13 @@ an attempt-bound approval after user presence. It transfers only attempt-scoped 
 
 Trusted UI must safely render untrusted labels, sizes, and source/content metadata. It never claims
 that the user understood generated source merely because presence was proven.
+
+UI activation, focus, or a synthetic click is not user presence. Approval requires the configured
+LocalAuthentication/Keychain-gated private-key operation over the exact registered-plan binding.
+Baseline synthetic-event attempts must fail to produce a grant without that operation. Accessibility,
+overlay/window automation, and similar broad user-granted capabilities remain an explicit elevated
+posture with separately recorded limitations and tests; Capsule does not imply they are defeated by
+ordinary anti-spoofing UI.
 
 ### Local process and storage boundary
 
@@ -157,6 +177,11 @@ validation record. A backend that cannot enforce a required value refuses the at
 The guest is hostile. External isolation controls syscalls, filesystem, processes, IPC, network,
 resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs
 untrusted Bun directly on the host.
+
+Every admitted runtime bundle binds the exact guest-kernel image, configuration, boot arguments,
+module policy, debug/inspection facilities, and launcher restrictions. Removing unused kernel and
+device authority is defense-in-depth that reduces reachable surface and must be reviewed and
+tested, but the VMM boundary must still contain a fully hostile guest kernel.
 
 ### Guest completion evidence scope
 
@@ -296,6 +321,14 @@ safe numeric constraints, and shared Go/Swift/TypeScript negative fixtures.
 Attacker story: the daemon and Broker interpret two spellings of a plan differently. Capsule must
 reject non-canonical or duplicate-key input before any approval/state transition.
 
+### Daemon service exhaustion
+
+Risks include concurrent maximum-size requests, connection churn, slow or partial bodies, parser
+CPU amplification, cancellation races, stalled Supervisor calls, queue growth, and high-cardinality
+diagnostics. Per-object byte/depth/count limits are necessary but insufficient. The daemon requires
+bounded per-peer and global in-flight accounting, concurrency and queue ceilings, deadlines,
+cancellation propagation, bounded diagnostics, and deterministic overload behavior.
+
 ### Daemon compromise
 
 The daemon can propose a malicious plan or lie in unsigned metadata. It must still be unable to use
@@ -316,9 +349,11 @@ separation, exact build/epoch checks, dynamic validation, and repair-required tr
 ### Approval/UI abuse
 
 Risks include daemon-supplied prose, hidden fields, truncated/bidi labels, deceptive provenance,
-approval fatigue, stale sessions, wrong Supervisor, and replay. The Broker renders Supervisor-
-registered typed data with bounded safe UI and fresh user presence; the Supervisor consumes the
-grant once.
+approval fatigue, stale sessions, wrong Supervisor, replay, synthetic input, Accessibility-driven
+automation, overlay/window spoofing, and focus substitution. The Broker renders Supervisor-
+registered typed data with bounded safe UI and a LocalAuthentication/Keychain-gated signing
+operation; the Supervisor consumes the grant once. A click or focused window alone is never
+approval evidence.
 
 The Broker can produce a signature whose local key operation was gated by configured user-presence
 controls. A remote verifier can check key attribution, but cannot independently verify user
@@ -347,6 +382,11 @@ against a compromised guest kernel. gVisor validation must bind its
 host/outer-VM, engine, cgroup/OCI configuration, Sentry/gofer identity, management endpoints, and
 exact `runsc` binary. The existing runc control run validates only the surrounding harness, not
 gVisor's isolation boundary.
+
+The admitted guest kernel is an exact runtime-profile component with its own configuration and
+provenance. A minimal configuration and disabled unused facilities reduce the workload-to-kernel
+and kernel-to-device attack surface, but cannot justify relaxing malicious-kernel VMM tests or
+treating guest completion as attestation.
 
 ### Input and output content
 
@@ -383,14 +423,16 @@ not concealed by the presence of a valid user approval.
 | Category | Cases |
 | --- | --- |
 | Protocol | raw byte/depth/count limits, invalid UTF-8, duplicate keys, unsafe numbers, trailing data, unknown fields/versions/powers |
+| Daemon service | concurrent maximum-size requests, connection churn, slow/partial bodies, parser amplification, queue saturation, stalled downstream calls, cancellation races, bounded diagnostics, deterministic overload |
 | Cryptography | non-canonical bytes, wrong type/purpose/audience/epoch, `none`/algorithm confusion, key substitution, malformed DER/raw/high-S handling |
 | Identity/IPC | unsigned/same-team-wrong-ID/stale/debugged peer, wrong user/session, Keychain/store access, PID/path/name substitution |
-| Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume |
+| Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume, synthetic input, Accessibility automation, overlay/focus substitution, signing without configured user presence |
 | Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
 | Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |
 | Process/runtime | workers/fork bomb, signals, inspector, orphan processes, subprocess APIs, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse, completion-descriptor forgery |
+| Guest kernel | image/config/boot substitution, module/debug/inspection authority, unnecessary drivers/protocols, launcher escape, malformed device traffic after kernel compromise |
 | Resources | busy loop, CPU semantics, heap/native OOM, PID exhaustion, disk/log/output flood, cancellation tree kill |
-| Isolation | host credentials/env/files, cross-job state, writable caches, backend escape, malicious runtime/image/config |
+| Isolation | host credentials/env/files, cross-job state, writable caches, backend escape, malicious runtime/image/config, mismatched host mitigation state, forbidden guest co-residency, speculative/shared-cache probe limitations |
 | Egress | undeclared/oversized/malformed output, agent content access, metadata/timing channels, guest strings in errors/logs |
 | Trust/update | TUF freeze/rollback/mix-and-match/delegation, revoked profile, partial component update, restored state, coherent rollback |
 | Recovery | crash at every saga/side-effect boundary, orphan enumeration, missing handle, teardown failure, repair history preservation |
@@ -413,6 +455,10 @@ Capsule does not prove:
 - pattern redaction finds every sensitive value;
 - supported runtime, parser, kernel, backend, hypervisor, Secure Enclave, or cryptographic library
   has no unknown vulnerability;
+- hostile guest/host/job domains cannot leak through speculative execution, shared caches, branch
+  predictors, memory deduplication, or another microarchitectural channel;
+- elevated Accessibility, Screen Recording, task-port, or comparable user-granted authority cannot
+  influence or spoof approval UX unless an exact posture and retained evidence say otherwise;
 - a signature remains trustworthy after private-key or signer-logic compromise;
 - trust epochs defeat coherent rollback without a stronger checkpoint;
 - receipt claims are independently true merely because signatures verify;

@@ -11,6 +11,8 @@ quality—is the deliverable.
 - Define the component-compromise and control-to-evidence matrices.
 - Inventory the target protocol objects and mark current schemas/types as pre-freeze scaffolding.
 - State evidence and runtime-integrity claims without implying platform attestation.
+- State cross-domain microarchitectural leakage and elevated approval-automation capabilities as
+  explicit posture limitations until exact platform evidence supports anything stronger.
 
 Exit evidence:
 
@@ -109,7 +111,14 @@ Exit evidence:
 ## Phase 3: registered-plan and fake-backend lifecycle
 
 - Implement daemon plan generation and Supervisor plan registration.
+- Before activating the candidate agent endpoint, define and enforce the daemon's aggregate
+  connection, concurrency, in-flight-byte, queue, deadline, cancellation, downstream-stall, and
+  overload envelope; retain maximum-size concurrency and slow/partial-client evidence for
+  `DAEMON-001`.
 - Implement direct Broker fetch/render/user-presence approval.
+- Prove that UI activation or synthetic input alone cannot sign a grant without the configured
+  LocalAuthentication/Keychain user-presence operation. Exercise Accessibility, overlay/focus, and
+  stale-session cases under their explicit elevated-adversary limitations for `UI-001`.
 - Implement a locally seeded, signed development `TrustSnapshot`; production TUF service remains
   later work.
 - Implement a durable atomic grant ledger and one-attempt semantics.
@@ -122,6 +131,10 @@ Exit evidence:
 - The daemon cannot execute unregistered or replacement bytes.
 - Plan A approval cannot execute plan B, and one grant cannot create two attempts.
 - The daemon cannot forge ordinary terminal success.
+- Authenticated-client overload stays within the configured daemon envelope, sheds work without
+  authority change, and does not create unbounded queues or diagnostics.
+- Approval evidence distinguishes the key-gated user-presence operation from UI clicks, focus, and
+  unverifiable claims about comprehension or elevated automation resistance.
 - Every post-create path reaches explicit destroy, unresolved, or quarantine state.
 
 ## Phase 4: inline JSON and content separation
@@ -151,6 +164,10 @@ Exit evidence:
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.
+- Bind an exact guest-kernel image, configuration, boot/module/debug policy, provenance, and
+  launcher restriction set into the runtime profile. Minimize unused facilities where supported
+  and retain deliberate restoration tests, while continuing to require containment of a fully
+  hostile guest kernel under `KERNEL-001`.
 - Build one exact package-free runtime bundle.
 - Execute one JSON-in/JSON-out job through the libkrun/HVF candidate in explicit development
   posture, including its durable-record-before-start lifecycle, inherited read-only root custody,
@@ -170,6 +187,8 @@ Exit evidence:
 - The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
   environment-file, and package-install path through a construction-level closure argument, source
   review, deliberate capability-restoration mutations, and the accepted adversarial corpus.
+- The exact guest-kernel and launcher profile matches its reviewed manifest, exposes no
+  undocumented kernel authority, and records remaining facilities and completion-trust limitations.
 - The exact configuration passes the minimum development attack suite.
 - Unsupported controls refuse execution rather than being silently approximated.
 - The backend remains clearly labeled development until its exact profile validation record passes.
@@ -207,8 +226,13 @@ Exit evidence:
 - Retain Apple Containerization only as a separately labeled development backend and regression
   target unless a future supported durable lifecycle API reopens its gate.
 - Build runtime SBOM, two-builder provenance, corresponding-source/license publication, review
-  attestation, registry, and backend validation records; exercise disable, revocation, update,
-  repair, and explicit rollback.
+  attestation, registry, and backend validation records; require independent non-author approval
+  for runtime, guest-kernel, VMM, and security-critical native patches; exercise deliberate
+  capability-restoration changes, disable, revocation, update, repair, and explicit rollback.
+- Define the exact platform and co-residency policy for each validated profile: hardware model,
+  OS/hypervisor build, applicable vendor mitigation state, allowed concurrent guests/jobs, and
+  explicit speculative/shared-cache residual risk. Do not claim microarchitectural
+  noninterference from platform identity or configuration alone; track this as `PLATFORM-001`.
 - Test runtime-integrity failure, cancellation, restart, orphan, parser failure, teardown ambiguity,
   repeated concurrency, cross-job state, and long-run cleanup paths.
 - Measure startup, thermal/CPU/RSS, storage, I/O, descriptor/process leakage, and cleanup behavior.
@@ -217,6 +241,9 @@ Exit evidence:
 
 - Only exact pinned configurations supported by retained evidence may use `validated-local` or a
   stronger isolation posture.
+- Validation records and receipts bind the applicable host/co-residency policy and preserve the
+  microarchitectural side-channel non-guarantee unless a separately reviewed exact campaign
+  supports a narrower claim.
 - Published claims include limitations and never collapse posture dimensions into one unsupported
   label.
 

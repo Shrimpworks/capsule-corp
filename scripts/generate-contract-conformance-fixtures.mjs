@@ -17,10 +17,16 @@ const ordinaryRequirements = [
   { decision: "accept", variant: "ordinary" },
   { decision: "reject", variant: "malformed" },
 ];
-const mediaImplementations = implementationStatus("pending", "pending", "not-applicable");
+const rawImplementations = implementationStatus("pending", "pending", "not-applicable");
 const jsonRawImplementations = implementationStatus("pending", "verified", "not-applicable");
-const scalarImplementations = implementationStatus("pending", "pending", "pending");
-const cborImplementations = implementationStatus("pending", "pending", "pending");
+const internalMediaTypeImplementations = implementationStatus(
+  "verified",
+  "pending",
+  "not-applicable",
+);
+const scalarImplementations = implementationStatus("verified", "pending", "pending");
+const cborImplementations = implementationStatus("verified", "pending", "pending");
+const pendingCborImplementations = implementationStatus("pending", "pending", "pending");
 const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
 const proposalSchemaImplementations = implementationStatus("pending", "verified", "not-applicable");
 const rules = [];
@@ -62,6 +68,8 @@ function addMediaTypeRulesAndCases() {
     ["plan-registration", "PlanRegistration", planRegistrationMediaType],
   ];
   for (const [slug, object, mediaType] of profiles) {
+    const implementations =
+      object === "JobProposal" ? rawImplementations : internalMediaTypeImplementations;
     const ruleId = `${slug}.media-type`;
     addRule(
       ruleId,
@@ -80,7 +88,7 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-exact.txt`,
       bytes: mediaType,
       owner: "media-type-parser",
-      implementations: mediaImplementations,
+      implementations,
     });
     const uppercaseType = `${mediaType.slice(0, mediaType.indexOf(";")).toUpperCase()};v=0`;
     addCase({
@@ -94,9 +102,17 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-uppercase.txt`,
       bytes: uppercaseType,
       owner: "media-type-parser",
-      implementations: mediaImplementations,
+      implementations,
     });
-    addMediaTypeReject(slug, object, ruleId, mediaType.split(";")[0], "missing-version", malformed);
+    addMediaTypeReject(
+      slug,
+      object,
+      ruleId,
+      mediaType.split(";")[0],
+      "missing-version",
+      malformed,
+      implementations,
+    );
     addMediaTypeReject(
       slug,
       object,
@@ -104,6 +120,7 @@ function addMediaTypeRulesAndCases() {
       `${mediaType};charset=utf-8`,
       "additional-parameter",
       malformed,
+      implementations,
     );
     addMediaTypeReject(
       slug,
@@ -112,11 +129,20 @@ function addMediaTypeRulesAndCases() {
       mediaType.replace("v=0", "v=1"),
       "unknown-version",
       "UNSUPPORTED",
+      implementations,
     );
   }
 }
 
-function addMediaTypeReject(slug, object, ruleId, mediaType, suffix, classification) {
+function addMediaTypeReject(
+  slug,
+  object,
+  ruleId,
+  mediaType,
+  suffix,
+  classification,
+  implementations,
+) {
   addCase({
     id: `${ruleId}.${suffix}`,
     description: `Reject ${suffix.replaceAll("-", " ")} for ${object}.`,
@@ -130,7 +156,7 @@ function addMediaTypeReject(slug, object, ruleId, mediaType, suffix, classificat
     decision: "reject",
     classification,
     owner: "media-type-parser",
-    implementations: mediaImplementations,
+    implementations,
   });
 }
 
@@ -439,6 +465,9 @@ function addCborBoundary(profile, dimension, exactBytes, overBytes, overlap) {
     variant: "exact-maximum",
     path: `shared/cbor-${profile.slug}-${dimension}-exact.bin`,
     bytes: exactBytes,
+    ...(profile.object === "PlanRegistration" && dimension === "depth"
+      ? { implementations: pendingCborImplementations }
+      : {}),
   });
   addCborCase(profile, {
     id: `${ruleId}.cap-plus-one`,

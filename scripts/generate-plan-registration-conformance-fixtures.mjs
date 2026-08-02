@@ -23,7 +23,13 @@ export function addPlanRegistrationRulesAndCases({
   retainFixture,
   scalarRoleContext,
 }) {
-  const implementations = {
+  const passiveImplementations = {
+    "fixture-integrity": "verified",
+    go: "verified",
+    typescript: "pending",
+    swift: "pending",
+  };
+  const stateImplementations = {
     "fixture-integrity": "verified",
     go: "pending",
     typescript: "pending",
@@ -45,7 +51,7 @@ export function addPlanRegistrationRulesAndCases({
       wireFormat: "cbor",
       mediaType: "application/capsule.execution-plan+cbor;v=0",
       owner: "role-binding-validator",
-      implementations,
+      implementations: passiveImplementations,
       ...options,
     });
 
@@ -93,7 +99,7 @@ export function addPlanRegistrationRulesAndCases({
       decision,
       classification,
       owner,
-      implementations,
+      implementations: stateImplementations,
       authorityStateChanged,
       stateDelta: { kind: "exact", after: afterFixture },
     });
@@ -166,7 +172,7 @@ export function addPlanRegistrationRulesAndCases({
     decision: "reject",
     classification: "DOMAIN",
     owner: "role-binding-validator",
-    implementations,
+    implementations: passiveImplementations,
   });
 
   for (const entry of domainCases({ cborEncode, planDigest })) {
@@ -182,7 +188,7 @@ export function addPlanRegistrationRulesAndCases({
       decision: "reject",
       classification: "DOMAIN",
       owner: "role-binding-validator",
-      implementations,
+      implementations: passiveImplementations,
     });
   }
 
@@ -410,7 +416,7 @@ export function addPlanRegistrationRulesAndCases({
     bytes: registrationBytes,
     context: { kind: "fixture", fixture: separationContext },
     owner: "supervisor-registration-predecoder",
-    implementations,
+    implementations: passiveImplementations,
   });
   addStateCase({
     id: "plan-registration.storage.minimum-stored-record",

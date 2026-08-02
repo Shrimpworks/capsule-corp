@@ -30,6 +30,13 @@ tmp/
 vendor/
 go.work
 
+# Python
+__pycache__/
+*.py[cod]
+
+# Swift
+.swiftpm/
+
 # Bun
 bun.lock
 bun.lockb

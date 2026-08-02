@@ -66,6 +66,10 @@ func (e *contractError) Error() string {
 
 func (e *contractError) Classification() Classification { return e.classification }
 
+func (e *contractError) ApprovalAttemptClassification() Classification {
+	return e.classification
+}
+
 func classified(classification Classification, code string) error {
 	return &contractError{classification: classification, code: code}
 }
@@ -73,10 +77,16 @@ func classified(classification Classification, code string) error {
 // ErrorClassification extracts a fixed content-free classification.
 func ErrorClassification(err error) (Classification, bool) {
 	var candidateError *contractError
-	if !errors.As(err, &candidateError) {
-		return "", false
+	if errors.As(err, &candidateError) {
+		return candidateError.classification, true
 	}
-	return candidateError.classification, true
+	var external interface {
+		ApprovalAttemptClassification() Classification
+	}
+	if errors.As(err, &external) {
+		return external.ApprovalAttemptClassification(), true
+	}
+	return "", false
 }
 
 type IdentifierDomain string
@@ -225,3 +235,82 @@ const (
 type AttemptState string
 
 const AttemptCreated AttemptState = "created"
+
+// ApprovalPayloadDigest is the semantic replay identity. Envelope and
+// signature bytes are deliberately excluded from this domain.
+type ApprovalPayloadDigest [32]byte
+
+// ApprovalEnvelopeDigest is retained only as exact-envelope integrity
+// evidence; it never selects a ledger record.
+type ApprovalEnvelopeDigest [32]byte
+
+// ApprovalRecord is the defensive stored projection returned by the unwired
+// fixed store. Its byte slices never alias caller, verifier, or store memory.
+type ApprovalRecord struct {
+	ApprovalID            ApprovalID
+	AttemptNonce          AttemptNonce
+	RegistrationID        v0candidate.RegistrationID
+	RegistrationSequence  v0candidate.PositiveUInt53
+	PlanDigest            v0candidate.ExecutionPlanDigest
+	InstallationID        v0candidate.InstallationID
+	EpochSequence         v0candidate.UInt53
+	EpochDigest           v0candidate.TrustEpochDigest
+	SupervisorID          v0candidate.SupervisorID
+	Purpose               string
+	Audience              string
+	IssuedAt              v0candidate.UInt53
+	ExpiresAt             v0candidate.UInt53
+	PayloadDigest         ApprovalPayloadDigest
+	EnvelopeDigest        ApprovalEnvelopeDigest
+	ExactEnvelopeBytes    []byte
+	ExactPayloadBytes     []byte
+	ExactProtectedBytes   []byte
+	ProtectedKeyID        []byte
+	AuthorizationIdentity ApprovalKeyAuthorizationIdentity
+	State                 ApprovalState
+	ConsumedAttemptID     AttemptID
+	StorageFormatVersion  uint64
+}
+
+func CloneApprovalRecord(record ApprovalRecord) ApprovalRecord {
+	record.ExactEnvelopeBytes = bytes.Clone(record.ExactEnvelopeBytes)
+	record.ExactPayloadBytes = bytes.Clone(record.ExactPayloadBytes)
+	record.ExactProtectedBytes = bytes.Clone(record.ExactProtectedBytes)
+	record.ProtectedKeyID = bytes.Clone(record.ProtectedKeyID)
+	return record
+}
+
+// ExecutionAttempt is the immutable created record committed in the same
+// transaction that consumes its approval. Slice B creates no backend handle
+// and no cleanup obligation.
+type ExecutionAttempt struct {
+	AttemptID             AttemptID
+	ApprovalID            ApprovalID
+	AttemptNonce          AttemptNonce
+	RegistrationID        v0candidate.RegistrationID
+	RegistrationSequence  v0candidate.PositiveUInt53
+	PlanDigest            v0candidate.ExecutionPlanDigest
+	InstallationID        v0candidate.InstallationID
+	EpochSequence         v0candidate.UInt53
+	EpochDigest           v0candidate.TrustEpochDigest
+	SupervisorID          v0candidate.SupervisorID
+	Purpose               string
+	Audience              string
+	ApprovalPayloadDigest ApprovalPayloadDigest
+	AuthorizationIdentity ApprovalKeyAuthorizationIdentity
+	CreatedAt             v0candidate.UInt53
+	State                 AttemptState
+	StorageFormatVersion  uint64
+}
+
+// ApprovalSubmission and AttemptCreation include the current fixed state so
+// exact retries can report terminal records without mutating them.
+type ApprovalSubmission struct {
+	Reference ApprovalReference
+	State     ApprovalState
+}
+
+type AttemptCreation struct {
+	Reference AttemptReference
+	State     AttemptState
+}

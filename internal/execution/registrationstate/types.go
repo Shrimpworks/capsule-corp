@@ -1,5 +1,6 @@
 // Package registrationstate implements the unwired Phase 2 candidate
-// registration-state boundary. It is backend independent and creates no guest.
+// registration, approval-ledger, and attempt-creation boundary. It is backend
+// independent and creates no guest.
 package registrationstate
 
 import (
@@ -11,6 +12,7 @@ import (
 	"fmt"
 	"time"
 
+	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
@@ -21,6 +23,8 @@ const (
 	StorageFormatVersion        = uint64(0)
 	RetentionStateRetained      = "retained"
 	RegisterPlanPurpose         = "register-plan"
+	SubmitApprovalPurpose       = "submit-approval"
+	RequestAttemptPurpose       = "request-attempt"
 )
 
 type Classification string
@@ -106,6 +110,7 @@ type InitialState struct {
 	Quarantined              bool
 	TimeHighWaterUnixSeconds v0candidate.UInt53
 	LastRegistrationSequence v0candidate.UInt53
+	AttemptsDisabled         bool
 }
 
 // PlanRegistration is only the deterministic-CBOR wire response. It never
@@ -161,6 +166,10 @@ type installationState struct {
 	InitialState
 	RegistrationSetDigest [32]byte
 	Registrations         []registrationEntry
+	ApprovalSetDigest     [32]byte
+	Approvals             []approvalattempt.ApprovalRecord
+	AttemptSetDigest      [32]byte
+	Attempts              []approvalattempt.ExecutionAttempt
 }
 
 // stateSnapshot is a defensive projection used by conformance and recovery
@@ -225,6 +234,9 @@ type StateStore interface {
 	snapshot(context.Context) (installationState, error)
 	persistTimeHighWater(context.Context, v0candidate.UInt53) error
 	update(context.Context, func(*installationState) error) error
+	commitApproval(context.Context, func(*installationState) error) error
+	commitAttempt(context.Context, func(*installationState) error) error
+	recoveryFenced() bool
 }
 
 // RegistrationResolver is the deliberately narrow handoff for the later fake
@@ -240,6 +252,10 @@ var _ RegistrationResolver = (*Component)(nil)
 func emptyRegistrationSetDigest() [32]byte {
 	return sha256.Sum256([]byte("[]\n"))
 }
+
+func emptyApprovalSetDigest() [32]byte { return sha256.Sum256([]byte("[]\n")) }
+
+func emptyAttemptSetDigest() [32]byte { return sha256.Sum256([]byte("[]\n")) }
 
 func clonePlanBindings(
 	bindings v0candidate.ExecutionPlanRoleBindings,

@@ -439,6 +439,291 @@ export function addApprovalAttemptRulesAndCases({
     decision: "reject",
     classification: "MALFORMED",
   });
+
+  addDurableStoreCases({
+    addCase,
+    addRule,
+    emptyState,
+    implementations,
+    jsonDocument,
+    ordinary,
+    retainFixture,
+  });
+}
+
+function addDurableStoreCases({
+  addCase,
+  addRule,
+  emptyState,
+  implementations,
+  jsonDocument,
+  ordinary,
+  retainFixture,
+}) {
+  const state = (name, overrides = {}) =>
+    retainFixture(
+      `contexts/approval-attempt/store-${name}.json`,
+      jsonDocument(approvalAttemptState(overrides)),
+    );
+  const usable = state("usable", {
+    approvalPopulation: population("usableCount", 1, 1, "usable"),
+    materializedApprovals: [{ approvalIdHex: "a1".padEnd(32, "0"), state: "usable" }],
+  });
+  const consumed = state("consumed-created", {
+    approvalPopulation: population("usableCount", 0, 1, "consumed"),
+    attemptPopulation: population("nonterminalCount", 1, 1, "created"),
+    materializedApprovals: [{ approvalIdHex: "a1".padEnd(32, "0"), state: "consumed" }],
+    materializedAttempts: [{ attemptIdHex: "b2".padEnd(32, "0"), state: "created" }],
+  });
+  const recoveryFenced = state("recovery-fenced", { recoveryFence: true });
+  const usableRecoveryFenced = state("usable-recovery-fenced", {
+    recoveryFence: true,
+    approvalPopulation: population("usableCount", 1, 1, "usable"),
+    materializedApprovals: [{ approvalIdHex: "a1".padEnd(32, "0"), state: "usable" }],
+  });
+  const approvalCapacity = state("approval-capacity", {
+    approvalPopulation: population("usableCount", 256, 256, "approval-capacity"),
+  });
+  const attemptCapacity = state("attempt-capacity", {
+    approvalPopulation: population("usableCount", 1, 257, "attempt-approval-capacity"),
+    attemptPopulation: population("nonterminalCount", 256, 256, "attempt-capacity"),
+  });
+
+  const addStoreCase = ({
+    id,
+    description,
+    ruleIds,
+    method,
+    scenario,
+    before,
+    after,
+    decision = "accept",
+    classification = null,
+    variant = "ordinary",
+    authorityStateChanged = false,
+    timeHighWaterChanged = false,
+    recovery = false,
+  }) => {
+    const operation = retainFixture(
+      `contexts/approval-attempt/${id.replaceAll(".", "-")}.operation.json`,
+      jsonDocument({
+        contextType: "capsule.conformance.approval-attempt-operation",
+        contextVersion: 0,
+        mode: "store-transition",
+        method,
+        scenario,
+        recovery,
+      }),
+    );
+    addCase({
+      id,
+      description,
+      ruleIds,
+      object: method === "submit-approval" ? "approval-state" : "attempt-state",
+      wireFormat: "raw-bytes",
+      mediaType: null,
+      variant,
+      path: `approval-grant/${ordinary.name}.cose`,
+      bytes: ordinary.envelopeBytes,
+      context: {
+        kind: "approval-attempt-state",
+        operation,
+        before,
+        payload: ordinary.payloadFixture,
+        protectedHeader: ordinary.protectedFixture,
+      },
+      decision,
+      classification,
+      owner: "approval-attempt-fixed-store",
+      implementations,
+      authorityStateChanged,
+      timeHighWaterChanged,
+      trustStateTightened: false,
+      fakeBackendEffectPermitted: false,
+      stateDelta: { kind: "exact", after },
+    });
+  };
+
+  addRule(
+    "approval-store.submission-idempotency",
+    "ADR-0024#approval-submission-durable-states-and-replay",
+    "One canonical payload creates one durable usable record; exact replay returns it without mutation.",
+    [
+      { decision: "accept", variant: "ordinary" },
+      { decision: "reject", variant: "malformed" },
+    ],
+  );
+  addStoreCase({
+    id: "approval-store.submission.first-usable",
+    description: "Commit one verified candidate as one usable approval.",
+    ruleIds: ["approval-store.submission-idempotency"],
+    method: "submit-approval",
+    scenario: "first-usable",
+    before: emptyState,
+    after: usable,
+    authorityStateChanged: true,
+  });
+  addStoreCase({
+    id: "approval-store.submission.exact-replay",
+    description: "Return the same usable reference for an exact canonical-payload replay.",
+    ruleIds: ["approval-store.submission-idempotency"],
+    method: "submit-approval",
+    scenario: "exact-replay",
+    before: usable,
+    after: usable,
+  });
+  addStoreCase({
+    id: "approval-store.submission.nonce-replay-reject",
+    description: "Reject a different payload that reuses a retained nonce.",
+    ruleIds: ["approval-store.submission-idempotency"],
+    method: "submit-approval",
+    scenario: "nonce-replay",
+    before: usable,
+    after: usable,
+    decision: "reject",
+    classification: "REPLAY",
+    variant: "malformed",
+  });
+
+  addRule(
+    "attempt-store.atomic-consume-create",
+    "ADR-0024#atomic-consume-and-attempt-creation",
+    "One transaction consumes one usable approval and creates exactly one immutable attempt.",
+    [
+      { decision: "accept", variant: "ordinary" },
+      { decision: "reject", variant: "malformed" },
+    ],
+  );
+  addStoreCase({
+    id: "attempt-store.consume-create.atomic",
+    description: "Atomically consume one approval and insert its one created attempt.",
+    ruleIds: ["attempt-store.atomic-consume-create"],
+    method: "request-attempt",
+    scenario: "atomic-commit",
+    before: usable,
+    after: consumed,
+    authorityStateChanged: true,
+  });
+  addStoreCase({
+    id: "attempt-store.consume-create.exact-replay",
+    description: "Return the same attempt for an exact request replay without redriving effects.",
+    ruleIds: ["attempt-store.atomic-consume-create"],
+    method: "request-attempt",
+    scenario: "exact-replay",
+    before: consumed,
+    after: consumed,
+  });
+  addStoreCase({
+    id: "attempt-store.consume-create.confirmed-abort",
+    description: "A confirmed transaction abort leaves the approval usable and creates no attempt.",
+    ruleIds: ["attempt-store.atomic-consume-create"],
+    method: "request-attempt",
+    scenario: "confirmed-abort",
+    before: usable,
+    after: usable,
+    decision: "reject",
+    classification: "LOCAL_FAILURE",
+    variant: "malformed",
+  });
+
+  addRule(
+    "approval-attempt-store.recovery-fence",
+    "ADR-0024#request-replay-concurrency-and-process-death",
+    "An indeterminate commit fences mutation until reopen validates one coherent pre-state or post-state.",
+    [
+      { decision: "accept", variant: "ordinary" },
+      { decision: "reject", variant: "malformed" },
+    ],
+  );
+  addStoreCase({
+    id: "approval-store.recovery.indeterminate-before-record",
+    description: "Fence an indeterminate approval commit without granting authority.",
+    ruleIds: ["approval-attempt-store.recovery-fence"],
+    method: "submit-approval",
+    scenario: "indeterminate-pre-state",
+    before: emptyState,
+    after: recoveryFenced,
+    decision: "reject",
+    classification: "RECOVERY_REQUIRED",
+    variant: "malformed",
+    recovery: true,
+  });
+  addStoreCase({
+    id: "approval-store.recovery.indeterminate-after-record",
+    description: "Fence an indeterminate approval commit whose complete record reached the store.",
+    ruleIds: ["approval-attempt-store.recovery-fence"],
+    method: "submit-approval",
+    scenario: "indeterminate-post-state",
+    before: emptyState,
+    after: usableRecoveryFenced,
+    decision: "reject",
+    classification: "RECOVERY_REQUIRED",
+    variant: "malformed",
+    recovery: true,
+  });
+  addStoreCase({
+    id: "approval-store.recovery.reopen-usable",
+    description:
+      "Reopen validates the committed usable record and clears only the transient fence.",
+    ruleIds: ["approval-attempt-store.recovery-fence"],
+    method: "submit-approval",
+    scenario: "reopen-post-state",
+    before: usableRecoveryFenced,
+    after: usable,
+    recovery: true,
+  });
+
+  addRule(
+    "approval-attempt-store.capacity",
+    "ADR-0024#bounded-first-store-and-retention",
+    "Exact approval and attempt ceilings reject cap-plus-one without eviction or consumption.",
+    [
+      { decision: "accept", variant: "exact-maximum" },
+      { decision: "reject", variant: "cap-plus-one" },
+    ],
+  );
+  addStoreCase({
+    id: "approval-store.capacity.usable-exact",
+    description: "Retain exactly 256 usable approvals without eviction.",
+    ruleIds: ["approval-attempt-store.capacity"],
+    method: "submit-approval",
+    scenario: "usable-exact-256",
+    before: approvalCapacity,
+    after: approvalCapacity,
+    variant: "exact-maximum",
+  });
+  addStoreCase({
+    id: "approval-store.capacity.usable-cap-plus-one",
+    description: "Reject the 257th usable approval without eviction.",
+    ruleIds: ["approval-attempt-store.capacity"],
+    method: "submit-approval",
+    scenario: "usable-cap-plus-one",
+    before: approvalCapacity,
+    after: approvalCapacity,
+    decision: "reject",
+    classification: "CAPACITY",
+    variant: "cap-plus-one",
+  });
+  addStoreCase({
+    id: "attempt-store.capacity.nonterminal-cap-plus-one",
+    description: "Reject the 257th nonterminal attempt and leave its approval usable.",
+    ruleIds: ["approval-attempt-store.capacity"],
+    method: "request-attempt",
+    scenario: "nonterminal-cap-plus-one",
+    before: attemptCapacity,
+    after: attemptCapacity,
+    decision: "reject",
+    classification: "CAPACITY",
+    variant: "cap-plus-one",
+  });
+}
+
+function population(liveField, liveCount, retainedCount, label) {
+  return {
+    [liveField]: liveCount,
+    retainedCount,
+    setDigest: sha256Hex(Buffer.from(label)),
+  };
 }
 
 function addVerifierCase(addStateCase, profile, options) {
@@ -550,7 +835,7 @@ function encodeByteString(value) {
   throw new Error("fixture byte string is too large");
 }
 
-function approvalAttemptState() {
+function approvalAttemptState(overrides = {}) {
   return {
     contextType: "capsule.conformance.approval-attempt-state",
     contextVersion: 0,
@@ -575,6 +860,7 @@ function approvalAttemptState() {
     },
     materializedApprovals: [],
     materializedAttempts: [],
+    ...overrides,
   };
 }
 

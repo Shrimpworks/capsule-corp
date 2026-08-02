@@ -23,14 +23,16 @@ Phase 2A now includes verified passive candidates for the first narrow `JobPropo
 `ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
 decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
 
-Phase 2B now retains a closed 78-rule, 250-case, 350-fixture conformance corpus for raw decoding,
+Phase 2B now retains a closed 82-rule, 262-case, 368-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
-and the passive ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
+and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
 TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
-verifies 165 Go targets: 81 internal-CBOR/wrapper cases, all 40 registration-state cases, and 44
-passive approval/attempt cases. The latter add distinct identifiers/references, the fixed internal
-classification vocabulary, the exact candidate approval known answer, and a bounded fixture-only
-verifier; they add no ledger, attempt, consumer, lifecycle integration, backend, or guest. A
+verifies 177 Go targets: 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
+passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
+adds distinct identifiers/references, the fixed internal classification vocabulary, the exact
+candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
+colocated fixed registration/approval/attempt store. It has no consumer, lifecycle integration,
+backend, or guest. A
 focused unwired TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
 bindings. The next

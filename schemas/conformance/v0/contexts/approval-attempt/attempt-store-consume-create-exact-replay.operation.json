@@ -1,0 +1,8 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "store-transition",
+  "method": "request-attempt",
+  "scenario": "exact-replay",
+  "recovery": false
+}

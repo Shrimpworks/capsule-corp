@@ -13,33 +13,50 @@ import (
 	"path/filepath"
 	"sync"
 
+	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// StoreFault identifies the two durable boundaries retained by Task 2.4.
+// StoreFault identifies the fixed store's confirmed-abort and indeterminate
+// durability boundaries.
 type StoreFault string
 
 const (
-	FaultTimeHighWaterWrite      StoreFault = "time-high-water-write"
-	FaultRegistrationCommitAbort StoreFault = "registration-commit-confirmed-abort"
+	FaultTimeHighWaterWrite                  StoreFault = "time-high-water-write"
+	FaultTimeHighWaterIndeterminatePreState  StoreFault = "time-high-water-indeterminate-pre-state"
+	FaultTimeHighWaterCommitIndeterminate    StoreFault = "time-high-water-commit-indeterminate"
+	FaultRegistrationCommitAbort             StoreFault = "registration-commit-confirmed-abort"
+	FaultApprovalCommitAbort                 StoreFault = "approval-commit-confirmed-abort"
+	FaultApprovalCommitIndeterminatePreState StoreFault = "approval-commit-indeterminate-pre-state"
+	FaultApprovalCommitIndeterminate         StoreFault = "approval-commit-indeterminate"
+	FaultAttemptCommitAbort                  StoreFault = "attempt-commit-confirmed-abort"
+	FaultAttemptCommitIndeterminatePreState  StoreFault = "attempt-commit-indeterminate-pre-state"
+	FaultAttemptCommitIndeterminate          StoreFault = "attempt-commit-indeterminate"
 )
 
 // ErrCommitOutcomeIndeterminate means the atomic rename completed but the
 // directory durability barrier failed. It is intentionally not classified as
 // a confirmed-abort LOCAL_FAILURE; callers must recover the store before
 // deciding whether authority committed.
-var ErrCommitOutcomeIndeterminate = errors.New("fixed registration commit outcome is indeterminate")
+var ErrCommitOutcomeIndeterminate = errors.New("fixed supervisor-state commit outcome is indeterminate")
 
-// FixedFileStore is the deliberately bounded, no-eviction first store. It
+// ErrStoreRepairRequired reports that startup validation refused a corrupt or
+// cross-linked snapshot without rewriting or deleting the retained evidence.
+var ErrStoreRepairRequired = errors.New("fixed supervisor state requires repair")
+
+var errNoStoreMutation = errors.New("fixed store transaction has no mutation")
+
+// FixedFileStore is the deliberately bounded, no-eviction first Supervisor store. It
 // writes a complete versioned snapshot with fsync/rename/fsync ordering and is
 // fault-injectable for conformance and fake-backend development. It is not a
 // reviewed production database: it has no archive, compaction, encryption, or
 // multi-process coordination, and no consumer may activate it.
 type FixedFileStore struct {
-	mu     sync.Mutex
-	path   string
-	state  installationState
-	faults map[StoreFault]error
+	mu               sync.Mutex
+	path             string
+	state            installationState
+	faults           map[StoreFault]error
+	recoveryRequired bool
 }
 
 type diskEnvelope struct {
@@ -60,7 +77,7 @@ func NewFixedFileStore(path string, initial InitialState) (*FixedFileStore, erro
 		}
 		state, loadErr := loadState(path)
 		if loadErr != nil {
-			return nil, loadErr
+			return nil, fmt.Errorf("%w: %v", ErrStoreRepairRequired, loadErr)
 		}
 		store.state = state
 		return store, nil
@@ -72,6 +89,10 @@ func NewFixedFileStore(path string, initial InitialState) (*FixedFileStore, erro
 		InitialState:          initial,
 		RegistrationSetDigest: emptyRegistrationSetDigest(),
 		Registrations:         make([]registrationEntry, 0),
+		ApprovalSetDigest:     emptyApprovalSetDigest(),
+		Approvals:             make([]approvalattempt.ApprovalRecord, 0),
+		AttemptSetDigest:      emptyAttemptSetDigest(),
+		Attempts:              make([]approvalattempt.ExecutionAttempt, 0),
 	}
 	if state.TrustPhase == "" {
 		state.TrustPhase = TrustStable
@@ -108,6 +129,12 @@ func (store *FixedFileStore) snapshot(ctx context.Context) (installationState, e
 	return cloneState(store.state), nil
 }
 
+func (store *FixedFileStore) recoveryFenced() bool {
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	return store.recoveryRequired
+}
+
 func (store *FixedFileStore) persistTimeHighWater(
 	ctx context.Context,
 	observation v0candidate.UInt53,
@@ -117,6 +144,9 @@ func (store *FixedFileStore) persistTimeHighWater(
 	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
+	if store.recoveryRequired {
+		return ErrCommitOutcomeIndeterminate
+	}
 	if err := store.takeFault(FaultTimeHighWaterWrite); err != nil {
 		return err
 	}
@@ -127,9 +157,15 @@ func (store *FixedFileStore) persistTimeHighWater(
 	if err := validateState(candidate); err != nil {
 		return err
 	}
-	if err := persistState(store.path, candidate); err != nil {
+	if err := store.takeFault(FaultTimeHighWaterIndeterminatePreState); err != nil {
+		store.recoveryRequired = true
+		return fmt.Errorf("%w: injected before time commit", ErrCommitOutcomeIndeterminate)
+	}
+	indeterminate := store.takeFault(FaultTimeHighWaterCommitIndeterminate)
+	if err := persistStateWithBoundary(store.path, candidate, indeterminate); err != nil {
 		if errors.Is(err, ErrCommitOutcomeIndeterminate) {
 			store.state = candidate
+			store.recoveryRequired = true
 		}
 		return err
 	}
@@ -147,21 +183,68 @@ func (store *FixedFileStore) update(
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	return store.commit(ctx, FaultRegistrationCommitAbort, "", "", update)
+}
+
+func (store *FixedFileStore) commitApproval(
+	ctx context.Context,
+	update func(*installationState) error,
+) error {
+	return store.commit(ctx, FaultApprovalCommitAbort, FaultApprovalCommitIndeterminatePreState, FaultApprovalCommitIndeterminate, update)
+}
+
+func (store *FixedFileStore) commitAttempt(
+	ctx context.Context,
+	update func(*installationState) error,
+) error {
+	return store.commit(ctx, FaultAttemptCommitAbort, FaultAttemptCommitIndeterminatePreState, FaultAttemptCommitIndeterminate, update)
+}
+
+func (store *FixedFileStore) commit(
+	ctx context.Context,
+	abortPoint StoreFault,
+	preIndeterminatePoint StoreFault,
+	indeterminatePoint StoreFault,
+	update func(*installationState) error,
+) error {
+	if update == nil {
+		return errors.New("registration state update is required")
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
+	if store.recoveryRequired {
+		return ErrCommitOutcomeIndeterminate
+	}
 	candidate := cloneState(store.state)
 	if err := update(&candidate); err != nil {
+		if errors.Is(err, errNoStoreMutation) {
+			return nil
+		}
 		return err
 	}
 	if err := validateState(candidate); err != nil {
 		return err
 	}
-	if err := store.takeFault(FaultRegistrationCommitAbort); err != nil {
+	if err := store.takeFault(abortPoint); err != nil {
 		return err
 	}
-	if err := persistState(store.path, candidate); err != nil {
+	if preIndeterminatePoint != "" {
+		if err := store.takeFault(preIndeterminatePoint); err != nil {
+			store.recoveryRequired = true
+			return fmt.Errorf("%w: injected before state commit", ErrCommitOutcomeIndeterminate)
+		}
+	}
+	var indeterminate error
+	if indeterminatePoint != "" {
+		indeterminate = store.takeFault(indeterminatePoint)
+	}
+	if err := persistStateWithBoundary(store.path, candidate, indeterminate); err != nil {
 		if errors.Is(err, ErrCommitOutcomeIndeterminate) {
 			store.state = candidate
+			store.recoveryRequired = true
 		}
 		return err
 	}
@@ -201,8 +284,12 @@ func loadState(path string) (installationState, error) {
 }
 
 func persistState(path string, state installationState) error {
+	return persistStateWithBoundary(path, state, nil)
+}
+
+func persistStateWithBoundary(path string, state installationState, afterRename error) error {
 	parent := filepath.Dir(path)
-	temporary, err := os.CreateTemp(parent, ".capsule-registration-*.tmp")
+	temporary, err := os.CreateTemp(parent, ".capsule-supervisor-state-*.tmp")
 	if err != nil {
 		return errors.New("create fixed registration transaction")
 	}
@@ -232,6 +319,9 @@ func persistState(path string, state installationState) error {
 		return errors.New("commit fixed registration transaction")
 	}
 	committed = true
+	if afterRename != nil {
+		return fmt.Errorf("%w: injected after rename", ErrCommitOutcomeIndeterminate)
+	}
 	directory, err := os.Open(parent)
 	if err != nil {
 		return fmt.Errorf("%w: open store directory", ErrCommitOutcomeIndeterminate)
@@ -292,7 +382,7 @@ func validateState(state installationState) error {
 			return err
 		}
 	}
-	return nil
+	return validateApprovalAttemptState(state)
 }
 
 func validateStoredRecord(entry registrationEntry) error {
@@ -352,6 +442,12 @@ func cloneState(state installationState) installationState {
 		clone.Registrations[index].PlanBindings = clonePlanBindings(entry.PlanBindings)
 		clone.Registrations[index].Record = cloneStoredRegistration(entry.Record)
 	}
+	clone.Approvals = make([]approvalattempt.ApprovalRecord, len(state.Approvals))
+	for index, record := range state.Approvals {
+		clone.Approvals[index] = approvalattempt.CloneApprovalRecord(record)
+	}
+	clone.Attempts = make([]approvalattempt.ExecutionAttempt, len(state.Attempts))
+	copy(clone.Attempts, state.Attempts)
 	return clone
 }
 

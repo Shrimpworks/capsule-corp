@@ -1,0 +1,8 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "store-transition",
+  "method": "submit-approval",
+  "scenario": "usable-exact-256",
+  "recovery": false
+}

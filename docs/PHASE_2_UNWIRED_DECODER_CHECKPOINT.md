@@ -16,11 +16,15 @@ conformance and cannot be activated before archival/compaction review.
 | Task 4A strict internal CBOR wrappers | `019fc327-c094-7592-9cb0-b0a270af30ad` | `b55abbd` | 81 Go manifest cases covering media type, shared scalars, both predecoders/wire objects, and role/cross-object binding |
 | PlanRegistration depth-fixture correction | coordinator `019fc2de-552d-77a0-aa47-35ac39d02edc` | `b7940ad` | Replaced array-based depth fixtures with contract-valid nested-map fixtures without changing any limit or decision |
 | Task 4B exact registration state | `019fc343-699c-7e70-9175-37bdce364c2a` | `43cc268` | 40 Go registration-state cases: 18 accept and 22 reject, with exact post-state fixtures |
+| Task 3C exact `ExecutionPlan` construction | focused unwired follow-up | focused branch | 6 TypeScript builder tests, including the 530-byte cross-language known answer |
 
 The manifest remains 67 rules, 206 cases, and 278 fixtures. It now records 80 verified TypeScript
 targets: 62 Task 3A raw/schema targets plus all 18 Task 3B semantic-resolution targets. It records
 121 verified Go targets: 81 Task 4A wrapper targets plus all 40 Task 4B registration-state targets.
-Swift targets and exact `ExecutionPlan` construction remain pending.
+Swift targets and consumer wiring remain pending. The conformance manifest remains unchanged: its
+existing TypeScript-pending `ExecutionPlan` cases are owned by the role-binding decoder or
+Supervisor registration state, not by the producer-side Task 3C builder. The focused builder tests
+therefore record construction assertions without falsely marking those broader targets verified.
 
 ## Task 3A outcome
 
@@ -80,6 +84,28 @@ registration ID and returns the stored exact plan after time/trust/binding check
 replacement plan bytes or backend options. The old `SupervisorCore.RegisterPlan` path remains
 unchanged and unwired.
 
+## Task 3C outcome
+
+`constructExecutionPlan` accepts only the provenance-bearing `ResolvedJobProposalPlanInputs`
+issued by Task 3B and an immutable trusted-binding value issued by the Task 3C constructors. The
+trusted value separately binds the installation ID, epoch sequence/digest, runtime-bundle manifest,
+one through eight profile-review attestations, profile-registry entry, backend validation,
+backend configuration, trust snapshot, policy decision, and expiry. Correct-width digest values
+remain nominally role-separated and copied before use.
+
+The builder constructs the closed 24-field minimum candidate, emits deterministic preferred CBOR,
+and computes the `execution-plan` SHA-256 identity from exactly those bytes. Candidate fields,
+retained exact bytes, digests, and nested arrays are deeply immutable passive values; byte accessors
+return defensive copies. Copied/generic Task 3B inputs or trusted-binding objects fail with fixed
+internal `BINDING` refusal data.
+
+The ordinary Task 3B proposal plus retained trusted bindings emits the exact 530-byte
+`execution-plan/ordinary.cbor` known answer with digest
+`627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c`. The existing Go Task 4A
+wrapper independently accepts that same fixture with complete trusted role bindings. The slice
+does not decode received plans, register bytes, call `SupervisorCore`, create approval or attempt
+authority, retrieve content, invoke a runtime/backend, or create a guest.
+
 ## Fixture correction
 
 The initial Task 4A pass identified that the retained PlanRegistration depth-exact fixture used
@@ -111,8 +137,12 @@ The restricted Go run used a task-specific cache under `/tmp`; all listed comman
 
 ## Next dependency boundary
 
-Task 3C exact plan construction can now proceed against the frozen Task 3B resolved inputs. In
-parallel, an unwired registered-plan/fault-injectable fake-backend slice can consume only the Task
-4B `RegistrationResolver` ID-only interface. Consumer activation remains blocked on the separately
-reviewed Supervisor archival/compaction design. Public daemon, SDK, and MCP cutover remains later
-and atomic.
+The exact next plan-registration handoff is an unwired adapter that passes only
+`ConstructedExecutionPlan.copyExactBytes()` plus complete trusted Task 4A role bindings into
+`registrationstate.Component.RegisterPlan`. That component must independently decode, bind, hash, and
+durably retain the copied bytes; the builder result itself grants no registration authority.
+
+In parallel, an unwired registered-plan/fault-injectable fake-backend slice can consume only the
+Task 4B `RegistrationResolver` ID-only interface. Consumer activation remains blocked on the
+separately reviewed Supervisor archival/compaction design. Public daemon, SDK, and MCP cutover
+remains later and atomic.

@@ -1,12 +1,14 @@
 # Phase 2B boundary-decision specification
 
 Status: Tasks 2.1 through 2.4 implemented as a passive fixture-integrity foundation. ADR-0023
-remains Proposed; no protocol decoder, semantic planner, registration store, or authority-bearing
+remains Proposed. Strict unwired decoders and the separate Task 4B Go registration-state component
+now exercise the retained corpus, but no semantic planner, consumer, endpoint, backend, or guest
 behavior is activated.
 
 Integration checkpoints: PR #10 merged the proposed decisions as `e565e6b`; PR #11 merged the
 manifest-driven conformance foundation as `f6de7ec`; Task 2.3 was integrated as `4afbdfa`. Task
-2.4 was integrated as `fd51ac4`. Task provenance and the complete handoff are indexed in the
+2.4 was integrated as `fd51ac4`; the later Task 4B Go implementation executes all 40 retained
+registration-state cases. Task provenance and the complete handoff are indexed in the
 [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
 ## Objective
@@ -133,8 +135,9 @@ Implementation status: complete. The generated corpus adds 12 rules, 59 cases, a
 fixtures for exact plan/registration bytes, role and domain separation, caller authentication,
 fresh registrations, installation-global sequence, expiry and monotonic time, trust fencing,
 capacity, atomic failure, and wire/stored-record separation. The full corpus contains 67 rules,
-206 cases, and 278 unique fixtures. Fixture-integrity assertions are verified; Go, TypeScript, and
-Swift registration-state implementations remain explicitly pending.
+206 cases, and 278 unique fixtures. Fixture-integrity assertions and all applicable Go
+registration-state assertions are verified; TypeScript and Swift registration-state
+implementations remain explicitly pending.
 
 Cover exact plan bytes/digest, cross-object/domain substitutions, authenticated caller role,
 duplicate plan registrations, sequence, expiry equality, epoch fencing, clock rollback, capacity,

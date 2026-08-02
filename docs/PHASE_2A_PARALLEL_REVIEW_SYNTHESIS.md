@@ -110,9 +110,10 @@ Dependencies: Task 1 for cases whose exact oracle is currently undecided.
 Implementation progress: Phase 2B Tasks 2.1 through 2.4 now provide the closed manifest, repository
 integrity runner, foundational raw/media/scalar/CBOR fixtures, fixed proposal resolver contexts,
 source/canonical-inline-input known answers, and exact plan/registration/domain/state fixtures.
-Task 3A now implements 62 TypeScript raw/schema cases, and Task 4A implements 81 Go internal
-media/scalar/CBOR/wrapper cases. Semantic planning, registration state, Swift, and consumer wiring
-remain pending; no endpoint or backend is activated.
+Task 3A now implements 62 TypeScript raw/schema cases, Task 4A implements 81 Go internal
+media/scalar/CBOR/wrapper cases, and Task 4B implements all 40 Go registration-state cases through
+a separate unwired component. Semantic planning, Swift, and consumer wiring remain pending; no
+endpoint or backend is activated.
 
 ### Task 3: Implement strict proposal decoding and semantic planning as an unwired library
 
@@ -136,8 +137,10 @@ Dependencies: Tasks 1 and 2.
 ### Task 4: Implement bounded internal wrappers and exact-byte registration
 
 Implementation progress: Task 4A is complete. Go now strictly predecodes, object-decodes, copies,
-hashes, and role-binds exact candidate bytes without persistence or authority creation. Exact
-Supervisor registration state and applicable Swift/TypeScript wrappers remain pending.
+hashes, and role-binds exact candidate bytes without persistence or authority creation. Task 4B
+implements exact Supervisor registration state using a bounded, fault-injectable development
+store. Applicable Swift/TypeScript wrappers remain pending, and the older `SupervisorCore`
+registration path is not activated.
 
 Implement object-specific deterministic-CBOR validation and separate the Supervisor-issued wire
 registration from its stored record containing exact plan bytes. Recompute the digest from copied

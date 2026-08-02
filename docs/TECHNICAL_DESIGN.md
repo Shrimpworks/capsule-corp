@@ -107,6 +107,11 @@ strictly validate proposals, store agent source, resolve policy and trusted refe
 plans, register exact plan bytes, request registered attempts, expose fixed status, and request
 authorized cancellation.
 
+Before the candidate public endpoint activates, its transport and work scheduler enforce a bounded
+aggregate envelope for connections, concurrent requests, in-flight bytes, queues, deadlines,
+cancellation, downstream stalls, and diagnostics. Strict object budgets are per-request controls,
+not a substitute for service-wide backpressure and deterministic overload behavior.
+
 It may not:
 
 - access Approval, installation-root, or Supervisor evidence private keys;
@@ -128,6 +133,12 @@ two logically separate surfaces:
 - **Content Broker:** performs trusted file selection, creates immutable snapshots, owns user labels
   and original paths, stores user-only content, transfers attempt-scoped handles to the Supervisor,
   validates bounded output content, and releases a fixed summary to the daemon.
+
+UI activation, focus, and synthetic input are not approval evidence. The Approval-key signature
+requires the configured LocalAuthentication/Keychain-gated private-key operation over the exact
+registered binding. Accessibility, Screen Recording, overlay/window automation, and comparable
+broad user-granted capabilities use an explicit elevated-adversary posture rather than an
+unsupported claim that ordinary UI hardening defeats them.
 
 The Broker never launches the backend. Approval and content interfaces, keys, and records remain
 separable even while deployed in one process.
@@ -488,7 +499,8 @@ mechanisms pass.
 Profile trust uses separate objects:
 
 - `RuntimeBundleManifest`: immutable runtime, root/image, dependencies, lock, SBOM, provenance,
-  hardening configuration, required controls, and build identity;
+  hardening configuration, exact guest-kernel image/configuration/boot/module/debug policy,
+  launcher restrictions, required controls, and build identity;
 - `ProfileReviewAttestation`: signed reviewer claim about one exact bundle and attack-corpus
   evidence, with verdict, date, expiry, and limitations;
 - `ProfileRegistryEntry`: mutable local alias, activation state, accepted review authorities,
@@ -525,6 +537,13 @@ is a later artifact gate. gVisor resource limits bind the outer Linux worker, en
 configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
 development-only because it has no supported durable VM/helper identity or restart reconciliation
 surface.
+
+Guest-kernel minimization is profile-bound defense-in-depth and never replaces a VMM corpus that
+assumes a hostile kernel. Any validated platform profile also binds its exact hardware model,
+OS/hypervisor build, documented vendor mitigation state, and concurrency/co-residency policy. Those
+facts support configuration matching, not a claim of speculative-execution or shared-cache
+noninterference; residual microarchitectural risk remains explicit unless a separate exact campaign
+supports a narrower statement.
 
 Posture is recorded across independent dimensions:
 
@@ -637,6 +656,9 @@ See [Roadmap](ROADMAP.md) for exit evidence.
 - Non-rollbackable or externally witnessed trust checkpoint, if required
 - Retention, encryption, garbage collection, and secure-deletion limitations
 - Quantitative performance and resource budgets
+- Daemon aggregate request/backpressure budgets before candidate endpoint activation
+- Exact platform/co-residency assumptions and microarchitectural residual-risk treatment before a
+  `validated-local` claim
 
 ## External design references
 

@@ -59,6 +59,39 @@ requirements below.
 See `.codex/AI_CENTRAL.md` for the installed revision, selection, provenance,
 licenses, and refresh workflow.
 
+## Orchestrated task delivery
+
+Treat the brain/orchestrator task as the owner of integration and delivery.
+Before dispatch, it must choose and state whether work is a user-visible task,
+an internal sub-agent assignment, or a research/experiment assignment.
+
+- A new user-visible task that may retain repository changes should normally use
+  its own `codex/<topic>` branch and worktree. When its work is complete, the task
+  must verify and commit the result, push the branch, open a pull request, and
+  report the branch, commit, PR, verification, limitations, and deferred work to
+  the orchestrator. Do not leave completed retained work only on a local branch.
+- Read-only coordination, monitoring, and research tasks need no branch or PR.
+  If such a task begins retaining repository changes, convert it to the normal
+  branch-and-PR workflow unless the orchestrator explicitly groups it elsewhere
+  before the changes are made.
+- Sub-agents spawned inside an orchestrator task are parallel workers, not
+  independent delivery units. They must work in the orchestrator task's current
+  branch and worktree. They must not create their own branch, commit, push, or PR
+  unless the orchestrator explicitly reclassifies the assignment as a separate
+  user-visible task. The orchestrator owns conflict resolution, final
+  verification, commits, and the single shared PR.
+- A research or experiment assignment running in another task must always call
+  back to its parent/orchestrator before completing. Its handoff must include the
+  question tested, defensive and authorized scope, method, results, retained
+  evidence or artifact paths, verification commands, confidence and limitations,
+  unresolved questions, and any recommended decision. If it created a branch,
+  commit, or PR, include those identifiers too.
+- The orchestrator must collect every child handoff and confirm that all retained
+  commits have a PR or an explicitly documented integration destination before
+  declaring the group complete. Research conclusions that affect architecture or
+  security claims must be recorded in the repository's canonical documentation
+  or ADRs; chat history alone is not retained evidence.
+
 ## Working rules
 
 - Preserve deny-by-default capabilities.

@@ -1,9 +1,9 @@
 # Phase 2B boundary-decision specification
 
 Status: Tasks 2.1 through 2.4 implemented as a passive fixture-integrity foundation. ADR-0023
-remains Proposed. Strict unwired decoders and the separate Task 4B Go registration-state component
-now exercise the retained corpus, but no semantic planner, consumer, endpoint, backend, or guest
-behavior is activated.
+remains Proposed. Strict unwired decoders, the Task 3B semantic resolver, and the separate Task 4B
+Go registration-state component now exercise the retained corpus, but no exact plan builder,
+consumer, endpoint, backend, or guest behavior is activated.
 
 Integration checkpoints: PR #10 merged the proposed decisions as `e565e6b`; PR #11 merged the
 manifest-driven conformance foundation as `f6de7ec`; Task 2.3 was integrated as `4afbdfa`. Task

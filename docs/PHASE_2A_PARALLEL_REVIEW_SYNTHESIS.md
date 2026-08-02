@@ -110,16 +110,19 @@ Dependencies: Task 1 for cases whose exact oracle is currently undecided.
 Implementation progress: Phase 2B Tasks 2.1 through 2.4 now provide the closed manifest, repository
 integrity runner, foundational raw/media/scalar/CBOR fixtures, fixed proposal resolver contexts,
 source/canonical-inline-input known answers, and exact plan/registration/domain/state fixtures.
-Task 3A now implements 62 TypeScript raw/schema cases, Task 4A implements 81 Go internal
-media/scalar/CBOR/wrapper cases, and Task 4B implements all 40 Go registration-state cases through
-a separate unwired component. Semantic planning, Swift, and consumer wiring remain pending; no
-endpoint or backend is activated.
+Task 3A now implements 62 TypeScript raw/schema cases, Task 3B implements all 18 TypeScript
+semantic-resolution cases, Task 4A implements 81 Go internal media/scalar/CBOR/wrapper cases, and
+Task 4B implements all 40 Go registration-state cases through a separate unwired component. Exact
+`ExecutionPlan` construction, Swift, and consumer wiring remain pending; no endpoint or backend is
+activated.
 
 ### Task 3: Implement strict proposal decoding and semantic planning as an unwired library
 
-Implementation progress: Task 3A is complete. `decodeJobProposal(Uint8Array)` implements the strict
-raw and closed-schema boundary and returns only a frozen passive candidate or fixed internal
-refusal. Task 3B semantic trusted resolution and minimum-plan construction remain pending.
+Implementation progress: Tasks 3A and 3B are complete. `decodeJobProposal(Uint8Array)` implements
+the strict raw and closed-schema boundary and returns only a frozen passive candidate or fixed
+internal refusal. The separate resolver derives exact source/input/profile/limit plan inputs from
+that decoder-issued candidate and trusted immutable contexts. Task 3C exact `ExecutionPlan`
+construction remains pending.
 
 Implement the public raw-decoder boundary and semantic `JobProposal` validation without adding a
 daemon, SDK, or MCP endpoint. Resolve trusted defaults and ceilings into a minimum exact plan or

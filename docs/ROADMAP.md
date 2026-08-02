@@ -80,10 +80,11 @@ Status: Phase 2A has implemented a passive, backend-independent foundation: a de
 byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B Tasks 2.1 through 2.4 now provide the
 closed conformance manifest, integrity runner, and 67-rule/206-case/278-fixture corpus, including
 proposal/source/input and exact plan/registration-state oracles. They are not frozen or activated;
-the unwired slices now implement strict TypeScript raw/schema proposal decoding, strict Go exact-
-byte plan/registration wrappers, and all 40 retained Go registration-state cases. Semantic planning
-and Swift remain pending. The next work is the semantic planner and then the registered-plan/fake-
-backend lifecycle. Public cutover waits for that vertical slice, an atomic
+the unwired slices now implement strict TypeScript raw/schema proposal decoding, all 18 retained
+TypeScript semantic-resolution cases, strict Go exact-byte plan/registration wrappers, and all 40
+retained Go registration-state cases. Exact plan construction and Swift remain pending. The next
+work is Task 3C exact plan construction in parallel with the registered-plan/fake-backend lifecycle.
+Public cutover waits for that vertical slice, an atomic
 consumer migration, and removal of the dormant direct-execution scaffold. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).

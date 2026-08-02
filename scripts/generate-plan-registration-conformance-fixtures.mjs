@@ -31,7 +31,7 @@ export function addPlanRegistrationRulesAndCases({
   };
   const stateImplementations = {
     "fixture-integrity": "verified",
-    go: "pending",
+    go: "verified",
     typescript: "pending",
     swift: "pending",
   };

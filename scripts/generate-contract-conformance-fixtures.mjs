@@ -26,7 +26,7 @@ const internalMediaTypeImplementations = implementationStatus(
 );
 const scalarImplementations = implementationStatus("verified", "pending", "pending");
 const cborImplementations = implementationStatus("verified", "pending", "pending");
-const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
+const proposalImplementations = implementationStatus("pending", "verified", "not-applicable");
 const proposalSchemaImplementations = implementationStatus("pending", "verified", "not-applicable");
 const rules = [];
 const cases = [];

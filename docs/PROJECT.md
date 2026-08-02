@@ -35,8 +35,11 @@ colocated fixed registration/approval/attempt store. The no-guest fake lifecycle
 recovers only committed `AttemptID` records, revalidates exact plan and copied bindings before fake
 prepare, and retains 12 top-level focused lifecycle tests for binding, replay, concurrency, fault,
 and startup-recovery behavior. Its lifecycle store remains bounded single-process memory. There is
-no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest. A
-focused unwired TypeScript Task 3C slice now constructs and deterministically encodes the minimum
+no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a future colocated
+lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
+fake-only implementation plan; no durable lifecycle behavior is implemented yet. A focused unwired
+TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
 bindings. The next
 focused slice now prepares a defensive exact-byte/complete-role handoff and exercises those values

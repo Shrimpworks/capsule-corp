@@ -349,6 +349,11 @@ Startup recovery enumerates nonterminal attempts from the Supervisor store and c
 `Recover(AttemptID)`. It never re-resolves approval usability or registration expiry to decide
 whether an already created attempt needs cleanup.
 
+[Proposed ADR-0025](0025-colocate-durable-attempt-lifecycle-state.md) defines the follow-up storage,
+effect-checkpoint, and startup-coordination design. It preserves this authority seam and proposes
+colocating lifecycle records in the same versioned Supervisor snapshot; it does not accept this ADR
+or implement durable lifecycle behavior.
+
 ## Conformance requirements
 
 The focused manifest and fault-injection plan is

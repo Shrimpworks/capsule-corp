@@ -92,12 +92,17 @@ The fixed store now colocates registrations, approval/attempt authority, and the
 high-water; it remains unwired. The fake lifecycle accepts only committed created attempts through
 `AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
 `FakeBackend.CreatesGuest() == false`; its lifecycle store is bounded single-process memory and
-non-durable. A focused local-only conformance handoff also carries copied TypeScript
+non-durable. [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) now selects
+colocating future lifecycle records and effect checkpoints in that same versioned Supervisor
+transaction domain, with a separate fake-only implementation and conformance plan. No durable
+lifecycle behavior is implemented yet. A focused local-only conformance handoff also carries copied
+TypeScript
 `ConstructedExecutionPlan` bytes and complete role bindings into the real Go `registrationstate`
 component. Neither path is a product-language/IPC seam or public consumer. The next
-backend-independent boundary is a design/ADR for durable `AttemptID`-keyed lifecycle state and
-startup coordination against the no-guest fake backend. Authenticated typed IPC, production
-approval signing/verification, reviewed Supervisor archival/compaction, evidence composition,
+backend-independent boundary is implementing the proposed durable `AttemptID`-keyed lifecycle
+state and startup coordination against the no-guest fake backend in small unwired slices.
+Authenticated typed IPC, production approval signing/verification, reviewed Supervisor archival/
+compaction, evidence composition,
 consumers, atomic public migration, and removal of the dormant direct-execution scaffold remain
 separate decisions. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed

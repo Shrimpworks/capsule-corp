@@ -271,17 +271,18 @@ Retained focused evidence includes:
   exact replay, all fake before/after-effect faults, post-effect restart recovery, and the explicit
   `FakeBackend.CreatesGuest() == false` invariant.
 
-The next backend-independent boundary is a future design/ADR and implementation plan for durable,
-Supervisor-internal `AttemptID`-keyed lifecycle state and startup coordination with the no-guest
-fake backend. It must replace the single-process `MemoryStore` without creating a registration-
-keyed execute path or weakening consume/create-before-effect ordering. It must decide durable
-state/effect checkpoints, store composition, reopen validation, capacity, and repair semantics.
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) and the
+[Phase 2B durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md) select the narrow next
+implementation boundary: add `AttemptID`-keyed lifecycle records and before/after-effect checkpoints
+to the same versioned Supervisor snapshot and transaction domain as the authority records. The
+proposal defines startup ownership, reconciliation, repair, capacity, and migration oracles without
+creating a registration-keyed execute path or weakening consume/create-before-effect ordering.
 
-This document does not decide archive/compaction or replay retention, authenticated IPC topology,
-production COSE/Swift/Keychain/user-presence signing and verification, consumers, content, evidence
-composition, runtime/backend admission, or public cutover. The fixed authority store remains
-no-eviction and lacks multi-process locking, rollback-resistant uniqueness, and a production
-retention design. No guest exists in this implementation checkpoint.
+This is not implemented durable lifecycle behavior. `registeredlifecycle.MemoryStore` remains the
+current non-durable implementation. Archive/compaction and replay retention, real multi-process
+locking, rollback/backup, authenticated IPC, production COSE/Swift/Keychain/user-presence signing
+and verification, production backend reconciliation, consumers, content, evidence composition,
+runtime/backend admission, and public cutover remain blocked. No guest exists in this checkpoint.
 
 ## Target acceptance tests
 

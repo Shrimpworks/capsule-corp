@@ -1504,7 +1504,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1535,7 +1535,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1566,7 +1566,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1597,7 +1597,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1628,7 +1628,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1659,7 +1659,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1690,7 +1690,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1721,7 +1721,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1752,7 +1752,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1783,7 +1783,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1814,7 +1814,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1845,7 +1845,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1876,7 +1876,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1907,7 +1907,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1938,7 +1938,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -1969,7 +1969,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2000,7 +2000,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2031,7 +2031,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2062,7 +2062,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2093,7 +2093,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2129,7 +2129,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2160,7 +2160,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2191,7 +2191,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2222,7 +2222,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2253,7 +2253,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2284,7 +2284,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2315,7 +2315,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2346,7 +2346,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2377,7 +2377,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2408,7 +2408,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2439,7 +2439,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2470,7 +2470,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2501,7 +2501,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2532,7 +2532,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2563,7 +2563,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2594,7 +2594,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2625,7 +2625,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -2656,7 +2656,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4333,7 +4333,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4381,7 +4381,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4429,7 +4429,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4488,7 +4488,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4536,7 +4536,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4584,7 +4584,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4632,7 +4632,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4680,7 +4680,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4728,7 +4728,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4776,7 +4776,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -4824,7 +4824,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5349,7 +5349,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5504,7 +5504,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5552,7 +5552,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5600,7 +5600,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5648,7 +5648,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5679,7 +5679,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5710,7 +5710,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5741,7 +5741,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5772,7 +5772,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5803,7 +5803,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5834,7 +5834,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5865,7 +5865,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },
@@ -5896,7 +5896,7 @@
       "implementations": {
         "fixture-integrity": "verified",
         "go": "pending",
-        "typescript": "pending",
+        "typescript": "verified",
         "swift": "not-applicable"
       }
     },

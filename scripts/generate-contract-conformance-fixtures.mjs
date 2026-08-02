@@ -17,10 +17,12 @@ const ordinaryRequirements = [
   { decision: "accept", variant: "ordinary" },
   { decision: "reject", variant: "malformed" },
 ];
-const rawImplementations = implementationStatus("pending", "pending", "not-applicable");
+const mediaImplementations = implementationStatus("pending", "pending", "not-applicable");
+const jsonRawImplementations = implementationStatus("pending", "verified", "not-applicable");
 const scalarImplementations = implementationStatus("pending", "pending", "pending");
 const cborImplementations = implementationStatus("pending", "pending", "pending");
 const proposalImplementations = implementationStatus("pending", "pending", "not-applicable");
+const proposalSchemaImplementations = implementationStatus("pending", "verified", "not-applicable");
 const rules = [];
 const cases = [];
 const fixtures = new Map();
@@ -78,7 +80,7 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-exact.txt`,
       bytes: mediaType,
       owner: "media-type-parser",
-      implementations: rawImplementations,
+      implementations: mediaImplementations,
     });
     const uppercaseType = `${mediaType.slice(0, mediaType.indexOf(";")).toUpperCase()};v=0`;
     addCase({
@@ -92,7 +94,7 @@ function addMediaTypeRulesAndCases() {
       path: `shared/media-${slug}-uppercase.txt`,
       bytes: uppercaseType,
       owner: "media-type-parser",
-      implementations: rawImplementations,
+      implementations: mediaImplementations,
     });
     addMediaTypeReject(slug, object, ruleId, mediaType.split(";")[0], "missing-version", malformed);
     addMediaTypeReject(
@@ -128,7 +130,7 @@ function addMediaTypeReject(slug, object, ruleId, mediaType, suffix, classificat
     decision: "reject",
     classification,
     owner: "media-type-parser",
-    implementations: rawImplementations,
+    implementations: mediaImplementations,
   });
 }
 
@@ -332,7 +334,7 @@ function addJsonCase(options) {
     wireFormat: "json",
     mediaType: jobProposalMediaType,
     owner: "public-raw-decoder",
-    implementations: rawImplementations,
+    implementations: jsonRawImplementations,
     ...options,
   });
 }
@@ -1230,13 +1232,15 @@ function addProposalRulesAndCases() {
   });
 
   function addProposalCase({ proposal: caseProposal, ...options }) {
+    const owner = options.owner ?? "job-proposal-semantic-validator";
     addCase({
       object: "JobProposal",
       wireFormat: "json",
       mediaType: jobProposalMediaType,
       context: resolverContext(),
-      owner: "job-proposal-semantic-validator",
-      implementations: proposalImplementations,
+      owner,
+      implementations:
+        owner === "job-proposal-schema" ? proposalSchemaImplementations : proposalImplementations,
       bytes: caseProposal === undefined ? options.bytes : jsonDocument(caseProposal),
       ...options,
     });
@@ -1344,7 +1348,7 @@ function addLabelCases(proposal) {
       mediaType: jobProposalMediaType,
       context: { kind: "none" },
       owner: "job-proposal-schema",
-      implementations: proposalImplementations,
+      implementations: proposalSchemaImplementations,
       bytes: jsonDocument({ ...proposal, labels }),
       ...entry,
     });

@@ -282,6 +282,33 @@ func TestApprovalAttemptDurableIdempotentAtomicHappyPath(t *testing.T) {
 	}
 }
 
+func TestResolveCreatedRefusesCrossLinkedDurableState(t *testing.T) {
+	harness := newApprovalHarness(t)
+	vector := fixtureVector(t, harness, 0x66, 1_785_456_000, 1_785_456_300, 0)
+	component := mustApprovalAttemptComponent(
+		t, harness, []approvalattempt.FixtureVector{vector},
+		&approvalIDSequence{next: 1}, &attemptIDSequence{next: 1}, nil,
+	)
+	submission, err := component.SubmitApproval(
+		context.Background(), submitCall(), harness.registrationID, vector.EnvelopeBytes,
+	)
+	if err != nil {
+		t.Fatalf("submit approval: %v", err)
+	}
+	created, err := component.RequestAttempt(
+		context.Background(), attemptCall(), harness.registrationID, submission.Reference,
+	)
+	if err != nil {
+		t.Fatalf("request attempt: %v", err)
+	}
+	harness.store.mu.Lock()
+	harness.store.state.Attempts[0].ApprovalID[0] ^= 0xff
+	harness.store.mu.Unlock()
+
+	_, err = component.ResolveCreated(context.Background(), created.Reference.AttemptID())
+	assertApprovalClassification(t, err, approvalattempt.ClassificationRecoveryRequired)
+}
+
 func TestApprovalAttemptConcurrentExactRequestsConverge(t *testing.T) {
 	const workers = 24
 	harness := newApprovalHarness(t)

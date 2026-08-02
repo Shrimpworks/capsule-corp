@@ -162,6 +162,47 @@ type registrationEntry struct {
 	Record       StoredRegistration
 }
 
+// CreatedAttempt is the narrow defensive handoff from the durable Slice B
+// authority store to the no-guest lifecycle. It contains only the immutable
+// created attempt, the Supervisor-retained registration record, and the
+// trusted role bindings required to independently decode those exact plan
+// bytes. It contains no approval envelope/reference or backend configuration.
+type CreatedAttempt struct {
+	Attempt          approvalattempt.ExecutionAttempt
+	Approval         ConsumedApprovalBinding
+	Registration     StoredRegistration
+	PlanRoleBindings v0candidate.ExecutionPlanRoleBindings
+}
+
+// ConsumedApprovalBinding is the byte-free cross-link needed to prove that a
+// created attempt still belongs to exactly one consumed approval. Exact signed
+// approval bytes remain inside the authority store and never enter the
+// lifecycle seam.
+type ConsumedApprovalBinding struct {
+	ApprovalID            approvalattempt.ApprovalID
+	ConsumedAttemptID     approvalattempt.AttemptID
+	AttemptNonce          approvalattempt.AttemptNonce
+	RegistrationID        v0candidate.RegistrationID
+	RegistrationSequence  v0candidate.PositiveUInt53
+	PlanDigest            v0candidate.ExecutionPlanDigest
+	InstallationID        v0candidate.InstallationID
+	EpochSequence         v0candidate.UInt53
+	EpochDigest           v0candidate.TrustEpochDigest
+	SupervisorID          v0candidate.SupervisorID
+	Purpose               string
+	Audience              string
+	PayloadDigest         approvalattempt.ApprovalPayloadDigest
+	AuthorizationIdentity approvalattempt.ApprovalKeyAuthorizationIdentity
+	State                 approvalattempt.ApprovalState
+	StorageFormatVersion  uint64
+}
+
+func cloneCreatedAttempt(created CreatedAttempt) CreatedAttempt {
+	created.Registration = cloneStoredRegistration(created.Registration)
+	created.PlanRoleBindings = clonePlanBindings(created.PlanRoleBindings)
+	return created
+}
+
 type installationState struct {
 	InitialState
 	RegistrationSetDigest [32]byte

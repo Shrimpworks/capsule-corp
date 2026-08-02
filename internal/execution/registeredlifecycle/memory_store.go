@@ -4,14 +4,16 @@ import (
 	"context"
 	"sync"
 
-	"capsule.local/capsule/internal/protocol/v0candidate"
+	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/registrationstate"
 )
 
 type fakeHandle uint64
 
 type lifecycleRecord struct {
 	Snapshot
-	handle fakeHandle
+	created registrationstate.CreatedAttempt
+	handle  fakeHandle
 }
 
 // MemoryStore is a bounded, single-process development store. Reusing it
@@ -19,61 +21,98 @@ type lifecycleRecord struct {
 // power-loss, encryption, archival, or multi-process coordination claim.
 type MemoryStore struct {
 	mu      sync.Mutex
-	records map[v0candidate.RegistrationID]lifecycleRecord
+	records map[approvalattempt.AttemptID]lifecycleRecord
 }
 
 func NewMemoryStore() *MemoryStore {
-	return &MemoryStore{records: make(map[v0candidate.RegistrationID]lifecycleRecord)}
+	return &MemoryStore{records: make(map[approvalattempt.AttemptID]lifecycleRecord)}
 }
 
 func (store *MemoryStore) begin(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
-	planDigest v0candidate.ExecutionPlanDigest,
-) error {
+	created registrationstate.CreatedAttempt,
+) (lifecycleRecord, bool, error) {
 	if err := ctx.Err(); err != nil {
-		return classified(ClassificationLocalFailure, "lifecycle-context-cancelled")
+		return lifecycleRecord{}, false, classified(ClassificationLocalFailure, "lifecycle-context-cancelled")
 	}
+	created = cloneCreatedAttempt(created)
+	attempt := created.Attempt
 	store.mu.Lock()
 	defer store.mu.Unlock()
 	if store.records == nil {
-		store.records = make(map[v0candidate.RegistrationID]lifecycleRecord)
+		store.records = make(map[approvalattempt.AttemptID]lifecycleRecord)
 	}
-	if _, exists := store.records[registrationID]; exists {
-		return classified(ClassificationStale, "lifecycle-registration-already-used")
+	if existing, exists := store.records[attempt.AttemptID]; exists {
+		if !createdAttemptsEqual(existing.created, created) {
+			return lifecycleRecord{}, false, classified(ClassificationBinding, "lifecycle-attempt-replay-mismatch")
+		}
+		return cloneLifecycleRecord(existing), false, nil
+	}
+	for _, existing := range store.records {
+		if existing.ApprovalID == attempt.ApprovalID {
+			return lifecycleRecord{}, false, classified(ClassificationBinding, "lifecycle-approval-already-owned")
+		}
 	}
 	if len(store.records) >= MaxLifecycleRecords {
-		return classified(ClassificationCapacity, "lifecycle-record-capacity")
+		return lifecycleRecord{}, false, classified(ClassificationCapacity, "lifecycle-record-capacity")
 	}
-	store.records[registrationID] = lifecycleRecord{Snapshot: Snapshot{
-		RegistrationID:  registrationID,
-		PlanDigest:      planDigest,
-		State:           StatePreparing,
-		CleanupRequired: true,
-		TransitionCount: 1,
-	}}
-	return nil
+	record := lifecycleRecord{Snapshot: Snapshot{
+		AttemptID:             attempt.AttemptID,
+		ApprovalID:            attempt.ApprovalID,
+		AttemptNonce:          attempt.AttemptNonce,
+		RegistrationID:        attempt.RegistrationID,
+		RegistrationSequence:  attempt.RegistrationSequence,
+		PlanDigest:            attempt.PlanDigest,
+		InstallationID:        attempt.InstallationID,
+		EpochSequence:         attempt.EpochSequence,
+		EpochDigest:           attempt.EpochDigest,
+		SupervisorID:          attempt.SupervisorID,
+		ApprovalPurpose:       attempt.Purpose,
+		ApprovalAudience:      attempt.Audience,
+		ApprovalPayloadDigest: attempt.ApprovalPayloadDigest,
+		AuthorizationIdentity: attempt.AuthorizationIdentity,
+		CreatedAt:             attempt.CreatedAt,
+		State:                 StatePreparing,
+		CleanupRequired:       true,
+		TransitionCount:       1,
+	}, created: created}
+	store.records[attempt.AttemptID] = record
+	return cloneLifecycleRecord(record), true, nil
 }
 
 func (store *MemoryStore) snapshot(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (lifecycleRecord, error) {
-	if err := ctx.Err(); err != nil {
-		return lifecycleRecord{}, classified(ClassificationLocalFailure, "lifecycle-context-cancelled")
+	record, exists, err := store.lookup(ctx, attemptID)
+	if err != nil {
+		return lifecycleRecord{}, err
 	}
-	store.mu.Lock()
-	defer store.mu.Unlock()
-	record, exists := store.records[registrationID]
 	if !exists {
 		return lifecycleRecord{}, classified(ClassificationBinding, "lifecycle-record-not-found")
 	}
 	return record, nil
 }
 
+func (store *MemoryStore) lookup(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+) (lifecycleRecord, bool, error) {
+	if err := ctx.Err(); err != nil {
+		return lifecycleRecord{}, false, classified(ClassificationLocalFailure, "lifecycle-context-cancelled")
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	record, exists := store.records[attemptID]
+	if !exists {
+		return lifecycleRecord{}, false, nil
+	}
+	return cloneLifecycleRecord(record), true, nil
+}
+
 func (store *MemoryStore) mutate(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	mutation func(*lifecycleRecord),
 ) error {
 	if err := ctx.Err(); err != nil {
@@ -81,32 +120,32 @@ func (store *MemoryStore) mutate(
 	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
-	record, exists := store.records[registrationID]
+	record, exists := store.records[attemptID]
 	if !exists {
 		return classified(ClassificationBinding, "lifecycle-record-not-found")
 	}
 	mutation(&record)
 	record.TransitionCount++
-	store.records[registrationID] = record
+	store.records[attemptID] = record
 	return nil
 }
 
 func (store *MemoryStore) transition(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	state State,
 ) error {
-	return store.mutate(ctx, registrationID, func(record *lifecycleRecord) {
+	return store.mutate(ctx, attemptID, func(record *lifecycleRecord) {
 		record.State = state
 	})
 }
 
 func (store *MemoryStore) retainHandle(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	handle fakeHandle,
 ) error {
-	return store.mutate(ctx, registrationID, func(record *lifecycleRecord) {
+	return store.mutate(ctx, attemptID, func(record *lifecycleRecord) {
 		record.handle = handle
 		record.State = StateCreated
 	})
@@ -114,11 +153,11 @@ func (store *MemoryStore) retainHandle(
 
 func (store *MemoryStore) noteFailure(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 	classification Classification,
 	operation Operation,
 ) error {
-	return store.mutate(ctx, registrationID, func(record *lifecycleRecord) {
+	return store.mutate(ctx, attemptID, func(record *lifecycleRecord) {
 		if record.Failure == "" {
 			record.Failure = classification
 			record.FailureAt = operation
@@ -128,9 +167,9 @@ func (store *MemoryStore) noteFailure(
 
 func (store *MemoryStore) markDestroyed(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) error {
-	return store.mutate(ctx, registrationID, func(record *lifecycleRecord) {
+	return store.mutate(ctx, attemptID, func(record *lifecycleRecord) {
 		record.State = StateDestroyed
 		record.CleanupRequired = false
 		record.handle = 0
@@ -139,9 +178,9 @@ func (store *MemoryStore) markDestroyed(
 
 func (store *MemoryStore) markUnresolved(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) error {
-	return store.mutate(ctx, registrationID, func(record *lifecycleRecord) {
+	return store.mutate(ctx, attemptID, func(record *lifecycleRecord) {
 		record.State = StateUnresolved
 		record.CleanupRequired = true
 	})
@@ -151,11 +190,16 @@ func (store *MemoryStore) markUnresolved(
 // handle are exposed.
 func (store *MemoryStore) Snapshot(
 	ctx context.Context,
-	registrationID v0candidate.RegistrationID,
+	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
-	record, err := store.snapshot(ctx, registrationID)
+	record, err := store.snapshot(ctx, attemptID)
 	if err != nil {
 		return Snapshot{}, err
 	}
 	return record.Snapshot, nil
+}
+
+func cloneLifecycleRecord(record lifecycleRecord) lifecycleRecord {
+	record.created = cloneCreatedAttempt(record.created)
+	return record
 }

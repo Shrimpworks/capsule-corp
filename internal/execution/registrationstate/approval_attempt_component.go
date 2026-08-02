@@ -422,6 +422,79 @@ func (component *ApprovalAttemptComponent) Attempt(
 	return state.Attempts[index], nil
 }
 
+// ResolveCreated resolves only a durably committed created attempt. It does
+// not consult current approval usability or registration expiry, because a
+// committed attempt remains authoritative recovery work after either expires.
+// Every returned byte slice and role-binding collection is a defensive copy.
+func (component *ApprovalAttemptComponent) ResolveCreated(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+) (CreatedAttempt, error) {
+	if attemptID == (approvalattempt.AttemptID{}) {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationSchema, "attempt-id-zero")
+	}
+	if component.store.recoveryFenced() {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationRecoveryRequired, "attempt-store-recovery-fenced")
+	}
+	state, err := component.store.snapshot(ctx)
+	if err != nil {
+		return CreatedAttempt{}, component.localOrRecovery(err, "attempt-read-failed")
+	}
+	if err := validateState(state); err != nil {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationRecoveryRequired, "attempt-store-state-invalid")
+	}
+	attemptIndex := findAttempt(state.Attempts, attemptID)
+	if attemptIndex < 0 {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationBinding, "created-attempt-not-found")
+	}
+	attempt := state.Attempts[attemptIndex]
+	if attempt.State != approvalattempt.AttemptCreated {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationBinding, "attempt-not-created")
+	}
+	approvalIndex := findApproval(state.Approvals, attempt.ApprovalID)
+	registrationIndex := findRegistration(state.Registrations, attempt.RegistrationID)
+	if approvalIndex < 0 || registrationIndex < 0 ||
+		!attemptMatchesApproval(attempt, state.Approvals[approvalIndex]) ||
+		!approvalMatchesRegistration(state.Approvals[approvalIndex], state.Registrations[registrationIndex]) ||
+		attempt.PlanDigest != state.Registrations[registrationIndex].Record.RecomputedPlanDigest ||
+		validateStoredRecord(state.Registrations[registrationIndex]) != nil {
+		return CreatedAttempt{}, approvalAttemptClassified(
+			approvalattempt.ClassificationRecoveryRequired, "created-attempt-cross-link-invalid")
+	}
+	return cloneCreatedAttempt(CreatedAttempt{
+		Attempt:          attempt,
+		Approval:         consumedApprovalBinding(state.Approvals[approvalIndex]),
+		Registration:     state.Registrations[registrationIndex].Record,
+		PlanRoleBindings: state.Registrations[registrationIndex].PlanBindings,
+	}), nil
+}
+
+func consumedApprovalBinding(record approvalattempt.ApprovalRecord) ConsumedApprovalBinding {
+	return ConsumedApprovalBinding{
+		ApprovalID:            record.ApprovalID,
+		ConsumedAttemptID:     record.ConsumedAttemptID,
+		AttemptNonce:          record.AttemptNonce,
+		RegistrationID:        record.RegistrationID,
+		RegistrationSequence:  record.RegistrationSequence,
+		PlanDigest:            record.PlanDigest,
+		InstallationID:        record.InstallationID,
+		EpochSequence:         record.EpochSequence,
+		EpochDigest:           record.EpochDigest,
+		SupervisorID:          record.SupervisorID,
+		Purpose:               record.Purpose,
+		Audience:              record.Audience,
+		PayloadDigest:         record.PayloadDigest,
+		AuthorizationIdentity: record.AuthorizationIdentity,
+		State:                 record.State,
+		StorageFormatVersion:  record.StorageFormatVersion,
+	}
+}
+
 func (component *ApprovalAttemptComponent) CreatedAttempts(ctx context.Context) ([]approvalattempt.AttemptReference, error) {
 	if component.store.recoveryFenced() {
 		return nil, approvalAttemptClassified(

@@ -13,6 +13,7 @@ import {
   type SourcePath,
   TRANSFORMED_JSON_OUTPUT_SLOT,
 } from "./job-proposal.js";
+import { retainResolvedJobProposalPlanInputs } from "./resolved-job-proposal-provenance.js";
 
 const MAX_SOURCE_FILE_BYTES = 262_144;
 const MAX_SOURCE_AGGREGATE_BYTES = 1_048_576;
@@ -249,19 +250,21 @@ export function resolveJobProposal(
     slot: TRANSFORMED_JSON_OUTPUT_SLOT,
     maxJsonBytes: proposal.outputs[0].maxBytes,
   });
-  const planInputs = Object.freeze({
-    sourceManifestDigest: source.manifest.digest,
-    sourceEntrypoint: source.entrypoint,
-    sourceByteLength: source.aggregateByteLength,
-    inputSlot: PRIMARY_DATA_INPUT_SLOT,
-    inlineInputDigest: inlineInput.digest,
-    inlineInputByteLength: inlineInput.exactBytes.byteLength,
-    runtimeProfileAlias: profile.alias,
-    wallTimeMs: wallTime.milliseconds,
-    wallTimeOrigin: wallTime.origin,
-    outputSlot: TRANSFORMED_JSON_OUTPUT_SLOT,
-    outputMaxJsonBytes: output.maxJsonBytes,
-  });
+  const planInputs = retainResolvedJobProposalPlanInputs(
+    Object.freeze({
+      sourceManifestDigest: source.manifest.digest,
+      sourceEntrypoint: source.entrypoint,
+      sourceByteLength: source.aggregateByteLength,
+      inputSlot: PRIMARY_DATA_INPUT_SLOT,
+      inlineInputDigest: inlineInput.digest,
+      inlineInputByteLength: inlineInput.exactBytes.byteLength,
+      runtimeProfileAlias: profile.alias,
+      wallTimeMs: wallTime.milliseconds,
+      wallTimeOrigin: wallTime.origin,
+      outputSlot: TRANSFORMED_JSON_OUTPUT_SLOT,
+      outputMaxJsonBytes: output.maxJsonBytes,
+    }),
+  );
   const labels = proposal.labels
     ? Object.freeze(Object.fromEntries(Object.entries(proposal.labels).sort(compareEntries)))
     : undefined;

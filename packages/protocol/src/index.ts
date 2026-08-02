@@ -5,6 +5,7 @@
  * blocking feasibility gates. See docs/protocol/OBJECT_MODEL.md.
  */
 
+export * from "./execution-plan-builder.js";
 export * from "./internal-contract-candidates.js";
 export * from "./job-proposal.js";
 export * from "./job-proposal-decoder.js";

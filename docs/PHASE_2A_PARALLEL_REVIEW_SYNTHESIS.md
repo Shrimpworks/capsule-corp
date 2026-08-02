@@ -112,17 +112,19 @@ integrity runner, foundational raw/media/scalar/CBOR fixtures, fixed proposal re
 source/canonical-inline-input known answers, and exact plan/registration/domain/state fixtures.
 Task 3A now implements 62 TypeScript raw/schema cases, Task 3B implements all 18 TypeScript
 semantic-resolution cases, Task 4A implements 81 Go internal media/scalar/CBOR/wrapper cases, and
-Task 4B implements all 40 Go registration-state cases through a separate unwired component. Exact
-`ExecutionPlan` construction, Swift, and consumer wiring remain pending; no endpoint or backend is
-activated.
+Task 4B implements all 40 Go registration-state cases through a separate unwired component. Task
+3C now constructs and encodes the exact minimum `ExecutionPlan` as a focused unwired TypeScript
+slice. Swift and consumer wiring remain pending; no endpoint or backend is activated.
 
 ### Task 3: Implement strict proposal decoding and semantic planning as an unwired library
 
-Implementation progress: Tasks 3A and 3B are complete. `decodeJobProposal(Uint8Array)` implements
-the strict raw and closed-schema boundary and returns only a frozen passive candidate or fixed
-internal refusal. The separate resolver derives exact source/input/profile/limit plan inputs from
-that decoder-issued candidate and trusted immutable contexts. Task 3C exact `ExecutionPlan`
-construction remains pending.
+Implementation progress: Tasks 3A, 3B, and 3C are complete as unwired slices.
+`decodeJobProposal(Uint8Array)` implements the strict raw and closed-schema boundary and returns
+only a frozen passive candidate or fixed internal refusal. The separate resolver derives exact
+source/input/profile/limit plan inputs from that decoder-issued candidate and trusted immutable
+contexts. The Task 3C builder accepts only those provenance-bearing plan inputs plus separately
+issued immutable trusted role bindings and emits the retained preferred-CBOR plan known answer and
+role-specific digest.
 
 Implement the public raw-decoder boundary and semantic `JobProposal` validation without adding a
 daemon, SDK, or MCP endpoint. Resolve trusted defaults and ceilings into a minimum exact plan or

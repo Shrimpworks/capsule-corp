@@ -313,18 +313,17 @@ separate tasks after their gates pass.
 
 ## Next backend-independent boundary
 
-The next dispatchable boundary is a design/ADR and implementation plan for Supervisor-internal,
-durable, `AttemptID`-keyed lifecycle state and startup coordination against
-`FakeBackend.CreatesGuest() == false`. It must preserve the confirmed consume/create-before-effect
-ordering, resolve only committed `CreatedAttempt` records, recover each enumerated attempt without
-rechecking approval usability or registration expiry, and never add a registration-keyed execute
-path.
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) and the separate
+[durable lifecycle implementation plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md) now select the
+narrow design for the next implementation slice: lifecycle records, effect intents, and terminal/
+unresolved dispositions are colocated in the existing versioned Supervisor snapshot and
+transaction domain. Startup and recovery remain `AttemptID`-only, resolve only committed created
+attempts, and do not recheck approval usability or registration expiry.
 
-That follow-up must explicitly decide its durable state machine, transaction/effect checkpoints,
-relationship to the authority store, crash/reopen validation, capacity, and repair behavior before
-replacing `MemoryStore`. This checkpoint does not decide authenticated IPC topology,
-archive/compaction or replay retention, production signing/verification, consumers, evidence
-composition, or public cutover.
+That proposal is design only. `MemoryStore` remains the implemented Slice C store until the
+fake-only slices and fault matrix land. Authenticated IPC, archive/compaction and replay retention,
+production signing/verification, real multi-process locking, rollback/backup, production backend
+reconciliation, consumers, evidence composition, and public cutover remain separate blockers.
 
 ## Verification for each retained slice
 

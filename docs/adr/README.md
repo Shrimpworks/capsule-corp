@@ -47,5 +47,7 @@ its core conclusion.
   — Proposed
 - [ADR-0024: Bound approval consumption and attempt creation before effects](0024-approval-consumption-and-attempt-creation.md)
   — Proposed
+- [ADR-0025: Colocate durable attempt lifecycle state with Supervisor authority state](0025-colocate-durable-attempt-lifecycle-state.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -607,6 +607,12 @@ rules include:
 - garbage collection never deletes the only record needed to revoke, reconcile, or explain an
   active attempt.
 
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) narrows the next fake-only
+implementation boundary to one colocated Supervisor snapshot/transaction domain with durable
+effect intents and `AttemptID`-only startup recovery. The proposal and its conformance plan do not
+make that lifecycle durable today or select production archive, locking, rollback, backup, or
+backend reconciliation mechanisms.
+
 ## Error and violation taxonomy
 
 Stable bounded codes distinguish malformed/unsupported protocol, authentication, untrusted or

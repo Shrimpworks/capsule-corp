@@ -156,11 +156,11 @@ Completed and retained:
 
 Next backend-independent work:
 
-1. Write the required design/ADR for durable Supervisor-internal, `AttemptID`-keyed lifecycle state
-   and startup coordination against `FakeBackend.CreatesGuest() == false`. It must preserve
-   consume/create-before-effect ordering, enumerate only committed created attempts, and decide
-   durable checkpoints, store composition, reopen validation, capacity, and repair behavior before
-   replacing the single-process `MemoryStore`.
+1. Implement [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) through the
+   [small fake-only durable lifecycle slices](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md). The
+   proposal selects one colocated Supervisor snapshot/transaction domain, stable effect identity,
+   `AttemptID`-only startup recovery, and explicit repair/capacity oracles; it does not itself
+   replace the single-process `MemoryStore` or advance a product claim.
 2. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
    no-eviction authority store is not a continuous-service store.
 3. After the Supervisor language/privilege topology is selected, design authenticated typed IPC

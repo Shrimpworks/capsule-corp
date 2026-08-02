@@ -196,6 +196,9 @@
         "backend-validation-record",
         "installation",
         "registration",
+        "approval",
+        "attempt",
+        "attempt-nonce",
         "supervisor",
         "source-manifest",
         "inline-input",
@@ -286,6 +289,28 @@
               "$ref": "#/$defs/fixtureReference"
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "operation", "before", "payload", "protectedHeader"],
+          "properties": {
+            "kind": {
+              "const": "approval-attempt-state"
+            },
+            "operation": {
+              "$ref": "#/$defs/fixtureReference"
+            },
+            "before": {
+              "$ref": "#/$defs/fixtureReference"
+            },
+            "payload": {
+              "$ref": "#/$defs/nullableFixtureReference"
+            },
+            "protectedHeader": {
+              "$ref": "#/$defs/nullableFixtureReference"
+            }
+          }
         }
       ]
     },
@@ -301,9 +326,11 @@
         "DOMAIN",
         "AUTHENTICATION",
         "STALE",
+        "REPLAY",
         "CAPACITY",
         "LOCAL_FAILURE",
-        "TRUST_STATE"
+        "TRUST_STATE",
+        "RECOVERY_REQUIRED"
       ]
     },
     "owner": {
@@ -317,7 +344,8 @@
         "shared-scalar-validator",
         "role-binding-validator",
         "supervisor-registration-state",
-        "channel-authentication"
+        "channel-authentication",
+        "approval-attempt-contract"
       ]
     },
     "expectedAccept": {
@@ -335,6 +363,15 @@
           "$ref": "#/$defs/owner"
         },
         "authorityStateChanged": {
+          "type": "boolean"
+        },
+        "timeHighWaterChanged": {
+          "type": "boolean"
+        },
+        "trustStateTightened": {
+          "type": "boolean"
+        },
+        "fakeBackendEffectPermitted": {
           "type": "boolean"
         },
         "stateDelta": {
@@ -357,6 +394,15 @@
           "$ref": "#/$defs/owner"
         },
         "authorityStateChanged": {
+          "type": "boolean"
+        },
+        "timeHighWaterChanged": {
+          "type": "boolean"
+        },
+        "trustStateTightened": {
+          "type": "boolean"
+        },
+        "fakeBackendEffectPermitted": {
           "type": "boolean"
         },
         "stateDelta": {
@@ -426,7 +472,15 @@
             "ExecutionPlan",
             "PlanRegistration",
             "CandidateId",
-            "Sha256Digest"
+            "Sha256Digest",
+            "ApprovalID",
+            "AttemptID",
+            "AttemptNonce",
+            "ApprovalReference",
+            "AttemptReference",
+            "ApprovalGrant",
+            "approval-state",
+            "attempt-state"
           ]
         },
         "wireFormat": {

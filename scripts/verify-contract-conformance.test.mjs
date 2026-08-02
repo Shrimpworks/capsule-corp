@@ -14,7 +14,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 206, fixtureCount: 278, ruleCount: 67 });
+  assert.deepEqual(result, { caseCount: 250, fixtureCount: 350, ruleCount: 78 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -274,6 +274,49 @@ test("retains the closed Task 2.4 registration-state matrix and stored record", 
   const expiredRereadAfter = await corpusJson(expiredRereadCase.expected.stateDelta.after.path);
   assert.equal(expiredRereadAfter.timeHighWaterUnixSeconds, 1_785_456_300);
   assert.equal(expiredRereadAfter.registrationPopulation.storedCount, 0);
+});
+
+test("retains the closed ADR-0024 passive Slice A matrix and known answer", async () => {
+  const manifest = await corpusJson("manifest.json");
+  const sliceCases = manifest.cases.filter(
+    (entry) => entry.context.kind === "approval-attempt-state",
+  );
+  assert.equal(sliceCases.length, 44);
+  assert.equal(sliceCases.filter((entry) => entry.expected.decision === "accept").length, 10);
+  assert.equal(sliceCases.filter((entry) => entry.expected.decision === "reject").length, 34);
+  assert.ok(
+    sliceCases.every(
+      (entry) =>
+        entry.implementations.go === "verified" &&
+        entry.expected.authorityStateChanged === false &&
+        entry.expected.timeHighWaterChanged === false &&
+        entry.expected.trustStateTightened === false &&
+        entry.expected.fakeBackendEffectPermitted === false,
+    ),
+  );
+
+  const envelope = await corpusBytes("approval-grant/ordinary.cose");
+  const payload = await corpusBytes("approval-grant/ordinary.payload.cbor");
+  const protectedHeader = await corpusBytes("approval-grant/ordinary.protected.cbor");
+  assert.equal(envelope.length, 375);
+  assert.equal(payload.length, 234);
+  assert.equal(protectedHeader.length, 68);
+  assert.equal(
+    sha256Hex(envelope),
+    "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd",
+  );
+  assert.equal(
+    sha256Hex(payload),
+    "8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea",
+  );
+  assert.equal(
+    sha256Hex(protectedHeader),
+    "b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf",
+  );
+
+  assert.equal((await corpusBytes("approval-grant/calculated-maximum.cose")).length, 431);
+  assert.equal((await corpusBytes("approval-grant/calculated-maximum.payload.cbor")).length, 242);
+  assert.equal((await corpusBytes("approval-grant/calculated-maximum.protected.cbor")).length, 116);
 });
 
 test("covers every ExecutionPlan and PlanRegistration scalar domain", async () => {

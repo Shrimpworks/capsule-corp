@@ -1,7 +1,8 @@
 # Phase 2B approval-consumption and attempt-creation conformance plan
 
-Status: proposed research/design plan. No approval ledger, attempt store, consumer, endpoint,
-backend authority, or guest is implemented by this document.
+Status: Slice A passive contracts and fixtures implemented on 2026-08-02. No approval ledger,
+attempt store, consumer, endpoint, lifecycle integration, backend authority, or guest is
+implemented.
 
 Normative proposal: [ADR-0024](adr/0024-approval-consumption-and-attempt-creation.md).
 
@@ -12,8 +13,8 @@ repository fixtures, a fixed fault-injectable local store, the existing exact re
 component, and the no-guest `registeredlifecycle.FakeBackend` in owned local worktrees. Do not
 access any other system, identity, credential, or data, and preserve Capsule's existing safeguards.
 
-The next implementation slice should answer one question: can a verified candidate approval become
-one durable usable ledger record and then one consumed record plus one `created`
+The remaining implementation slices should answer one question: can a verified candidate approval
+become one durable usable ledger record and then one consumed record plus one `created`
 `ExecutionAttempt`, atomically and recoverably, before the fake lifecycle performs any effect?
 
 ## Inputs and fixed test authorities
@@ -181,6 +182,29 @@ candidate approval known answer. Do not implement COSE or reuse experiment packa
 
 Acceptance: all byte/state oracles are reviewable, fixture integrity passes, and no product package
 or consumer is wired.
+
+Observed checkpoint: `internal/execution/approvalattempt` now provides the three distinct nonzero
+16-byte identifier/nonce domains, typed local references, the exact 12-class internal vocabulary,
+passive approval/attempt states, and an injected fixture-only verifier. The verifier recognizes only
+retained vectors, returns defensive copies, and applies the inclusive 512/256/128 raw ceilings plus
+the calculated 431/242/116 closed-candidate maxima. It is not a production COSE or Approval-key
+authorization implementation.
+
+The manifest grew from 67 rules, 206 cases, and 278 fixtures to 78 rules, 250 cases, and 350
+fixtures. The 44 new Go cases contain 10 accept and 34 reject oracles for identifiers, references,
+the vocabulary, the exact 375-byte candidate known answer, complete signed/resolved bindings,
+copied byte ownership, calculated maxima, and cap-plus-one refusal. Every Slice A context retains
+the same empty approval/attempt state, sets `authorityStateChanged`, `timeHighWaterChanged`, and
+`trustStateTightened` false, and forbids a fake-backend effect.
+
+Observed fixture identities include:
+
+- envelope: SHA-256 `fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd`, 375 bytes;
+- payload: SHA-256 `8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea`, 234 bytes; and
+- protected header: SHA-256 `b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf`, 68 bytes.
+
+Slice B remains wholly pending. `registrationstate`, `registeredlifecycle`, and the older in-memory
+`SupervisorCore` remain behaviorally unchanged and do not import the Slice A package.
 
 ### Slice B: fixed approval/attempt store
 

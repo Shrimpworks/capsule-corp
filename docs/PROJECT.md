@@ -23,13 +23,17 @@ Phase 2A now includes verified passive candidates for the first narrow `JobPropo
 `ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
 decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
 
-Phase 2B Tasks 2.1 through 2.4 now retain a closed 67-rule, 206-case, 278-fixture conformance corpus
-for raw decoding, proposal/source/input semantics, exact plan and registration bytes, and
-registration-state transitions. The unwired implementation now verifies 80 TypeScript proposal
-targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also verifies 121 Go targets:
-81 internal-CBOR/wrapper cases plus all 40 registration-state cases. A focused unwired TypeScript
-Task 3C slice now constructs and deterministically encodes the minimum `ExecutionPlan` from only
-Task 3B provenance-bearing plan inputs and separately issued trusted role bindings. The next
+Phase 2B now retains a closed 78-rule, 250-case, 350-fixture conformance corpus for raw decoding,
+proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
+and the passive ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
+TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
+verifies 165 Go targets: 81 internal-CBOR/wrapper cases, all 40 registration-state cases, and 44
+passive approval/attempt cases. The latter add distinct identifiers/references, the fixed internal
+classification vocabulary, the exact candidate approval known answer, and a bounded fixture-only
+verifier; they add no ledger, attempt, consumer, lifecycle integration, backend, or guest. A
+focused unwired TypeScript Task 3C slice now constructs and deterministically encodes the minimum
+`ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
+bindings. The next
 focused slice now prepares a defensive exact-byte/complete-role handoff and exercises those values
 against the real Go `registrationstate` component through a local-only conformance command. Go
 independently predecodes, role-binds, hashes, and retains the 530-byte known answer. This is not a

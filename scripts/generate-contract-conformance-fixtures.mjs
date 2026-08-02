@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
+import { addApprovalAttemptRulesAndCases } from "./generate-approval-attempt-conformance-fixtures.mjs";
 import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
@@ -44,6 +45,13 @@ addPlanRegistrationRulesAndCases({
   jsonDocument,
   retainFixture,
   scalarRoleContext,
+});
+addApprovalAttemptRulesAndCases({
+  addCase,
+  addRule,
+  cborEncode,
+  jsonDocument,
+  retainFixture,
 });
 
 await mkdir(sharedDirectory, { recursive: true });
@@ -1544,10 +1552,22 @@ function addCase({
   owner,
   implementations,
   authorityStateChanged = false,
+  timeHighWaterChanged,
+  trustStateTightened,
+  fakeBackendEffectPermitted,
   stateDelta,
 }) {
   const fixture = retainFixture(path, bytes);
   const expected = { decision, classification, owner, authorityStateChanged };
+  if (timeHighWaterChanged !== undefined) {
+    expected.timeHighWaterChanged = timeHighWaterChanged;
+  }
+  if (trustStateTightened !== undefined) {
+    expected.trustStateTightened = trustStateTightened;
+  }
+  if (fakeBackendEffectPermitted !== undefined) {
+    expected.fakeBackendEffectPermitted = fakeBackendEffectPermitted;
+  }
   if (stateDelta !== undefined) {
     expected.stateDelta = stateDelta;
   }

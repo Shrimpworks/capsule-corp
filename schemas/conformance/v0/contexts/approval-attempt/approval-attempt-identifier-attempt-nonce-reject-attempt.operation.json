@@ -1,0 +1,7 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "identifier",
+  "expectedDomain": "attempt-nonce",
+  "providedDomain": "attempt"
+}

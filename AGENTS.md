@@ -4,6 +4,33 @@ This repository is building a security boundary, not only a developer tool. Trea
 changes to execution, policy, artifacts, networking, and dependency handling as
 security-sensitive.
 
+## Authorized defensive scope
+
+Capsule repository work is defensive, authorized, and local-only. Work must stay
+within this repository; controlled local test harnesses, processes, and fixtures;
+owned disposable guests; and isolated test environments explicitly authorized
+by their owner and named in the task. “Local-only” means confined to those
+assets, not permission to touch unrelated or third-party infrastructure.
+
+No repository task—including one using offensive-security terminology—authorizes
+targeting third-party systems, credential theft, persistence on unrelated hosts,
+uncontrolled scanning, malware delivery, or bypassing platform, product,
+organization, or repository safety or security controls. Stop rather than infer
+authority beyond the named scope.
+
+Adversarial fixtures, fault injection, boundary-abuse tests, and hostile-guest
+tests are defensive validation of deny-by-default behavior. Keep them controlled,
+reproducible, minimal, and confined to the exact authorized scope; do not
+repurpose them into real-world intrusion tooling.
+
+When drafting or delegating work, name the defensive intent, control under test,
+exact fixtures or targets, and authorized environment. Recommended framing:
+
+> Defensively validate `<Capsule control>` using `<specific repository fixture,
+> local harness, or owned disposable guest>` in `<named authorized test
+> environment>`. Do not access any other system, identity, credential, or data,
+> and preserve Capsule’s existing safeguards.
+
 ## Start here
 
 Read these documents before changing behavior:

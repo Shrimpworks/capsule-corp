@@ -82,22 +82,24 @@ Status: Phase 2A has implemented a passive, backend-independent foundation: a de
 byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B now provides the closed conformance
 manifest, integrity runner, and 82-rule/262-case/368-fixture corpus, including proposal/source/input,
 exact plan/registration-state, passive approval/attempt Slice A, and unwired fixed-store Slice B
-oracles. They are not frozen or
-activated;
+oracles. Slice C adds an `AttemptID`-keyed no-guest fake-lifecycle seam and 12 top-level focused Go
+tests without changing the manifest counts. These slices are not frozen or activated;
 the unwired slices now implement strict TypeScript raw/schema proposal decoding, all 18 retained
 TypeScript semantic-resolution cases, exact TypeScript minimum-plan construction/encoding, strict
 Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, 44 passive
 Go approval/attempt contract cases, and 12 fixed-store transition cases. Swift remains pending.
 The fixed store now colocates registrations, approval/attempt authority, and the durable time
-high-water; it remains unwired and cannot call a lifecycle or backend. A focused local-only conformance
-handoff now carries copied TypeScript `ConstructedExecutionPlan` bytes and complete role bindings
-into the real Go `registrationstate` component; the registered-plan/fault-injectable fake lifecycle
-is also retained. Neither is a
-product-language/IPC seam or public consumer. The next approval work is the attempt-keyed Slice C
-fake-lifecycle seam; authenticated typed local IPC remains separate. Public cutover waits for
-those boundaries, reviewed
-Supervisor archival/compaction, an atomic consumer migration, and removal of the dormant
-direct-execution scaffold. See the
+high-water; it remains unwired. The fake lifecycle accepts only committed created attempts through
+`AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
+`FakeBackend.CreatesGuest() == false`; its lifecycle store is bounded single-process memory and
+non-durable. A focused local-only conformance handoff also carries copied TypeScript
+`ConstructedExecutionPlan` bytes and complete role bindings into the real Go `registrationstate`
+component. Neither path is a product-language/IPC seam or public consumer. The next
+backend-independent boundary is a design/ADR for durable `AttemptID`-keyed lifecycle state and
+startup coordination against the no-guest fake backend. Authenticated typed IPC, production
+approval signing/verification, reviewed Supervisor archival/compaction, evidence composition,
+consumers, atomic public migration, and removal of the dormant direct-execution scaffold remain
+separate decisions. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 

@@ -1,8 +1,9 @@
-# Phase 2B approval-consumption and attempt-creation conformance plan
+# Phase 2B approval-consumption and attempt-creation checkpoint
 
 Status: Slice A passive contracts and fixtures, Slice B's unwired fixed durable store, and Slice
-C's attempt-keyed no-guest fake lifecycle seam were implemented on 2026-08-02. No consumer,
-endpoint, real-backend authority, or guest is implemented.
+C's attempt-keyed no-guest fake lifecycle seam were implemented on 2026-08-02. Slice D reconciles
+their documentation and evidence without adding behavior. No consumer, endpoint, real-backend
+authority, or guest is implemented.
 
 Normative proposal: [ADR-0024](adr/0024-approval-consumption-and-attempt-creation.md).
 
@@ -13,9 +14,11 @@ repository fixtures, a fixed fault-injectable local store, the existing exact re
 component, and the no-guest `registeredlifecycle.FakeBackend` in owned local worktrees. Do not
 access any other system, identity, credential, or data, and preserve Capsule's existing safeguards.
 
-The remaining implementation slices should answer one question: can a verified candidate approval
-become one durable usable ledger record and then one consumed record plus one `created`
-`ExecutionAttempt`, atomically and recoverably, before the fake lifecycle performs any effect?
+The retained Slice A-C implementation answers one local conformance question: a fixture-verified
+candidate approval can become one durable usable ledger record and then one consumed record plus
+one `created` `ExecutionAttempt`, atomically and recoverably, before the no-guest fake lifecycle
+performs an effect. This is not evidence that a production signer, consumer, process boundary,
+backend, runtime, or guest can exercise that path.
 
 ## Inputs and fixed test authorities
 
@@ -35,10 +38,25 @@ The conformance implementation uses:
 The injected verifier is not production cryptography or Keychain evidence. Production wrapper and
 signer-authorization work remains blocked on ADR-0019.
 
+## Evidence interpretation
+
+The checkpoint separates four different things that must not be collapsed:
+
+| Evidence kind | Current meaning |
+| --- | --- |
+| Implemented local mechanic | Repository Go code implements the named unwired state transition or no-guest fake-lifecycle behavior. |
+| Retained test evidence | A named focused test or manifest case exercises that exact local mechanic in the owned test environment. |
+| Planned production control | Architecture or a Proposed ADR requires the control, but no production mechanism or consumer exists. |
+| Unsupported claim | Current evidence cannot support the claim; callers must not infer activation, production cryptography, authenticated IPC, evidence, runtime/backend enforcement, or guest execution. |
+
+The manifest remains exactly 82 rules, 262 cases, and 368 fixtures. Slice C changes no manifest or
+fixture count; its additional evidence is the 12 named top-level focused tests in
+`internal/execution/registeredlifecycle/component_test.go`.
+
 ## Manifest extension
 
-Extend the closed conformance manifest with object kinds `approval-state` and `attempt-state`.
-Each case records:
+The closed conformance manifest includes the `approval-state` and `attempt-state` object kinds.
+Each such case records:
 
 - exact fixture hashes and context paths;
 - first owning layer and one ADR-0024 classification;
@@ -274,11 +292,39 @@ store, and no consumer, production approval wrapper, content path, real backend,
 
 ### Slice D: documentation checkpoint only
 
-Reconcile `EXECUTION_SUPERVISOR.md`, the phase checkpoint, and control/evidence matrix with observed
-test evidence. Do not claim durable product behavior, production approval, or backend validation.
+Reconciles `EXECUTION_SUPERVISOR.md`, the phase checkpoint, workstream ledger, and control/evidence
+matrix with observed test evidence. It does not claim durable product behavior, production
+approval, or backend validation.
+
+Observed checkpoint: Slice D changes documentation only. The evidence map is:
+
+| Slice | Implemented local mechanic | Retained evidence |
+| --- | --- | --- |
+| A | Distinct nonzero `ApprovalID`, `AttemptID`, and `AttemptNonce` domains; typed references; fixed states/classifications; defensive byte ownership; retained-vector-only verifier with raw and calculated maxima. | `TestSliceAConformanceManifest`, `TestDomainIdentifierCopiesInputAndReferencesRejectZero`, and `TestClassificationProjectionIsDefensive`; 44 manifest-backed Go cases, including the 375-byte known answer and 431/242/116 calculated maxima. |
+| B | One versioned fixed snapshot colocates registration, effective-time high-water, approval, and created-attempt state; canonical-payload replay identity, retained nonce uniqueness, exact request replay, and atomic consume/create precede effects. | `TestApprovalAttemptDurableIdempotentAtomicHappyPath`, `TestApprovalAttemptConcurrentExactRequestsConverge`, `TestApprovalSubmissionTimeBoundaries`, `TestApprovalAttemptFaultAndProcessDeathMatrix`, `TestApprovalAttemptReopenRejectsCorruptionAndCrossLinks`, `TestApprovalAttemptHighWaterAndAttemptCapacity`, `TestApprovalCapacityAndNonEvictingRetainedState`, and `TestSliceBDurableStoreManifestOracles`. |
+| C | `AttemptResolver` and `CreatedAttemptEnumerator` expose committed created attempts; `Drive`, `Recover`, lifecycle state, fake instances, and faults are keyed only by `AttemptID`; bindings and exact plan bytes are revalidated before fake prepare. | All 12 top-level `registeredlifecycle` tests, including `TestDriveRejectsMissingMutatedAndCrossLinkedAttemptsBeforePrepare`, `TestConcurrentAndSequentialDriveNeverRedriveEffects`, `TestTwoApprovalsForOneRegistrationHaveIndependentAttemptLifecycles`, `TestFakeFaultMatrixEndsDestroyedOrUnresolved`, `TestPostSideEffectInterruptionRecoversByAttemptAcrossComponentRestart`, and `TestStartupEnumerationDrivesCreatedAttemptOnceAndIgnoresExpiry`. `TestDriveResolvesCommittedSliceBAttemptAndExposesNoSuccessResult` also asserts `FakeBackend.CreatesGuest() == false`. |
+
+The Slice B fixed authority store is durable only within this unwired file-snapshot test design.
+The Slice C `MemoryStore` is bounded, single-process, and non-durable; reusing it across component
+instances exercises in-process restart logic, not process-death or power-loss persistence.
 
 Consumer wiring, Broker UI/signing, evidence composition, content, and real backend work remain
 separate tasks after their gates pass.
+
+## Next backend-independent boundary
+
+The next dispatchable boundary is a design/ADR and implementation plan for Supervisor-internal,
+durable, `AttemptID`-keyed lifecycle state and startup coordination against
+`FakeBackend.CreatesGuest() == false`. It must preserve the confirmed consume/create-before-effect
+ordering, resolve only committed `CreatedAttempt` records, recover each enumerated attempt without
+rechecking approval usability or registration expiry, and never add a registration-keyed execute
+path.
+
+That follow-up must explicitly decide its durable state machine, transaction/effect checkpoints,
+relationship to the authority store, crash/reopen validation, capacity, and repair behavior before
+replacing `MemoryStore`. This checkpoint does not decide authenticated IPC topology,
+archive/compaction or replay retention, production signing/verification, consumers, evidence
+composition, or public cutover.
 
 ## Verification for each retained slice
 
@@ -298,11 +344,13 @@ The repository-required commands remain authoritative if this list becomes stale
 
 ## Exit and blockers
 
-This plan exits when the unwired store and fake lifecycle pass the exact matrix and the repository
-records only the demonstrated claim: atomic one-use state mechanics against a no-guest fake
-backend.
+This checkpoint exits with the repository recording only the demonstrated claim: atomic one-use
+authority-state mechanics and `AttemptID`-keyed recovery against a no-guest fake backend.
 
-It does not exit ADR-0019 or authorize consumers. Remaining blockers include production COSE and
-Swift wrappers, Approval-key authorization and Keychain/user-presence evidence, reviewed durable
-archive/compaction and rollback behavior, public identifiers/endpoints, evidence profiles, content
-custody, and every real-backend/runtime P0 gate.
+It does not accept ADR-0019 or ADR-0024 and does not authorize consumers. The fixed authority store
+has no eviction, production archive/compaction, multi-process locking, backup/restore design, or
+rollback-resistant identifier/nonce uniqueness. The lifecycle `MemoryStore` is single-process and
+non-durable. Production COSE and Swift wrappers, Approval-key authorization,
+Keychain/LocalAuthentication user-presence evidence, authenticated IPC, public identifiers and
+endpoints, consumers, content custody, evidence composition/signing, runtime/backend enforcement,
+and every real-backend/runtime P0 gate remain unresolved. No guest is created.

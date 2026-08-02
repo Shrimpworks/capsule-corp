@@ -6,12 +6,22 @@ immutable runtime-root custody, `NullFs` disposition, typed port transport/compl
 installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded filesystem-image
 parsing is a later gate before file artifacts.
 
-Implementation note: `internal/execution.SupervisorCore` now exercises exact-byte registration,
-approval binding/one-use consumption, transition fencing/component acceptance, and cleanup
-obligations against an in-memory store and a no-guest development lifecycle. It is an executable
-contract, not a deployed Supervisor: the store is non-durable, approval/integrity checks are ports,
-the lifecycle is forbidden from creating a guest, and no macOS IPC, code identity, Keychain,
-protected storage, or production cryptography is present.
+Implementation checkpoint: the older `internal/execution.SupervisorCore` remains in-memory scaffold
+evidence and is not the oracle for ADR-0024. The current unwired path instead comprises:
+
+- `internal/execution/approvalattempt`: passive typed domains, fixed classifications/states, and a
+  retained-vector-only bounded verifier;
+- `internal/execution/registrationstate`: a fixed file snapshot colocating exact registrations,
+  effective-time high-water, approvals, and immutable created attempts, including atomic
+  consume/create and reopen validation; and
+- `internal/execution/registeredlifecycle`: an `AttemptID`-keyed, no-guest fake lifecycle that
+  revalidates the committed attempt and exact registered plan before fake prepare.
+
+These are implemented local mechanics with retained Go tests, not a deployed Supervisor. The
+authority store has no production archive/compaction or multi-process locking, the lifecycle store
+is bounded single-process memory, and no consumer, authenticated IPC, macOS code identity,
+Keychain/user presence, protected production storage, production cryptography, content, evidence,
+runtime/backend authority, or guest is present. ADR-0019 and ADR-0024 remain Proposed.
 
 ## Purpose
 
@@ -56,7 +66,7 @@ The exact wire contracts remain pending, but the conceptual interfaces are:
 ```text
 registerPlan(exactCanonicalPlanBytes) -> PlanRegistration
 getRegisteredPlan(registrationId) -> exactCanonicalPlanBytes
-submitApproval(registrationId, ApprovalGrant) -> approvalReference
+submitApproval(registrationId, exactSignedApprovalEnvelopeBytes) -> approvalReference
 requestAttempt(registrationId, approvalReference) -> attemptReference
 cancelAttempt(attemptId) -> acceptedState
 getFixedStatus(attemptId) -> boundedStatus
@@ -70,6 +80,10 @@ policy overrides.
 The Broker has a direct authenticated read/approval/content-handle surface. The daemon receives
 only planning/registration/attempt/status/cancellation operations. A privileged launcher, if any,
 receives only a sealed typed launch descriptor created by the Supervisor.
+
+These role-specific surfaces are intended and proposed interfaces. Current tests inject an
+`AuthenticatedCallContext`; they do not implement or validate authenticated IPC or choose its
+process topology.
 
 ## Independent validation
 
@@ -116,19 +130,32 @@ Every path after backend creation reaches destroy/reconcile. Terminal classifica
 guest failure, policy/integrity denial, cancellation, timeout, resource exhaustion, backend
 failure, egress rejection, teardown failure, unresolved backend, and success.
 
+The current local evidence stops at a narrower boundary. `ApprovalAttemptComponent` durably
+creates one immutable `created` attempt and exposes `ResolveCreated(AttemptID)` plus startup
+enumeration. `registeredlifecycle.Drive` and `Recover` accept only that `AttemptID`, revalidate the
+attempt/consumed-approval/registration/plan bindings, and key lifecycle records, fake instances,
+faults, and recovery by the attempt. Separately approved attempts for one registration therefore
+remain distinct. The lifecycle `MemoryStore` is non-durable, and the fake lifecycle has no job
+success result and creates no guest.
+
 ## Side-effect ordering
 
-1. Persist registration before issuing the registration ID.
-2. Persist grant and validate its bindings.
-3. Atomically consume grant and create attempt before backend side effects.
+1. Persist registration before issuing the registration ID. The unwired fixed store exercises
+   this locally.
+2. Persist grant and validate its bindings. The fixed fixture verifier and authority store
+   exercise only the candidate local profile.
+3. Atomically consume grant and create attempt before backend side effects. Slice B and Slice C
+   tests exercise this ordering against the no-guest fake lifecycle.
 4. Persist a cleanup lease before or transactionally with backend creation intent.
 5. Persist the durable backend handle immediately after creation and reconcile ambiguous results.
 6. Verify staged bytes before start.
 7. Persist collection manifest before content release.
 8. Persist terminal transcript and teardown classification before ordinary success is visible.
 
-A process crash between steps produces an explicit recovery state. The system never infers that a
-grant was unused or a backend absent solely because a later record is missing.
+Steps 4 through 8 remain planned product controls. The current lifecycle memory store does not
+provide their required durability. In the intended system, a crash between steps produces an
+explicit recovery state; missing later state never proves that a grant was unused or a backend was
+absent.
 
 ## Backend lifecycle
 
@@ -228,7 +255,35 @@ continues to own portable policy/state-machine/backend-contract code. A post-v0 
 may be considered only under the separate ADR above and must never receive public parsing,
 approval, content, or general engine authority.
 
-## Acceptance tests
+## Current checkpoint and next boundary
+
+Retained focused evidence includes:
+
+- `TestApprovalAttemptDurableIdempotentAtomicHappyPath` and
+  `TestApprovalAttemptConcurrentExactRequestsConverge` for canonical-payload idempotency, exact
+  replay/concurrency, and the consumed-approval/created-attempt cross-link;
+- `TestApprovalSubmissionTimeBoundaries`, `TestApprovalAttemptFaultAndProcessDeathMatrix`,
+  `TestApprovalAttemptReopenRejectsCorruptionAndCrossLinks`, and
+  `TestApprovalAttemptHighWaterAndAttemptCapacity` for effective time, capacity, confirmed versus
+  indeterminate faults, recovery fencing, reopen, and corruption refusal; and
+- the 12 top-level `registeredlifecycle` tests for `AttemptID`-only drive/recovery, complete binding
+  revalidation before fake prepare, distinct attempts per registration, startup enumeration,
+  exact replay, all fake before/after-effect faults, post-effect restart recovery, and the explicit
+  `FakeBackend.CreatesGuest() == false` invariant.
+
+The next backend-independent boundary is a future design/ADR and implementation plan for durable,
+Supervisor-internal `AttemptID`-keyed lifecycle state and startup coordination with the no-guest
+fake backend. It must replace the single-process `MemoryStore` without creating a registration-
+keyed execute path or weakening consume/create-before-effect ordering. It must decide durable
+state/effect checkpoints, store composition, reopen validation, capacity, and repair semantics.
+
+This document does not decide archive/compaction or replay retention, authenticated IPC topology,
+production COSE/Swift/Keychain/user-presence signing and verification, consumers, content, evidence
+composition, runtime/backend admission, or public cutover. The fixed authority store remains
+no-eviction and lacks multi-process locking, rollback-resistant uniqueness, and a production
+retention design. No guest exists in this implementation checkpoint.
+
+## Target acceptance tests
 
 - daemon cannot call backend/launcher directly;
 - execute with replacement bytes has no interface;

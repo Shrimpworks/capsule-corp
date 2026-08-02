@@ -25,3 +25,6 @@ but it has not selected a public versioning or release policy yet.
   37 rules, 105 cases, and 91 unique raw/media/scalar/CBOR fixtures.
 - A durable workstream/evidence ledger mapping parallel task conclusions and external reviews to
   retained evidence, synthesis documents, merged integration commits, and remaining work.
+- An unwired exact plan-registration conformance handoff that passes copied TypeScript plan bytes
+  and complete role bindings to the Go `registrationstate` component without defining product IPC
+  or activating any daemon, approval, backend, or guest surface.

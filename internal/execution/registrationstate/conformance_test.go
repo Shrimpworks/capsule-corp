@@ -284,6 +284,41 @@ func TestFixedStoreRestartAndDefensiveCopies(t *testing.T) {
 	}
 }
 
+func TestFixedStoreRestartRefusesStoredPlanDigestMismatch(t *testing.T) {
+	plan := readBytes(t, filepath.Join(conformanceRoot, "execution-plan/ordinary.cbor"))
+	path := filepath.Join(t.TempDir(), "registration-state.json")
+	store, err := NewFixedFileStore(path, ordinaryInitialState())
+	if err != nil {
+		t.Fatalf("new fixed store: %v", err)
+	}
+	component := mustComponent(t, store, fixedTrustedClock{observation: 1_785_456_000}, &sequenceIdentifierSource{next: 1})
+	if _, err := component.RegisterPlan(
+		context.Background(),
+		AuthenticatedCallContext{Authenticated: true, Role: CallerDaemon, Purpose: RegisterPlanPurpose},
+		plan,
+		ordinaryPlanBindings(),
+	); err != nil {
+		t.Fatalf("register plan: %v", err)
+	}
+	state, err := store.snapshot(context.Background())
+	if err != nil {
+		t.Fatalf("snapshot registered state: %v", err)
+	}
+	state.Registrations[0].Record.RecomputedPlanDigest[0] ^= 0xff
+	corrupt, err := json.Marshal(diskEnvelope{StoreFormatVersion: 0, State: state})
+	if err != nil {
+		t.Fatalf("marshal digest-mismatched store: %v", err)
+	}
+	corrupt = append(corrupt, '\n')
+	if err := os.WriteFile(path, corrupt, 0o600); err != nil {
+		t.Fatalf("write digest-mismatched store: %v", err)
+	}
+	if _, err := NewFixedFileStore(path, InitialState{}); err == nil ||
+		!strings.Contains(err.Error(), "stored plan digest mismatch") {
+		t.Fatalf("restart error = %v, want stored plan digest mismatch", err)
+	}
+}
+
 func TestTrustedClockObservationFailureChangesNoState(t *testing.T) {
 	plan := readBytes(t, filepath.Join(conformanceRoot, "execution-plan/ordinary.cbor"))
 	for _, test := range []struct {

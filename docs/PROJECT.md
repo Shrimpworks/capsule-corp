@@ -29,8 +29,12 @@ registration-state transitions. The unwired implementation now verifies 80 TypeS
 targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also verifies 121 Go targets:
 81 internal-CBOR/wrapper cases plus all 40 registration-state cases. A focused unwired TypeScript
 Task 3C slice now constructs and deterministically encodes the minimum `ExecutionPlan` from only
-Task 3B provenance-bearing plan inputs and separately issued trusted role bindings. Swift,
-consumers, and endpoints remain pending. See the
+Task 3B provenance-bearing plan inputs and separately issued trusted role bindings. The next
+focused slice now prepares a defensive exact-byte/complete-role handoff and exercises those values
+against the real Go `registrationstate` component through a local-only conformance command. Go
+independently predecodes, role-binds, hashes, and retains the 530-byte known answer. This is not a
+product IPC implementation: Swift, authenticated cross-process transport, consumers, and endpoints
+remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint also rejects stock Bun 1.3.14 for the required runtime-authority contract and keeps the
 exact libkrun block-root profile unsupported because the smallest `NullFs` removal prevents guest

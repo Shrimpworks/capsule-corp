@@ -132,10 +132,13 @@ Completed and retained:
 
 Next backend-independent work:
 
-1. Unwired strict proposal decoding and semantic planning.
-2. Bounded internal wrappers and exact-byte Supervisor registration.
-3. The registered-plan/fault-injectable fake-backend vertical slice.
-4. Only then, the coordinated public consumer cutover and mixed-`Job` removal.
+1. Replace the local-only exact plan-registration conformance wrapper with reviewed authenticated
+   typed IPC after the Supervisor language/privilege topology is selected; do not promote the test
+   JSON into a product transport.
+2. Implement direct Broker approval and durable one-use grant consumption/attempt creation against
+   registration IDs only.
+3. Complete the Supervisor archival/compaction design and daemon aggregate service envelope.
+4. Only then, perform the coordinated public consumer cutover and mixed-`Job` removal.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

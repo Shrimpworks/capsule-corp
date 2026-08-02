@@ -1,21 +1,29 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 import {
   constructExecutionPlan,
   createTrustedExecutionPlanBindings,
   createTrustedExecutionPlanDigest,
   createTrustedExecutionPlanInstallationId,
+  createTrustedExecutionPlanRegistrationRoleBindings,
   createTrustedProfileRegistryContext,
   createTrustedUserPolicyContext,
   decodeJobProposal,
+  type ExecutionPlanRegistrationHandoff,
   type ExecutionPlanRetainedByteRole,
+  prepareExecutionPlanRegistrationHandoff,
   type ResolvedJobProposalPlanInputs,
   resolveJobProposal,
   type TrustedExecutionPlanBindings,
   type TrustedExecutionPlanDigest,
   type TrustedExecutionPlanDigestRole,
+  type TrustedExecutionPlanRegistrationRoleBindings,
 } from "./index.js";
 
 const corpusRoot = new URL("../../../schemas/conformance/v0/", import.meta.url);
@@ -239,6 +247,129 @@ test("builder preserves the Task 3B trusted-default origin without rewriting exa
   assert.deepEqual(first.plan.copyExactBytes(), second.plan.copyExactBytes());
 });
 
+test("unwired registration handoff retains only defensive exact-byte and complete role copies", async () => {
+  const constructed = constructExecutionPlan(await ordinaryPlanInputs(), ordinaryTrustedBindings());
+  assert.equal(constructed.ok, true);
+  if (!constructed.ok) {
+    return;
+  }
+  const roleBindings = ordinaryRegistrationRoleBindings();
+  const prepared = prepareExecutionPlanRegistrationHandoff(constructed.plan, roleBindings);
+  assert.equal(prepared.ok, true);
+  if (!prepared.ok) {
+    return;
+  }
+
+  assert.equal(prepared.handoff.exactPlanByteLength, 530);
+  assert.equal(Object.isFrozen(prepared.handoff), true);
+  assert.equal(Object.isFrozen(prepared.handoff.roleBindings), true);
+  assert.equal(
+    Object.isFrozen(prepared.handoff.roleBindings.profileReviewAttestationDigests),
+    true,
+  );
+  const callerCopy = prepared.handoff.copyExactPlanBytes();
+  callerCopy[0] = (callerCopy[0] ?? 0) ^ 0xff;
+  assert.equal(prepared.handoff.copyExactPlanBytes()[0], 0xb8);
+
+  assert.deepEqual(
+    prepareExecutionPlanRegistrationHandoff(
+      { ...constructed.plan } as typeof constructed.plan,
+      roleBindings,
+    ),
+    {
+      ok: false,
+      refusal: {
+        owner: "execution-plan-registration-handoff",
+        classification: "BINDING",
+        code: "PLAN_PROVENANCE",
+      },
+    },
+  );
+  assert.deepEqual(
+    prepareExecutionPlanRegistrationHandoff(constructed.plan, {
+      ...roleBindings,
+    } as TrustedExecutionPlanRegistrationRoleBindings),
+    {
+      ok: false,
+      refusal: {
+        owner: "execution-plan-registration-handoff",
+        classification: "BINDING",
+        code: "ROLE_BINDING_PROVENANCE",
+      },
+    },
+  );
+  assert.deepEqual(
+    prepareExecutionPlanRegistrationHandoff(
+      constructed.plan,
+      ordinaryRegistrationRoleBindings({
+        policyDecisionDigest: trustedDigest(0xbc, "policy-decision"),
+      }),
+    ),
+    {
+      ok: false,
+      refusal: {
+        owner: "execution-plan-registration-handoff",
+        classification: "BINDING",
+        code: "ROLE_BINDING_MISMATCH",
+      },
+    },
+  );
+});
+
+test("TypeScript exact-plan output reaches Go registrationstate through the local conformance harness", async () => {
+  const constructed = constructExecutionPlan(await ordinaryPlanInputs(), ordinaryTrustedBindings());
+  assert.equal(constructed.ok, true);
+  if (!constructed.ok) {
+    return;
+  }
+  const prepared = prepareExecutionPlanRegistrationHandoff(
+    constructed.plan,
+    ordinaryRegistrationRoleBindings(),
+  );
+  assert.equal(prepared.ok, true);
+  if (!prepared.ok) {
+    return;
+  }
+
+  const ordinary = serializeHandoff(prepared.handoff);
+  const accepted = runGoRegistrationHandoff(ordinary);
+  assert.deepEqual(accepted, {
+    accepted: true,
+    stateUnchanged: false,
+    retainedExactPlanHex: Buffer.from(prepared.handoff.copyExactPlanBytes()).toString("hex"),
+    recomputedPlanDigestHex: expectedPlanDigest,
+    wireRegistrationPlanDigestHex: expectedPlanDigest,
+  });
+
+  const wrongRole = structuredClone(ordinary);
+  wrongRole.roleBindings.policyDecisionDigestHex = "bc".repeat(32);
+  assert.deepEqual(runGoRegistrationHandoff(wrongRole), {
+    accepted: false,
+    classification: "DOMAIN",
+    stateUnchanged: true,
+  });
+
+  const missingRole = structuredClone(ordinary);
+  delete missingRole.roleBindings.sourceManifestDigestHex;
+  assert.deepEqual(runGoRegistrationHandoff(missingRole), {
+    accepted: false,
+    classification: "DOMAIN",
+    stateUnchanged: true,
+  });
+
+  const mutatedPlan = structuredClone(ordinary);
+  const mutatedBytes = Buffer.from(mutatedPlan.exactPlanHex, "hex");
+  const policyDigestOffset = mutatedBytes.indexOf(Buffer.alloc(32, 0xbb));
+  assert.notEqual(policyDigestOffset, -1);
+  mutatedBytes[policyDigestOffset] = (mutatedBytes[policyDigestOffset] ?? 0) ^ 0x01;
+  mutatedPlan.exactPlanHex = mutatedBytes.toString("hex");
+  assert.deepEqual(runGoRegistrationHandoff(mutatedPlan), {
+    accepted: false,
+    classification: "DOMAIN",
+    stateUnchanged: true,
+  });
+});
+
 async function ordinaryPlanInputs(): Promise<ResolvedJobProposalPlanInputs> {
   return resolvedPlanInputs("job-proposal/ordinary.json");
 }
@@ -274,6 +405,38 @@ function ordinaryTrustedBindings(
 ): TrustedExecutionPlanBindings {
   return createTrustedExecutionPlanBindings({
     ...ordinaryTrustedBindingsInput(),
+    ...overrides,
+  });
+}
+
+type RegistrationRoleBindingOverrides = Partial<
+  Parameters<typeof createTrustedExecutionPlanRegistrationRoleBindings>[0]
+>;
+
+function ordinaryRegistrationRoleBindings(
+  overrides: RegistrationRoleBindingOverrides = {},
+): TrustedExecutionPlanRegistrationRoleBindings {
+  return createTrustedExecutionPlanRegistrationRoleBindings({
+    installationId: createTrustedExecutionPlanInstallationId(repeatedBytes(0x11, 16)),
+    epochDigest: trustedDigest(0x22, "trust-epoch"),
+    sourceManifestDigest: createTrustedExecutionPlanDigest(
+      hexBytes("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+      "source-manifest",
+    ),
+    inlineInputDigest: createTrustedExecutionPlanDigest(
+      hexBytes("bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72"),
+      "inline-input",
+    ),
+    runtimeBundleManifestDigest: trustedDigest(0x55, "runtime-bundle-manifest"),
+    profileReviewAttestationDigests: [
+      trustedDigest(0x66, "profile-review-attestation"),
+      trustedDigest(0x67, "profile-review-attestation"),
+    ],
+    profileRegistryEntryDigest: trustedDigest(0x77, "profile-registry-entry"),
+    backendValidationRecordDigest: trustedDigest(0x88, "backend-validation-record"),
+    backendConfigurationDigest: trustedDigest(0x99, "backend-configuration"),
+    trustSnapshotDigest: trustedDigest(0xaa, "trust-snapshot"),
+    policyDecisionDigest: trustedDigest(0xbb, "policy-decision"),
     ...overrides,
   });
 }
@@ -323,4 +486,79 @@ function repeatedBytes(value: number, length: number): Uint8Array {
 
 function hexBytes(value: string): Uint8Array {
   return Uint8Array.from(Buffer.from(value, "hex"));
+}
+
+interface SerializedRegistrationHandoff {
+  exactPlanHex: string;
+  roleBindings: {
+    installationIdHex: string;
+    epochDigestHex: string;
+    sourceManifestDigestHex?: string;
+    inlineInputDigestHex: string;
+    runtimeBundleManifestDigestHex: string;
+    profileReviewAttestationDigestHexes: string[];
+    profileRegistryEntryDigestHex: string;
+    backendValidationRecordDigestHex: string;
+    backendConfigurationDigestHex: string;
+    trustSnapshotDigestHex: string;
+    policyDecisionDigestHex: string;
+  };
+}
+
+interface GoRegistrationHandoffResponse {
+  accepted: boolean;
+  classification?: string;
+  stateUnchanged: boolean;
+  retainedExactPlanHex?: string;
+  recomputedPlanDigestHex?: string;
+  wireRegistrationPlanDigestHex?: string;
+}
+
+function serializeHandoff(
+  handoff: ExecutionPlanRegistrationHandoff,
+): SerializedRegistrationHandoff {
+  const bindings = handoff.roleBindings;
+  return {
+    exactPlanHex: Buffer.from(handoff.copyExactPlanBytes()).toString("hex"),
+    roleBindings: {
+      installationIdHex: retainedHex(bindings.installationId),
+      epochDigestHex: retainedHex(bindings.epochDigest),
+      sourceManifestDigestHex: retainedHex(bindings.sourceManifestDigest),
+      inlineInputDigestHex: retainedHex(bindings.inlineInputDigest),
+      runtimeBundleManifestDigestHex: retainedHex(bindings.runtimeBundleManifestDigest),
+      profileReviewAttestationDigestHexes:
+        bindings.profileReviewAttestationDigests.map(retainedHex),
+      profileRegistryEntryDigestHex: retainedHex(bindings.profileRegistryEntryDigest),
+      backendValidationRecordDigestHex: retainedHex(bindings.backendValidationRecordDigest),
+      backendConfigurationDigestHex: retainedHex(bindings.backendConfigurationDigest),
+      trustSnapshotDigestHex: retainedHex(bindings.trustSnapshotDigest),
+      policyDecisionDigestHex: retainedHex(bindings.policyDecisionDigest),
+    },
+  };
+}
+
+function retainedHex(value: { readonly bytes: readonly number[] }): string {
+  return Buffer.from(value.bytes).toString("hex");
+}
+
+function runGoRegistrationHandoff(
+  request: SerializedRegistrationHandoff,
+): GoRegistrationHandoffResponse {
+  const repositoryRoot = fileURLToPath(new URL("../../../", import.meta.url));
+  const result = spawnSync(
+    "go",
+    ["run", "./internal/execution/registrationstate/conformancehandoff"],
+    {
+      cwd: repositoryRoot,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GOCACHE: process.env.GOCACHE ?? join(tmpdir(), "capsule-registration-handoff-gocache"),
+      },
+      input: JSON.stringify(request),
+      maxBuffer: 1 << 20,
+    },
+  );
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  return JSON.parse(result.stdout) as GoRegistrationHandoffResponse;
 }

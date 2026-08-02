@@ -4,6 +4,10 @@ Status: Tasks 2.1 and 2.2 implemented as a passive fixture-integrity foundation.
 Proposed; no protocol decoder, semantic planner, registration store, or authority-bearing behavior
 is activated.
 
+Integration checkpoints: PR #10 merged the proposed decisions as `e565e6b`; PR #11 merged the
+manifest-driven conformance foundation as `f6de7ec`. Task provenance and the complete handoff are
+indexed in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+
 ## Objective
 
 Resolve only the exact protocol and registration questions needed to build the manifest-driven

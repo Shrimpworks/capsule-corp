@@ -158,10 +158,11 @@ Exit evidence:
 - Agent-observable fields stay within the documented channel budget.
 - Rich parsing is absent from the daemon and Supervisor.
 
-## Phase 5: dependency-free Bun development execution
+## Phase 5: dependency-free runtime development execution
 
-- Close the five reconciled P0 Gate C campaigns: governed runtime-authority closure or an alternate
-  runtime following the failed stock-Bun branch, immutable
+- Close the five reconciled P0 Gate C campaigns: investigate and select an alternate runtime under
+  the unchanged authority contract after both stock Bun and the governed-construction branch failed,
+  then close immutable
   runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
   bounded inline JSON, and an admissible complete installed development bundle.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
@@ -194,6 +195,8 @@ Exit evidence:
 - The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
   environment-file, and package-install path through a construction-level closure argument, source
   review, deliberate capability-restoration mutations, and the accepted adversarial corpus.
+- The alternate-runtime selection is recorded in an ADR that supersedes ADR-0003's Bun-first
+  implementation choice; the runtime-neutral protocol decision remains intact.
 - The exact guest-kernel and launcher profile matches its reviewed manifest, exposes no
   undocumented kernel authority, and records remaining facilities and completion-trust limitations.
 - The exact configuration passes the minimum development attack suite.

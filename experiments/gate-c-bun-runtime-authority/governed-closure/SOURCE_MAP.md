@@ -3,7 +3,9 @@
 This map is read-only source evidence for Bun tag `bun-v1.3.14`, commit
 `0d9b296af33f2b851fcbf4df3e9ec89751734ba4`. It extends the retained parent
 [`SOURCE_INVENTORY.md`](../SOURCE_INVENTORY.md) only far enough to identify the construction seams
-that a governed profile would have to close. It is not a reviewed patch or proof of absence.
+that a governed profile would have to close. It is not a reviewed patch or proof of absence. The
+subsequent [exact construction review](CONSTRUCTION_REVIEW.md) expanded this initial map to a
+40-hand-authored-file plus 10-generated-output conservative lower bound and triggered NO-GO.
 
 ## Registry construction
 
@@ -53,7 +55,7 @@ library loading make broad executable-memory or native-load denial a compatibili
 native closure argument must therefore combine construction-level removal of every attacker-facing
 loader, an empty/no-exec workload staging design, and exact final-binary review.
 
-## Minimum maintenance surface observed
+## Initial minimum maintenance surface observed
 
 Before generated outputs, tests, build-profile wiring, and the self-seal implementation, the map
 already crosses at least these 21 source units:
@@ -80,6 +82,8 @@ already crosses at least these 21 source units:
 20. `src/cli/bunfig.zig`
 21. `src/resolver/resolver.zig`
 
-This is a lower bound, not a patch-size estimate. Any Bun update changes the generated registry,
-native bindings, module resolver, JSC/runtime behavior, or syscall profile and invalidates the
-closure evidence.
+This was a lower bound, not a patch-size estimate. It omitted duplicate builtin/source registries,
+process-native tables, build-profile propagation, Worker/global LUTs, SQLite compile controls, and
+generated outputs. [`CONSTRUCTION_REVIEW.md`](CONSTRUCTION_REVIEW.md) is the terminal maintenance-
+surface decision. Any Bun update changes the generated registry, native bindings, module resolver,
+JSC/runtime behavior, or syscall profile and invalidates the source evidence.

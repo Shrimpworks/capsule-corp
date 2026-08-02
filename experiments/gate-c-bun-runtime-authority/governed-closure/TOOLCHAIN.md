@@ -223,8 +223,9 @@ dynamic-loader, or Linux/arm64 oracle evidence.
 
 ## What baseline success does and does not decide
 
-The prior missing-toolchain blocker is removed, so the governed patch experiment can continue. This
-does not establish that subprocess, executable replacement, native loading, inspector, Worker,
-configuration injection, or dynamic resolution are absent. That still requires the construction
-patch, exact Linux launcher enforcement, defensive probes, syscall and descriptor observations, and
-deliberate restoration mutations. No runtime or backend bytes are admitted by this setup.
+The prior missing-toolchain blocker was removed, permitting the next fail-fast source review. That
+review rejected the governed Bun branch before patching because the minimum honest construction
+surface is broad and unreviewable; see [CONSTRUCTION_REVIEW.md](CONSTRUCTION_REVIEW.md). The stock
+baseline does not establish that subprocess, executable replacement, native loading, inspector,
+Worker, configuration injection, or dynamic resolution are absent. It remains prerequisite
+buildability evidence only. No runtime or backend bytes are admitted by this setup.

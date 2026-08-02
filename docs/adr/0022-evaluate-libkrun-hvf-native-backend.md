@@ -85,11 +85,11 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   non-stop-aware transmit waiting, undocumented negative-FD directionality, shared `O_NONBLOCK`
   status mutation, and partial-then-error handling must be patched or pass an exact fail-closed
   corpus. The host continuously drains to cap-plus-one and never uses EOF as completion.
-- Pinning Bun proves byte identity, not absence of runtime powers. Until the exact profile refuses
-  subprocess, FFI, native-addon, inspector, macro, environment-file, and package-install paths,
-  execution requiring that contract is unsupported. The exact stock Bun 1.3.14 P0-0 investigation
-  failed, so only a governed patched/external profile remains on the Bun branch; failure requires
-  an alternate runtime and an ADR-0003 update. A contract change requires a separate ADR.
+- Pinning Bun proves byte identity, not absence of runtime powers. The exact stock Bun 1.3.14 P0-0
+  investigation and the follow-up governed-construction review both failed. The latter found a
+  40-hand-authored plus 10-generated-output minimum and triggered its broad/unreviewable stop rule.
+  Execution requiring the contract remains unsupported; alternate-runtime selection and an
+  ADR-0003 superseding decision are required. A contract change requires a separate ADR.
 - Host capture retains at most the exact approved prefix per stream while continuously draining.
   Wall/cancel actions remain independent of guest cooperation, and revalidated exact-process
   `SIGKILL` is the required fallback because graceful eventfd shutdown did not pass.

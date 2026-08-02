@@ -84,6 +84,14 @@ The same source states that the device serves built-in init and pre-pivot mount 
 passthrough configuration exists. This supports the narrow inference that no host-backed directory
 was configured; it does not suppress the guest-visible device or validate its VMM implementation.
 
+## P0-2 replacement evidence
+
+The 2026-08-02 [bounded P0-2 investigation](NULLFS_P0_2.md) retains the smallest tested removal
+patch, selected baseline/mutation output, a rerun summary, and verification record under
+`patches/` and `evidence/nullfs-p0-2/`. It falsifies only removal of the internal fs-device
+construction: the build passed but bootstrap panicked before init. It does not accept the residual
+surface or update installed-profile evidence.
+
 ## Review queries
 
 ```sh

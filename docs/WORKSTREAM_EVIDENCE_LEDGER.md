@@ -6,6 +6,10 @@ Status: durable coordination index. This ledger records where completed task con
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
 linked experiment results, synthesis documents, ADRs, or conformance fixtures.
 
+The consolidated outcomes, exact known answers, application status, combined verification, and
+next dependency boundary for the latest group are recorded in the
+[Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+
 ## Purpose and authority
 
 Capsule used parallel Codex tasks, external read-only reviews, retained experiments, and several
@@ -43,6 +47,8 @@ product finding. Every completed track result was recovered into the repository 
 | Installed lifecycle and crash recovery | `019fb9e7-25ec-78b2-8bf2-65688a86f41f` | Conditional same-host pass for enrolled launch mechanics and exact recovery. Complete installed authority, accepted distribution, clean-host, session, reboot, and minimum-OS evidence remain open. | [`RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) and Gate C synthesis |
 | Adversarial VMM and cross-job isolation | original `019fb9e7-2692-7cb0-a5c2-cebb9378e07f`; completed replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | The original task failed at the task/app layer. The bounded replacement verified and preserved the existing report. The exact profile conditionally failed because `NullFs` remains guest-visible even without a configured host directory. | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md), [`VALIDATION_RECEIPT.md`](../experiments/gate-c-libkrun-adversarial/VALIDATION_RECEIPT.md), and Gate C synthesis |
 | Runtime packaging, provenance, patch governance, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional build/release feasibility pass; current bytes are no-go for admission. Controlled same-host equality is not two-builder provenance, and the complete final signed/notarized topology is not available. | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md), [`HANDOFF.md`](../experiments/gate-c-libkrun-supply-chain/HANDOFF.md), and Gate C synthesis |
+| P0-0 exact stock Bun runtime authority | `019fc2e6-cf9f-7482-82b5-240992c79419`, delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` | Failed for stock Bun 1.3.14: process, `execve`, FFI/native-loader, inspector, Worker, and descriptor authority remain reachable. `RUNTIME-001` stays unsupported; only a governed patched/external branch or alternate runtime remains. | [`RESULTS.md`](../experiments/gate-c-bun-runtime-authority/RESULTS.md), source inventory, synthetic probes, and selected evidence |
+| P0-2 `NullFs` disposition replacement | `019fc2e8-445e-7cb2-b4c2-54d84282c3fe`, replacing task `019fc2e6-cf9d-7210-b2f3-f3bf2244e83a` after an app-layer failure | The smallest removal built but prevented guest bootstrap; no independent feature toggle or retained sanitizer/coverage corpus closes the residual path. The exact block-root profile remains unsupported and barred from user bytes. | [`NULLFS_P0_2.md`](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md), audit script, patch, and selected evidence |
 
 The retained generated `.build/` and `.runs/` directories are intentionally disposable and ignored.
 The repository keeps the source, reproduction instructions, selected evidence, validation receipts,
@@ -72,9 +78,10 @@ rejected, or narrowed conclusion is retained in
   coverage; and
 - early topology testing followed by final signed/notarized-byte rebuild and revalidation.
 
-The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. The
-reviews found no architecture-killing contradiction and did not authorize libkrun to handle user
-bytes.
+The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. The exact
+stock-runtime branch of P0-0 is now closed as a failure; its governed patch/external mechanism
+branch remains open. The reviews and experiment found no architecture-killing contradiction and
+did not authorize libkrun to handle user bytes.
 
 ## Phase 2 parallel-task reconciliation
 
@@ -99,6 +106,10 @@ plan, not separate code or experiment directories.
 | PR #9, Phase 2A contract foundation | `3a75098` | Passive `JobProposal`, minimum `ExecutionPlan` and `PlanRegistration` candidates, byte-exact fixtures, role-specific Go/TypeScript views, and parallel-review synthesis. |
 | PR #10, Phase 2B boundary decisions | `e565e6b` | Proposed ADR-0023 and an implementation-ready breakdown for strict decoding, exact identity, registration, and conformance. |
 | PR #11, Phase 2B conformance foundation | `f6de7ec` | Closed manifest, integrity verifier, 37 rules, 105 cases, and 91 unique raw/media/scalar/CBOR fixtures; corrected derived JSON-node and `PlanRegistration` item limits. |
+| Local Phase 2B Task 2.3 integration | `4afbdfa` | Proposal/source/input rules, fixed resolver contexts, and known-answer source-manifest/canonical-input fixtures; corpus expanded to 55 rules, 147 cases, and 130 fixtures. |
+| Local Gate C P0-2 evidence integration | `d3be865` | Retained the bounded `NullFs` route/removal investigation and kept the exact profile unsupported. |
+| Local Gate C P0-0 evidence integration | `004c047` | Rejected stock Bun 1.3.14 for `RUNTIME-001` and retained the source/probe evidence and governed-patch-or-alternate decision. |
+| Local Phase 2B Task 2.4 integration | `fd51ac4` | Exact plan/registration/domain/state fixtures and proposed ADR-0023 state addendum; corpus expanded to 67 rules, 206 cases, and 278 fixtures. |
 
 The merge commits, not the former draft-PR state recorded in task responses, are the integration
 checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
@@ -111,16 +122,16 @@ Completed and retained:
 - all five Gate C readiness tracks and their P0 reconciliation;
 - Phase 2A passive candidate contracts and three independent reviews;
 - Phase 2B exact proposed decoder/registration decisions;
-- conformance Tasks 2.1 and 2.2: manifest integrity and foundational byte fixtures.
+- conformance Tasks 2.1 through 2.4: manifest integrity, foundational byte fixtures, fixed proposal
+  resolver contexts, source/canonical-inline-input known answers, and exact
+  plan/registration/domain/state fixtures.
 
 Next backend-independent work:
 
-1. Task 2.3 proposal/source/canonical-inline-input fixtures and fixed resolver contexts.
-2. Task 2.4 exact plan/registration/domain/state fixtures.
-3. Unwired strict proposal decoding and semantic planning.
-4. Bounded internal wrappers and exact-byte Supervisor registration.
-5. The registered-plan/fault-injectable fake-backend vertical slice.
-6. Only then, the coordinated public consumer cutover and mixed-`Job` removal.
+1. Unwired strict proposal decoding and semantic planning.
+2. Bounded internal wrappers and exact-byte Supervisor registration.
+3. The registered-plan/fault-injectable fake-backend vertical slice.
+4. Only then, the coordinated public consumer cutover and mixed-`Job` removal.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

@@ -24,5 +24,6 @@ remain pre-freeze while ADR-0019 is Proposed.
 
 [`conformance/v0/`](conformance/v0/) contains the closed manifest and retained byte-exact fixtures
 for the proposed Phase 2B boundary rules. The corpus records pending language targets and grants no
-runtime authority. Regenerate it with `pnpm generate:conformance` and verify it with
-`pnpm verify:schemas`.
+runtime authority. Its fixed proposal resolver contexts and known-answer source/canonical-input
+bytes are conformance inputs, not an activated planner or accepted ADR. Regenerate it with
+`pnpm generate:conformance` and verify it with `pnpm verify:schemas`.

@@ -38,10 +38,16 @@ export async function verifyConformanceCorpus({ rootDirectory = defaultRootDirec
     await verifyFixture(root, entry.fixture, entry.id);
     listedFixtures.add(entry.fixture.path);
 
-    if (entry.context.kind === "fixture") {
-      await verifyFixture(root, entry.context.fixture, `${entry.id} context`);
-      listedFixtures.add(entry.context.fixture.path);
+    for (const [label, fixture] of contextFixtures(entry.context)) {
+      await verifyFixture(root, fixture, `${entry.id} ${label}`);
+      listedFixtures.add(fixture.path);
     }
+    if (entry.expected.stateDelta) {
+      await verifyFixture(root, entry.expected.stateDelta.after, `${entry.id} expected post-state`);
+      listedFixtures.add(entry.expected.stateDelta.after.path);
+    }
+    assertProposalResolutionContext(entry);
+    await assertRegistrationStateContext(root, entry);
   }
 
   for (const rule of manifest.rules) {
@@ -166,6 +172,281 @@ function assertScalarRoleContext(entry) {
     sameRole
   ) {
     throw new Error(`DOMAIN case ${entry.id} must substitute a different scalar role`);
+  }
+}
+
+function contextFixtures(context) {
+  if (context.kind === "fixture") {
+    return [["context", context.fixture]];
+  }
+  if (context.kind !== "proposal-resolution") {
+    return context.kind === "registration-state"
+      ? [
+          ["registration operation", context.operation],
+          ["registration pre-state", context.before],
+        ]
+      : [];
+  }
+  return [
+    ["profile registry", context.profileRegistry],
+    ["user policy", context.userPolicy],
+    ...(context.oracle.sourceManifest
+      ? [["source manifest oracle", context.oracle.sourceManifest]]
+      : []),
+    ...(context.oracle.canonicalInlineInput
+      ? [["canonical inline-input oracle", context.oracle.canonicalInlineInput]]
+      : []),
+  ];
+}
+
+async function assertRegistrationStateContext(root, entry) {
+  if (entry.context.kind !== "registration-state") {
+    if (entry.expected.stateDelta) {
+      throw new Error(`non-state case ${entry.id} cannot retain a registration state delta`);
+    }
+    return;
+  }
+  if (entry.expected.stateDelta?.kind !== "exact") {
+    throw new Error(`registration-state case ${entry.id} requires an exact post-state`);
+  }
+
+  const operation = await readFixtureJson(root, entry.context.operation, `${entry.id} operation`);
+  const before = await readFixtureJson(root, entry.context.before, `${entry.id} pre-state`);
+  const after = await readFixtureJson(
+    root,
+    entry.expected.stateDelta.after,
+    `${entry.id} post-state`,
+  );
+  assertExactKeys(
+    operation,
+    [
+      "contextType",
+      "contextVersion",
+      "method",
+      "caller",
+      "trustedClockObservationUnixSeconds",
+      "concurrentHighWaterUnixSeconds",
+      "identifier",
+      "mutation",
+      "fault",
+    ],
+    `${entry.id} operation`,
+  );
+  if (
+    operation.contextType !== "capsule.conformance.registration-operation" ||
+    operation.contextVersion !== 0 ||
+    !["register-plan", "use-registration"].includes(operation.method) ||
+    !Number.isSafeInteger(operation.trustedClockObservationUnixSeconds) ||
+    operation.trustedClockObservationUnixSeconds < 0 ||
+    !(
+      operation.concurrentHighWaterUnixSeconds === null ||
+      (Number.isSafeInteger(operation.concurrentHighWaterUnixSeconds) &&
+        operation.concurrentHighWaterUnixSeconds >= 0)
+    )
+  ) {
+    throw new Error(`registration-state case ${entry.id} has an unknown operation context`);
+  }
+  assertExactKeys(
+    operation.caller,
+    ["authenticated", "role", "purpose"],
+    `${entry.id} operation caller`,
+  );
+  if (
+    typeof operation.caller.authenticated !== "boolean" ||
+    !["daemon", "broker", "updater"].includes(operation.caller.role) ||
+    operation.caller.purpose !== "register-plan"
+  ) {
+    throw new Error(`registration-state case ${entry.id} has an invalid caller context`);
+  }
+  for (const [label, state] of [
+    ["pre-state", before],
+    ["post-state", after],
+  ]) {
+    assertRegistrationStateShape(entry.id, label, state);
+  }
+  if (after.timeHighWaterUnixSeconds < before.timeHighWaterUnixSeconds) {
+    throw new Error(`registration-state case ${entry.id} moved effective time backward`);
+  }
+  if (
+    after.installationIdHex !== before.installationIdHex ||
+    after.supervisorIdHex !== before.supervisorIdHex ||
+    after.epochSequence !== before.epochSequence ||
+    after.epochDigestHex !== before.epochDigestHex
+  ) {
+    throw new Error(`registration-state case ${entry.id} changed bound installation identity`);
+  }
+
+  const beforePopulation = before.registrationPopulation;
+  const afterPopulation = after.registrationPopulation;
+  if (entry.expected.decision === "reject") {
+    if (entry.expected.authorityStateChanged) {
+      throw new Error(`rejected registration-state case ${entry.id} created authority`);
+    }
+    if (
+      after.lastRegistrationSequence !== before.lastRegistrationSequence ||
+      afterPopulation.storedCount !== beforePopulation.storedCount ||
+      afterPopulation.unexpiredCount !== beforePopulation.unexpiredCount ||
+      afterPopulation.setDigest !== beforePopulation.setDigest ||
+      JSON.stringify(after.materializedRecords) !== JSON.stringify(before.materializedRecords)
+    ) {
+      throw new Error(
+        `rejected registration-state case ${entry.id} changed registration authority`,
+      );
+    }
+    if (trustStateWidened(before, after)) {
+      throw new Error(`rejected registration-state case ${entry.id} widened trust state`);
+    }
+    return;
+  }
+
+  if (operation.method !== "register-plan" || !entry.expected.authorityStateChanged) {
+    throw new Error(`accepted registration-state case ${entry.id} must create one registration`);
+  }
+  if (
+    after.trustPhase !== before.trustPhase ||
+    after.trustReason !== before.trustReason ||
+    after.quarantined !== before.quarantined ||
+    after.lastRegistrationSequence !== before.lastRegistrationSequence + 1 ||
+    afterPopulation.storedCount !== beforePopulation.storedCount + 1 ||
+    afterPopulation.unexpiredCount !== beforePopulation.unexpiredCount + 1 ||
+    afterPopulation.setDigest === beforePopulation.setDigest ||
+    after.materializedRecords.length !== before.materializedRecords.length + 1
+  ) {
+    throw new Error(`accepted registration-state case ${entry.id} lacks one atomic append`);
+  }
+  const record = after.materializedRecords.at(-1);
+  assertExactKeys(
+    record,
+    [
+      "wireRegistrationHex",
+      "exactPlanHex",
+      "recomputedPlanDigestHex",
+      "registeredAtUnixSeconds",
+      "storageFormatVersion",
+      "retentionState",
+    ],
+    `${entry.id} stored record`,
+  );
+  const planBytes = await readFile(resolveFixturePath(root, entry.fixture.path));
+  if (
+    !/^[0-9a-f]+$/u.test(record.wireRegistrationHex) ||
+    record.wireRegistrationHex.length % 2 !== 0 ||
+    record.exactPlanHex !== planBytes.toString("hex") ||
+    record.recomputedPlanDigestHex !== createHash("sha256").update(planBytes).digest("hex") ||
+    !record.wireRegistrationHex.includes(`055820${record.recomputedPlanDigestHex}`) ||
+    record.registeredAtUnixSeconds !== after.timeHighWaterUnixSeconds ||
+    record.storageFormatVersion !== 0 ||
+    record.retentionState !== "retained"
+  ) {
+    throw new Error(`accepted registration-state case ${entry.id} has an invalid stored record`);
+  }
+}
+
+function trustStateWidened(before, after) {
+  if (before.quarantined && !after.quarantined) {
+    return true;
+  }
+  if (before.trustPhase === "stable") {
+    return false;
+  }
+  return after.trustPhase !== before.trustPhase || after.trustReason !== before.trustReason;
+}
+
+function assertRegistrationStateShape(caseId, label, state) {
+  assertExactKeys(
+    state,
+    [
+      "contextType",
+      "contextVersion",
+      "installationIdHex",
+      "supervisorIdHex",
+      "epochSequence",
+      "epochDigestHex",
+      "trustPhase",
+      "trustReason",
+      "quarantined",
+      "timeHighWaterUnixSeconds",
+      "lastRegistrationSequence",
+      "registrationPopulation",
+      "materializedRecords",
+    ],
+    `${caseId} ${label}`,
+  );
+  if (
+    state.contextType !== "capsule.conformance.registration-state" ||
+    state.contextVersion !== 0 ||
+    !/^[0-9a-f]{32}$/u.test(state.installationIdHex) ||
+    !/^[0-9a-f]{32}$/u.test(state.supervisorIdHex) ||
+    !/^[0-9a-f]{64}$/u.test(state.epochDigestHex) ||
+    !Number.isSafeInteger(state.epochSequence) ||
+    state.epochSequence < 0 ||
+    !["stable", "transition-fenced", "repair-required"].includes(state.trustPhase) ||
+    !(state.trustReason === null || typeof state.trustReason === "string") ||
+    typeof state.quarantined !== "boolean" ||
+    !Number.isSafeInteger(state.timeHighWaterUnixSeconds) ||
+    state.timeHighWaterUnixSeconds < 0 ||
+    !Number.isSafeInteger(state.lastRegistrationSequence) ||
+    state.lastRegistrationSequence < 0 ||
+    !Array.isArray(state.materializedRecords)
+  ) {
+    throw new Error(`registration-state case ${caseId} has invalid ${label} scalars`);
+  }
+  assertExactKeys(
+    state.registrationPopulation,
+    ["storedCount", "unexpiredCount", "setDigest"],
+    `${caseId} ${label} population`,
+  );
+  if (
+    !Number.isSafeInteger(state.registrationPopulation.storedCount) ||
+    state.registrationPopulation.storedCount < 0 ||
+    !Number.isSafeInteger(state.registrationPopulation.unexpiredCount) ||
+    state.registrationPopulation.unexpiredCount < 0 ||
+    state.registrationPopulation.unexpiredCount > state.registrationPopulation.storedCount ||
+    !/^[0-9a-f]{64}$/u.test(state.registrationPopulation.setDigest)
+  ) {
+    throw new Error(`registration-state case ${caseId} has an invalid ${label} population`);
+  }
+}
+
+function assertExactKeys(value, expected, label) {
+  if (
+    value === null ||
+    typeof value !== "object" ||
+    JSON.stringify(Object.keys(value)) !== JSON.stringify(expected)
+  ) {
+    throw new Error(`${label} does not use the closed fixture shape`);
+  }
+}
+
+async function readFixtureJson(root, fixture, label) {
+  try {
+    return JSON.parse(await readFile(resolveFixturePath(root, fixture.path), "utf8"));
+  } catch (error) {
+    throw new Error(`failed to read ${label}: ${error.message}`, { cause: error });
+  }
+}
+
+function assertProposalResolutionContext(entry) {
+  if (entry.context.kind !== "proposal-resolution") {
+    return;
+  }
+  const { oracle } = entry.context;
+  for (const [label, fixture, digest] of [
+    ["source manifest", oracle.sourceManifest, oracle.sourceManifestDigest],
+    ["canonical inline input", oracle.canonicalInlineInput, oracle.inlineInputDigest],
+  ]) {
+    if ((fixture === null) !== (digest === null)) {
+      throw new Error(`${entry.id} ${label} fixture and digest must be present together`);
+    }
+    if (fixture && fixture.sha256 !== digest) {
+      throw new Error(`${entry.id} ${label} digest must match the retained fixture digest`);
+    }
+  }
+  if (
+    entry.expected.decision === "reject" &&
+    (oracle.sourceManifest || oracle.canonicalInlineInput || oracle.wallTime)
+  ) {
+    throw new Error(`rejected proposal case ${entry.id} cannot retain a resolution result`);
   }
 }
 

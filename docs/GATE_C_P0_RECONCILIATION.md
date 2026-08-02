@@ -27,7 +27,7 @@ closes. Broad backend research is no longer the next step.
 | Must completion use runner status or a result disk? | No. Runner exit is lifecycle evidence only. Use one bounded typed completion/result frame on a dedicated port and bind it to the attempt and expected profile. | Required design; not implemented. |
 | Is ext4 parsing P0 for inline JSON? | No. Carry bounded JSON in the typed result frame. A disposable ext4/raw-image parser becomes a gate for the later file-artifact slice. | Scope decision; no parser posture is promoted. |
 | Is `NullFs` coupled to custody? | No. Remove it or independently review and fuzz the exact guest-facing virtiofs parser surface. | Existing exact profile remains failed until this closes. |
-| Does stock Bun satisfy the documented no-subprocess/no-FFI contract? | Not evidenced. Bun 1.3.14 exposes subprocess and FFI APIs and has no demonstrated non-bypassable `--no-spawn`/`--no-ffi` profile. Preserve the contract and make runtime-authority closure a P0 gate; change it only through an explicit ADR. | Current stock-Bun profile is unsupported for this claim. |
+| Does stock Bun satisfy the documented no-subprocess/no-FFI contract? | No. The exact Bun 1.3.14 source/binary investigation observed process, `execve`, FFI/native-loader, inspector, Worker, and descriptor authority despite all relevant stock flags. Preserve the contract; evaluate only a governed patched/external mechanism or alternate runtime, and change the contract only by ADR. | Stock Bun is rejected for this claim; `RUNTIME-001` remains unsupported. |
 | Does no-host-root remain plausible? | Yes, provisionally: test one complete signed/notarized app containing the enrolled per-user Supervisor/runner/runtime topology and an embedded `SMAppService` registration. Do not add privilege silently if it fails. | Packaging hypothesis; clean-host and minimum-OS evidence remain open. |
 
 The multiport API names observed in libkrun 1.19.4 are
@@ -108,6 +108,17 @@ Pass: an exact pinned mechanism refuses every prohibited power. Fail: choose a g
 patch or alternate runtime, or explicitly revise the product contract in a new ADR. Do not keep
 building around a stock Bun profile that contradicts the plan shown to the user.
 
+The 2026-08-02 exact-stock investigation failed this hypothesis. Bun 1.3.14 commit
+`0d9b296af33f2b851fcbf4df3e9ec89751734ba4` exposed direct and aliased subprocess, `execve`, FFI,
+SQLite native loading, workload-started inspector, Worker, and inherited-descriptor authority under
+all relevant stock deny flags. Addon, macro, and environment/config mutations showed that those
+individual flags were active, but no stock `--no-spawn` or `--no-ffi` closure exists. See the
+[retained P0-0 result](../experiments/gate-c-bun-runtime-authority/RESULTS.md). `RUNTIME-001`
+therefore remains unsupported and execution requiring it must refuse. P0-0 remains open only for a
+governed construction-level patch plus an exact external enforcement mechanism; failure of that
+branch requires an alternate runtime and an ADR-0003 update. This finding does not admit runtime or
+backend bytes.
+
 ### P0-1: immutable runtime-root custody
 
 Goal: prove that a concurrent same-user attacker cannot change or substitute bytes observed through
@@ -182,6 +193,16 @@ exhaustion fuzzing under applicable sanitizers. Retain coverage, corpus, crashes
 unresolved high-severity findings, and residual limitations. Describe the surface as accepted, not
 absent or proven bug-free. Custody and `NullFs` remain independent decisions even if one libkrun
 patch eventually changes both areas.
+
+Evidence checkpoint (2026-08-02): the bounded replacement investigation found no independent
+virtiofs feature toggle and confirmed that `krun_set_root_disk_remount` always adds `NullFs` in the
+exact retained block-root route. Removing only that device built but failed before init because the
+dummy virtiofs root supplies the bootstrap file and mount points. This falsifies the smallest
+removal, not all alternate-bootstrap designs. The existing 47-device-test/one-libkrun-test suites
+and Go profile fuzzing do not cover the complete FUSE/queue/worker/overlay path, and the pinned tree
+has no relevant fuzz target or retained sanitizer/coverage corpus. P0-2 therefore remains open and
+the current profile remains unsupported. See the
+[P0-2 investigation](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md).
 
 ### P0-3: typed port transport and completion
 

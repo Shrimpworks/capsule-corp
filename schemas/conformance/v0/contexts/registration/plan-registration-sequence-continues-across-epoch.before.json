@@ -1,0 +1,19 @@
+{
+  "contextType": "capsule.conformance.registration-state",
+  "contextVersion": 0,
+  "installationIdHex": "11111111111111111111111111111111",
+  "supervisorIdHex": "55555555555555555555555555555555",
+  "epochSequence": 8,
+  "epochDigestHex": "2323232323232323232323232323232323232323232323232323232323232323",
+  "trustPhase": "stable",
+  "trustReason": null,
+  "quarantined": false,
+  "timeHighWaterUnixSeconds": 1785456000,
+  "lastRegistrationSequence": 1,
+  "registrationPopulation": {
+    "storedCount": 1,
+    "unexpiredCount": 1,
+    "setDigest": "b52edb4214b7ede79029bd3ee62574c4958b8efa3bb8eae243f5957e3c5691bb"
+  },
+  "materializedRecords": []
+}

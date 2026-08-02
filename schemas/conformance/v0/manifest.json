@@ -555,6 +555,460 @@
           "variant": "malformed"
         }
       ]
+    },
+    {
+      "id": "job-proposal.schema.authority-omission",
+      "source": "ADR-0017#decision",
+      "description": "The closed proposal omits unsupported authority instead of accepting false placeholders.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.path-grammar",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "Source paths use the exact relative case-sensitive ASCII grammar.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.path-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "One source path contains at most 256 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.segment-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "One source path segment contains at most 64 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.file-count",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "A proposal contains at most 32 source file entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.file-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.manifest-identity",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership",
+      "source": "ADR-0023#source-path-and-source-manifest-identity",
+      "description": "The entrypoint exactly equals one source-file key.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.input.canonical-identity",
+      "source": "ADR-0023#canonical-inline-json-identity",
+      "description": "Canonical inline JSON has one exact sorted, escaped, non-normalizing byte identity.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes",
+      "source": "ADR-0023#canonical-inline-json-identity",
+      "description": "Canonical inline-input JSON contains at most 262,144 bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles",
+      "source": "ADR-0017#decision",
+      "description": "The first slice uses only primary-data input and transformed-json output roles.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.count",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Labels contain at most 8 entries.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.key-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One label key contains at most 32 ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.value-bytes",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "One label value contains at most 128 printable-ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii",
+      "source": "ADR-0023#strict-jobproposal-raw-profile",
+      "description": "Label values contain only printable ASCII bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.profile.resolution",
+      "source": "PHASE-2B-BOUNDARY-DECISIONS#task-23-add-proposalsourceinput-fixtures",
+      "description": "The requested runtime profile alias resolves to one active fixed-context entry.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "job-proposal.policy.wall-time",
+      "source": "ADR-0009#decision",
+      "description": "Wall time is requested or defaulted exactly, and ceiling plus one rejects without clamping.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.registration.exact-bytes",
+      "source": "ADR-0023#registration-creation-replay-sequence-and-expiry",
+      "description": "Registration copies, hashes, and stores the exact submitted plan bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        }
+      ]
+    },
+    {
+      "id": "execution-plan.registration.domain-separation",
+      "source": "ADR-0023#scalar-zero-rules",
+      "description": "Valid objects, identifiers, and digests cannot substitute across nominal roles.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.channel.caller-role",
+      "source": "ADR-0023#boundary-ownership-and-media-types",
+      "description": "Only the authenticated daemon registration method accepts candidate plan bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "wrong-domain"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.creation.fresh",
+      "source": "ADR-0023#registration-creation-replay-sequence-and-expiry",
+      "description": "Every successful call creates a fresh nonzero registration, including duplicate plan bytes.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "accept",
+          "variant": "nonzero"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.sequence.installation-global",
+      "source": "ADR-0023#proposed-task-24-registration-oracle-addendum",
+      "description": "The inclusive UInt53 sequence is installation-global and exhaustion fails stale.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.expiry.lifetime",
+      "source": "ADR-0023#registration-creation-replay-sequence-and-expiry",
+      "description": "Registration requires effectiveNow < expiresAt <= effectiveNow + 300 exactly.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.time.monotonic",
+      "source": "ADR-0023#proposed-task-24-registration-oracle-addendum",
+      "description": "Effective time uses a durable nondecreasing Unix-seconds high-water mark.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.trust.gate",
+      "source": "ADR-0023#proposed-task-24-registration-oracle-addendum",
+      "description": "Epoch fencing, quarantine, and repair fail closed at their distinct state oracle.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.capacity.unexpired",
+      "source": "ADR-0023#registration-creation-replay-sequence-and-expiry",
+      "description": "At most 256 unexpired registrations are admitted.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.capacity.stored",
+      "source": "ADR-0023#registration-creation-replay-sequence-and-expiry",
+      "description": "At most 4,096 stored registration records are retained.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.failure.atomicity",
+      "source": "ADR-0023#proposed-task-24-registration-oracle-addendum",
+      "description": "Local prerequisite and confirmed-abort failures create no registration or sequence.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "plan-registration.storage.separation",
+      "source": "ADR-0023#proposed-task-24-registration-oracle-addendum",
+      "description": "Wire registration bytes remain separate from the minimum exact stored record.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        }
+      ]
     }
   ],
   "cases": [
@@ -3816,6 +4270,4594 @@
         "classification": "MALFORMED",
         "owner": "supervisor-registration-predecoder",
         "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.accept",
+      "description": "Accept the closed first-slice proposal with unsupported authority omitted.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.reject-placeholder",
+      "description": "Reject a false network placeholder because unsupported authority is omitted.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/authority-network-placeholder.json",
+        "sha256": "56f354890feac70c5a70cd42a4e0796bd40c5f018888804388385da798076ee1",
+        "byteLength": 887
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.schema.authority-omission.reject-missing-source",
+      "description": "Reject a proposal that omits the required source field.",
+      "ruleIds": [
+        "job-proposal.schema.authority-omission"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/missing-source.json",
+        "sha256": "f34449677dc5a975667ce38e4a9b85a4634f3fa16b24b8bf2ac156b0e02e1003",
+        "byteLength": 634
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-grammar.accept",
+      "description": "Accept case-distinct relative ASCII source paths.",
+      "ruleIds": [
+        "job-proposal.source.path-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-grammar.reject-dot-segment",
+      "description": "Reject a dot-dot source path segment before semantic resolution.",
+      "ruleIds": [
+        "job-proposal.source.path-grammar"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/source-path-dot-segment.json",
+        "sha256": "e105058b08e3961cc673ac1fb08273a0deb597552eb2962844d36df113c0be5f",
+        "byteLength": 777
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-bytes.exact-maximum",
+      "description": "Accept an exact 256-byte source path and matching entrypoint.",
+      "ruleIds": [
+        "job-proposal.source.path-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-path-exact.json",
+        "sha256": "889f7c9e053eb4568fa37086ff9cc2e76dda1ea4e2bec0a10296c4786f817632",
+        "byteLength": 1233
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.path-bytes.cap-plus-one",
+      "description": "Reject a 257-byte source path without truncation or normalization.",
+      "ruleIds": [
+        "job-proposal.source.path-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-path-over.json",
+        "sha256": "bfefff28435f5aaa2f82c446a723275e7ceddb36dc3991c5b5be8f727cb8431a",
+        "byteLength": 1235
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.segment-bytes.exact-maximum",
+      "description": "Accept an exact 64-byte non-entrypoint source path segment.",
+      "ruleIds": [
+        "job-proposal.source.segment-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-segment-exact.json",
+        "sha256": "a6191c65cdb7d83d29eb6c93416cd07bd1496c6842a16496f8fecfbb8d9066f1",
+        "byteLength": 835
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.segment-bytes.cap-plus-one",
+      "description": "Reject a 65-byte source path segment.",
+      "ruleIds": [
+        "job-proposal.source.segment-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-segment-over.json",
+        "sha256": "67c055fe4144eedc83182780124abd24c18254d262eaf165b1a9fdac7b8ba6f5",
+        "byteLength": 836
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-count.exact-maximum",
+      "description": "Accept exactly 32 source file entries.",
+      "ruleIds": [
+        "job-proposal.source.file-count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-file-count-exact.json",
+        "sha256": "3a8597ba4781d312256901fd36667d4109d43cf4e9de79a65bcc7c8e36f00205",
+        "byteLength": 1341
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-count.cap-plus-one",
+      "description": "Reject 33 source file entries.",
+      "ruleIds": [
+        "job-proposal.source.file-count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-file-count-over.json",
+        "sha256": "0ba15d30fa5eb42217ed5f6ee1130e0bb7d5464e4e4e51082239b88201d34420",
+        "byteLength": 1361
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-bytes.exact-maximum",
+      "description": "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+      "ruleIds": [
+        "job-proposal.source.file-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-file-bytes-exact.json",
+        "sha256": "cb2681fd2cb02a1508494de5b18f5c8afc5061c16655e72d37f93869475c8edc",
+        "byteLength": 262867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.file-bytes.cap-plus-one",
+      "description": "Reject one source file containing 262,145 UTF-8 bytes.",
+      "ruleIds": [
+        "job-proposal.source.file-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-file-bytes-over.json",
+        "sha256": "5642e299e91b7803fd874ba5ae574877ad5f0e928c2a8a20fe163927cb41eb40",
+        "byteLength": 262868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes.exact-maximum",
+      "description": "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
+      "ruleIds": [
+        "job-proposal.source.aggregate-bytes",
+        "job-proposal.source.manifest-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/source-aggregate-exact.json",
+        "sha256": "0fcb54d8b9c973e2e144cc62f7c4503d9681f4f6931d6e55516cd7aad8f8871a",
+        "byteLength": 1049352
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.aggregate-bytes.cap-plus-one",
+      "description": "Reject 1,048,577 aggregate source bytes without clamping a file.",
+      "ruleIds": [
+        "job-proposal.source.aggregate-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/source-aggregate-over.json",
+        "sha256": "aac806c3ecb4274b538258ea1df6149e6a1ce6f623e02809cc6110799c21625d",
+        "byteLength": 1049374
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.manifest-identity.known-answer",
+      "description": "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
+      "ruleIds": [
+        "job-proposal.source.manifest-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership.accept",
+      "description": "Accept an entrypoint that exactly matches a source path.",
+      "ruleIds": [
+        "job-proposal.source.entrypoint-membership"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.source.entrypoint-membership.reject-missing",
+      "description": "Reject a valid entrypoint path that is absent from the source map.",
+      "ruleIds": [
+        "job-proposal.source.entrypoint-membership"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/entrypoint-not-member.json",
+        "sha256": "7f8af716a8994a2face2a2937d900bb2a82046a5b18e1f7d35c92e89811d9741",
+        "byteLength": 866
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.known-answer",
+      "description": "Derive the retained canonical inline JSON bytes and SHA-256 digest.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.equivalent-public-json",
+      "description": "Different public key order and escape spelling derive the same canonical bytes.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/equivalent-public-json.json",
+        "sha256": "fabaa21a35f66fd3913055e4e25b5c8cc000fcefe0d1a9fb6b11054a4fe053e2",
+        "byteLength": 659
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-identity.reject-unsupported-key",
+      "description": "Reject a canonical inline-input object key outside the candidate ASCII grammar.",
+      "ruleIds": [
+        "job-proposal.input.canonical-identity"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/inline-input-unicode-key.json",
+        "sha256": "4203002310cecb673ec662532409c4920dcd6965d5f0de896006ad6746c51253",
+        "byteLength": 662
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes.exact-maximum",
+      "description": "Accept exactly 262,144 canonical inline-input bytes.",
+      "ruleIds": [
+        "job-proposal.input.canonical-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/inline-input-bytes-exact.json",
+        "sha256": "565ef0885cf28f97e0a2c145c8a68d89993268a11cafb37299a3fb0f15aa5792",
+        "byteLength": 262818
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.input.canonical-bytes.cap-plus-one",
+      "description": "Reject 262,145 canonical inline-input bytes without resizing the cap.",
+      "ruleIds": [
+        "job-proposal.input.canonical-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/inline-input-bytes-over.json",
+        "sha256": "75ded4967796e9a8ba2d967a9a63df63f87f4b439bf21ce29d5cfe374178b591",
+        "byteLength": 262819
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.accept",
+      "description": "Accept the fixed input and output slot roles.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-input-substitution",
+      "description": "Reject the output slot substituted into the input role.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "job-proposal/input-slot-wrong-domain.json",
+        "sha256": "2fb9cbd350aba9caacbbef1c849a6a60a06992b328f3fe850f74abc955fec972",
+        "byteLength": 871
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-unknown",
+      "description": "Reject an unknown logical input slot.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/input-slot-unknown.json",
+        "sha256": "cb57ad861d1935428f34985572e40a8eb16a76f1dd6397ddb9d5d0406413387e",
+        "byteLength": 865
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.slots.fixed-roles.reject-output-substitution",
+      "description": "Reject the input slot substituted into the output role.",
+      "ruleIds": [
+        "job-proposal.slots.fixed-roles"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "job-proposal/output-slot-wrong-domain.json",
+        "sha256": "c42abdbfa7d7aa8745e4f191612faf19afbe3789e350ba9496f77b36953e8003",
+        "byteLength": 863
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.count.exact-maximum",
+      "description": "Accept exactly 8 labels.",
+      "ruleIds": [
+        "job-proposal.labels.count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/labels-count-exact.json",
+        "sha256": "6537d75a0e82b8ab34d6629cf4f7b1660b8c0f07bdc76ac2cf2bacf466600c68",
+        "byteLength": 996
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.count.cap-plus-one",
+      "description": "Reject 9 labels.",
+      "ruleIds": [
+        "job-proposal.labels.count"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/labels-count-over.json",
+        "sha256": "ab02f2263cec12b185efa0054c4017aeb273fda6ab04b797c8b89c268c12d147",
+        "byteLength": 1016
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.key-bytes.exact-maximum",
+      "description": "Accept a 32-byte label key.",
+      "ruleIds": [
+        "job-proposal.labels.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/label-key-exact.json",
+        "sha256": "8e228d8bb2e4d0299687ba019765b205e1d52793eb39ef8185cc89537c40cabe",
+        "byteLength": 881
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.key-bytes.cap-plus-one",
+      "description": "Reject a 33-byte label key.",
+      "ruleIds": [
+        "job-proposal.labels.key-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/label-key-over.json",
+        "sha256": "104ea5c4a8c62a4752decb83e2f97f3a1e4718f583711498f2b28b2e4b862e44",
+        "byteLength": 882
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.value-bytes.exact-maximum",
+      "description": "Accept a 128-byte printable-ASCII label value.",
+      "ruleIds": [
+        "job-proposal.labels.value-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/label-value-exact.json",
+        "sha256": "5bd4e3fa423d922905a7f757259996e076e310295e71eafadd9c8cd5705dcc98",
+        "byteLength": 983
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.value-bytes.cap-plus-one",
+      "description": "Reject a 129-byte label value.",
+      "ruleIds": [
+        "job-proposal.labels.value-bytes"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/label-value-over.json",
+        "sha256": "80780f6926b3d29fd94602266ba8086d91cba09dcae787fcfedb088878322720",
+        "byteLength": 984
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii.accept",
+      "description": "Accept printable ASCII label bytes.",
+      "ruleIds": [
+        "job-proposal.labels.printable-ascii"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/label-printable.json",
+        "sha256": "02fb68689c4d17c6e3268b26e35152016ed3adf85d50458bede3e7596708e8ad",
+        "byteLength": 864
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.labels.printable-ascii.reject-control",
+      "description": "Reject a control byte in a label value.",
+      "ruleIds": [
+        "job-proposal.labels.printable-ascii"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/label-control.json",
+        "sha256": "3dd62770d0b42952858e8603ede85c0032f25577b35ad484b1afd254d238d556",
+        "byteLength": 866
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "job-proposal-schema",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.active",
+      "description": "Resolve the active fixture-only profile from the fixed registry context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.reject-unknown",
+      "description": "Reject a structurally valid alias absent from the fixed profile context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/profile-unknown.json",
+        "sha256": "4d188b67e2c7c1f2d2cfe14d888e749bfabe92db358c23c5a46851cedf5c96d5",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.profile.resolution.reject-inactive",
+      "description": "Reject a known but inactive profile under the fixed resolver context.",
+      "ruleIds": [
+        "job-proposal.profile.resolution"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "job-proposal/profile-inactive.json",
+        "sha256": "46892660a451aab92d0af8c9d388bc620cf1b2d4be32b7bb9324fd7175b8e646",
+        "byteLength": 869
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "POLICY",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.requested",
+      "description": "Preserve a requested wall time below the ceiling exactly.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/ordinary.json",
+        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
+        "byteLength": 867
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": {
+            "path": "source-manifest/ordinary.cbor",
+            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+            "byteLength": 178
+          },
+          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "canonicalInlineInput": {
+            "path": "canonical-inline-input/ordinary.json",
+            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+            "byteLength": 118
+          },
+          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.trusted-default",
+      "description": "Resolve omitted wall time to the unchanged trusted default.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "job-proposal/wall-time-defaulted.json",
+        "sha256": "f04c00bbbc0b44c8e13319633eb135c4af1edc05a0925d9804bbf9ab50b1c0b5",
+        "byteLength": 841
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": {
+            "milliseconds": 5000,
+            "origin": "trusted-default"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.exact-ceiling",
+      "description": "Accept the exact 10,000 ms trusted ceiling unchanged.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "job-proposal/wall-time-exact-ceiling.json",
+        "sha256": "2698672d4e6d7f2ec91cd311790c3121d1a37e808ee7f5d3d757ea5b40be1e0b",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": {
+            "milliseconds": 10000,
+            "origin": "requested"
+          }
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "job-proposal.policy.wall-time.ceiling-plus-one",
+      "description": "Reject 10,001 ms rather than clamping it to the trusted ceiling.",
+      "ruleIds": [
+        "job-proposal.policy.wall-time"
+      ],
+      "object": "JobProposal",
+      "wireFormat": "json",
+      "mediaType": "application/capsule.job-proposal+json;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "job-proposal/wall-time-over-ceiling.json",
+        "sha256": "75276c26491af5bd1054a8438ecccda795abd648e9552e0805bd53431976593c",
+        "byteLength": 868
+      },
+      "context": {
+        "kind": "proposal-resolution",
+        "profileRegistry": {
+          "path": "contexts/profile-registry.json",
+          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
+          "byteLength": 419
+        },
+        "userPolicy": {
+          "path": "contexts/user-policy.json",
+          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
+          "byteLength": 150
+        },
+        "oracle": {
+          "sourceManifest": null,
+          "sourceManifestDigest": null,
+          "canonicalInlineInput": null,
+          "inlineInputDigest": null,
+          "wallTime": null
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "POLICY",
+        "owner": "job-proposal-semantic-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "execution-plan.registration.exact-bytes",
+      "description": "Register the exact integrated plan bytes and recompute their SHA-256 identity before commit.",
+      "ruleIds": [
+        "execution-plan.registration.exact-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/execution-plan-registration-exact-bytes.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/execution-plan-registration-exact-bytes.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/execution-plan-registration-exact-bytes.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.registration.mutation-after-submission",
+      "description": "Caller mutation after submission cannot change retained plan bytes or digest.",
+      "ruleIds": [
+        "execution-plan.registration.exact-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "nonzero",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/execution-plan-registration-mutation-after-submission.operation.json",
+          "sha256": "0f639941e9947c27c86d94d61871eb7bd1b539827f44c21e41feef99795482b3",
+          "byteLength": 471
+        },
+        "before": {
+          "path": "contexts/registration/execution-plan-registration-mutation-after-submission.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/execution-plan-registration-mutation-after-submission.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.registration.validator-copy-mutation",
+      "description": "Mutation of the validator's private copy cannot change retained authority.",
+      "ruleIds": [
+        "execution-plan.registration.exact-bytes"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/execution-plan-registration-validator-copy-mutation.operation.json",
+          "sha256": "8d4d7e83f621b5361fc635ab46c107c3ae7936604a2b0cdc211a2b09d9915051",
+          "byteLength": 463
+        },
+        "before": {
+          "path": "contexts/registration/execution-plan-registration-validator-copy-mutation.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/execution-plan-registration-validator-copy-mutation.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.roles-match",
+      "description": "Accept exact plan bytes whose role-specific identifiers and digests match.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "source-manifest",
+        "providedRole": "source-manifest"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-plan-registration-object",
+      "description": "Reject a valid PlanRegistration object at the ExecutionPlan entry point.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/plan-registration-object.cbor",
+        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.domain.reject-execution-plan-object",
+      "description": "Reject a valid ExecutionPlan object at the PlanRegistration entry point.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/execution-plan-object.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-supervisor-as-installation",
+      "description": "Reject a Supervisor ID in the installation-ID role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-supervisor-as-installation.cbor",
+        "sha256": "28aca0e99ce32147480d736583a79950d7ca994b005b4f5a7f340c53778d85ce",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "id",
+        "expectedRole": "installation",
+        "providedRole": "supervisor"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-inline-input-as-epoch",
+      "description": "Reject an inline-input digest in the trust-epoch role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-inline-input-as-epoch.cbor",
+        "sha256": "272af9a5209b3c721841298907af4489d3693efe840ef8585fc920b2d401e7ef",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "trust-epoch",
+        "providedRole": "inline-input"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-inline-input-as-source-manifest",
+      "description": "Reject an inline-input digest in the source-manifest role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-inline-input-as-source.cbor",
+        "sha256": "66811e266d722e934077d05951d20900b8544fbc899be9865d10e4c1164008b5",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "source-manifest",
+        "providedRole": "inline-input"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-source-manifest-as-inline-input",
+      "description": "Reject a source-manifest digest in the inline-input role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-source-manifest-as-inline-input.cbor",
+        "sha256": "6aab663912dda6ba34a157ec159db21a7106b6bca5f04d1786d09a592e2498b5",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "inline-input",
+        "providedRole": "source-manifest"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-profile-registry-as-runtime-bundle",
+      "description": "Reject a profile-registry-entry digest in the runtime-bundle role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-profile-registry-as-runtime-bundle.cbor",
+        "sha256": "78c23bdbe2b5408c654259b42bc46c482b9131c4694139b8ce2da595009cee5b",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "runtime-bundle-manifest",
+        "providedRole": "profile-registry-entry"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-runtime-bundle-as-review-attestation",
+      "description": "Reject a runtime-bundle digest in the profile-review-attestation role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-runtime-bundle-as-review-attestation.cbor",
+        "sha256": "290567bc6245ef0e5017a0c4ba08667abc8c52353ed4bfcafe1eeb318af29a8a",
+        "byteLength": 496
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "profile-review-attestation",
+        "providedRole": "runtime-bundle-manifest"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-review-attestation-as-profile-registry",
+      "description": "Reject a profile-review-attestation digest in the profile-registry-entry role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-review-attestation-as-profile-registry.cbor",
+        "sha256": "79022b435461f2ed835d58e03ee978a33d1d340f29b1e23c1a5240be227e237c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "profile-registry-entry",
+        "providedRole": "profile-review-attestation"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-backend-config-as-validation",
+      "description": "Reject a backend-configuration digest in the backend-validation-record role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-backend-config-as-validation.cbor",
+        "sha256": "34a5243f766ab8ec8385b04216798b6d10067e569c41a7ddf3a177dc0e93e94c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "backend-validation-record",
+        "providedRole": "backend-configuration"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-backend-validation-as-config",
+      "description": "Reject a backend-validation-record digest in the backend-configuration role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-backend-validation-as-config.cbor",
+        "sha256": "389b4bfb136b59f7f27ef41852ccf1209a4028605768db19528aa6a1919f2f02",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "backend-configuration",
+        "providedRole": "backend-validation-record"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-policy-as-trust-snapshot",
+      "description": "Reject a policy-decision digest in the trust-snapshot role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-policy-as-trust-snapshot.cbor",
+        "sha256": "f8d4626f08ae3e2f6e87d0da81f3022861ed8e5a6e78a1c3d7b60929e64464b2",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "trust-snapshot",
+        "providedRole": "policy-decision"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.domain.reject-trust-snapshot-as-policy",
+      "description": "Reject a trust-snapshot digest in the policy-decision role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/domain-trust-snapshot-as-policy.cbor",
+        "sha256": "0dc36d73a5bea2ccd33db15942576e71371455abaa6af7e4304f6acb95531edc",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "policy-decision",
+        "providedRole": "trust-snapshot"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.domain.reject-installation-as-registration",
+      "description": "Reject an installation ID in the registration-ID role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/domain-installation-as-registration.cbor",
+        "sha256": "231e65de9957d6a25486c71cd2cd7084e00c4760bb1bb681e2ed197da9005812",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "id",
+        "expectedRole": "registration",
+        "providedRole": "installation"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.domain.reject-epoch-as-plan-digest",
+      "description": "Reject a trust-epoch digest in the execution-plan digest role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/domain-epoch-as-plan-digest.cbor",
+        "sha256": "e555d2ed1952ea1a7a951eaf13411652a13778b84b057147f442cbc2c23a3ae5",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "execution-plan",
+        "providedRole": "trust-epoch"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.domain.reject-plan-as-epoch-digest",
+      "description": "Reject an execution-plan digest in the trust-epoch digest role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/domain-plan-as-epoch-digest.cbor",
+        "sha256": "065b69ba209315d4f355bf1b8575ea9206dc01386133b350ba97a2bd24cec029",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "digest",
+        "expectedRole": "trust-epoch",
+        "providedRole": "execution-plan"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.domain.reject-registration-as-supervisor",
+      "description": "Reject a registration ID in the Supervisor-ID role.",
+      "ruleIds": [
+        "execution-plan.registration.domain-separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/domain-registration-as-supervisor.cbor",
+        "sha256": "6cd1956af1623412bd4eb30ff4c515dc956190b2e6683c5584e97ed4dd12cdde",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "scalar-role",
+        "scalarKind": "id",
+        "expectedRole": "supervisor",
+        "providedRole": "registration"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "role-binding-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.binding.plan-a-registration-b",
+      "description": "A correct-role registration B cannot substitute for registration A and plan A.",
+      "ruleIds": [
+        "execution-plan.registration.exact-bytes"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "plan-registration/plan-a-registration-b.cbor",
+        "sha256": "e3da610326802cfb5e57c6d95fb9ec691651f6d0e86c13372cfea5d2c6c10b54",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-binding-plan-a-registration-b.operation.json",
+          "sha256": "e56860870966e054506c8e07e5d719fc8e8f5914513ab66091d389cf5588013e",
+          "byteLength": 375
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-binding-plan-a-registration-b.before.json",
+          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+          "byteLength": 2332
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-binding-plan-a-registration-b.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.channel.authenticated-daemon",
+      "description": "Only the authenticated daemon registration method reaches stateful admission.",
+      "ruleIds": [
+        "plan-registration.channel.caller-role"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-channel-authenticated-daemon.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-channel-authenticated-daemon.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "channel-authentication",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-channel-authenticated-daemon.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.creation.first-fresh-registration",
+      "description": "The first successful call creates a fresh nonzero registration at sequence one.",
+      "ruleIds": [
+        "plan-registration.creation.fresh"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-creation-first-fresh-registration.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-creation-first-fresh-registration.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-creation-first-fresh-registration.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.channel.reject-unauthenticated",
+      "description": "Reject the unauthenticated caller before trusted-time persistence.",
+      "ruleIds": [
+        "plan-registration.channel.caller-role"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-channel-reject-unauthenticated.operation.json",
+          "sha256": "6f21cb2adf3495150f6500f7340e6e3f1a2e51748cdc4ee70e1f9be3476e2c0a",
+          "byteLength": 446
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-channel-reject-unauthenticated.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "AUTHENTICATION",
+        "owner": "channel-authentication",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-channel-reject-unauthenticated.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.channel.reject-broker",
+      "description": "Reject the broker caller before trusted-time persistence.",
+      "ruleIds": [
+        "plan-registration.channel.caller-role"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-channel-reject-broker.operation.json",
+          "sha256": "0ffc6b8bd83ef10b690e554101ba460e2d3097a1118f58a61163c6839151868f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-channel-reject-broker.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "AUTHENTICATION",
+        "owner": "channel-authentication",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-channel-reject-broker.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.channel.reject-updater",
+      "description": "Reject the updater caller before trusted-time persistence.",
+      "ruleIds": [
+        "plan-registration.channel.caller-role"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-channel-reject-updater.operation.json",
+          "sha256": "ce0d1a194131fa9937b0946da3ba39f21f49318e28799a610cbcb474b386d2a7",
+          "byteLength": 446
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-channel-reject-updater.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "AUTHENTICATION",
+        "owner": "channel-authentication",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-channel-reject-updater.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.creation.duplicate-plan-bytes",
+      "description": "Identical plan bytes create a fresh ID and increasing registration sequence.",
+      "ruleIds": [
+        "plan-registration.creation.fresh"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "nonzero",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-creation-duplicate-plan-bytes.operation.json",
+          "sha256": "203d9fd1769d6e204bb617ab310864477fec995b0578f63baad17111c2126de9",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-creation-duplicate-plan-bytes.before.json",
+          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+          "byteLength": 2332
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-creation-duplicate-plan-bytes.after.json",
+            "sha256": "253e9f3a6e1aa8f7dcddc63d086df3a2e09c012a5299b80661e8f510235f5cf4",
+            "byteLength": 4008
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.sequence.continues-across-epoch",
+      "description": "The installation-global registration sequence does not reset at a trust epoch.",
+      "ruleIds": [
+        "plan-registration.sequence.installation-global"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/epoch-eight.cbor",
+        "sha256": "43c9342db21199143ba76ccd7575b15794d1828ac1ad51ab07aeba37be51de43",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-sequence-continues-across-epoch.operation.json",
+          "sha256": "203d9fd1769d6e204bb617ab310864477fec995b0578f63baad17111c2126de9",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-sequence-continues-across-epoch.before.json",
+          "sha256": "1008c256b67f289ab9a407ec9e00d883467dc05fe85f7fdb2db12ed9fe520198",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-sequence-continues-across-epoch.after.json",
+            "sha256": "482425a5234fc58a31ca2a30163e562364921c77983124f64752296cb04a2d9f",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.sequence.uint53-maximum",
+      "description": "Issue the inclusive UInt53 maximum as a successful registration sequence.",
+      "ruleIds": [
+        "plan-registration.sequence.installation-global"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-sequence-uint53-maximum.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-sequence-uint53-maximum.before.json",
+          "sha256": "4958e6d364888fac58e2a7d1b971fde8fa35ca5ae03404096958800d8b5ad140",
+          "byteLength": 669
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-sequence-uint53-maximum.after.json",
+            "sha256": "9f8a96067d51cc67273f84b1c05210d1548fd9b301bf638bdfc3b8456da251fd",
+            "byteLength": 2363
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.sequence.exhausted",
+      "description": "The request after UInt53 exhaustion fails stale and enters repair-required.",
+      "ruleIds": [
+        "plan-registration.sequence.installation-global"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-sequence-exhausted.operation.json",
+          "sha256": "5bb43666bafa89966a187ad24817697dc1454a60aff4f6f491b042c642815e2b",
+          "byteLength": 372
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-sequence-exhausted.before.json",
+          "sha256": "3b948b3e79dad6fbcd2aec8266fe9f539f93cfff79a1ffc72af0abbb9c1ab27f",
+          "byteLength": 669
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-sequence-exhausted.after.json",
+            "sha256": "66a53e1558c8c327ac483c7adb3b2aacebaa36e4354103b702b97170e4d41c35",
+            "byteLength": 707
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.expiry.equality-expired",
+      "description": "Reject expiry equality because effectiveNow < expiresAt is strict.",
+      "ruleIds": [
+        "plan-registration.expiry.lifetime"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/expires-equality-expired.cbor",
+        "sha256": "ec9e457a7d69f64f63084b61a0c937136b23610014fd36bb590f2dc855c585b5",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-expiry-equality-expired.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-expiry-equality-expired.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-expiry-equality-expired.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.expiry.one-second",
+      "description": "Accept the minimum one-second remaining lifetime unchanged.",
+      "ruleIds": [
+        "plan-registration.expiry.lifetime"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/expires-one-second.cbor",
+        "sha256": "3c9f43105de452f89cbb738baa37d44e167d5b5bb1a33926603fe7fb8be51f3d",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-expiry-one-second.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-expiry-one-second.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-expiry-one-second.after.json",
+            "sha256": "6f42160ccefce6b82139561a4e9c98c3654664f4df25d19177c92f49273d909b",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.expiry.exact-300-seconds",
+      "description": "Accept the exact 300-second lifetime and copy expiry unchanged.",
+      "ruleIds": [
+        "plan-registration.expiry.lifetime"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/expires-exact-300-seconds.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-expiry-exact-300-seconds.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-expiry-exact-300-seconds.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-expiry-exact-300-seconds.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.expiry.301-seconds",
+      "description": "Reject 301 seconds rather than clamping or extending the lifetime.",
+      "ruleIds": [
+        "plan-registration.expiry.lifetime"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "execution-plan/expires-301-seconds.cbor",
+        "sha256": "ea6276c6acc31fb813e1824e283f18be540ab7651b3b6f7343d2f7570f0b433d",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-expiry-301-seconds.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-expiry-301-seconds.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "POLICY",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-expiry-301-seconds.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.expiry.use-at-equality",
+      "description": "A stored registration is unusable when effectiveNow equals its expiry.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "plan-registration/ordinary.cbor",
+        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-expiry-use-at-equality.operation.json",
+          "sha256": "5940092fdffcb77ae4c3c23585f73c77fe644d6850d7fb4adce180b58100a7db",
+          "byteLength": 375
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-expiry-use-at-equality.before.json",
+          "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
+          "byteLength": 2332
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-expiry-use-at-equality.after.json",
+            "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.initial-high-water",
+      "description": "A valid registration records the final effective Unix second.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-initial-high-water.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-initial-high-water.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-initial-high-water.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.final-reread-uses-later-high-water",
+      "description": "The final transaction re-read records a concurrent later high-water second.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-final-reread-uses-later-high-water.operation.json",
+          "sha256": "5ca86d44c95ccd63819b4d128df6e48bc88027793583d49e3711ed36ef26959a",
+          "byteLength": 451
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-final-reread-uses-later-high-water.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-final-reread-uses-later-high-water.after.json",
+            "sha256": "f1647a40e0954c4b3c942a1adaecf17edf46a48531ca0d6e509fe606edba2711",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.final-reread-can-expire-plan",
+      "description": "A concurrent high-water advance to expiry makes final admission stale.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-final-reread-can-expire-plan.operation.json",
+          "sha256": "e68bfb3a17d341dcfc561f858f1c835c75ca50a4405fc3a06a7242a3e9f4d8f8",
+          "byteLength": 451
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-final-reread-can-expire-plan.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-final-reread-can-expire-plan.after.json",
+            "sha256": "b2fecf708987d99829faca833afc1cd798b44973fd5336dc1a39fa5f348a80be",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.clock-rollback-cannot-resurrect",
+      "description": "A backward clock observation cannot reactivate an expired registration.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "plan-registration/ordinary.cbor",
+        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-clock-rollback-cannot-resurrect.operation.json",
+          "sha256": "e56860870966e054506c8e07e5d719fc8e8f5914513ab66091d389cf5588013e",
+          "byteLength": 375
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-clock-rollback-cannot-resurrect.before.json",
+          "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
+          "byteLength": 2332
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-clock-rollback-cannot-resurrect.after.json",
+            "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.binding-reject-advances-high-water",
+      "description": "A stateful binding rejection may retain only the trusted time observation.",
+      "ruleIds": [
+        "plan-registration.time.monotonic"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "wrong-domain",
+      "fixture": {
+        "path": "execution-plan/wrong-epoch-binding.cbor",
+        "sha256": "eb27521d9659f5647e531c5b7fd5ef8c26584ac8c972e153873a9ed862bc715e",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-binding-reject-advances-high-water.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-binding-reject-advances-high-water.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-binding-reject-advances-high-water.after.json",
+            "sha256": "069d345320cb8cb70d4bca85ef4895eeb00a6a42a351b027219bf9fb847b31a4",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "execution-plan.registration.invalid-bytes-no-time-write",
+      "description": "Malformed plan bytes reject before trusted-time persistence.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/invalid-break.cbor",
+        "sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+        "byteLength": 1
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/execution-plan-registration-invalid-bytes-no-time-write.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/execution-plan-registration-invalid-bytes-no-time-write.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "supervisor-plan-predecoder",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/execution-plan-registration-invalid-bytes-no-time-write.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.time.high-water-write-failure",
+      "description": "High-water persistence failure stops admission without durable state change.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-time-high-water-write-failure.operation.json",
+          "sha256": "c965fa00b5943504656e26314126e6606778004c1ee576a4001cd6ad08d054a6",
+          "byteLength": 391
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-time-high-water-write-failure.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-time-high-water-write-failure.after.json",
+            "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.trust.stable",
+      "description": "Stable matching trust state admits the exact plan.",
+      "ruleIds": [
+        "plan-registration.trust.gate"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-trust-stable.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-trust-stable.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-trust-stable.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.trust.reject-transition-fenced",
+      "description": "Reject registration while trust state is transition-fenced.",
+      "ruleIds": [
+        "plan-registration.trust.gate"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-trust-reject-transition-fenced.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-trust-reject-transition-fenced.before.json",
+          "sha256": "a016cff9d77375635bce8b1b12d130e3be9baee6ffc638c65ef1566c76880d6e",
+          "byteLength": 665
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "STALE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-trust-reject-transition-fenced.after.json",
+            "sha256": "264f85aab37f7a876a740e300ae16e20d19f475095d585dfcc793475cd88debf",
+            "byteLength": 665
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.trust.reject-quarantined",
+      "description": "Reject registration while trust state is quarantined.",
+      "ruleIds": [
+        "plan-registration.trust.gate"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-trust-reject-quarantined.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-trust-reject-quarantined.before.json",
+          "sha256": "c2aa5582cfe74bf8cd65ddbf43fabab85dd5671261212255d89fbd5fab2a686b",
+          "byteLength": 653
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "TRUST_STATE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-trust-reject-quarantined.after.json",
+            "sha256": "12e529d1bd288a67ad2cee3485d520451402305b91f82bcd2b691274fd76b077",
+            "byteLength": 653
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.trust.reject-repair-required",
+      "description": "Reject registration while trust state is repair-required.",
+      "ruleIds": [
+        "plan-registration.trust.gate"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-trust-reject-repair-required.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-trust-reject-repair-required.before.json",
+          "sha256": "032ef132bc4d1ff4770734500e1dfac2880ef95b7a764532f8a018f3fe393245",
+          "byteLength": 682
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "TRUST_STATE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-trust-reject-repair-required.after.json",
+            "sha256": "aeee4749e7f689831d2f345d59a1219a1f5cd25669535aef6a4f0955df44760b",
+            "byteLength": 682
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.capacity.unexpired-exact-256",
+      "description": "Admit the 256th unexpired registration exactly.",
+      "ruleIds": [
+        "plan-registration.capacity.unexpired"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-capacity-unexpired-exact-256.operation.json",
+          "sha256": "258f76cb2185a11ba5edbcb78dfdfd762e91070f4db7a8c338831accd5096c1b",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-capacity-unexpired-exact-256.before.json",
+          "sha256": "dac3f3540f4b26e739ea2c1ae135ceacc626c7a3b55a6029c347b723d6ec5851",
+          "byteLength": 660
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-capacity-unexpired-exact-256.after.json",
+            "sha256": "ed92fbba9c37fdadffc17a5a973cd566626d994d9c61b4c211eb3c7f73645cc0",
+            "byteLength": 2342
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.capacity.unexpired-cap-plus-one",
+      "description": "Reject the 257th unexpired registration without eviction.",
+      "ruleIds": [
+        "plan-registration.capacity.unexpired"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-capacity-unexpired-cap-plus-one.operation.json",
+          "sha256": "5bb43666bafa89966a187ad24817697dc1454a60aff4f6f491b042c642815e2b",
+          "byteLength": 372
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-capacity-unexpired-cap-plus-one.before.json",
+          "sha256": "b1055a31711fc0a4c6f22a4157d39de62af6308287cde2a6b2f33a2537cd3367",
+          "byteLength": 660
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "CAPACITY",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-capacity-unexpired-cap-plus-one.after.json",
+            "sha256": "b1055a31711fc0a4c6f22a4157d39de62af6308287cde2a6b2f33a2537cd3367",
+            "byteLength": 660
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.capacity.expiry-equality-not-unexpired",
+      "description": "Records expiring at effectiveNow do not consume the unexpired allowance.",
+      "ruleIds": [
+        "plan-registration.capacity.unexpired"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-capacity-expiry-equality-not-unexpired.operation.json",
+          "sha256": "83f6cf75bdf31b5a6fa196fa8f339763b7eb4e24f7af35e499ea75b821cd7857",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-capacity-expiry-equality-not-unexpired.before.json",
+          "sha256": "839dbcfe1b12ab85e002667a40ccf41107687e5bee98d97db8679c75a985a1cc",
+          "byteLength": 658
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-capacity-expiry-equality-not-unexpired.after.json",
+            "sha256": "688c62a97f4d51756b5fccdce979a0e7e2ad609f81e4112576d056f8e3690e27",
+            "byteLength": 2340
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.capacity.stored-exact-4096",
+      "description": "Admit the 4,096th stored record exactly.",
+      "ruleIds": [
+        "plan-registration.capacity.stored"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-capacity-stored-exact-4096.operation.json",
+          "sha256": "3cb1b4f46069102f55409176f5ee4b7386b42679ecc9f744b95e8823214cf8e4",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-capacity-stored-exact-4096.before.json",
+          "sha256": "9cb7d96613d59cedf6eea0e280a59bdb9ea453f74b5407d79a5f2302b2298b79",
+          "byteLength": 660
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-capacity-stored-exact-4096.after.json",
+            "sha256": "5269c20d3a53a40f29a0cfe85ef093d1a994e68d9111f9b638ad2b3f3b116746",
+            "byteLength": 2342
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.capacity.stored-cap-plus-one",
+      "description": "Reject record 4,097 even when all stored records are expired.",
+      "ruleIds": [
+        "plan-registration.capacity.stored"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-capacity-stored-cap-plus-one.operation.json",
+          "sha256": "5bb43666bafa89966a187ad24817697dc1454a60aff4f6f491b042c642815e2b",
+          "byteLength": 372
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-capacity-stored-cap-plus-one.before.json",
+          "sha256": "60305df7c9e312d391c383f66fccbcc38e2b14334f83cf73bad1024ef52db714",
+          "byteLength": 660
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "CAPACITY",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-capacity-stored-cap-plus-one.after.json",
+            "sha256": "60305df7c9e312d391c383f66fccbcc38e2b14334f83cf73bad1024ef52db714",
+            "byteLength": 660
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.identifier.source-error",
+      "description": "Identifier source-error fails locally without sequence consumption.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-identifier-source-error.operation.json",
+          "sha256": "a29433d8ce590926719540dc50a53e8d053cc4db3c14316a36552e57067df23f",
+          "byteLength": 426
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-identifier-source-error.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-identifier-source-error.after.json",
+            "sha256": "069d345320cb8cb70d4bca85ef4895eeb00a6a42a351b027219bf9fb847b31a4",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.identifier.zero",
+      "description": "Identifier zero fails locally without sequence consumption.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-identifier-zero.operation.json",
+          "sha256": "ccd19761a691b9afff27d498d8de8d23572b47d50a6c61b292f8c142ce7bc287",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-identifier-zero.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-identifier-zero.after.json",
+            "sha256": "069d345320cb8cb70d4bca85ef4895eeb00a6a42a351b027219bf9fb847b31a4",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.identifier.duplicate",
+      "description": "Identifier duplicate fails locally without sequence consumption.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-identifier-duplicate.operation.json",
+          "sha256": "1ba76d1d24ab6444021e75ee48833bedeeead40a0874d4b136c83f1ed686ade2",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-identifier-duplicate.before.json",
+          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+          "byteLength": 2332
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-identifier-duplicate.after.json",
+            "sha256": "55e0fe7a1420ef409ec4bb35448b9a5e38c7c32957d8fa4b8e181a3885b1da06",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.transaction.confirmed-abort",
+      "description": "A confirmed-abort commit exposes neither a sequence nor a partial record.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-transaction-confirmed-abort.operation.json",
+          "sha256": "95e1a253d8bbd4c51187bdb1425328b24782e139da6ff80c445a172eca90c778",
+          "byteLength": 478
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-transaction-confirmed-abort.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "LOCAL_FAILURE",
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-transaction-confirmed-abort.after.json",
+            "sha256": "069d345320cb8cb70d4bca85ef4895eeb00a6a42a351b027219bf9fb847b31a4",
+            "byteLength": 654
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.transaction.atomic-commit",
+      "description": "A successful commit exposes its complete record and sequence together.",
+      "ruleIds": [
+        "plan-registration.failure.atomicity"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-transaction-atomic-commit.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-transaction-atomic-commit.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-transaction-atomic-commit.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.storage.wire-omits-stored-fields",
+      "description": "Wire PlanRegistration contains no plan bytes, registration time, or recovery data.",
+      "ruleIds": [
+        "plan-registration.storage.separation"
+      ],
+      "object": "PlanRegistration",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.plan-registration+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "plan-registration/ordinary.cbor",
+        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "byteLength": 165
+      },
+      "context": {
+        "kind": "fixture",
+        "fixture": {
+          "path": "contexts/registration/wire-stored-separation.json",
+          "sha256": "25b02e43b864d0238c99291e9f92d1b149a50c6b00e4de78b3cabb7efa618766",
+          "byteLength": 506
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-predecoder",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "plan-registration.storage.minimum-stored-record",
+      "description": "Commit the exact closed six-field stored record separately from the wire payload.",
+      "ruleIds": [
+        "plan-registration.storage.separation"
+      ],
+      "object": "ExecutionPlan",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "execution-plan/ordinary.cbor",
+        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+        "byteLength": 530
+      },
+      "context": {
+        "kind": "registration-state",
+        "operation": {
+          "path": "contexts/registration/plan-registration-storage-minimum-stored-record.operation.json",
+          "sha256": "2d79f700b8374285eaf344d4e92e7aedd49b35a5039f65abe19939d1591fc05f",
+          "byteLength": 445
+        },
+        "before": {
+          "path": "contexts/registration/plan-registration-storage-minimum-stored-record.before.json",
+          "sha256": "fb418e990089ba9dd3f62391cfe5c652a75a5a22531a1250f467670ee03a0401",
+          "byteLength": 654
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "supervisor-registration-state",
+        "authorityStateChanged": true,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/registration/plan-registration-storage-minimum-stored-record.after.json",
+            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
+            "byteLength": 2332
+          }
+        }
       },
       "implementations": {
         "fixture-integrity": "verified",

@@ -1,0 +1,10 @@
+{
+  "labels": {"example":"known-answer"},
+  "outputs": [{"maxBytes":65536,"kind":"inline-json","slot":"transformed-json"}],
+  "requestedLimits": {"wallTimeMs":5000},
+  "input": {"value":{"z":[3,0,-2,true,null],"a":"quote:\" slash:/ backslash:\\ control:\u0000\u001f rocket:\ud83d\ude80","A":{"b":false,"a":"\u00e9"}},"kind":"inline-json","slot":"primary-data"},
+  "runtimeProfile": "fixture-active@1",
+  "source": {"files":{"A.ts":"export const a = 1;\r\n","src/main.ts":"import { a } from \"../A.ts\";\nconsole.log(a);\n","z.ts":"export const z = \"\ud83d\ude80\";\n"},"entrypoint":"src/main.ts"},
+  "kind": "JobProposal",
+  "apiVersion": "capsule.dev/v0"
+}

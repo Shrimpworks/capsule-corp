@@ -1,0 +1,8 @@
+{
+  "contextType": "capsule.conformance.user-policy",
+  "contextVersion": 0,
+  "wallTimeMs": {
+    "trustedDefault": 5000,
+    "ceiling": 10000
+  }
+}

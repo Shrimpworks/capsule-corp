@@ -1,12 +1,13 @@
 # Phase 2B boundary-decision specification
 
-Status: Tasks 2.1 and 2.2 implemented as a passive fixture-integrity foundation. ADR-0023 remains
-Proposed; no protocol decoder, semantic planner, registration store, or authority-bearing behavior
-is activated.
+Status: Tasks 2.1 through 2.4 implemented as a passive fixture-integrity foundation. ADR-0023
+remains Proposed; no protocol decoder, semantic planner, registration store, or authority-bearing
+behavior is activated.
 
 Integration checkpoints: PR #10 merged the proposed decisions as `e565e6b`; PR #11 merged the
-manifest-driven conformance foundation as `f6de7ec`. Task provenance and the complete handoff are
-indexed in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+manifest-driven conformance foundation as `f6de7ec`; Task 2.3 was integrated as `4afbdfa`. Task
+2.4 was integrated as `fd51ac4`. Task provenance and the complete handoff are indexed in the
+[workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
 ## Objective
 
@@ -108,6 +109,11 @@ Likely files: `schemas/conformance/v0/shared/` and manifest entries. Estimated s
 
 ### Task 2.3: Add proposal/source/input fixtures
 
+Implementation status: complete. The generated corpus now adds 18 rules, 42 cases, and 39 unique
+fixtures for proposal structure, fixed resolver inputs, source-manifest and canonical-inline-input
+known answers, semantic boundaries, and exact wall-time policy. The full corpus contains 55 rules,
+147 cases, and 130 unique fixtures. Go and TypeScript semantic assertions remain explicitly pending.
+
 Cover structural authority omission, exact source-path/manifest ordering, entrypoint membership,
 source aggregate bytes, canonical inline JSON, fixed slot roles, labels, and requested/defaulted/
 over-ceiling wall time.
@@ -122,6 +128,13 @@ Likely files: `schemas/conformance/v0/job-proposal/` and fixed resolver contexts
 medium.
 
 ### Task 2.4: Add plan/registration and state fixtures
+
+Implementation status: complete. The generated corpus adds 12 rules, 59 cases, and 148 unique
+fixtures for exact plan/registration bytes, role and domain separation, caller authentication,
+fresh registrations, installation-global sequence, expiry and monotonic time, trust fencing,
+capacity, atomic failure, and wire/stored-record separation. The full corpus contains 67 rules,
+206 cases, and 278 unique fixtures. Fixture-integrity assertions are verified; Go, TypeScript, and
+Swift registration-state implementations remain explicitly pending.
 
 Cover exact plan bytes/digest, cross-object/domain substitutions, authenticated caller role,
 duplicate plan registrations, sequence, expiry equality, epoch fencing, clock rollback, capacity,

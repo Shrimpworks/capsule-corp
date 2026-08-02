@@ -77,11 +77,11 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
-byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B Tasks 2.1 and 2.2 have also merged the
-closed conformance manifest, integrity runner, and 37-rule/105-case/91-fixture foundational raw,
-media, scalar, and CBOR corpus. They are not frozen or activated. Tasks 2.3 and 2.4 next add the
-proposal/source/input and plan/registration-state oracles needed before unwired strict decoders and
-the registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice, an atomic
+byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B Tasks 2.1 through 2.4 now provide the
+closed conformance manifest, integrity runner, and 67-rule/206-case/278-fixture corpus, including
+proposal/source/input and exact plan/registration-state oracles. They are not frozen or activated;
+language implementations remain pending. The next work is unwired strict decoders and the
+registered-plan/fake-backend lifecycle. Public cutover waits for that vertical slice, an atomic
 consumer migration, and removal of the dormant direct-execution scaffold. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
@@ -137,7 +137,8 @@ Exit evidence:
 
 ## Phase 5: dependency-free Bun development execution
 
-- Close the five reconciled P0 Gate C campaigns: stock-Bun runtime-authority closure, immutable
+- Close the five reconciled P0 Gate C campaigns: governed runtime-authority closure or an alternate
+  runtime following the failed stock-Bun branch, immutable
   runtime-root custody, independent `NullFs` disposition, typed port transport/completion with
   bounded inline JSON, and an admissible complete installed development bundle.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,

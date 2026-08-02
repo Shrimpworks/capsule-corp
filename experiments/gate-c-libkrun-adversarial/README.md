@@ -35,6 +35,7 @@ experiment rather than trusting the older ignored `.build` directory:
 ```sh
 CAPSULE_SIGNING_IDENTITY='AD70CEDCA605604676C2853A229AA4664AD3F750' ./build.sh
 ./prepare-disk.sh
+./audit-nullfs-source.sh .build/capsule-krun-runner
 ./run.sh
 ```
 
@@ -46,6 +47,15 @@ the guest-visible `NullFs` virtiofs device; this is an unresolved profile findin
 error. See [SELECTED_EVIDENCE.md](SELECTED_EVIDENCE.md) for the tracked evidence index and
 [VALIDATION_RECEIPT.md](VALIDATION_RECEIPT.md) for the finding disposition, and
 [HANDOFF.md](HANDOFF.md) for integration guidance.
+
+The bounded replacement P0-2 investigation is recorded in
+[NULLFS_P0_2.md](NULLFS_P0_2.md). It found no independent virtiofs build toggle, established that
+the retained block-root route always creates `NullFs`, and falsified the smallest removal: deleting
+only that device prevented bootstrap. Selected control/mutation output is tracked under
+`evidence/nullfs-p0-2/`. The current profile remains unsupported for P0-2; the follow-up does not
+replace the original Developer ID evidence with its ad-hoc boot-only comparison.
+`audit-nullfs-source.sh` is a read-only regression check for the pinned source routes and optional
+runner imports; passing it is not residual-surface validation.
 
 ## Safety boundaries
 

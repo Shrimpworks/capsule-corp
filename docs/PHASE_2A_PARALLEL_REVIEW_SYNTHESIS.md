@@ -97,7 +97,7 @@ Dependencies: none.
 Add byte-retaining accept/reject fixtures for shared scalars, raw JSON, deterministic CBOR,
 `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and cross-object/domain substitutions. Each case
 records its first owning layer, provisional/frozen classification, participating languages, and
-`stateChanged: false` where rejected.
+`authorityStateChanged: false` where rejected.
 
 Acceptance:
 
@@ -107,9 +107,10 @@ Acceptance:
 
 Dependencies: Task 1 for cases whose exact oracle is currently undecided.
 
-Implementation progress: Phase 2B Tasks 2.1 and 2.2 now provide the closed manifest, repository
-integrity runner, and foundational raw/media/scalar/CBOR fixture corpus. Proposal/source/input and
-plan/registration state cases remain Tasks 2.3 and 2.4.
+Implementation progress: Phase 2B Tasks 2.1 through 2.4 now provide the closed manifest, repository
+integrity runner, foundational raw/media/scalar/CBOR fixtures, fixed proposal resolver contexts,
+source/canonical-inline-input known answers, and exact plan/registration/domain/state fixtures.
+Language implementations remain pending and no endpoint or backend is activated.
 
 ### Task 3: Implement strict proposal decoding and semantic planning as an unwired library
 

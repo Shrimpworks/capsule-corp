@@ -291,6 +291,12 @@ These limits are sufficient only for unwired conformance and the no-guest fake l
 activation remains blocked on a reviewed Supervisor-owned archive/compaction and replay-retention
 design that preserves approval, attempt, nonce, evidence, cleanup, trust, and rollback invariants.
 
+[Proposed ADR-0031](0031-checkpoint-closed-supervisor-cohorts.md) now supplies that design boundary
+without implementing or accepting it. It retains complete closed registration cohorts and exact
+replay/non-reuse tombstones in finite immutable segments, forbids referenced-history deletion, and
+keeps production engine, owner-lock, power-loss, backup/rollback, and continuous-service evidence
+blocked.
+
 ### Fixed internal classifications
 
 This slice uses exactly these content-free internal classes; they are not public protocol error

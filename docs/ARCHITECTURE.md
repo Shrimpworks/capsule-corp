@@ -147,6 +147,14 @@ in-process owner/coordinator. This is repository-local mechanic evidence only: i
 macOS installation lock, a production database, a real adapter, guest lifecycle evidence, or
 evidence composition.
 
+Proposed ADR-0031 defines the unimplemented next retention boundary. Only a complete expired
+registration cohort whose attempts are all durably destroyed with cleanup false after
+authoritative absence may move into an immutable Supervisor-owned archive segment. Exact records,
+replay/non-reuse tombstones, cross-record indexes, and checkpoint digests remain retained; active
+or unresolved work never archives. The selected fixed checkpoint is a finite conformance oracle,
+not a production engine or continuous-service mechanism, and referenced archive history is not
+deletable under that proposal.
+
 ### Trust verifier and repository
 
 TUF root, targets, snapshot, and timestamp metadata anchor release/profile distribution,

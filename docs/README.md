@@ -26,6 +26,9 @@ migration, and conformance reviews are consolidated in
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md).
 The proposed exact validator and registration rules for the next slice are in
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
+The next Supervisor retention boundary is defined in
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) and its
+[archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md).
 
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).

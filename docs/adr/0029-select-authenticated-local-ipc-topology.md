@@ -346,6 +346,11 @@ archive/compaction, real multi-process owner-lock evidence, production approval 
 key authorization, protected storage, update/repair integration, and all existing runtime/backend/
 content/evidence gates.
 
+[Proposed ADR-0031](0031-checkpoint-closed-supervisor-cohorts.md) defines the archive/compaction and
+replay-retention semantics, but implements no storage behavior and deliberately does not select a
+production engine. Its archive operations depend on this ADR's still-unimplemented lifetime owner
+lock and expose no new IPC call.
+
 Ad-hoc local evidence may support API availability, exact-CDHash denial, message shape/caps,
 purpose/audience/epoch refusal, process death, replay, flow control, and bridge ownership. It cannot
 support Team/channel enrollment, Developer ID/notarized distribution, provisioning-backed

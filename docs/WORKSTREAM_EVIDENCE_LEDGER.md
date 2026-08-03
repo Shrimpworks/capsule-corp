@@ -164,6 +164,15 @@ This is an unwired `local-mechanic` result. Archive/compaction, a real platform/
 backup/rollback, production reconciliation, consumers, content, evidence, runtime, backend, and
 guest remain absent.
 
+The next design task is now retained as
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) and the
+[Supervisor archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md). It selects
+complete closed registration cohorts, immutable full-record segments, exact replay/non-reuse
+tombstone indexes, publish-before-activate fault ordering, coherent backup verification, and
+read-only offline verification. It implements no archive behavior and deliberately leaves
+referenced-history deletion, production-engine selection, real owner locking/power loss, coherent-
+rollback prevention, continuous service, consumers, and guests blocked.
+
 The closed conformance manifest remains 82 rules, 262 cases, and 368 fixtures after Slice C. Its Go
 manifest-backed coverage remains 177 targets: 81 internal-CBOR/wrapper cases, 40 registration-state
 cases, 44 passive approval/attempt cases, and 12 Slice B state transitions. Slice C adds focused Go
@@ -248,15 +257,17 @@ Completed and retained:
 Next backend-independent work:
 
 1. Keep [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) at the E5
-   `local-mechanic` checkpoint until a separately reviewed archive/compaction boundary and selected
-   production owner-lock topology exist. Do not infer continuous-service, multi-process, or guest
-   lifecycle evidence from the fixed snapshot and injected coordinator.
+   `local-mechanic` checkpoint until Proposed ADR-0031's archive/compaction boundary is implemented
+   and a production owner-lock topology is selected and evidenced. Do not infer continuous-service,
+   multi-process, or guest lifecycle evidence from the fixed snapshot and injected coordinator.
 2. Add the missing digest-pinned Linux/arm64 `rusty_v8` builder/publication sibling profile, then
    construct the merged governed Deno candidate and exact root in clean same-host and independently
    controlled builders. Follow the [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md);
    keep source/notice publication, TypeScript owner/topology, real releases, and admission separate.
-3. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
-   no-eviction authority store is not a continuous-service store.
+3. Implement Proposed ADR-0031's passive fixed-store F1-F5 archive/compaction and replay-retention
+   oracle before a separate production-engine experiment/ADR. The current no-eviction authority
+   store is not a continuous-service store; do not delete referenced history or activate a
+   consumer.
 4. Implement the passive S1 fixtures for Proposed ADR-0029's selected local-IPC topology after the
    TypeScript approved-byte binding record is stable. Keep the native-to-Go bridge, installed peer
    identities, and production Approval verification/authorization separate; do not promote the

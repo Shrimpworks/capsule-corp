@@ -39,6 +39,14 @@ identities, reconciliation, exact active/retained ceilings, and repeated-startup
 Supervisor topology for the future authenticated boundary. No native bridge fixture, product XPC
 service, production owner lock, consumer, runtime, backend effect, or guest is connected.
 
+Proposed ADR-0031 defines, but does not implement, the next archive boundary. A complete expired
+registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
+with cleanup false and authoritative absence. Immutable segments retain full records and exact
+registration/approval/attempt/nonce/effect/instance/replay tombstones. The finite fixed-store v2
+checkpoint is selected only as a fault-injectable conformance oracle; production-engine selection,
+referenced-history deletion, continuous service, coherent restore activation, and rollback-
+resistant non-reuse remain blocked.
+
 ## Reference workflow
 
 The first complete workflow is intentionally narrow:
@@ -632,6 +640,14 @@ capacity is released only by a durable `destroyed` record with cleanup false aft
 absence. The owner/coordinator is still injected in-process; production archive, platform locking,
 rollback, backup, and real-backend reconciliation mechanisms remain unselected.
 
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the next local
+conformance shape for archive and replay retention. Under the sole owner lock, the Supervisor
+publishes a fully verified immutable closed-cohort segment before atomically activating a v2 hot
+snapshot that references it, installs exact tombstone indexes, and removes the same records from
+hot sets. Indeterminate publication or activation fences until reopen. Full cohort records remain
+retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. The
+proposal implements nothing and deliberately defers a production engine and real power-loss proof.
+
 ## Error and violation taxonomy
 
 Stable bounded codes distinguish malformed/unsupported protocol, authentication, untrusted or
@@ -664,19 +680,22 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 2. Freeze backend-independent contracts using the measured results.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-5. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
+4. Implement the passive/fault-injectable ADR-0031 fixed-store archive oracle, then run the same
+   logical corpus plus real locking, backup, corruption, APFS, and power-loss tests against a named
+   production-engine candidate before selecting it.
+5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
+6. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
-6. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
+7. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.
-7. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
+8. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
    bounded outputs.
-8. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
+9. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
    Containerization explicitly development-only unless a future supported lifecycle API reopens
    its gate.
-9. Operationalize production TUF/update infrastructure.
-10. Evaluate optional Guardian and external witness mechanisms.
+10. Operationalize production TUF/update infrastructure.
+11. Evaluate optional Guardian and external witness mechanisms.
 
 See [Roadmap](ROADMAP.md) for exit evidence.
 
@@ -690,6 +709,8 @@ See [Roadmap](ROADMAP.md) for exit evidence.
   mechanisms before user bytes; disposable filesystem-image parsing before file artifacts
 - Exact OCI/gVisor worker, engine, runtime, resource, management, identity, and recovery mechanisms
 - Broker-to-Supervisor content-handle mechanism
+- Production Supervisor storage-engine selection and exact archive/compaction, owner-lock,
+  coherent-backup, power-loss, retention/deletion, and replay/non-reuse evidence
 - Non-rollbackable or externally witnessed trust checkpoint, if required
 - Retention, encryption, garbage collection, and secure-deletion limitations
 - Quantitative performance and resource budgets

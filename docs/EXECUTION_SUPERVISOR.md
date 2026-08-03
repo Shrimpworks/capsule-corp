@@ -295,6 +295,14 @@ authenticated IPC, production COSE/Swift/Keychain/user-presence signing
 and verification, production backend reconciliation, consumers, content, evidence composition,
 runtime/backend admission, and public cutover remain blocked. No guest exists in this checkpoint.
 
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) now defines the archive/
+compaction and replay-retention design without implementing it. Only a complete expired
+registration cohort whose attempts are durably destroyed with authoritative absence is eligible.
+The Supervisor publishes an immutable full-record segment before activating a v2 hot snapshot with
+exact registration/approval/attempt/nonce/effect/instance/replay tombstones. Referenced history is
+not deletable, restore without an independent latest checkpoint is rollback-uncertain, and the
+finite fixed-store checkpoint remains unsuitable for consumers or continuous service.
+
 ## Target acceptance tests
 
 - daemon cannot call backend/launcher directly;

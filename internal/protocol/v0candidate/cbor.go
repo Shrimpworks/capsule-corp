@@ -19,6 +19,8 @@ const (
 	PlanRegistrationMaxCBORArrayElements = 0
 )
 
+// cborProfile bounds the allocation-independent predecoder for one object
+// kind: total byte/depth/item ceilings plus per-container map/array caps.
 type cborProfile struct {
 	maxBytes         int
 	maxDepth         int
@@ -219,6 +221,8 @@ func (s *cborScanner) readHead() (byte, uint64, error) {
 	return major, argument, nil
 }
 
+// compareDeterministicCBOR orders two encoded CBOR map keys by RFC 8949 §4.2.1
+// canonical/deterministic ordering: shorter encoding first, then byte-lexicographic.
 func compareDeterministicCBOR(left, right []byte) int {
 	if len(left) < len(right) {
 		return -1

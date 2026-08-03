@@ -6,10 +6,15 @@ package v0candidate
 
 import "fmt"
 
+// MaxSafeInteger is the largest integer both this decoder and the
+// TypeScript side of the protocol can represent exactly (2^53-1),
+// matching TypeScript's Number.isSafeInteger ceiling.
 const MaxSafeInteger uint64 = 9_007_199_254_740_991
 
+// ObjectVersion is the closed candidate object-version discriminator.
 type ObjectVersion uint64
 
+// CandidateObjectVersion is the only object version this decoder accepts; any other value is unsupported protocol.
 const CandidateObjectVersion ObjectVersion = 0
 
 const (
@@ -17,10 +22,19 @@ const (
 	PlanRegistrationObjectType = "capsule.plan-registration"
 )
 
+// InstallationID, RegistrationID, and SupervisorID are distinct nominal
+// 16-byte identity domains. Each is validated nonzero by its New*
+// constructor and is never accepted in a field belonging to another role,
+// even though all three share the same underlying width (ADR-0023).
 type InstallationID [16]byte
 type RegistrationID [16]byte
 type SupervisorID [16]byte
 
+// The digest types below are distinct nominal 32-byte SHA-256 domains, one
+// per role. Unlike the ID types above, every 32-byte bit pattern is
+// structurally accepted, including all-zero: existence and byte equality
+// are binding checks owned by the role-specific resolver, not this decoder
+// (see newDigest).
 type ExecutionPlanDigest [32]byte
 type TrustEpochDigest [32]byte
 type SourceManifestDigest [32]byte
@@ -33,17 +47,23 @@ type BackendConfigurationDigest [32]byte
 type TrustSnapshotDigest [32]byte
 type PolicyDecisionDigest [32]byte
 
+// UInt53 is an unsigned integer bounded to the safe-integer range (0 through MaxSafeInteger).
 type UInt53 uint64
+
+// PositiveUInt53 is a UInt53 additionally constrained to be nonzero.
 type PositiveUInt53 uint64
 
+// InputSlot is the closed set of logical input slot identifiers (ADR-0017); v0 defines exactly one.
 type InputSlot string
 
 const PrimaryDataInputSlot InputSlot = "primary-data"
 
+// OutputSlot is the closed set of logical output slot identifiers (ADR-0017); v0 defines exactly one.
 type OutputSlot string
 
 const TransformedJSONOutputSlot OutputSlot = "transformed-json"
 
+// WallTimeOrigin records whether a resolved wall-time limit came from the caller's request or the trusted default.
 type WallTimeOrigin string
 
 const (
@@ -103,6 +123,11 @@ type PlanRegistration struct {
 	ExpiresAt            UInt53
 }
 
+// The New* constructors below all validate and copy raw bytes into their
+// role-specific nominal type via newIdentifier (16-byte, nonzero) or
+// newDigest (32-byte, all-zero-accepting); see those functions for the
+// exact validation each performs.
+
 func NewInstallationID(value []byte) (InstallationID, error) {
 	return newIdentifier[InstallationID](value, "installation")
 }
@@ -159,6 +184,7 @@ func NewPolicyDecisionDigest(value []byte) (PolicyDecisionDigest, error) {
 	return newDigest[PolicyDecisionDigest](value, "policy-decision")
 }
 
+// NewUInt53 validates value is within the safe-integer range.
 func NewUInt53(value uint64) (UInt53, error) {
 	if value > MaxSafeInteger {
 		return 0, schema(fmt.Sprintf("value must not exceed %d", MaxSafeInteger))
@@ -166,6 +192,7 @@ func NewUInt53(value uint64) (UInt53, error) {
 	return UInt53(value), nil
 }
 
+// NewPositiveUInt53 validates value is nonzero and within the safe-integer range.
 func NewPositiveUInt53(value uint64) (PositiveUInt53, error) {
 	if value == 0 || value > MaxSafeInteger {
 		return 0, schema(fmt.Sprintf("value must be between 1 and %d", MaxSafeInteger))

@@ -14,7 +14,7 @@ index 8778483..83ea6b4 100644
 @@ -1374,8 +1376,23 @@ int main(int argc, char **argv)
          krun_root_fstype = clone_str(getenv("KRUN_BLOCK_ROOT_FSTYPE"));
          krun_root_options = clone_str(getenv("KRUN_BLOCK_ROOT_OPTIONS"));
-
+ 
 -        if (try_mount(krun_root, "/newroot", krun_root_fstype, 0,
 -                      krun_root_options) < 0) {
 +        /*

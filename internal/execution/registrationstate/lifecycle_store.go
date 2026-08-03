@@ -123,6 +123,45 @@ func (store *FixedFileStoreV1) LifecycleRecoveryFenced() bool {
 	return store.recoveryRequired || store.repairRequired
 }
 
+// OwnerSessionID identifies the sealed permit owner for this open store
+// handle. It is used only to bind the injected E4 in-process coordinator to
+// the same owner session; it grants no execute or backend authority.
+func (store *FixedFileStoreV1) OwnerSessionID() lifecyclestate.OwnerSessionID {
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	return store.ownerSessionID
+}
+
+// AdvanceLifecycleTime durably advances the installation high-water used by
+// lifecycle transitions and retry eligibility. It never moves time backward
+// and does not create or widen approval, attempt, or backend authority.
+func (store *FixedFileStoreV1) AdvanceLifecycleTime(
+	ctx context.Context,
+	observed v0candidate.UInt53,
+) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if uint64(observed) > v0candidate.MaxSafeInteger {
+		return classified(ClassificationSchema, "lifecycle-time-uint53")
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	if err := store.requireMutableLocked(); err != nil {
+		return err
+	}
+	if observed <= store.state.TimeHighWaterUnixSeconds {
+		return nil
+	}
+	return store.commitLifecycleLocked(
+		ctx, "", "", "", false,
+		func(state *installationState, _ *[]lifecyclestate.Record) error {
+			state.TimeHighWaterUnixSeconds = observed
+			return nil
+		},
+	)
+}
+
 func (store *FixedFileStoreV1) EnsureLifecycle(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -446,11 +485,10 @@ func (store *FixedFileStoreV1) RecordIndeterminate(
 	return cloneLifecycleRecord(updated, store.state.TimeHighWaterUnixSeconds), nil
 }
 
-func (store *FixedFileStoreV1) RecordReconciliation(
+func (store *FixedFileStoreV1) BeginReconciliation(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
 	expected lifecyclestate.RecordVersion,
-	result lifecyclestate.ReconcileResult,
 ) (lifecyclestate.Record, error) {
 	if err := ctx.Err(); err != nil {
 		return lifecyclestate.Record{}, err
@@ -468,8 +506,9 @@ func (store *FixedFileStoreV1) RecordReconciliation(
 	if view.RecordVersion != expected {
 		return lifecyclestate.Record{}, ErrLifecycleVersionConflict
 	}
-	if result.Operation() != view.Operation ||
-		(view.EffectStatus != lifecyclestate.EffectIntent && view.EffectStatus != lifecyclestate.EffectIndeterminate && view.State != lifecyclestate.StateDestroyConfirmed) {
+	if view.EffectStatus != lifecyclestate.EffectIntent &&
+		view.EffectStatus != lifecyclestate.EffectIndeterminate &&
+		view.State != lifecyclestate.StateDestroyConfirmed {
 		return lifecyclestate.Record{}, ErrLifecycleBindingMismatch
 	}
 	if view.AutomaticRecoveryCount >= lifecyclestate.MaxAutomaticRecoveryAttempts {
@@ -479,12 +518,12 @@ func (store *FixedFileStoreV1) RecordReconciliation(
 		return lifecyclestate.Record{}, classified(ClassificationStale, "reconciliation-not-eligible")
 	}
 
-	// E3 has no adapter call. It nevertheless commits the eligibility/count
-	// checkpoint separately so E4 can place observation strictly after this
-	// durable edge without changing the transaction oracle.
+	// Commit the eligibility/count checkpoint separately so E4 places the
+	// observation strictly after this durable edge.
 	eligibility := view
 	eligibility.AutomaticRecoveryCount++
 	eligibility.NextRecoveryAt = nextRecoveryTime(eligibility.AutomaticRecoveryCount, store.state.TimeHighWaterUnixSeconds)
+	eligibility.LastReconciliation = lifecyclestate.ReconciliationNone
 	if err := advanceLifecycleVersion(&eligibility, store.state.TimeHighWaterUnixSeconds); err != nil {
 		return lifecyclestate.Record{}, err
 	}
@@ -509,6 +548,40 @@ func (store *FixedFileStoreV1) RecordReconciliation(
 	)
 	if err != nil {
 		return lifecyclestate.Record{}, err
+	}
+	return cloneLifecycleRecord(eligibleRecord, store.state.TimeHighWaterUnixSeconds), nil
+}
+
+func (store *FixedFileStoreV1) CompleteReconciliation(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+	expected lifecyclestate.RecordVersion,
+	result lifecyclestate.ReconcileResult,
+) (lifecyclestate.Record, error) {
+	if err := ctx.Err(); err != nil {
+		return lifecyclestate.Record{}, err
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	if err := store.requireMutableLocked(); err != nil {
+		return lifecyclestate.Record{}, err
+	}
+	position := findLifecycle(store.lifecycles, attemptID)
+	if position < 0 {
+		return lifecyclestate.Record{}, ErrLifecycleNotFound
+	}
+	eligibleRecord := store.lifecycles[position]
+	eligibleView := eligibleRecord.View()
+	if eligibleView.RecordVersion != expected {
+		return lifecyclestate.Record{}, ErrLifecycleVersionConflict
+	}
+	if eligibleView.AutomaticRecoveryCount == 0 ||
+		eligibleView.LastReconciliation != lifecyclestate.ReconciliationNone ||
+		result.Operation() != eligibleView.Operation ||
+		(eligibleView.EffectStatus != lifecyclestate.EffectIntent &&
+			eligibleView.EffectStatus != lifecyclestate.EffectIndeterminate &&
+			eligibleView.State != lifecyclestate.StateDestroyConfirmed) {
+		return lifecyclestate.Record{}, ErrLifecycleBindingMismatch
 	}
 
 	final := eligibleRecord.View()
@@ -557,6 +630,22 @@ func (store *FixedFileStoreV1) RecordReconciliation(
 	}
 	delete(store.issuedPermits, attemptID)
 	return cloneLifecycleRecord(finalRecord, store.state.TimeHighWaterUnixSeconds), nil
+}
+
+// RecordReconciliation retains the E3 composite transaction oracle. The E4
+// driver uses BeginReconciliation and CompleteReconciliation so the fake
+// observation occurs strictly between the two durable commits.
+func (store *FixedFileStoreV1) RecordReconciliation(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+	expected lifecyclestate.RecordVersion,
+	result lifecyclestate.ReconcileResult,
+) (lifecyclestate.Record, error) {
+	eligible, err := store.BeginReconciliation(ctx, attemptID, expected)
+	if err != nil {
+		return lifecyclestate.Record{}, err
+	}
+	return store.CompleteReconciliation(ctx, attemptID, eligible.View().RecordVersion, result)
 }
 
 func (store *FixedFileStoreV1) RecoveryAttemptIDs(ctx context.Context) ([]approvalattempt.AttemptID, error) {
@@ -865,10 +954,17 @@ func intentState(operation lifecyclestate.Operation) lifecyclestate.LifecycleSta
 }
 
 func retryableSameEffect(view lifecyclestate.RecordView, expected lifecyclestate.RecordVersion, operation lifecyclestate.Operation) bool {
-	return view.RecordVersion == expected && view.Operation == operation && !view.EffectID.IsZero() &&
-		view.LastReconciliation == lifecyclestate.ReconciliationNotApplied &&
-		(view.EffectStatus == lifecyclestate.EffectIntent || view.EffectStatus == lifecyclestate.EffectIndeterminate) &&
-		view.State == lifecyclestate.StateUnresolved
+	if view.RecordVersion != expected || view.Operation != operation || view.EffectID.IsZero() ||
+		view.State != lifecyclestate.StateUnresolved {
+		return false
+	}
+	if view.LastReconciliation == lifecyclestate.ReconciliationNotApplied &&
+		(view.EffectStatus == lifecyclestate.EffectIntent || view.EffectStatus == lifecyclestate.EffectIndeterminate) {
+		return true
+	}
+	return view.EffectStatus == lifecyclestate.EffectConfirmed &&
+		view.FirstFailure == lifecyclestate.FailureLifecycle &&
+		view.RecoveryFence == lifecyclestate.RecoveryFenceNone
 }
 
 func (store *FixedFileStoreV1) permitForView(view lifecyclestate.RecordView) (lifecyclestate.EffectPermit, error) {
@@ -896,11 +992,17 @@ func (store *FixedFileStoreV1) validatePermitLocked(
 		return lifecyclestate.RecordView{}, -1, ErrLifecycleNotFound
 	}
 	view := store.lifecycles[position].View()
+	retryPermit := view.State == lifecyclestate.StateUnresolved &&
+		view.EffectStatus == lifecyclestate.EffectConfirmed &&
+		view.FirstFailure == lifecyclestate.FailureLifecycle &&
+		view.RecoveryFence == lifecyclestate.RecoveryFenceNone
 	if view.RecordVersion != permitView.RecordVersion || view.OperationSequence != permitView.OperationSequence ||
 		view.Operation != permitView.Operation || view.EffectID != permitView.EffectID ||
 		view.ImmutableBindingDigest != permitView.ImmutableBindingDigest ||
 		!backendInstancesEqual(view.Instance, permitView.Instance) ||
-		(view.EffectStatus != lifecyclestate.EffectIntent && view.EffectStatus != lifecyclestate.EffectIndeterminate) {
+		(view.EffectStatus != lifecyclestate.EffectIntent &&
+			view.EffectStatus != lifecyclestate.EffectIndeterminate &&
+			!retryPermit) {
 		return lifecyclestate.RecordView{}, -1, ErrLifecycleBindingMismatch
 	}
 	return view, position, nil

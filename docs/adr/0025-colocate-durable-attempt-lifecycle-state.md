@@ -2,6 +2,7 @@
 
 - Status: Proposed
 - Date: 2026-08-02
+- Slice E1-E3 implementation checkpoint: 2026-08-03
 - Refines if accepted: ADR-0011, ADR-0012, ADR-0013, ADR-0023, and ADR-0024
 
 ## Context
@@ -283,6 +284,15 @@ The concrete store builds the immutable record from its own colocated authority 
 binding, effect, and instance types are runtime-neutral, but the first implementation accepts only
 the closed fake binding and rejects any adapter for which `CreatesGuest()` is true. A later real
 adapter requires a separate proposal and validation without changing execute authority.
+
+### Current implementation checkpoint
+
+Slices E1 through E3 now implement the passive types, explicit fixed-store v1 migration/open
+validation, and the complete unwired `DurableLifecycleStore` transaction port above. The E3 fault,
+reopen, collision, ownership, capacity-reservation, and recovery-set tests call no adapter.
+`registeredlifecycle` still uses its bounded non-durable `MemoryStore`; Slice E4 must migrate that
+fake-only driver and startup coordinator before this proposal describes an end-to-end durable local
+mechanic. The status remains Proposed, and no production or guest-facing claim advances.
 
 ## Alternatives considered
 

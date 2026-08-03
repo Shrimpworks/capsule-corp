@@ -611,11 +611,13 @@ rules include:
 - garbage collection never deletes the only record needed to revoke, reconcile, or explain an
   active attempt.
 
-[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) narrows the next fake-only
-implementation boundary to one colocated Supervisor snapshot/transaction domain with durable
-effect intents and `AttemptID`-only startup recovery. The proposal and its conformance plan do not
-make that lifecycle durable today or select production archive, locking, rollback, backup, or
-backend reconciliation mechanisms.
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects one colocated
+Supervisor snapshot/transaction domain with durable effect intents and `AttemptID`-only startup
+recovery. Slices E1 through E3 now implement the passive contract, explicit fixed-store v1
+migration/open validation, and unwired lifecycle transactions. The registered lifecycle driver
+still uses `MemoryStore` and no adapter call is made through E3. Slice E4 is the next fake-only
+boundary; production archive, locking, rollback, backup, and backend reconciliation mechanisms
+remain unselected.
 
 ## Error and violation taxonomy
 
@@ -652,9 +654,9 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 4. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 5. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
-6. After P0-0 selects an admitted runtime by ADR, add one dependency-free inline-JSON vertical
-   slice through the admitted libkrun/HVF development profile, preserving Apple Containerization
-   only as a regression fixture.
+6. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
+   ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
+   development profile, preserving Apple Containerization only as a regression fixture.
 7. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
    bounded outputs.
 8. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple

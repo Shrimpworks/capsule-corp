@@ -45,7 +45,7 @@ registered and approved source/input bytes
 dedicated virtio-console source/input ports
         │
         ▼
-pinned kernel + trusted launcher ──fork/drop authority──▶ untrusted Bun workload
+pinned kernel + trusted launcher ──fork/drop authority──▶ governed deno_core workload
         │ completion descriptor retained only by launcher
         ▼
 one typed completion frame + commit trailer containing bounded inline JSON
@@ -145,9 +145,9 @@ packaging experiment replaced the local-only builder with a digest-pinned no-apt
 offline Cargo source bundle, reproducing the same bytes in two clean same-host containers. The
 later self-contained-root experiment closed the standalone dynamic-root item with an exact
 package-derived 22-entry root, explicit cache-free loader invocation, and file-open/mutation
-evidence. The stronger selection-evidence gate still fails on independent-builder provenance,
-exact archive-corresponding V8 source/notices, governed hosted-fork/release ownership, and the
-remaining admission corpus. See
+evidence. The stronger admission-evidence gate still fails on independent-builder provenance,
+exact archive-corresponding V8 source/notices, governed fork branches/releases, and the remaining
+admission corpus. See
 the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md),
 [physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
 [package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
@@ -159,8 +159,9 @@ gitlinks, exact Deno V8 commit, Chromium V8 base, and four-patch stack. The 1,87
 726 source-tree license/notice candidates were inventoried. The release still omits immutable
 runner/package/action resolutions, effective GN/Ninja closure, generated notices, and a
 corresponding-source bundle, so an exact rebuild was not possible and PR #50's CycloneDX
-composition remains incomplete. Governed `deno_core` is the intended first engineering candidate;
-that direction does not select or admit a profile, supersede ADR-0003, or change `RUNTIME-001`. See
+composition remains incomplete. Accepted ADR-0028 selects governed `deno_core` as the first
+engineering candidate and supersedes ADR-0003's Bun-first ordering only; it does not admit a
+profile or change `RUNTIME-001`. See
 the [retained closure result](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
 
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
@@ -170,8 +171,8 @@ only those three, fixed
 restoration mutations failed closed, and ASLR-controlled clean builds reproduced the snapshot and
 binary. This closes only the pre-registration/final-link question. TypeScript approved-byte
 semantics, independently reconstructible packaging/provenance, complete restoration/backstop
-review, external isolation composition, and runtime-profile admission remain open. No runtime is
-selected, ADR-0003 is not superseded, and `RUNTIME-001` remains unsupported. See the
+review, external isolation composition, and runtime-profile admission remain open. The later
+ADR-0028 ordering decision does not promote this narrow result or `RUNTIME-001`. See the
 [retained physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md).
 
 Approved-byte follow-up (2026-08-03): **BOUNDARY-PASS; NO RUNTIME ADMISSION**. Exact Node
@@ -407,13 +408,17 @@ The next non-credential work is:
    one closed source/API composition;
 2. reproduce the 43 P0-3 vectors in the selected host/launcher languages and complete the console
    sanitizer/coverage corpus, distinct launcher, child manifest, and exact runner FD manifest;
-3. close governed `deno_core` independent-builder, deterministic V8 publication/link/notice
-   evidence, and runtime-root packaging,
+3. bootstrap governed branches in the real `dills122/deno` and `dills122/rusty_v8` forks, then
+   close independent-builder, deterministic V8 publication/link/notice evidence, and runtime-root
+   packaging,
    complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
    candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;
    and
 4. finish the final role, descriptor, runtime/kernel/init, source/license, SBOM/provenance, and
    minimum-OS build inputs so the exact package can be rebuilt before signing.
+
+The exact sequencing and fork exit criteria are recorded in the
+[governed deno_core work plan](GOVERNED_DENO_CORE_WORK_PLAN.md).
 
 The signing-dependent blockers are a valid Apple Development or Developer ID signing identity for
 the hardened App Sandbox runner, protected-container custody test, and Team-enrolled installed IPC;

@@ -18,7 +18,8 @@ its core conclusion.
 
 - [ADR-0001: Jobs, not computers](0001-jobs-not-computers.md)
 - [ADR-0002: External isolation is mandatory](0002-external-isolation.md)
-- [ADR-0003: Bun-first, runtime-neutral protocol](0003-bun-first.md)
+- [ADR-0003: Bun-first, runtime-neutral protocol](0003-bun-first.md) — first-runtime ordering
+  superseded by ADR-0028; runtime-neutral protocol retained
 - [ADR-0004: Guest output is controlled egress](0004-controlled-egress.md)
 - [ADR-0005: Go for the initial trusted control plane](0005-go-control-plane.md) — refined by
   ADR-0018
@@ -52,5 +53,6 @@ its core conclusion.
 - [ADR-0026: Bind strip-only TypeScript emission before plan registration](0026-bind-pre-approval-typescript-erasure.md)
   — Proposed
 - [ADR-0027: Retire the SupervisorCore in-memory scaffold](0027-retire-supervisorcore-scaffold.md)
+- [ADR-0028: Select governed deno_core as the first runtime candidate](0028-select-governed-deno-core-first.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

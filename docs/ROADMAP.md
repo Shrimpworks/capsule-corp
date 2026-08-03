@@ -27,11 +27,14 @@ Exit evidence:
 Status: initial decision spikes and all five Gate C implementation-readiness tracks completed for
 the currently available host/account environment. Gate C produced a required backend pivot and a
 conditional native candidate, plus explicit blockers for the exact native profile. Runtime P0-0
-has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions; no
-runtime is selected and `RUNTIME-001` remains unsupported. The governed `deno_core` follow-ups
+has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions.
+Accepted ADR-0028 now selects governed `deno_core` as the first runtime engineering candidate;
+`RUNTIME-001` remains unsupported and no runtime profile is admitted. The follow-ups
 passed physical omission, same-host byte reproduction, and the exact standalone dynamic-root
 question; the TypeScript follow-up passed a strip-only pre-approval byte-binding question. These
-results establish the intended engineering direction but do not admit that runtime. P0-1 is a `PATCH-CANDIDATE`, P0-2
+results establish bounded construction evidence but do not admit that runtime. The real
+`dills122/deno` and `dills122/rusty_v8` forks exist, but their governed branches and releases do
+not. P0-1 is a `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, P0-3 has only a backend-independent candidate and local
 console patch, and P0-4A passed only the conditional no-host-root topology. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
@@ -99,23 +102,22 @@ Go approval/attempt contract cases, and 12 fixed-store transition cases. Swift r
 The fixed store now colocates registrations, approval/attempt authority, and the durable time
 high-water; it remains unwired. The fake lifecycle accepts only committed created attempts through
 `AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
-`FakeBackend.CreatesGuest() == false`; its lifecycle store is bounded single-process memory and
-non-durable. [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) now selects
-colocating future lifecycle records and effect checkpoints in that same versioned Supervisor
-transaction domain, with a separate fake-only implementation and conformance plan. No durable
-store or driver behavior is implemented yet. Slice E1 has merged passive runtime-neutral lifecycle
-record/effect/instance/result types, domain validation, ceilings, and defensive-copy tests; it
-performs no store write or adapter call. Slices E2 through E5—snapshot v1/migration, transactional
-checkpoints, durable fake driver/startup, and capacity/coordination evidence—remain unwired. A
+`FakeBackend.CreatesGuest() == false`; its active driver still uses bounded single-process memory.
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects colocated lifecycle
+records and effect checkpoints in that same versioned Supervisor transaction domain. Slices E1
+through E3 are merged: passive contracts, explicit fixed-store v1 migration/open validation, and
+unwired durable lifecycle transactions with exact fault/reopen semantics. No E3 transaction calls
+an adapter. Slice E4 must migrate the fake driver and startup coordinator onto those transactions;
+Slice E5 then closes capacity, repeated-startup, and documentation evidence. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
 product-language/IPC seam or public consumer. The next
-backend-independent boundary is implementing the proposed durable `AttemptID`-keyed lifecycle
-state and startup coordination against the no-guest fake backend in small unwired slices.
+backend-independent boundary is Slice E4's durable `AttemptID`-keyed fake driver and startup
+coordination.
 Authenticated typed IPC, production approval signing/verification, reviewed Supervisor archival/
 compaction, evidence composition,
-consumers, atomic public migration, and removal of the dormant direct-execution scaffold remain
-separate decisions. See the
+consumers, and atomic public migration remain separate decisions. The dormant `SupervisorCore`
+scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 
@@ -181,10 +183,12 @@ Exit evidence:
 
 ## Phase 5: dependency-free runtime development execution
 
-- Close the five reconciled P0 Gate C campaigns. Preserve the governed `deno_core`
-  `PHYSICAL-OMISSION-PASS` as construction evidence only and decide its packaging/provenance,
+- Close the five reconciled P0 Gate C campaigns. Follow accepted ADR-0028 and bootstrap the real
+  `dills122/deno` and `dills122/rusty_v8` governed branches from their exact retained upstream
+  commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
+  while closing packaging/provenance,
   restoration/backstop, coordinated approved-byte TypeScript migration under Proposed ADR-0026,
-  external-isolation, and profile-admission gaps before selecting a runtime. Carry the FD-native
+  external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported
   throughout.
@@ -231,8 +235,9 @@ Exit evidence:
 - The exact runtime refuses every prohibited subprocess, FFI, native-addon, inspector, macro,
   environment-file, and package-install path through a construction-level closure argument, source
   review, deliberate capability-restoration mutations, and the accepted adversarial corpus.
-- The alternate-runtime selection is recorded in an ADR that supersedes ADR-0003's Bun-first
-  implementation choice; the runtime-neutral protocol decision remains intact.
+- Accepted ADR-0028 records the governed `deno_core` engineering selection and supersedes
+  ADR-0003's Bun-first implementation choice; the runtime-neutral protocol remains intact. This
+  exit item does not itself admit the runtime.
 - The exact guest-kernel and launcher profile matches its reviewed manifest, exposes no
   undocumented kernel authority, and records remaining facilities and completion-trust limitations.
 - The exact configuration passes the minimum development attack suite.
@@ -311,7 +316,7 @@ Exit evidence:
 
 ## Deferred
 
-- Node and Deno portability
+- Node portability/contingency and additional Deno profiles
 - network and API brokers
 - secrets brokerage
 - directory and repository snapshots

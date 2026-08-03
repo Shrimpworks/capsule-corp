@@ -1,10 +1,10 @@
 # Execution Supervisor
 
 Status: intended v0 authority and interface; unprivileged per-user macOS topology is feasible. The
-native libkrun/HVF adapter is the lead Apple candidate under evaluation, while stock-Bun authority,
-immutable runtime-root custody, `NullFs` disposition, typed port transport/completion, complete
-installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded filesystem-image
-parsing is a later gate before file artifacts.
+native libkrun/HVF adapter is the lead Apple candidate under evaluation. Governed runtime
+admission, immutable runtime-root custody, `NullFs` disposition, typed port transport/completion,
+complete installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded
+filesystem-image parsing is a later gate before file artifacts.
 
 Implementation checkpoint: the older `internal/execution.SupervisorCore` in-memory scaffold was
 never the oracle for ADR-0024 and has been retired (it had no product wiring and was already
@@ -14,9 +14,13 @@ superseded as the authoritative unwired path). The current unwired path comprise
   retained-vector-only bounded verifier;
 - `internal/execution/registrationstate`: a fixed file snapshot colocating exact registrations,
   effective-time high-water, approvals, and immutable created attempts, including atomic
-  consume/create and reopen validation; and
+  consume/create, snapshot-v1 lifecycle migration/validation, and unwired durable lifecycle
+  transactions;
+- `internal/execution/lifecyclestate`: passive closed lifecycle, effect, binding, instance, and
+  reconciliation contracts; and
 - `internal/execution/registeredlifecycle`: an `AttemptID`-keyed, no-guest fake lifecycle that
-  revalidates the committed attempt and exact registered plan before fake prepare.
+  revalidates the committed attempt and exact registered plan before fake prepare, but still uses
+  `MemoryStore` until Slice E4.
 
 These are implemented local mechanics with retained Go tests, not a deployed Supervisor. The
 authority store has no production archive/compaction or multi-process locking, the lifecycle store
@@ -273,14 +277,17 @@ Retained focused evidence includes:
   `FakeBackend.CreatesGuest() == false` invariant.
 
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) and the
-[Phase 2B durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md) select the narrow next
-implementation boundary: add `AttemptID`-keyed lifecycle records and before/after-effect checkpoints
-to the same versioned Supervisor snapshot and transaction domain as the authority records. The
-proposal defines startup ownership, reconciliation, repair, capacity, and migration oracles without
-creating a registration-keyed execute path or weakening consume/create-before-effect ordering.
+[Phase 2B durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md) place `AttemptID`-keyed
+lifecycle records and before/after-effect checkpoints in the same versioned Supervisor snapshot and
+transaction domain as the authority records. Slices E1 through E3 now implement passive types,
+explicit v1 migration/open validation, and the unwired durable transaction port. Those
+transactions copy only committed authority bindings, preserve consume/create-before-effect
+ordering, and do not call an adapter.
 
-This is not implemented durable lifecycle behavior. `registeredlifecycle.MemoryStore` remains the
-current non-durable implementation. Archive/compaction and replay retention, real multi-process
+`registeredlifecycle.MemoryStore` remains the active non-durable driver. Slice E4 is the next
+boundary: migrate the no-guest fake driver and startup coordinator to the durable E3 port with
+stable effect and instance identities and exact reconciliation. Archive/compaction and replay
+retention, real multi-process
 locking, rollback/backup, authenticated IPC, production COSE/Swift/Keychain/user-presence signing
 and verification, production backend reconciliation, consumers, content, evidence composition,
 runtime/backend admission, and public cutover remain blocked. No guest exists in this checkpoint.

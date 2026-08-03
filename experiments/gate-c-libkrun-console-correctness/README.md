@@ -21,9 +21,12 @@ with another owned local checkout of the same exact commit.
 CAPSULE_LIBKRUN_SOURCE=/private/tmp/capsule-libkrun-v1.19.4 ./verify.sh
 ```
 
-`verify.sh` archives the exact pinned commit into a fresh temporary directory, applies the retained
-candidate patch, checks the four changed Rust files, and runs the `krun-devices` library tests with
-Cargo networking disabled. Temporary products are removed when the command exits.
+`verify.sh` archives the exact pinned commit into a fresh temporary directory, verifies and applies
+the retained candidate patch, checks the four changed Rust files, and runs the `krun-devices`
+library tests with Cargo networking disabled. It also runs warning-denying Clippy, AddressSanitizer
+with the pinned locally installed `nightly-2026-05-28` toolchain, LLVM source coverage, 25 repeated
+shutdown-interruption tests, and four restoration mutations. Temporary products are removed when
+the command exits.
 
 ## Retained scope
 
@@ -32,6 +35,9 @@ Cargo networking disabled. Temporary products are removed when the command exits
 - [`RESULTS.md`](RESULTS.md) records the observed test result, decision, and unresolved work.
 - [`evidence/2026-08-02/verification.txt`](evidence/2026-08-02/verification.txt) retains the exact
   local verification summary.
+- [`evidence/2026-08-03/verification.txt`](evidence/2026-08-03/verification.txt) and
+  [`coverage-summary.json`](evidence/2026-08-03/coverage-summary.json) retain the sanitizer,
+  static-analysis, repetition, mutation, and exact coverage follow-up.
 
 Product packages do not import this directory. Any later use of the patch requires independent
 review, complete profile composition, exact final-byte admission, and a resulting ADR/evidence

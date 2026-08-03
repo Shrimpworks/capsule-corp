@@ -6,6 +6,7 @@
 - P0 reconciliation: 2026-08-01
 - P0-0 stock-runtime result: 2026-08-02
 - P0-1 FD-native patch candidate: 2026-08-02
+- P0-3 cross-language and console coverage result: 2026-08-03
 - Refines: ADR-0020
 
 ## Context
@@ -159,5 +160,7 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
 - [`experiments/gate-c-libkrun-supply-chain/RESULTS.md`](../../experiments/gate-c-libkrun-supply-chain/RESULTS.md)
 - [`experiments/gate-c-bun-runtime-authority/RESULTS.md`](../../experiments/gate-c-bun-runtime-authority/RESULTS.md)
 - [`experiments/gate-c-libkrun-root-custody/RESULTS.md`](../../experiments/gate-c-libkrun-root-custody/RESULTS.md)
+- [`experiments/gate-c-p0-3-protocol-conformance/RESULTS.md`](../../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md)
+- [`experiments/gate-c-libkrun-console-correctness/RESULTS.md`](../../experiments/gate-c-libkrun-console-correctness/RESULTS.md)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)

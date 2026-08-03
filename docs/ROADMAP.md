@@ -198,10 +198,11 @@ Exit evidence:
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.
-- Reproduce the 43 P0-3 vectors in the selected host/launcher languages, finish review and
-  sanitizer/coverage work for the console patch, and run the exact frames through the governed
-  directional transport, distinct launcher, closed child/runner descriptor manifests, guest, and
-  forced-teardown lifecycle. The current model and 51-test library result do not cover those checks.
+- Carry the independently reproduced Go/Node P0-3 vectors into the selected host/launcher languages,
+  close the measured console gaps (only 90/728 patched-file lines covered, with two files at zero),
+  and run the exact frames through the governed directional transport, distinct launcher, closed
+  child/runner descriptor manifests, guest, and forced-teardown lifecycle. The local process-pipe,
+  sanitizer, static-analysis, repetition, and mutation results do not cover those checks.
 - Bind an exact guest-kernel image, configuration, boot/module/debug policy, provenance, and
   launcher restriction set into the runtime profile. Minimize unused facilities where supported
   and retain deliberate restoration tests, while continuing to require containment of a fully

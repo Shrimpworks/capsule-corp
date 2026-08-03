@@ -1,7 +1,7 @@
 # Gate C P0 reconciliation
 
 Date: 2026-08-01
-Evidence last reconciled: 2026-08-02
+Evidence last reconciled: 2026-08-03
 
 Status: planning decision with retained P0 evidence checkpoints after independent adversarial
 review and targeted source research. This document refines the remaining work in the
@@ -351,20 +351,25 @@ Pass: ordinary success requires a valid frame plus separate input-integrity, bou
 runtime-integrity, runner-lifecycle, and teardown dispositions. Runner exit zero never substitutes
 for a missing frame.
 
-Evidence checkpoint (2026-08-02): **conditional pass for a falsifiable backend-independent
-candidate; P0-3 remains open**. The retained local model contains 43 byte-exact vectors. It measured
+Evidence checkpoint (2026-08-03): **conditional pass for a falsifiable backend-independent
+candidate; P0-3 remains open**. Independent Go and Node models verify the same 43 byte-exact vectors,
+and Node independently encodes six accepted known answers. The local process-pipe corpus adds
+partial writes, zero progress/stall, reader death, peer-close `EPIPE`, backpressure, cancellation,
+runner death before/after commit, three-way role confusion, and EOF/clean-exit refusal. It measured
 1,048,576 source bytes, 262,144 canonical-input bytes, 262,144 inline-result JSON bytes, and a
-262,368-byte physical completion frame; exact boundaries passed and cap-plus-one failed across four
-read chunk sizes. It also retained drain/flood, stall/death, binding, role, JSON, commit-ordering,
-EOF, runner-exit, and crash cases. No virtio-console, launcher, runtime, guest, VMM, App Sandbox,
-Supervisor, approval, or teardown mechanism participated. See the
+262,368-byte physical completion frame; exact boundaries passed and cap-plus-one was fully drained
+and refused. No virtio-console, launcher, runtime, guest, VMM, App Sandbox, Supervisor, approval,
+or product teardown mechanism participated. See the
 [retained protocol result](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md).
 
 The sibling console review found that stock libkrun cannot proceed as-is. Governed patch SHA-256
 `584ce48548fe969684fe3c55e57fbf56e7dae40af28c241c24c47b138faf1283` passed 51 local library
-tests, including four focused regressions, but lacks independent review, full sanitizer/coverage,
-real transport/launcher/guest composition, caller-flag closure, and final installed evidence. See
-the [retained console result](../experiments/gate-c-libkrun-console-correctness/RESULTS.md).
+tests, all 51 under AddressSanitizer, warning-denying Clippy with the known deprecated-call
+allowance, 25 shutdown repetitions, and four caught restoration mutations. Exact coverage was only
+90/728 lines (12.362637%) across the four patched files, with `port.rs` and `process_tx.rs` at zero.
+Direct queue/thread/partial-write coverage, independent review, real transport/launcher/guest
+composition, caller-flag closure, a real governed fork, and final installed evidence remain open.
+See the [retained console result](../experiments/gate-c-libkrun-console-correctness/RESULTS.md).
 
 ### P0-4: complete installed development bundle
 
@@ -406,8 +411,9 @@ The next non-credential work is:
 
 1. independently review and mutation-test the FD-native, direct-block-root, and console patches as
    one closed source/API composition;
-2. reproduce the 43 P0-3 vectors in the selected host/launcher languages and complete the console
-   sanitizer/coverage corpus, distinct launcher, child manifest, and exact runner FD manifest;
+2. carry the independently reproduced 43 P0-3 vectors into the selected host/launcher languages,
+   close the measured console coverage gaps, and complete the distinct launcher, child manifest,
+   and exact runner FD manifest;
 3. bootstrap governed branches in the real `dills122/deno` and `dills122/rusty_v8` forks, then
    close independent-builder, deterministic V8 publication/link/notice evidence, and runtime-root
    packaging,

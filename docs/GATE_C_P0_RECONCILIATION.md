@@ -22,7 +22,7 @@ closes. Broad backend research is no longer the next step.
 
 | Question | Decision | Evidence status |
 | --- | --- | --- |
-| Must Capsule fork libkrun for immutable disks? | Test a genuine inherited read-only descriptor exposed as `/dev/fd/N` first. Prefer direct Supervisor-to-runner inheritance; add descriptor-transfer IPC only if the installed lifecycle requires post-spawn transfer. A narrow FD-native libkrun change is the fallback. | Promising hypothesis; not yet validated under the exact App Sandbox/install profile. |
+| Must Capsule fork libkrun for immutable disks? | The stock `/dev/fd/N` route passed the local identity/guest corpus but retained pathname semantics. A governed raw-only FD-native fallback is now a patch candidate. Prefer direct Supervisor-to-runner inheritance; add descriptor-transfer IPC only if the installed lifecycle requires post-spawn transfer. | FD-native local and owned-guest corpus passed; exact signed installed App Sandbox/protected-construction corpus remains untested. |
 | Must source and inline input be block devices? | No for the first slice. Use bounded, attempt-bound virtio-console ports for source/input delivery. Keep the immutable block-custody problem scoped to the trusted runtime root and any later file-artifact storage. | The pinned libkrun header exposes generic multiport console APIs; the exact protocol and hostile cases remain untested. |
 | Must completion use runner status or a result disk? | No. Runner exit is lifecycle evidence only. Use one bounded typed completion/result frame on a dedicated port and bind it to the attempt and expected profile. | Required design; not implemented. |
 | Is ext4 parsing P0 for inline JSON? | No. Carry bounded JSON in the typed result frame. A disposable ext4/raw-image parser becomes a gate for the later file-artifact slice. | Scope decision; no parser posture is promoted. |
@@ -63,7 +63,7 @@ The first slice does not use one generic custody mechanism for every byte class:
 
 | Class | Authoritative producer | First-slice transport/custody | Gate |
 | --- | --- | --- | --- |
-| Runtime root | Admitted runtime-bundle manifest | Finalized unlinked object retained through a genuine read-only descriptor and attached through `/dev/fd/N` | P0-1 |
+| Runtime root | Admitted runtime-bundle manifest | Finalized unlinked object retained through a genuine read-only descriptor and attached through the governed raw-only FD-native API | P0-1 |
 | Registered source | Exact Supervisor-registered source bytes | Bounded attempt-bound host-writer/guest-reader port | P0-3 |
 | Approved inline input | Exact Broker-approved canonical JSON bytes | Separate bounded attempt-bound host-writer/guest-reader port | P0-3 |
 | Completion/inline result | Trusted launcher under the admitted guest profile | Fresh launcher-owned guest-writer/host-reader port; unavailable to the workload | P0-3 |
@@ -203,6 +203,18 @@ paths fail, reject libkrun for the v0 profile. Host-root execution, a separate-o
 or another privileged host helper is a hard v0 non-option; considering one later requires a new ADR
 comparing a higher macOS floor, memory-backed storage, a different backend, narrower same-user
 claims, and the complete new installation/update/recovery boundary.
+
+Evidence checkpoint (2026-08-02): the fallback is a **PATCH-CANDIDATE**, not a P0-1 pass. Against
+libkrun commit `728df8125077d0db44265f6e997c72b81b65c015`, patch SHA-256
+`48cdbc307b3fa1209fa0ec68fc3f817634af312983d68f0de259db86c0b43333` adds only the fixed
+`runtime-root:vda:raw:read-only` API. It takes an owned `F_DUPFD_CLOEXEC` duplicate, validates exact
+finalized descriptor identity, and constructs raw imago storage directly from an owned `File`.
+The controlled C/Rust/local custody and five-mutation corpus passed; four owned unsandboxed HVF
+guest runs matched finalized host, guest `/dev/vda`, and post-stop digests with zero root-path
+opens. The host has no valid signing identity, so the ad-hoc App Sandbox bundle aborted before
+`main`; protected construction, exact installed descriptor manifest, task-port/grant denial, and
+final signed/notarized bytes remain mandatory. See the
+[retained result](../experiments/gate-c-libkrun-root-custody/RESULTS.md).
 
 ### P0-2: `NullFs` disposition
 

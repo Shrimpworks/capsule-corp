@@ -5,6 +5,7 @@
 - Readiness synthesis: 2026-07-31
 - P0 reconciliation: 2026-08-01
 - P0-0 stock-runtime result: 2026-08-02
+- P0-1 FD-native patch candidate: 2026-08-02
 - Refines: ADR-0020
 
 ## Context
@@ -73,6 +74,11 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   do not make a same-user mutable pathname immutable. First-slice source/input bytes use bounded
   dedicated console ports; later file storage must pass its own immutable custody and parsing gates.
   Writable scratch uses a fresh bounded disposable raw block device.
+- The governed P0-1 fallback is a patch candidate on pinned libkrun 1.19.4: its additive fixed-role
+  API accepts only an exact finalized raw read-only descriptor, takes duplicate ownership, and
+  routes imago directly from `File` without a pathname or format-selection input. Local custody,
+  mutation, and fixed owned-guest digest evidence passed. This does not close P0-1C because the
+  exact signed/notarized installed App Sandbox and protected-construction corpus remains untested.
 - The trusted guest launcher is part of the reviewed runtime bundle, not an invocation of `su` or a
   host UID setter. It remains distinct instead of replacing itself with Bun, retains the completion
   descriptor while dropping and spawning the workload without that authority, verifies complete
@@ -152,5 +158,6 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
 - [`experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md`](../../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md)
 - [`experiments/gate-c-libkrun-supply-chain/RESULTS.md`](../../experiments/gate-c-libkrun-supply-chain/RESULTS.md)
 - [`experiments/gate-c-bun-runtime-authority/RESULTS.md`](../../experiments/gate-c-bun-runtime-authority/RESULTS.md)
+- [`experiments/gate-c-libkrun-root-custody/RESULTS.md`](../../experiments/gate-c-libkrun-root-custody/RESULTS.md)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)

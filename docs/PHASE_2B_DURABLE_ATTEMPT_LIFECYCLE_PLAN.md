@@ -379,6 +379,12 @@ The fake-only fixed-store slice does not satisfy any of these:
 
 No blocker may be inferred complete from fixed-file or fake-backend evidence.
 
+Proposed ADR-0031 and the
+[Supervisor archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md) now define
+the next fixed-store checkpoint and exact implementation slices for item 1. They implement nothing,
+forbid referenced-history deletion, retain a finite-capacity/continuous-service limitation, and do
+not satisfy the production owner-lock, engine, power-loss, backup/rollback, or consumer blockers.
+
 ## Verification for each retained implementation slice
 
 Use Node.js 22.22.1 or newer, pnpm 10, and Go 1.23 or newer:

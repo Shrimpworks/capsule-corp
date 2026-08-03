@@ -116,9 +116,17 @@ product-language/IPC seam or public consumer. The next backend-independent bound
 Supervisor archive/compaction and a selected real platform owner lock; neither is supplied by E5.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
-and platform evidence remain unimplemented. Production approval signing/verification, reviewed
-Supervisor archival/compaction, evidence composition, consumers, and atomic public migration remain
-separate decisions.
+and platform evidence remain unimplemented. Production approval signing/verification, archive
+implementation and production-engine selection, evidence composition, consumers, and atomic public
+migration remain separate decisions.
+
+Proposed ADR-0031 now defines the reviewed archive/compaction semantics and an exact unimplemented
+conformance plan. Complete expired registration cohorts may move to immutable retained segments
+only after all bound attempts are durably destroyed with authoritative absence. Full records and
+exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
+fixed-store v2 checkpoint is selected only as the next local oracle. Production-engine selection,
+real owner locking and power loss, coherent restore/anti-rollback, continuous service, and all
+consumer behavior remain open.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
@@ -136,6 +144,9 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
+- Implement the passive/fault-injectable ADR-0031 fixed-store archive oracle, retaining full closed
+  cohorts and exact tombstone indexes without deletion, then compare a pinned production-engine
+  candidate against the same logical, corruption, locking, backup, APFS, and power-loss corpus.
 
 Exit evidence:
 

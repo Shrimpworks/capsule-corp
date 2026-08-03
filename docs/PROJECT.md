@@ -47,6 +47,12 @@ explicit fixed-store v0-to-v1 migration and validation, durable ensure/read/inte
 indeterminate/reconciliation/recovery-set transactions, the FakeBackend-only driver, and the
 capacity/repeated-startup evidence checkpoint. ADR-0025 remains Proposed and the implementation
 status remains unwired `local-mechanic` only.
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) now defines the next exact
+archive/compaction boundary: complete expired registration cohorts move from the mutable snapshot
+to immutable retained segments only after every bound attempt is durably destroyed with
+authoritative absence, while full records and replay/non-reuse tombstones remain retained. It
+selects a finite fixed-store checkpoint only as the next local conformance oracle, not a production
+engine, and authorizes no referenced-history deletion. No archive behavior is implemented.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

@@ -305,6 +305,12 @@ enters `repair-required` rather than accepting whichever components start.
 - Missing backend state is not assumed to prove destruction.
 - Collected content is not released while integrity/teardown state is indeterminate.
 - Repair preserves or explicitly replaces trust, grant, attempt, cleanup, and evidence history.
+- Archive/compaction never treats expiry or terminal state as permission to forget replay,
+  identifier, nonce, effect, instance, cleanup, or explanatory history. A cohort may leave hot
+  state only when all of its attempts are durably destroyed after authoritative absence.
+- An indeterminate archive publication/activation outcome fences until reopen establishes the old
+  complete hot world or the new complete referenced-archive world. Missing referenced archive data
+  is repair-required, not permission to resurrect hot authority.
 
 #### Evidence
 
@@ -414,6 +420,14 @@ expired metadata, compromised publisher/reviewer, partial install, coherent loca
 repair history reset. Pinned TUF roles, independent review/activation/validation, local snapshots,
 prepared epochs, and fault-injected recovery reduce these risks.
 
+Archive introduces a related local rollback and omission surface. An attacker or fault may remove
+a segment, substitute an older otherwise valid segment/index/checkpoint, split a registration
+cohort, or restore a coherent pre-archive world so that a consumed approval or identifier appears
+absent. Proposed ADR-0031 requires immutable full-record segments, reconstructed exact tombstone
+indexes, a hash-linked visible checkpoint, publish-before-activate ordering, and fail-closed reopen.
+Those mechanisms detect corruption and mix-and-match only inside the visible set. They do not
+prevent coherent rollback without an independently protected latest checkpoint.
+
 An external witness is optional and privacy-sensitive. It may improve historical rollback evidence
 but does not authorize local execution.
 
@@ -453,6 +467,11 @@ capacity release, and bounded repeated startup under an injected in-process owne
 runtime security control, production lock, consumer, real backend, or guest. The authoritative
 claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows advance only for the
 exact retained mechanism and evidence they name.
+
+Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
+replay/non-reuse tombstone boundary. The finite fixed-store checkpoint is design only; it provides
+no production engine, multi-process lock, power-loss result, restore/anti-rollback mechanism,
+referenced-history deletion, continuous service, consumer, or guest evidence.
 
 ### Non-guarantees
 

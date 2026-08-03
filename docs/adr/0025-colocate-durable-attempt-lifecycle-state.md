@@ -240,6 +240,12 @@ design. That design must preserve replay and uniqueness tombstones, cleanup and 
 sole explanatory evidence, cross-record digests, and a transactionally checkable active/archive
 boundary. Raising a ceiling is not archival.
 
+[Proposed ADR-0031](0031-checkpoint-closed-supervisor-cohorts.md) now defines that boundary but is
+not accepted or implemented. It permits only complete expired registration cohorts whose attempts
+are durably destroyed after authoritative absence, retains full records and exact tombstones, and
+forbids referenced-history deletion. Its finite fixed-store checkpoint is a conformance oracle,
+not the production engine or continuous-service mechanism required here.
+
 ### Versioning, migration, backup, and rollback
 
 Adding lifecycle state requires a new top-level snapshot version. Version 0 never treats a missing

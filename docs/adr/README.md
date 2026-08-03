@@ -57,5 +57,7 @@ its core conclusion.
 - [ADR-0029: Select one native-fronted Go Supervisor process for authenticated local IPC](0029-select-authenticated-local-ipc-topology.md)
   — Proposed
 - [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
+- [ADR-0031: Checkpoint closed Supervisor cohorts into immutable retained archives](0031-checkpoint-closed-supervisor-cohorts.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

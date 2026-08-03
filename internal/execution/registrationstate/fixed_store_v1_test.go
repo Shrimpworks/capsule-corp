@@ -257,8 +257,9 @@ func TestFixedStoreV1CorruptionRequiresRepairWithoutRewrite(t *testing.T) {
 	state, record := stateAndLifecycleRecord(t)
 	valid := encodedEnvelopeV1(state, []lifecyclestate.Record{record})
 	tests := []struct {
-		name   string
-		mutate func(*diskEnvelopeV1)
+		name      string
+		wantError string
+		mutate    func(*diskEnvelopeV1)
 	}{
 		{name: "unsupported store version", mutate: func(envelope *diskEnvelopeV1) {
 			value := uint64(2)
@@ -277,10 +278,10 @@ func TestFixedStoreV1CorruptionRequiresRepairWithoutRewrite(t *testing.T) {
 		{name: "lifecycle set digest", mutate: func(envelope *diskEnvelopeV1) {
 			envelope.LifecycleSetDigest[0] ^= 0xff
 		}},
-		{name: "approval set digest", mutate: func(envelope *diskEnvelopeV1) {
+		{name: "approval set digest", wantError: "fixed approval/attempt set digest mismatch", mutate: func(envelope *diskEnvelopeV1) {
 			envelope.State.ApprovalSetDigest[0] ^= 0xff
 		}},
-		{name: "attempt set digest", mutate: func(envelope *diskEnvelopeV1) {
+		{name: "attempt set digest", wantError: "fixed approval/attempt set digest mismatch", mutate: func(envelope *diskEnvelopeV1) {
 			envelope.State.AttemptSetDigest[0] ^= 0xff
 		}},
 		{name: "missing registration set digest", mutate: func(envelope *diskEnvelopeV1) {
@@ -297,7 +298,11 @@ func TestFixedStoreV1CorruptionRequiresRepairWithoutRewrite(t *testing.T) {
 		}},
 		{name: "lifecycle attempt cross-link", mutate: func(envelope *diskEnvelopeV1) {
 			envelope.State.Attempts[0].AttemptID[0] ^= 0xff
-			envelope.State.AttemptSetDigest = attemptSetDigest(envelope.State.Attempts)
+			attemptDigest, err := attemptSetDigest(envelope.State.Attempts)
+			if err != nil {
+				t.Fatalf("attempt set digest: %v", err)
+			}
+			envelope.State.AttemptSetDigest = attemptDigest
 		}},
 		{name: "timestamp above high water", mutate: func(envelope *diskEnvelopeV1) {
 			envelope.Lifecycles[0].LastTransitionAt = envelope.State.TimeHighWaterUnixSeconds + 1
@@ -310,8 +315,12 @@ func TestFixedStoreV1CorruptionRequiresRepairWithoutRewrite(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "corrupt-v1.json")
 			writeV1Envelope(t, path, envelope)
 			before := mustReadFile(t, path)
-			if _, err := OpenFixedFileStoreV1(path); err == nil || !errors.Is(err, ErrStoreRepairRequired) {
+			_, err := OpenFixedFileStoreV1(path)
+			if err == nil || !errors.Is(err, ErrStoreRepairRequired) {
 				t.Fatalf("corrupt open error = %v, want repair required", err)
+			}
+			if test.wantError != "" && !strings.Contains(err.Error(), test.wantError) {
+				t.Fatalf("corrupt open error = %v, want %q", err, test.wantError)
 			}
 			if after := mustReadFile(t, path); !bytes.Equal(after, before) {
 				t.Fatal("corrupt v1 open rewrote evidence")

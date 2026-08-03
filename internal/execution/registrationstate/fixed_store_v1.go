@@ -542,14 +542,22 @@ func validateV1State(
 }
 
 func validateV1AuthorityDigests(state installationState) error {
+	approvalDigest, err := approvalSetDigest(state.Approvals)
+	if err != nil {
+		return fmt.Errorf("fixed v1 compute approval set digest: %w", err)
+	}
+	attemptDigest, err := attemptSetDigest(state.Attempts)
+	if err != nil {
+		return fmt.Errorf("fixed v1 compute attempt set digest: %w", err)
+	}
 	switch {
 	case len(state.Registrations) == 0 && state.RegistrationSetDigest != emptyRegistrationSetDigest():
 		return errors.New("fixed v1 empty registration set digest mismatch")
 	case len(state.Registrations) != 0 && state.RegistrationSetDigest == ([32]byte{}):
 		return errors.New("fixed v1 registration set digest is missing")
-	case approvalSetDigest(state.Approvals) != state.ApprovalSetDigest:
+	case approvalDigest != state.ApprovalSetDigest:
 		return errors.New("fixed v1 approval set digest mismatch")
-	case attemptSetDigest(state.Attempts) != state.AttemptSetDigest:
+	case attemptDigest != state.AttemptSetDigest:
 		return errors.New("fixed v1 attempt set digest mismatch")
 	default:
 		return nil

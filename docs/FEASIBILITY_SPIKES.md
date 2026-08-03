@@ -14,7 +14,11 @@ the later governed-`deno_core` follow-up physically omitted 96 nonessential buil
 one-file patch. Its package follow-up reproduced the exact snapshot and binary in two clean
 same-host containers from a digest-pinned no-apt builder and complete Cargo source bundle, but
 failed the stronger selection-evidence question on independent-builder, V8 notice/source, and
-dynamic-runtime-root closure. The later TypeScript approved-byte experiment separately passed a
+dynamic-runtime-root closure. The exact V8 follow-up proved the official archive-to-source and
+four-patch V8 relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publisher
+inputs, complete linked-component metadata, and generated notices are unavailable. Governed
+`deno_core` is the intended engineering direction, not an admitted profile. The later TypeScript
+approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
@@ -152,7 +156,7 @@ or permits user bytes. The later
 NO-GO: full Deno retained initial-graph, Worker, inspector, compatibility, and persistence routes,
 while `deno_core` physically registered 99 built-in ops and did not supply the TypeScript pipeline.
 The bounded [physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
-then passed that one construction question: the exact governed fork registers and links only three
+then passed that one construction question: the exact governed patched construction registers and links only three
 bootstrap ops with a reviewable one-file patch and reproducible ASLR-controlled snapshot. It did
 not address TypeScript, independent builder provenance, runtime-profile admission, or external
 isolation composition, so it does not reverse the family NO-GO or support `RUNTIME-001`.

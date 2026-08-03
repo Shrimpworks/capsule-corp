@@ -149,8 +149,18 @@ the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/R
 [physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
 [package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md).
 
+Exact V8 closure follow-up (2026-08-02): **SOURCE-LICENSE-CLOSURE-NO-GO**. The official
+Linux/arm64 asset is now bound to its successful release job, exact `rusty_v8` commit, 20 recursive
+gitlinks, exact Deno V8 commit, Chromium V8 base, and four-patch stack. The 1,875 archive members and
+726 source-tree license/notice candidates were inventoried. The release still omits immutable
+runner/package/action resolutions, effective GN/Ninja closure, generated notices, and a
+corresponding-source bundle, so an exact rebuild was not possible and PR #50's CycloneDX
+composition remains incomplete. Governed `deno_core` is the intended first engineering candidate;
+that direction does not select or admit a profile, supersede ADR-0003, or change `RUNTIME-001`. See
+the [retained closure result](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
+
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
-The exact fork reduced the built-in registry from 99 ops to the three bootstrap-required ops with
+The exact governed patched construction reduced the built-in registry from 99 ops to the three bootstrap-required ops with
 a one-file physical-omission patch; runtime/symbol inspection observed only those three, fixed
 restoration mutations failed closed, and ASLR-controlled clean builds reproduced the snapshot and
 binary. This closes only the pre-registration/final-link question. TypeScript approved-byte
@@ -392,7 +402,8 @@ The next non-credential work is:
    one closed source/API composition;
 2. reproduce the 43 P0-3 vectors in the selected host/launcher languages and complete the console
    sanitizer/coverage corpus, distinct launcher, child manifest, and exact runner FD manifest;
-3. close governed `deno_core` independent-builder, V8 source/notice, and runtime-root packaging,
+3. close governed `deno_core` independent-builder, deterministic V8 publication/link/notice
+   evidence, and runtime-root packaging,
    complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
    candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;
    and

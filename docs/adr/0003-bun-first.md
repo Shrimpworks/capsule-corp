@@ -8,6 +8,7 @@
 - Deno-family disposition refinement: 2026-08-02
 - Governed `deno_core` physical-omission refinement: 2026-08-02
 - Governed `deno_core` reproducible-package refinement: 2026-08-02
+- Governed `deno_core` direction and V8 source/license refinement: 2026-08-02
 - TypeScript approved-byte refinement: 2026-08-03
 
 ## Context
@@ -68,7 +69,7 @@ passed one narrower question left by that disposition. A one-file pre-registrati
 reduced the exact built-in registry from 99 ops to three bootstrap-required ops; two
 ASLR-controlled clean builds produced identical snapshots and binaries, and the final binary
 exposed only those three built-in op symbols. Fixed prohibited-power and restoration probes still
-refused. This removes the physical-built-in-registration objection for a governed fork, but it
+refused. This removes the physical-built-in-registration objection for a governed construction, but it
 does not supply the excluded TypeScript transformation, independently reconstructible runtime
 package, complete runtime-profile admission, or external-isolation composition. The earlier
 full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
@@ -85,6 +86,15 @@ external-isolation/profile admission remain open. The experiment therefore retur
 runtime-selection evidence. No runtime is selected, this ADR is not superseded, and `RUNTIME-001`
 remains unsupported.
 
+The exact [V8 source/license follow-up](../../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
+then bound the official Linux/arm64 asset to its release job, exact `rusty_v8`/V8 source revisions,
+Chromium V8 base, and four-patch Deno V8 stack. It returned `SOURCE-LICENSE-CLOSURE-NO-GO` because
+mutable publisher inputs, missing exact GN/Ninja link metadata, and absent generated notices block
+an independent rebuild and complete source/notice publication. Product direction is now governed
+`deno_core` as the intended first engineering candidate, with Node reserved for a later
+portability/contingency proof. This direction does not select or admit a runtime profile,
+supersede this ADR, or change `RUNTIME-001`.
+
 The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
 passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
 deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-approval-typescript-erasure.md),
@@ -97,11 +107,11 @@ admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
 
 - The initial product has a clear technical wedge.
 - Runtime-specific APIs inside an admitted profile may be used in guest source.
-- The Node adapter will test whether the abstraction is real.
+- A later Node adapter remains a portability/contingency proof rather than first-runtime selection.
 - The external isolation boundary must carry the primary security guarantee.
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
 - Runtime construction investigation remains blocking after the Bun and Deno-family NO-GOs;
-  the governed `deno_core` physical-op and reproducible-package results narrow that investigation
-  but do not admit a runtime. Capsule does not relax the advertised authority contract to preserve
-  implementation sequencing.
+  governed `deno_core` is the intended engineering direction, while the physical-op, package, and
+  V8 source/license results narrow its blockers without admitting a runtime. Capsule does not relax
+  the advertised authority contract to preserve implementation sequencing.

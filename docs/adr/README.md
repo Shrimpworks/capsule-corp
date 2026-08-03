@@ -54,5 +54,7 @@ its core conclusion.
   — Proposed
 - [ADR-0027: Retire the SupervisorCore in-memory scaffold](0027-retire-supervisorcore-scaffold.md)
 - [ADR-0028: Select governed deno_core as the first runtime candidate](0028-select-governed-deno-core-first.md)
+- [ADR-0029: Define the passive TypeScript approved-byte migration boundary](0029-define-typescript-approved-byte-migration-boundary.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

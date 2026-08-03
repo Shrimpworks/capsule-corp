@@ -108,11 +108,12 @@ canonical-wrapper acceptance conditions.
 These terms are never interchangeable. `jobId` alone cannot substitute for registration or attempt
 identity.
 
-Proposed ADR-0026 adds a future role separation for TypeScript without changing the current
-candidate: an original-authoring source manifest, an executable JavaScript source manifest, and an
-ordered transformation-record set all bind into the plan before registration. Approval continues
-to bind the exact plan digest; the runtime may receive only the executable role and may never
-transform from an original-only digest after approval.
+Proposed ADR-0029 refines ADR-0026 with a passive versioned object family and atomic cutover plan
+without changing the current candidate: an original-authoring source manifest, an executable
+JavaScript source manifest, and an ordered transformation-record set all bind into a future plan v1
+before registration. Approval continues to bind the exact plan digest; the runtime may receive only
+the executable role and may never transform from an original-only digest after approval. The
+production transformation owner remains explicitly unresolved.
 
 ## V0 proposal shape
 

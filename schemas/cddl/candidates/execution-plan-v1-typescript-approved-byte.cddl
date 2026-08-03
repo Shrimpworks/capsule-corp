@@ -1,0 +1,33 @@
+; Illustrative full-shape migration candidate for the atomic v0 -> v1 plan
+; cutover. It is deliberately not wired into current wrappers or fixtures.
+; Evaluate with common-v0.cddl and typescript-approved-byte-v0.cddl.
+
+capsule-execution-plan-v1 = {
+  1: "capsule.execution-plan",
+  2: 1,
+  3: capsule-id-v0, ; installationId
+  4: capsule-uint53-v0, ; trust epoch sequence
+  5: capsule-sha256-v0, ; trust epoch
+  6: capsule-sha256-v0, ; original-authoring manifest
+  7: capsule-source-path-v0, ; exact logical entrypoint
+  8: capsule-uint53-v0, ; original aggregate bytes
+  9: "primary-data",
+  10: capsule-sha256-v0, ; inline input
+  11: capsule-uint53-v0,
+  12: tstr .size (1..128),
+  13: capsule-sha256-v0, ; runtime bundle manifest
+  14: [1*8 capsule-sha256-v0], ; profile review attestations
+  15: capsule-sha256-v0, ; profile registry entry
+  16: capsule-sha256-v0, ; backend validation record
+  17: capsule-sha256-v0, ; backend configuration
+  18: capsule-sha256-v0, ; trust snapshot
+  19: capsule-sha256-v0, ; policy decision
+  20: capsule-positive-uint53-v0,
+  21: "requested" / "trusted-default",
+  22: "transformed-json",
+  23: capsule-positive-uint53-v0,
+  24: capsule-unix-seconds-v0,
+  25: capsule-sha256-v0, ; executable-JavaScript manifest
+  26: capsule-uint53-v0, ; executable aggregate bytes
+  27: capsule-sha256-v0 ; ordered transformation-record set
+}

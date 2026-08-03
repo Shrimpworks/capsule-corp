@@ -53,15 +53,18 @@ remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint rejects stock Bun 1.3.14, its governed-construction branch, hardened full Deno v2.9.4,
 and the tested minimal `deno_core` 0.409.0 construction for the required runtime-authority contract.
-The later governed `deno_core` construction passed only the narrow physical-omission question. Its package
-follow-up reproduced the exact snapshot and binary on one owned host from a digest-pinned no-apt
-builder and complete locked Cargo source bundle, but independent-builder provenance,
-archive-corresponding V8 source/notices, and a standalone dynamic runtime root remained open. The
-subsequent exact V8 closure trace proved the official asset, publisher job, source gitlinks, V8 base
-and patch stack, but returned `SOURCE-LICENSE-CLOSURE-NO-GO`: mutable publisher inputs, missing
-GN/Ninja link metadata, and absent generated notices prevent an independent rebuild and complete
-notice closure. Governed `deno_core` is now the intended first engineering candidate, but this is
-not runtime/profile selection or admission; ADR-0003 remains unsuperseded and `RUNTIME-001` remains
+The later governed `deno_core` patched construction passed only the narrow physical-omission
+question. Its package follow-up reproduced the exact snapshot and binary on one owned host from a
+digest-pinned no-apt
+builder and complete locked Cargo source bundle. The later self-contained-root follow-up closed its
+standalone dynamic Bookworm-root blocker with a 22-entry package-derived root and no ambient
+library/config fallback. The subsequent exact V8 closure trace proved the official asset,
+publisher job, source gitlinks, V8 base, and patch stack, but returned
+`SOURCE-LICENSE-CLOSURE-NO-GO`: mutable publisher inputs, missing GN/Ninja link metadata, and absent
+generated notices prevent an independent rebuild and complete notice closure. Independent-builder
+provenance, governed hosted-fork/release ownership, and admission also remain open. Governed
+`deno_core` is the intended first engineering direction after the hard Bun pivot; that direction
+does not select or admit the runtime. ADR-0003 remains unsuperseded and `RUNTIME-001` remains
 unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes

@@ -142,12 +142,16 @@ and coordinated plan/schema/ADR binding. Neither construction is selected, no Pr
 supersedes ADR-0003, and `RUNTIME-001` continues to refuse. The governed physical-omission follow-up
 then reduced the registry to three bootstrap ops and reproduced its snapshot/binary. A later
 packaging experiment replaced the local-only builder with a digest-pinned no-apt recipe and complete
-offline Cargo source bundle, reproducing the same bytes in two clean same-host containers. It
-failed the stronger selection-evidence gate because independent-builder provenance, exact
-archive-corresponding V8 source/notices, and a standalone dynamic runtime root remain missing. See
+offline Cargo source bundle, reproducing the same bytes in two clean same-host containers. The
+later self-contained-root experiment closed the standalone dynamic-root item with an exact
+package-derived 22-entry root, explicit cache-free loader invocation, and file-open/mutation
+evidence. The stronger selection-evidence gate still fails on independent-builder provenance,
+exact archive-corresponding V8 source/notices, governed hosted-fork/release ownership, and the
+remaining admission corpus. See
 the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md),
 [physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
-[package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md).
+[package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
+[self-contained-root result](../experiments/gate-c-deno-core-runtime-root/RESULTS.md).
 
 Exact V8 closure follow-up (2026-08-02): **SOURCE-LICENSE-CLOSURE-NO-GO**. The official
 Linux/arm64 asset is now bound to its successful release job, exact `rusty_v8` commit, 20 recursive
@@ -160,8 +164,9 @@ that direction does not select or admit a profile, supersede ADR-0003, or change
 the [retained closure result](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
 
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
-The exact governed patched construction reduced the built-in registry from 99 ops to the three bootstrap-required ops with
-a one-file physical-omission patch; runtime/symbol inspection observed only those three, fixed
+The exact governed patched construction reduced the built-in registry from 99 ops to the three
+bootstrap-required ops with a one-file physical-omission patch; runtime/symbol inspection observed
+only those three, fixed
 restoration mutations failed closed, and ASLR-controlled clean builds reproduced the snapshot and
 binary. This closes only the pre-registration/final-link question. TypeScript approved-byte
 semantics, independently reconstructible packaging/provenance, complete restoration/backstop

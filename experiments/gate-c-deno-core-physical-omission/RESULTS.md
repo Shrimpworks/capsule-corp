@@ -107,9 +107,9 @@ tested.
 
 ## Decision
 
-The narrow question passes: a governed `deno_core` source line can physically omit the 96 nonessential
-built-in ops before registration with a one-file reviewable patch while preserving the fixed JS
-fixture and prohibited-power observations.
+The narrow question passes: a governed patched `deno_core` construction can physically omit the 96
+nonessential built-in ops before registration with a one-file reviewable patch while preserving the
+fixed JS fixture and prohibited-power observations.
 
 The earlier `DENO-FAMILY-NO-GO` remains the disposition of full Deno and the unpatched/middleware
 construction. This result removes one blocker for a governed `deno_core` architecture; it does not

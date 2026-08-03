@@ -28,9 +28,10 @@ Status: initial decision spikes and all five Gate C implementation-readiness tra
 the currently available host/account environment. Gate C produced a required backend pivot and a
 conditional native candidate, plus explicit blockers for the exact native profile. Runtime P0-0
 has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions; no
-runtime is selected and `RUNTIME-001` remains unsupported. The governed `deno_core` follow-up
-passed physical omission only, while the TypeScript follow-up passed a strip-only pre-approval
-byte-binding question; neither result admits that runtime. P0-1 is a `PATCH-CANDIDATE`, P0-2
+runtime is selected and `RUNTIME-001` remains unsupported. The governed `deno_core` follow-ups
+passed physical omission, same-host byte reproduction, and the exact standalone dynamic-root
+question; the TypeScript follow-up passed a strip-only pre-approval byte-binding question. These
+results establish the intended engineering direction but do not admit that runtime. P0-1 is a `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, P0-3 has only a backend-independent candidate and local
 console patch, and P0-4A passed only the conditional no-host-root topology. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work

@@ -52,6 +52,17 @@ export interface RequestedLimits {
   readonly wallTimeMs?: PositiveSafeInteger;
 }
 
+/**
+ * `maxBytes` is a required structural bound only. Unlike `wallTimeMs`
+ * (see resolveJobProposal's WALL_TIME_CEILING check), it is not yet
+ * checked against a trusted policy ceiling anywhere in the resolver.
+ * This is a deliberately deferred gap, not an oversight: ADR-0023 and
+ * PHASE_2A_CONTRACT_FOUNDATION.md defer output-payload limits pending
+ * P0 transport evidence. Activating enforcement requires adding an
+ * `outputMaxJsonBytes` ceiling dimension to TrustedUserPolicyContext and
+ * an ADR-0023 addendum recording the mechanism and evidence — do not
+ * wire a fixed schema maximum here as a shortcut.
+ */
 export interface InlineJsonOutputProposal {
   readonly slot: typeof TRANSFORMED_JSON_OUTPUT_SLOT;
   readonly kind: "inline-json";

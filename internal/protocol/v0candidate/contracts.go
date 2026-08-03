@@ -77,8 +77,14 @@ type ExecutionPlan struct {
 	WallTimeMS                      PositiveUInt53
 	WallTimeOrigin                  WallTimeOrigin
 	OutputSlot                      OutputSlot
-	OutputMaxJSONBytes              PositiveUInt53
-	ExpiresAt                       UInt53
+	// OutputMaxJSONBytes is decoded as a structural positive integer only.
+	// Unlike WallTimeMS, it is not yet checked against a trusted policy
+	// ceiling anywhere in this package or the resolver — a deliberately
+	// deferred gap per ADR-0023 and PHASE_2A_CONTRACT_FOUNDATION.md, not
+	// an oversight. See packages/protocol/src/job-proposal.ts's
+	// InlineJsonOutputProposal for the matching TS-side note.
+	OutputMaxJSONBytes PositiveUInt53
+	ExpiresAt          UInt53
 }
 
 // PlanRegistration is a decoded view of the Supervisor-issued registration

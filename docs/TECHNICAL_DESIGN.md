@@ -613,11 +613,12 @@ rules include:
 
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects one colocated
 Supervisor snapshot/transaction domain with durable effect intents and `AttemptID`-only startup
-recovery. Slices E1 through E3 now implement the passive contract, explicit fixed-store v1
-migration/open validation, and unwired lifecycle transactions. The registered lifecycle driver
-still uses `MemoryStore` and no adapter call is made through E3. Slice E4 is the next fake-only
-boundary; production archive, locking, rollback, backup, and backend reconciliation mechanisms
-remain unselected.
+recovery. Slices E1 through E5 now implement the passive contract, explicit fixed-store v1
+migration/open validation, durable lifecycle transactions, the no-guest FakeBackend driver, exact
+256-active/4,096-retained capacity behavior, and repeated-startup/exhaustion checks. Active
+capacity is released only by a durable `destroyed` record with cleanup false after authoritative
+absence. The owner/coordinator is still injected in-process; production archive, platform locking,
+rollback, backup, and real-backend reconciliation mechanisms remain unselected.
 
 ## Error and violation taxonomy
 

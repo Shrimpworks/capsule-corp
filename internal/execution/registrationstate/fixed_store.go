@@ -21,9 +21,10 @@ import (
 type StoreFault string
 
 const (
-	SupervisorStoreFormatV0 = uint64(0)
-	SupervisorStoreFormatV1 = uint64(1)
-	MaxSupervisorStateBytes = int64(16 << 20)
+	SupervisorStoreFormatV0   = uint64(0)
+	SupervisorStoreFormatV1   = uint64(1)
+	MaxSupervisorStateBytes   = int64(16 << 20)
+	MaxSupervisorStateV1Bytes = int64(64 << 20)
 
 	FaultTimeHighWaterWrite                  StoreFault = "time-high-water-write"
 	FaultTimeHighWaterIndeterminatePreState  StoreFault = "time-high-water-indeterminate-pre-state"
@@ -262,7 +263,7 @@ func (store *FixedFileStore) takeFault(point StoreFault) error {
 }
 
 func loadState(path string) (installationState, error) {
-	data, err := readBoundedStoreFile(path)
+	data, err := readBoundedStoreFile(path, MaxSupervisorStateBytes)
 	if err != nil {
 		return installationState{}, err
 	}
@@ -337,6 +338,14 @@ func persistStateWithBoundary(path string, state installationState, afterRename 
 }
 
 func validateState(state installationState) error {
+	return validateStateWithAttemptCapacity(state, true)
+}
+
+// validateStateWithAttemptCapacity keeps the v0 authority snapshot's active
+// attempt ceiling intact while allowing v1 to derive active work from the
+// colocated lifecycle disposition. Retained attempt bounds and every authority
+// cross-link remain mandatory in both formats.
+func validateStateWithAttemptCapacity(state installationState, enforceAttemptCapacity bool) error {
 	if state.InstallationID == (v0candidate.InstallationID{}) ||
 		state.SupervisorID == (v0candidate.SupervisorID{}) {
 		return errors.New("fixed registration state lost installation identity")
@@ -384,7 +393,7 @@ func validateState(state installationState) error {
 			return err
 		}
 	}
-	return validateApprovalAttemptState(state)
+	return validateApprovalAttemptState(state, enforceAttemptCapacity)
 }
 
 func validateStoredRecord(entry registrationEntry) error {

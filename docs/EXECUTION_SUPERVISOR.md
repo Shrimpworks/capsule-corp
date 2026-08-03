@@ -19,12 +19,12 @@ superseded as the authoritative unwired path). The current unwired path comprise
 - `internal/execution/lifecyclestate`: passive closed lifecycle, effect, binding, instance, and
   reconciliation contracts; and
 - `internal/execution/registeredlifecycle`: an `AttemptID`-keyed, no-guest fake lifecycle that
-  revalidates the committed attempt and exact registered plan before fake prepare, but still uses
-  `MemoryStore` until Slice E4.
+  revalidates the committed attempt and exact registered plan before fake prepare and drives the
+  colocated v1 durable lifecycle store under an injected in-process owner/coordinator.
 
 These are implemented local mechanics with retained Go tests, not a deployed Supervisor. The
-authority store has no production archive/compaction or multi-process locking, the lifecycle store
-is bounded single-process memory, and no consumer, authenticated IPC, macOS code identity,
+authority store has no production archive/compaction or multi-process locking, the fixed snapshot
+and coordinator remain bounded local mechanics, and no consumer, authenticated IPC, macOS code identity,
 Keychain/user presence, protected production storage, production cryptography, content, evidence,
 runtime/backend authority, or guest is present. ADR-0019 and ADR-0024 remain Proposed.
 
@@ -140,8 +140,8 @@ creates one immutable `created` attempt and exposes `ResolveCreated(AttemptID)` 
 enumeration. `registeredlifecycle.Drive` and `Recover` accept only that `AttemptID`, revalidate the
 attempt/consumed-approval/registration/plan bindings, and key lifecycle records, fake instances,
 faults, and recovery by the attempt. Separately approved attempts for one registration therefore
-remain distinct. The lifecycle `MemoryStore` is non-durable, and the fake lifecycle has no job
-success result and creates no guest.
+remain distinct. The E5 lifecycle record/effect checkpoints are durable only in the fixed v1 local
+snapshot, and the fake lifecycle has no job success result and creates no guest.
 
 ## Side-effect ordering
 
@@ -157,10 +157,12 @@ success result and creates no guest.
 7. Persist collection manifest before content release.
 8. Persist terminal transcript and teardown classification before ordinary success is visible.
 
-Steps 4 through 8 remain planned product controls. The current lifecycle memory store does not
-provide their required durability. In the intended system, a crash between steps produces an
-explicit recovery state; missing later state never proves that a grant was unused or a backend was
-absent.
+Steps 4 through 8 remain planned product controls. The E5 no-guest fixed snapshot now exercises
+durable cleanup intent, stable effect/instance identity, and fake reconciliation for the narrower
+prepare/create/start/observe/stop/destroy state machine; it does not implement staging, collection,
+content release, evidence, a real backend, or production persistence. In the intended system, a
+crash between steps produces an explicit recovery state; missing later state never proves that a
+grant was unused or a backend was absent.
 
 ## Backend lifecycle
 
@@ -279,16 +281,14 @@ Retained focused evidence includes:
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) and the
 [Phase 2B durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md) place `AttemptID`-keyed
 lifecycle records and before/after-effect checkpoints in the same versioned Supervisor snapshot and
-transaction domain as the authority records. Slices E1 through E3 now implement passive types,
-explicit v1 migration/open validation, and the unwired durable transaction port. Those
-transactions copy only committed authority bindings, preserve consume/create-before-effect
-ordering, and do not call an adapter.
+transaction domain as the authority records. Slices E1 through E5 now implement passive types,
+explicit v1 migration/open validation, the durable transaction port, the no-guest fake driver,
+stable effect/instance identities, exact reconciliation, 256-active/4,096-retained capacity, and
+repeated-startup/exhaustion evidence. Active capacity releases only after durable `destroyed`,
+cleanup false, and authoritative absence. The injected owner/coordinator is not a platform lock.
 
-`registeredlifecycle.MemoryStore` remains the active non-durable driver. Slice E4 is the next
-boundary: migrate the no-guest fake driver and startup coordinator to the durable E3 port with
-stable effect and instance identities and exact reconciliation. Archive/compaction and replay
-retention, real multi-process
-locking, rollback/backup, authenticated IPC, production COSE/Swift/Keychain/user-presence signing
+Archive/compaction and replay retention, real multi-process locking, rollback/backup,
+authenticated IPC, production COSE/Swift/Keychain/user-presence signing
 and verification, production backend reconciliation, consumers, content, evidence composition,
 runtime/backend admission, and public cutover remain blocked. No guest exists in this checkpoint.
 

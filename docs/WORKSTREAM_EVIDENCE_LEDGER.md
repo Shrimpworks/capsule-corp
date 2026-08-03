@@ -123,7 +123,22 @@ not consumer activation or backend admission.
 | --- | --- | --- |
 | A: passive contracts | `internal/execution/approvalattempt` defines distinct `ApprovalID`, `AttemptID`, and `AttemptNonce` domains, typed references, three approval states, one created-attempt state, the fixed 12-class vocabulary, defensive byte ownership, and the retained-vector-only verifier. | `TestSliceAConformanceManifest` covers 44 cases (10 accept, 34 reject), the exact 375-byte known answer, 512/256/128 raw budgets, and 431/242/116 calculated maxima. It is not production COSE, signer authorization, or cryptography. |
 | B: fixed authority store | `registrationstate.FixedFileStore` colocates registration, effective-time high-water, approval, and immutable created-attempt state; payload-digest idempotency, retained nonce uniqueness, atomic consume/create, exact replay/concurrency, capacity, recovery fencing, reopen validation, and corruption refusal are implemented locally. | Twelve manifest state-transition cases plus focused component tests retain the exact behavior. The fixed no-eviction file-snapshot store has no production archive/compaction, multi-process locking, backup/restore, or rollback-resistant uniqueness and remains unwired. |
-| C: attempt-keyed fake lifecycle | `ApprovalAttemptComponent` supplies `ResolveCreated` and created-attempt enumeration; `registeredlifecycle` accepts only `AttemptID`, revalidates every copied binding and exact plan before fake prepare, keeps attempts for one registration distinct, and keys replay/fault/recovery state by attempt. | Twelve top-level focused tests cover binding refusal, exact/concurrent replay, startup enumeration, all fake fault moments, and post-effect restart recovery. `FakeBackend.CreatesGuest() == false`; lifecycle `MemoryStore` is bounded single-process memory and non-durable. |
+| C: attempt-keyed fake lifecycle | `ApprovalAttemptComponent` supplies `ResolveCreated` and created-attempt enumeration; `registeredlifecycle` accepts only `AttemptID`, revalidates every copied binding and exact plan before fake prepare, keeps attempts for one registration distinct, and keys replay/fault/recovery state by attempt. | The original twelve top-level focused tests cover binding refusal, exact/concurrent replay, startup enumeration, all fake fault moments, and post-effect restart recovery. E4/E5 now preserve those oracles through the colocated v1 store and stable fake effect/instance IDs. `FakeBackend.CreatesGuest() == false`; no real adapter or guest exists. |
+
+## Phase 2B durable lifecycle Slice E1-E5 reconciliation
+
+The local durable-lifecycle checkpoint implements Proposed ADR-0025 without accepting it or
+activating a consumer:
+
+| Slice | Retained checkpoint | Evidence and limitation |
+| --- | --- | --- |
+| E1-E3 | Closed passive record/effect types, explicit v0-to-v1 migration/open validation, and colocated lifecycle transactions | Exact binding, collision, migration, corruption, fault, and recovery-set tests; no adapter call through E3 |
+| E4 | `registeredlifecycle` drives only the no-guest fake through stable store-issued effect permits and exact fake instance identities | PR #59 retains before/after-effect, death, reopen, reconciliation, backoff, owner-session, and fake-no-guest oracles; the owner/coordinator is injected in-process |
+| E5 | Joined v1 capacity and repeated-startup checkpoint | `TestFixedStoreV1ExactActiveCapacityReleasesOnlyAfterDurableDestroy` proves 256 active and destroyed-only release; `TestFixedStoreV1ExactRetainedLifecycleCapacityNeverEvicts` proves 4,096 retained and cap-plus-one no rewrite/eviction with a 30,321,818-byte population; repeated/concurrent startup tests prove terminal omission, unresolved/exhausted retention, no fourth observation, and owner/coordinator mismatch refusal |
+
+This is an unwired `local-mechanic` result. Archive/compaction, a real platform/multi-process lock,
+backup/rollback, production reconciliation, consumers, content, evidence, runtime, backend, and
+guest remain absent.
 
 The closed conformance manifest remains 82 rules, 262 cases, and 368 fixtures after Slice C. Its Go
 manifest-backed coverage remains 177 targets: 81 internal-CBOR/wrapper cases, 40 registration-state
@@ -171,6 +186,7 @@ tests rather than manifest cases.
 | PR #55, CI hardening | `a5cb64a` | Added security scanning, deeper linting, ADR-index validation, and coverage gates. |
 | PR #56, V8 source/license closure | `abfdaa5` | Recorded `SOURCE-LICENSE-CLOSURE-NO-GO`: exact official source/patch identity was mapped, but mutable publisher inputs, missing build closure, and absent generated notices block governed reuse. |
 | PR #57, self-contained runtime root | `96383a8` | Recorded `STANDALONE DYNAMIC ROOT PASS; NO RUNTIME ADMISSION` for the exact 22-entry package-derived root with no ambient library/config fallback. |
+| PR #59, durable lifecycle E4 | `68b75fd` | Replaced the active memory driver with the colocated v1 store, added stable fake effect/instance identity and injected startup coordination, and retained the death/fault/reopen matrix without a consumer or guest. |
 
 The merge commits, not the former draft-PR state recorded in task responses, are the integration
 checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
@@ -189,20 +205,20 @@ Completed and retained:
 - approval/attempt Slices A-C: passive typed contracts and fixture verifier, the unwired colocated
   fixed authority store with atomic consume/create, and the `AttemptID`-keyed no-guest fake
   lifecycle seam; and
-- durable-lifecycle Slices E1-E3: passive runtime-neutral types, explicit fixed-store v1 migration
-  and validation, and unwired ensure/read/intent/result/indeterminate/reconciliation/recovery-set
-  transactions. No E3 path calls an adapter, consumer, runtime, backend, or guest; and
+- durable-lifecycle Slices E1-E5: passive runtime-neutral types, explicit fixed-store v1 migration
+  and validation, colocated transactions, the no-guest fake driver, exact 256-active/4,096-retained
+  ceilings, destroyed-only capacity release, and repeated-startup/exhaustion evidence. No consumer,
+  real adapter, runtime, backend process, or guest is present; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   and standalone dynamic-root evidence. Accepted ADR-0028 selects its engineering order without
   admitting a profile; the real Deno and `rusty_v8` forks exist with no governed branches yet.
 
 Next backend-independent work:
 
-1. Continue [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) with Slice E4
-   in the [fake-only durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md): migrate
-   `registeredlifecycle` from `MemoryStore` to the E3 durable transaction port, add stable fake
-   effect/instance identities and startup coordination, and rerun the death/fault/reopen matrix.
-   Slice E5 remains separate and no product or guest claim advances.
+1. Keep [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) at the E5
+   `local-mechanic` checkpoint until a separately reviewed archive/compaction boundary and selected
+   production owner-lock topology exist. Do not infer continuous-service, multi-process, or guest
+   lifecycle evidence from the fixed snapshot and injected coordinator.
 2. In parallel, bootstrap governed branches and reviewable draft PRs in `dills122/deno` and
    `dills122/rusty_v8` from the exact ADR-0028 upstream commits. Follow the
    [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md); do not substitute local copies or
@@ -218,8 +234,9 @@ Next backend-independent work:
 This checkpoint does not decide IPC topology, authority-store archive/compaction, production
 COSE/Swift/Keychain/user-presence signing, consumer ownership, evidence composition, or public
 cutover. The authority/lifecycle snapshot lacks real multi-process locking and rollback-resistant
-identifier/nonce/effect uniqueness, while the active driver remains single-process and
-non-durable. Content, evidence, runtime, backend, and guest remain absent from the unwired path.
+identifier/nonce/effect uniqueness. The fixed snapshot is durable for controlled local tests, but
+ownership remains in-process and no production persistence claim follows. Content, evidence,
+runtime, real backend, and guest remain absent from the unwired path.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

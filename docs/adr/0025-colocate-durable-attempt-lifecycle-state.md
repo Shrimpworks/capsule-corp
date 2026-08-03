@@ -2,7 +2,7 @@
 
 - Status: Proposed
 - Date: 2026-08-02
-- Slice E1-E3 implementation checkpoint: 2026-08-03
+- Slice E1-E5 implementation checkpoint: 2026-08-03
 - Refines if accepted: ADR-0011, ADR-0012, ADR-0013, ADR-0023, and ADR-0024
 
 ## Context
@@ -287,12 +287,19 @@ adapter requires a separate proposal and validation without changing execute aut
 
 ### Current implementation checkpoint
 
-Slices E1 through E3 now implement the passive types, explicit fixed-store v1 migration/open
-validation, and the complete unwired `DurableLifecycleStore` transaction port above. The E3 fault,
-reopen, collision, ownership, capacity-reservation, and recovery-set tests call no adapter.
-`registeredlifecycle` still uses its bounded non-durable `MemoryStore`; Slice E4 must migrate that
-fake-only driver and startup coordinator before this proposal describes an end-to-end durable local
-mechanic. The status remains Proposed, and no production or guest-facing claim advances.
+Slices E1 through E5 now implement the passive types, explicit fixed-store v1 migration/open
+validation, the complete `DurableLifecycleStore` transaction port above, and the unwired
+FakeBackend-only driver. Retained tests cover stable effect/instance identity, every fake effect
+boundary, reconciliation, concurrent/repeated startup, owner/coordinator mismatch, three-observation
+automatic-recovery exhaustion, exact 256 active and 4,096 retained lifecycle ceilings, and
+cap-plus-one refusal without eviction. The exact retained population encodes to 30,321,818 bytes
+under a v1-only 64 MiB raw read bound; the v0 bound remains 16 MiB.
+
+Joined v1 validation releases active capacity only for a durable `destroyed` record with cleanup
+false and authoritative absence. `observed`, `stopped`, `destroy-confirmed`, `unresolved`, and
+`quarantined` remain active and retained. The coordinator and owner session are still injected
+in-process mechanics and do not implement the proposed macOS lock. The status remains Proposed,
+and no production or guest-facing claim advances.
 
 ## Alternatives considered
 

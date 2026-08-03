@@ -1,10 +1,11 @@
 # Phase 2B durable attempt lifecycle implementation and conformance plan
 
-Status: Slices E1 through E3 implemented; Slices E4 and E5 remain. Proposed ADR-0025 selects one
-colocated Supervisor snapshot and transaction domain for durable `AttemptID`-keyed fake lifecycle
-state. E2 provides explicit snapshot-v1 migration/open validation and E3 provides unwired durable
-transactions; no adapter call uses them yet. No consumer, IPC, evidence, runtime, real backend, or
-guest is implemented.
+Status: Slices E1 through E5 implemented as an unwired `local-mechanic` checkpoint. Proposed
+ADR-0025 selects one colocated Supervisor snapshot and transaction domain for durable
+`AttemptID`-keyed fake lifecycle state. E2 provides explicit snapshot-v1 migration/open validation,
+E3 provides durable transactions, E4 drives only `FakeBackend`, and E5 retains exact capacity and
+repeated-startup evidence. No consumer, IPC, evidence, runtime, real backend, or guest is
+implemented; ADR-0025 remains Proposed.
 
 Normative proposal:
 [ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md).
@@ -306,6 +307,10 @@ store and newly constructed component. `FakeBackend.CreatesGuest() == false` is 
 constructor path. No consumer, IPC, content, evidence, runtime, real adapter, process, or guest is
 introduced.
 
+Implemented checkpoint: merged PR #59 replaced `MemoryStore` with the v1 transaction port, added
+stable fake effect/instance identity, durable reconciliation/backoff, and the injected in-process
+owner/coordinator. It created no guest and selected no production platform lock.
+
 ### Slice E5: capacity, repeated-startup, and documentation checkpoint
 
 - Prove exact 256 active and 4,096 retained ceilings, capacity release only after durable destroyed,
@@ -315,6 +320,14 @@ introduced.
   tests exist.
 
 Acceptance: no production or guest-facing claim is promoted.
+
+Implemented checkpoint: the v1 joined validator and focused local tests prove the exact 256-active
+and 4,096-retained ceilings, cap-plus-one refusal without rewrite/eviction, and active-capacity
+release only after durable `destroyed` plus cleanup false and authoritative absence. Concurrent and
+repeated startup retains unresolved/exhausted work, omits terminal attempts, makes no call after
+three unknown observations, ignores approval usability/registration expiry as execution authority,
+and rejects owner/coordinator mismatch before store mutation or fake effect. The exact retained
+population is 30,321,818 encoded bytes under a v1-only 64 MiB raw bound; v0 remains 16 MiB.
 
 ## Required focused tests
 

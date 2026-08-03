@@ -149,6 +149,7 @@ func NewAttemptNonce(value DomainIdentifier) (AttemptNonce, error) {
 	return AttemptNonce(value.bytes), nil
 }
 
+// field-authority-object: capsule.approval-reference v0
 type ApprovalReference struct {
 	approvalID ApprovalID
 }
@@ -162,6 +163,7 @@ func NewApprovalReference(approvalID ApprovalID) (ApprovalReference, error) {
 
 func (reference ApprovalReference) ApprovalID() ApprovalID { return reference.approvalID }
 
+// field-authority-object: capsule.attempt-reference v0
 type AttemptReference struct {
 	attemptID AttemptID
 }
@@ -244,6 +246,7 @@ type ApprovalPayloadDigest [32]byte
 // evidence; it never selects a ledger record.
 type ApprovalEnvelopeDigest [32]byte
 
+// field-authority-object: capsule.approval-record v0
 // ApprovalRecord is the defensive stored projection returned by the unwired
 // fixed store. Its byte slices never alias caller, verifier, or store memory.
 type ApprovalRecord struct {
@@ -280,6 +283,7 @@ func CloneApprovalRecord(record ApprovalRecord) ApprovalRecord {
 	return record
 }
 
+// field-authority-object: capsule.execution-attempt v0
 // ExecutionAttempt is the immutable created record committed in the same
 // transaction that consumes its approval. Slice B creates no backend handle
 // and no cleanup obligation.

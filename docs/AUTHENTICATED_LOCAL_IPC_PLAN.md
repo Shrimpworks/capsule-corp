@@ -82,6 +82,14 @@ this plan and requires an updated Proposed ADR before implementation.
 
 ## S1: passive contracts and fixed fixtures
 
+Current consistency gate: **stopped before fixture construction**. The merged TypeScript
+approved-byte contract requires three distinct future plan source roles, while ADR-0029's proposed
+562-byte `RegisterPlanV0` record contains one source-manifest role and ADR-0030 makes that record
+v0-only. See the bounded
+[S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md). S1 must not resume until the
+method/version and complete binding field set are selected together; the separate field-authority
+manifest remains an integration dependency.
+
 Add no-product native, Go, and Swift-readable fixtures for the common header, four requests, four
 success replies, and fixed refusal replies. Do not activate an XPC listener in a product target.
 

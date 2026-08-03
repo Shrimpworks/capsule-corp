@@ -4,6 +4,7 @@ Capsule is an experimental trusted execution platform for bounded JavaScript and
 proposed by AI agents.
 
 [Project site](https://dills122.github.io/capsule-corp/) ·
+[Security overview](docs/SECURITY_OVERVIEW.md) ·
 [Technical design](docs/TECHNICAL_DESIGN.md) ·
 [Architecture](docs/ARCHITECTURE.md) ·
 [Threat model](docs/security/THREAT_MODEL.md)

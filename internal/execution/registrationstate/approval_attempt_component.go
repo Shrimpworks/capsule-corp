@@ -229,7 +229,11 @@ func (component *ApprovalAttemptComponent) SubmitApproval(
 			StorageFormatVersion:  ApprovalStoreVersion,
 		}
 		fresh.Approvals = append(fresh.Approvals, approvalattempt.CloneApprovalRecord(committed))
-		fresh.ApprovalSetDigest = approvalSetDigest(fresh.Approvals)
+		digest, err := approvalSetDigest(fresh.Approvals)
+		if err != nil {
+			return approvalAttemptClassified(approvalattempt.ClassificationLocalFailure, "approval-digest-encode-failed")
+		}
+		fresh.ApprovalSetDigest = digest
 		return nil
 	})
 	if err != nil {
@@ -368,8 +372,16 @@ func (component *ApprovalAttemptComponent) RequestAttempt(
 		fresh.Attempts = append(fresh.Attempts, created)
 		fresh.Approvals[index].State = approvalattempt.ApprovalConsumed
 		fresh.Approvals[index].ConsumedAttemptID = attemptID
-		fresh.ApprovalSetDigest = approvalSetDigest(fresh.Approvals)
-		fresh.AttemptSetDigest = attemptSetDigest(fresh.Attempts)
+		approvalDigest, err := approvalSetDigest(fresh.Approvals)
+		if err != nil {
+			return approvalAttemptClassified(approvalattempt.ClassificationLocalFailure, "approval-digest-encode-failed")
+		}
+		attemptDigest, err := attemptSetDigest(fresh.Attempts)
+		if err != nil {
+			return approvalAttemptClassified(approvalattempt.ClassificationLocalFailure, "attempt-digest-encode-failed")
+		}
+		fresh.ApprovalSetDigest = approvalDigest
+		fresh.AttemptSetDigest = attemptDigest
 		return nil
 	})
 	if err != nil {

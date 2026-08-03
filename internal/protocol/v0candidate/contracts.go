@@ -179,6 +179,12 @@ func newIdentifier[T ~[16]byte](value []byte, role string) (T, error) {
 	return result, nil
 }
 
+// newDigest accepts every 32-byte bit pattern structurally, including all
+// zeroes, unlike newIdentifier. ADR-0023 rejects special-casing the all-zero
+// SHA-256 value here: width and nominal role are structural, but existence
+// and byte equality are binding checks owned by the role-specific resolver.
+// An unresolved all-zero digest therefore fails binding like any other
+// unknown digest, rather than being rejected at decode time.
 func newDigest[T ~[32]byte](value []byte, role string) (T, error) {
 	var result T
 	if len(value) != len(result) {

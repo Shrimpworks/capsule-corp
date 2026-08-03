@@ -68,10 +68,10 @@
       }
     },
     "effectiveCapabilities": {
-      "type": "object"
+      "$ref": "urn:capsule:schema:job:v0#/$defs/capabilities"
     },
     "limits": {
-      "type": "object"
+      "$ref": "urn:capsule:schema:job:v0#/$defs/limits"
     },
     "status": {
       "enum": ["succeeded", "failed", "timed-out", "cancelled", "policy-denied"]
@@ -106,10 +106,12 @@
         "required": ["name", "mediaType", "bytes", "digest", "exposure"],
         "properties": {
           "name": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+            "maxLength": 255
           },
           "mediaType": {
-            "type": "string"
+            "enum": ["application/json", "application/x-ndjson", "text/csv", "text/plain"]
           },
           "bytes": {
             "type": "integer",
@@ -119,7 +121,7 @@
             "$ref": "#/$defs/sha256"
           },
           "exposure": {
-            "type": "object"
+            "$ref": "urn:capsule:schema:job:v0#/$defs/exposure"
           }
         }
       }

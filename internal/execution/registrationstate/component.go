@@ -160,7 +160,11 @@ func (component *Component) RegisterPlan(
 			Record:       record,
 		})
 		state.LastRegistrationSequence = v0candidate.UInt53(sequence)
-		state.RegistrationSetDigest = appendRegistrationSetDigest(state.RegistrationSetDigest, record)
+		registrationSetDigest, err := appendRegistrationSetDigest(state.RegistrationSetDigest, record)
+		if err != nil {
+			return classified(ClassificationLocalFailure, "registration-digest-encode-failed")
+		}
+		state.RegistrationSetDigest = registrationSetDigest
 		issued = PlanRegistration{bytes: bytes.Clone(wireBytes), view: wireView}
 		return nil
 	})

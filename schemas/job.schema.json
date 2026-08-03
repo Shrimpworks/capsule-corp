@@ -75,7 +75,7 @@
       "properties": {
         "entrypoint": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*\\.(?:js|mjs|cjs|ts|mts|cts|tsx)$",
+          "pattern": "^(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*\\.(?:js|mjs|cjs|ts|mts|cts|tsx)$",
           "maxLength": 512
         },
         "files": {
@@ -83,7 +83,7 @@
           "minProperties": 1,
           "maxProperties": 128,
           "propertyNames": {
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*$",
             "maxLength": 512
           },
           "additionalProperties": {

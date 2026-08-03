@@ -111,19 +111,23 @@
       "properties": {
         "wallTimeMs": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "maximum": 3600000
         },
         "memoryBytes": {
           "type": "integer",
-          "minimum": 16777216
+          "minimum": 16777216,
+          "maximum": 17179869184
         },
         "pids": {
           "type": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "maximum": 1024
         },
         "artifactBytes": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 107374182400
         }
       }
     }

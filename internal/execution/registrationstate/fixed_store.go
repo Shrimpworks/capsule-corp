@@ -474,7 +474,7 @@ type storedRecordJSON struct {
 	StoredRecordRetentionState string `json:"retentionState"`
 }
 
-func appendRegistrationSetDigest(previous [32]byte, record StoredRegistration) [32]byte {
+func appendRegistrationSetDigest(previous [32]byte, record StoredRegistration) ([32]byte, error) {
 	projection := storedRecordJSON{
 		WireRegistrationHex:        hex.EncodeToString(record.WireRegistrationBytes),
 		ExactPlanHex:               hex.EncodeToString(record.ExactPlanBytes),
@@ -485,13 +485,13 @@ func appendRegistrationSetDigest(previous [32]byte, record StoredRegistration) [
 	}
 	encoded, err := json.Marshal(projection)
 	if err != nil {
-		panic(fmt.Sprintf("encode closed stored registration record: %v", err))
+		return [32]byte{}, fmt.Errorf("encode closed stored registration record: %w", err)
 	}
 	material := make([]byte, 0, 64+1+len(encoded))
 	material = append(material, hex.EncodeToString(previous[:])...)
 	material = append(material, ':')
 	material = append(material, encoded...)
-	return sha256.Sum256(material)
+	return sha256.Sum256(material), nil
 }
 
 func recordsEqual(left, right StoredRegistration) bool {

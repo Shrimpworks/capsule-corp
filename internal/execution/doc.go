@@ -7,4 +7,10 @@
 // boundary. Product wiring requires the approved protocol, authenticated native
 // IPC, a durable transactional store, production cryptographic verification,
 // and a separately validated backend adapter.
+//
+// SupervisorCore is the older in-memory scaffold and is not the oracle for
+// ADR-0024: see docs/EXECUTION_SUPERVISOR.md. The current unwired path is the
+// registrationstate/approvalattempt/registeredlifecycle split in this tree's
+// subpackages; SupervisorCore remains behaviorally frozen alongside it until
+// retired.
 package execution

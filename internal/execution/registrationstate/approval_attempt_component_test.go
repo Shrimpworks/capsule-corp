@@ -610,28 +610,52 @@ func TestApprovalAttemptReopenRejectsCorruptionAndCrossLinks(t *testing.T) {
 	}{
 		{name: "consumed without attempt", mutate: func(state *installationState) {
 			state.Attempts = nil
-			state.AttemptSetDigest = attemptSetDigest(state.Attempts)
+			attemptDigest, err := attemptSetDigest(state.Attempts)
+			if err != nil {
+				t.Fatalf("attempt set digest: %v", err)
+			}
+			state.AttemptSetDigest = attemptDigest
 		}},
 		{name: "attempt without consumption", mutate: func(state *installationState) {
 			state.Approvals[0].State = approvalattempt.ApprovalUsable
 			state.Approvals[0].ConsumedAttemptID = approvalattempt.AttemptID{}
-			state.ApprovalSetDigest = approvalSetDigest(state.Approvals)
+			approvalDigest, err := approvalSetDigest(state.Approvals)
+			if err != nil {
+				t.Fatalf("approval set digest: %v", err)
+			}
+			state.ApprovalSetDigest = approvalDigest
 		}},
 		{name: "cross linked approval", mutate: func(state *installationState) {
 			state.Attempts[0].ApprovalID[0] ^= 0xff
-			state.AttemptSetDigest = attemptSetDigest(state.Attempts)
+			attemptDigest, err := attemptSetDigest(state.Attempts)
+			if err != nil {
+				t.Fatalf("attempt set digest: %v", err)
+			}
+			state.AttemptSetDigest = attemptDigest
 		}},
 		{name: "copied nonce mismatch", mutate: func(state *installationState) {
 			state.Attempts[0].AttemptNonce[0] ^= 0xff
-			state.AttemptSetDigest = attemptSetDigest(state.Attempts)
+			attemptDigest, err := attemptSetDigest(state.Attempts)
+			if err != nil {
+				t.Fatalf("attempt set digest: %v", err)
+			}
+			state.AttemptSetDigest = attemptDigest
 		}},
 		{name: "payload digest corruption", mutate: func(state *installationState) {
 			state.Approvals[0].PayloadDigest[0] ^= 0xff
-			state.ApprovalSetDigest = approvalSetDigest(state.Approvals)
+			approvalDigest, err := approvalSetDigest(state.Approvals)
+			if err != nil {
+				t.Fatalf("approval set digest: %v", err)
+			}
+			state.ApprovalSetDigest = approvalDigest
 		}},
 		{name: "approval record version", mutate: func(state *installationState) {
 			state.Approvals[0].StorageFormatVersion++
-			state.ApprovalSetDigest = approvalSetDigest(state.Approvals)
+			approvalDigest, err := approvalSetDigest(state.Approvals)
+			if err != nil {
+				t.Fatalf("approval set digest: %v", err)
+			}
+			state.ApprovalSetDigest = approvalDigest
 		}},
 	}
 	for _, test := range tests {
@@ -884,7 +908,11 @@ func TestApprovalCapacityAndNonEvictingRetainedState(t *testing.T) {
 			record.PayloadDigest = approvalattempt.ApprovalPayloadDigest(sha256.Sum256(record.ExactPayloadBytes))
 			state.Approvals[index] = record
 		}
-		state.ApprovalSetDigest = approvalSetDigest(state.Approvals)
+		approvalDigest, err := approvalSetDigest(state.Approvals)
+		if err != nil {
+			t.Fatalf("approval set digest: %v", err)
+		}
+		state.ApprovalSetDigest = approvalDigest
 		if err := validateState(state); err != nil {
 			t.Fatalf("exact retained approval population invalid: %v", err)
 		}
@@ -957,7 +985,11 @@ func TestAttemptAdmissionTrustBindingAndIdentifierFailures(t *testing.T) {
 		{name: "attempts disabled", mutate: func(state *installationState) { state.AttemptsDisabled = true }, want: approvalattempt.ClassificationTrustState},
 		{name: "approval invalidated", mutate: func(state *installationState) {
 			state.Approvals[0].State = approvalattempt.ApprovalInvalidated
-			state.ApprovalSetDigest = approvalSetDigest(state.Approvals)
+			approvalDigest, err := approvalSetDigest(state.Approvals)
+			if err != nil {
+				t.Fatalf("approval set digest: %v", err)
+			}
+			state.ApprovalSetDigest = approvalDigest
 		}, want: approvalattempt.ClassificationTrustState},
 	}
 	for _, test := range tests {

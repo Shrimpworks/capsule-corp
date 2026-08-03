@@ -29,11 +29,12 @@ the currently available host/account environment. Gate C produced a required bac
 conditional native candidate, plus explicit blockers for the exact native profile. Runtime P0-0
 has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions; no
 runtime is selected and `RUNTIME-001` remains unsupported. The governed `deno_core` follow-up
-passed physical omission only. P0-1 is a `PATCH-CANDIDATE`, P0-2 selected `GOVERNED-PATCH` without
-admission, P0-3 has only a backend-independent candidate and local console patch, and P0-4A passed
-only the conditional no-host-root topology. Session, MDM, power-loss, independent-builder,
-clean-host, and Linux-worker cases remain later validation work rather than reasons to delay
-backend-independent contract implementation.
+passed physical omission only, while the TypeScript follow-up passed a strip-only pre-approval
+byte-binding question; neither result admits that runtime. P0-1 is a `PATCH-CANDIDATE`, P0-2
+selected `GOVERNED-PATCH` without admission, P0-3 has only a backend-independent candidate and local
+console patch, and P0-4A passed only the conditional no-host-root topology. Session, MDM,
+power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
+rather than reasons to delay backend-independent contract implementation.
 
 Run bounded, disposable prototypes in parallel where practical:
 
@@ -181,10 +182,11 @@ Exit evidence:
 
 - Close the five reconciled P0 Gate C campaigns. Preserve the governed `deno_core`
   `PHYSICAL-OMISSION-PASS` as construction evidence only and decide its packaging/provenance,
-  restoration/backstop, approved-byte TypeScript, external-isolation, and profile-admission gaps
-  before selecting a runtime. Carry the FD-native `PATCH-CANDIDATE` and direct-block-root
-  `GOVERNED-PATCH` through independent review, closed APIs/routes, mutation tests, and composed
-  final-profile reruns. Keep `RUNTIME-001` unsupported throughout.
+  restoration/backstop, coordinated approved-byte TypeScript migration under Proposed ADR-0026,
+  external-isolation, and profile-admission gaps before selecting a runtime. Carry the FD-native
+  `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
+  APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported
+  throughout.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on

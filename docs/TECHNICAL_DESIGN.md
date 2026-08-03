@@ -39,7 +39,10 @@ The first complete workflow is intentionally narrow:
 1. An agent proposes a dependency-free, one-shot TypeScript transformation with inline JSON input
    and bounded JSON output.
 2. The Go daemon strictly decodes the proposal, resolves trusted policy and manifests, and creates
-   canonical `ExecutionPlan` bytes.
+   canonical `ExecutionPlan` bytes. Proposed ADR-0026 requires any TypeScript transformation to
+   finish before plan construction and bind separate exact authoring and executable source roles;
+   its production owner/topology remains unresolved and no post-approval transformation is
+   permitted.
 3. The daemon sends those exact bytes to the Execution Supervisor. The Supervisor independently
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.

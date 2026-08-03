@@ -7,6 +7,7 @@
 - P0-0 governed-construction refinement: 2026-08-02
 - Deno-family disposition refinement: 2026-08-02
 - Governed `deno_core` physical-omission refinement: 2026-08-02
+- TypeScript approved-byte refinement: 2026-08-03
 
 ## Context
 
@@ -71,6 +72,14 @@ does not supply the excluded TypeScript transformation, independently reconstruc
 package, complete runtime-profile admission, or external-isolation composition. The earlier
 full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
 is not superseded, and `RUNTIME-001` remains unsupported.
+
+The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
+passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
+deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-approval-typescript-erasure.md),
+which binds original and executable bytes before registration and forbids post-approval
+transformation. The experiment did not choose a production transformer owner, change product
+contracts, add a `deno_core` module loader, or close packaging, external isolation, or full runtime
+admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
 
 ## Consequences
 

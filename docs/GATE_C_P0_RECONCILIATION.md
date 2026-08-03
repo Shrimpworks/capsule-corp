@@ -154,6 +154,17 @@ review, external isolation composition, and runtime-profile admission remain ope
 selected, ADR-0003 is not superseded, and `RUNTIME-001` remains unsupported. See the
 [retained physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md).
 
+Approved-byte follow-up (2026-08-03): **BOUNDARY-PASS; NO RUNTIME ADMISSION**. Exact Node
+22.22.1/Amaro 1.1.5 `stripTypeScriptTypes` in strip-only mode emitted byte-identical fixed outputs
+across repeated processes, refused transform-requiring syntax and unknown options, preserved
+Unicode/line endings without normalization, and detected source/output/toolchain/options
+mutations. Proposed ADR-0026 therefore places transformation before executable-source manifest and
+plan construction and binds original, emitted, options, transformer, diagnostics-zero, and explicit
+source-map absence into the future plan. Current schemas/types remain unchanged, production
+ownership/topology and cross-platform provenance remain open, no `deno_core` module loader or
+runtime was wired, and `RUNTIME-001` still refuses. See the
+[retained result](../experiments/typescript-approved-byte-boundary/RESULTS.md).
+
 ### P0-1: immutable runtime-root custody
 
 Goal: prove that a concurrent same-user attacker cannot change or substitute bytes observed through

@@ -108,6 +108,12 @@ canonical-wrapper acceptance conditions.
 These terms are never interchangeable. `jobId` alone cannot substitute for registration or attempt
 identity.
 
+Proposed ADR-0026 adds a future role separation for TypeScript without changing the current
+candidate: an original-authoring source manifest, an executable JavaScript source manifest, and an
+ordered transformation-record set all bind into the plan before registration. Approval continues
+to bind the exact plan digest; the runtime may receive only the executable role and may never
+transform from an original-only digest after approval.
+
 ## V0 proposal shape
 
 The final frozen schema is pending. The passive first-slice candidate is narrower than this target
@@ -159,7 +165,7 @@ Guest paths never carry authority and do not appear in approval as agent-selecte
 
 | Object | Identity mechanism | Reason |
 | --- | --- | --- |
-| SourceManifest | SHA-256 | Registered/approved plan binds exact source identity |
+| SourceManifest | SHA-256 | Registered/approved plan binds exact source identity; Proposed ADR-0026 later splits authoring and executable roles |
 | InputSnapshotManifest | SHA-256; optional Broker signature across independent boundary | Exact bytes are primary; signature attributes Broker claim |
 | PolicyDecision | SHA-256 | Plan binds exact policy result/source |
 | ExecutionPlan | SHA-256 canonical bytes | Supervisor registration and Broker approval bind it |

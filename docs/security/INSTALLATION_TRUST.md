@@ -25,7 +25,8 @@ The signed manifest records at least:
 - schema version and manifest sequence;
 - installation ID and installation-root public-key identity;
 - platform, architecture, and distribution authority;
-- expected daemon, Broker, Supervisor, updater, and optional Guardian roles;
+- expected daemon, Broker, Supervisor, updater, optional Guardian, and—only if the TypeScript
+  profile is admitted—Source Preparer roles;
 - signing identifiers, team IDs, peer code requirements, exact active code-directory hashes, and
   relevant entitlements;
 - Approval Broker and Supervisor evidence-key authorizations;
@@ -70,6 +71,7 @@ Receipts must state which mechanism, if any, was active.
 | Current epoch checkpoint | Supervisor protected state plus narrow Keychain checkpoint where feasible | Atomic update and rollback comparison |
 | Complete manifest/epoch chain | Supervisor-owned store | Hash-linked, bounded, recoverable |
 | Verified public trust metadata | Updater/trust cache | Pinned roots and rollback/freshness checkpoint |
+| Proposed TypeScript source set/store | Source Preparer-only protected container | Exact single-member access; sealed installer-owned genesis/update descriptor; installation/epoch/store-format binding; no shared app group or live-path handoff |
 | Optional witnessed digest | External or independent protected store | No job content; privacy-reviewed correlation |
 
 A general shared app group is not used merely for convenience. Cross-component data moves through

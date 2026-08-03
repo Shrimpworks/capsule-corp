@@ -1,0 +1,108 @@
+; Capsule passive TypeScript approved-byte object family v0.
+; Evaluate with common-v0.cddl. These objects are conformance candidates only:
+; no consumer, IPC method, registration path, approval path, or runtime accepts
+; them. Exact deterministic-CBOR bytes are authoritative.
+
+capsule-source-path-v0 = tstr .size (1..256)
+capsule-source-media-v0 =
+  "application/capsule.typescript-source;v=0;module=esm" /
+  "application/capsule.javascript-source;v=0;module=esm"
+capsule-javascript-media-v0 =
+  "application/capsule.javascript-source;v=0;module=esm"
+
+capsule-original-source-entry-v0 = [
+  capsule-source-path-v0,
+  capsule-source-media-v0,
+  capsule-sha256-v0,
+  0..262144
+]
+
+capsule-executable-source-entry-v0 = [
+  capsule-source-path-v0,
+  capsule-javascript-media-v0,
+  capsule-sha256-v0,
+  0..262144
+]
+
+; Entries are nonempty, unique, and sorted by unsigned ASCII path bytes.
+capsule-original-authoring-source-manifest-v0 = {
+  1: "capsule.original-authoring-source-manifest",
+  2: 0,
+  3: capsule-source-path-v0, ; exact entrypoint and member
+  4: [1*32 capsule-original-source-entry-v0],
+  5: 0..1048576 ; exact aggregate bytes
+}
+
+capsule-executable-javascript-source-manifest-v0 = {
+  1: "capsule.executable-javascript-source-manifest",
+  2: 0,
+  3: capsule-source-path-v0, ; same logical entrypoint and member
+  4: [1*32 capsule-executable-source-entry-v0],
+  5: 0..1048576 ; exact aggregate bytes
+}
+
+capsule-typescript-transformer-profile-v0 = {
+  1: "capsule.typescript-transformer-profile",
+  2: 0,
+  3: "node:module.stripTypeScriptTypes",
+  4: "22.22.1",
+  5: "1.1.5",
+  6: capsule-sha256-v0, ; official Node source archive
+  7: "darwin",
+  8: "arm64",
+  9: capsule-sha256-v0, ; platform distribution archive
+  10: capsule-sha256-v0 ; installed executable
+}
+
+capsule-typescript-normalized-options-v0 = {
+  1: "capsule.typescript-normalized-options",
+  2: 0,
+  3: "strip",
+  4: "reject-any",
+  5: "absent", ; sourceMap
+  6: "absent", ; sourceURL
+  7: "application/capsule.typescript-source;v=0;module=esm",
+  8: "application/capsule.javascript-source;v=0;module=esm"
+}
+
+capsule-typescript-transformation-record-v0 = {
+  1: "capsule.typescript-transformation-record",
+  2: 0,
+  3: capsule-source-path-v0,
+  4: "application/capsule.typescript-source;v=0;module=esm",
+  5: 0..262144,
+  6: capsule-sha256-v0, ; role: original source bytes
+  7: "application/capsule.javascript-source;v=0;module=esm",
+  8: 0..262144,
+  9: capsule-sha256-v0, ; role: emitted executable bytes
+  10: capsule-sha256-v0, ; role: transformer profile exact CBOR
+  11: "22.22.1",
+  12: "1.1.5",
+  13: capsule-sha256-v0, ; Node source archive
+  14: capsule-sha256-v0, ; distribution archive
+  15: capsule-sha256-v0, ; executable
+  16: bstr .size (1..1024), ; exact normalized-options CBOR
+  17: capsule-sha256-v0, ; role: normalized options
+  18: "absent", ; sourceMap
+  19: "absent", ; sourceURL
+  20: "reject-any",
+  21: 0 ; successful diagnostic count
+}
+
+; Each element is one exact canonical record byte string. Records are
+; nonempty, unique, and sorted by the decoded unsigned-ASCII logical path.
+capsule-typescript-transformation-record-set-v0 = {
+  1: "capsule.typescript-transformation-record-set",
+  2: 0,
+  3: [*32 bstr .size (1..4096)]
+}
+
+; Passive Slice A projection of the three fields that a future atomic
+; ExecutionPlan v1 must own. This is not an executable plan or wire object.
+capsule-typescript-plan-source-bindings-v0 = {
+  1: "capsule.typescript-plan-source-bindings",
+  2: 0,
+  3: capsule-sha256-v0, ; original-authoring manifest
+  4: capsule-sha256-v0, ; executable-JavaScript manifest
+  5: capsule-sha256-v0  ; ordered transformation-record set
+}

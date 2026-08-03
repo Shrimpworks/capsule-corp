@@ -1,0 +1,139 @@
+{
+  "manifestVersion": "capsule.typescript-approved-byte-conformance/v0",
+  "status": "passive-unwired-fixture-only",
+  "fixtureCount": 9,
+  "mutationCount": 14,
+  "caps": {
+    "sourceFiles": 32,
+    "originalFileBytes": 262144,
+    "originalAggregateBytes": 1048576,
+    "emittedFileBytes": 262144,
+    "emittedAggregateBytes": 1048576
+  },
+  "knownAnswers": [
+    {
+      "path": "files/ordinary.ts",
+      "byteLength": 391,
+      "sha256": "697a9bed1307422ecae49d20f60dff7b367535f450fee514b63ffe4d5a22c6db"
+    },
+    {
+      "path": "files/ordinary.js",
+      "byteLength": 391,
+      "sha256": "f91911dd606409fed94c214381533f5ece3e2ae23ea861a3a55192cefad884cd"
+    },
+    {
+      "path": "objects/transformer-profile.cbor",
+      "byteLength": 215,
+      "sha256": "ab82cd553d52490fb0e2cc2e6cfc8cc106440a601c99c70cebad43537efc7f97",
+      "mediaType": "application/capsule.typescript-transformer-profile+cbor;v=0"
+    },
+    {
+      "path": "objects/normalized-options.cbor",
+      "byteLength": 188,
+      "sha256": "8a43f134b568e983a7e4e24a763209a61405dc535a710e4799611033e4983b2e",
+      "mediaType": "application/capsule.typescript-normalized-options+cbor;v=0"
+    },
+    {
+      "path": "objects/original-manifest.cbor",
+      "byteLength": 171,
+      "sha256": "1010ae00c786a6266348173c7760e0190be4cc280be1f71c8549f09727e4b183",
+      "mediaType": "application/capsule.original-authoring-source-manifest+cbor;v=0"
+    },
+    {
+      "path": "objects/executable-manifest.cbor",
+      "byteLength": 174,
+      "sha256": "295138062d0785785373b8c468fee75f77a28131d0974f30f69c4050425e9814",
+      "mediaType": "application/capsule.executable-javascript-source-manifest+cbor;v=0"
+    },
+    {
+      "path": "objects/transformation-record.cbor",
+      "byteLength": 659,
+      "sha256": "3ddf8b242afbddaa1856f79a24a46f7e8f9c674699ef6b1bd63215d49e512c39",
+      "mediaType": "application/capsule.typescript-transformation-record+cbor;v=0"
+    },
+    {
+      "path": "objects/transformation-record-set.cbor",
+      "byteLength": 714,
+      "sha256": "5738283a5accdbd8b736af81982dc46068172ec502f5c43e4113fe7de10c76eb",
+      "mediaType": "application/capsule.typescript-transformation-record-set+cbor;v=0"
+    },
+    {
+      "path": "objects/plan-source-bindings.cbor",
+      "byteLength": 150,
+      "sha256": "deb9342fc8c2c0ea18ff280aa3c409246d7c96fab9dc46dddb54862640e4cc28",
+      "mediaType": "application/capsule.typescript-plan-source-bindings+cbor;v=0"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "original-byte",
+      "decision": "reject",
+      "classification": "BYTE_BINDING"
+    },
+    {
+      "id": "emitted-byte",
+      "decision": "reject",
+      "classification": "BYTE_BINDING"
+    },
+    {
+      "id": "path-order",
+      "decision": "reject",
+      "classification": "ORDERING"
+    },
+    {
+      "id": "profile-digest",
+      "decision": "reject",
+      "classification": "TRANSFORMER_BINDING"
+    },
+    {
+      "id": "profile-node",
+      "decision": "reject",
+      "classification": "TRANSFORMER_BINDING"
+    },
+    {
+      "id": "options-bytes",
+      "decision": "reject",
+      "classification": "OPTIONS_BINDING"
+    },
+    {
+      "id": "options-digest",
+      "decision": "reject",
+      "classification": "OPTIONS_BINDING"
+    },
+    {
+      "id": "input-media-type",
+      "decision": "reject",
+      "classification": "MEDIA_TYPE"
+    },
+    {
+      "id": "output-media-type",
+      "decision": "reject",
+      "classification": "MEDIA_TYPE"
+    },
+    {
+      "id": "source-map-present",
+      "decision": "reject",
+      "classification": "DISPOSITION"
+    },
+    {
+      "id": "source-url-present",
+      "decision": "reject",
+      "classification": "DISPOSITION"
+    },
+    {
+      "id": "diagnostic-count-one",
+      "decision": "reject",
+      "classification": "DIAGNOSTIC"
+    },
+    {
+      "id": "cross-domain-original-as-executable",
+      "decision": "reject",
+      "classification": "DOMAIN"
+    },
+    {
+      "id": "cross-domain-record-set-as-original",
+      "decision": "reject",
+      "classification": "DOMAIN"
+    }
+  ]
+}

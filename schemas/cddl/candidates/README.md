@@ -12,3 +12,9 @@ bindings in addition to the CDDL shape.
 authority object. Its candidate payload contains no plan bytes and cannot be submitted by a caller
 to mint registration authority. Exact authenticated-IPC and optional exported-evidence treatment
 remain later decisions.
+
+[`typescript-approved-byte-v0.cddl`](typescript-approved-byte-v0.cddl) defines the separate passive
+ADR-0030 original/executable/profile/options/record object family.
+[`execution-plan-v1-typescript-approved-byte.cddl`](execution-plan-v1-typescript-approved-byte.cddl)
+is an illustrative full-shape atomic migration candidate only. Neither changes the current plan v0
+wrapper or permits dual plan-version acceptance.

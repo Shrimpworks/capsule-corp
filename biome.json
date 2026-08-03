@@ -19,6 +19,7 @@
       "!!schemas/conformance/v0/contexts",
       "!!schemas/conformance/v0/job-proposal",
       "!!schemas/conformance/v0/source-manifest",
+      "!!schemas/conformance/typescript-approved-byte-v0",
       "!!**/.codex/skills",
       "!!.codex/steering/javascript-esm-steering.md"
     ]

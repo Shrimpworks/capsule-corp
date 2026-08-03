@@ -56,5 +56,6 @@ its core conclusion.
 - [ADR-0028: Select governed deno_core as the first runtime candidate](0028-select-governed-deno-core-first.md)
 - [ADR-0029: Select one native-fronted Go Supervisor process for authenticated local IPC](0029-select-authenticated-local-ipc-topology.md)
   — Proposed
+- [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

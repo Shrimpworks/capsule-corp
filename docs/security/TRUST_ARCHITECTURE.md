@@ -16,6 +16,7 @@ DIDs can name principals and verification methods, but do not grant authority.
 | Authority | Owner | Positive authority | Explicit denial |
 | --- | --- | --- | --- |
 | Proposal/planning | Agent-facing daemon | Validate proposals, resolve trusted inputs/policy/profiles, construct and register a plan | Approval signing, user-content custody, backend launch, grant reset |
+| Proposed TypeScript source preparation | Enrolled Source Preparer | Emit and retain exact original/executable/profile/options/record bytes before plan construction | Approval, plan registration, user-content custody, backend launch, post-registration transformation |
 | Human authorization | Approval Broker | Fetch/render registered plan, require user presence, sign one attempt-bound approval | Plan creation, backend launch, enforcement claims |
 | Content custody | Content Broker | Select/snapshot user files, own user content, transfer attempt-scoped handles, release output | Agent endpoint, general network, backend launch |
 | Execution enforcement | Execution Supervisor | Register exact bytes, enforce hard safety, consume grants, create/destroy guests, sign transcript | Public agent parsing, file picker, rich parsing, network trust resolution |
@@ -24,6 +25,10 @@ DIDs can name principals and verification methods, but do not grant authority.
 
 The v0 Trusted Host Broker may combine Human authorization and Content custody in one signed native
 process. Their keys, APIs, and persisted records remain purpose-separated.
+
+Proposed ADR-0032 splits the narrow TypeScript parser/store responsibility from the public daemon.
+The Source Preparer is additional planning and approval-understanding TCB, but receives no
+operational key or execution authority. The proposal remains unimplemented.
 
 ## Why process separation is conditional
 

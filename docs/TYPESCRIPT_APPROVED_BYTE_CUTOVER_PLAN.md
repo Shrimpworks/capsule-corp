@@ -1,19 +1,24 @@
 # TypeScript approved-byte atomic cutover plan
 
-Status: proposed implementation plan; only passive Slice A conformance artifacts exist.
+Status: proposed implementation plan; passive Slice A conformance artifacts and the Slice B design
+decision exist, but no owner/store implementation or consumer is active.
 
 ## Decision checkpoint
 
-Proposed ADR-0030 defines the exact object family and records `OWNER-UNRESOLVED`. No consumer may
-activate until a separate accepted owner/topology ADR names the pre-registration process and its
-packaging, custody, authentication, fault, and update boundaries. SDK-produced transformations
-remain untrusted hints; post-registration or post-approval transformation is always forbidden.
+Proposed ADR-0030 defines the exact object family and originally records `OWNER-UNRESOLVED`.
+[Proposed ADR-0032](adr/0032-select-enrolled-typescript-source-preparer.md) now selects a separate
+unprivileged Source Preparer with an exact one-shot Node worker and one role-namespaced immutable
+source store. The decision is not accepted or implemented. No consumer may activate until its
+evidence gates pass and the coordinated cutover completes. SDK-produced transformations remain
+untrusted hints; post-registration or post-approval transformation is always forbidden.
 
 ## Dependency graph
 
 ```text
-A. passive object family + known answers (this slice)
-  -> B. accepted owner/topology ADR + governed transformer packaging
+A. passive object family + known answers (complete)
+  -> B. Proposed ADR-0032 owner/store design (selected; acceptance and implementation pending)
+       -> B1. passive Source Preparer/store/field-authority fixtures
+       -> B2. fault-injected store + governed transformer/package/installed evidence
   -> C. final CDDL/media/profile review and Swift agreement
   -> D. immutable original/emitted/options/profile/record source-store ownership
   -> E. ExecutionPlan v1 builder + complete role resolver
@@ -41,13 +46,17 @@ graph and do not become valid because the graph completes.
 
 ### Slice B — owner and source-store decision
 
-- Accept a dedicated ADR choosing the transformation owner and rejecting every unauthorized route.
+- Review and accept Proposed ADR-0032's separately enrolled, unprivileged Source Preparer; reject
+  daemon, SDK, Broker, Supervisor, updater, generic parser/helper, runtime, and split-store routes.
 - Bind exact Node/Amaro packaging, executable custody, updater responsibilities, process identity,
   authentication, timeout, cancellation, diagnostics, aggregate capacity, crash recovery, and
   cleanup.
 - Define immutable storage ownership for exact original/emitted file bytes and exact profile,
   options, record, record-set, and manifest bytes. Every accessor returns defensive copies or
   read-only snapshots; no live host path becomes authority.
+- Follow the exact dependency, conformance, and fault gates in
+  [`TYPESCRIPT_SOURCE_PREPARER_PLAN.md`](TYPESCRIPT_SOURCE_PREPARER_PLAN.md). Slice B is not complete
+  merely because the topology is written down.
 
 ### Slice C — complete object-model implementation
 

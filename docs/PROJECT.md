@@ -99,7 +99,9 @@ The bounded TypeScript approved-byte follow-up passed only the pre-approval byte
 question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,
-change current contracts, or admit a runtime.
+change current contracts, or admit a runtime. Proposed ADR-0032 now selects a separate enrolled
+Source Preparer with a one-shot exact Node worker and a role-namespaced immutable source store, but
+no component, store, endpoint, consumer, installed identity, or cutover exists.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)

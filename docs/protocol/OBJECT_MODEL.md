@@ -155,8 +155,9 @@ Proposed ADR-0030 refines ADR-0026 with a passive versioned object family and at
 without changing the current candidate: an original-authoring source manifest, an executable
 JavaScript source manifest, and an ordered transformation-record set all bind into a future plan v1
 before registration. Approval continues to bind the exact plan digest; the runtime may receive only
-the executable role and may never transform from an original-only digest after approval. The
-production transformation owner remains explicitly unresolved.
+the executable role and may never transform from an original-only digest after approval. Proposed
+ADR-0032 selects a separately enrolled Source Preparer and immutable source store as the production
+topology, but that owner is not implemented or accepted and remains an activation blocker.
 
 ## V0 proposal shape
 

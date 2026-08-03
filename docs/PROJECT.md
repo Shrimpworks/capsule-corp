@@ -90,11 +90,18 @@ runtime, and `RUNTIME-001` remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes
 close P0-1 through P0-4. P0-3 now retains independent Go/Node verification of the 43 framing
-vectors and a local process-pipe fault corpus. Its console patch passed local tests, AddressSanitizer,
-Clippy, four restoration mutations, and repetition, while exact coverage exposed zero line coverage
-in two patched files. Neither result exercised the real transport, launcher, guest, or installed
-topology. P0-4A conditionally passed the no-host-root topology only; signing, notarization,
-Gatekeeper, clean-host, and minimum-OS admission remain open.
+vectors and a local process-pipe fault corpus. The public governed libkrun follow-up merged from
+exact head `8a2c91943793668f31a1cf7af431933be935bb58` as
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`. It retains the unchanged five-patch aggregate
+`d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`, adds bounded console and
+raw-FD library corpora, fixes two locally observed shutdown/lifecycle defects, and raises the four
+console files from 13/88 to 37/88 covered functions and from 90/728 to 298/733 covered lines.
+This is fork-source governance, local library, and CI build evidence only. Measured uncovered code,
+the post-merge governed-branch/verifier pin mismatch, independent human/CODEOWNER review, the real
+transport, launcher, guest/VMM, installed composition, signing/notarization,
+distribution/source/SBOM obligations, and final profile reruns remain open.
+P0-4A conditionally passed the no-host-root topology only; Gatekeeper, clean-host, and minimum-OS
+admission also remain open.
 The bounded TypeScript approved-byte follow-up passed only the pre-approval byte-ownership
 question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That

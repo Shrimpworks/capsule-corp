@@ -380,9 +380,62 @@ The sibling console review found that stock libkrun cannot proceed as-is. Govern
 tests, all 51 under AddressSanitizer, warning-denying Clippy with the known deprecated-call
 allowance, 25 shutdown repetitions, and four caught restoration mutations. Exact coverage was only
 90/728 lines (12.362637%) across the four patched files, with `port.rs` and `process_tx.rs` at zero.
-Direct queue/thread/partial-write coverage, independent review, real transport/launcher/guest
-composition, caller-flag closure, a real governed fork, and final installed evidence remain open.
+That retained local result is the before measurement, not the current governed-fork coverage state.
 See the [retained console result](../experiments/gate-c-libkrun-console-correctness/RESULTS.md).
+
+Governed-fork reconciliation (public state read 2026-08-03T22:57:43Z):
+
+- [`dills122/libkrun` PR #2](https://github.com/dills122/libkrun/pull/2) merged exact source head
+  `8a2c91943793668f31a1cf7af431933be935bb58` as merge commit
+  `cf0333cdba478cc34a8570a65b38412da7fd3ecc`. The merge parents are governed base
+  `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5` and that exact head. At read time the source branch
+  still resolved to the head and `capsule/upstream-v1.19.4` resolved to the merge commit.
+- The five retained patch files and aggregate patch-set identity
+  `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5` are unchanged. Their
+  reconstruction still begins at upstream `728df8125077d0db44265f6e997c72b81b65c015` and matches
+  governed base `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`; the follow-up fixes and tests are source changes
+  layered above that base, not rewritten experiment patch bytes.
+- The bounded property corpus exposed and fixed two local defects: shutdown racing a queued,
+  backpressured zero-progress descriptor could re-pop and retry it, and a port whose workers had
+  been joined remained logically active. The merged source checks stop before requeue, parks
+  zero-progress work until signaled, and moves the port to `Inactive` as shutdown takes its worker
+  handles.
+- Four-file console coverage moved from 13/88 functions (14.772727%) and 90/728 lines
+  (12.362637%) to 37/88 functions (42.045455%) and 298/733 lines (40.654843%). `port.rs` moved from
+  0/17 functions and 0/137 lines to 15/17 functions (88.235294%) and 111/137 lines (81.021898%);
+  `process_tx.rs` moved from 0/4 functions and 0/91 lines to 4/4 functions (100%) and 82/96 lines
+  (85.416667%). The measured remaining gaps are 2 functions/26 lines in `port.rs` and 0
+  functions/14 lines in `process_tx.rs`.
+- The governed no-guest wrapper reports 51 retained default tests, 53 `blk` tests including the two
+  existing raw-FD tests, four bounded console/property tests, two raw-FD library-boundary tests,
+  warning-denying Clippy with the retained deprecation allowance, AddressSanitizer over the
+  51+4+2 macOS-arm64 sets, 25/25 shutdown and 25/25 queued-backpressure repetitions, five caught
+  raw-FD mutations, four caught console restoration mutations, formatting/source/header contracts,
+  exact patch reconstruction, and reverse dry-run. The non-`blk` raw-FD target compiled with zero
+  gated tests; no guest was run.
+- GitHub reported 16 head check runs: 13 successes, two intentionally skipped guest-running
+  integration jobs, and the self-hosted `Unit tests (Linux aarch64)` job still queued with no steps
+  or conclusion. The overall head check state was therefore pending. The macOS cross-compilation
+  job, including the default Linux init build, succeeded; both push and pull-request governed
+  no-guest jobs succeeded. GitHub reported no checks for the merge commit itself.
+- Those successes are pre-merge head evidence, not a successful post-merge baseline rerun. At the
+  exact merge, `capsule/upstream-v1.19.4` resolves to `cf0333cdba478cc34a8570a65b38412da7fd3ecc`,
+  while `verify-patch-queue.sh` still requires that branch to equal
+  `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`. Read-only inspection therefore predicts—and the
+  script deliberately defines—a fail-closed `governed baseline branch moved` result before patch
+  reconstruction on the current branch tip. The unchanged local five-patch aggregate still
+  reproduces exactly; branch-policy consistency does not.
+- GitHub reported no submitted review, no requested reviewer/team, and the exact CODEOWNERS rule
+  names `@dills122`, who also authored and merged the PR. Independent human review and an evidenced
+  CODEOWNER review therefore remain open; merge and green checks do not satisfy that governance
+  requirement.
+
+This closes the stale zero-coverage and archived-only descriptions, not P0-3. Measured uncovered
+code, the governed branch/verifier invariant, caller-flag closure, control/queue/descriptor
+fuzzing, real virtio transport, the distinct launcher and child/runner FD manifests,
+guest/VMM/forced-teardown behavior, installed App Sandbox, and final profile evidence remain open.
+Fork source identity, local library tests, CI build evidence, earlier owned-guest custody evidence,
+and product/backend admission are separate classes.
 
 ### P0-4: complete installed development bundle
 
@@ -422,11 +475,13 @@ only ticket is not sufficient.
 
 The next non-credential work is:
 
-1. independently review and mutation-test the FD-native, direct-block-root, and console patches as
-   one closed source/API composition;
+1. repair the governed baseline/ref/verifier invariant without rewriting the retained five patch
+   bytes, then independently review the exact merge and full FD-native, direct-block-root, console,
+   and follow-up source/API composition; explicitly map the follow-up deltas and close the measured
+   uncovered lines/functions with bounded tests and mutations;
 2. carry the independently reproduced 43 P0-3 vectors into the selected host/launcher languages,
-   close the measured console coverage gaps, and complete the distinct launcher, child manifest,
-   and exact runner FD manifest;
+   complete hostile control/queue/descriptor coverage, and implement the distinct launcher, child
+   manifest, and exact runner FD manifest before any real-guest composition;
 3. extend the merged `dills122/rusty_v8` governed follow-up with a fully pinned Linux/arm64
    builder/publication sibling profile, then reconstruct the merged governed Deno candidate,
    deterministic V8 publication/link/notice evidence, and runtime-root packaging,

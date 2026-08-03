@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"sync"
@@ -22,6 +21,10 @@ import (
 type StoreFault string
 
 const (
+	SupervisorStoreFormatV0 = uint64(0)
+	SupervisorStoreFormatV1 = uint64(1)
+	MaxSupervisorStateBytes = int64(16 << 20)
+
 	FaultTimeHighWaterWrite                  StoreFault = "time-high-water-write"
 	FaultTimeHighWaterIndeterminatePreState  StoreFault = "time-high-water-indeterminate-pre-state"
 	FaultTimeHighWaterCommitIndeterminate    StoreFault = "time-high-water-commit-indeterminate"
@@ -259,23 +262,22 @@ func (store *FixedFileStore) takeFault(point StoreFault) error {
 }
 
 func loadState(path string) (installationState, error) {
-	file, err := os.Open(path)
+	data, err := readBoundedStoreFile(path)
 	if err != nil {
-		return installationState{}, errors.New("open fixed registration store")
+		return installationState{}, err
 	}
-	defer file.Close()
-	decoder := json.NewDecoder(io.LimitReader(file, 16<<20))
-	decoder.DisallowUnknownFields()
-	var envelope diskEnvelope
-	if err := decoder.Decode(&envelope); err != nil {
+	var header struct {
+		StoreFormatVersion *uint64 `json:"storeFormatVersion"`
+	}
+	if err := json.Unmarshal(data, &header); err != nil {
 		return installationState{}, errors.New("decode fixed registration store")
 	}
-	if envelope.StoreFormatVersion != 0 {
+	if header.StoreFormatVersion == nil || *header.StoreFormatVersion != SupervisorStoreFormatV0 {
 		return installationState{}, errors.New("unsupported fixed registration store version")
 	}
-	var trailing any
-	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
-		return installationState{}, errors.New("fixed registration store has trailing data")
+	var envelope diskEnvelope
+	if err := decodeOneClosedJSON(data, &envelope); err != nil {
+		return installationState{}, errors.New("decode fixed registration store")
 	}
 	if err := validateState(envelope.State); err != nil {
 		return installationState{}, err
@@ -306,7 +308,7 @@ func persistStateWithBoundary(path string, state installationState, afterRename 
 	}
 	encoder := json.NewEncoder(temporary)
 	encoder.SetEscapeHTML(false)
-	if err := encoder.Encode(diskEnvelope{StoreFormatVersion: 0, State: state}); err != nil {
+	if err := encoder.Encode(diskEnvelope{StoreFormatVersion: SupervisorStoreFormatV0, State: state}); err != nil {
 		return errors.New("encode fixed registration transaction")
 	}
 	if err := temporary.Sync(); err != nil {

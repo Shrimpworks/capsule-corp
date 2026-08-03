@@ -6,6 +6,8 @@ failed Apple Containerization as a production backend; libkrun/Hypervisor.framew
 lead native candidate under evaluation, but its exact profile remains unadmitted. The FD-native
 root API is a `PATCH-CANDIDATE`; the direct-block-root `NullFs` disposition is `GOVERNED-PATCH`,
 making removal credible but not final; and the current runtime bytes are not admissible. A
+public governed libkrun follow-up has since merged exact console/raw-FD library hardening and
+coverage source, but it adds no guest, VMM, installed-product, or profile-admission evidence. A
 post-track independent review and
 source-research reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until
 file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
@@ -158,7 +160,9 @@ subprocess/FFI surface adds an earlier runtime-authority admission question. Lat
 experiments narrowed, but did not close, those gates: the FD-native raw-root API became a
 `PATCH-CANDIDATE`; a direct-block-root prototype selected `GOVERNED-PATCH` and reran the bounded
 device corpus without `NullFs`; a 43-vector backend-independent framing model conditionally passed;
-a 51-test local console patch established that stock console handling cannot proceed as-is; and
+a 51-test local console baseline established that stock console handling cannot proceed as-is; the
+later public governed follow-up fixed two observed lifecycle defects, added bounded console/raw-FD
+library corpora, and materially raised measured coverage without exercising a guest or VMM; and
 P0-4A conditionally passed an 18-role no-host-root topology while exposing App Sandbox, signing,
 notarization, Gatekeeper, clean-host, and macOS-floor gaps. None of those results admits a backend
 or permits user bytes. The later

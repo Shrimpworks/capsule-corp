@@ -12,13 +12,22 @@ source store. The decision is not accepted or implemented. No consumer may activ
 evidence gates pass and the coordinated cutover completes. SDK-produced transformations remain
 untrusted hints; post-registration or post-approval transformation is always forbidden.
 
+The retained
+[P0 authority/TCB checkpoint](TYPESCRIPT_SOURCE_PREPARER_P0_AUTHORITY_REVIEW.md) places passive
+Source Preparer P1 work on hold. The topology is conditionally retained as the least-dangerous
+TypeScript option, but its role-namespaced store is not a same-user security boundary by itself and
+Node/Amaro remains full planning/store TCB until proven confined. P1 cannot freeze APIs or bytes
+until every checkpoint entry criterion is satisfied; failure of a stop condition leaves
+JavaScript-only admission as the bounded fallback or requires a new ADR.
+
 ## Dependency graph
 
 ```text
 A. passive object family + known answers (complete)
   -> B. Proposed ADR-0032 owner/store design (selected; acceptance and implementation pending)
-       -> B1. passive Source Preparer/store/field-authority fixtures
-       -> B2. fault-injected store + governed transformer/package/installed evidence
+       -> B0. P0 authority/TCB platform-boundary closure (HOLD)
+            -> B1. passive Source Preparer/store/field-authority fixtures
+                 -> B2. fault-injected store + governed transformer/package/installed evidence
   -> C. final CDDL/media/profile review and Swift agreement
   -> D. immutable original/emitted/options/profile/record source-store ownership
   -> E. ExecutionPlan v1 builder + complete role resolver
@@ -57,6 +66,9 @@ graph and do not become valid because the graph completes.
 - Follow the exact dependency, conformance, and fault gates in
   [`TYPESCRIPT_SOURCE_PREPARER_PLAN.md`](TYPESCRIPT_SOURCE_PREPARER_PLAN.md). Slice B is not complete
   merely because the topology is written down.
+- Before B1, prove one OS-enforced single-member store container, close worker process-tree and
+  package/store authority, select the sealed store-genesis/update channel, settle archive/release
+  and cancellation/death semantics, and design recursive nested-member field-authority coverage.
 
 ### Slice C — complete object-model implementation
 

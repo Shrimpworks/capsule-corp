@@ -23,28 +23,34 @@ a pass.
 ## Dependency order
 
 ```text
-P0 Proposed ADR-0032 review and field-authority reconciliation
-  -> P1 passive method/store objects and exact cross-language fixtures
-       -> P2 unwired Go validator and fault-injected immutable temporary store
-            -> P3 fixed one-shot Node worker and governed package evidence
-                 -> P4 no-product native authentication/sandbox composition
-                      -> P5 Apple Development installed/update/recovery matrix
-                           -> P6 ADR-0030 ExecutionPlan/RegisterPlan v1 atomic cutover
-                                -> P7 Developer ID/notarized clean-host activation review
+P0 Proposed ADR-0032 adversarial authority/TCB review
+  -> P0A protected-store, worker-confinement, bootstrap/update, and authority-schema closure
+       -> P1 passive method/store objects and exact cross-language fixtures
+            -> P2 unwired Go validator and fault-injected immutable temporary store
+                 -> P3 fixed one-shot Node worker and governed package evidence
+                      -> P4 no-product native authentication/sandbox composition
+                           -> P5 Apple Development installed/update/recovery matrix
+                                -> P6 ADR-0030 ExecutionPlan/RegisterPlan v1 atomic cutover
+                                     -> P7 Developer ID/notarized clean-host activation review
 ```
 
-P1 may prepare fixture readers in Go, TypeScript, and Swift in parallel only after one exact field-
-authority manifest owns every field. P2 and P3 remain unwired and may proceed independently after
-P1. P4 composes them. P6 cannot begin until P1-P5 evidence either closes the relevant gate or the
-ADR is revised. Authenticated-local-IPC S1 resumes only against the versioned v1 registration
-shape selected in P6; the legacy 562-byte `RegisterPlanV0` record is never frozen or reinterpreted.
+P1 is on hold at the retained
+[P0 authority/TCB checkpoint](TYPESCRIPT_SOURCE_PREPARER_P0_AUTHORITY_REVIEW.md). P0A must satisfy
+every checkpoint entry criterion and stop condition first. P1 may then prepare fixture readers in
+Go, TypeScript, and Swift in parallel only after the canonical object inventory and a recursive
+field-authority schema/verifier design are reviewable together. P2 and P3 remain unwired and may
+proceed independently after P1. P4 composes them. P6 cannot begin until P1-P5 evidence either
+closes the relevant gate or the ADR is revised. Authenticated-local-IPC S1 resumes only against the
+versioned v1 registration shape selected in P6; the legacy 562-byte `RegisterPlanV0` record is never
+frozen or reinterpreted.
 
 ## P0 — decision and authority review
 
 Review ADR-0032 with ADR-0010/0011/0013/0018/0026/0029/0030/0031, the merged S1 consistency stop,
-and the canonical field-authority manifest. The current manifest's 164 entries cover the passive
-approved-byte family but not plan v1 or Source Preparer methods/store state; extend that one
-manifest during the versioned cutover rather than creating a parallel classification. Confirm:
+and the canonical field-authority manifest. The current manifest covers the passive approved-byte
+family but not plan v1 or Source Preparer methods/store state. P0 must not add unverifiable manifest
+targets before their canonical objects exist; P1 must add the objects, entries, and verifier support
+atomically rather than creating a parallel classification. Confirm:
 
 - a separate unprivileged planning component, not a generic or privileged helper;
 - no Broker, Supervisor, updater, daemon, SDK, runtime, or backend transformation owner;
@@ -55,10 +61,15 @@ manifest during the versioned cutover rather than creating a parallel classifica
 - no path/descriptor/transform option crosses a caller boundary; and
 - plan v1 registration replaces rather than extends the v0 binding record.
 
-Exit evidence: reviewed Proposed ADR plus a machine-readable manifest entry for every method field,
-store field, plan projection, and registered internal source reference. Any new key, backend route,
-Broker content access, Supervisor transform responsibility, generic lookup, or third service stops
-the plan and requires another ADR revision.
+Exit evidence: the retained P0 checkpoint, ADR/threat/control refinements, and an explicit P1 HOLD.
+P0A exit evidence is: an exact OS-enforced single-member store container with hostile same-user and
+stale-process negative probes; an exact worker child profile or an explicit decision that Node is
+full store TCB; a sealed installer-owned genesis/update descriptor; settled archive/release and
+cancellation/death semantics; canonical Source Preparer object identifiers; and a field-authority
+schema/verifier design that classifies every nested tuple member and permits one required validator
+per independent consumer. Any new key, backend route, Broker content access, Supervisor transform
+responsibility, generic lookup, third service, or weakened same-user model stops the plan and
+requires another ADR revision.
 
 ## P1 — passive objects, calculated maxima, and known answers
 
@@ -90,7 +101,11 @@ Required positive known answers:
 7. registration-intent resolve, abort, and exact replay;
 8. registration retain and approval readback;
 9. executable-only attempt readback; and
-10. final idempotent release with retained tombstone.
+10. final idempotent release refusal with a retained tombstone and unchanged blob references.
+
+A positive blob-reference decrement is deliberately excluded from P1 until the archive/retention
+decision selects one exact durable release authority. When selected, it needs a new positive known
+answer and crash/replay/capacity oracles before implementation.
 
 Required negative oracles include:
 
@@ -111,7 +126,8 @@ Required negative oracles include:
   record with no selected schema.
 
 Exit evidence: independent Go/TypeScript/Swift agreement where each language participates,
-fixture-generator idempotence, exact file hashes/counts, and no product import or endpoint.
+fixture-generator idempotence, exact file hashes/counts, recursive nested-member field-authority
+coverage with all required independent validators, and no product import or endpoint.
 
 ## P2 — unwired Go owner, validators, and temporary store
 
@@ -168,9 +184,13 @@ Package and verify:
 - source/distribution/executable/Amaro/bootstrap hashes and complete notice/license inventory;
 - fixed argv, empty environment, working directory, inherited descriptor allowlist, and no loader,
   config, package, network, debug, inspector, addon, or user path input;
+- an exact OS child profile that denies the source store and package tree after executable open,
+  network, process discovery/attach, descendant persistence, dynamic/native loading, arbitrary
+  filesystem access, and every descriptor except bounded stdin/stdout/stderr and the process handle;
 - exact regular-file/no-link/non-user-writable installed artifact custody;
 - worker exit, signal, timeout, pipe truncation, extra frame, trailing bytes, stdout/stderr flood,
-  parent cancellation, parent death, and orphan identity/reaping;
+  parent cancellation, parent death, pre-bind death, and process-handle/start/code-identity orphan
+  reaping without PID-only action;
 - two-worker/8,912,896-byte reservation saturation and a third-call `CAPACITY` refusal; and
 - all retained TypeScript semantic/cap/mutation fixtures, 100 repeated same-process-set runs, and
   25 fresh-process runs.
@@ -182,7 +202,9 @@ parser crash and hang only with fixed benign fault hooks or retained non-hostile
 Exit evidence: reproducible exact package inventory, SBOM/notices, worker fixture hashes, timing and
 peak-memory distributions at exact maxima, and explicit limits. This slice does not establish App
 Sandbox, signed peer identity, independent rebuilding, or production source/license closure unless
-the retained evidence actually does so.
+the retained evidence actually does so. If the child profile cannot prove store and package
+separation, Node/Amaro remains full Source Preparer/store TCB; if that consequence is unacceptable,
+the TypeScript path stops.
 
 ## P4 — no-product native authentication and composition
 
@@ -315,7 +337,8 @@ platform or credentialed case explicitly.
 | daemon cannot mint trusted emission | fabricated set ID/object/profile or daemon-direct worker call refuses before registration state |
 | no path becomes authority | any request/reply/store accessor accepting or returning a host path, URL, fd, bookmark, or mmap fails conformance |
 | worker cannot choose authority | changed argv/env/loader/options/digest/record/output destination refuses or is ignored and parent-recomputed |
-| one immutable source owner | caller/store/accessor mutation cannot change committed readback; unknown mutation quarantines |
+| protected source-store ownership | daemon/Broker/Supervisor/updater/stale-Preparer/unrelated same-user opens, links, replaces, maps, renames, or retains no handle to the store; unknown mutation quarantines |
+| worker authority is bounded or explicit | child-profile probes deny store/package/network/process/native-loading authority; otherwise evidence labels Node/Amaro full store TCB |
 | independent registration validation | each digest/media/path/order/member/pass-through/record mutation refuses before registration commit |
 | independent approval validation | same mutations refuse before Broker signature operation |
 | registration binds retention | approval/attempt remains disabled until idempotent source retain is committed |

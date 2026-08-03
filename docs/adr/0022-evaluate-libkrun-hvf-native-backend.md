@@ -7,6 +7,7 @@
 - P0-0 stock-runtime result: 2026-08-02
 - P0-1 FD-native patch candidate: 2026-08-02
 - P0-3 cross-language and console coverage result: 2026-08-03
+- Governed fork source reconciliation: 2026-08-03
 - Refines: ADR-0020
 
 ## Context
@@ -44,6 +45,18 @@ user-data disks. A genuine inherited read-only descriptor exposed as `/dev/fd/N`
 runtime-root custody candidate. The same review found that stock Bun's subprocess and FFI APIs do
 not satisfy the documented prohibited-power contract merely because the binary is pinned. All
 three conclusions remain P0 hypotheses until their exact installed corpora pass.
+
+The five retained libkrun patches now have a public governed source record. Their unchanged
+aggregate identity is `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`,
+reconstructed from upstream `728df8125077d0db44265f6e997c72b81b65c015` to governed base
+`4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`. A bounded console/raw-FD follow-up merged from exact
+head `8a2c91943793668f31a1cf7af431933be935bb58` as
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`. It fixed two locally observed console
+shutdown/lifecycle defects and raised measured coverage, but ran no guest and received no recorded
+independent human or CODEOWNER review. The post-merge baseline branch also no longer satisfies the
+verifier's hardcoded `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5` branch pin, so current
+source-governance consistency fails closed even though the five patch bytes and aggregate remain
+exact. This changes source identity and library evidence only.
 
 ## Decision
 
@@ -88,10 +101,14 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   bound frame plus input, result-validation, integrity, and teardown evidence; runner exit status
   alone is never success.
 - Port admission includes the guest-facing virtio control/queue/descriptor implementation and a
-  closed host-runner FD manifest, not only application framing. Pinned unchecked guest port IDs,
-  non-stop-aware transmit waiting, undocumented negative-FD directionality, shared `O_NONBLOCK`
-  status mutation, and partial-then-error handling must be patched or pass an exact fail-closed
-  corpus. The host continuously drains to cap-plus-one and never uses EOF as completion.
+  closed host-runner FD manifest, not only application framing. The governed follow-up bounds the
+  previously unchecked port-ID and stop-aware transmit cases, prevents zero-progress re-pop during
+  shutdown, and makes shutdown return a port to `Inactive`. Its four-file coverage is 37/88
+  functions and 298/733 lines, with 2 functions/26 lines in `port.rs` and 14 lines in
+  `process_tx.rs` still uncovered. Undocumented negative-FD directionality, shared `O_NONBLOCK`
+  status mutation, remaining hostile control/queue/descriptor coverage, and real composition must
+  still pass an exact fail-closed corpus. The host continuously drains to cap-plus-one and never
+  uses EOF as completion.
 - Pinning Bun proves byte identity, not absence of runtime powers. The exact stock Bun 1.3.14 P0-0
   investigation and the follow-up governed-construction review both failed. The latter found a
   40-hand-authored plus 10-generated-output minimum and triggered its broad/unreviewable stop rule.
@@ -112,8 +129,12 @@ three conclusions remain P0 hypotheses until their exact installed corpora pass.
   for the v0 milestone. If no-host-root custody fails, libkrun fails that profile. Any later
   exception requires a new ADR covering authorization, installation, update, recovery, compromise
   radius, supported macOS floor, and comparison with memory-backed storage or another backend.
-- Capsule must upstream the two patches or maintain a governed fork with exact source publication,
-  SBOM/provenance, advisories, and LGPL/GPL source-compliance handling for libkrunfw and its kernel.
+- Capsule now maintains a public governed five-patch source line and exact follow-up merge, but this
+  is not a release. The branch/ref/verifier invariant must first be repaired without rewriting the
+  retained patch bytes. Independent human/CODEOWNER review, a complete mapping of the follow-up
+  deltas, exact source publication, SBOM/provenance, advisories, update/removal operations, and
+  LGPL/GPL source-compliance handling for libkrunfw and its kernel remain required unless
+  equivalent changes are accepted upstream.
 - An early signed installed harness may test App Sandbox, service, descriptor, identity, and minimum-
   OS assumptions, but it cannot admit the backend. After P0 selects mechanisms and patches, Capsule
   rebuilds the complete final app and reruns every affected gate on those signed/notarized bytes;
@@ -162,5 +183,8 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
 - [`experiments/gate-c-libkrun-root-custody/RESULTS.md`](../../experiments/gate-c-libkrun-root-custody/RESULTS.md)
 - [`experiments/gate-c-p0-3-protocol-conformance/RESULTS.md`](../../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md)
 - [`experiments/gate-c-libkrun-console-correctness/RESULTS.md`](../../experiments/gate-c-libkrun-console-correctness/RESULTS.md)
+- [`dills122/libkrun` PR #2](https://github.com/dills122/libkrun/pull/2), exact
+  [source head](https://github.com/dills122/libkrun/commit/8a2c91943793668f31a1cf7af431933be935bb58),
+  and exact [merge commit](https://github.com/dills122/libkrun/commit/cf0333cdba478cc34a8570a65b38412da7fd3ecc)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)

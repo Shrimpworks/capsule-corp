@@ -31,3 +31,8 @@ bytes are conformance inputs, not an activated planner or accepted ADR. Regenera
 [`conformance/typescript-approved-byte-v0/`](conformance/typescript-approved-byte-v0/) is a
 separate nine-fixture, fourteen-mutation passive corpus for Proposed ADR-0030. It has no consumer
 and does not change the active scaffold or the existing v0 conformance manifest.
+
+[`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
+and exact coverage notes. Repository verification compares its 164 field entries with 15 selected
+current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or
+nonexistent classifications. This is a pre-freeze development invariant, not schema admission.

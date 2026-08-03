@@ -1,0 +1,284 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:authority:field-authority-manifest:v0",
+  "title": "Capsule passive field-authority manifest v0",
+  "description": "Closed development-time classification for selected passive pre-freeze target fields. This schema does not freeze or activate a protocol object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifestVersion", "status", "vocabularyVersion", "profiles", "targets"],
+  "properties": {
+    "manifestVersion": {
+      "const": "capsule.field-authority-manifest/v0"
+    },
+    "status": {
+      "const": "passive-pre-freeze-development-invariant"
+    },
+    "vocabularyVersion": {
+      "const": "capsule.field-authority-vocabulary/v0"
+    },
+    "profiles": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/classificationProfile"
+      }
+    },
+    "targets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/target"
+      }
+    }
+  },
+  "$defs": {
+    "classificationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityClass",
+        "originRole",
+        "validator",
+        "resolver",
+        "authorityEffect",
+        "approvalVisibility",
+        "contentStatus",
+        "binding",
+        "unknownBehavior"
+      ],
+      "properties": {
+        "authorityClass": {
+          "enum": [
+            "protocol-discriminator",
+            "untrusted-proposal-data",
+            "approval-visible-authority",
+            "supervisor-authoritative-state",
+            "content-capability",
+            "runtime-authority",
+            "backend-authority",
+            "evidence-only-observation",
+            "non-authoritative-metadata"
+          ]
+        },
+        "originRole": {
+          "enum": [
+            "agent",
+            "daemon-planner",
+            "trusted-policy-resolver",
+            "approval-broker",
+            "execution-supervisor",
+            "passive-fixture-generator"
+          ]
+        },
+        "validator": {
+          "enum": [
+            "strict-job-proposal-decoder",
+            "execution-plan-cbor-decoder",
+            "plan-registration-cbor-decoder",
+            "approval-grant-cose-cbor-verifier",
+            "approval-attempt-record-validator",
+            "typescript-approved-byte-fixture-verifier"
+          ]
+        },
+        "resolver": {
+          "enum": [
+            "none",
+            "job-proposal-semantic-resolver",
+            "execution-plan-role-resolver",
+            "registration-state-resolver",
+            "approval-ledger-binding-resolver",
+            "attempt-cross-link-resolver",
+            "fixture-known-answer-resolver"
+          ]
+        },
+        "authorityEffect": {
+          "enum": [
+            "none",
+            "requests-authority",
+            "changes-authority",
+            "narrows-authority",
+            "selects-predeclared-alternative",
+            "records-evidence"
+          ]
+        },
+        "approvalVisibility": {
+          "$ref": "#/$defs/approvalVisibility"
+        },
+        "contentStatus": {
+          "$ref": "#/$defs/contentStatus"
+        },
+        "binding": {
+          "enum": [
+            "unbound-untrusted-proposal",
+            "execution-plan-v0-exact-bytes-and-digest",
+            "supervisor-registration-record",
+            "approval-grant-v0-signature-and-registration",
+            "durable-approval-record",
+            "atomic-execution-attempt-record",
+            "passive-approved-byte-v0-exact-cbor-digest"
+          ]
+        },
+        "unknownBehavior": {
+          "enum": [
+            "reject-proposal",
+            "reject-plan",
+            "reject-registration",
+            "reject-approval",
+            "reject-durable-record",
+            "reject-attempt",
+            "reject-passive-fixture"
+          ]
+        }
+      }
+    },
+    "approvalVisibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "source"],
+      "properties": {
+        "mode": {
+          "enum": ["not-rendered", "must-render", "must-render-after-versioned-cutover"]
+        },
+        "source": {
+          "enum": [
+            "none",
+            "registered-execution-plan-v0",
+            "supervisor-registration-record",
+            "signed-approval-grant-v0",
+            "future-registered-execution-plan-v1"
+          ]
+        }
+      }
+    },
+    "contentStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["userContent", "guestControl"],
+      "properties": {
+        "userContent": {
+          "enum": ["none", "identity-only", "may-contain"]
+        },
+        "guestControl": {
+          "enum": ["none", "untrusted-value", "derived-from-untrusted", "guest-observation"]
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object", "version", "definition", "fields"],
+      "properties": {
+        "object": {
+          "type": "string",
+          "pattern": "^capsule\\.[a-z0-9.-]+$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "definition": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/jsonSchemaDefinition"
+            },
+            {
+              "$ref": "#/$defs/cddlDefinition"
+            },
+            {
+              "$ref": "#/$defs/goStructDefinition"
+            }
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/field"
+          }
+        }
+      }
+    },
+    "jsonSchemaDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path"],
+      "properties": {
+        "kind": {
+          "const": "json-schema"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^schemas/.+\\.schema\\.json$"
+        }
+      }
+    },
+    "cddlDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "rule"],
+      "properties": {
+        "kind": {
+          "const": "cddl-map"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^schemas/.+\\.cddl$"
+        },
+        "rule": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      }
+    },
+    "goStructDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "type"],
+      "properties": {
+        "kind": {
+          "const": "go-struct"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^internal/.+\\.go$"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9]*$"
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sourceField", "profile"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^/(?:[A-Za-z0-9*-]+)(?:/[A-Za-z0-9*-]+)*$"
+        },
+        "sourceField": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          ]
+        },
+        "profile": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        }
+      }
+    }
+  }
+}

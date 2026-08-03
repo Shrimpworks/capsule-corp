@@ -1,0 +1,864 @@
+{
+  "manifestVersion": "capsule.field-authority-manifest/v0",
+  "status": "passive-pre-freeze-development-invariant",
+  "vocabularyVersion": "capsule.field-authority-vocabulary/v0",
+  "profiles": {
+    "proposal-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "proposal-source": {
+      "authorityClass": "untrusted-proposal-data",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "job-proposal-semantic-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "proposal-selector": {
+      "authorityClass": "untrusted-proposal-data",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "job-proposal-semantic-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "proposal-content": {
+      "authorityClass": "content-capability",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "job-proposal-semantic-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "proposal-runtime": {
+      "authorityClass": "runtime-authority",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "job-proposal-semantic-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "proposal-metadata": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
+    "plan-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "daemon-planner",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-trust-state": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "trusted-policy-resolver",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-content": {
+      "authorityClass": "content-capability",
+      "originRole": "daemon-planner",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-runtime": {
+      "authorityClass": "runtime-authority",
+      "originRole": "trusted-policy-resolver",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-runtime-label": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "daemon-planner",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "derived-from-untrusted" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-backend": {
+      "authorityClass": "backend-authority",
+      "originRole": "trusted-policy-resolver",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-policy": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "trusted-policy-resolver",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "plan-limit-output": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "trusted-policy-resolver",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "contentStatus": { "userContent": "none", "guestControl": "derived-from-untrusted" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-plan"
+    },
+    "registration-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "execution-supervisor",
+      "validator": "plan-registration-cbor-decoder",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "supervisor-registration-record",
+      "unknownBehavior": "reject-registration"
+    },
+    "registration-state": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "execution-supervisor",
+      "validator": "plan-registration-cbor-decoder",
+      "resolver": "registration-state-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "supervisor-registration-record",
+      "unknownBehavior": "reject-registration"
+    },
+    "registration-plan": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "execution-supervisor",
+      "validator": "plan-registration-cbor-decoder",
+      "resolver": "registration-state-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "binding": "supervisor-registration-record",
+      "unknownBehavior": "reject-registration"
+    },
+    "approval-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "approval-broker",
+      "validator": "approval-grant-cose-cbor-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "approval-grant-v0-signature-and-registration",
+      "unknownBehavior": "reject-approval"
+    },
+    "approval-binding": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "approval-broker",
+      "validator": "approval-grant-cose-cbor-verifier",
+      "resolver": "approval-ledger-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "signed-approval-grant-v0" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "binding": "approval-grant-v0-signature-and-registration",
+      "unknownBehavior": "reject-approval"
+    },
+    "supervisor-reference": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "approval-ledger-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "durable-approval-record",
+      "unknownBehavior": "reject-durable-record"
+    },
+    "approval-record-authority": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "approval-ledger-binding-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "binding": "durable-approval-record",
+      "unknownBehavior": "reject-durable-record"
+    },
+    "approval-record-bytes": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "approval-broker",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "approval-ledger-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "binding": "durable-approval-record",
+      "unknownBehavior": "reject-durable-record"
+    },
+    "approval-envelope-evidence": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "none",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "durable-approval-record",
+      "unknownBehavior": "reject-durable-record"
+    },
+    "durable-record-version": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "durable-approval-record",
+      "unknownBehavior": "reject-durable-record"
+    },
+    "attempt-authority": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "attempt-cross-link-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "binding": "atomic-execution-attempt-record",
+      "unknownBehavior": "reject-attempt"
+    },
+    "attempt-record-version": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "execution-supervisor",
+      "validator": "approval-attempt-record-validator",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "atomic-execution-attempt-record",
+      "unknownBehavior": "reject-attempt"
+    },
+    "typescript-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "passive-fixture-generator",
+      "validator": "typescript-approved-byte-fixture-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-approved-byte-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "typescript-original-content": {
+      "authorityClass": "content-capability",
+      "originRole": "passive-fixture-generator",
+      "validator": "typescript-approved-byte-fixture-verifier",
+      "resolver": "fixture-known-answer-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": {
+        "mode": "must-render-after-versioned-cutover",
+        "source": "future-registered-execution-plan-v1"
+      },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "passive-approved-byte-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "typescript-executable-content": {
+      "authorityClass": "runtime-authority",
+      "originRole": "passive-fixture-generator",
+      "validator": "typescript-approved-byte-fixture-verifier",
+      "resolver": "fixture-known-answer-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": {
+        "mode": "must-render-after-versioned-cutover",
+        "source": "future-registered-execution-plan-v1"
+      },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "passive-approved-byte-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "typescript-runtime": {
+      "authorityClass": "runtime-authority",
+      "originRole": "passive-fixture-generator",
+      "validator": "typescript-approved-byte-fixture-verifier",
+      "resolver": "fixture-known-answer-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": {
+        "mode": "must-render-after-versioned-cutover",
+        "source": "future-registered-execution-plan-v1"
+      },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-approved-byte-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
+    }
+  },
+  "targets": [
+    {
+      "object": "capsule.job-proposal",
+      "version": 0,
+      "definition": {
+        "kind": "json-schema",
+        "path": "schemas/candidates/job-proposal-v0.schema.json"
+      },
+      "fields": [
+        {
+          "path": "/apiVersion",
+          "sourceField": "/apiVersion",
+          "profile": "proposal-discriminator"
+        },
+        { "path": "/kind", "sourceField": "/kind", "profile": "proposal-discriminator" },
+        { "path": "/source", "sourceField": "/source", "profile": "proposal-source" },
+        {
+          "path": "/source/entrypoint",
+          "sourceField": "/source/entrypoint",
+          "profile": "proposal-selector"
+        },
+        { "path": "/source/files", "sourceField": "/source/files", "profile": "proposal-source" },
+        {
+          "path": "/source/files/*",
+          "sourceField": "/source/files/*",
+          "profile": "proposal-source"
+        },
+        {
+          "path": "/runtimeProfile",
+          "sourceField": "/runtimeProfile",
+          "profile": "proposal-runtime"
+        },
+        { "path": "/input", "sourceField": "/input", "profile": "proposal-content" },
+        { "path": "/input/slot", "sourceField": "/input/slot", "profile": "proposal-selector" },
+        { "path": "/input/kind", "sourceField": "/input/kind", "profile": "proposal-selector" },
+        { "path": "/input/value", "sourceField": "/input/value", "profile": "proposal-content" },
+        {
+          "path": "/requestedLimits",
+          "sourceField": "/requestedLimits",
+          "profile": "proposal-selector"
+        },
+        {
+          "path": "/requestedLimits/wallTimeMs",
+          "sourceField": "/requestedLimits/wallTimeMs",
+          "profile": "proposal-selector"
+        },
+        { "path": "/outputs", "sourceField": "/outputs", "profile": "proposal-selector" },
+        {
+          "path": "/outputs/*/slot",
+          "sourceField": "/outputs/*/slot",
+          "profile": "proposal-selector"
+        },
+        {
+          "path": "/outputs/*/kind",
+          "sourceField": "/outputs/*/kind",
+          "profile": "proposal-selector"
+        },
+        {
+          "path": "/outputs/*/maxBytes",
+          "sourceField": "/outputs/*/maxBytes",
+          "profile": "proposal-selector"
+        },
+        { "path": "/labels", "sourceField": "/labels", "profile": "proposal-metadata" },
+        { "path": "/labels/*", "sourceField": "/labels/*", "profile": "proposal-metadata" }
+      ]
+    },
+    {
+      "object": "capsule.execution-plan",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/execution-plan-v0.cddl",
+        "rule": "capsule-execution-plan-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "plan-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "plan-discriminator" },
+        { "path": "/installationId", "sourceField": 3, "profile": "plan-trust-state" },
+        { "path": "/epochSequence", "sourceField": 4, "profile": "plan-trust-state" },
+        { "path": "/epochDigest", "sourceField": 5, "profile": "plan-trust-state" },
+        { "path": "/sourceManifestDigest", "sourceField": 6, "profile": "plan-content" },
+        { "path": "/sourceEntrypoint", "sourceField": 7, "profile": "plan-content" },
+        { "path": "/sourceByteLength", "sourceField": 8, "profile": "plan-content" },
+        { "path": "/inputSlot", "sourceField": 9, "profile": "plan-content" },
+        { "path": "/inlineInputDigest", "sourceField": 10, "profile": "plan-content" },
+        { "path": "/inlineInputByteLength", "sourceField": 11, "profile": "plan-content" },
+        { "path": "/runtimeProfileAlias", "sourceField": 12, "profile": "plan-runtime-label" },
+        { "path": "/runtimeBundleManifestDigest", "sourceField": 13, "profile": "plan-runtime" },
+        {
+          "path": "/profileReviewAttestationDigests",
+          "sourceField": 14,
+          "profile": "plan-runtime"
+        },
+        { "path": "/profileRegistryEntryDigest", "sourceField": 15, "profile": "plan-runtime" },
+        { "path": "/backendValidationRecordDigest", "sourceField": 16, "profile": "plan-backend" },
+        { "path": "/backendConfigurationDigest", "sourceField": 17, "profile": "plan-backend" },
+        { "path": "/trustSnapshotDigest", "sourceField": 18, "profile": "plan-policy" },
+        { "path": "/policyDecisionDigest", "sourceField": 19, "profile": "plan-policy" },
+        { "path": "/wallTimeMs", "sourceField": 20, "profile": "plan-limit-output" },
+        { "path": "/wallTimeOrigin", "sourceField": 21, "profile": "plan-limit-output" },
+        { "path": "/outputSlot", "sourceField": 22, "profile": "plan-limit-output" },
+        { "path": "/outputMaxJsonBytes", "sourceField": 23, "profile": "plan-limit-output" },
+        { "path": "/expiresAt", "sourceField": 24, "profile": "plan-trust-state" }
+      ]
+    },
+    {
+      "object": "capsule.plan-registration",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/plan-registration-v0.cddl",
+        "rule": "capsule-plan-registration-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "registration-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "registration-discriminator" },
+        { "path": "/registrationId", "sourceField": 3, "profile": "registration-state" },
+        { "path": "/registrationSequence", "sourceField": 4, "profile": "registration-state" },
+        { "path": "/planDigest", "sourceField": 5, "profile": "registration-plan" },
+        { "path": "/installationId", "sourceField": 6, "profile": "registration-state" },
+        { "path": "/epochSequence", "sourceField": 7, "profile": "registration-state" },
+        { "path": "/epochDigest", "sourceField": 8, "profile": "registration-state" },
+        { "path": "/supervisorId", "sourceField": 9, "profile": "registration-state" },
+        { "path": "/expiresAt", "sourceField": 10, "profile": "registration-state" }
+      ]
+    },
+    {
+      "object": "capsule.approval-grant",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/approval-grant-v0.cddl",
+        "rule": "capsule-approval-grant-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "approval-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "approval-discriminator" },
+        { "path": "/installationId", "sourceField": 3, "profile": "approval-binding" },
+        { "path": "/epochDigest", "sourceField": 4, "profile": "approval-binding" },
+        { "path": "/registrationId", "sourceField": 5, "profile": "approval-binding" },
+        { "path": "/planDigest", "sourceField": 6, "profile": "approval-binding" },
+        { "path": "/supervisorId", "sourceField": 7, "profile": "approval-binding" },
+        { "path": "/attemptNonce", "sourceField": 8, "profile": "approval-binding" },
+        { "path": "/purpose", "sourceField": 9, "profile": "approval-binding" },
+        { "path": "/audience", "sourceField": 10, "profile": "approval-binding" },
+        { "path": "/issuedAt", "sourceField": 11, "profile": "approval-binding" },
+        { "path": "/expiresAt", "sourceField": 12, "profile": "approval-binding" }
+      ]
+    },
+    {
+      "object": "capsule.approval-reference",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/approvalattempt/types.go",
+        "type": "ApprovalReference"
+      },
+      "fields": [
+        { "path": "/approvalId", "sourceField": "approvalID", "profile": "supervisor-reference" }
+      ]
+    },
+    {
+      "object": "capsule.attempt-reference",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/approvalattempt/types.go",
+        "type": "AttemptReference"
+      },
+      "fields": [
+        { "path": "/attemptId", "sourceField": "attemptID", "profile": "supervisor-reference" }
+      ]
+    },
+    {
+      "object": "capsule.approval-record",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/approvalattempt/types.go",
+        "type": "ApprovalRecord"
+      },
+      "fields": [
+        {
+          "path": "/approvalId",
+          "sourceField": "ApprovalID",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/attemptNonce",
+          "sourceField": "AttemptNonce",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/registrationId",
+          "sourceField": "RegistrationID",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/registrationSequence",
+          "sourceField": "RegistrationSequence",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/planDigest",
+          "sourceField": "PlanDigest",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": "SupervisorID",
+          "profile": "approval-record-authority"
+        },
+        { "path": "/purpose", "sourceField": "Purpose", "profile": "approval-record-authority" },
+        { "path": "/audience", "sourceField": "Audience", "profile": "approval-record-authority" },
+        { "path": "/issuedAt", "sourceField": "IssuedAt", "profile": "approval-record-authority" },
+        {
+          "path": "/expiresAt",
+          "sourceField": "ExpiresAt",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/payloadDigest",
+          "sourceField": "PayloadDigest",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/envelopeDigest",
+          "sourceField": "EnvelopeDigest",
+          "profile": "approval-envelope-evidence"
+        },
+        {
+          "path": "/exactEnvelopeBytes",
+          "sourceField": "ExactEnvelopeBytes",
+          "profile": "approval-record-bytes"
+        },
+        {
+          "path": "/exactPayloadBytes",
+          "sourceField": "ExactPayloadBytes",
+          "profile": "approval-record-bytes"
+        },
+        {
+          "path": "/exactProtectedBytes",
+          "sourceField": "ExactProtectedBytes",
+          "profile": "approval-record-bytes"
+        },
+        {
+          "path": "/protectedKeyId",
+          "sourceField": "ProtectedKeyID",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/authorizationIdentity",
+          "sourceField": "AuthorizationIdentity",
+          "profile": "approval-record-authority"
+        },
+        { "path": "/state", "sourceField": "State", "profile": "approval-record-authority" },
+        {
+          "path": "/consumedAttemptId",
+          "sourceField": "ConsumedAttemptID",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/storageFormatVersion",
+          "sourceField": "StorageFormatVersion",
+          "profile": "durable-record-version"
+        }
+      ]
+    },
+    {
+      "object": "capsule.execution-attempt",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/approvalattempt/types.go",
+        "type": "ExecutionAttempt"
+      },
+      "fields": [
+        { "path": "/attemptId", "sourceField": "AttemptID", "profile": "attempt-authority" },
+        { "path": "/approvalId", "sourceField": "ApprovalID", "profile": "attempt-authority" },
+        { "path": "/attemptNonce", "sourceField": "AttemptNonce", "profile": "attempt-authority" },
+        {
+          "path": "/registrationId",
+          "sourceField": "RegistrationID",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/registrationSequence",
+          "sourceField": "RegistrationSequence",
+          "profile": "attempt-authority"
+        },
+        { "path": "/planDigest", "sourceField": "PlanDigest", "profile": "attempt-authority" },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "attempt-authority"
+        },
+        { "path": "/epochDigest", "sourceField": "EpochDigest", "profile": "attempt-authority" },
+        { "path": "/supervisorId", "sourceField": "SupervisorID", "profile": "attempt-authority" },
+        { "path": "/purpose", "sourceField": "Purpose", "profile": "attempt-authority" },
+        { "path": "/audience", "sourceField": "Audience", "profile": "attempt-authority" },
+        {
+          "path": "/approvalPayloadDigest",
+          "sourceField": "ApprovalPayloadDigest",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/authorizationIdentity",
+          "sourceField": "AuthorizationIdentity",
+          "profile": "attempt-authority"
+        },
+        { "path": "/createdAt", "sourceField": "CreatedAt", "profile": "attempt-authority" },
+        { "path": "/state", "sourceField": "State", "profile": "attempt-authority" },
+        {
+          "path": "/storageFormatVersion",
+          "sourceField": "StorageFormatVersion",
+          "profile": "attempt-record-version"
+        }
+      ]
+    },
+    {
+      "object": "capsule.original-authoring-source-manifest",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-original-authoring-source-manifest-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/entrypoint", "sourceField": 3, "profile": "typescript-original-content" },
+        { "path": "/entries", "sourceField": 4, "profile": "typescript-original-content" },
+        {
+          "path": "/aggregateByteLength",
+          "sourceField": 5,
+          "profile": "typescript-original-content"
+        }
+      ]
+    },
+    {
+      "object": "capsule.executable-javascript-source-manifest",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-executable-javascript-source-manifest-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/entrypoint", "sourceField": 3, "profile": "typescript-executable-content" },
+        { "path": "/entries", "sourceField": 4, "profile": "typescript-executable-content" },
+        {
+          "path": "/aggregateByteLength",
+          "sourceField": 5,
+          "profile": "typescript-executable-content"
+        }
+      ]
+    },
+    {
+      "object": "capsule.typescript-transformer-profile",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-typescript-transformer-profile-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/transformerApi", "sourceField": 3, "profile": "typescript-runtime" },
+        { "path": "/nodeVersion", "sourceField": 4, "profile": "typescript-runtime" },
+        { "path": "/amaroVersion", "sourceField": 5, "profile": "typescript-runtime" },
+        { "path": "/nodeSourceArchiveDigest", "sourceField": 6, "profile": "typescript-runtime" },
+        { "path": "/platform", "sourceField": 7, "profile": "typescript-runtime" },
+        { "path": "/architecture", "sourceField": 8, "profile": "typescript-runtime" },
+        { "path": "/distributionArchiveDigest", "sourceField": 9, "profile": "typescript-runtime" },
+        { "path": "/installedExecutableDigest", "sourceField": 10, "profile": "typescript-runtime" }
+      ]
+    },
+    {
+      "object": "capsule.typescript-normalized-options",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-typescript-normalized-options-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/mode", "sourceField": 3, "profile": "typescript-runtime" },
+        { "path": "/diagnosticPolicy", "sourceField": 4, "profile": "typescript-runtime" },
+        { "path": "/sourceMap", "sourceField": 5, "profile": "typescript-runtime" },
+        { "path": "/sourceUrl", "sourceField": 6, "profile": "typescript-runtime" },
+        { "path": "/inputMediaType", "sourceField": 7, "profile": "typescript-runtime" },
+        { "path": "/outputMediaType", "sourceField": 8, "profile": "typescript-runtime" }
+      ]
+    },
+    {
+      "object": "capsule.typescript-transformation-record",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-typescript-transformation-record-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/logicalPath", "sourceField": 3, "profile": "typescript-original-content" },
+        {
+          "path": "/originalMediaType",
+          "sourceField": 4,
+          "profile": "typescript-original-content"
+        },
+        {
+          "path": "/originalByteLength",
+          "sourceField": 5,
+          "profile": "typescript-original-content"
+        },
+        { "path": "/originalDigest", "sourceField": 6, "profile": "typescript-original-content" },
+        {
+          "path": "/emittedMediaType",
+          "sourceField": 7,
+          "profile": "typescript-executable-content"
+        },
+        {
+          "path": "/emittedByteLength",
+          "sourceField": 8,
+          "profile": "typescript-executable-content"
+        },
+        { "path": "/emittedDigest", "sourceField": 9, "profile": "typescript-executable-content" },
+        { "path": "/transformerProfileDigest", "sourceField": 10, "profile": "typescript-runtime" },
+        { "path": "/nodeVersion", "sourceField": 11, "profile": "typescript-runtime" },
+        { "path": "/amaroVersion", "sourceField": 12, "profile": "typescript-runtime" },
+        { "path": "/nodeSourceArchiveDigest", "sourceField": 13, "profile": "typescript-runtime" },
+        {
+          "path": "/distributionArchiveDigest",
+          "sourceField": 14,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/installedExecutableDigest",
+          "sourceField": 15,
+          "profile": "typescript-runtime"
+        },
+        { "path": "/normalizedOptionsBytes", "sourceField": 16, "profile": "typescript-runtime" },
+        { "path": "/normalizedOptionsDigest", "sourceField": 17, "profile": "typescript-runtime" },
+        { "path": "/sourceMap", "sourceField": 18, "profile": "typescript-runtime" },
+        { "path": "/sourceUrl", "sourceField": 19, "profile": "typescript-runtime" },
+        { "path": "/diagnosticPolicy", "sourceField": 20, "profile": "typescript-runtime" },
+        { "path": "/diagnosticCount", "sourceField": 21, "profile": "typescript-runtime" }
+      ]
+    },
+    {
+      "object": "capsule.typescript-transformation-record-set",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-typescript-transformation-record-set-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        { "path": "/records", "sourceField": 3, "profile": "typescript-runtime" }
+      ]
+    },
+    {
+      "object": "capsule.typescript-plan-source-bindings",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/typescript-approved-byte-v0.cddl",
+        "rule": "capsule-typescript-plan-source-bindings-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
+        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        {
+          "path": "/originalAuthoringManifestDigest",
+          "sourceField": 3,
+          "profile": "typescript-original-content"
+        },
+        {
+          "path": "/executableJavascriptManifestDigest",
+          "sourceField": 4,
+          "profile": "typescript-executable-content"
+        },
+        {
+          "path": "/transformationRecordSetDigest",
+          "sourceField": 5,
+          "profile": "typescript-runtime"
+        }
+      ]
+    }
+  ]
+}

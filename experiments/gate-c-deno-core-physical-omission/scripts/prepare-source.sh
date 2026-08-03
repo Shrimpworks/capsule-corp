@@ -22,11 +22,13 @@ mkdir -p "$work"
 tar -xzf "$2" -C "$work"
 "$experiment/review-phase-a.sh" "$1" "$deno"
 tar -xzf "$1" -C "$work"
-git apply --directory="$core" "$experiment/patches/0001-physically-allowlist-bootstrap-ops.patch"
-git apply --directory="$core" "$experiment/patches/0002-canonicalize-snapshot-module-order.patch"
-git apply --check --reverse --directory="$core" \
+git apply --unsafe-paths --directory="$core" \
   "$experiment/patches/0001-physically-allowlist-bootstrap-ops.patch"
-git apply --check --reverse --directory="$core" \
+git apply --unsafe-paths --directory="$core" \
+  "$experiment/patches/0002-canonicalize-snapshot-module-order.patch"
+git apply --unsafe-paths --check --reverse --directory="$core" \
+  "$experiment/patches/0001-physically-allowlist-bootstrap-ops.patch"
+git apply --unsafe-paths --check --reverse --directory="$core" \
   "$experiment/patches/0002-canonicalize-snapshot-module-order.patch"
 
 echo "reviewed physical-omission source prepared at $core"

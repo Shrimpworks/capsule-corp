@@ -139,10 +139,15 @@ loader or ambient extensions and used V8 `--jitless`, but `JsRuntime` still phys
 99 built-in core ops before middleware disabled 96. `deno_core` also has no TypeScript pipeline;
 preserving exact approved-byte semantics requires a separately pinned pre-approval transformation
 and coordinated plan/schema/ADR binding. Neither construction is selected, no Proposed ADR
-supersedes ADR-0003, and `RUNTIME-001` continues to refuse. The retained next experiment is a
-governed `deno_core` fork that physically omits nonessential built-ins before snapshot, external
-seal, or TypeScript work. See the
-[retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md).
+supersedes ADR-0003, and `RUNTIME-001` continues to refuse. The governed physical-omission follow-up
+then reduced the registry to three bootstrap ops and reproduced its snapshot/binary. A later
+packaging experiment replaced the local-only builder with a digest-pinned no-apt recipe and complete
+offline Cargo source bundle, reproducing the same bytes in two clean same-host containers. It
+failed the stronger selection-evidence gate because independent-builder provenance, exact
+archive-corresponding V8 source/notices, and a standalone dynamic runtime root remain missing. See
+the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md),
+[physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
+[package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md).
 
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
 The exact fork reduced the built-in registry from 99 ops to the three bootstrap-required ops with
@@ -387,9 +392,10 @@ The next non-credential work is:
    one closed source/API composition;
 2. reproduce the 43 P0-3 vectors in the selected host/launcher languages and complete the console
    sanitizer/coverage corpus, distinct launcher, child manifest, and exact runner FD manifest;
-3. decide the governed `deno_core` packaging/provenance, complete restoration/backstop review,
-   approved-byte TypeScript disposition, and external-isolation/profile composition without
-   weakening `RUNTIME-001`; and
+3. close governed `deno_core` independent-builder, V8 source/notice, and runtime-root packaging,
+   complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
+   candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;
+   and
 4. finish the final role, descriptor, runtime/kernel/init, source/license, SBOM/provenance, and
    minimum-OS build inputs so the exact package can be rebuilt before signing.
 

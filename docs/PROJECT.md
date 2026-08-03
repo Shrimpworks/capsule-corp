@@ -53,8 +53,11 @@ remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint rejects stock Bun 1.3.14, its governed-construction branch, hardened full Deno v2.9.4,
 and the tested minimal `deno_core` 0.409.0 construction for the required runtime-authority contract.
-The later governed `deno_core` fork passed only the narrow physical-omission question; it did not
-select or admit a runtime. No first runtime is selected and `RUNTIME-001` remains unsupported. The
+The later governed `deno_core` fork passed only the narrow physical-omission question. Its package
+follow-up reproduced the exact snapshot and binary on one owned host from a digest-pinned no-apt
+builder and complete locked Cargo source bundle, but independent-builder provenance,
+archive-corresponding V8 source/notices, and a standalone dynamic runtime root remain open. It did
+not select or admit a runtime. No first runtime is selected and `RUNTIME-001` remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes
 close P0-1 through P0-4. P0-3 retains a backend-independent 43-vector framing candidate and a local
@@ -69,6 +72,7 @@ admit a runtime.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
+and [governed package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 and [TypeScript approved-byte result](../experiments/typescript-approved-byte-boundary/RESULTS.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 

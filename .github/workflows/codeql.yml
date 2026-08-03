@@ -23,9 +23,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language:
-          - go
-          - javascript-typescript
+        include:
+          # Go is compiled; CodeQL needs to build it to extract from.
+          - language: go
+            build-mode: autobuild
+          # JS/TS has no build step CodeQL can drive; "none" extracts
+          # source directly. "autobuild" is not a supported mode for
+          # this language and fails init outright.
+          - language: javascript-typescript
+            build-mode: none
 
     steps:
       - name: Check out repository
@@ -35,7 +41,7 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
-          build-mode: autobuild
+          build-mode: ${{ matrix.build-mode }}
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4

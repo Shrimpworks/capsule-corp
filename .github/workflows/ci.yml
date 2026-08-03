@@ -40,6 +40,11 @@ jobs:
           version: v2.12.2
 
       - name: Vulnerability scan
+        env:
+          # govulncheck@latest requires a newer Go than go.mod pins for the
+          # project itself; let `go run` fetch a matching toolchain just for
+          # this tool instead of restricting it to the local one.
+          GOTOOLCHAIN: auto
         run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
       - name: Test

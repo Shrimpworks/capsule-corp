@@ -2,8 +2,9 @@
 
 Date: 2026-08-03
 
-Status: blocked decision record. No S1 message, bridge, reply, refusal, or field-authority fixture
-was generated.
+Status: architecture decision recorded; fixture work remains blocked. The architecture owner
+selected ADR-0030's versioned atomic-cutover path. No S1 message, bridge, reply, refusal, or
+field-authority fixture was generated.
 
 ## Defensive scope
 
@@ -16,10 +17,11 @@ deployment and accessed no external system, credential, identity, or data.
 Can S1 retain one exact 562-byte complete role-binding record while also including the three
 distinct TypeScript approved-byte source roles merged with ADR-0030?
 
-No. Preserve the current authority contracts and stop S1 fixture construction until the
-registration method/version and complete role-binding field set are revised together. Encoding a
-fixture now would either omit approved-byte authority, conflate nominal roles, or reinterpret a
-v0 method as v1. Each option is an authority change, not a fixture-only implementation choice.
+No. The architecture owner selected ADR-0030's versioned atomic cutover. S1 fixture construction
+stays stopped until the dependency chain below produces a finalized plan, complete role model, and
+newly versioned registration method and binding record. Encoding a fixture now would either omit
+approved-byte authority, conflate nominal roles, or reinterpret a v0 method as v1. Each option is
+an authority change, not a fixture-only implementation choice.
 
 ## Exact conflict
 
@@ -53,6 +55,10 @@ plan likewise forbids freezing or reinterpreting 562 bytes for the three new pla
 current TypeScript and Go registration/lifecycle bindings still contain the single v0
 `sourceManifestDigest`; the approved-byte roles remain separate passive Slice A fixtures.
 
+`RegisterPlanV0` and its 562-byte projection therefore remain historical/current-plan-v0 design
+only. They will not be frozen into an S1 corpus. The 626-byte arithmetic above is not an approved
+layout, cap, record, or known answer.
+
 ## Retained baselines and counts
 
 This stop preserves the existing generated corpora unchanged:
@@ -74,28 +80,31 @@ Relevant retained known answers are:
 | Transformation-record set | 714 | `5738283a5accdbd8b736af81982dc46068172ec502f5c43e4113fe7de10c76eb` |
 
 There is no retained 562-byte S1 record and no 626-byte successor known answer. Producing either
-would cross the unresolved decision boundary.
+would violate the selected atomic-cutover path.
 
-## Required integration decision
+## Selected integration path
 
-Before S1 resumes, architecture owners must choose and record one of these non-equivalent scopes:
+S1 may resume only after this dependency order completes:
 
-- retain a deliberately legacy, plan-v0-only `RegisterPlanV0` S1 corpus using exactly the current
-  single-source role, with no claim that it covers approved-byte plan v1; or
-- follow ADR-0030's atomic cutover and define a versioned registration method and complete binding
-  record, replacement caps, and downstream plan/registration/approval/attempt/lifecycle fixtures.
+1. accept the transformation-owner and immutable source-store topology;
+2. finalize `ExecutionPlan` v1 and its complete nominal role model;
+3. merge and integrate the separately developed canonical field-authority manifest;
+4. define a newly versioned registration method and binding record with reviewed field order,
+   exact caps, cap-plus-one behavior, and cross-language known answers; and
+5. explicitly review the other registration fetch, approval submission, and attempt-request
+   method projections and version each one whose typed shape changes.
 
-The separately developed field-authority manifest is an integration dependency after that choice.
-This task did not duplicate it, infer its field ownership, or create a parallel manifest. S1
-classification should consume that canonical manifest only after it merges and after the chosen
-method/version defines the fields to classify.
+There is no dual active v0/v1 acceptance, optional transformation role, generic fallback, or field
+inference. This task did not duplicate the field-authority manifest, infer its field ownership, or
+create a parallel manifest. S1 classification must consume that canonical manifest only after it
+merges and after the newly versioned method defines the fields to classify.
 
 ## Deferred boundaries
 
 - S1 common-header, four-request, four-success-reply, fixed-refusal, maxima/cap-plus-one,
   copy-ownership, response-loss, idempotency, and state/effect oracle fixtures remain uncreated.
-- S2 remains blocked on the shared S1 bytes and the selected v0-only or versioned complete-role
-  contract. It must not resolve the ambiguity inside a Go facade.
+- S2 remains blocked on the shared newly versioned S1 bytes and finalized complete-role contract.
+  It must not define the missing record or field authority inside a Go facade.
 - S3 remains blocked on the same shared fixture contract. It must not use native message parsing to
   create a de facto field or version decision.
 
@@ -106,5 +115,5 @@ remain unchanged.
 
 Confidence is high because the size result follows directly from fixed-width fields and ADR-0030
 states the versioning rule explicitly. This record does not decide the eventual method name,
-record layout, field authority, migration order, or whether a legacy v0-only S1 corpus is worth
-retaining.
+record layout, field authority, exact cap, known answer, or other method-version outcomes; those
+belong to the selected dependency chain.

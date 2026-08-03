@@ -30,10 +30,11 @@ The proposed exact validator and registration rules for the next slice are in
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
-The authenticated local IPC S1 fixture slice is currently stopped at a versioned-authority
-consistency gate. The retained
+The authenticated local IPC S1 fixture slice follows ADR-0030's selected versioned atomic-cutover
+path and remains blocked on its dependency chain. The retained
 [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md) records why ADR-0029's
-562-byte v0 binding record cannot silently absorb ADR-0030's three approved-byte source roles.
+562-byte v0 binding record will not be frozen or silently absorb ADR-0030's three approved-byte
+source roles.
 
 ## Detailed authority and trust documents
 

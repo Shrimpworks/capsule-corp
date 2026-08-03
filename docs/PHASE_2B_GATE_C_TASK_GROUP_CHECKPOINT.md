@@ -6,6 +6,12 @@ Status: integrated local checkpoint. This document records the completed paralle
 the next implementation boundary. It does not accept ADR-0023, activate a public endpoint, admit a
 runtime or backend, or authorize user bytes.
 
+Historical-status note: the P0-2 row below records the earlier minimal-removal result at `d3be865`.
+PR #30 later selected `GOVERNED-PATCH` after a direct-block-root prototype booted and reran the
+bounded corpus without `NullFs`; removal remains credible but unadmitted. Current status lives in
+the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
+[workstream ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+
 ## Task group
 
 | Workstream | Task provenance | Integration | Result |

@@ -1,9 +1,10 @@
 # Gate C P0 reconciliation
 
 Date: 2026-08-01
+Evidence last reconciled: 2026-08-02
 
-Status: planning decision after independent adversarial review and targeted source research. This
-document refines the remaining work in the
+Status: planning decision with retained P0 evidence checkpoints after independent adversarial
+review and targeted source research. This document refines the remaining work in the
 [Gate C readiness synthesis](GATE_C_READINESS_CHECKPOINT.md). It records hypotheses to test; it is
 not new backend evidence, a frozen libkrun profile, or permission to execute user bytes.
 
@@ -23,12 +24,12 @@ closes. Broad backend research is no longer the next step.
 | Question | Decision | Evidence status |
 | --- | --- | --- |
 | Must Capsule fork libkrun for immutable disks? | The stock `/dev/fd/N` route passed the local identity/guest corpus but retained pathname semantics. A governed raw-only FD-native fallback is now a patch candidate. Prefer direct Supervisor-to-runner inheritance; add descriptor-transfer IPC only if the installed lifecycle requires post-spawn transfer. | FD-native local and owned-guest corpus passed; exact signed installed App Sandbox/protected-construction corpus remains untested. |
-| Must source and inline input be block devices? | No for the first slice. Use bounded, attempt-bound virtio-console ports for source/input delivery. Keep the immutable block-custody problem scoped to the trusted runtime root and any later file-artifact storage. | The pinned libkrun header exposes generic multiport console APIs; the exact protocol and hostile cases remain untested. |
-| Must completion use runner status or a result disk? | No. Runner exit is lifecycle evidence only. Use one bounded typed completion/result frame on a dedicated port and bind it to the attempt and expected profile. | Required design; not implemented. |
+| Must source and inline input be block devices? | No for the first slice. Use bounded, attempt-bound virtio-console ports for source/input delivery. Keep the immutable block-custody problem scoped to the trusted runtime root and any later file-artifact storage. | A 43-vector backend-independent framing candidate conditionally passed; real transport, launcher, guest, and installed checks remain. |
+| Must completion use runner status or a result disk? | No. Runner exit is lifecycle evidence only. Use one bounded typed completion/result frame on a dedicated port and bind it to the attempt and expected profile. | The backend-independent frame/commit model conditionally passed; it is not implemented in the real transport or launcher. |
 | Is ext4 parsing P0 for inline JSON? | No. Carry bounded JSON in the typed result frame. A disposable ext4/raw-image parser becomes a gate for the later file-artifact slice. | Scope decision; no parser posture is promoted. |
-| Is `NullFs` coupled to custody? | No. Remove it or independently review and fuzz the exact guest-facing virtiofs parser surface. | Existing exact profile remains failed until this closes. |
+| Is `NullFs` coupled to custody? | No. Carry the direct-block-root design as a narrow reviewed governed patch; fall back to complete virtiofs acceptance or reject the profile if that branch fails. | `GOVERNED-PATCH`: prototype removal is credible, not admitted; the current unpatched profile remains unsupported. |
 | Does stock Bun satisfy the documented no-subprocess/no-FFI contract? | No. The exact Bun 1.3.14 source/binary investigation observed process, `execve`, FFI/native-loader, inspector, Worker, and descriptor authority despite all relevant stock flags. Preserve the contract; evaluate only a governed patched/external mechanism or alternate runtime, and change the contract only by ADR. | Stock Bun is rejected for this claim; `RUNTIME-001` remains unsupported. |
-| Does no-host-root remain plausible? | Yes, provisionally: test one complete signed/notarized app containing the enrolled per-user Supervisor/runner/runtime topology and an embedded `SMAppService` registration. Do not add privilege silently if it fails. | Packaging hypothesis; clean-host and minimum-OS evidence remain open. |
+| Does no-host-root remain plausible? | Yes, provisionally. Continue the per-user Supervisor/runner/runtime topology and embedded `SMAppService`; do not add privilege silently if final packaging fails. | P0-4A conditionally passed 18-role topology enumeration, ad-hoc identity, registration, explicit activation, and same-session recovery. Valid Apple signing, App Sandbox, notarization, Gatekeeper, clean-host, on-demand activation, and supported-floor evidence remain open. |
 
 The multiport API names observed in libkrun 1.19.4 are
 `krun_add_virtio_console_multiport` and `krun_add_console_port_inout`. Their presence is not proof
@@ -143,6 +144,16 @@ governed `deno_core` fork that physically omits nonessential built-ins before sn
 seal, or TypeScript work. See the
 [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md).
 
+Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
+The exact fork reduced the built-in registry from 99 ops to the three bootstrap-required ops with
+a one-file physical-omission patch; runtime/symbol inspection observed only those three, fixed
+restoration mutations failed closed, and ASLR-controlled clean builds reproduced the snapshot and
+binary. This closes only the pre-registration/final-link question. TypeScript approved-byte
+semantics, independently reconstructible packaging/provenance, complete restoration/backstop
+review, external isolation composition, and runtime-profile admission remain open. No runtime is
+selected, ADR-0003 is not superseded, and `RUNTIME-001` remains unsupported. See the
+[retained physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md).
+
 ### P0-1: immutable runtime-root custody
 
 Goal: prove that a concurrent same-user attacker cannot change or substitute bytes observed through
@@ -230,15 +241,24 @@ unresolved high-severity findings, and residual limitations. Describe the surfac
 absent or proven bug-free. Custody and `NullFs` remain independent decisions even if one libkrun
 patch eventually changes both areas.
 
-Evidence checkpoint (2026-08-02): the bounded replacement investigation found no independent
+Earlier evidence checkpoint (2026-08-02): the bounded replacement investigation found no independent
 virtiofs feature toggle and confirmed that `krun_set_root_disk_remount` always adds `NullFs` in the
 exact retained block-root route. Removing only that device built but failed before init because the
 dummy virtiofs root supplies the bootstrap file and mount points. This falsifies the smallest
 removal, not all alternate-bootstrap designs. The existing 47-device-test/one-libkrun-test suites
 and Go profile fuzzing do not cover the complete FUSE/queue/worker/overlay path, and the pinned tree
-has no relevant fuzz target or retained sanitizer/coverage corpus. P0-2 therefore remains open and
-the current profile remains unsupported. See the
+has no relevant fuzz target or retained sanitizer/coverage corpus. See the
 [P0-2 investigation](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md).
+
+Later disposition checkpoint (2026-08-02): **`GOVERNED-PATCH`; removal credible but not admitted**.
+A direct-block-root prototype placed the trusted init inside the immutable root, booted
+`/dev/vda` directly, and remounted `/` `ro,nosuid,nodev`. It exposed only balloon, RNG, console,
+and block devices, no virtiofs device or mount, denied the network probe, exposed no usable vsock,
+and reran 36 adversarial plus four identity cases without the original `NullFs` failure. The three
+failures were expected ad-hoc-signing identity limitations. This does not close P0-2: the patch
+needs independent source/API review, route-closure mutations, final P0-1 custody, P0-3 transport,
+and the complete signed/notarized P0-4 corpus. The current unpatched profile remains unsupported.
+See the [retained disposition](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md).
 
 ### P0-3: typed port transport and completion
 
@@ -299,6 +319,21 @@ Pass: ordinary success requires a valid frame plus separate input-integrity, bou
 runtime-integrity, runner-lifecycle, and teardown dispositions. Runner exit zero never substitutes
 for a missing frame.
 
+Evidence checkpoint (2026-08-02): **conditional pass for a falsifiable backend-independent
+candidate; P0-3 remains open**. The retained local model contains 43 byte-exact vectors. It measured
+1,048,576 source bytes, 262,144 canonical-input bytes, 262,144 inline-result JSON bytes, and a
+262,368-byte physical completion frame; exact boundaries passed and cap-plus-one failed across four
+read chunk sizes. It also retained drain/flood, stall/death, binding, role, JSON, commit-ordering,
+EOF, runner-exit, and crash cases. No virtio-console, launcher, runtime, guest, VMM, App Sandbox,
+Supervisor, approval, or teardown mechanism participated. See the
+[retained protocol result](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md).
+
+The sibling console review found that stock libkrun cannot proceed as-is. Governed patch SHA-256
+`584ce48548fe969684fe3c55e57fbf56e7dae40af28c241c24c47b138faf1283` passed 51 local library
+tests, including four focused regressions, but lacks independent review, full sanitizer/coverage,
+real transport/launcher/guest composition, caller-flag closure, and final installed evidence. See
+the [retained console result](../experiments/gate-c-libkrun-console-correctness/RESULTS.md).
+
 ### P0-4: complete installed development bundle
 
 Goal: admit the exact bytes and topology that will run the first development slice without host-
@@ -308,6 +343,17 @@ P0-4A builds an early signed installed-topology harness containing the Superviso
 libkrun/libkrunfw, firmware/kernel/root, candidate runtime and launcher, entitlements, manifests,
 and embedded per-user service registration. It tests App Sandbox, service, descriptor-manifest,
 process-identity, recovery, and minimum-OS assumptions but cannot admit the backend.
+
+Evidence checkpoint (2026-08-02): **conditional P0-4A topology pass; no admission**. The retained
+harness enumerated 18 roles and verified 17 non-self-referential installed entries, kept
+`backendAdmitted=false`, registered and explicitly activated an embedded per-user `SMAppService`,
+enforced exact ad-hoc CDHash identity in both IPC directions, refused stale/missing/mixed/unexpected
+components and FD 8, and recovered after same-session Supervisor death. It created no guest and did
+not load libkrun. With zero valid signing identities, the App-Sandboxed runner failed before
+`main`, Gatekeeper rejected the app, pure on-demand activation remained open, and the exact assembled
+candidate inherited a macOS 26.0 floor from libkrunfw. No notarized, stapled, clean-host, supported-
+floor, session, or P0-0-through-P0-3-composed evidence exists. See the
+[retained P0-4A result](../experiments/gate-c-installed-development-topology/RESULTS.md).
 
 After P0-0 through P0-3 select exact mechanisms and patches, P0-4B rebuilds the complete final app
 with source/license material and reruns every affected P0 gate on the final signed/notarized bytes.
@@ -321,6 +367,27 @@ macOS support floor. The resulting `BackendValidationRecord` verdict is at most
 `development-admitted`; it binds exact final bytes/configuration, passed claims, known limitations,
 evidence digests, expiry and invalidation triggers and cannot authorize `validated-local`. A runner-
 only ticket is not sufficient.
+
+## Exact next work and credential boundary
+
+The next non-credential work is:
+
+1. independently review and mutation-test the FD-native, direct-block-root, and console patches as
+   one closed source/API composition;
+2. reproduce the 43 P0-3 vectors in the selected host/launcher languages and complete the console
+   sanitizer/coverage corpus, distinct launcher, child manifest, and exact runner FD manifest;
+3. decide the governed `deno_core` packaging/provenance, complete restoration/backstop review,
+   approved-byte TypeScript disposition, and external-isolation/profile composition without
+   weakening `RUNTIME-001`; and
+4. finish the final role, descriptor, runtime/kernel/init, source/license, SBOM/provenance, and
+   minimum-OS build inputs so the exact package can be rebuilt before signing.
+
+The signing-dependent blockers are a valid Apple Development or Developer ID signing identity for
+the hardened App Sandbox runner, protected-container custody test, and Team-enrolled installed IPC;
+Developer ID signing/notarization credentials for complete-bundle notarization, stapling, and
+Gatekeeper assessment; and installed-byte, clean-host, session/recovery, and support-floor
+validation on those exact signed bytes. P0-4B and final P0-1/P0-2/P0-3 installed reruns cannot pass
+without that evidence.
 
 ## Work that starts before P0 closes
 

@@ -1,8 +1,9 @@
 # Phase 2B durable attempt lifecycle implementation and conformance plan
 
-Status: design only. Proposed ADR-0025 selects one colocated Supervisor snapshot and transaction
-domain for future durable `AttemptID`-keyed fake lifecycle state. No durable lifecycle behavior,
-consumer, IPC, evidence, runtime, real backend, or guest is implemented by this document.
+Status: Slice E1 passive lifecycle contracts implemented; Slices E2 through E5 unwired. Proposed
+ADR-0025 selects one colocated Supervisor snapshot and transaction domain for future durable
+`AttemptID`-keyed fake lifecycle state. The E1 types perform no I/O or adapter call and do not make
+lifecycle state durable. No consumer, IPC, evidence, runtime, real backend, or guest is implemented.
 
 Normative proposal:
 [ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md).
@@ -253,13 +254,18 @@ a permissive fallback.
 
 ## Small implementation slices
 
-### Slice E1: passive lifecycle contract
+### Slice E1: passive lifecycle contract — merged in PR #42
 
 - Add the closed runtime-neutral record, effect, instance, result, and validation types.
 - Add byte/collection ceilings and defensive-copy tests.
 - Preserve every copied Slice B binding and prove wrong-domain/cross-link rejection.
 
 Acceptance: passive tests only; no store write, adapter call, consumer, or guest.
+
+Implemented checkpoint: `internal/execution/lifecyclestate` now contains the closed passive types,
+validations, ceilings, domain checks, and defensive-copy behavior with focused local tests. This is
+the complete E1 boundary only. E2 migration/storage, E3 transactions, E4 durable fake driver and
+startup, and E5 capacity/coordination evidence do not exist yet.
 
 ### Slice E2: fixed snapshot v1 and explicit migration
 

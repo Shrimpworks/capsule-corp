@@ -22,7 +22,8 @@ export class CapsuleClient {
 
   async health(signal?: AbortSignal): Promise<"ok"> {
     const response = await this.#request("healthz", signal);
-    const body = (await response.json()) as { status: string };
+    const body: unknown = await response.json();
+    assertHealthResponse(body);
 
     if (body.status !== "ok") {
       throw new Error(`unexpected daemon health status: ${body.status}`);
@@ -33,12 +34,15 @@ export class CapsuleClient {
 
   async version(signal?: AbortSignal): Promise<VersionInfo> {
     const response = await this.#request("v1/version", signal);
-    return (await response.json()) as VersionInfo;
+    const body: unknown = await response.json();
+    assertVersionInfo(body);
+    return body;
   }
 
   async listRuntimes(signal?: AbortSignal): Promise<RuntimeProfileDescriptor[]> {
     const response = await this.#request("v1/runtimes", signal);
-    const body = (await response.json()) as { profiles: RuntimeProfileDescriptor[] };
+    const body: unknown = await response.json();
+    assertRuntimesResponse(body);
     return body.profiles;
   }
 
@@ -54,5 +58,56 @@ export class CapsuleClient {
     }
 
     return response;
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+/**
+ * Validates the daemon's `/healthz` body shape before the caller trusts it.
+ * The daemon is a locally spawned process, not a fully trusted peer — a
+ * malformed or unexpected-shape response should fail loudly here rather
+ * than propagate an `undefined`/garbage value into caller code.
+ */
+function assertHealthResponse(value: unknown): asserts value is { status: string } {
+  if (!isRecord(value) || typeof value.status !== "string") {
+    throw new Error("capsule daemon returned a malformed health response");
+  }
+}
+
+/** Validates the daemon's `/v1/version` body shape before the caller trusts it. */
+function assertVersionInfo(value: unknown): asserts value is VersionInfo {
+  if (
+    !isRecord(value) ||
+    typeof value.version !== "string" ||
+    typeof value.commit !== "string" ||
+    typeof value.buildDate !== "string"
+  ) {
+    throw new Error("capsule daemon returned a malformed version response");
+  }
+}
+
+function isRuntimeProfileDescriptor(value: unknown): value is RuntimeProfileDescriptor {
+  return (
+    isRecord(value) &&
+    typeof value.name === "string" &&
+    (value.runtime === "bun" || value.runtime === "node" || value.runtime === "deno") &&
+    (value.status === "draft" || value.status === "active" || value.status === "retired") &&
+    typeof value.available === "boolean"
+  );
+}
+
+/** Validates the daemon's `/v1/runtimes` body shape, including every array element, before the caller trusts it. */
+function assertRuntimesResponse(
+  value: unknown,
+): asserts value is { profiles: RuntimeProfileDescriptor[] } {
+  if (
+    !isRecord(value) ||
+    !Array.isArray(value.profiles) ||
+    !value.profiles.every(isRuntimeProfileDescriptor)
+  ) {
+    throw new Error("capsule daemon returned a malformed runtimes response");
   }
 }

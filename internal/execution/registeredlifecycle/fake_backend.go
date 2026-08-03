@@ -1,29 +1,18 @@
 package registeredlifecycle
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"sync"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/lifecyclestate"
 )
 
 var errInjectedFakeFault = errors.New("injected fake lifecycle fault")
 
-const maxInjectedFaultKeys = MaxLifecycleRecords * 7 * 2
-
-type fakeObservationStatus string
-
-const (
-	fakePresent fakeObservationStatus = "present"
-	fakeAbsent  fakeObservationStatus = "authoritatively-absent"
-	fakeUnknown fakeObservationStatus = "unknown"
-)
-
-type fakeObservation struct {
-	status fakeObservationStatus
-	handle fakeHandle
-}
+const maxInjectedFaultKeys = 4_096 * 7 * 2
 
 type fakeFaultKey struct {
 	attemptID approvalattempt.AttemptID
@@ -31,8 +20,13 @@ type fakeFaultKey struct {
 	moment    FaultMoment
 }
 
+type fakeEffectRecord struct {
+	permit lifecyclestate.EffectPermitView
+	result lifecyclestate.EffectResult
+}
+
 type fakeInstance struct {
-	handle    fakeHandle
+	identity  lifecyclestate.BackendInstanceIdentity
 	prepared  bool
 	created   bool
 	started   bool
@@ -40,31 +34,44 @@ type fakeInstance struct {
 	stopped   bool
 	destroyed bool
 	calls     map[Operation]uint64
+	applied   map[Operation]uint64
+	effectIDs map[Operation]lifecyclestate.EffectID
 }
 
-// FakeBackend is a closed in-memory lifecycle simulator. Apart from its fixed
-// fault oracle, it has no import, link, runtime configuration, command,
-// subprocess, VMM, container, network, filesystem-content, runtime-launch, or
-// guest-creation path.
+// FakeBackend is a closed, no-guest lifecycle simulator. Every logical effect
+// is keyed by the store-issued EffectID and is applied at most once. Apart
+// from its fixed fault oracle, it has no import, command, subprocess, VMM,
+// container, network, filesystem-content, runtime-launch, or guest path.
 type FakeBackend struct {
 	mu        sync.Mutex
-	next      fakeHandle
+	binding   lifecyclestate.BackendBinding
 	instances map[approvalattempt.AttemptID]*fakeInstance
+	effects   map[lifecyclestate.EffectID]fakeEffectRecord
 	faults    map[fakeFaultKey]uint64
 }
 
-func NewFakeBackend() *FakeBackend {
-	return &FakeBackend{
-		next:      1,
-		instances: make(map[approvalattempt.AttemptID]*fakeInstance),
-		faults:    make(map[fakeFaultKey]uint64),
+func NewFakeBackend(binding lifecyclestate.BackendBinding) (*FakeBackend, error) {
+	validated, err := lifecyclestate.NewBackendBinding(binding.View())
+	if err != nil || validated.View().CreatesGuest ||
+		validated.View().Kind != lifecyclestate.BackendFakeNoGuest {
+		return nil, errors.New("fake backend requires the closed no-guest binding")
 	}
+	return &FakeBackend{
+		binding:   validated,
+		instances: make(map[approvalattempt.AttemptID]*fakeInstance),
+		effects:   make(map[lifecyclestate.EffectID]fakeEffectRecord),
+		faults:    make(map[fakeFaultKey]uint64),
+	}, nil
 }
 
 func (*FakeBackend) CreatesGuest() bool { return false }
 
-// InjectFault adds one deterministic, attempt-scoped fault. The fault is
-// consumed immediately before or immediately after the selected fake effect.
+func (backend *FakeBackend) Binding() lifecyclestate.BackendBinding {
+	return backend.binding
+}
+
+// InjectFault adds one deterministic, attempt-scoped fault immediately before
+// or after the selected fake effect or reconciliation observation.
 func (backend *FakeBackend) InjectFault(
 	attemptID approvalattempt.AttemptID,
 	operation Operation,
@@ -78,9 +85,6 @@ func (backend *FakeBackend) InjectFault(
 	}
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	if backend.faults == nil {
-		backend.faults = make(map[fakeFaultKey]uint64)
-	}
 	key := fakeFaultKey{attemptID: attemptID, operation: operation, moment: moment}
 	if _, exists := backend.faults[key]; !exists && len(backend.faults) >= maxInjectedFaultKeys {
 		return errors.New("fake fault table reached its fixed capacity")
@@ -120,228 +124,271 @@ func (backend *FakeBackend) takeFaultLocked(
 	return true
 }
 
-func (backend *FakeBackend) instanceLocked(
-	attemptID approvalattempt.AttemptID,
-) *fakeInstance {
-	if backend.instances == nil {
-		backend.instances = make(map[approvalattempt.AttemptID]*fakeInstance)
-	}
-	if backend.next == 0 {
-		backend.next = 1
-	}
+func (backend *FakeBackend) instanceLocked(attemptID approvalattempt.AttemptID) *fakeInstance {
 	instance := backend.instances[attemptID]
 	if instance == nil {
-		instance = &fakeInstance{calls: make(map[Operation]uint64)}
+		instance = &fakeInstance{
+			calls:     make(map[Operation]uint64),
+			applied:   make(map[Operation]uint64),
+			effectIDs: make(map[Operation]lifecyclestate.EffectID),
+		}
 		backend.instances[attemptID] = instance
 	}
 	return instance
 }
 
-func (backend *FakeBackend) beforeLocked(
-	attemptID approvalattempt.AttemptID,
-	operation Operation,
-) (*fakeInstance, error) {
-	instance := backend.instanceLocked(attemptID)
+func operationForDurable(operation lifecyclestate.Operation) Operation {
+	return Operation(operation)
+}
+
+func durableOperation(operation Operation) lifecyclestate.Operation {
+	return lifecyclestate.Operation(operation)
+}
+
+func samePermit(left, right lifecyclestate.EffectPermitView) bool {
+	return left.AttemptID == right.AttemptID &&
+		left.OperationSequence == right.OperationSequence &&
+		left.Operation == right.Operation &&
+		left.EffectID == right.EffectID &&
+		left.ImmutableBindingDigest == right.ImmutableBindingDigest &&
+		instancesEqual(left.Instance, right.Instance)
+}
+
+func instancesEqual(
+	left lifecyclestate.BackendInstanceIdentity,
+	right lifecyclestate.BackendInstanceIdentity,
+) bool {
+	return left.Present() == right.Present() && left.Kind() == right.Kind() &&
+		left.Digest() == right.Digest() && bytes.Equal(left.Value(), right.Value())
+}
+
+func (backend *FakeBackend) apply(
+	ctx context.Context,
+	permit lifecyclestate.EffectPermit,
+) (lifecyclestate.EffectResult, error) {
+	if err := ctx.Err(); err != nil {
+		return lifecyclestate.EffectResult{}, err
+	}
+	view := permit.View()
+	operation := operationForDurable(view.Operation)
+	backend.mu.Lock()
+	defer backend.mu.Unlock()
+	instance := backend.instanceLocked(view.AttemptID)
 	instance.calls[operation]++
-	if backend.takeFaultLocked(attemptID, operation, FaultBeforeEffect) {
-		return instance, errInjectedFakeFault
-	}
-	return instance, nil
-}
 
-func (backend *FakeBackend) afterLocked(
-	attemptID approvalattempt.AttemptID,
-	operation Operation,
-) error {
-	if backend.takeFaultLocked(attemptID, operation, FaultAfterEffect) {
-		return errInjectedFakeFault
+	if cached, exists := backend.effects[view.EffectID]; exists {
+		if !samePermit(cached.permit, view) {
+			return lifecyclestate.EffectResult{}, errors.New("fake effect identity binding mismatch")
+		}
+		return cached.result, nil
 	}
-	return nil
-}
+	if backend.takeFaultLocked(view.AttemptID, operation, FaultBeforeEffect) {
+		result, err := lifecyclestate.NewEffectResult(
+			view.Operation,
+			lifecyclestate.EffectResultNotApplied,
+			lifecyclestate.BackendInstanceIdentity{},
+		)
+		return result, errors.Join(errInjectedFakeFault, err)
+	}
 
-func (backend *FakeBackend) prepare(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-) error {
-	if err := ctx.Err(); err != nil {
-		return err
+	var resultInstance lifecyclestate.BackendInstanceIdentity
+	switch view.Operation {
+	case lifecyclestate.OperationPrepare:
+		instance.prepared = true
+	case lifecyclestate.OperationCreate:
+		if !instance.prepared || instance.destroyed {
+			return lifecyclestate.EffectResult{}, errors.New("fake create state rejected")
+		}
+		if !instance.created {
+			identity, err := lifecyclestate.NewBackendInstanceIdentity(
+				lifecyclestate.BackendInstanceFake,
+				append(append([]byte(nil), view.AttemptID[:]...), view.EffectID[:]...),
+			)
+			if err != nil {
+				return lifecyclestate.EffectResult{}, err
+			}
+			instance.identity = identity
+			instance.created = true
+		}
+		resultInstance = instance.identity
+	case lifecyclestate.OperationStart:
+		if !instance.created || instance.destroyed || !instancesEqual(instance.identity, view.Instance) {
+			return lifecyclestate.EffectResult{}, errors.New("fake start state rejected")
+		}
+		instance.started = true
+	case lifecyclestate.OperationObserve:
+		if !instance.started || instance.destroyed || !instancesEqual(instance.identity, view.Instance) {
+			return lifecyclestate.EffectResult{}, errors.New("fake observe state rejected")
+		}
+		instance.observed = true
+	case lifecyclestate.OperationStop:
+		if !instance.created || instance.destroyed || !instancesEqual(instance.identity, view.Instance) {
+			return lifecyclestate.EffectResult{}, errors.New("fake stop state rejected")
+		}
+		instance.stopped = true
+	case lifecyclestate.OperationDestroy:
+		if !instance.created || instance.destroyed || !instancesEqual(instance.identity, view.Instance) {
+			return lifecyclestate.EffectResult{}, errors.New("fake destroy state rejected")
+		}
+		instance.destroyed = true
+	default:
+		return lifecyclestate.EffectResult{}, errors.New("fake operation rejected")
 	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationPrepare)
+	instance.applied[operation]++
+	instance.effectIDs[operation] = view.EffectID
+	result, err := lifecyclestate.NewEffectResult(
+		view.Operation,
+		lifecyclestate.EffectResultApplied,
+		resultInstance,
+	)
 	if err != nil {
-		return err
+		return lifecyclestate.EffectResult{}, err
 	}
-	instance.prepared = true
-	return backend.afterLocked(attemptID, OperationPrepare)
-}
-
-func (backend *FakeBackend) create(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-) (fakeHandle, error) {
-	if err := ctx.Err(); err != nil {
-		return 0, err
+	backend.effects[view.EffectID] = fakeEffectRecord{permit: view, result: result}
+	if backend.takeFaultLocked(view.AttemptID, operation, FaultAfterEffect) {
+		indeterminate, indeterminateErr := lifecyclestate.NewEffectResult(
+			view.Operation,
+			lifecyclestate.EffectResultIndeterminate,
+			lifecyclestate.BackendInstanceIdentity{},
+		)
+		return indeterminate, errors.Join(errInjectedFakeFault, indeterminateErr)
 	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationCreate)
-	if err != nil {
-		return 0, err
-	}
-	if !instance.prepared || instance.destroyed {
-		return 0, errors.New("fake create state rejected")
-	}
-	if !instance.created {
-		instance.handle = backend.next
-		backend.next++
-		instance.created = true
-	}
-	if err := backend.afterLocked(attemptID, OperationCreate); err != nil {
-		return 0, err
-	}
-	return instance.handle, nil
-}
-
-func (backend *FakeBackend) start(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-	handle fakeHandle,
-) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationStart)
-	if err != nil {
-		return err
-	}
-	if !instance.created || instance.destroyed || instance.handle != handle {
-		return errors.New("fake start state rejected")
-	}
-	instance.started = true
-	return backend.afterLocked(attemptID, OperationStart)
-}
-
-func (backend *FakeBackend) observe(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-	handle fakeHandle,
-) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationObserve)
-	if err != nil {
-		return err
-	}
-	if !instance.started || instance.destroyed || instance.handle != handle {
-		return errors.New("fake observe state rejected")
-	}
-	instance.observed = true
-	return backend.afterLocked(attemptID, OperationObserve)
-}
-
-func (backend *FakeBackend) stop(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-	handle fakeHandle,
-) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationStop)
-	if err != nil {
-		return err
-	}
-	if !instance.created || instance.destroyed || instance.handle != handle {
-		return errors.New("fake stop state rejected")
-	}
-	instance.stopped = true
-	return backend.afterLocked(attemptID, OperationStop)
-}
-
-func (backend *FakeBackend) destroy(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-	handle fakeHandle,
-) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	backend.mu.Lock()
-	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationDestroy)
-	if err != nil {
-		return err
-	}
-	if !instance.created || instance.destroyed || instance.handle != handle {
-		return errors.New("fake destroy state rejected")
-	}
-	instance.destroyed = true
-	return backend.afterLocked(attemptID, OperationDestroy)
+	return result, nil
 }
 
 func (backend *FakeBackend) reconcile(
 	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-) (fakeObservation, error) {
+	record lifecyclestate.Record,
+) (lifecyclestate.ReconcileResult, error) {
 	if err := ctx.Err(); err != nil {
-		return fakeObservation{status: fakeUnknown}, err
+		return lifecyclestate.ReconcileResult{}, err
 	}
+	view := record.View()
+	attemptID := view.Bindings.View().AttemptID
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
-	instance, err := backend.beforeLocked(attemptID, OperationReconcile)
+	instance := backend.instanceLocked(attemptID)
+	instance.calls[OperationReconcile]++
+	unknown := func() (lifecyclestate.ReconcileResult, error) {
+		result, err := lifecyclestate.NewReconcileResult(
+			view.Operation,
+			lifecyclestate.ReconciliationUnknown,
+			lifecyclestate.BackendInstanceIdentity{},
+		)
+		return result, err
+	}
+	if backend.takeFaultLocked(attemptID, OperationReconcile, FaultBeforeEffect) {
+		result, err := unknown()
+		return result, errors.Join(errInjectedFakeFault, err)
+	}
+
+	status := lifecyclestate.ReconciliationNotApplied
+	var resultInstance lifecyclestate.BackendInstanceIdentity
+	if view.Instance.Present() {
+		if !instance.created {
+			status = lifecyclestate.ReconciliationUnknown
+		} else if !instancesEqual(instance.identity, view.Instance) {
+			status = lifecyclestate.ReconciliationIdentityMismatch
+			resultInstance = instance.identity
+		}
+	}
+	if status == lifecyclestate.ReconciliationNotApplied {
+		if view.State == lifecyclestate.StateDestroyConfirmed && instance.destroyed &&
+			instancesEqual(instance.identity, view.Instance) {
+			status = lifecyclestate.ReconciliationAuthoritativelyAbsent
+		} else if cached, exists := backend.effects[view.EffectID]; exists {
+			if !samePermit(cached.permit, lifecyclestate.EffectPermitView{
+				AttemptID:              attemptID,
+				OperationSequence:      view.OperationSequence,
+				Operation:              view.Operation,
+				EffectID:               view.EffectID,
+				ImmutableBindingDigest: view.ImmutableBindingDigest,
+				OwnerSessionID:         cached.permit.OwnerSessionID,
+				Instance:               view.Instance,
+			}) {
+				status = lifecyclestate.ReconciliationIdentityMismatch
+				if instance.identity.Present() {
+					resultInstance = instance.identity
+				}
+			} else {
+				status = lifecyclestate.ReconciliationApplied
+				if view.Operation == lifecyclestate.OperationCreate {
+					resultInstance = cached.result.Instance()
+				}
+			}
+		}
+	}
+	result, err := lifecyclestate.NewReconcileResult(view.Operation, status, resultInstance)
 	if err != nil {
-		return fakeObservation{status: fakeUnknown}, err
+		return lifecyclestate.ReconcileResult{}, err
 	}
-	observation := fakeObservation{status: fakeAbsent}
-	if instance.created && !instance.destroyed {
-		observation = fakeObservation{status: fakePresent, handle: instance.handle}
+	if backend.takeFaultLocked(attemptID, OperationReconcile, FaultAfterEffect) {
+		unknownResult, unknownErr := unknown()
+		return unknownResult, errors.Join(errInjectedFakeFault, unknownErr)
 	}
-	if err := backend.afterLocked(attemptID, OperationReconcile); err != nil {
-		return fakeObservation{status: fakeUnknown}, err
-	}
-	return observation, nil
+	return result, nil
 }
 
-// BackendSnapshot is bounded passive test/development evidence. CallCounts is
-// returned as a defensive copy.
+// BackendSnapshot is bounded passive test/development evidence. Maps are
+// defensive copies; effect applications count logical effects, not retries.
 type BackendSnapshot struct {
-	Prepared   bool
-	Created    bool
-	Started    bool
-	Observed   bool
-	Stopped    bool
-	Destroyed  bool
-	CallCounts map[Operation]uint64
+	Prepared          bool
+	Created           bool
+	Started           bool
+	Observed          bool
+	Stopped           bool
+	Destroyed         bool
+	InstanceDigest    lifecyclestate.BackendInstanceDigest
+	CallCounts        map[Operation]uint64
+	ApplicationCounts map[Operation]uint64
+	EffectIDs         map[Operation]lifecyclestate.EffectID
 }
 
-func (backend *FakeBackend) Snapshot(
-	attemptID approvalattempt.AttemptID,
-) BackendSnapshot {
+func (backend *FakeBackend) Snapshot(attemptID approvalattempt.AttemptID) BackendSnapshot {
 	backend.mu.Lock()
 	defer backend.mu.Unlock()
 	instance := backend.instances[attemptID]
 	if instance == nil {
-		return BackendSnapshot{CallCounts: make(map[Operation]uint64)}
+		return BackendSnapshot{
+			CallCounts: make(map[Operation]uint64), ApplicationCounts: make(map[Operation]uint64),
+			EffectIDs: make(map[Operation]lifecyclestate.EffectID),
+		}
 	}
 	calls := make(map[Operation]uint64, len(instance.calls))
 	for operation, count := range instance.calls {
 		calls[operation] = count
 	}
-	return BackendSnapshot{
-		Prepared:   instance.prepared,
-		Created:    instance.created,
-		Started:    instance.started,
-		Observed:   instance.observed,
-		Stopped:    instance.stopped,
-		Destroyed:  instance.destroyed,
-		CallCounts: calls,
+	applied := make(map[Operation]uint64, len(instance.applied))
+	for operation, count := range instance.applied {
+		applied[operation] = count
 	}
+	effectIDs := make(map[Operation]lifecyclestate.EffectID, len(instance.effectIDs))
+	for operation, effectID := range instance.effectIDs {
+		effectIDs[operation] = effectID
+	}
+	return BackendSnapshot{
+		Prepared: instance.prepared, Created: instance.created, Started: instance.started,
+		Observed: instance.observed, Stopped: instance.stopped, Destroyed: instance.destroyed,
+		InstanceDigest: instance.identity.Digest(), CallCounts: calls, ApplicationCounts: applied,
+		EffectIDs: effectIDs,
+	}
+}
+
+// forgetAttemptState and replaceAttemptIdentity are closed local fault oracles
+// used by the retained E4 missing/stale/identity tests.
+func (backend *FakeBackend) forgetAttemptState(attemptID approvalattempt.AttemptID) {
+	backend.mu.Lock()
+	defer backend.mu.Unlock()
+	delete(backend.instances, attemptID)
+}
+
+func (backend *FakeBackend) replaceAttemptIdentity(
+	attemptID approvalattempt.AttemptID,
+	identity lifecyclestate.BackendInstanceIdentity,
+) {
+	backend.mu.Lock()
+	defer backend.mu.Unlock()
+	instance := backend.instanceLocked(attemptID)
+	instance.created = true
+	instance.identity = identity
 }

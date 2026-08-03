@@ -6,54 +6,64 @@ import (
 	"errors"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/execution/registrationstate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// Component drives only durable created attempts from the Slice B store into
-// the concrete, no-guest FakeBackend. It is not wired to a deployed
-// Supervisor, an endpoint, content, evidence, a real backend, or a guest.
+// Component drives only durable created attempts from the colocated v1 store
+// into the concrete no-guest FakeBackend. It is not wired to a deployed
+// Supervisor, endpoint, content, evidence, runtime, real backend, or guest.
 type Component struct {
-	attempts        AttemptResolver
-	createdAttempts CreatedAttemptEnumerator
-	store           *MemoryStore
-	backend         *FakeBackend
-	checkpoint      CheckpointHook
+	attempts    AttemptResolver
+	store       registrationstate.DurableLifecycleStore
+	backend     *FakeBackend
+	coordinator *Coordinator
+	clock       registrationstate.TrustedClock
+	checkpoint  CheckpointHook
 }
 
 func New(options Options) (*Component, error) {
-	if options.Attempts == nil || options.CreatedAttempts == nil ||
-		options.Store == nil || options.Backend == nil {
-		return nil, errors.New("attempt resolver, created-attempt enumeration, store, and fake backend are required")
+	if options.Attempts == nil || options.Store == nil || options.Backend == nil ||
+		options.Coordinator == nil || options.Clock == nil {
+		return nil, errors.New("attempt resolver, durable store, fake backend, coordinator, and clock are required")
 	}
-	if options.Backend.CreatesGuest() {
+	if options.Backend.CreatesGuest() || options.Backend.Binding().View().CreatesGuest {
 		return nil, errors.New("registered lifecycle requires a no-guest fake backend")
 	}
+	if options.Coordinator.OwnerSessionID() != options.Store.OwnerSessionID() {
+		return nil, errors.New("lifecycle coordinator and store owner sessions must match")
+	}
 	if options.Checkpoint == nil {
-		options.Checkpoint = func(context.Context, Checkpoint, approvalattempt.AttemptID) error {
-			return nil
-		}
+		options.Checkpoint = func(context.Context, Checkpoint, approvalattempt.AttemptID) error { return nil }
 	}
 	return &Component{
-		attempts:        options.Attempts,
-		createdAttempts: options.CreatedAttempts,
-		store:           options.Store,
-		backend:         options.Backend,
-		checkpoint:      options.Checkpoint,
+		attempts: options.Attempts, store: options.Store, backend: options.Backend,
+		coordinator: options.Coordinator, clock: options.Clock, checkpoint: options.Checkpoint,
 	}, nil
 }
 
-// Drive accepts only a Supervisor-issued AttemptID. It resolves and
-// independently revalidates the already committed created attempt and exact
-// registered plan before creating lifecycle state or calling fake prepare.
-// An existing identical lifecycle record is returned without redriving any
-// effect.
+// Drive accepts only a Supervisor-issued AttemptID. It independently
+// revalidates the committed attempt and exact registered plan before the
+// durable lifecycle record can be established or any fake effect can run.
 func (component *Component) Drive(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
 ) (Snapshot, error) {
 	if attemptID == (approvalattempt.AttemptID{}) {
 		return Snapshot{}, classified(ClassificationBinding, "attempt-id-required")
+	}
+	return component.coordinator.withAttempt(ctx, attemptID, func() (Snapshot, error) {
+		return component.driveLocked(ctx, attemptID)
+	})
+}
+
+func (component *Component) driveLocked(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+) (Snapshot, error) {
+	if err := component.advanceTime(ctx); err != nil {
+		return Snapshot{}, err
 	}
 	created, err := component.attempts.ResolveCreated(ctx, attemptID)
 	if err != nil {
@@ -76,78 +86,16 @@ func (component *Component) Drive(
 		decoded.Digest() != created.Attempt.PlanDigest {
 		return Snapshot{}, classified(ClassificationBinding, "stored-plan-digest-mismatch")
 	}
-	record, began, err := component.store.begin(ctx, created)
+	record, _, err := component.store.EnsureLifecycle(ctx, attemptID, component.backend.Binding())
 	if err != nil {
-		return Snapshot{}, err
+		return Snapshot{}, mapStoreFailure(err)
 	}
-	if !began {
-		return record.Snapshot, nil
-	}
-
-	if err := component.backend.prepare(ctx, attemptID); err != nil {
-		return component.failAndCleanup(ctx, attemptID, OperationPrepare)
-	}
-	if err := component.afterEffect(
-		ctx,
-		CheckpointAfterPrepareEffect,
-		attemptID,
-		OperationPrepare,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.store.transition(ctx, attemptID, StateCreateIntent); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	handle, err := component.backend.create(ctx, attemptID)
-	if err != nil || handle == 0 {
-		return component.failAndCleanup(ctx, attemptID, OperationCreate)
-	}
-	if err := component.afterEffect(
-		ctx,
-		CheckpointAfterCreateEffect,
-		attemptID,
-		OperationCreate,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.store.retainHandle(ctx, attemptID, handle); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.store.transition(ctx, attemptID, StateStarting); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.backend.start(ctx, attemptID, handle); err != nil {
-		return component.failAndCleanup(ctx, attemptID, OperationStart)
-	}
-	if err := component.afterEffect(
-		ctx,
-		CheckpointAfterStartEffect,
-		attemptID,
-		OperationStart,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.store.transition(ctx, attemptID, StateObserving); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.backend.observe(ctx, attemptID, handle); err != nil {
-		return component.failAndCleanup(ctx, attemptID, OperationObserve)
-	}
-	if err := component.afterEffect(
-		ctx,
-		CheckpointAfterObserveEffect,
-		attemptID,
-		OperationObserve,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	return component.cleanup(ctx, attemptID)
+	return component.advanceLocked(ctx, record)
 }
 
-// Recover accepts only the original attempt ID. If no lifecycle record exists,
-// it resolves and drives the durable created attempt. Existing cleanup work is
-// recovered solely from retained lifecycle state, without rechecking approval
-// usability or registration expiry.
+// Recover never re-evaluates approval usability or registration expiry. A
+// missing lifecycle record remains startup work for the already committed
+// AttemptID; every other decision uses only durable lifecycle state.
 func (component *Component) Recover(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -155,46 +103,39 @@ func (component *Component) Recover(
 	if attemptID == (approvalattempt.AttemptID{}) {
 		return Snapshot{}, classified(ClassificationBinding, "attempt-id-required")
 	}
-	record, exists, err := component.store.lookup(ctx, attemptID)
-	if err != nil {
-		return Snapshot{}, err
-	}
-	if !exists {
-		return component.Drive(ctx, attemptID)
-	}
-	if record.State == StateDestroyed {
-		return record.Snapshot, nil
-	}
-	if !record.CleanupRequired {
-		return record.Snapshot, classified(ClassificationLocalFailure, "nonterminal-cleanup-state-invalid")
-	}
-	return component.cleanup(ctx, attemptID)
+	return component.coordinator.withAttempt(ctx, attemptID, func() (Snapshot, error) {
+		record, err := component.store.ReadLifecycle(ctx, attemptID)
+		if errors.Is(err, registrationstate.ErrLifecycleNotFound) {
+			if timeErr := component.advanceTime(ctx); timeErr != nil {
+				return Snapshot{}, timeErr
+			}
+			return component.driveLocked(ctx, attemptID)
+		}
+		if err != nil {
+			return Snapshot{}, mapStoreFailure(err)
+		}
+		if timeErr := component.advanceTime(ctx); timeErr != nil {
+			return component.cleanupWithPriorTimeLocked(ctx, record, timeErr)
+		}
+		return component.advanceLocked(ctx, record)
+	})
 }
 
-// RecoverCreatedAttempts enumerates the durable created-attempt authority
-// store once and drives or recovers each distinct AttemptID. It continues
-// through fixed lifecycle failures so one broken attempt cannot hide later
-// cleanup work, and returns the first fixed error after processing the set.
+// RecoverCreatedAttempts uses the colocated store's sorted join of committed
+// created attempts and nonterminal lifecycle work. It processes every entry
+// and returns the first fixed error after the complete initial pass.
 func (component *Component) RecoverCreatedAttempts(ctx context.Context) ([]Snapshot, error) {
-	references, err := component.createdAttempts.CreatedAttempts(ctx)
+	identifiers, err := component.store.RecoveryAttemptIDs(ctx)
 	if err != nil {
-		return nil, mapAttemptResolutionFailure(err)
+		return nil, mapStoreFailure(err)
 	}
-	seen := make(map[approvalattempt.AttemptID]struct{}, len(references))
-	for _, reference := range references {
-		attemptID := reference.AttemptID()
+	results := make([]Snapshot, 0, len(identifiers))
+	var firstErr error
+	for _, attemptID := range identifiers {
 		if attemptID == (approvalattempt.AttemptID{}) {
 			return nil, classified(ClassificationRecoveryRequired, "startup-attempt-id-invalid")
 		}
-		if _, duplicate := seen[attemptID]; duplicate {
-			return nil, classified(ClassificationRecoveryRequired, "startup-attempt-id-duplicate")
-		}
-		seen[attemptID] = struct{}{}
-	}
-	results := make([]Snapshot, 0, len(references))
-	var firstErr error
-	for _, reference := range references {
-		snapshot, recoverErr := component.Recover(ctx, reference.AttemptID())
+		snapshot, recoverErr := component.Recover(ctx, attemptID)
 		results = append(results, snapshot)
 		if firstErr == nil && recoverErr != nil {
 			firstErr = recoverErr
@@ -203,157 +144,251 @@ func (component *Component) RecoverCreatedAttempts(ctx context.Context) ([]Snaps
 	return results, firstErr
 }
 
-func (component *Component) failAndCleanup(
+// cleanupWithPriorTimeLocked preserves ADR-0025's trusted-clock failure rule:
+// no new prepare/create/start/observe effect may begin, while exact
+// reconciliation and destructive stop/destroy work may use the existing
+// durable high-water timestamp.
+func (component *Component) cleanupWithPriorTimeLocked(
 	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-	operation Operation,
+	record lifecyclestate.Record,
+	clockErr error,
 ) (Snapshot, error) {
-	if err := component.store.noteFailure(
-		ctx,
-		attemptID,
-		ClassificationLifecycleFailure,
-		operation,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	snapshot, cleanupErr := component.cleanup(ctx, attemptID)
-	if cleanupErr != nil {
-		return snapshot, cleanupErr
-	}
-	return snapshot, classified(ClassificationLifecycleFailure, "fake-lifecycle-operation-failed")
-}
-
-func (component *Component) cleanup(
-	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
-) (Snapshot, error) {
-	record, err := component.store.snapshot(ctx, attemptID)
-	if err != nil {
-		return Snapshot{}, err
-	}
-	if record.State == StateDestroyed {
-		return record.Snapshot, nil
-	}
-	if record.State == StateDestroying {
-		observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
-		if reconcileErr != nil || observation.status == fakeUnknown {
-			return component.unresolved(ctx, attemptID)
-		}
-		if observation.status == fakeAbsent {
-			if err := component.store.markDestroyed(ctx, attemptID); err != nil {
-				return component.snapshotWithError(ctx, attemptID, err)
+	for {
+		view := record.View()
+		switch view.State {
+		case lifecyclestate.StateDestroyed:
+			return terminalSnapshot(record)
+		case lifecyclestate.StateQuarantined:
+			return snapshotFromRecord(record), classified(ClassificationTrustState, "lifecycle-quarantined")
+		case lifecyclestate.StateCreated, lifecyclestate.StateStarted, lifecyclestate.StateObserved:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationStop)
+		case lifecyclestate.StateStopped:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationDestroy)
+		case lifecyclestate.StateUnresolved:
+			if retryableConfirmedNotApplied(view) {
+				if view.Operation == lifecyclestate.OperationStop || view.Operation == lifecyclestate.OperationDestroy {
+					return component.performAndContinue(ctx, record, view.Operation)
+				}
+				return snapshotFromRecord(record), clockErr
 			}
-			return component.store.Snapshot(ctx, attemptID)
-		}
-	}
-	if record.handle == 0 {
-		observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
-		if reconcileErr != nil || observation.status == fakeUnknown {
-			return component.unresolved(ctx, attemptID)
-		}
-		switch observation.status {
-		case fakeAbsent:
-			if err := component.store.markDestroyed(ctx, attemptID); err != nil {
-				return component.snapshotWithError(ctx, attemptID, err)
+			var err error
+			record, err = component.reconcileLocked(ctx, record)
+			if err != nil {
+				return snapshotFromRecord(record), err
 			}
-			return component.store.Snapshot(ctx, attemptID)
-		case fakePresent:
-			if observation.handle == 0 {
-				return component.unresolved(ctx, attemptID)
+		case lifecyclestate.StatePrepareIntent,
+			lifecyclestate.StateCreateIntent,
+			lifecyclestate.StateStartIntent,
+			lifecyclestate.StateObserveIntent,
+			lifecyclestate.StateStopIntent,
+			lifecyclestate.StateDestroyIntent,
+			lifecyclestate.StateDestroyConfirmed:
+			var err error
+			record, err = component.reconcileLocked(ctx, record)
+			if err != nil {
+				return snapshotFromRecord(record), err
 			}
-			if err := component.store.retainHandle(ctx, attemptID, observation.handle); err != nil {
-				return component.snapshotWithError(ctx, attemptID, err)
-			}
-			record.handle = observation.handle
+		case lifecyclestate.StatePreparePending, lifecyclestate.StatePrepared:
+			return snapshotFromRecord(record), clockErr
 		default:
-			return component.unresolved(ctx, attemptID)
+			return snapshotFromRecord(record), classified(ClassificationRecoveryRequired, "lifecycle-state-invalid")
 		}
 	}
-
-	if err := component.store.transition(ctx, attemptID, StateStopping); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	stopErr := component.backend.stop(ctx, attemptID, record.handle)
-	if stopErr != nil {
-		_ = component.store.noteFailure(
-			ctx,
-			attemptID,
-			ClassificationLifecycleFailure,
-			OperationStop,
-		)
-	} else if err := component.afterEffect(
-		ctx,
-		CheckpointAfterStopEffect,
-		attemptID,
-		OperationStop,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	if err := component.store.transition(ctx, attemptID, StateDestroying); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	destroyErr := component.backend.destroy(ctx, attemptID, record.handle)
-	if destroyErr != nil {
-		_ = component.store.noteFailure(
-			ctx,
-			attemptID,
-			ClassificationLifecycleFailure,
-			OperationDestroy,
-		)
-	} else if err := component.afterEffect(
-		ctx,
-		CheckpointAfterDestroyEffect,
-		attemptID,
-		OperationDestroy,
-	); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-
-	observation, reconcileErr := component.backend.reconcile(ctx, attemptID)
-	if reconcileErr != nil || observation.status != fakeAbsent {
-		return component.unresolved(ctx, attemptID)
-	}
-	if err := component.store.markDestroyed(ctx, attemptID); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
-	}
-	snapshot, err := component.store.Snapshot(ctx, attemptID)
-	if err != nil {
-		return Snapshot{}, err
-	}
-	if stopErr != nil || destroyErr != nil {
-		return snapshot, classified(ClassificationLifecycleFailure, "fake-lifecycle-cleanup-operation-failed")
-	}
-	return snapshot, nil
 }
 
-func (component *Component) unresolved(
+func (component *Component) advanceLocked(
 	ctx context.Context,
-	attemptID approvalattempt.AttemptID,
+	record lifecyclestate.Record,
 ) (Snapshot, error) {
-	if err := component.store.markUnresolved(ctx, attemptID); err != nil {
-		return component.snapshotWithError(ctx, attemptID, err)
+	for {
+		view := record.View()
+		switch view.State {
+		case lifecyclestate.StateDestroyed:
+			return terminalSnapshot(record)
+		case lifecyclestate.StateQuarantined:
+			return snapshotFromRecord(record), classified(ClassificationTrustState, "lifecycle-quarantined")
+		case lifecyclestate.StatePreparePending:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationPrepare)
+		case lifecyclestate.StatePrepared:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationCreate)
+		case lifecyclestate.StateCreated:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationStart)
+		case lifecyclestate.StateStarted:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationObserve)
+		case lifecyclestate.StateObserved:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationStop)
+		case lifecyclestate.StateStopped:
+			return component.performAndContinue(ctx, record, lifecyclestate.OperationDestroy)
+		case lifecyclestate.StateUnresolved:
+			if retryableConfirmedNotApplied(view) {
+				return component.performAndContinue(ctx, record, view.Operation)
+			}
+			var err error
+			record, err = component.reconcileLocked(ctx, record)
+			if err != nil {
+				return snapshotFromRecord(record), err
+			}
+		case lifecyclestate.StatePrepareIntent,
+			lifecyclestate.StateCreateIntent,
+			lifecyclestate.StateStartIntent,
+			lifecyclestate.StateObserveIntent,
+			lifecyclestate.StateStopIntent,
+			lifecyclestate.StateDestroyIntent,
+			lifecyclestate.StateDestroyConfirmed:
+			var err error
+			record, err = component.reconcileLocked(ctx, record)
+			if err != nil {
+				return snapshotFromRecord(record), err
+			}
+		default:
+			return snapshotFromRecord(record), classified(ClassificationRecoveryRequired, "lifecycle-state-invalid")
+		}
 	}
-	snapshot, err := component.store.Snapshot(ctx, attemptID)
-	if err != nil {
-		return Snapshot{}, err
-	}
-	return snapshot, classified(ClassificationCleanupUnresolved, "fake-lifecycle-cleanup-unresolved")
 }
 
-func (component *Component) afterEffect(
+func (component *Component) performAndContinue(
 	ctx context.Context,
-	checkpoint Checkpoint,
-	attemptID approvalattempt.AttemptID,
-	operation Operation,
-) error {
-	if err := component.checkpoint(ctx, checkpoint, attemptID); err != nil {
-		_ = component.store.noteFailure(
-			ctx,
-			attemptID,
-			ClassificationLocalFailure,
-			operation,
+	record lifecyclestate.Record,
+	operation lifecyclestate.Operation,
+) (Snapshot, error) {
+	view := record.View()
+	permit, err := component.store.BeginEffect(
+		ctx, view.Bindings.View().AttemptID, view.RecordVersion, operation,
+	)
+	if err != nil {
+		return snapshotFromRecord(record), mapStoreFailure(err)
+	}
+	result, adapterErr := component.backend.apply(ctx, permit)
+	if result.Status() == lifecyclestate.EffectResultApplied {
+		if checkpointErr := component.checkpoint(
+			ctx, checkpointFor(operation), permit.View().AttemptID,
+		); checkpointErr != nil {
+			current, readErr := component.store.ReadLifecycle(ctx, permit.View().AttemptID)
+			if readErr == nil {
+				return snapshotFromRecord(current), classified(ClassificationLocalFailure, "simulated-lifecycle-interruption")
+			}
+			return Snapshot{}, classified(ClassificationLocalFailure, "simulated-lifecycle-interruption")
+		}
+	}
+	switch result.Status() {
+	case lifecyclestate.EffectResultApplied, lifecyclestate.EffectResultNotApplied:
+		confirmed, confirmErr := component.store.ConfirmEffect(ctx, permit, result)
+		if confirmErr != nil {
+			return component.snapshotWithError(ctx, permit.View().AttemptID, mapStoreFailure(confirmErr))
+		}
+		return component.advanceLocked(ctx, confirmed)
+	case lifecyclestate.EffectResultIndeterminate:
+		indeterminate, recordErr := component.store.RecordIndeterminate(
+			ctx, permit, registrationstate.ClassificationLifecycleFailure,
 		)
-		return classified(ClassificationLocalFailure, "simulated-lifecycle-interruption")
+		if recordErr != nil {
+			return component.snapshotWithError(ctx, permit.View().AttemptID, mapStoreFailure(recordErr))
+		}
+		return snapshotFromRecord(indeterminate), classified(ClassificationLifecycleFailure, "fake-effect-indeterminate")
+	default:
+		if adapterErr == nil {
+			adapterErr = errors.New("fake adapter returned no closed result")
+		}
+		indeterminate, recordErr := component.store.RecordIndeterminate(
+			ctx, permit, registrationstate.ClassificationLifecycleFailure,
+		)
+		if recordErr != nil {
+			return component.snapshotWithError(ctx, permit.View().AttemptID, mapStoreFailure(recordErr))
+		}
+		_ = adapterErr
+		return snapshotFromRecord(indeterminate), classified(ClassificationLifecycleFailure, "fake-effect-indeterminate")
+	}
+}
+
+func (component *Component) reconcileLocked(
+	ctx context.Context,
+	record lifecyclestate.Record,
+) (lifecyclestate.Record, error) {
+	view := record.View()
+	attemptID := view.Bindings.View().AttemptID
+	eligible := record
+	// A prior result-commit failure leaves a durable eligibility checkpoint
+	// with LastReconciliation == none. Reopen repeats only the observation.
+	if view.AutomaticRecoveryCount == 0 || view.LastReconciliation != lifecyclestate.ReconciliationNone {
+		begun, err := component.store.BeginReconciliation(ctx, attemptID, view.RecordVersion)
+		if err != nil {
+			classification, ok := registrationstate.ErrorClassification(err)
+			if ok && (classification == registrationstate.ClassificationStale ||
+				classification == registrationstate.ClassificationCapacity) {
+				return record, classified(ClassificationCleanupUnresolved, "reconciliation-not-eligible")
+			}
+			return record, mapStoreFailure(err)
+		}
+		eligible = begun
+	}
+	result, _ := component.backend.reconcile(ctx, eligible)
+	if result.Status() == "" {
+		var resultErr error
+		result, resultErr = lifecyclestate.NewReconcileResult(
+			eligible.View().Operation,
+			lifecyclestate.ReconciliationUnknown,
+			lifecyclestate.BackendInstanceIdentity{},
+		)
+		if resultErr != nil {
+			return eligible, classified(ClassificationLocalFailure, "fake-reconciliation-result")
+		}
+	}
+	completed, err := component.store.CompleteReconciliation(
+		ctx, attemptID, eligible.View().RecordVersion, result,
+	)
+	if err != nil {
+		return eligible, mapStoreFailure(err)
+	}
+	switch completed.View().State {
+	case lifecyclestate.StateUnresolved:
+		if retryableConfirmedNotApplied(completed.View()) ||
+			completed.View().LastReconciliation == lifecyclestate.ReconciliationNotApplied {
+			return completed, nil
+		}
+		return completed, classified(ClassificationCleanupUnresolved, "fake-reconciliation-unresolved")
+	case lifecyclestate.StateQuarantined:
+		return completed, classified(ClassificationTrustState, "fake-reconciliation-identity-mismatch")
+	default:
+		return completed, nil
+	}
+}
+
+func retryableConfirmedNotApplied(view lifecyclestate.RecordView) bool {
+	return view.State == lifecyclestate.StateUnresolved &&
+		((view.EffectStatus == lifecyclestate.EffectConfirmed &&
+			view.FirstFailure == lifecyclestate.FailureLifecycle &&
+			view.RecoveryFence == lifecyclestate.RecoveryFenceNone) ||
+			(view.LastReconciliation == lifecyclestate.ReconciliationNotApplied &&
+				(view.EffectStatus == lifecyclestate.EffectIntent ||
+					view.EffectStatus == lifecyclestate.EffectIndeterminate)))
+}
+
+func checkpointFor(operation lifecyclestate.Operation) Checkpoint {
+	switch operation {
+	case lifecyclestate.OperationPrepare:
+		return CheckpointAfterPrepareEffect
+	case lifecyclestate.OperationCreate:
+		return CheckpointAfterCreateEffect
+	case lifecyclestate.OperationStart:
+		return CheckpointAfterStartEffect
+	case lifecyclestate.OperationObserve:
+		return CheckpointAfterObserveEffect
+	case lifecyclestate.OperationStop:
+		return CheckpointAfterStopEffect
+	case lifecyclestate.OperationDestroy:
+		return CheckpointAfterDestroyEffect
+	default:
+		return ""
+	}
+}
+
+func (component *Component) advanceTime(ctx context.Context) error {
+	observed, err := component.clock.ObserveUnixSeconds(ctx)
+	if err != nil || observed > v0candidate.MaxSafeInteger {
+		return classified(ClassificationLocalFailure, "trusted-clock-observation")
+	}
+	if err := component.store.AdvanceLifecycleTime(ctx, v0candidate.UInt53(observed)); err != nil {
+		return mapStoreFailure(err)
 	}
 	return nil
 }
@@ -363,11 +398,74 @@ func (component *Component) snapshotWithError(
 	attemptID approvalattempt.AttemptID,
 	err error,
 ) (Snapshot, error) {
-	snapshot, snapshotErr := component.store.Snapshot(ctx, attemptID)
-	if snapshotErr != nil {
+	record, readErr := component.store.ReadLifecycle(ctx, attemptID)
+	if readErr != nil {
 		return Snapshot{}, err
 	}
-	return snapshot, err
+	return snapshotFromRecord(record), err
+}
+
+func terminalSnapshot(record lifecyclestate.Record) (Snapshot, error) {
+	snapshot := snapshotFromRecord(record)
+	switch snapshot.Failure {
+	case "":
+		return snapshot, nil
+	case ClassificationCleanupUnresolved:
+		return snapshot, classified(ClassificationCleanupUnresolved, "fake-lifecycle-recovered-cleanup")
+	default:
+		return snapshot, classified(snapshot.Failure, "fake-lifecycle-retained-failure")
+	}
+}
+
+func snapshotFromRecord(record lifecyclestate.Record) Snapshot {
+	view := record.View()
+	bindings := view.Bindings.View()
+	failure := Classification("")
+	failureAt := Operation("")
+	if view.FirstFailure != lifecyclestate.FailureNone {
+		failure = Classification(view.FirstFailure)
+		failureAt = Operation(view.FailureOperation)
+	}
+	return Snapshot{
+		AttemptID: bindings.AttemptID, ApprovalID: bindings.ApprovalID,
+		AttemptNonce: bindings.AttemptNonce, RegistrationID: bindings.RegistrationID,
+		RegistrationSequence: bindings.RegistrationSequence, PlanDigest: bindings.PlanDigest,
+		InstallationID: bindings.InstallationID, EpochSequence: bindings.EpochSequence,
+		EpochDigest: bindings.EpochDigest, SupervisorID: bindings.SupervisorID,
+		ApprovalPurpose: bindings.ApprovalPurpose, ApprovalAudience: bindings.ApprovalAudience,
+		ApprovalPayloadDigest: bindings.ApprovalPayloadDigest,
+		AuthorizationIdentity: bindings.AuthorizationIdentity, CreatedAt: bindings.AttemptCreatedAt,
+		State: view.State, CleanupRequired: view.CleanupRequired,
+		Failure: failure, FailureAt: failureAt, TransitionCount: uint64(view.RecordVersion),
+		RecordVersion: view.RecordVersion, OperationSequence: view.OperationSequence,
+		EffectID: view.EffectID, EffectStatus: view.EffectStatus,
+		InstanceDigest: view.Instance.Digest(), LastReconciliation: view.LastReconciliation,
+		AutomaticRecoveryCount: view.AutomaticRecoveryCount, NextRecoveryAt: view.NextRecoveryAt,
+		RecoveryFence:              view.RecoveryFence,
+		AutomaticRecoveryExhausted: view.AutomaticRecoveryExhausted,
+	}
+}
+
+func mapStoreFailure(err error) error {
+	if err == nil {
+		return nil
+	}
+	if errors.Is(err, registrationstate.ErrStoreRepairRequired) {
+		return classified(ClassificationRecoveryRequired, "durable-lifecycle-repair-required")
+	}
+	if errors.Is(err, registrationstate.ErrCommitOutcomeIndeterminate) {
+		return classified(ClassificationRecoveryRequired, "durable-lifecycle-commit-indeterminate")
+	}
+	if errors.Is(err, registrationstate.ErrLifecycleNotFound) ||
+		errors.Is(err, registrationstate.ErrLifecycleBindingMismatch) ||
+		errors.Is(err, registrationstate.ErrLifecycleVersionConflict) {
+		return classified(ClassificationBinding, "durable-lifecycle-binding")
+	}
+	classification, ok := registrationstate.ErrorClassification(err)
+	if !ok {
+		return classified(ClassificationLocalFailure, "durable-lifecycle-store")
+	}
+	return classified(Classification(classification), "durable-lifecycle-store")
 }
 
 func validateCreatedAttempt(
@@ -420,11 +518,9 @@ func validateCreatedAttempt(
 	decodedRegistration, err := v0candidate.DecodePlanRegistration(
 		record.WireRegistrationBytes,
 		v0candidate.PlanRegistrationRoleBindings{
-			RegistrationID: attempt.RegistrationID,
-			PlanDigest:     attempt.PlanDigest,
-			InstallationID: attempt.InstallationID,
-			EpochDigest:    attempt.EpochDigest,
-			SupervisorID:   attempt.SupervisorID,
+			RegistrationID: attempt.RegistrationID, PlanDigest: attempt.PlanDigest,
+			InstallationID: attempt.InstallationID, EpochDigest: attempt.EpochDigest,
+			SupervisorID: attempt.SupervisorID,
 		},
 	)
 	if err != nil {

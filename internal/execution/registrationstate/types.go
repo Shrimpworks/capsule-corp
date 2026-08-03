@@ -294,11 +294,15 @@ type StateStore interface {
 type DurableLifecycleStore interface {
 	EnsureLifecycle(context.Context, approvalattempt.AttemptID, lifecyclestate.BackendBinding) (lifecyclestate.Record, bool, error)
 	ReadLifecycle(context.Context, approvalattempt.AttemptID) (lifecyclestate.Record, error)
+	AdvanceLifecycleTime(context.Context, v0candidate.UInt53) error
 	BeginEffect(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion, lifecyclestate.Operation) (lifecyclestate.EffectPermit, error)
 	ConfirmEffect(context.Context, lifecyclestate.EffectPermit, lifecyclestate.EffectResult) (lifecyclestate.Record, error)
 	RecordIndeterminate(context.Context, lifecyclestate.EffectPermit, Classification) (lifecyclestate.Record, error)
+	BeginReconciliation(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion) (lifecyclestate.Record, error)
+	CompleteReconciliation(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion, lifecyclestate.ReconcileResult) (lifecyclestate.Record, error)
 	RecordReconciliation(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion, lifecyclestate.ReconcileResult) (lifecyclestate.Record, error)
 	RecoveryAttemptIDs(context.Context) ([]approvalattempt.AttemptID, error)
+	OwnerSessionID() lifecyclestate.OwnerSessionID
 }
 
 // RegistrationResolver is the deliberately narrow handoff for the later fake

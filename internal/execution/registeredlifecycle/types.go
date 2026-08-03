@@ -5,14 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"reflect"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/execution/registrationstate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
-
-const MaxLifecycleRecords = 256
 
 // Classification is a fixed, content-free internal development oracle. It is
 // not a public protocol error or an execution result.
@@ -75,44 +73,55 @@ const (
 	FaultAfterEffect  FaultMoment = "after-effect"
 )
 
-type State string
+type State = lifecyclestate.LifecycleState
 
 const (
-	StatePreparing    State = "preparing"
-	StateCreateIntent State = "create-intent"
-	StateCreated      State = "created"
-	StateStarting     State = "starting"
-	StateObserving    State = "observing"
-	StateStopping     State = "stopping"
-	StateDestroying   State = "destroying"
-	StateDestroyed    State = "destroyed"
-	StateUnresolved   State = "unresolved"
+	StatePreparing    State = lifecyclestate.StatePreparePending
+	StateCreateIntent State = lifecyclestate.StateCreateIntent
+	StateCreated      State = lifecyclestate.StateCreated
+	StateStarting     State = lifecyclestate.StateStartIntent
+	StateObserving    State = lifecyclestate.StateObserveIntent
+	StateStopping     State = lifecyclestate.StateStopIntent
+	StateDestroying   State = lifecyclestate.StateDestroyIntent
+	StateDestroyed    State = lifecyclestate.StateDestroyed
+	StateUnresolved   State = lifecyclestate.StateUnresolved
+	StateQuarantined  State = lifecyclestate.StateQuarantined
 )
 
 // Snapshot is the complete caller-visible lifecycle state. It contains no
 // plan bytes, backend handle, content, guest data, success result, or free-form
 // failure text.
 type Snapshot struct {
-	AttemptID             approvalattempt.AttemptID
-	ApprovalID            approvalattempt.ApprovalID
-	AttemptNonce          approvalattempt.AttemptNonce
-	RegistrationID        v0candidate.RegistrationID
-	RegistrationSequence  v0candidate.PositiveUInt53
-	PlanDigest            v0candidate.ExecutionPlanDigest
-	InstallationID        v0candidate.InstallationID
-	EpochSequence         v0candidate.UInt53
-	EpochDigest           v0candidate.TrustEpochDigest
-	SupervisorID          v0candidate.SupervisorID
-	ApprovalPurpose       string
-	ApprovalAudience      string
-	ApprovalPayloadDigest approvalattempt.ApprovalPayloadDigest
-	AuthorizationIdentity approvalattempt.ApprovalKeyAuthorizationIdentity
-	CreatedAt             v0candidate.UInt53
-	State                 State
-	CleanupRequired       bool
-	Failure               Classification
-	FailureAt             Operation
-	TransitionCount       uint64
+	AttemptID                  approvalattempt.AttemptID
+	ApprovalID                 approvalattempt.ApprovalID
+	AttemptNonce               approvalattempt.AttemptNonce
+	RegistrationID             v0candidate.RegistrationID
+	RegistrationSequence       v0candidate.PositiveUInt53
+	PlanDigest                 v0candidate.ExecutionPlanDigest
+	InstallationID             v0candidate.InstallationID
+	EpochSequence              v0candidate.UInt53
+	EpochDigest                v0candidate.TrustEpochDigest
+	SupervisorID               v0candidate.SupervisorID
+	ApprovalPurpose            string
+	ApprovalAudience           string
+	ApprovalPayloadDigest      approvalattempt.ApprovalPayloadDigest
+	AuthorizationIdentity      approvalattempt.ApprovalKeyAuthorizationIdentity
+	CreatedAt                  v0candidate.UInt53
+	State                      State
+	CleanupRequired            bool
+	Failure                    Classification
+	FailureAt                  Operation
+	TransitionCount            uint64
+	RecordVersion              lifecyclestate.RecordVersion
+	OperationSequence          v0candidate.PositiveUInt53
+	EffectID                   lifecyclestate.EffectID
+	EffectStatus               lifecyclestate.EffectStatus
+	InstanceDigest             lifecyclestate.BackendInstanceDigest
+	LastReconciliation         lifecyclestate.ReconciliationStatus
+	AutomaticRecoveryCount     v0candidate.UInt53
+	NextRecoveryAt             lifecyclestate.OptionalUnixSeconds
+	RecoveryFence              lifecyclestate.RecoveryFenceReason
+	AutomaticRecoveryExhausted bool
 }
 
 // AttemptResolver is the only authority seam used before a first lifecycle
@@ -123,16 +132,7 @@ type AttemptResolver interface {
 	ResolveCreated(context.Context, approvalattempt.AttemptID) (registrationstate.CreatedAttempt, error)
 }
 
-// CreatedAttemptEnumerator is separate from AttemptResolver so startup
-// enumeration does not widen the ID-only resolution seam.
-type CreatedAttemptEnumerator interface {
-	CreatedAttempts(context.Context) ([]approvalattempt.AttemptReference, error)
-}
-
-var (
-	_ AttemptResolver          = (*registrationstate.ApprovalAttemptComponent)(nil)
-	_ CreatedAttemptEnumerator = (*registrationstate.ApprovalAttemptComponent)(nil)
-)
+var _ AttemptResolver = (*registrationstate.ApprovalAttemptComponent)(nil)
 
 type Checkpoint string
 
@@ -151,11 +151,12 @@ const (
 type CheckpointHook func(context.Context, Checkpoint, approvalattempt.AttemptID) error
 
 type Options struct {
-	Attempts        AttemptResolver
-	CreatedAttempts CreatedAttemptEnumerator
-	Store           *MemoryStore
-	Backend         *FakeBackend
-	Checkpoint      CheckpointHook
+	Attempts    AttemptResolver
+	Store       registrationstate.DurableLifecycleStore
+	Backend     *FakeBackend
+	Coordinator *Coordinator
+	Clock       registrationstate.TrustedClock
+	Checkpoint  CheckpointHook
 }
 
 func cloneRoleBindings(
@@ -202,16 +203,4 @@ func cloneCreatedAttempt(created registrationstate.CreatedAttempt) registrations
 	created.Registration.ExactPlanBytes = bytes.Clone(created.Registration.ExactPlanBytes)
 	created.PlanRoleBindings = cloneRoleBindings(created.PlanRoleBindings)
 	return created
-}
-
-func createdAttemptsEqual(left, right registrationstate.CreatedAttempt) bool {
-	return left.Attempt == right.Attempt &&
-		left.Approval == right.Approval &&
-		left.Registration.RecomputedPlanDigest == right.Registration.RecomputedPlanDigest &&
-		left.Registration.RegisteredAtUnixSeconds == right.Registration.RegisteredAtUnixSeconds &&
-		left.Registration.StorageFormatVersion == right.Registration.StorageFormatVersion &&
-		left.Registration.RetentionState == right.Registration.RetentionState &&
-		bytes.Equal(left.Registration.WireRegistrationBytes, right.Registration.WireRegistrationBytes) &&
-		bytes.Equal(left.Registration.ExactPlanBytes, right.Registration.ExactPlanBytes) &&
-		reflect.DeepEqual(left.PlanRoleBindings, right.PlanRoleBindings)
 }

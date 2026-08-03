@@ -254,13 +254,15 @@ one, it fails the v0 profile; any later exception requires a new ADR. Swift rema
 implementation where direct macOS Security, XPC, LocalAuthentication, or lifecycle APIs materially
 reduce bindings.
 
-Gate C invalidated direct Swift Containerization as the production backend authority. The
-libkrun/HVF candidate has a narrow C ABI and direct macOS process/code-identity needs; the next
-slice compares a Go-owned lifecycle adapter with narrow native Security bindings against a small
-native launcher surface. The possible Linux OCI/gVisor worker remains a separate boundary. Go
-continues to own portable policy/state-machine/backend-contract code. A post-v0 privileged helper
-may be considered only under the separate ADR above and must never receive public parsing,
-approval, content, or general engine authority.
+Gate C invalidated direct Swift Containerization as the production backend authority. Proposed
+[ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one unprivileged
+per-user Supervisor process with a small in-process native C/Objective-C XPC/Security front end and
+the existing Go authority/lifecycle core. It adds no Swift service, native launcher process, or
+privileged helper. The selection is architecture/conformance evidence only; authenticated product
+IPC and installed distribution validation remain unimplemented. The possible Linux OCI/gVisor
+worker remains a separate boundary. A post-v0 privileged helper may be considered only under the
+separate ADR above and must never receive public parsing, approval, content, or general engine
+authority.
 
 ## Current checkpoint and next boundary
 

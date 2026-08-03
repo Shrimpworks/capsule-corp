@@ -680,7 +680,7 @@ func persistLifecycleEnvelopeV1(path string, envelope diskEnvelopeV1, beforeRena
 	if afterRename != nil {
 		return fmt.Errorf("%w: injected after lifecycle rename", ErrCommitOutcomeIndeterminate)
 	}
-	directory, err := os.Open(parent)
+	directory, err := os.Open(parent) //nolint:gosec // G304: parent is the store's own installation-configured directory, not caller/network-supplied
 	if err != nil {
 		return fmt.Errorf("%w: open lifecycle store directory", ErrCommitOutcomeIndeterminate)
 	}

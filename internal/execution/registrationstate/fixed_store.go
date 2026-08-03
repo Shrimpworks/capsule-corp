@@ -324,7 +324,7 @@ func persistStateWithBoundary(path string, state installationState, afterRename 
 	if afterRename != nil {
 		return fmt.Errorf("%w: injected after rename", ErrCommitOutcomeIndeterminate)
 	}
-	directory, err := os.Open(parent)
+	directory, err := os.Open(parent) //nolint:gosec // G304: parent is the store's own installation-configured directory, not caller/network-supplied
 	if err != nil {
 		return fmt.Errorf("%w: open store directory", ErrCommitOutcomeIndeterminate)
 	}

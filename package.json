@@ -18,6 +18,7 @@
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
     "test": "pnpm --recursive test && node --test scripts/verify-contract-conformance.test.mjs",
+    "verify:adrs": "node scripts/verify-adr-index.mjs",
     "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/verify-contract-conformance.mjs"
   },
   "devDependencies": {

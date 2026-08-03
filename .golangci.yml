@@ -1,0 +1,36 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - gosec
+  exclusions:
+    paths:
+      # Spike/experiment code is explicitly non-production (see AGENTS.md)
+      # and is not held to the same lint bar as product code.
+      - experiments
+    rules:
+      # Test files read fixture paths under repo control (not user input),
+      # construct tiny fixture-index conversions that cannot overflow, and
+      # fixed_store_v1_test.go intentionally sets a loose mode to verify
+      # the store rejects it. None of these is the G304/G302/G115 risk
+      # gosec flags for.
+      - path: _test\.go
+        linters:
+          - gosec
+        text: "G304|G302|G115"
+      # cbor.go/wrappers.go's cborReader offset invariant is maintained by
+      # the bounds check on every prior read in the same loop, verified by
+      # 368 byte-exact conformance fixtures (see docs/adr/0023). gosec
+      # cannot see that invariant statically.
+      - path: internal/protocol/v0candidate/(cbor|wrappers)\.go
+        linters:
+          - gosec
+        text: "G115"
+
+formatters:
+  enable:
+    - gofmt

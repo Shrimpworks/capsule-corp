@@ -85,13 +85,13 @@ func run(ctx context.Context, input io.Reader) (response, error) {
 	if err != nil {
 		return response{}, errors.New("create conformance store directory")
 	}
-	defer os.RemoveAll(directory)
+	defer func() { _ = os.RemoveAll(directory) }()
 	storePath := filepath.Join(directory, "registration-state.json")
 	store, err := registrationstate.NewFixedFileStore(storePath, ordinaryInitialState())
 	if err != nil {
 		return response{}, fmt.Errorf("create conformance store: %w", err)
 	}
-	before, err := os.ReadFile(storePath)
+	before, err := os.ReadFile(storePath) //nolint:gosec // G304: storePath is a tempdir path this function created above, not caller-supplied
 	if err != nil {
 		return response{}, errors.New("read initial conformance store")
 	}
@@ -113,7 +113,7 @@ func run(ctx context.Context, input io.Reader) (response, error) {
 		exactPlan,
 		bindings,
 	)
-	after, err := os.ReadFile(storePath)
+	after, err := os.ReadFile(storePath) //nolint:gosec // G304: storePath is a tempdir path this function created above, not caller-supplied
 	if err != nil {
 		return response{}, errors.New("read final conformance store")
 	}

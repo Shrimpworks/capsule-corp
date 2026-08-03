@@ -11,9 +11,12 @@ source-research reconciliation narrowed the first-slice P0 work, deferred filesy
 file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
 stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
 the later governed-`deno_core` follow-up physically omitted 96 nonessential built-in ops through a
-one-file patch but did not select or admit a runtime. The later TypeScript approved-byte experiment
-then passed a narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro
-1.1.5 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
+one-file patch. Its package follow-up reproduced the exact snapshot and binary in two clean
+same-host containers from a digest-pinned no-apt builder and complete Cargo source bundle, but
+failed the stronger selection-evidence question on independent-builder, V8 notice/source, and
+dynamic-runtime-root closure. The later TypeScript approved-byte experiment separately passed a
+narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
+strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
@@ -153,6 +156,12 @@ then passed that one construction question: the exact governed fork registers an
 bootstrap ops with a reviewable one-file patch and reproducible ASLR-controlled snapshot. It did
 not address TypeScript, independent builder provenance, runtime-profile admission, or external
 isolation composition, so it does not reverse the family NO-GO or support `RUNTIME-001`.
+The subsequent [reproducible-package follow-up](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
+closed the local builder-image ambiguity for a bounded two-file candidate: two clean same-host
+containers using a digest-pinned no-apt builder and complete offline Cargo source bundle reproduced
+the prior binary and snapshot identities. It still returned NO-GO for runtime-selection evidence
+because no independent builder/host, complete archive-corresponding V8 source/notices, standalone
+dynamic runtime root, or production TypeScript ownership/wiring was available.
 The bounded [approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
 subsequently passed the exact pre-approval byte-binding question for a strip-only ESM TypeScript
 subset. It selected no runtime, wired no component, and left production ownership, protocol

@@ -7,6 +7,7 @@
 - P0-0 governed-construction refinement: 2026-08-02
 - Deno-family disposition refinement: 2026-08-02
 - Governed `deno_core` physical-omission refinement: 2026-08-02
+- Governed `deno_core` reproducible-package refinement: 2026-08-02
 - TypeScript approved-byte refinement: 2026-08-03
 
 ## Context
@@ -73,6 +74,17 @@ package, complete runtime-profile admission, or external-isolation composition. 
 full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
 is not superseded, and `RUNTIME-001` remains unsupported.
 
+The subsequent [reproducible-package follow-up](../../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
+closed the prior local builder-image ambiguity for that bounded candidate. A digest-pinned official
+Rust base with no added apt state and a complete 191-crate source bundle reproduced the same
+snapshot and binary in two clean same-host containers, and a normalized two-file candidate archive
+matched completely. This is not independent-builder provenance. The exact prebuilt V8 archive still
+lacks a complete corresponding source/third-party-notice record, the candidate archive depends on
+an unbundled dynamic Bookworm root, and production TypeScript ownership/wiring plus
+external-isolation/profile admission remain open. The experiment therefore returned NO-GO for
+runtime-selection evidence. No runtime is selected, this ADR is not superseded, and `RUNTIME-001`
+remains unsupported.
+
 The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
 passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
 deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-approval-typescript-erasure.md),
@@ -90,6 +102,6 @@ admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
 - Runtime construction investigation remains blocking after the Bun and Deno-family NO-GOs;
-  the governed `deno_core` physical-op result narrows that investigation but does not admit a
-  runtime. Capsule does not relax the advertised authority contract to preserve implementation
-  sequencing.
+  the governed `deno_core` physical-op and reproducible-package results narrow that investigation
+  but do not admit a runtime. Capsule does not relax the advertised authority contract to preserve
+  implementation sequencing.

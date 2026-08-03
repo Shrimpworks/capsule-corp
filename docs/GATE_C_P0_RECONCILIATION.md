@@ -146,8 +146,10 @@ offline Cargo source bundle, reproducing the same bytes in two clean same-host c
 later self-contained-root experiment closed the standalone dynamic-root item with an exact
 package-derived 22-entry root, explicit cache-free loader invocation, and file-open/mutation
 evidence. The stronger admission-evidence gate still fails on independent-builder provenance,
-exact archive-corresponding V8 source/notices, governed fork branches/releases, and the remaining
-admission corpus. See
+exact archive-corresponding V8 source/notices, a fork-native Linux/arm64 builder/release, and the
+remaining admission corpus. The governed fork branches now exist, but the first fork-native
+integration check stopped before building because the `rusty_v8` fork supports only Linux/amd64.
+See
 the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md),
 [physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
 [package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
@@ -163,6 +165,17 @@ composition remains incomplete. Accepted ADR-0028 selects governed `deno_core` a
 engineering candidate and supersedes ADR-0003's Bun-first ordering only; it does not admit a
 profile or change `RUNTIME-001`. See
 the [retained closure result](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
+
+Fork-native integration follow-up (2026-08-03): **LINUX/ARM64 CONSTRUCTION BLOCKED; NO BUILD OR
+RUNTIME ADMISSION**. Exact public refs, merge parents, upstream ancestry, Deno three-op/fixture
+oracles, the `rusty_v8` 20-gitlink source lock, and existing tool locks passed independent
+inspection at governed Deno head `9adb0b68...91bed` and governed `rusty_v8` follow-up head
+`a43ee748...33cf`. The latter's only profile is Linux/amd64:
+`x86_64-unknown-linux-gnu`, including its builder image, LLVM/bindgen, sysroot, GN/Ninja, output,
+collection, and provenance paths. The experiment therefore performed no prefetch or build and did
+not substitute amd64. The smallest next fork change is a digest-pinned Linux/arm64 sibling profile
+with network-disabled compilation/test/evidence collection. `RUNTIME-001` remains unsupported.
+See the [retained blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
 
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
 The exact governed patched construction reduced the built-in registry from 99 ops to the three
@@ -414,9 +427,9 @@ The next non-credential work is:
 2. carry the independently reproduced 43 P0-3 vectors into the selected host/launcher languages,
    close the measured console coverage gaps, and complete the distinct launcher, child manifest,
    and exact runner FD manifest;
-3. bootstrap governed branches in the real `dills122/deno` and `dills122/rusty_v8` forks, then
-   close independent-builder, deterministic V8 publication/link/notice evidence, and runtime-root
-   packaging,
+3. extend the merged `dills122/rusty_v8` governed follow-up with a fully pinned Linux/arm64
+   builder/publication sibling profile, then reconstruct the merged governed Deno candidate,
+   deterministic V8 publication/link/notice evidence, and runtime-root packaging,
    complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
    candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;
    and

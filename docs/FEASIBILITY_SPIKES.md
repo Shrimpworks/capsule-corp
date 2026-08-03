@@ -20,14 +20,19 @@ relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publ
 complete linked-component metadata, and generated notices are unavailable. Independent-builder
 and V8 source/license publication closure still fail the stronger admission-evidence question.
 Accepted ADR-0028 selects governed `deno_core` as the first engineering candidate, not an admitted
-profile. The real `dills122/deno` and `dills122/rusty_v8` forks exist, but governed branches,
-builders, and releases have not been established. The later
+profile. The real `dills122/deno` and `dills122/rusty_v8` forks now have first governed branches
+merged at Deno head `9adb0b68...91bed` and `rusty_v8` follow-up head
+`a43ee748...33cf`. A fork-native integration experiment then stopped before prefetch or build:
+the merged `rusty_v8` contract is fully pinned only for Linux/amd64 and has no Linux/arm64 builder,
+so it cannot construct the intended profile and no amd64 substitution is permitted. No release or
+new runtime artifact was produced. The later
 TypeScript approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md) and
+[fork-native runtime-bundle blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 

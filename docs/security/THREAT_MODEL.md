@@ -443,9 +443,13 @@ not concealed by the presence of a valid user approval.
 
 ### Existing and planned mitigations
 
-The current repository implements only schema/tooling scaffolding. All runtime security controls are
-planned. The authoritative claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md);
-each row begins `proposed` and advances only with exact retained evidence.
+The current repository implements schema/tooling plus named unwired local mechanics for exact
+registration, atomic approval consumption/attempt creation, and a durable no-guest fake lifecycle.
+The E5 fixed-store corpus proves exact lifecycle ceilings, no eviction, destroyed-only active
+capacity release, and bounded repeated startup under an injected in-process owner. It implements no
+runtime security control, production lock, consumer, real backend, or guest. The authoritative
+claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows advance only for the
+exact retained mechanism and evidence they name.
 
 ### Non-guarantees
 

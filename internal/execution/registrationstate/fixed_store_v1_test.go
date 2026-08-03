@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -14,6 +15,7 @@ import (
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/execution/lifecyclestate"
+	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
 type migrationLockStub struct {
@@ -437,6 +439,291 @@ func TestFixedStoreV1CapacityAndFormatIdentities(t *testing.T) {
 	if emptyHex != wantEmpty {
 		t.Fatalf("empty lifecycle-set digest = %s, want %s", emptyHex, wantEmpty)
 	}
+}
+
+func TestFixedStoreV1ExactActiveCapacityReleasesOnlyAfterDurableDestroy(t *testing.T) {
+	exactState, exactRecords := generatedLifecyclePopulation(
+		t, MaxActiveLifecycleRecords, lifecyclestate.StatePreparePending,
+	)
+	if got := activeLifecycleWork(exactState, nil); got != MaxActiveLifecycleRecords {
+		t.Fatalf("exact active population = %d, want %d", got, MaxActiveLifecycleRecords)
+	}
+	if err := validateV1State(exactState, nil, lifecycleSetDigest(nil)); err != nil {
+		t.Fatalf("exact active population rejected: %v", err)
+	}
+	if len(exactRecords) != MaxActiveLifecycleRecords {
+		t.Fatal("generated exact active population lost records")
+	}
+
+	states := []lifecyclestate.LifecycleState{
+		lifecyclestate.StateObserved,
+		lifecyclestate.StateStopped,
+		lifecyclestate.StateDestroyConfirmed,
+		lifecyclestate.StateUnresolved,
+		lifecyclestate.StateQuarantined,
+	}
+	for _, state := range states {
+		t.Run(string(state)+"-does-not-release", func(t *testing.T) {
+			candidate, records := generatedLifecyclePopulation(t, MaxActiveLifecycleRecords+1, state)
+			one := records[:1]
+			if got := activeLifecycleWork(candidate, one); got != MaxActiveLifecycleRecords+1 {
+				t.Fatalf("%s active population = %d, want %d", state, got, MaxActiveLifecycleRecords+1)
+			}
+			if err := validateV1State(candidate, one, lifecycleSetDigest(one)); err == nil ||
+				!strings.Contains(err.Error(), "active capacity") {
+				t.Fatalf("%s cap-plus-one result = %v", state, err)
+			}
+		})
+	}
+
+	releasedState, releasedRecords := generatedLifecyclePopulation(
+		t, MaxActiveLifecycleRecords+1, lifecyclestate.StateDestroyed,
+	)
+	oneDestroyed := releasedRecords[:1]
+	view := oneDestroyed[0].View()
+	if view.CleanupRequired || view.LastReconciliation != lifecyclestate.ReconciliationAuthoritativelyAbsent {
+		t.Fatalf("capacity-releasing record = %#v", view)
+	}
+	for _, test := range []struct {
+		name   string
+		mutate func(*lifecyclestate.RecordView)
+	}{
+		{name: "cleanup-still-required", mutate: func(candidate *lifecyclestate.RecordView) {
+			candidate.CleanupRequired = true
+		}},
+		{name: "absence-not-authoritative", mutate: func(candidate *lifecyclestate.RecordView) {
+			candidate.LastReconciliation = lifecyclestate.ReconciliationUnknown
+		}},
+	} {
+		t.Run(test.name+"-cannot-be-destroyed", func(t *testing.T) {
+			candidate := view
+			test.mutate(&candidate)
+			if _, err := lifecyclestate.NewRecord(candidate, releasedState.TimeHighWaterUnixSeconds); err == nil {
+				t.Fatal("invalid destroyed disposition passed durable record validation")
+			}
+		})
+	}
+	if got := activeLifecycleWork(releasedState, oneDestroyed); got != MaxActiveLifecycleRecords {
+		t.Fatalf("destroyed capacity release = %d, want %d", got, MaxActiveLifecycleRecords)
+	}
+	if err := validateV1State(releasedState, oneDestroyed, lifecycleSetDigest(oneDestroyed)); err != nil {
+		t.Fatalf("destroyed capacity release rejected: %v", err)
+	}
+
+	path := filepath.Join(t.TempDir(), "active-capacity-v1.json")
+	writeV1Envelope(t, path, encodedEnvelopeV1(releasedState, oneDestroyed))
+	reopened, err := OpenFixedFileStoreV1(path)
+	if err != nil {
+		t.Fatalf("reopen destroyed capacity release: %v", err)
+	}
+	recovery, err := reopened.RecoveryAttemptIDs(context.Background())
+	if err != nil || len(recovery) != MaxActiveLifecycleRecords {
+		t.Fatalf("recovery after one durable destroy = %d, %v", len(recovery), err)
+	}
+
+	capPlusOnePath := filepath.Join(t.TempDir(), "active-capacity-plus-one-v1.json")
+	writeV1Envelope(t, capPlusOnePath, encodedEnvelopeV1(releasedState, nil))
+	before := mustReadFile(t, capPlusOnePath)
+	if _, err := OpenFixedFileStoreV1(capPlusOnePath); err == nil ||
+		!strings.Contains(err.Error(), "active capacity") {
+		t.Fatalf("active cap-plus-one open = %v", err)
+	}
+	if after := mustReadFile(t, capPlusOnePath); !bytes.Equal(after, before) {
+		t.Fatal("active cap-plus-one refusal evicted or rewrote retained state")
+	}
+}
+
+func TestFixedStoreV1ExactRetainedLifecycleCapacityNeverEvicts(t *testing.T) {
+	state, records := generatedLifecyclePopulation(
+		t, MaxRetainedLifecycleRecords, lifecyclestate.StateDestroyed,
+	)
+	if len(records) != MaxRetainedLifecycleRecords {
+		t.Fatalf("retained lifecycle count = %d", len(records))
+	}
+	if err := validateV1State(state, records, lifecycleSetDigest(records)); err != nil {
+		t.Fatalf("exact retained lifecycle population rejected: %v", err)
+	}
+
+	path := filepath.Join(t.TempDir(), "retained-lifecycle-capacity-v1.json")
+	envelope := encodedEnvelopeV1(state, records)
+	encoded, err := json.Marshal(envelope)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if int64(len(encoded)) > MaxSupervisorStateV1Bytes {
+		t.Fatalf("exact retained lifecycle population is %d bytes, exceeds fixed bound %d", len(encoded), MaxSupervisorStateV1Bytes)
+	}
+	t.Logf("exact retained lifecycle population: %d records, %d encoded bytes", len(records), len(encoded))
+	writeV1Envelope(t, path, envelope)
+	reopened, err := OpenFixedFileStoreV1(path)
+	if err != nil {
+		t.Fatalf("reopen exact retained lifecycle population: %v", err)
+	}
+	recovery, err := reopened.RecoveryAttemptIDs(context.Background())
+	if err != nil || len(recovery) != 0 {
+		t.Fatalf("terminal retained recovery set = %d, %v", len(recovery), err)
+	}
+
+	tooMany := append(append([]lifecyclestate.Record(nil), records...), lifecyclestate.Record{})
+	if err := validateV1State(state, tooMany, lifecycleSetDigest(tooMany)); err == nil ||
+		!strings.Contains(err.Error(), "retained capacity") {
+		t.Fatalf("retained cap-plus-one result = %v", err)
+	}
+	capPlusOnePath := filepath.Join(t.TempDir(), "retained-lifecycle-capacity-plus-one-v1.json")
+	writeV1Envelope(t, capPlusOnePath, encodedEnvelopeV1(state, tooMany))
+	before := mustReadFile(t, capPlusOnePath)
+	if _, err := OpenFixedFileStoreV1(capPlusOnePath); err == nil ||
+		!strings.Contains(err.Error(), "retained capacity") {
+		t.Fatalf("retained cap-plus-one open = %v", err)
+	}
+	if after := mustReadFile(t, capPlusOnePath); !bytes.Equal(after, before) {
+		t.Fatal("retained cap-plus-one refusal evicted or rewrote retained state")
+	}
+}
+
+func generatedLifecyclePopulation(
+	t *testing.T,
+	count int,
+	state lifecyclestate.LifecycleState,
+) (installationState, []lifecyclestate.Record) {
+	t.Helper()
+	templateState, templateRecord := stateAndLifecycleRecord(t)
+	templateApproval := templateState.Approvals[0]
+	templateAttempt := templateState.Attempts[0]
+	templateBindings := templateRecord.Bindings().View()
+
+	result := cloneState(templateState)
+	result.Approvals = make([]approvalattempt.ApprovalRecord, count)
+	result.Attempts = make([]approvalattempt.ExecutionAttempt, count)
+	records := make([]lifecyclestate.Record, count)
+	for index := range count {
+		ordinal := uint16(index + 1)
+		approval := approvalattempt.CloneApprovalRecord(templateApproval)
+		approval.ApprovalID = templateApproval.ApprovalID
+		approval.AttemptNonce = templateApproval.AttemptNonce
+		binary.BigEndian.PutUint16(approval.ApprovalID[14:], ordinal)
+		binary.BigEndian.PutUint16(approval.AttemptNonce[14:], ordinal)
+		binary.BigEndian.PutUint16(approval.ExactEnvelopeBytes[len(approval.ExactEnvelopeBytes)-2:], ordinal)
+		binary.BigEndian.PutUint16(approval.ExactPayloadBytes[len(approval.ExactPayloadBytes)-2:], ordinal)
+		approval.EnvelopeDigest = approvalattempt.ApprovalEnvelopeDigest(sha256.Sum256(approval.ExactEnvelopeBytes))
+		approval.PayloadDigest = approvalattempt.ApprovalPayloadDigest(sha256.Sum256(approval.ExactPayloadBytes))
+		approval.ConsumedAttemptID = templateAttempt.AttemptID
+		binary.BigEndian.PutUint16(approval.ConsumedAttemptID[14:], ordinal)
+
+		attempt := templateAttempt
+		attempt.AttemptID = approval.ConsumedAttemptID
+		attempt.ApprovalID = approval.ApprovalID
+		attempt.AttemptNonce = approval.AttemptNonce
+		attempt.ApprovalPayloadDigest = approval.PayloadDigest
+		result.Approvals[index] = approval
+		result.Attempts[index] = attempt
+
+		bindingsView := templateBindings
+		bindingsView.ProfileReviewAttestationDigests = append(
+			[]v0candidate.ProfileReviewAttestationDigest(nil),
+			templateBindings.ProfileReviewAttestationDigests...,
+		)
+		bindingsView.AttemptID = attempt.AttemptID
+		bindingsView.ApprovalID = attempt.ApprovalID
+		bindingsView.AttemptNonce = attempt.AttemptNonce
+		bindingsView.ApprovalPayloadDigest = attempt.ApprovalPayloadDigest
+		bindings, err := lifecyclestate.NewImmutableBindings(bindingsView)
+		if err != nil {
+			t.Fatalf("generated lifecycle bindings %d: %v", index, err)
+		}
+		records[index] = generatedLifecycleRecord(t, result.TimeHighWaterUnixSeconds, bindings, state)
+	}
+	approvalDigest, err := approvalSetDigest(result.Approvals)
+	if err != nil {
+		t.Fatal(err)
+	}
+	attemptDigest, err := attemptSetDigest(result.Attempts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result.ApprovalSetDigest = approvalDigest
+	result.AttemptSetDigest = attemptDigest
+	return result, records
+}
+
+func generatedLifecycleRecord(
+	t *testing.T,
+	highWater v0candidate.UInt53,
+	bindings lifecyclestate.ImmutableBindings,
+	state lifecyclestate.LifecycleState,
+) lifecyclestate.Record {
+	t.Helper()
+	view := lifecyclestate.RecordView{
+		FormatVersion: lifecyclestate.LifecycleRecordFormatVersion, RecordVersion: 1,
+		SnapshotGeneration: 1, Bindings: bindings, ImmutableBindingDigest: bindings.Digest(),
+		State: state, CleanupRequired: true, LastConfirmedCheckpoint: lifecyclestate.CheckpointNone,
+		FirstFailure: lifecyclestate.FailureNone, FailureOperation: lifecyclestate.OperationNone,
+		LastReconciliation: lifecyclestate.ReconciliationNone,
+		RecoveryFence:      lifecyclestate.RecoveryFenceNone,
+		OpenedAt:           bindings.View().AttemptCreatedAt,
+		LastTransitionAt:   bindings.View().AttemptCreatedAt,
+	}
+	setEffect := func(operation lifecyclestate.Operation, status lifecyclestate.EffectStatus, checkpoint lifecyclestate.Checkpoint) {
+		view.Operation = operation
+		view.EffectStatus = status
+		view.LastConfirmedCheckpoint = checkpoint
+		attemptID := bindings.View().AttemptID
+		identifier, err := lifecyclestate.NewDomainIdentifier(lifecyclestate.DomainEffectID, attemptID[:])
+		if err != nil {
+			t.Fatal(err)
+		}
+		view.EffectID, err = lifecyclestate.NewEffectID(identifier)
+		if err != nil {
+			t.Fatal(err)
+		}
+		view.OperationSequence = 1
+		view.Instance, err = lifecyclestate.NewBackendInstanceIdentity(
+			lifecyclestate.BackendInstanceFake, attemptID[:],
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	switch state {
+	case lifecyclestate.StatePreparePending:
+		view.Operation = lifecyclestate.OperationNone
+		view.EffectStatus = lifecyclestate.EffectNone
+	case lifecyclestate.StateObserved:
+		setEffect(lifecyclestate.OperationObserve, lifecyclestate.EffectConfirmed, lifecyclestate.CheckpointObserve)
+	case lifecyclestate.StateStopped:
+		setEffect(lifecyclestate.OperationStop, lifecyclestate.EffectConfirmed, lifecyclestate.CheckpointStop)
+	case lifecyclestate.StateDestroyConfirmed:
+		setEffect(lifecyclestate.OperationDestroy, lifecyclestate.EffectConfirmed, lifecyclestate.CheckpointDestroy)
+	case lifecyclestate.StateUnresolved:
+		setEffect(lifecyclestate.OperationObserve, lifecyclestate.EffectIndeterminate, lifecyclestate.CheckpointStart)
+		view.FirstFailure = lifecyclestate.FailureCleanupUnresolved
+		view.FailureOperation = lifecyclestate.OperationObserve
+		view.LastReconciliation = lifecyclestate.ReconciliationUnknown
+		view.AutomaticRecoveryCount = 1
+		view.NextRecoveryAt = lifecyclestate.OptionalUnixSeconds{Present: true, Value: highWater + 1}
+		view.RecoveryFence = lifecyclestate.RecoveryFenceReconcileUnknown
+	case lifecyclestate.StateQuarantined:
+		setEffect(lifecyclestate.OperationStart, lifecyclestate.EffectIndeterminate, lifecyclestate.CheckpointCreate)
+		view.FirstFailure = lifecyclestate.FailureBinding
+		view.FailureOperation = lifecyclestate.OperationStart
+		view.LastReconciliation = lifecyclestate.ReconciliationIdentityMismatch
+		view.AutomaticRecoveryCount = 1
+		view.RecoveryFence = lifecyclestate.RecoveryFenceIdentityMismatch
+	case lifecyclestate.StateDestroyed:
+		view.Operation = lifecyclestate.OperationNone
+		view.EffectStatus = lifecyclestate.EffectNone
+		view.CleanupRequired = false
+		view.LastReconciliation = lifecyclestate.ReconciliationAuthoritativelyAbsent
+		view.AutomaticRecoveryCount = 1
+		view.TerminalAt = lifecyclestate.OptionalUnixSeconds{Present: true, Value: view.LastTransitionAt}
+	default:
+		t.Fatalf("unsupported generated lifecycle state %q", state)
+	}
+	record, err := lifecyclestate.NewRecord(view, highWater)
+	if err != nil {
+		t.Fatalf("generated lifecycle record %s: %v", state, err)
+	}
+	return record
 }
 
 func stateAndLifecycleRecord(t *testing.T) (installationState, lifecyclestate.Record) {

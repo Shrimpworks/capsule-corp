@@ -322,6 +322,140 @@ func TestStartupEnumerationDrivesCreatedAttemptOnceAndIgnoresExpiry(t *testing.T
 	}
 }
 
+func TestConcurrentRepeatedStartupUsesOneInjectedOwnerAndOmitsTerminal(t *testing.T) {
+	harness := newHarness(t, nil)
+	coordinator, err := NewCoordinator(harness.store.OwnerSessionID())
+	if err != nil {
+		t.Fatal(err)
+	}
+	components := make([]*Component, 8)
+	for index := range components {
+		components[index], err = New(Options{
+			Attempts: harness.attempts, Store: harness.store, Backend: harness.backend,
+			Coordinator: coordinator, Clock: harness.clock,
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	var group sync.WaitGroup
+	errorsSeen := make(chan error, len(components))
+	for _, component := range components {
+		group.Add(1)
+		go func() {
+			defer group.Done()
+			_, startupErr := component.RecoverCreatedAttempts(context.Background())
+			errorsSeen <- startupErr
+		}()
+	}
+	group.Wait()
+	close(errorsSeen)
+	for startupErr := range errorsSeen {
+		if startupErr != nil {
+			t.Fatalf("concurrent startup: %v", startupErr)
+		}
+	}
+	backend := harness.backend.Snapshot(harness.attemptID)
+	for _, operation := range durableOperations {
+		if backend.CallCounts[operation] != 1 || backend.ApplicationCounts[operation] != 1 {
+			t.Fatalf("%s concurrent startup calls/applications = %d/%d", operation, backend.CallCounts[operation], backend.ApplicationCounts[operation])
+		}
+	}
+
+	harness.reopen(t, nil)
+	results, err := harness.component.RecoverCreatedAttempts(context.Background())
+	if err != nil || len(results) != 0 {
+		t.Fatalf("repeated startup retained terminal work: %+v, %v", results, err)
+	}
+	after := harness.backend.Snapshot(harness.attemptID)
+	if !reflect.DeepEqual(backend.CallCounts, after.CallCounts) ||
+		!reflect.DeepEqual(backend.EffectIDs, after.EffectIDs) {
+		t.Fatalf("terminal startup replay changed fake effects: before=%+v after=%+v", backend, after)
+	}
+}
+
+func TestRepeatedStartupRetainsExhaustedRecoveryWithoutRestart(t *testing.T) {
+	harness := newHarness(t, nil)
+	harness.component = harness.newComponent(t, harness.attempts, oneShotCheckpoint(CheckpointAfterCreateEffect))
+	if _, err := harness.component.Drive(context.Background(), harness.attemptID); err == nil {
+		t.Fatal("expected simulated interruption after create")
+	}
+	for range lifecyclestate.MaxAutomaticRecoveryAttempts {
+		if err := harness.backend.InjectFault(harness.attemptID, OperationReconcile, FaultBeforeEffect); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	times := []uint64{1_785_456_000, 1_785_456_001, 1_785_456_006}
+	var exhausted Snapshot
+	for index, observed := range times {
+		harness.clock.set(observed)
+		harness.reopen(t, nil)
+		results, err := harness.component.RecoverCreatedAttempts(context.Background())
+		assertLifecycleClassification(t, err, ClassificationCleanupUnresolved)
+		if len(results) != 1 || results[0].State != StateUnresolved || !results[0].CleanupRequired ||
+			results[0].AutomaticRecoveryCount != v0candidate.UInt53(index+1) {
+			t.Fatalf("startup recovery %d = %+v, %v", index+1, results, err)
+		}
+		exhausted = results[0]
+	}
+	if !exhausted.AutomaticRecoveryExhausted || exhausted.NextRecoveryAt.Present ||
+		exhausted.RecoveryFence != lifecyclestate.RecoveryFenceAutomaticExhausted {
+		t.Fatalf("third unknown did not exhaust automatic recovery: %+v", exhausted)
+	}
+	before := harness.backend.Snapshot(harness.attemptID)
+	if before.CallCounts[OperationReconcile] != uint64(lifecyclestate.MaxAutomaticRecoveryAttempts) ||
+		before.ApplicationCounts[OperationCreate] != 1 {
+		t.Fatalf("exhaustion calls/effects = %+v", before)
+	}
+
+	for repetition := range 4 {
+		harness.clock.set(1_785_456_100 + uint64(repetition))
+		harness.reopen(t, nil)
+		results, err := harness.component.RecoverCreatedAttempts(context.Background())
+		assertLifecycleClassification(t, err, ClassificationCleanupUnresolved)
+		if len(results) != 1 || !results[0].AutomaticRecoveryExhausted ||
+			results[0].RecordVersion != exhausted.RecordVersion ||
+			results[0].AutomaticRecoveryCount != exhausted.AutomaticRecoveryCount {
+			t.Fatalf("exhausted startup %d mutated or omitted work: %+v", repetition, results)
+		}
+	}
+	after := harness.backend.Snapshot(harness.attemptID)
+	if after.CallCounts[OperationReconcile] != before.CallCounts[OperationReconcile] ||
+		after.ApplicationCounts[OperationCreate] != 1 {
+		t.Fatalf("exhausted startup silently restarted recovery/effect: before=%+v after=%+v", before, after)
+	}
+}
+
+func TestOwnerCoordinatorMismatchRefusesBeforeStartupMutationOrEffect(t *testing.T) {
+	harness := newHarness(t, nil)
+	before, err := os.ReadFile(harness.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wrongCoordinator, err := NewCoordinator(ownerID(t, 0xee))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := New(Options{
+		Attempts: harness.attempts, Store: harness.store, Backend: harness.backend,
+		Coordinator: wrongCoordinator, Clock: harness.clock,
+	}); err == nil {
+		t.Fatal("constructor accepted owner/coordinator mismatch")
+	}
+	after, err := os.ReadFile(harness.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(before, after) {
+		t.Fatal("owner/coordinator mismatch mutated the fixed store")
+	}
+	if calls := harness.backend.Snapshot(harness.attemptID).CallCounts; len(calls) != 0 {
+		t.Fatalf("owner/coordinator mismatch reached fake backend: %v", calls)
+	}
+}
+
 func TestDefensiveCopiesSnapshotsAndFixedErrors(t *testing.T) {
 	harness := newHarness(t, nil)
 	resolved, err := harness.attempts.ResolveCreated(context.Background(), harness.attemptID)

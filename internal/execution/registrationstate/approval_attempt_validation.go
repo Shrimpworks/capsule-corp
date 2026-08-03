@@ -19,12 +19,12 @@ const (
 	AttemptStoreVersion    = uint64(0)
 )
 
-func validateApprovalAttemptState(state installationState) error {
+func validateApprovalAttemptState(state installationState, enforceAttemptCapacity bool) error {
 	if len(state.Approvals) > MaxRetainedApprovals || len(state.Attempts) > MaxRetainedAttempts {
 		return errors.New("fixed approval/attempt state exceeds retained capacity")
 	}
 	if countUsableApprovals(state.Approvals, state.TimeHighWaterUnixSeconds) > MaxUsableApprovals ||
-		countNonterminalAttempts(state.Attempts) > MaxNonterminalAttempts {
+		(enforceAttemptCapacity && countNonterminalAttempts(state.Attempts) > MaxNonterminalAttempts) {
 		return errors.New("fixed approval/attempt state exceeds active capacity")
 	}
 	approvalIDs := make(map[approvalattempt.ApprovalID]int, len(state.Approvals))

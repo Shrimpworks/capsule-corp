@@ -256,7 +256,7 @@ type loadedV1State struct {
 }
 
 func loadV1State(path string) (loadedV1State, error) {
-	data, err := readBoundedStoreFile(path)
+	data, err := readBoundedStoreFile(path, MaxSupervisorStateV1Bytes)
 	if err != nil {
 		return loadedV1State{}, err
 	}
@@ -276,7 +276,7 @@ func loadV1State(path string) (loadedV1State, error) {
 	if len(envelope.Lifecycles) > MaxRetainedLifecycleRecords {
 		return loadedV1State{}, errors.New("fixed lifecycle state exceeds retained capacity")
 	}
-	if err := validateState(envelope.State); err != nil {
+	if err := validateStateWithAttemptCapacity(envelope.State, false); err != nil {
 		return loadedV1State{}, err
 	}
 	if err := validateV1AuthorityDigests(envelope.State); err != nil {
@@ -302,7 +302,7 @@ func loadV1State(path string) (loadedV1State, error) {
 }
 
 func loadV0StateStrict(path string) (installationState, error) {
-	data, err := readBoundedStoreFile(path)
+	data, err := readBoundedStoreFile(path, MaxSupervisorStateBytes)
 	if err != nil {
 		return installationState{}, err
 	}
@@ -325,17 +325,17 @@ func loadV0StateStrict(path string) (installationState, error) {
 	return cloneState(envelope.State), nil
 }
 
-func readBoundedStoreFile(path string) ([]byte, error) {
+func readBoundedStoreFile(path string, maxBytes int64) ([]byte, error) {
 	file, err := os.Open(path) //nolint:gosec // G304: path is the store's own installation-configured path, not caller/network-supplied
 	if err != nil {
 		return nil, errors.New("open fixed supervisor store")
 	}
 	defer func() { _ = file.Close() }()
-	data, err := io.ReadAll(io.LimitReader(file, MaxSupervisorStateBytes+1))
+	data, err := io.ReadAll(io.LimitReader(file, maxBytes+1))
 	if err != nil {
 		return nil, errors.New("read fixed supervisor store")
 	}
-	if int64(len(data)) > MaxSupervisorStateBytes {
+	if int64(len(data)) > maxBytes {
 		return nil, errors.New("fixed supervisor store exceeds byte capacity")
 	}
 	return data, nil
@@ -510,7 +510,7 @@ func validateV1State(
 	records []lifecyclestate.Record,
 	digest LifecycleSetDigest,
 ) error {
-	if err := validateState(state); err != nil {
+	if err := validateStateWithAttemptCapacity(state, false); err != nil {
 		return err
 	}
 	if err := validateV1AuthorityDigests(state); err != nil {

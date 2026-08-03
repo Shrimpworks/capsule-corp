@@ -12,6 +12,20 @@ bounded corpus without `NullFs`; removal remains credible but unadmitted. Curren
 the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [workstream ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
+## Subsequent Phase 2B durable-lifecycle checkpoint
+
+As of 2026-08-03, PR #59 merged Slice E4 and the E5 local checkpoint is retained in the
+[durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md). The no-guest fake now uses the
+colocated v1 fixed snapshot and stable store-issued effect identities. Focused tests prove exact
+256-active and 4,096-retained lifecycle ceilings, cap-plus-one refusal without eviction, capacity
+release only after durable destroyed/cleanup-false/authoritative-absence state, terminal omission
+on repeated startup, retained unresolved/exhausted recovery work, and owner/coordinator mismatch
+refusal within the injected in-process boundary.
+
+This later checkpoint does not alter the Gate C task results below, accept Proposed ADR-0025, or
+claim production multi-process locking, archive/compaction, backup/rollback, production
+reconciliation, a consumer, content, evidence, runtime, real backend, or guest.
+
 ## Task group
 
 | Workstream | Task provenance | Integration | Result |

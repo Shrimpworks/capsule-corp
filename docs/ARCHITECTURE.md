@@ -136,6 +136,13 @@ retained validation evidence.
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
 
+The current unwired E5 checkpoint exercises this fake through a fixed colocated Supervisor
+snapshot. It retains durable intents, stable effect IDs, cleanup/reconciliation state, exact
+256-active and 4,096-retained ceilings, and idempotent repeated startup under an injected
+in-process owner/coordinator. This is repository-local mechanic evidence only: it is not the
+macOS installation lock, a production database, a real adapter, guest lifecycle evidence, or
+evidence composition.
+
 ### Trust verifier and repository
 
 TUF root, targets, snapshot, and timestamp metadata anchor release/profile distribution,

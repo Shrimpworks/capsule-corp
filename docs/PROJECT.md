@@ -33,16 +33,20 @@ adds distinct identifiers/references, the fixed internal classification vocabula
 candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
 colocated fixed registration/approval/attempt store. The no-guest fake lifecycle now resolves and
 recovers only committed `AttemptID` records, revalidates exact plan and copied bindings before fake
-prepare, and retains 12 top-level focused lifecycle tests for binding, replay, concurrency, fault,
-and startup-recovery behavior. Its active driver still uses bounded single-process memory. There is
-no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
+prepare, and retains the original 12 top-level focused lifecycle tests for binding, replay,
+concurrency, fault, and startup-recovery behavior. The E4/E5 local checkpoint adds focused durable
+tests and now drives that no-guest fake through
+the colocated v1 fixed snapshot and retains exact effect identities, restart reconciliation,
+256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. The owner
+and coordinator remain injected in-process mechanics, not a production platform lock. There is no
+consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
-fake-only implementation plan. Slices E1 through E3 now provide the passive lifecycle contract,
-explicit fixed-store v0-to-v1 migration and validation, and unwired durable ensure/read/intent/
-result/indeterminate/reconciliation/recovery-set transactions. None calls an adapter. Slice E4 must
-replace the active `MemoryStore` driver with those transactions while preserving the no-guest fake;
-Slice E5 remains the capacity, repeated-startup, and evidence checkpoint.
+fake-only implementation plan. Slices E1 through E5 now provide the passive lifecycle contract,
+explicit fixed-store v0-to-v1 migration and validation, durable ensure/read/intent/result/
+indeterminate/reconciliation/recovery-set transactions, the FakeBackend-only driver, and the
+capacity/repeated-startup evidence checkpoint. ADR-0025 remains Proposed and the implementation
+status remains unwired `local-mechanic` only.
 A focused unwired
 TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role

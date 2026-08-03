@@ -99,24 +99,23 @@ the unwired slices now implement strict TypeScript raw/schema proposal decoding,
 TypeScript semantic-resolution cases, exact TypeScript minimum-plan construction/encoding, strict
 Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, 44 passive
 Go approval/attempt contract cases, and 12 fixed-store transition cases. Swift remains pending.
-The fixed store now colocates registrations, approval/attempt authority, and the durable time
-high-water; it remains unwired. The fake lifecycle accepts only committed created attempts through
-`AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
-`FakeBackend.CreatesGuest() == false`; its active driver still uses bounded single-process memory.
+The fixed store now colocates registrations, approval/attempt authority, durable time high-water,
+and lifecycle/effect checkpoints; it remains unwired. The fake lifecycle accepts only committed
+created attempts through `AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
+`FakeBackend.CreatesGuest() == false`.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects colocated lifecycle
 records and effect checkpoints in that same versioned Supervisor transaction domain. Slices E1
-through E3 are merged: passive contracts, explicit fixed-store v1 migration/open validation, and
-unwired durable lifecycle transactions with exact fault/reopen semantics. No E3 transaction calls
-an adapter. Slice E4 must migrate the fake driver and startup coordinator onto those transactions;
-Slice E5 then closes capacity, repeated-startup, and documentation evidence. A
+through E5 now retain passive contracts, explicit fixed-store v1 migration/open validation,
+durable lifecycle transactions, the FakeBackend-only driver, exact 256-active/4,096-retained
+capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evidence. The only
+adapter used is the closed no-guest fake, and the owner/coordinator remains injected in-process. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next
-backend-independent boundary is Slice E4's durable `AttemptID`-keyed fake driver and startup
-coordination.
+product-language/IPC seam or public consumer. The next backend-independent boundaries are reviewed
+Supervisor archive/compaction and a selected real platform owner lock; neither is supplied by E5.
 Authenticated typed IPC, production approval signing/verification, reviewed Supervisor archival/
-compaction, evidence composition,
-consumers, and atomic public migration remain separate decisions. The dormant `SupervisorCore`
+compaction, evidence composition, consumers, and atomic public migration remain separate decisions.
+The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).

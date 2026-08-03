@@ -1,3 +1,7 @@
+// Command capsuled is the capsule daemon entrypoint. It currently only
+// serves internal/api's read-only diagnostic endpoints on a loopback
+// address by default; it holds no Approval, Supervisor, or execution
+// authority (see internal/api's package doc and AGENTS.md).
 package main
 
 import (

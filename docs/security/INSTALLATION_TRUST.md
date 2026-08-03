@@ -33,6 +33,8 @@ The signed manifest records at least:
 - policy-bundle and runtime-profile-registry digests;
 - pinned TUF root identity and accepted metadata checkpoint;
 - component and storage-format versions;
+- the Supervisor private state-root identity, closed store/owner-lock names, and Proposed
+  ADR-0033 owner-lock UID/device/inode/mode/link-count enrollment;
 - previous manifest/epoch digest;
 - transition reason: install, update, repair, recovery, or authority change.
 
@@ -76,6 +78,14 @@ Receipts must state which mechanism, if any, was active.
 
 A general shared app group is not used merely for convenience. Cross-component data moves through
 authenticated typed IPC or narrow handles.
+
+The trusted containing application/installer creates the Supervisor's owner-lock object exactly
+once with the private state root, syncs and reopens it, and enrolls its identity. Ordinary updates
+preserve the same object. Normal Supervisor startup, the daemon, and store openers never create or
+replace it. Loss, relocation, or restore to a different inode is repair-required and needs an
+authorized forward epoch/new-installation decision. The BSD advisory lock serializes cooperating
+Supervisors; installed protected-directory enforcement is what must deny baseline same-UID path
+replacement. Mode `0600` is not that containment boundary.
 
 A stable data-protection Keychain access group is a Team/profile/entitlement boundary, not an
 exact-build or trust-epoch boundary. Gate B demonstrated that a stale same-team Broker rejected by

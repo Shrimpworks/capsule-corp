@@ -165,14 +165,36 @@ This is an unwired `local-mechanic` result. Archive/compaction, a real platform/
 backup/rollback, production reconciliation, consumers, content, evidence, runtime, backend, and
 guest remain absent.
 
+## Supervisor owner-lock design checkpoint
+
+Proposed ADR-0033 selects a pre-created installer-enrolled sibling object, exact
+UID/mode/type/link/device/inode validation, and lifetime nonblocking BSD `flock`. The retained
+[development-only experiment](../experiments/supervisor-owner-lock-boundary/RESULTS.md) observed
+duplicate-process refusal before store/recovery markers, last-description/process-death release,
+dup/fork/exec/`CLOEXEC` behavior, POSIX record-lock any-close risk, macOS 26 OFD behavior,
+`O_EXLOCK` interoperability, retained-directory `openat`, and rename/unlink/replacement limits.
+
+This is a `spike-observed` local-semantics decision only. The E5 store still injects its owner and
+coordinator. No Go/Darwin port, owner-required store opener, Apple-signed protected state root,
+wrong-user/session/update/reboot result, production engine, archive behavior, consumer, runtime,
+backend, or guest exists. The advisory lock does not contain a same-UID process that can mutate its
+parent directory.
+
+Source Preparer P0 remains a separate bounded NO-GO/HOLD at draft PR #72 commit `a12041c`: no
+single-member source-store container, exact worker confinement evidence, or closed store-genesis
+and update authority is proven. ADR-0033 process exclusion does not supply source-store
+confidentiality, integrity, or protected-container membership. Useful composition would require a
+separate protected root, component identity, lock object, and owner session after those properties
+are independently proven; Supervisor ownership material is not shared.
+
 The next design task is now retained as
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) and the
 [Supervisor archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md). It selects
 complete closed registration cohorts, immutable full-record segments, exact replay/non-reuse
 tombstone indexes, publish-before-activate fault ordering, coherent backup verification, and
 read-only offline verification. It implements no archive behavior and deliberately leaves
-referenced-history deletion, production-engine selection, real owner locking/power loss, coherent-
-rollback prevention, continuous service, consumers, and guests blocked.
+referenced-history deletion, implementation/installed validation of the selected owner lock and
+power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
 The closed conformance manifest remains 82 rules, 262 cases, and 368 fixtures after Slice C. Its Go
 manifest-backed coverage remains 177 targets: 81 internal-CBOR/wrapper cases, 40 registration-state

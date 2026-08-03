@@ -194,7 +194,9 @@ separating OS enforcement, protocol enforcement, harness mechanics, inference, a
 
 Compose the native front end and Go facade in one disposable Supervisor executable against a
 temporary fixed v1 store and `FakeBackend.CreatesGuest() == false`. Use a sibling no-symlink
-mode-0600 owner-lock fixture. Do not add the executable to a product package or service manifest.
+mode-0600 owner-lock fixture implementing Proposed ADR-0033's enrolled object, explicit BSD
+`flock`, and lock-before-store contract. Do not add the executable to a product package or service
+manifest.
 
 Bridge rules under test:
 
@@ -254,7 +256,8 @@ rerun S3/S4 with:
 - old daemon/new Supervisor, new daemon/old Supervisor, stale Broker, mixed CDHash set, changed
   entitlement, prepared update, pending verification, epoch finalization, component acceptance,
   crash at swap/acceptance boundaries, and repair-required refusal;
-- duplicate Supervisor startup and owner-lock contention; and
+- duplicate Supervisor startup and owner-lock contention;
+- lock-object preservation across update plus enrolled device/inode mismatch refusal; and
 - exact installed protected store and epoch-scoped operational-key access denial, without exercising
   an Approval private-key operation unless separately authorized by the approval plan.
 

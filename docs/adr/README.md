@@ -61,5 +61,7 @@ its core conclusion.
   — Proposed
 - [ADR-0032: Select an enrolled TypeScript Source Preparer and immutable source store](0032-select-enrolled-typescript-source-preparer.md)
   — Proposed
+- [ADR-0033: Select an enrolled BSD `flock` object for Supervisor ownership](0033-select-enrolled-flock-supervisor-owner.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

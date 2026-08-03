@@ -39,6 +39,12 @@ identities, reconciliation, exact active/retained ceilings, and repeated-startup
 Supervisor topology for the future authenticated boundary. No native bridge fixture, product XPC
 service, production owner lock, consumer, runtime, backend effect, or guest is connected.
 
+Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
+installer-enrolled pre-created sibling object, acquire nonblocking BSD `flock`, and retain the
+opaque `CLOEXEC` descriptor for the Supervisor lifetime. Its bounded local harness observed
+process/descriptor semantics and refusal-before-store ordering only. No Go/Darwin port or installed
+protected-state-root evidence is connected.
+
 Proposed ADR-0031 defines, but does not implement, the next archive boundary. A complete expired
 registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
 with cleanup false and authoritative absence. Immutable segments retain full records and exact
@@ -212,7 +218,9 @@ Proposed ADR-0029 selects one unprivileged per-user Supervisor process with a sm
 C/Objective-C XPC/Security front end and the existing Go authority/lifecycle core linked in-process
 through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
 process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains
-open, and any later separate or privileged component still requires a new ADR. Adding Rust or
+open at the product-evidence level: ADR-0033 selects the mechanism, while its owner-required store
+port and installed protected-root matrix remain unimplemented. Any later separate or privileged
+component still requires a new ADR. Adding Rust or
 another language requires a narrow interface and a demonstrated reduction in privileged risk, not
 an assumption that language choice alone creates the security boundary.
 
@@ -650,6 +658,12 @@ capacity is released only by a durable `destroyed` record with cleanup false aft
 absence. The owner/coordinator is still injected in-process; production archive, platform locking,
 rollback, backup, and real-backend reconciliation mechanisms remain unselected.
 
+Proposed ADR-0033 selects BSD `flock` over POSIX process locks, macOS 26 OFD locks, and `O_EXLOCK`
+after one owned local corpus. The selected opener validates the pre-created object by UID, mode,
+type, link count, device, and inode relative to a retained protected state-root descriptor before
+store access. Implementation and installed same-UID pathname protection remain unproven, so E5
+still uses its injected owner.
+
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the next local
 conformance shape for archive and replay retention. Under the sole owner lock, the Supervisor
 publishes a fully verified immutable closed-cohort segment before atomically activating a v2 hot
@@ -719,8 +733,9 @@ See [Roadmap](ROADMAP.md) for exit evidence.
   mechanisms before user bytes; disposable filesystem-image parsing before file artifacts
 - Exact OCI/gVisor worker, engine, runtime, resource, management, identity, and recovery mechanisms
 - Broker-to-Supervisor content-handle mechanism
-- Production Supervisor storage-engine selection and exact archive/compaction, owner-lock,
-  coherent-backup, power-loss, retention/deletion, and replay/non-reuse evidence
+- Production Supervisor storage-engine selection and exact archive/compaction, implemented
+  ADR-0033 owner lock plus installed protected state root, coherent-backup, power-loss,
+  retention/deletion, and replay/non-reuse evidence
 - Non-rollbackable or externally witnessed trust checkpoint, if required
 - Retention, encryption, garbage collection, and secure-deletion limitations
 - Quantitative performance and resource budgets

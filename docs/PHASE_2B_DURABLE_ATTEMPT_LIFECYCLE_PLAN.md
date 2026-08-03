@@ -129,8 +129,8 @@ No corruption case rewrites, deletes, truncates, recreates, normalizes, or drops
 The startup coordinator has one exact order:
 
 1. acquire the installation exclusive-open port; the production macOS target is the pre-created,
-   no-symlink, installation-owned mode-0600 sibling lock file and lifetime nonblocking exclusive
-   descriptor lock proposed by ADR-0025, while the first slice injects an in-process substitute;
+   no-symlink, installation-enrolled mode-0600 sibling object and lifetime nonblocking BSD `flock`
+   selected by Proposed ADR-0033, while the current slice still injects an in-process substitute;
 2. open the existing store without create-on-missing fallback;
 3. validate top-level version, bounds, set digests, cross-links, lifecycle invariants, and migration
    completion;
@@ -364,8 +364,9 @@ The fake-only fixed-store slice does not satisfy any of these:
 
 1. **Archive/compaction:** accepted active/archive transaction, replay tombstones, retention,
    secure-deletion limitations, power-loss evidence, and continuous-service capacity.
-2. **Multi-process and platform ownership:** selected Supervisor topology, real installation lock,
-   process crash, session/reboot/update behavior, and duplicate-owner refusal across processes.
+2. **Multi-process and platform ownership:** implement the ADR-0033 Go/Darwin installation lock,
+   then retain protected-root, process crash, session/reboot/update, and duplicate-owner evidence
+   across installed processes.
 3. **Rollback, backup, and uniqueness:** coherent backup/restore protocol, independent checkpoint or
    explicit rollback limitation, and durable non-reuse for registration/approval/attempt/nonce/
    effect identities across archive and restore.
@@ -384,6 +385,11 @@ Proposed ADR-0031 and the
 the next fixed-store checkpoint and exact implementation slices for item 1. They implement nothing,
 forbid referenced-history deletion, retain a finite-capacity/continuous-service limitation, and do
 not satisfy the production owner-lock, engine, power-loss, backup/rollback, or consumer blockers.
+
+Proposed ADR-0033 and the
+[Supervisor owner-lock implementation plan](SUPERVISOR_OWNER_LOCK_PLAN.md) now select the exact
+primitive and later fault slices. The local temporary-process result does not make E5 a
+multi-process implementation or close installed protected-storage/session/update blockers.
 
 ## Verification for each retained implementation slice
 

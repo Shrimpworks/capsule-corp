@@ -174,6 +174,14 @@ containers, relevant entitlements, and Supervisor-only backend control.
 PID, path, process name, same-user mode bits, or a diagram alone do not establish identity or
 containment. Broad shared app groups are disallowed.
 
+Proposed ADR-0033 uses one enrolled pre-created regular sibling object and lifetime nonblocking
+BSD `flock` to serialize cooperating Supervisor processes before store access. The advisory lock
+is not same-UID containment: the retained local harness observed that an actor able to mutate the
+parent directory can rename the locked inode and create a separately lockable replacement.
+Product use therefore requires the installed Supervisor-private protected state root, exact
+device/inode enrollment, and fail-closed repair on mismatch. No cross-user or elevated local-
+capability claim follows from the lock.
+
 The proposed Source Preparer's sole role-namespaced store is an ownership topology, not a security
 boundary by itself. TypeScript P1 requires an exact OS-enforced protected container with the Source
 Preparer as its single enrolled member and negative open/link/replace/map/rename/handle-retention
@@ -322,6 +330,9 @@ enters `repair-required` rather than accepting whichever components start.
 
 #### Persistence and recovery
 
+- One enrolled installation owner lock is acquired before store read/mutation, recovery, archive,
+  backup, repair, or adapter work; duplicate ownership refuses without creating a lock/store or
+  issuing an owner-session permit.
 - Grant consumption, attempt identity, trust/quarantine state, backend handles/cleanup leases, and
   content release state are durable before dependent side effects.
 - Cross-store messages are authenticated, bounded, idempotent, and attempt/epoch/content-bound.

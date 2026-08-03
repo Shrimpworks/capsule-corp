@@ -191,13 +191,14 @@ high-water timestamp rather than move time backward.
 Startup occurs in this order:
 
 1. Acquire one nonblocking installation-scoped exclusive owner lock before opening state. On macOS,
-   the proposed concrete mechanism is a pre-created sibling lock file that is opened without
-   symlink following, verified as an installation-owned mode-0600 regular file, and held by an
-   exclusive nonblocking advisory file-descriptor lock for the entire process lifetime. Normal
-   startup never creates a missing lock file. Because the store itself is atomically replaced, the
-   stable sibling inode—not the snapshot inode—is locked. A second Supervisor process refuses with
-   a fixed busy/locked result and performs no read-modify-write or adapter call. Process death closes
-   the descriptor and releases the lock.
+   Proposed ADR-0033 selects a pre-created sibling object opened relative to the enrolled protected
+   state root with `O_NOFOLLOW|O_CLOEXEC`, validated by exact UID/mode/type/link/device/inode, and
+   held by `flock(LOCK_EX|LOCK_NB)` for the entire process lifetime. Normal startup never creates a
+   missing object. Because the store itself is atomically replaced, the stable sibling inode—not
+   the snapshot inode—is locked. A second Supervisor process refuses with a fixed busy result
+   before store read-modify-write, recovery, archive, or adapter work. Process death closes the last
+   inherited description and releases the lock. The local semantics passed; the Go/Darwin port and
+   installed protected-root matrix remain unimplemented.
 2. Open without automatic creation, enforce file type/ownership/permission policy, bound the read,
    decode the exact supported version, and validate snapshot, set digests, capacities, immutable
    bindings, cross-links, state transitions, and time rules.
@@ -307,6 +308,10 @@ false and authoritative absence. `observed`, `stopped`, `destroy-confirmed`, `un
 in-process mechanics and do not implement the proposed macOS lock. The status remains Proposed,
 and no production or guest-facing claim advances.
 
+Proposed ADR-0033 now selects the exact BSD `flock` mechanism and startup/bootstrap contract but
+does not change that implementation checkpoint. Owner-session IDs remain only sealed in-process
+permit bindings and never substitute for the held OS descriptor.
+
 ## Alternatives considered
 
 ### Keep a separately durable lifecycle store
@@ -346,7 +351,8 @@ versioned effect and cleanup transitions.
 - A durable intent plus stable effect identity makes every lost response and process-death point
   recoverable without treating absence as proof or issuing a differently identified effect.
 - The fixed snapshot remains an unwired conformance checkpoint, not a production database.
-- Archive/compaction and continuous retention, real multi-process locking, backup/restore and
+- Archive/compaction and continuous retention, implementation and installed validation of the
+  selected multi-process lock, backup/restore and
   rollback-resistant uniqueness, a production backend's exact reconciliation contract, and any
   consumer/public cutover each remain explicit blockers.
 - The first implementation remains fake-only and must continue to assert

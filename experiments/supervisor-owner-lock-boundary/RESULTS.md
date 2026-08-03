@@ -29,6 +29,10 @@ backend, runtime, or guest and touched no unrelated process. All children belong
 | Apple clang | 21.0.0 (`clang-2100.1.1.101`) |
 | Privilege | ordinary current user; no sudo, root, helper, or second-user fixture |
 
+Repository verification used Node.js 22.22.1, pnpm 10.28.2, Go 1.26.5 (`darwin/arm64`),
+golangci-lint 2.12.2 (built with Go 1.26.2 at `c0d3ddc`), and govulncheck 1.6.0 against
+`https://vuln.go.dev` updated 2026-07-27 20:14:16 UTC.
+
 The full machine-readable run is
 [`evidence/2026-08-03/local-run.json`](evidence/2026-08-03/local-run.json).
 

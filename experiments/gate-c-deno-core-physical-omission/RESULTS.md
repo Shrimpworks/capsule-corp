@@ -107,7 +107,7 @@ tested.
 
 ## Decision
 
-The narrow question passes: a governed `deno_core` fork can physically omit the 96 nonessential
+The narrow question passes: a governed `deno_core` source line can physically omit the 96 nonessential
 built-in ops before registration with a one-file reviewable patch while preserving the fixed JS
 fixture and prohibited-power observations.
 

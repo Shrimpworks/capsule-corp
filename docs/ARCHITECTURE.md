@@ -22,10 +22,15 @@ is implemented or validated.
 │             ▼                                                       │
 │  Agent-facing Capsule daemon (Go)                                   │
 │  ├── strict public protocol boundary                                │
-│  ├── proposal and source handling                                   │
+│  ├── proposal handling and plan construction                        │
 │  ├── policy resolution and immutable planning                       │
 │  └── no approval key, backend launch, or user-only content          │
-│             │ register exact plan / request registered attempt      │
+│             ├── copied source → Proposed TypeScript Source Preparer │
+│             │   ├── exact one-shot Node/Amaro strip-only worker     │
+│             │   ├── immutable original/emitted/object source store  │
+│             │   └── fixed prepared-source projection → daemon       │
+│             │                                                       │
+│             └── register exact plan / request registered attempt    │
 │             ▼                                                       │
 │  Execution Supervisor                                               │
 │  ├── independently validates and stores exact plan bytes            │
@@ -55,11 +60,14 @@ to a compact signed local `TrustSnapshot` consumed by the Supervisor.
 
 ## Authority model
 
-The architecture deliberately splits three authorities:
+The architecture deliberately splits three primary authorities. Proposed ADR-0032 further
+subdivides the planning side with a method-specific Source Preparer that has no approval, content,
+or execution authority:
 
 | Component | May do | Must not do |
 | --- | --- | --- |
 | Agent-facing daemon | Authenticate agents, validate proposals, resolve policy, construct plans, register plans, request attempts, expose fixed status | Use approval/evidence keys, launch a backend, replace registered plan bytes, retrieve user-only content, clear quarantine or grant state |
+| Proposed TypeScript Source Preparer | Transform copied untrusted source before planning, own exact original/emitted/profile/options/record bytes, return fixed plan projections and registered executable copies | Approve or register plans, access user-only Broker content, expose a generic parser/path API, launch a backend, transform after registration |
 | Trusted Host Broker | Render registered plans, require user presence, sign one-use approvals, select files, own user content, release fixed summaries | Expose agent endpoints, launch a guest, accept daemon display prose as authoritative, make enforcement claims |
 | Execution Supervisor | Independently validate registered plans, enforce hard safety, consume approvals, create attempts, manage backend lifecycle, sign enforcement transcripts | Parse the public agent protocol, author general policy, select files, perform rich parsing, fetch network trust data |
 
@@ -79,6 +87,23 @@ trusted policy, content manifests, a runtime bundle, and required backend contro
 The daemon cannot authorize its own plan. It sends exact bytes to the Supervisor for independent
 validation and durable registration. After registration, execute APIs accept only the returned
 registration identifier.
+
+Proposed ADR-0032 removes production TypeScript emission and immutable approved-byte custody from
+the daemon. The daemon may submit copied untrusted source to a separately enrolled Source Preparer
+and use only its fixed source-set projection during plan construction. This topology is design
+only; no service, store, transformer consumer, or authenticated endpoint exists.
+
+### Proposed TypeScript Source Preparer
+
+The proposed unprivileged Source Preparer owns exact pre-registration Node 22.22.1/Amaro 1.1.5
+strip-only emission and a single role-namespaced immutable store for original, executable, profile,
+options, manifest, record, and record-set bytes. It accepts no caller path or transform option,
+returns defensive copies only, and has no Approval/content/backend/evidence key or guest route.
+
+The Supervisor resolves and independently validates a prepared source set before plan-v1
+registration; the Broker independently validates copied registered objects before approval; and
+attempt staging can retrieve only executable-manifest bytes through retained Supervisor state. See
+[Proposed ADR-0032](adr/0032-select-enrolled-typescript-source-preparer.md).
 
 ### Trusted Host Broker
 
@@ -208,7 +233,8 @@ Same-user mode bits alone are not sufficient containment against a compromised s
 
 | Store | Owner | Contents |
 | --- | --- | --- |
-| Daemon store | Daemon | Proposals, agent source, planning state, plan references, fixed agent summaries, non-authoritative receipt indexes |
+| Daemon store | Daemon | Proposals, untrusted agent-source copies, planning state, prepared-source references, plan references, fixed agent summaries, non-authoritative receipt indexes |
+| Proposed Source Preparer store | TypeScript Source Preparer | Immutable role-namespaced original/emitted/profile/options/manifest/record bytes plus bounded prepare/retain/release/quarantine state |
 | Broker store | Trusted Host Broker | Input snapshots, original-path/user labels, user-only artifacts, retention policy, approval audit records, Approval key reference |
 | Supervisor store | Execution Supervisor | Registered plan bytes, grant ledger, attempts, integrity/quarantine state, backend handles, cleanup leases, transcript chain, evidence-key reference, trust-epoch checkpoint |
 | Trust cache | Updater/trust verifier | Pinned roots, verified TUF metadata, profile/review/revocation material, signed local trust snapshots |

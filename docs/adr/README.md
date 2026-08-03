@@ -59,5 +59,7 @@ its core conclusion.
 - [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
 - [ADR-0031: Checkpoint closed Supervisor cohorts into immutable retained archives](0031-checkpoint-closed-supervisor-cohorts.md)
   — Proposed
+- [ADR-0032: Select an enrolled TypeScript Source Preparer and immutable source store](0032-select-enrolled-typescript-source-preparer.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

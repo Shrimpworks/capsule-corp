@@ -127,6 +127,10 @@ exact replay/non-reuse tombstones remain retained; referenced deletion is forbid
 fixed-store v2 checkpoint is selected only as the next local oracle. Production-engine selection,
 real owner locking and power loss, coherent restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
+
+Proposed ADR-0032 separately selects the pre-registration TypeScript Source Preparer and immutable
+source-store topology. Its passive field/method fixtures, fault-injected store, governed Node
+package, installed identity/sandbox evidence, and plan-v1 atomic cutover remain unimplemented.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
@@ -210,6 +214,7 @@ Exit evidence:
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, coordinated approved-byte TypeScript migration under Proposed ADR-0026,
+  ADR-0030, and Proposed ADR-0032's Source Preparer evidence plan,
   external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported

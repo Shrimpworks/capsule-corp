@@ -39,6 +39,13 @@ path and remains blocked on its dependency chain. The retained
 562-byte v0 binding record will not be frozen or silently absorb ADR-0030's three approved-byte
 source roles.
 
+The proposed TypeScript approved-byte cutover is split between the
+[atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-
+implemented [Source Preparer implementation, conformance, and fault plan](TYPESCRIPT_SOURCE_PREPARER_PLAN.md).
+Proposed ADR-0032 assigns transformation and immutable original/emitted/object custody to a
+separately enrolled planning component; it does not activate a transformer, endpoint, runtime, or
+execution path.
+
 ## Detailed authority and trust documents
 
 - [Trust architecture](security/TRUST_ARCHITECTURE.md)

@@ -145,6 +145,10 @@ assign transformation to the daemon, Supervisor, Broker, SDK, helper, or runtime
 select a process, packaging, authentication, custody, fault, and update topology consistent with
 Capsule's authority split before any consumer activates.
 
+Follow-up Proposed ADR-0032 selects a separately enrolled Source Preparer and immutable source
+store. That later design does not remove this Slice A blocker until it is accepted, implemented,
+and validated through the coordinated cutover.
+
 The parallel authenticated-IPC decision in PR #65 does not resolve this blocker. Its selected
 unprivileged per-user SMAppService Supervisor has a small native C/Objective-C XPC/Security front
 end linked in-process to the existing Go authority/lifecycle core through a synchronous,
@@ -189,5 +193,6 @@ It wires no product consumer. The retained ordinary source and emitted output re
 - No evidence here proves semantic equivalence, TypeScript correctness, cross-version or
   cross-platform output stability, an independent transformer implementation, runtime admission,
   module loading, product process isolation, production readiness, or user comprehension.
-- ADR-0019, the owner/topology decision, governed packaging, Broker/Supervisor implementations,
-  runtime admission, and the complete atomic cutover all remain blockers.
+- ADR-0019, acceptance and evidence for Proposed ADR-0032's owner/topology, governed packaging,
+  Broker/Supervisor implementations, runtime admission, and the complete atomic cutover all remain
+  blockers.

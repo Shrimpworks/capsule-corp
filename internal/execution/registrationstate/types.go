@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
@@ -30,17 +31,20 @@ const (
 type Classification string
 
 const (
-	ClassificationMalformed      Classification = "MALFORMED"
-	ClassificationUnsupported    Classification = "UNSUPPORTED"
-	ClassificationSchema         Classification = "SCHEMA"
-	ClassificationPolicy         Classification = "POLICY"
-	ClassificationBinding        Classification = "BINDING"
-	ClassificationDomain         Classification = "DOMAIN"
-	ClassificationAuthentication Classification = "AUTHENTICATION"
-	ClassificationStale          Classification = "STALE"
-	ClassificationCapacity       Classification = "CAPACITY"
-	ClassificationLocalFailure   Classification = "LOCAL_FAILURE"
-	ClassificationTrustState     Classification = "TRUST_STATE"
+	ClassificationMalformed         Classification = "MALFORMED"
+	ClassificationUnsupported       Classification = "UNSUPPORTED"
+	ClassificationSchema            Classification = "SCHEMA"
+	ClassificationPolicy            Classification = "POLICY"
+	ClassificationBinding           Classification = "BINDING"
+	ClassificationDomain            Classification = "DOMAIN"
+	ClassificationAuthentication    Classification = "AUTHENTICATION"
+	ClassificationStale             Classification = "STALE"
+	ClassificationCapacity          Classification = "CAPACITY"
+	ClassificationLocalFailure      Classification = "LOCAL_FAILURE"
+	ClassificationTrustState        Classification = "TRUST_STATE"
+	ClassificationLifecycleFailure  Classification = "LIFECYCLE_FAILURE"
+	ClassificationCleanupUnresolved Classification = "CLEANUP_UNRESOLVED"
+	ClassificationRecoveryRequired  Classification = "RECOVERY_REQUIRED"
 )
 
 type stateError struct {
@@ -66,6 +70,9 @@ func ErrorClassification(err error) (Classification, bool) {
 		return registrationError.classification, true
 	}
 	if classification, ok := v0candidate.ErrorClassification(err); ok {
+		return Classification(classification), true
+	}
+	if classification, ok := lifecyclestate.ErrorClassification(err); ok {
 		return Classification(classification), true
 	}
 	return "", false
@@ -278,6 +285,20 @@ type StateStore interface {
 	commitApproval(context.Context, func(*installationState) error) error
 	commitAttempt(context.Context, func(*installationState) error) error
 	recoveryFenced() bool
+}
+
+// DurableLifecycleStore is the unwired ADR-0025 E3 transaction boundary. It
+// accepts only Supervisor-issued AttemptID authority and closed lifecycle
+// values; no approval bytes, plan bytes, backend flags, paths, images, mounts,
+// or guest configuration can enter through this interface.
+type DurableLifecycleStore interface {
+	EnsureLifecycle(context.Context, approvalattempt.AttemptID, lifecyclestate.BackendBinding) (lifecyclestate.Record, bool, error)
+	ReadLifecycle(context.Context, approvalattempt.AttemptID) (lifecyclestate.Record, error)
+	BeginEffect(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion, lifecyclestate.Operation) (lifecyclestate.EffectPermit, error)
+	ConfirmEffect(context.Context, lifecyclestate.EffectPermit, lifecyclestate.EffectResult) (lifecyclestate.Record, error)
+	RecordIndeterminate(context.Context, lifecyclestate.EffectPermit, Classification) (lifecyclestate.Record, error)
+	RecordReconciliation(context.Context, approvalattempt.AttemptID, lifecyclestate.RecordVersion, lifecyclestate.ReconcileResult) (lifecyclestate.Record, error)
+	RecoveryAttemptIDs(context.Context) ([]approvalattempt.AttemptID, error)
 }
 
 // RegistrationResolver is the deliberately narrow handoff for the later fake

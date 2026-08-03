@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"sort"
+	"sync"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/execution/lifecyclestate"
@@ -60,14 +61,22 @@ var (
 	ErrMigrationOutcomeIndeterminate = errors.New("fixed supervisor-state migration outcome is indeterminate")
 )
 
-// FixedFileStoreV1 is the read-only E2 view of a validated v1 snapshot. Active
-// lifecycle transactions are intentionally deferred to E3.
+// FixedFileStoreV1 is the E3 transactional view of a validated v1 snapshot.
+// It remains an unwired, single-process fixed-file checkpoint with no
+// consumer, adapter invocation, or platform owner-lock claim.
 type FixedFileStoreV1 struct {
+	mu                  sync.Mutex
 	path                string
 	sourceFormatVersion uint64
 	state               installationState
 	lifecycleSetDigest  LifecycleSetDigest
 	lifecycles          []lifecyclestate.Record
+	effectIDs           LifecycleEffectIDSource
+	ownerSessionID      lifecyclestate.OwnerSessionID
+	faults              map[LifecycleStoreFault]error
+	issuedPermits       map[approvalattempt.AttemptID]lifecyclestate.EffectPermit
+	recoveryRequired    bool
+	repairRequired      bool
 }
 
 type fixedStoreV1Snapshot struct {
@@ -154,6 +163,13 @@ type lifecycleBindingsDisk struct {
 // OpenFixedFileStoreV1 opens only an existing v1 file. It never creates a
 // missing store and never interprets v0 as an empty-lifecycle v1 snapshot.
 func OpenFixedFileStoreV1(path string) (*FixedFileStoreV1, error) {
+	return OpenFixedFileStoreV1WithOptions(path, FixedFileStoreV1Options{})
+}
+
+// OpenFixedFileStoreV1WithOptions opens an existing validated v1 snapshot and
+// installs trusted local identifier sources. The options exist for retained,
+// deterministic fault and collision tests; they authorize no external effect.
+func OpenFixedFileStoreV1WithOptions(path string, options FixedFileStoreV1Options) (*FixedFileStoreV1, error) {
 	if path == "" {
 		return nil, errors.New("fixed supervisor v1 store path is required")
 	}
@@ -164,12 +180,20 @@ func OpenFixedFileStoreV1(path string) (*FixedFileStoreV1, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrStoreRepairRequired, err)
 	}
+	resolved, err := resolveFixedFileStoreV1Options(options)
+	if err != nil {
+		return nil, err
+	}
 	return &FixedFileStoreV1{
 		path:                path,
 		sourceFormatVersion: loaded.SourceFormatVersion,
 		state:               cloneState(loaded.State),
 		lifecycleSetDigest:  loaded.LifecycleSetDigest,
 		lifecycles:          cloneLifecycleRecords(loaded.Lifecycles, loaded.State.TimeHighWaterUnixSeconds),
+		effectIDs:           resolved.EffectIDs,
+		ownerSessionID:      resolved.OwnerSessionID,
+		faults:              make(map[LifecycleStoreFault]error),
+		issuedPermits:       make(map[approvalattempt.AttemptID]lifecyclestate.EffectPermit),
 	}, nil
 }
 
@@ -177,6 +201,8 @@ func (store *FixedFileStoreV1) snapshot(ctx context.Context) (fixedStoreV1Snapsh
 	if err := ctx.Err(); err != nil {
 		return fixedStoreV1Snapshot{}, err
 	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
 	return fixedStoreV1Snapshot{
 		SourceFormatVersion: store.sourceFormatVersion,
 		State:               cloneState(store.state),
@@ -499,7 +525,6 @@ func validateV1State(
 	attemptIDs := make(map[approvalattempt.AttemptID]struct{}, len(records))
 	effectIDs := make(map[lifecyclestate.EffectID]struct{}, len(records))
 	instanceDigests := make(map[lifecyclestate.BackendInstanceDigest]struct{}, len(records))
-	active := 0
 	var previous approvalattempt.AttemptID
 	for index, record := range records {
 		if err := record.Validate(state.TimeHighWaterUnixSeconds); err != nil {
@@ -528,14 +553,11 @@ func validateV1State(
 			}
 			instanceDigests[instanceDigest] = struct{}{}
 		}
-		if view.State != lifecyclestate.StateDestroyed || view.CleanupRequired {
-			active++
-		}
 		if err := validateLifecycleAuthorityCrossLinks(state, record); err != nil {
 			return err
 		}
 	}
-	if active > MaxActiveLifecycleRecords {
+	if activeLifecycleWork(state, records) > MaxActiveLifecycleRecords {
 		return errors.New("fixed lifecycle state exceeds active capacity")
 	}
 	return nil

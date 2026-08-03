@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-03
+- Fork-integration evidence refinement: 2026-08-03
 - Supersedes: ADR-0003's Bun-first implementation ordering only; its runtime-neutral protocol
   decision remains accepted
 - Refines: ADR-0013, ADR-0016, and ADR-0026
@@ -84,8 +85,11 @@ for bootstrapping the forks, not the shipping integration mechanism.
   Node as equal first-slice candidates.
 - Maintaining two security-sensitive forks adds release engineering, review, advisory response,
   corresponding-source publication, and upstream-rebase obligations.
-- The actual fork branches and release pipeline must be established before another packaging or
-  admission claim can advance.
+- The governed fork branches are now established at exact merged commits. The first fork-native
+  integration check stopped before building because the `rusty_v8` release pipeline supports only
+  Linux/amd64 and has no intended Linux/arm64 profile. A pinned arm64 builder/publication profile,
+  actual fork-native outputs, and a release still must exist before another packaging or admission
+  claim can advance.
 - Independent-builder evidence, TypeScript contract migration, libkrun/launcher/transport
   composition, installed signing/notarization, and final profile admission remain separate gates.
 - A failure of the governed fork to retain a small reviewable authority surface, reproduce exact

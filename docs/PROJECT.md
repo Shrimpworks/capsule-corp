@@ -71,9 +71,11 @@ generated notices prevent an independent rebuild and complete notice closure. In
 provenance, governed release construction, and admission remain open. Accepted
 [ADR-0028](adr/0028-select-governed-deno-core-first.md) selects governed `deno_core` as the first
 runtime engineering candidate after the hard Bun pivot and records the real `dills122/deno` and
-`dills122/rusty_v8` forks. Their governed branches and releases do not exist yet. The decision
-supersedes ADR-0003's Bun-first ordering only; it does not admit a runtime, and `RUNTIME-001`
-remains unsupported. The
+`dills122/rusty_v8` forks. Their first governed branches are now merged at exact commits, but the
+first fork-native integration check stopped before construction because the `rusty_v8` fork has
+only a Linux/amd64 builder and no intended Linux/arm64 profile. No fork release or new runtime
+artifact exists. The decision supersedes ADR-0003's Bun-first ordering only; it does not admit a
+runtime, and `RUNTIME-001` remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes
 close P0-1 through P0-4. P0-3 now retains independent Go/Node verification of the 43 framing
@@ -92,6 +94,7 @@ See the
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
 and [governed package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 and [V8 source/license closure](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
+and [fork-native Linux/arm64 blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md)
 and [TypeScript approved-byte result](../experiments/typescript-approved-byte-boundary/RESULTS.md)
 and [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).

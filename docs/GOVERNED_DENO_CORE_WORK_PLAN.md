@@ -1,24 +1,33 @@
 # Governed deno_core work plan
 
-Status: active planning checkpoint after merged PRs #54, #56, and #57 and accepted ADR-0028.
+Status: active planning checkpoint after accepted ADR-0028, the merged fork-governance branches,
+and the first fork-native Linux/arm64 fail-fast result.
 This plan selects work order; it does not admit a runtime, backend, profile, or guest.
 
 ## Current checkpoint
 
-- Capsule `main` includes durable lifecycle Slice E3, the V8 source/license closure result, and the
+- Capsule `main` includes durable lifecycle Slice E5, the V8 source/license closure result, and the
   self-contained dynamic-root result.
 - [`dills122/deno`](https://github.com/dills122/deno) is a real fork of `denoland/deno`.
 - [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8) is a real fork of
   `denoland/rusty_v8`.
-- Both forks currently contain only inherited `main`; no governed branch or release exists.
+- Deno governed PR #1 is merged at head `9adb0b68b55bca81644827f1e7749a3acb091bed`
+  and merge `ea18b9dc21ff8ebd19347be7095f47937ee14ec2`.
+- `rusty_v8` governed follow-up PR #2 is merged at head
+  `a43ee7486c3e05bce5d6e5db586b3e2e688c33cf` and merge
+  `a31b8f39dc6933d5635367e8ccb67d70f2cc2385`. The stale original head
+  `17698ca...f313a` is not a terminal integration input.
+- The first fork-native integration check stopped before prefetch or build because `rusty_v8`
+  provides only Linux/amd64 and no Linux/arm64 builder/publication profile. No release or new
+  runtime artifact exists.
 - Governed `deno_core` is the first runtime engineering candidate. `RUNTIME-001` remains
   unsupported and no product execution path may use these bytes.
-- Durable lifecycle Slices E1 through E3 are implemented locally and unwired. E4 and E5 remain.
+- Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
-## Priority 1: next parallel batch
+## Priority 1: completed governance bootstrap
 
-These three tasks are independent enough to run in parallel and should use separate branches and
-pull requests in their owning repositories.
+The three original parallel tasks completed as local/fork governance checkpoints. None admitted a
+runtime or release.
 
 ### 1A. Capsule durable lifecycle Slice E4
 
@@ -32,8 +41,7 @@ Repository: `dills122/capsule-corp`.
 - Preserve `FakeBackend.CreatesGuest() == false`; add no process, runtime, backend, guest, consumer,
   IPC, content, or evidence path.
 
-Exit: the migrated Slice C behaviors and E4 death/fault matrix pass against a newly reopened store
-and newly constructed component. E5 remains a separate checkpoint.
+Exit: completed through E5; the fake-only lifecycle remains unwired and creates no guest.
 
 ### 1B. Bootstrap the governed Deno fork
 
@@ -48,8 +56,9 @@ Repository: `dills122/deno`.
   fixture, and prohibited restoration cases from clean builders.
 - Do not publish an admitted Capsule runtime or wire the fork into Capsule in this slice.
 
-Exit: a real governed branch and green draft PR exist in the fork, with exact upstream ancestry and
-no experiment-directory or copied-registry dependency.
+Exit: completed by merged Deno head `9adb0b68...91bed`; exact ancestry, patch/fixture identities,
+and fork-local three-op/restoration verification pass. The fork did not produce fresh binary or
+snapshot bytes.
 
 ### 1C. Bootstrap the governed rusty_v8 fork
 
@@ -64,20 +73,26 @@ Repository: `dills122/rusty_v8`.
 - Add advisory ownership, upstream-update/rebase policy, review gates, and byte/restoration tests.
 - Do not fork `denoland/v8` unless the governed work actually changes that source.
 
-Exit: a real governed branch and green draft PR exist in the fork, and its release candidate can be
-reconstructed from declared inputs without relying on the incomplete official prebuilt archive.
+Exit: partially completed by merged follow-up head `a43ee748...33cf`. The exact 20-gitlink source
+lock and an offline build/publication contract exist for Linux/amd64 only. The intended
+Linux/arm64 exit remains blocked, and no release candidate was built or published.
 
-## Priority 2: evidence and contract closure
+## Priority 2: Linux/arm64 construction and evidence closure
 
-Start after the relevant Priority 1 branches stabilize:
+Start only after the smallest required `rusty_v8` fork change lands:
 
-1. Reconstruct the governed Deno, `rusty_v8`, binary, snapshot, and 22-entry root on an independently
-   controlled Linux/arm64 builder; compare every declared output byte and retain provenance.
-2. Decide the production owner and process topology for the ADR-0026 strip-only transformation,
+1. Add a fully digest-pinned Linux/arm64 sibling builder/publication profile to `rusty_v8` at or
+   after `a43ee748...33cf`, covering the builder image, host tools, aarch64 sysroot/target, offline
+   build/test, generated GN/Ninja closure, output verification, source/notices, SBOM, and unsigned
+   provenance. Do not substitute the existing amd64 profile.
+2. Reconstruct the governed Deno, `rusty_v8`, binary, snapshot, and 22-entry root first in clean
+   same-host Linux/arm64 builders, then on an independently controlled Linux/arm64 builder; retain
+   the distinct provenance claims and compare every declared output byte.
+3. Decide the production owner and process topology for the ADR-0026 strip-only transformation,
    then implement the coordinated versioned original-TypeScript/emitted-JavaScript plan migration.
-3. Assemble one immutable runtime bundle manifest from governed fork releases and the exact dynamic
+4. Assemble one immutable runtime bundle manifest from governed fork releases and the exact dynamic
    root; rerun physical-op, final-link, file-open, syscall-seal, descriptor, and restoration tests.
-4. Run an independent review of the combined libkrun FD-native, direct-block-root, and console
+5. Run an independent review of the combined libkrun FD-native, direct-block-root, and console
    patches and reproduce the 43 P0-3 frames in the selected host and launcher languages.
 
 ## Priority 3: composed development profile

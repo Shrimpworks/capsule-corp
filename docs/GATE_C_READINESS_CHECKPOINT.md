@@ -196,9 +196,11 @@ claim.
 1. **Runtime-authority closure:** both the
    [exact stock Bun 1.3.14 investigation](../experiments/gate-c-bun-runtime-authority/RESULTS.md) and
    [governed-construction branch](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
-   failed. Investigate an alternate runtime under the same subprocess, FFI, native-addon,
-   inspector, macro, environment-file, and package-install criteria, including deliberate
-   capability restoration, then supersede ADR-0003's Bun-first implementation choice.
+   failed. The bounded [governed `deno_core` physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+   passed the one-file pre-registration and final-link question but did not select a runtime.
+   Continue the alternate-runtime decision under the same prohibited-power criteria, exact
+   packaging/provenance, approved-byte TypeScript disposition, restoration mutations, and external
+   isolation composition, then supersede ADR-0003's Bun-first implementation choice.
    `RUNTIME-001` remains unsupported throughout.
 2. **Immutable runtime-root custody:** test protected exclusive creation, a distinct genuine
    read-only descriptor, closure of every writable alias/mapping, unlink, final digest through that

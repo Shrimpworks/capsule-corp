@@ -61,9 +61,15 @@ close P0-1 through P0-4. P0-3 retains a backend-independent 43-vector framing ca
 console-correctness patch; neither has run through the real transport, launcher, guest, or installed
 topology. P0-4A conditionally passed the no-host-root topology only; signing, notarization,
 Gatekeeper, clean-host, and minimum-OS admission remain open.
+The bounded TypeScript approved-byte follow-up passed only the pre-approval byte-ownership
+question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
+fixtures and Proposed ADR-0026 binds original and emitted roles before registration. It does not
+select governed `deno_core`, choose a production transformer owner, change current contracts, or
+admit a runtime.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
+and [TypeScript approved-byte result](../experiments/typescript-approved-byte-boundary/RESULTS.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 
 ## Problem

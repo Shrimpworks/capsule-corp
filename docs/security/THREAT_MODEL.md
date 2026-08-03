@@ -242,6 +242,9 @@ enters `repair-required` rather than accepting whichever components start.
 
 - Hashes are byte identities, not origin proof without a trusted binding.
 - Broker approval and Supervisor registration bind the same canonical plan digest/bytes.
+- When TypeScript is supported, the registered plan separately binds exact original authoring
+  bytes, exact emitted executable JavaScript bytes, and the closed transformation identity before
+  approval; transformation from only an original digest after approval is forbidden.
 - Approval binds registration, installation, epoch, expected Supervisor, attempt nonce, purpose,
   audience, and expiry.
 - Approval is atomically consumed with attempt creation before backend side effects.

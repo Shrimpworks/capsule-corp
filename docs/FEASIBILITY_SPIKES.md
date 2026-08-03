@@ -11,8 +11,10 @@ source-research reconciliation narrowed the first-slice P0 work, deferred filesy
 file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
 stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
 the later governed-`deno_core` follow-up physically omitted 96 nonessential built-in ops through a
-one-file patch but did not select or admit a runtime. `RUNTIME-001` remains unsupported. OCI/gVisor
-remains an independent comparison and contingency. See the
+one-file patch but did not select or admit a runtime. The later TypeScript approved-byte experiment
+then passed a narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro
+1.1.5 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
+unsupported. OCI/gVisor remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
@@ -151,6 +153,10 @@ then passed that one construction question: the exact governed fork registers an
 bootstrap ops with a reviewable one-file patch and reproducible ASLR-controlled snapshot. It did
 not address TypeScript, independent builder provenance, runtime-profile admission, or external
 isolation composition, so it does not reverse the family NO-GO or support `RUNTIME-001`.
+The bounded [approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+subsequently passed the exact pre-approval byte-binding question for a strip-only ESM TypeScript
+subset. It selected no runtime, wired no component, and left production ownership, protocol
+migration, packaging, module loading, and runtime admission open.
 See
 [`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
 

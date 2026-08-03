@@ -203,9 +203,12 @@ claim.
    [governed-construction branch](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
    failed. The bounded [governed `deno_core` physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
    passed the one-file pre-registration and final-link question but did not select a runtime.
+   The later [TypeScript approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+   passed only the deterministic strip-only pre-approval binding question and supports Proposed
+   ADR-0026; it did not select a production owner or runtime.
    Continue the alternate-runtime decision under the same prohibited-power criteria, exact
-   packaging/provenance, approved-byte TypeScript disposition, restoration mutations, and external
-   isolation composition, then supersede ADR-0003's Bun-first implementation choice.
+   packaging/provenance, coordinated approved-byte protocol migration, restoration mutations, and
+   external isolation composition, then supersede ADR-0003's Bun-first implementation choice.
    `RUNTIME-001` remains unsupported throughout.
 2. **Immutable runtime-root custody:** test protected exclusive creation, a distinct genuine
    read-only descriptor, closure of every writable alias/mapping, unlink, final digest through that

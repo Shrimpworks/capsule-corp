@@ -49,5 +49,7 @@ its core conclusion.
   — Proposed
 - [ADR-0025: Colocate durable attempt lifecycle state with Supervisor authority state](0025-colocate-durable-attempt-lifecycle-state.md)
   — Proposed
+- [ADR-0026: Bind strip-only TypeScript emission before plan registration](0026-bind-pre-approval-typescript-erasure.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

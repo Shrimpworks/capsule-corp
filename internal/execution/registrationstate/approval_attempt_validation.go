@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
 	"capsule.local/capsule/internal/protocol/v0candidate"
@@ -118,9 +119,17 @@ func validateApprovalAttemptState(state installationState) error {
 			}
 		}
 	}
-	approvalDigestValid := approvalSetDigest(state.Approvals) == state.ApprovalSetDigest ||
+	approvalDigest, err := approvalSetDigest(state.Approvals)
+	if err != nil {
+		return fmt.Errorf("compute approval set digest: %w", err)
+	}
+	attemptDigest, err := attemptSetDigest(state.Attempts)
+	if err != nil {
+		return fmt.Errorf("compute attempt set digest: %w", err)
+	}
+	approvalDigestValid := approvalDigest == state.ApprovalSetDigest ||
 		(len(state.Approvals) == 0 && state.ApprovalSetDigest == ([32]byte{}))
-	attemptDigestValid := attemptSetDigest(state.Attempts) == state.AttemptSetDigest ||
+	attemptDigestValid := attemptDigest == state.AttemptSetDigest ||
 		(len(state.Attempts) == 0 && state.AttemptSetDigest == ([32]byte{}))
 	if !approvalDigestValid || !attemptDigestValid {
 		return errors.New("fixed approval/attempt set digest mismatch")
@@ -154,26 +163,26 @@ func attemptMatchesApproval(attempt approvalattempt.ExecutionAttempt, approval a
 		attempt.AuthorizationIdentity == approval.AuthorizationIdentity
 }
 
-func approvalSetDigest(records []approvalattempt.ApprovalRecord) [32]byte {
+func approvalSetDigest(records []approvalattempt.ApprovalRecord) ([32]byte, error) {
 	if len(records) == 0 {
-		return emptyApprovalSetDigest()
+		return emptyApprovalSetDigest(), nil
 	}
 	encoded, err := json.Marshal(records)
 	if err != nil {
-		panic(err)
+		return [32]byte{}, fmt.Errorf("encode approval set for digest: %w", err)
 	}
-	return sha256.Sum256(append([]byte("approvals:"), encoded...))
+	return sha256.Sum256(append([]byte("approvals:"), encoded...)), nil
 }
 
-func attemptSetDigest(records []approvalattempt.ExecutionAttempt) [32]byte {
+func attemptSetDigest(records []approvalattempt.ExecutionAttempt) ([32]byte, error) {
 	if len(records) == 0 {
-		return emptyAttemptSetDigest()
+		return emptyAttemptSetDigest(), nil
 	}
 	encoded, err := json.Marshal(records)
 	if err != nil {
-		panic(err)
+		return [32]byte{}, fmt.Errorf("encode attempt set for digest: %w", err)
 	}
-	return sha256.Sum256(append([]byte("attempts:"), encoded...))
+	return sha256.Sum256(append([]byte("attempts:"), encoded...)), nil
 }
 
 func countUsableApprovals(records []approvalattempt.ApprovalRecord, now v0candidate.UInt53) int {

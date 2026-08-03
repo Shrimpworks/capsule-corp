@@ -1,11 +1,11 @@
 # Gate C P0-3 backend-independent framing results
 
-Date: 2026-08-02
+Date: 2026-08-02; independent follow-up: 2026-08-03
 
 Decision: **conditional pass for a falsifiable backend-independent candidate; do not freeze the
 contract or connect a backend yet**.
 
-The local experiment supports taking the proposed caps and layouts into the later protocol/ADR
+The local experiment and independent Node follow-up support taking the proposed caps and layouts into the later protocol/ADR
 review. It found no candidate-level ambiguity that requires abandoning fixed role envelopes or a
 fixed last-written commit trailer. The conclusion is deliberately narrower than P0-3: no
 virtio-console, launcher, runtime, guest, VMM, App Sandbox, approval, Supervisor, or teardown
@@ -37,6 +37,16 @@ untrusted workload, and accessed no third-party system or deployment.
 
 The exact observed command/environment record is retained in `evidence/measurement.json`. Timings
 are ordinary wall-clock observations on one developer host, not a performance guarantee.
+
+The 2026-08-03 follow-up ran dependency-free Node 22.22.1 on the same local arm64 host from base
+revision `68b75fdf41f3d6c5db72a5163b19da451eb6f766`. Its implementation does not import or call the Go
+model. It verified every retained case length and SHA-256 against manifest SHA-256
+`f4fd4ee1e1728e085eb8dd142890e1b4fd79749330bf746f6535eef3f3d342f6`, reproduced every expected
+disposition, and independently re-encoded six accepted source/input/completion known answers. The
+exact-cap fixture digests remained source
+`c511109fde643ac10bd7f78d16a1c962b4263d0f87be3bba192d8eff25f6ba1e`, input
+`7fea2562e7dcf0b01e89cc07671e93aa63ada96adc3b96376d7fa8b4b8e49aae`, and completion
+`239c6abf0c3b0133d946cbe9cfd78b710a8e9abed9c0882435f64bd5b330c6df`.
 
 ## Proposed maxima and measurement result
 
@@ -76,6 +86,13 @@ three live stream faults.
 | EOF and runner exit | EOF and clean runner exit without a trailer remained `MISSING_COMMIT`. Runner exit never supplied commitment. |
 | Crash before/after commit | Crash before trailer failed `MISSING_COMMIT`. Crash after a valid trailer preserved `ACCEPT` framing evidence but `ordinarySuccess` remained false because lifecycle failed separately. |
 
+The independent local process-pipe harness additionally passed ten bounded fault classes: exact
+cap/cap-plus-one draining for all roles, one-byte writes, zero-progress stall with forced kill,
+partial reader death, peer-close `EPIPE`, real pipe backpressure with a four-times-cap flood,
+cancellation, runner exit 17 before/after commit, three-way endpoint confusion, and EOF plus clean
+exit without commitment. Retention never exceeded the role cap plus one. These are local process
+semantics, not virtio-console observations.
+
 The frame digest covers the complete completion header and payload, so terminal status and every
 attempt/registration/plan/profile binding are committed. The payload digest remains separately
 available for content identity. Source and input envelopes use endpoint role, distinct magic, fixed
@@ -87,8 +104,9 @@ Carry this candidate forward, but freeze it only after all of the following revi
 
 1. Decide the exact source-transfer payload object (one file or a deterministic bounded multi-file
    object) without changing the 1 MiB aggregate authority implicitly.
-2. Reproduce the layouts, SHA-256 vectors, strict JSON behavior, and classifications in the selected
-   launcher/Supervisor languages, including invalid UTF-8 escape and allocation-bound cases.
+2. Carry the now-independent Go/Node layouts, SHA-256 vectors, strict JSON behavior, and
+   classifications into the selected launcher/Supervisor languages, including invalid UTF-8 escape
+   and allocation-bound cases.
 3. Specify whether the terminal status vocabulary belongs to the launcher protocol or a separately
    versioned result contract, and keep failure payloads fixed rather than guest-text-bearing.
 4. Prove the launcher writes the trailer last, withholds the completion endpoint from the workload,
@@ -108,9 +126,9 @@ virtio-console for v0; do not weaken cap or completion semantics.
 ## Counterevidence and residual unknowns
 
 - The source payload is opaque in this experiment; multi-file serialization remains unresolved.
-- Go's standard JSON token decoder is only an experiment implementation. This work did not prove
-  identical invalid-surrogate, decoded-text-budget, allocation, or canonicalization behavior in
-  Go, Swift, and the selected launcher language.
+- The Node implementation adds an independent strict decoder, including lone-surrogate refusal,
+  but this work still did not prove identical decoded-text budgets, allocation behavior, or
+  canonicalization in Swift and the selected launcher language.
 - The drain model can close its local reader on deadline. It does not prove that the pinned
   libkrun/virtio-console stack wakes blocked reads/writes, propagates stop, accounts partial writes,
   or avoids thread joins and shared-status races.
@@ -132,6 +150,8 @@ virtio-console for v0; do not weaken cap or completion semantics.
 - 43 byte-exact vectors with size/SHA-256/expected disposition: `fixtures/manifest.json` and
   `fixtures/cases/*.bin`.
 - Local environment and boundary/flood observations: `evidence/measurement.json`.
+- Independent Node verifier, process-pipe fault harness, and observed summary:
+  `cross-language/` and `evidence/2026-08-03/cross-language.json`.
 
 Prototype disposal: product packages must never import this code. After contract freeze, replace it
 with reviewed object-specific implementations and retain only the fixtures/results needed for

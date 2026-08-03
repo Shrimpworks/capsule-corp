@@ -18,9 +18,10 @@ repository-owned byte fixtures and local in-memory streams. It creates no guest,
 approval, starts no runtime or backend, grants no authority, and accesses no unrelated system,
 identity, credential, or data.
 
-Question: can one small fixed-width candidate make source/input roles, exact byte limits, attempt
-and plan bindings, terminal status, and completion commitment mechanically falsifiable while a host
-receiver continuously drains cap-plus-one and refuses to infer completion from EOF or process exit?
+Question: can independent Go and Node implementations make source/input roles, exact byte limits,
+attempt and plan bindings, terminal status, and completion commitment mechanically falsifiable
+while local process-pipe receivers continuously drain cap-plus-one and refuse to infer completion
+from EOF or process exit?
 
 ## Proposed exact maxima
 
@@ -138,8 +139,14 @@ early/missing/duplicate trailers, trailing data, bad payload/commit digests, run
 commit, and crash before/after commit. Tests additionally inject a four-times-cap output flood,
 reader stall, and partial-read-then-reader-death.
 
-`evidence/measurement.json` retains the exact local environment, revision, commands, read chunk
-sizes, drained/retained byte counts, dispositions, and elapsed observations.
+`evidence/measurement.json` retains the original Go environment, commands, read chunk sizes,
+drained/retained byte counts, dispositions, and elapsed observations. The independent dependency-
+free Node 22 verifier rechecks all 43 retained lengths, SHA-256 values, layouts, big-endian fields,
+roles, bindings, completion status, and commit-last trailer semantics without importing the Go
+model. It independently encodes six accepted known answers byte-for-byte. Its local child-process
+pipe harness covers one-byte writes, zero progress/stall, partial reader death, peer close/EPIPE,
+backpressure flood, cancellation/teardown, runner death before/after commit, endpoint confusion,
+and EOF/clean-exit refusal. The observed summary is retained under `evidence/2026-08-03/`.
 
 ## Reproduce
 
@@ -148,6 +155,8 @@ From the repository root:
 ```sh
 ./experiments/gate-c-p0-3-protocol-conformance/run.sh
 ```
+
+The script requires the repository baseline of Node 22 or newer in addition to Go 1.23 or newer.
 
 Regenerate deterministic byte fixtures and refresh local measurement observations with:
 
@@ -160,8 +169,8 @@ The generator intentionally rewrites only this experiment's `fixtures/` and `evi
 
 ## Claim boundary
 
-Passing this experiment says only that the candidate is internally falsifiable in the local Go
-model. It does not show that libkrun directionality, virtio queue/control parsing, backpressure,
-shutdown, partial writes, signals, descriptor ownership, App Sandbox behavior, launcher/runtime
-authority, a guest kernel, Broker parsing, or an installed bundle is safe. It does not freeze an
-ADR, admit a runtime/backend/profile, prove workload correctness, or attest an uncompromised guest.
+Passing this experiment says only that the candidate is independently falsifiable in local Go and
+Node models and local process pipes. It does not show that libkrun directionality, virtio queue/
+control parsing, shutdown, descriptor ownership, App Sandbox behavior, launcher/runtime authority,
+a guest kernel, Broker parsing, or an installed bundle is safe. It does not freeze an ADR, admit a
+runtime/backend/profile, prove workload correctness, or attest an uncompromised guest.

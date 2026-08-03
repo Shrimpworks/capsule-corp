@@ -237,9 +237,11 @@ claim.
    exact VMM/control/queue/descriptor and stream corpus cannot fail closed. Freeze a distinct
    launcher that verifies inputs before child start, withholds completion authority, uses a closed
    child manifest, waits for child-tree termination, and commits last. Start the host runner with an
-   exact descriptor allowlist and reject every unexpected inherited authority. The retained
-   43-vector framing candidate and 51-test console patch are inputs to this work, not transport,
-   launcher, guest, or P0-3 admission evidence.
+   exact descriptor allowlist and reject every unexpected inherited authority. A later independent
+   Go/Node follow-up verified all 43 vectors and added local process-pipe faults. The 51-test console
+   patch then passed AddressSanitizer, Clippy, repetition, and four mutations, but measured only
+   90/728 changed-file lines with zero coverage in `port.rs` and `process_tx.rs`. These remain inputs
+   to the work, not transport, launcher, guest, or P0-3 admission evidence.
 5. **Admissible complete development bundle:** pin all build inputs, govern patches, produce the
    complete manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, and
    sign/notarize/staple/read back the complete Supervisor/runner/runtime/per-user-service topology

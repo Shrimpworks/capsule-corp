@@ -1,6 +1,6 @@
 # Gate C P0-3 local console correctness results
 
-Date: 2026-08-02
+Date: 2026-08-02; sanitizer/coverage follow-up: 2026-08-03
 
 Decision: **a governed correctness patch is required before this console route can proceed**.
 
@@ -51,6 +51,24 @@ The patch:
 the four new focused cases. Targeted `rustfmt --check`, patch application from a clean archive, and
 repository `git diff --check` also passed.
 
+The 2026-08-03 strongest locally available offline follow-up also passed:
+
+- warning-denying `cargo clippy` for the `krun-devices` library, allowing only the already-known
+  deprecated `GuestMemory::try_access` use;
+- all 51 tests under AddressSanitizer using pinned local rustc 1.98.0-nightly
+  (`57d06900f`, 2026-05-27);
+- 25 consecutive shutdown-interruption repetitions; and
+- four restoration mutations covering malformed control acceptance, unchecked port IDs,
+  duplicate start scheduling, and stop-blind output waiting. Every mutation was caught by its
+  focused regression.
+
+`cargo-llvm-cov` 0.8.4 measured the four changed files at **13/88 functions (14.772727%)**,
+**90/728 lines (12.362637%)**, and **156/1,091 regions (14.298808%)**. File line coverage was
+35/275 (12.727273%) for `device.rs`, 0/137 for `port.rs`, 55/225 (24.444444%) for `port_io.rs`, and
+0/91 for `process_tx.rs`. These low values—especially the two zero-coverage files—are retained
+counterevidence. The sanitizer run and four caught mutants do not substitute for direct queue,
+thread, shutdown-order, and partial-write coverage.
+
 ## Limitations and remaining work
 
 - The patch has not been accepted upstream or independently reviewed.
@@ -59,7 +77,9 @@ repository `git diff --check` also passed.
 - The `dup`-then-`O_NONBLOCK` implementation still changes flags on the caller's shared open-file
   description. Capsule must provide dedicated endpoints and retain a pre/post flag canary, or adopt
   a separately reviewed FD construction change.
-- No sanitizer/coverage campaign was retained for every console queue and descriptor path.
+- The retained sanitizer/coverage campaign exposes substantial unexecuted console code. Direct
+  coverage of `port.rs` and `process_tx.rs`, malformed queue/descriptor paths, partial-then-error,
+  caller flags, and thread shutdown ordering remains mandatory.
 - The patch still uses deprecated `GuestMemory::try_access`; replacement with reviewed slice
   iteration remains appropriate before a final dependency patch.
 - Output failure after partial progress is preserved as partial completion and logged, but the final
@@ -69,5 +89,6 @@ repository `git diff --check` also passed.
   contract and requires the sibling profile canary or a governed directional API.
 
 Therefore the stock route is not supportable as-is. Capsule may continue only with a governed patch
-plus the remaining local correctness/coverage work and later composition with the typed protocol;
-otherwise it should replace this transport.
+plus the remaining direct coverage work and later composition with the typed protocol; otherwise
+it should replace this transport. The local source archive and patch artifact are experiment inputs,
+not a shippable governed fork.

@@ -1,9 +1,12 @@
 # Supervisor archive, compaction, and replay-retention conformance plan
 
-Status: proposed, unimplemented, and local-only. Proposed ADR-0031 defines an immutable retained
-archive of closed registration cohorts and selects a minimal fixed-store checkpoint only as the
-next conformance oracle. No storage behavior, consumer, IPC, evidence, runtime, backend, process,
-service, identity, credential, user data, deployment, or guest is implemented by this plan.
+Status: proposed and local-only. Slice F1 now implements passive archive projections, exact
+limits/domain-separated known answers, defensive copies, and the pure closed-cohort eligibility
+selector. It performs no file I/O or authority mutation. Proposed ADR-0031 still defines the
+unimplemented immutable retained archive and selects a minimal fixed-store checkpoint only as the
+conformance oracle. No migration, full v2 verifier, archive write/activation, retained lookup,
+consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
+deployment, or guest is implemented by this plan.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -28,7 +31,7 @@ Preserve throughout:
 
 ## Implementation oracle and non-goals
 
-The implementation oracle is current Slice B/E5:
+The stateful implementation oracle is current Slice B/E5:
 
 - `registrationstate.FixedFileStoreV1` closed-decodes and validates the complete authority and
   lifecycle snapshot;
@@ -38,6 +41,13 @@ The implementation oracle is current Slice B/E5:
 - only `destroyed` plus cleanup false after authoritative absence releases active capacity;
 - indeterminate rename/directory-sync outcomes fence the open store until reopen; and
 - the only lifecycle adapter is the no-guest fake.
+
+Slice F1 adds passive `internal/execution/archivestate` values and tests only. It implements the
+closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections, their exact
+candidate limits and literal known answers, defensive-copy behavior, and deterministic complete-
+cohort selection with `RecoveryAttemptIDs` exclusion. It does not open or write a store or segment,
+migrate v1, reconstruct a v2 archive set, release hot capacity, route lookup, or invoke the fake.
+F2 is the next retained slice.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
@@ -447,7 +457,7 @@ inside their existing transactions; no caller can request hot versus archive res
 
 ## Small implementation slices
 
-### Slice F1: passive archive types and known answers
+### Slice F1: passive archive types and known answers — complete
 
 - Add closed format/index/checkpoint types and domain-separated digest functions.
 - Add empty, one-cohort, multi-attempt, exact-bound, cap-plus-one, wrong-domain, aliasing, sort, and
@@ -457,7 +467,12 @@ inside their existing transactions; no caller can request hot versus archive res
 Acceptance: passive tests only. No file write, migration, authority mutation, lifecycle entry
 point, adapter call, or deletion.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier
+Retained result: merged in PR #75 from exact head
+`20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef` as
+`6fc31a049c476acf5085071c48d3d5e36f27240f`. The focused race run reported 86.0% statement
+coverage for the passive package. This is a local-mechanic checkpoint, not archive activation.
+
+### Slice F2: explicit fixed-store v2 migration and full verifier — next
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.

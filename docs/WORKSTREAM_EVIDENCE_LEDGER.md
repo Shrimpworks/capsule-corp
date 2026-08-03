@@ -63,7 +63,7 @@ product finding. Every completed track result was recovered into the repository 
 | P0-2 `NullFs` disposition | Earlier replacement `019fc2e8-445e-7cb2-b4c2-54d84282c3fe`, replacing task `019fc2e6-cf9d-7210-b2f3-f3bf2244e83a`; later prototype merged in PR #30 | `GOVERNED-PATCH`: the smallest deletion failed bootstrap, but the later direct-block-root prototype booted without virtiofs, reran 36 adversarial plus four identity cases without the original failure, and made removal credible. It is not admitted; independent patch review, route closure, P0-1 custody, P0-3 transport, and final signed P0-4 evidence remain. | [`NULLFS_P0_2.md`](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md), [`NULLFS_P0_2_DISPOSITION.md`](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md), governed prototype patch, and compact evidence |
 | P0-3 backend-independent framing | Merged in PR #27 | Conditional candidate pass only: 43 byte-exact vectors measured the proposed source/input/result/frame caps and retained binding, role, JSON, commit, drain, stall/death, EOF, runner-exit, and crash dispositions. No transport, launcher, guest, VMM, App Sandbox, Supervisor, approval, or teardown mechanism participated. | [`RESULTS.md`](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md), 43-vector manifest, local model, and measurement record |
 | P0-3 libkrun console correctness | Merged in PR #28 | At that checkpoint stock could not proceed as-is. Governed patch `584ce48548fe969684fe3c55e57fbf56e7dae40af28c241c24c47b138faf1283` passed 51 local library tests and four regressions but still lacked the later sanitizer/coverage follow-up and all real composition. | [`RESULTS.md`](../experiments/gate-c-libkrun-console-correctness/RESULTS.md), governed patch, verification record, and focused tests |
-| P0-3 cross-language/console follow-up | Delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` on 2026-08-03 | This retained pre-fork checkpoint added independent Node agreement on all 43 vectors, six re-encodings, ten local pipe fault classes, Clippy, AddressSanitizer, repetition, four mutations, and the before measurement of 90/728 patched-file lines with zero coverage in `port.rs`/`process_tx.rs`. It remains historical counterevidence rather than the current fork measurement. | Updated P0-3 and console `RESULTS.md`, independent verifier/fault harness, cross-language evidence, coverage summary, and mutation patches |
+| P0-3 cross-language/console follow-up | Delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` on 2026-08-03 | This retained pre-fork checkpoint added independent Node agreement on all 43 vectors, six re-encodings, ten local pipe fault classes, Clippy, AddressSanitizer, repetition, four mutations, and the historical before measurement of 90/728 patched-file lines. The governed-fork row below supersedes it for current coverage. | Updated P0-3 and console `RESULTS.md`, independent verifier/fault harness, cross-language evidence, coverage summary, and mutation patches |
 | Governed libkrun console/raw-FD source reconciliation | User-visible read-only reconciliation delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc`; public fork PR #2 | Exact head `8a2c91943793668f31a1cf7af431933be935bb58` merged as `cf0333cdba478cc34a8570a65b38412da7fd3ecc` over governed base `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`. The unchanged five-patch aggregate is `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`. The merge fixes queued-backpressure shutdown and inactive-state defects; four-file coverage moves from 13/88 to 37/88 functions and 90/728 to 298/733 lines. The no-guest property/raw-FD, ASan, Clippy, repetition, mutation, reconstruction, and macOS default-init cross-build head checks passed. At 2026-08-03T22:57:43Z Linux-arm64 unit tests remained queued, the overall head state was pending, no merge-commit checks or submitted independent/CODEOWNER review existed, and the advanced baseline branch no longer satisfied the verifier's hardcoded earlier-base pin. No guest, VMM transport, installed product, release, or admission was evidenced. | [Public PR #2](https://github.com/dills122/libkrun/pull/2), exact [head](https://github.com/dills122/libkrun/commit/8a2c91943793668f31a1cf7af431933be935bb58), exact [merge](https://github.com/dills122/libkrun/commit/cf0333cdba478cc34a8570a65b38412da7fd3ecc), and canonical Gate C reconciliation |
 | P0-4A installed development topology | Merged in PR #34 | Conditional topology pass only: 18 roles, 17 installed-entry readbacks, per-user registration/explicit activation, exact ad-hoc IPC identity, refusal cases, and same-session recovery passed without host root or a guest. App Sandbox failed before `main`; valid signing, Team enrollment, notarization/stapling/Gatekeeper, on-demand activation, clean hosts, sessions, and the macOS support floor remain open. | [`RESULTS.md`](../experiments/gate-c-installed-development-topology/RESULTS.md), closed manifests, scripts/tests, and selected installed-run evidence |
 
@@ -161,9 +161,9 @@ activating a consumer:
 | E4 | `registeredlifecycle` drives only the no-guest fake through stable store-issued effect permits and exact fake instance identities | PR #59 retains before/after-effect, death, reopen, reconciliation, backoff, owner-session, and fake-no-guest oracles; the owner/coordinator is injected in-process |
 | E5 | Joined v1 capacity and repeated-startup checkpoint | `TestFixedStoreV1ExactActiveCapacityReleasesOnlyAfterDurableDestroy` proves 256 active and destroyed-only release; `TestFixedStoreV1ExactRetainedLifecycleCapacityNeverEvicts` proves 4,096 retained and cap-plus-one no rewrite/eviction with a 30,321,818-byte population; repeated/concurrent startup tests prove terminal omission, unresolved/exhausted retention, no fourth observation, and owner/coordinator mismatch refusal |
 
-This is an unwired `local-mechanic` result. Archive/compaction, a real platform/multi-process lock,
-backup/rollback, production reconciliation, consumers, content, evidence, runtime, backend, and
-guest remain absent.
+This is an unwired `local-mechanic` result. Passive archive F1 types and selection now exist, but
+archive file/store behavior, a real platform/multi-process lock, backup/rollback, production
+reconciliation, consumers, content, evidence, runtime, backend, and guest remain absent.
 
 ## Supervisor owner-lock design checkpoint
 
@@ -180,19 +180,25 @@ wrong-user/session/update/reboot result, production engine, archive behavior, co
 backend, or guest exists. The advisory lock does not contain a same-UID process that can mutate its
 parent directory.
 
-Source Preparer P0 remains a separate bounded NO-GO/HOLD at draft PR #72 commit `a12041c`: no
-single-member source-store container, exact worker confinement evidence, or closed store-genesis
-and update authority is proven. ADR-0033 process exclusion does not supply source-store
+Source Preparer P0 remains a separate bounded NO-GO/HOLD merged in PR #72 from head
+`a12041c36d90815474598f0929c595b32dc68e11` as
+`2e268b01d4174fe90397c00abc5973a3dd785606`: no single-member source-store container, exact worker
+confinement evidence, closed store-genesis/update authority, settled release/archive authority, or
+recursive nested-member field-authority design is proven. P1 passive contracts have not begun.
+ADR-0033 process exclusion does not supply source-store
 confidentiality, integrity, or protected-container membership. Useful composition would require a
 separate protected root, component identity, lock object, and owner session after those properties
 are independently proven; Supervisor ownership material is not shared.
 
-The next design task is now retained as
+The archive design is retained as
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) and the
 [Supervisor archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md). It selects
 complete closed registration cohorts, immutable full-record segments, exact replay/non-reuse
 tombstone indexes, publish-before-activate fault ordering, coherent backup verification, and
-read-only offline verification. It implements no archive behavior and deliberately leaves
+read-only offline verification. Slice F1 now implements passive archive projections, exact
+limits/known answers, defensive copies, and deterministic complete-cohort eligibility only. It
+writes no file, migrates no store, activates no archive, and routes no retained lookup; F2 is next.
+The design deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
@@ -249,12 +255,23 @@ tests rather than manifest cases.
 | PR #62, fork-native runtime bundle | `4f1edd7` | Stopped the first governed Linux/arm64 construction before build because the merged `rusty_v8` publication contract supported only Linux/amd64. |
 | PR #63, libkrun patch provenance | `ada09cd` | Restored the exact governed base-patch bytes and made their canonical hashes unconditional verifier inputs without changing patch semantics. |
 | External `dills122/libkrun` PR #2, governed console/raw-FD follow-up | `cf0333cdba478cc34a8570a65b38412da7fd3ecc` | Merged exact follow-up head `8a2c91943793668f31a1cf7af431933be935bb58`, preserving the five-patch aggregate while adding bounded library tests, two source fixes, measured coverage, and CI build evidence. This is an external fork source checkpoint, not Capsule product admission. |
-| PR #64, security overview | `0306688` | Added a plain-language explanation of Capsule's intended security design and current claim boundary. |
-| PR #65, authenticated IPC topology | `758bed7` | Proposed one unprivileged per-user Supervisor with a native XPC/Security front end, the existing Go core, two role-specific services, and four closed calls; no product IPC was implemented. |
+| PR #64, security overview | `030668857a5c0fbba76f5a81b905ae03aed63d28` | Source head `df0a48e9518db67356d8645da3f58f83f6692662`; added a plain-language explanation of Capsule's intended security design and current claim boundary. |
+| PR #65, authenticated IPC topology | `758bed7eb0f85124b4477c37f8893401f8c2c037` | Source head `b0acd66ae8fd06f2de8522723469ca5ac9fb01de`; proposed one unprivileged per-user Supervisor with a native XPC/Security front end, the existing Go core, two role-specific services, and four closed calls; no product IPC was implemented. |
+| PR #66, passive TypeScript approved-byte contract | `4be6d0e5059f179a66b6b439de76d6f8ed4e2f08` | Source head `d2f6969122d840e045fc63bb61d6525b95f8da22`; added nine known answers, 14 refusal mutations, and the illustrative plan-v1 source roles without selecting an owner, activating a consumer, or admitting a runtime. |
+| PR #67, related-systems/current-plan alignment | `5dee741a1aeb465dc5eb77917089d98cf1ad4564` | Source head `ad6c89c9f429fb93540ec711d5c821a3fbf835cf`; retained the field-authority requirement and reconciled then-current runtime, lifecycle, and IPC ordering without adding evidence. |
+| PR #68, authenticated IPC S1 consistency stop | `77e39fdb83cee22243c711507318327777dcb607` | Source head `c3ad12c6c0aa40684268b7f5154d5f87a8183b85`; selected the versioned atomic-cutover dependency and generated zero S1 fixtures/known answers rather than freezing the v0-only 562-byte record or 626-byte arithmetic. |
+| PR #69, passive field authority | `ba743febfe77a8a96cf368f3513fbf5795effb3c` | Source head `0b7e5a911e66a960677e66cbafc3ab349ccdc11d`; added fail-closed verification for 164 top-level fields across 15 passive targets. It does not recursively classify future Source Preparer or plan-v1 objects. |
+| PR #70, Supervisor archive design | `66f7fc1120eeb0bc7f4b15e955ca07988f500ddb` | Source head `2217f297fdec08d48890418899cc25ed5f176c66`; proposed ADR-0031 and the F1-F6 plan, with no archive implementation in that merge. |
+| PR #71, Source Preparer topology | `c68dfb1535b6763ad7c89d5f401fa9002f225b26` | Source head `5edc7fd90025c918291b5967ae0f06297b72540e`; proposed the separate enrolled owner/store topology and P0-P7 plan without implementing it. |
+| PR #72, Source Preparer P0 authority review | `2e268b01d4174fe90397c00abc5973a3dd785606` | Source head `a12041c36d90815474598f0929c595b32dc68e11`; retained P1 HOLD/NO-GO pending protected-store, worker, bootstrap/update, retention/release, recursive field-authority, and lifecycle evidence. No P1 contract exists. |
+| PR #73, governed libkrun reconciliation | `f6fcf172af752a425afb29ce62680d0b115f6998` | Source head `5e17ac8cec21320c3693049c53e7575bb9dbc15a`; reconciled external fork PR #2 head `8a2c91943793668f31a1cf7af431933be935bb58` and merge `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, two lifecycle fixes, and 37/88-function plus 298/733-line four-file coverage without guest/backend/profile admission. |
+| PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 is next. |
+| PR #75, passive archive F1 | `6fc31a049c476acf5085071c48d3d5e36f27240f` | Source head `20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef`; implemented passive archive types, limits, known answers, defensive copies, and eligibility only. No file write, migration, activation, lookup consumer, or adapter call exists; F2 is next. |
 
-The merge commits, not the former draft-PR state recorded in task responses, are the integration
-checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
-directory, which is not project evidence and is intentionally excluded from Git.
+The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
+PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->
+e930f9d` even though the PR numbers are 73, 75, and 74. The exact source heads above preserve review
+identity without treating an unmerged head as durable Capsule evidence.
 
 ## Current boundary and remaining work
 
@@ -273,42 +290,68 @@ Completed and retained:
   and validation, colocated transactions, the no-guest fake driver, exact 256-active/4,096-retained
   ceilings, destroyed-only capacity release, and repeated-startup/exhaustion evidence. No consumer,
   real adapter, runtime, backend process, or guest is present; and
+- passive field-authority verification for 164 top-level fields across 15 selected pre-freeze
+  targets, without claiming recursive coverage for future Source Preparer or plan-v1 objects; and
+- archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
+  eligibility selection. No file/store/archive behavior or consumer exists; and
+- Proposed ADR-0033's local owner-lock mechanism selection, while G1, owner-required store
+  composition, and installed protected-root evidence remain unimplemented; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
-  governed branches are merged, but `rusty_v8` has only an amd64 builder and no release.
+  governed baseline branches are merged, but no governed arm64 release or admitted artifact exists.
 - exact public governed libkrun source identity through merge
   `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, with the unchanged five-patch aggregate, bounded
   console/raw-FD library evidence, two local lifecycle fixes, and improved coverage. The queued
   Linux-arm64 unit job, post-merge branch/verifier mismatch, absent independent review, remaining
   uncovered code, release obligations, and every guest/product admission boundary remain explicit.
 
-Next backend-independent work:
+Current dependency and priority view:
 
-1. Keep [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) at the E5
-   `local-mechanic` checkpoint until Proposed ADR-0031's archive/compaction boundary is implemented
-   and a production owner-lock topology is selected and evidenced. Do not infer continuous-service,
-   multi-process, or guest lifecycle evidence from the fixed snapshot and injected coordinator.
-2. Add the missing digest-pinned Linux/arm64 `rusty_v8` builder/publication sibling profile, then
-   construct the merged governed Deno candidate and exact root in clean same-host and independently
-   controlled builders. Follow the [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md);
-   keep source/notice publication, TypeScript owner/topology, real releases, and admission separate.
-3. Implement Proposed ADR-0031's passive fixed-store F1-F5 archive/compaction and replay-retention
-   oracle before a separate production-engine experiment/ADR. The current no-eviction authority
-   store is not a continuous-service store; do not delete referenced history or activate a
-   consumer.
-4. Implement the passive S1 fixtures for Proposed ADR-0029's selected local-IPC topology after the
-   TypeScript approved-byte binding record is stable. Keep the native-to-Go bridge, installed peer
-   identities, and production Approval verification/authorization separate; do not promote the
-   conformance JSON or injected caller context into a product transport.
-5. Add the machine-readable field-authority classification required by the coordinated object-model
-   migration. Unknown or unclassified authority-bearing fields must fail verification.
-6. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
-   envelope exist may a coordinated public cutover and mixed-`Job` removal be considered.
+1. **Independently actionable now:** implement archive F2 from the completed passive F1 boundary;
+   implement owner-lock G1 under owned temporary roots; run only bounded Source Preparer P0A
+   blocker/design work; and maintain exact documentation plus recursive field-authority design.
+2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
+   `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
+   `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
+   not durable Capsule evidence and no workflow artifact may be reused yet.
+3. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
+   transport/launcher/root/device/teardown work, and explicit authorization for an owned disposable
+   development guest. No current task authorizes a guest.
+4. **Credential/environment dependent:** Apple Development identities and provisioning profiles
+   must be deliberately authorized before the existing installed matrices run. Current Individual
+   membership is Team `W4QUR9FUL4`, and read-only discovery reports a valid Apple Development
+   identity for that Team. Local signed/provisioned experiments can proceed once exact W4 role
+   identifiers, entitlements, and profiles are deliberately created. All three Xcode 26.6-cached
+   profiles belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. A separate
+   Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution
+   authority requiring explicit authorization and matching-Team package design; it is not W4
+   development evidence and does not make Developer ID/notarization work current. Paid owned
+   clean-host/minimum-OS coverage is not currently planned
+   and remains deferred activation/distribution evidence, not a blocker for local F2/G1 mechanics.
+   A genuinely independent
+   Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
+   limited and independent-builder equality is deferred.
+5. **Sequentially blocked:** authenticated IPC S1 and `RegisterPlanV1` wait for the Source Preparer
+   evidence/decision, finalized plan-v1 roles, recursive field-authority integration, and coordinated
+   ADR-0030 cutover. No S1 fixtures exist and P1 has not begun.
+
+If Source Preparer P0A cannot close without widening authority, user direction accepts a later-
+reviewed modern ESM `.mjs`-only JavaScript first-release fallback. CommonJS, package resolution,
+legacy Node module surface, and widening of the governed runtime contract remain forbidden. This
+direction requires an exact contract/ADR update before implementation and is not a frozen profile.
+
+The idle governed Deno fork has transferred from `dills122/deno` to
+[`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) with its fork relationship, default and
+`capsule/upstream-v2.9.4` branches, merged PR #1, and Actions history intact. This is repository-
+governance state, not source review, build provenance, security evidence, release admission, or
+profile validation. Capsule, `rusty_v8`, and libkrun ownership remains unchanged while their current
+work is active or queued; any later transfer remains separate governance work.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. This checkpoint also does not decide
-authority-store archive/compaction, production COSE/Keychain/user-presence signing, consumer
+stateful archive migration/activation or production-engine archive/compaction beyond passive F1,
+production COSE/Keychain/user-presence signing, consumer
 ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot
 is durable for controlled local tests, but ownership remains in-process and no production

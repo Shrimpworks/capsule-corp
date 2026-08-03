@@ -1,145 +1,142 @@
-# Phase 2B and Gate C parallel-task checkpoint
+# Phase 2B and Gate C current maintainer checkpoint
 
-Date: 2026-08-02
+Date: 2026-08-03
 
-Status: integrated local checkpoint. This document records the completed parallel-task group and
-the next implementation boundary. It does not accept ADR-0023, activate a public endpoint, admit a
-runtime or backend, or authorize user bytes.
+Status: integrated repository checkpoint through Capsule PR #74 merge
+`e930f9dbd877bea0cbd55870060f48c9c7fdd72f`, including PR #75 merge
+`6fc31a049c476acf5085071c48d3d5e36f27240f`. This is a status and dependency
+index. It does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
+backend, authorize user bytes, or authorize a guest.
 
-Historical-status note: the P0-2 row below records the earlier minimal-removal result at `d3be865`.
-PR #30 later selected `GOVERNED-PATCH` after a direct-block-root prototype booted and reran the
-bounded corpus without `NullFs`; removal remains credible but unadmitted. Current status lives in
-the [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
-[workstream ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+## How to read the status
 
-## Subsequent Phase 2B durable-lifecycle checkpoint
+Keep these evidence classes separate:
 
-As of 2026-08-03, PR #59 merged Slice E4 and the E5 local checkpoint is retained in the
-[durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md). The no-guest fake now uses the
-colocated v1 fixed snapshot and stable store-issued effect identities. Focused tests prove exact
-256-active and 4,096-retained lifecycle ceilings, cap-plus-one refusal without eviction, capacity
-release only after durable destroyed/cleanup-false/authoritative-absence state, terminal omission
-on repeated startup, retained unresolved/exhausted recovery work, and owner/coordinator mismatch
-refusal within the injected in-process boundary.
+| Class | Meaning at this checkpoint |
+| --- | --- |
+| Selected design | Accepted ADR-0028 selects governed `deno_core` as the first runtime engineering candidate. Proposed ADRs describe reviewable directions only. |
+| Implemented local mechanics | Unwired repository code and tests implement only their named passive or no-guest behavior. They are not product authority boundaries. |
+| Experiment evidence | A bounded mechanism was observed in its recorded local environment. The result does not transfer automatically to an installed product or composed profile. |
+| Governed external source | A named fork commit or merge establishes source identity and maintenance provenance. It does not admit artifacts, releases, runtimes, backends, or profiles. |
+| Product admission | No runtime, backend, guest profile, authenticated product IPC, production approval path, or installed security boundary is admitted today. |
 
-This later checkpoint does not alter the Gate C task results below, accept Proposed ADR-0025, or
-claim production multi-process locking, archive/compaction, backup/rollback, production
-reconciliation, a consumer, content, evidence, runtime, real backend, or guest.
+## Durable repository state
 
-## Task group
+The current closed conformance corpus remains 82 rules, 262 cases, and 368 fixtures. The unwired
+Go/TypeScript implementation covers the previously recorded 177 Go targets and 80 TypeScript
+proposal targets. The passive field-authority foundation covers 164 top-level fields across 15
+selected pre-freeze targets; it does not recursively classify future Source Preparer or plan-v1
+objects.
 
-| Workstream | Task provenance | Integration | Result |
-| --- | --- | --- | --- |
-| Phase 2B Task 2.3: proposal/source/input fixtures | `019fc2e6-cf9f-7482-82b5-23e67a399ce6` | `4afbdfa` | Added 18 rules, 42 cases, and 39 fixtures; the corpus reached 55 rules, 147 cases, and 130 fixtures. |
-| Gate C P0-2: `NullFs` disposition | replacement `019fc2e8-445e-7cb2-b4c2-54d84282c3fe`; original `019fc2e6-cf9d-7210-b2f3-f3bf2244e83a` ended at the app layer | `d3be865` | The smallest removal built but broke guest bootstrap. The exact block-root profile remains unsupported. |
-| Gate C P0-0: stock Bun runtime authority | `019fc2e6-cf9f-7482-82b5-240992c79419` | `004c047` | Stock Bun 1.3.14 failed the prohibited-power contract. `RUNTIME-001` remains unsupported. |
-| Phase 2B Task 2.4: plan/registration/state fixtures | `019fc2e6-cf9d-7210-b2f3-f3dfc37458a7` | `fd51ac4` | Added 12 rules, 59 cases, and 148 fixtures; the corpus reached 67 rules, 206 cases, and 278 fixtures. |
-| Cross-workstream reconciliation | coordinator `019fc2de-552d-77a0-aa47-35ac39d02edc` | `99192d4` | Reconciled the roadmap, boundary decisions, and durable evidence ledger. |
+The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
+approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
+exist, while ownership is still injected in-process and `FakeBackend.CreatesGuest() == false`.
 
-The app-layer failure in the original P0-2 task is not a product finding. Its replacement retained
-the bounded investigation and evidence in the repository.
+Archive Slice F1 is now implemented as passive `internal/execution/archivestate` types, exact
+limits and known-answer digests, defensive copies, and a deterministic complete-cohort eligibility
+selector. F1 writes no file, migrates no store, moves no cohort, activates no archive, resolves no
+retained authority, deletes nothing, and calls no lifecycle adapter. F2—the explicit lock-held
+fixed-store v1-to-v2 migration and full empty-archive verifier—is the next archive slice.
 
-## Durable contract outcomes
+Proposed ADR-0033 selects one installer-enrolled pre-created sibling inode plus a lifetime
+nonblocking BSD `flock` for cooperating Supervisor ownership. The retained harness covers local
+process/descriptor behavior and refusal-before-store ordering only. It is not same-UID containment,
+protected storage, rollback protection, or Source Preparer store protection. G1—the passive
+Go/Darwin bootstrap and opaque-owner port using owned temporary roots—is next; the owner-required
+store composition and installed protected-root matrix remain later slices.
 
-Task 2.3 closed the passive fixture oracles for proposal structure, source paths and ordering,
-entrypoint membership, source counts and byte budgets, fixed input/output slots, trusted profile
-resolution, labels, canonical inline JSON, and requested/defaulted/over-ceiling wall time.
+## Source preparation and authenticated IPC
 
-Task 2.4 closed the passive fixture oracles for exact plan and registration bytes, scalar and
-digest domains, authenticated caller roles, fresh registration, installation-global sequence,
-expiry equality, monotonic time, trust fencing, fixed capacity, mutation isolation, atomic
-failure, and wire/stored-record separation. Its registration-state matrix has 40 cases: 18 accept
-and 22 reject. Every stateful case retains exact before, operation, and after fixtures.
+PR #72 retained Source Preparer P0 as a bounded **P1 HOLD / NO-GO today**. A separately enrolled
+unprivileged Source Preparer remains only a conditional design. P1 passive contracts have not
+begun. Its entry blockers include:
 
-Retained known answers:
+- an exact single-member protected store with baseline same-user negative-access evidence;
+- exact one-shot Node worker confinement and bounded process-tree death/cleanup evidence;
+- sealed installer-owned store genesis and update authority;
+- settled source retention, archive, and positive release authority;
+- canonical Source Preparer and plan-v1 objects with recursive nested-member field-authority
+  classification and every independent validator; and
+- closed cancellation, recovery, epoch, rollback, resource, and refusal-side state semantics.
 
-| Object | Exact length | SHA-256 |
-| --- | ---: | --- |
-| Ordinary source manifest | retained fixture | `e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171` |
-| Ordinary canonical inline input | retained fixture | `bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72` |
-| Ordinary `ExecutionPlan` | 530 bytes | `627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c` |
-| Ordinary `PlanRegistration` | 165 bytes | `f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614` |
+JavaScript-only is an acceptable bounded first-release fallback if those gates do not close. User
+direction narrows that future fallback to modern ESM `.mjs` only: no CommonJS, package resolution,
+legacy Node module surface, or widening of the governed runtime contract. This is planning
+direction, not a frozen media/profile decision. The exact contract and applicable ADRs must be
+updated and reviewed before implementation.
 
-These fixtures are executable specifications for future language implementations. They are not a
-claim that strict decoders, semantic planners, registration storage, or public consumers are
-implemented. ADR-0023 remains Proposed.
+Authenticated IPC S1 and `RegisterPlanV1` remain blocked behind the Source Preparer decision/evidence
+and the coordinated ADR-0030 plan-v1 authority model. There is no retained 562-byte S1 fixture and
+the 626-byte arithmetic is not a layout, cap, or known answer. The native/Go bridge, installed
+authenticated endpoints, production identities, Approval verification, and consumers remain
+unimplemented.
 
-## Durable Gate C outcomes
+## Governed runtime and libkrun source state
 
-### Stock Bun
+The governed libkrun follow-up merged external fork PR #2 from head
+`8a2c91943793668f31a1cf7af431933be935bb58` as
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`. It preserves the five-patch aggregate
+`d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`, fixes the observed
+queued-backpressure shutdown loop and inactive-state lifecycle defect, and moves the four changed
+console files from 13/88 to 37/88 covered functions and 90/728 to 298/733 covered lines. The
+remaining uncovered code, branch/verifier pin mismatch, independent review, caller shared-status
+hazard, hostile control/queue/descriptor work, real transport, distinct launcher, guest/VMM,
+installed composition, release obligations, and final profile reruns remain open. This is governed
+fork source and local library evidence only; no guest, backend, or profile is admitted.
 
-The exact Bun 1.3.14 investigation observed reachable subprocess, executable replacement,
-FFI/native-loading, inspector, Worker, and inherited-descriptor authority despite all relevant
-stock deny flags. Stock flags cannot satisfy the advertised v0 runtime contract.
+Governed `rusty_v8` PR #4 remains external work in progress at exact head
+`aa921fa48901bf28774d61248b0187c8b91c55a4`. At the publication check on
+2026-08-03T23:57:25Z, its contract jobs had passed and two clean Linux/arm64 `arm64-full-build` jobs
+were still in progress. The PR is unmerged and has no accepted handoff, reusable artifact, release,
+or admission effect. A successful job would still need exact artifact/evidence review and merge/
+governance reconciliation before Capsule reuses it.
 
-The governed construction-level branch also failed its explicit reviewability gate: its minimum
-honest closure spans at least 40 hand-authored files plus 10 generated outputs, while a narrow
-process/exec self-seal cannot independently close Worker or native loading. Capsule must now choose
-an alternate runtime and supersede ADR-0003's Bun-first implementation choice. Execution requiring
-`RUNTIME-001` refuses throughout.
+## Priority and dependency view
 
-### `NullFs`
+| Priority | Work | Dependency boundary |
+| --- | --- | --- |
+| Independently actionable now | Archive F2 | Build the explicit fixed-store v2 migration/full verifier from passive F1; no cohort leaves hot state and no archive segment exists. |
+| Independently actionable now | Owner-lock G1 | Port only the passive bootstrap/opaque owner boundary under owned temporary roots; do not claim protected storage. |
+| Independently actionable now | Source Preparer blockers | Run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
+| Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
+| Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |
+| Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
+| Credential/environment dependent | Apple Development/provisioning and installed matrices | Current Individual Team `W4QUR9FUL4` has a valid local Apple Development identity, so signed/provisioned experiments can proceed after exact W4 role identifiers, entitlements, and profiles are deliberately created. The three cached profiles belong to historical Team `3DDR84M4JS` and are not reusable. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices are not planned now and remain deferred activation/distribution evidence, not blockers for F2, G1, or other local mechanics. |
+| Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 
-`NullFs` is not introduced merely by building or loading libkrun, but it is unconditional for the
-exact retained `krun_set_root_disk_remount` block-root route. Removing only that device prevented
-the guest from mounting its root because the current dummy virtiofs route supplies bootstrap
-files and mount points.
+## Maintainer decisions and resources that can unblock work
 
-The current profile remains unsupported. Next work must either provide an alternate bootstrap
-with a closed device list or formally review and exercise the complete residual guest-reachable
-virtio queue, FUSE decoder, worker, overlay, and `NullFs` surface under an applicable retained
-sanitizer/coverage corpus. No libkrun adapter may handle user bytes before that and the other Gate C
-P0 campaigns close.
+- TypeScript remains conditional. If its P0A evidence cannot close without widening authority,
+  proceed toward a separately reviewed modern-ESM `.mjs`-only JavaScript fallback contract rather
+  than implementing around the stop.
+- Current Apple Developer membership is Individual / Team `W4QUR9FUL4`, and read-only
+  `security find-identity -v -p codesigning` now reports a valid Apple Development identity for
+  that Team. Local signed/provisioned experiments can proceed once exact W4 role identifiers,
+  entitlements, and profiles are deliberately created. The three profiles Xcode 26.6 cached through
+  Download Manual Profiles all belong to historical Team `3DDR84M4JS` (Gate B Broker, Gate B
+  Supervisor, and wildcard); they are not reusable for W4 tests. A separate Developer ID
+  Application identity for historical Team `3DDR84M4JS` is later distribution authority only: its
+  use requires explicit authorization and matching-Team package design, must not enter W4
+  development evidence, and does not mean Developer ID or notarization work is currently planned.
+- Owned clean macOS hosts across the support floor and paid clean-host testing are deferred. They
+  remain required before the corresponding installed/distribution claim can advance.
+- A genuinely independent Linux/arm64 builder would strengthen byte-equality provenance, but is
+  not currently scheduled. GitHub-hosted or same-host equality must not be described as independent.
+- The idle governed Deno fork has transferred from `dills122/deno` to
+  [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) with its fork relationship, branches,
+  merged PR #1, and Actions history intact. This is repository governance only; it does not
+  validate bytes, reviews, controls, releases, or admission. Transfers of Capsule, `rusty_v8`, or
+  libkrun are later work and must not disturb their active or queued work.
 
-## Application reality at this checkpoint
+## Historical and exact integration record
 
-The repository contains a runnable daemon shell with health, version, and unavailable-profile
-endpoints. It also contains an OS-neutral Supervisor state machine exercised through an in-memory
-store and a fake lifecycle that refuses guest-creating backends.
+The earlier Phase 2B/Gate C task-group observations remain durable in the
+[workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md), the
+[Gate C readiness checkpoint](GATE_C_READINESS_CHECKPOINT.md), and the
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). PRs #64-#75 and their exact source/merge
+identities are reconciled in the ledger. Historical observations are not silently rewritten when a
+later merge narrows their interpretation.
 
-It does not yet contain a job-submission endpoint, wired strict planner, durable Supervisor
-process/store, native Broker approval UI, real approval signatures, content custody flow, real
-guest execution, or end-to-end SDK/MCP job workflow. The conformance corpus and Supervisor state
-machine are durable product foundations; `experiments/` implementations remain non-production
-evidence and cannot be imported into product packages.
-
-## Combined verification
-
-The integrated tree passed:
-
-```sh
-fnm exec --using=22.22.1 -- pnpm install --frozen-lockfile
-fnm exec --using=22.22.1 -- pnpm check
-fnm exec --using=22.22.1 -- pnpm lint
-fnm exec --using=22.22.1 -- pnpm test
-fnm exec --using=22.22.1 -- pnpm verify:schemas
-fnm exec --using=22.22.1 -- pnpm format:check
-fnm exec --using=22.22.1 -- pnpm site:build
-go test ./...
-go vet ./...
-go build ./...
-git diff --check
-```
-
-The conformance runner passed 22 tests and validated 67 rules, 206 cases, and 278 fixtures. The Go
-commands completed successfully; the restricted local run emitted only a non-fatal user-module-
-cache write warning.
-
-## Next implementation group
-
-Two backend-independent tasks may begin in parallel from this checkpoint:
-
-1. Implement strict public JSON proposal decoding and semantic planning as an unwired library,
-   making the applicable Task 2.3 language targets executable.
-2. Implement strict deterministic-CBOR internal wrappers and exact received-byte validation in Go,
-   making the applicable plan/registration fixture targets executable without activating a store
-   or endpoint.
-
-After both integrate, connect them to the existing Supervisor state machine through a
-fault-injectable fake backend. That vertical slice remains sequential because it depends on both
-decoding/planning and exact internal wrapper behavior. Public daemon, SDK, and MCP cutover remains
-blocked until the fake-backend slice and the separately reviewed Supervisor archival/compaction
-design are complete.
-
-Backend P0 research may continue independently, but it must not add backend flags, paths, runtime
-claims, or experiment code to the backend-independent contract implementation.
+The repository still contains no job-submission endpoint, production Broker approval/signature
+flow, authenticated product IPC, protected production authority/source store, admitted runtime,
+real execution adapter, hostile guest, or composed production evidence chain.

@@ -383,15 +383,22 @@ The resulting binary and snapshot were reproduced in clean same-host containers.
 These are narrow construction results, not a complete runtime.
 
 **Selected design.** Accepted ADR-0028 chooses governed `deno_core` as the first runtime engineering
-candidate. The real Deno and `rusty_v8` forks have governed commits, but the intended Linux/arm64
-`rusty_v8` builder and fork-native release do not yet exist. Exact V8 build/source/notice closure,
-independent builders, module loading, TypeScript ownership, external isolation composition, and
-runtime admission remain open.
+candidate. The real Deno and `rusty_v8` forks have governed commits. Governed `rusty_v8` PR #4 is
+unmerged external work in progress at head
+`aa921fa48901bf28774d61248b0187c8b91c55a4`; contract checks pass while clean Linux/arm64 build
+work is still in progress. It has no accepted artifact or admission effect. Exact V8
+build/source/notice closure, independent builders, module loading, TypeScript ownership, external
+isolation composition, and runtime admission remain open.
 
 **Experiment evidence.** A fixed Node/Amaro strip-only TypeScript experiment produced deterministic
 JavaScript for a narrow syntax subset. Proposed ADR-0026 requires both the original TypeScript and
 emitted JavaScript, plus the exact transformer identity, to be bound before plan registration and
-approval. No production component owns or performs that transformation today.
+approval. No production component owns or performs that transformation today. PR #72 kept the
+proposed Source Preparer's P1 contracts on HOLD until protected-store, worker-confinement,
+genesis/update, retention/release, recursive field-authority, and lifecycle evidence closes.
+JavaScript-only is an acceptable planning fallback if those gates fail, but a first-release
+fallback must be separately frozen as modern ESM `.mjs` only—without CommonJS, package resolution,
+legacy Node module authority, or runtime-contract widening—before implementation.
 
 ### libkrun/HVF, immutable roots, and direct block attachment
 
@@ -477,12 +484,16 @@ attempts with missing or unfinished lifecycle work, and performs bounded reconci
 unknown results stop automatic retry rather than creating a restart storm. A consumed approval
 remains consumed throughout; safe retry of the job requires a new human approval.
 
+**Implemented local mechanics.** Archive Slice F1 adds passive archive projections, exact limits
+and known answers, defensive copies, and a pure complete-cohort eligibility selector. It does not
+write a file, migrate the v1 store, move a cohort, activate an archive, or route retained lookup.
+
 **Open production work.** The current owner/coordinator remains injected in process. Proposed
 ADR-0033 selects a pre-created enrolled sibling object plus lifetime nonblocking BSD `flock` after
 one local temporary-process corpus, but the Go/Darwin port and Apple-signed protected-state-root,
-session, update, and reboot matrix remain unimplemented. Production archive/compaction, backup and
-rollback handling, power-loss tests, real-backend reconciliation, signed evidence, and installed
-recovery are unresolved.
+session, update, and reboot matrix remain unimplemented. Archive F2's fixed-store v2 migration/full
+verifier, production archive/compaction, backup and rollback handling, power-loss tests, real-
+backend reconciliation, signed evidence, and installed recovery are unresolved.
 
 ## What exists today
 
@@ -493,6 +504,8 @@ recovery are unresolved.
   explicit intents, effect IDs, reconciliation, capacity refusal, and controlled restart tests.
 - **Implemented mechanics:** `FakeBackend.CreatesGuest()` is fixed to `false`. These tests create no
   virtual machine or hostile process.
+- **Implemented mechanics:** archive F1 provides passive types, digests, defensive copies, and
+  eligibility selection only; it writes and activates no archive.
 - **Experiment evidence:** bounded macOS code identity, XPC, Keychain, user-presence, protected
   storage, per-user service, libkrun/HVF, runtime-construction, root-custody, device, framing, and
   packaging questions have retained results with stated environments and limitations.

@@ -513,8 +513,10 @@ claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows ad
 exact retained mechanism and evidence they name.
 
 Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
-replay/non-reuse tombstone boundary. The finite fixed-store checkpoint is design only; it provides
-no production engine, multi-process lock, power-loss result, restore/anti-rollback mechanism,
+replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies,
+and complete-cohort eligibility now exist, but no file write, v2 migration, archive activation,
+retained lookup, or authority mutation exists. The finite fixed-store checkpoint provides no
+production engine, multi-process lock, power-loss result, restore/anti-rollback mechanism,
 referenced-history deletion, continuous service, consumer, or guest evidence.
 
 ### Non-guarantees

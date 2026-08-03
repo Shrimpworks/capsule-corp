@@ -52,8 +52,11 @@ single-member storage mechanism plus installed adversarial evidence.
 
 The least-dangerous viable alternative is JavaScript-only pass-through with TypeScript unsupported.
 It removes the parser, transformation claim, worker, source-set saga, and semantic-substitution
-trust. It is safer than every TypeScript topology and remains the mandatory fallback if the gates
-below fail. Moving Node into the daemon, Broker, Supervisor, updater, runtime, or backend is
+trust. User planning direction accepts that bounded first-release fallback only as modern ESM
+`.mjs`: no CommonJS, package resolution, legacy Node module surface, or widening of the governed
+runtime contract. This is not an already frozen media/profile decision; the exact contract and
+applicable ADRs must be updated before implementation. Moving Node into the daemon, Broker,
+Supervisor, updater, runtime, or backend is
 rejected. A second independent transformer could change the trust claim, but adds an authority,
 protocol, store/update seam, and must be decided in a new ADR.
 
@@ -372,8 +375,9 @@ P1 may start only when all of these are reviewed and retained:
     and all independent validation phases in the same change as its canonical contract.
 13. The full substitution and no-authority-state-change oracle above is represented in the P1
     fixture plan.
-14. JavaScript-only pass-through remains the documented fallback if any selected TypeScript
-    mechanism fails.
+14. A later-reviewed modern ESM `.mjs`-only JavaScript contract remains the documented planning
+    fallback if any selected TypeScript mechanism fails; CommonJS, package resolution, legacy Node
+    module surface, and governed-runtime widening remain excluded.
 
 ## Stop conditions
 

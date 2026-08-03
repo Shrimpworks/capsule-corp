@@ -57,8 +57,11 @@ backup, restore admission, and repair fencing. No daemon, Broker, updater, publi
 backend adapter can select archive records, supply archive paths, request deletion, reset a
 tombstone, or claim that capacity was released.
 
-The next implementation uses a minimal fixed-store archive checkpoint only as an unwired
-conformance oracle. It preserves the current full-snapshot validation and exact rename fault
+The implementation series uses a minimal fixed-store archive checkpoint only as an unwired
+conformance oracle. Slice F1 now retains passive projections, exact limits/known answers, defensive
+copies, and deterministic eligibility selection. It performs no file I/O, migration, archive
+activation, lookup, or authority mutation; F2 is next. The later stateful slices preserve the
+current full-snapshot validation and exact rename fault
 boundaries while proving the archive protocol. It is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate

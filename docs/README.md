@@ -12,6 +12,8 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 6. [Feasibility spikes](FEASIBILITY_SPIKES.md) — disposable evidence gates before schema freeze
 7. [Roadmap](ROADMAP.md) — risk-reduction order and phase exit evidence
 8. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
+9. [Related systems and design influences](RELATED_SYSTEMS.md) — public precedents, reusable
+   lessons, rejected patterns, and the boundary between comparison and Capsule evidence
 
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and

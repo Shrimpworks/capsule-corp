@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-02
+Date: 2026-08-03
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -100,6 +100,28 @@ selects governed `deno_core` as the first engineering candidate and preserves th
 protocol, but no profile is admitted. The reviews and experiments did not authorize libkrun to
 handle user bytes.
 
+## Related-systems review reconciliation
+
+A later public-source comparison considered Deno's permission broker, HARP, Redan, Qubes qrexec,
+XDG portals, Confidential Containers/Kata, reproducible-build systems, DSSE/in-toto, capability
+systems, and agent-sandbox products. The bounded comparison is retained in
+[Related systems and design influences](RELATED_SYSTEMS.md). It is an input to design review, not
+implementation evidence, a competitor-completeness claim, a novelty opinion, or authority to relax
+Capsule's boundary.
+
+The review reinforced existing decisions: approval cannot add authority absent from the registered
+plan, indeterminate or failed resolution must not be treated as absence, content should cross trust
+boundaries through narrow handles, the guest is hostile, receipts describe observed execution rather
+than prove correctness, and network remains out of the first slice. It did not justify importing
+full Deno permission brokering, dynamic authority negotiation, URL fetches, Unix-socket trust, or
+product-specific policy formats.
+
+One concrete planning refinement was retained: before schema freeze, every authority-bearing field
+must have a machine-readable classification naming its origin role, validator, authority effect,
+approval visibility, content status, binding, and unknown-field behavior. Unclassified fields fail
+verification. This tightens the coordinated object-model migration without changing the current
+priority order.
+
 ## Phase 2 parallel-task reconciliation
 
 Three read-only tasks independently reviewed the first passive contract slice. Their full useful
@@ -188,7 +210,14 @@ tests rather than manifest cases.
 | PR #55, CI hardening | `a5cb64a` | Added security scanning, deeper linting, ADR-index validation, and coverage gates. |
 | PR #56, V8 source/license closure | `abfdaa5` | Recorded `SOURCE-LICENSE-CLOSURE-NO-GO`: exact official source/patch identity was mapped, but mutable publisher inputs, missing build closure, and absent generated notices block governed reuse. |
 | PR #57, self-contained runtime root | `96383a8` | Recorded `STANDALONE DYNAMIC ROOT PASS; NO RUNTIME ADMISSION` for the exact 22-entry package-derived root with no ambient library/config fallback. |
+| PR #58, governed runtime work plan | `37482fb` | Recorded the real-fork governance and release/admission sequence for governed `deno_core` without admitting a profile. |
 | PR #59, durable lifecycle E4 | `68b75fd` | Replaced the active memory driver with the colocated v1 store, added stable fake effect/instance identity and injected startup coordination, and retained the death/fault/reopen matrix without a consumer or guest. |
+| PR #60, durable lifecycle E5 | `d88661b` | Retained exact active/retained lifecycle capacities, destroyed-only release, repeated startup, and bounded recovery-exhaustion evidence at `local-mechanic` status. |
+| PR #61, P0-3 cross-language/console | `91c4aa4` | Added independent Node verification of 43 vectors and local process-fault evidence while retaining the real transport/guest and console-coverage gaps. |
+| PR #62, fork-native runtime bundle | `4f1edd7` | Stopped the first governed Linux/arm64 construction before build because the merged `rusty_v8` publication contract supported only Linux/amd64. |
+| PR #63, libkrun patch provenance | `ada09cd` | Restored the exact governed base-patch bytes and made their canonical hashes unconditional verifier inputs without changing patch semantics. |
+| PR #64, security overview | `0306688` | Added a plain-language explanation of Capsule's intended security design and current claim boundary. |
+| PR #65, authenticated IPC topology | `758bed7` | Proposed one unprivileged per-user Supervisor with a native XPC/Security front end, the existing Go core, two role-specific services, and four closed calls; no product IPC was implemented. |
 
 The merge commits, not the former draft-PR state recorded in task responses, are the integration
 checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
@@ -228,18 +257,23 @@ Next backend-independent work:
    keep source/notice publication, TypeScript owner/topology, real releases, and admission separate.
 3. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
    no-eviction authority store is not a continuous-service store.
-4. After the Supervisor language/privilege topology is selected, design authenticated typed IPC
-   and production Approval verification/authorization; do not promote the conformance JSON or
-   injected caller context into a product transport.
-5. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
+4. Implement the passive S1 fixtures for Proposed ADR-0029's selected local-IPC topology after the
+   TypeScript approved-byte binding record is stable. Keep the native-to-Go bridge, installed peer
+   identities, and production Approval verification/authorization separate; do not promote the
+   conformance JSON or injected caller context into a product transport.
+5. Add the machine-readable field-authority classification required by the coordinated object-model
+   migration. Unknown or unclassified authority-bearing fields must fail verification.
+6. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
    envelope exist may a coordinated public cutover and mixed-`Job` removal be considered.
 
-This checkpoint does not decide IPC topology, authority-store archive/compaction, production
-COSE/Swift/Keychain/user-presence signing, consumer ownership, evidence composition, or public
-cutover. The authority/lifecycle snapshot lacks real multi-process locking and rollback-resistant
-identifier/nonce/effect uniqueness. The fixed snapshot is durable for controlled local tests, but
-ownership remains in-process and no production persistence claim follows. Content, evidence,
-runtime, real backend, and guest remain absent from the unwired path.
+Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
+installed endpoints, peer identities, or production transport. This checkpoint also does not decide
+authority-store archive/compaction, production COSE/Keychain/user-presence signing, consumer
+ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
+multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot
+is durable for controlled local tests, but ownership remains in-process and no production
+persistence claim follows. Content, evidence, runtime, real backend, and guest remain absent from
+the unwired path.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

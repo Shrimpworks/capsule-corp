@@ -59,7 +59,8 @@ Capsule assumes the following may be malicious:
 - a compromised agent-facing daemon;
 - a same-user local process attempting IPC, file, key, or component impersonation;
 - user-selected file bytes and third-party data;
-- Bun, parsers, libraries, dependencies, and guest-controlled runtime behavior;
+- the selected workload runtime, parsers, libraries, dependencies, and guest-controlled runtime
+  behavior;
 - all guest stdout, stderr, filenames, metadata, structured results, files, timings, and exit state;
 - signed envelopes from unknown, revoked, expired, replaced, wrong-purpose, wrong-audience,
   wrong-installation, wrong-epoch, or compromised keys;
@@ -175,8 +176,8 @@ validation record. A backend that cannot enforce a required value refuses the at
 ### Guest to host
 
 The guest is hostile. External isolation controls syscalls, filesystem, processes, IPC, network,
-resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs
-untrusted Bun directly on the host.
+resources, and lifecycle. Runtime permission systems are supplemental only. Capsule never runs an
+untrusted workload runtime directly on the host.
 
 Every admitted runtime bundle binds the exact guest-kernel image, configuration, boot arguments,
 module policy, debug/inspection facilities, and launcher restrictions. Removing unused kernel and
@@ -198,7 +199,8 @@ teardown, with the explicit limitation that workload completion is guest-reporte
 prove correct execution, user intent, or an uncompromised guest kernel.
 
 The launcher is a distinct admitted guest process, not the current experiment's `exec`-and-replace
-shim. It fully verifies source/input before starting Bun, withholds the completion endpoint and node,
+shim. It fully verifies source/input before starting the admitted runtime, withholds the completion
+endpoint and node,
 uses a fixed child FD/argv/environment/cwd manifest, bounds the child result, waits for the exact
 child tree, and writes the commit trailer last. The host runner separately starts with an exact
 role-specific FD allowlist because a VMM compromise acquires any ambient descriptor it inherits.
@@ -377,8 +379,9 @@ hidden-helper risk but does not trust PID/path alone or prove safety against a m
 VMM exploit, output flood, or untested disk/recovery path. Its readiness corpus additionally found
 that a same-user process could mutate a live raw backing image and that the block-root path exposed
 a `NullFs` virtiofs device without a host-backed share. Those are unresolved custody and VMM-surface
-risks, not evidence of an observed escape. The reconciled first slice also treats stock Bun's
-subprocess and FFI surfaces as an unresolved authority mismatch and proposes bounded dedicated
+risks, not evidence of an observed escape. The reconciled first slice rejected stock Bun's
+subprocess and FFI surfaces as an authority mismatch, selected governed `deno_core` as the first
+engineering candidate without admitting it, and proposes bounded dedicated
 virtio-console ports for source/input and typed inline completion. The pinned guest kernel and
 trusted launcher are part of that profile's TCB; an in-guest completion record is not attestation
 against a compromised guest kernel. gVisor validation must bind its

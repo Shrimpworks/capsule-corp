@@ -33,8 +33,9 @@ Accepted ADR-0028 now selects governed `deno_core` as the first runtime engineer
 passed physical omission, same-host byte reproduction, and the exact standalone dynamic-root
 question; the TypeScript follow-up passed a strip-only pre-approval byte-binding question. These
 results establish bounded construction evidence but do not admit that runtime. The real
-`dills122/deno` and `dills122/rusty_v8` forks exist, but their governed branches and releases do
-not. P0-1 is a `PATCH-CANDIDATE`, P0-2
+`dills122/deno` and `dills122/rusty_v8` forks now contain merged governed branches, but no governed
+release exists. The first fork-native Linux/arm64 construction stopped before building because the
+merged `rusty_v8` publication contract supports only Linux/amd64. P0-1 is a `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, P0-3 has only a backend-independent candidate and local
 console patch, and P0-4A passed only the conditional no-host-root topology. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
@@ -113,8 +114,11 @@ focused local-only conformance handoff also carries copied TypeScript `Construct
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
 product-language/IPC seam or public consumer. The next backend-independent boundaries are reviewed
 Supervisor archive/compaction and a selected real platform owner lock; neither is supplied by E5.
-Authenticated typed IPC, production approval signing/verification, reviewed Supervisor archival/
-compaction, evidence composition, consumers, and atomic public migration remain separate decisions.
+Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
+surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
+and platform evidence remain unimplemented. Production approval signing/verification, reviewed
+Supervisor archival/compaction, evidence composition, consumers, and atomic public migration remain
+separate decisions.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
@@ -125,6 +129,9 @@ scaffold was removed in PR #49 under ADR-0027. See the
   transcript, artifact manifest, agent summary, and composed receipt.
 - Add closed CDDL and byte-exact fixtures for every canonically registered or signed internal
   security object; do not generalize from the first `ApprovalGrant` candidate.
+- Add a machine-readable field-authority manifest for each target object. Every field identifies
+  its origin role, validator/resolver, authority effect, approval visibility, content/guest-control
+  status, and cryptographic or durable binding; verification rejects unclassified fields.
 - Define semantic source-path canonicalization and logical input/output slots.
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
@@ -135,6 +142,8 @@ Exit evidence:
 - JSON Schema, Go, Swift, and TypeScript agree on all applicable fixtures.
 - Duplicate keys, unknown fields/versions, unsafe numbers, unsupported powers, wrong types, and
   cross-protocol substitutions fail closed.
+- Every frozen field has a closed authority classification, and adding a known schema/CDDL field
+  without that classification fails repository verification.
 - The backend contract requests only controls supported or explicitly rejected by candidates.
 
 ## Phase 3: registered-plan and fake-backend lifecycle
@@ -159,6 +168,9 @@ Exit evidence:
 
 - The daemon cannot execute unregistered or replacement bytes.
 - Plan A approval cannot execute plan B, and one grant cannot create two attempts.
+- Approval cannot add or widen a destination, audience, limit, capability, content reference,
+  runtime/profile choice, or backend requirement; a selectable option must already be a closed,
+  Supervisor-validated part of the registered plan.
 - The daemon cannot forge ordinary terminal success.
 - Authenticated-client overload stays within the configured daemon envelope, sheds work without
   authority change, and does not create unbounded queues or diagnostics.

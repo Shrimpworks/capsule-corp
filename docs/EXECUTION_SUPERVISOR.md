@@ -106,8 +106,9 @@ of:
 - resource values the exact backend cannot enforce.
 
 Unsupported powers fail as unsupported protocol. They are not accepted merely because policy says
-`false`. The runtime profile must also refuse those powers in execution; the current stock Bun
-profile has not evidenced non-bypassable subprocess/FFI denial.
+`false`. The runtime profile must also refuse those powers in execution. Stock and governed Bun
+failed that requirement; the governed `deno_core` engineering candidate remains unadmitted until
+its complete composed profile passes.
 
 ## Durable lifecycle
 
@@ -198,10 +199,10 @@ runner lifecycle, guest-reported completion, input integrity, applicable result 
 disposition, and teardown as separate evidence.
 Any missing required element blocks ordinary success. The trusted launcher, not the unprivileged
 workload, retains completion authority. It remains a distinct process instead of replacing itself
-with Bun, verifies complete source/input before child start, gives the child a fixed argv/
-environment/cwd/FD manifest without the completion endpoint or node, caps the child result, waits
-for exact child-tree termination, and commits completion last. A compromised guest kernel remains
-outside what this record attests.
+with the admitted runtime, verifies complete source/input before child start, gives the child a
+fixed argv/environment/cwd/FD manifest without the completion endpoint or node, caps the child
+result, waits for exact child-tree termination, and commits completion last. A compromised guest
+kernel remains outside what this record attests.
 
 The host runner starts from a fail-closed role-specific descriptor allowlist. After exec it may hold
 only the finalized read-only runtime root, dedicated directional port endpoints, and indispensable

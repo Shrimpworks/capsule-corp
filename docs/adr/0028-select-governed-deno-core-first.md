@@ -43,8 +43,13 @@ The repository owner created two real GitHub forks on 2026-08-03:
 - [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8), forked from
   `denoland/rusty_v8`.
 
-At this checkpoint both forks contain only their inherited `main` branches. No Capsule-governed
-branch, release, builder, or admitted artifact exists yet.
+Both forks now contain merged Capsule-governed branches. The governed Deno line was merged from
+head `9adb0b68b55bca81644827f1e7749a3acb091bed` at merge
+`ea18b9dc21ff8ebd19347be7095f47937ee14ec2`. The governed `rusty_v8` follow-up was merged from head
+`a43ee7486c3e05bce5d6e5db586b3e2e688c33cf` at merge
+`a31b8f39dc6933d5635367e8ccb67d70f2cc2385`. No governed release or admitted artifact exists. The
+first fork-native Linux/arm64 construction stopped before building because the merged `rusty_v8`
+publication profile supported Linux/amd64 only.
 
 ## Decision
 

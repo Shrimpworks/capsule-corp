@@ -108,12 +108,14 @@ Apple Containerization may create a lightweight Linux VM for a development job, 
 it as a production authority because a restarted Supervisor cannot durably identify or enumerate
 the exact VM/helper through supported public APIs. Controller loss therefore remains unresolved;
 the backend cannot produce ordinary success or release artifacts after ambiguity. No development
-backend may execute untrusted Bun directly on the host. The libkrun/HVF follow-up is the lead native
-candidate under evaluation after conditionally passing its first isolation and lifecycle corpus,
+backend may execute an untrusted workload runtime directly on the host. The libkrun/HVF follow-up
+is the lead native candidate under evaluation after conditionally passing its first isolation and
+lifecycle corpus,
 but its follow-up tracks found unresolved immutable block custody and a guest-visible `NullFs`
 device.
-The P0 reconciliation additionally requires stock-Bun authority closure, narrows custody to the
-runtime root for the first slice, and proposes bounded console ports for source/input and typed
+The P0 reconciliation rejected stock and governed Bun for the first runtime, selected governed
+`deno_core` as the engineering candidate without admitting it, narrows custody to the runtime root
+for the first slice, and proposes bounded console ports for source/input and typed
 inline JSON completion. Safe filesystem-image output parsing remains required before file artifacts,
 while complete release-byte admission and composed validation remain open. The retained spike
 runners are not a product development backend. Until one exact candidate profile passes the

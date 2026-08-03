@@ -47,6 +47,11 @@ explicit fixed-store v0-to-v1 migration and validation, durable ensure/read/inte
 indeterminate/reconciliation/recovery-set transactions, the FakeBackend-only driver, and the
 capacity/repeated-startup evidence checkpoint. ADR-0025 remains Proposed and the implementation
 status remains unwired `local-mechanic` only.
+[Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
+unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
+Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
+calls, but no bridge fixture, installed authenticated endpoint, product consumer, or production
+identity evidence is implemented.
 A focused unwired
 TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
@@ -54,8 +59,8 @@ bindings. The next
 focused slice now prepares a defensive exact-byte/complete-role handoff and exercises those values
 against the real Go `registrationstate` component through a local-only conformance command. Go
 independently predecodes, role-binds, hashes, and retains the 530-byte known answer. This is not a
-product IPC implementation: Swift, authenticated cross-process transport, consumers, and endpoints
-remain pending. See the
+product IPC implementation: the native-to-Go bridge, authenticated cross-process transport,
+consumers, and endpoints remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint rejects stock Bun 1.3.14, its governed-construction branch, hardened full Deno v2.9.4,
 and the tested minimal `deno_core` 0.409.0 construction for the required runtime-authority contract.
@@ -220,17 +225,20 @@ exercises the authority boundaries successfully.
   attempt-bound virtio-console ports in the first slice; an ext4/raw-image parser is deferred until
   file artifacts. OCI plus gVisor remains an independent unvalidated candidate and contingency
   until both exact profiles run the shared attack corpus.
-- Go remains the daemon language; Swift is preferred for the native Broker. Supervisor language and
-  privilege remain gated by the backend adapter; the current macOS service evidence supports an
-  unprivileged per-user Swift component with no host-root helper.
+- Go remains the daemon language and Swift/native remains preferred for the Broker. Proposed
+  ADR-0029 selects an unprivileged per-user Supervisor that keeps the existing Go
+  authority/lifecycle core and links a small native C/Objective-C XPC/Security front end in the
+  same process. It adds no Swift Supervisor service, host-root process, or privileged helper.
 
 ## Success criteria
 
 The first functional milestone succeeds when a client can submit a dependency-free inline JSON
 job, obtain a Supervisor registration, receive explicit user-presence approval from the Broker,
-consume that grant for one attempt, run Bun in a disposable development backend, release only a
-fixed agent summary, record backend-specific teardown evidence, and compose a receipt from Broker
-approval evidence and a Supervisor enforcement transcript.
+consume that grant for one attempt, run an explicitly admitted dependency-free runtime in a
+disposable development backend, release only a fixed agent summary, record backend-specific
+teardown evidence, and compose a receipt from Broker approval evidence and a Supervisor enforcement
+transcript. Accepted ADR-0028 makes governed `deno_core` the first engineering candidate, but this
+milestone remains blocked until a separate profile-admission decision accepts exact runtime bytes.
 
 The first validated-local milestone additionally requires the exact backend, runtime bundle,
 component identities, and host configuration to survive the documented adversarial corpus. An
@@ -246,4 +254,6 @@ resulting ADR decisions remain durable project evidence.
 
 See [Feasibility Spikes](FEASIBILITY_SPIKES.md), [Technical Design](TECHNICAL_DESIGN.md), and the
 [Roadmap](ROADMAP.md). The exact branch point is recorded in the
-[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
+[Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). Public precedents and the boundary between
+reusable lessons and Capsule evidence are recorded in
+[Related systems and design influences](RELATED_SYSTEMS.md).

@@ -1,6 +1,8 @@
 # Architecture
 
-Status: intended architecture; none of these boundaries is implemented or validated yet.
+Status: intended architecture. The repository implements only unwired local contract and
+FakeBackend lifecycle mechanics; no connected authority boundary, real runtime/backend, or guest
+is implemented or validated.
 
 ## System context
 
@@ -39,7 +41,7 @@ Status: intended architecture; none of these boundaries is implemented or valida
 │  ├── native approval UI       └── OCI + gVisor comparison/fallback  │
 │  ├── user-presence key                 │                             │
 │  ├── file selection                    ▼                             │
-│  ├── user-content store          Disposable Bun guest               │
+│  ├── user-content store          Disposable governed-runtime guest  │
 │  └── fixed agent summary                                             │
 │                                                                     │
 │  Optional Runtime Guardian                                          │
@@ -104,9 +106,11 @@ It owns exact registered plan bytes, approval consumption, attempt state, runtim
 backend capability matching, backend handles, cleanup leases, staged-digest verification, safe
 filesystem collection, and a hash-linked enforcement transcript.
 
-The language and privilege model are not frozen. A feasibility spike will compare native Swift,
-Go plus narrow platform bindings, and a hybrid with a tiny privileged launcher if one is genuinely
-required. No design assumes a root LaunchDaemon by default.
+Proposed ADR-0029 selects one unprivileged per-user Supervisor process: a small native
+C/Objective-C XPC/Security front end linked in-process with the existing Go authority/lifecycle
+core. It adds no Swift Supervisor service, root LaunchDaemon, or privileged helper. The exact
+installed identity/session/owner-lock evidence remains open, so this topology is selected design,
+not an implemented authority boundary.
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 
@@ -127,8 +131,8 @@ passed lifecycle mechanics conditionally, but the integrated readiness result fo
 same-user block-image mutation and a guest-visible `NullFs` virtiofs device. The reconciled first
 slice proposes genuine read-only descriptor custody for the trusted root plus bounded
 virtio-console ports for source, inline input, completion, and inline JSON output. Those mechanisms,
-stock-Bun authority restrictions, complete installed distribution, and admissible release bytes
-remain P0 hypotheses, not validated controls. Filesystem-image output parsing is deferred until
+the selected governed `deno_core` profile, complete installed distribution, and admissible release
+bytes remain P0 hypotheses, not validated controls. Filesystem-image output parsing is deferred until
 file artifacts. OCI plus gVisor remains an independent candidate and contingency. Each exact
 backend reports mechanisms, unsupported controls, management channels, recovery behavior, and
 retained validation evidence.
@@ -271,7 +275,9 @@ No single `secure` or `authoritative` label hides unsupported dimensions.
 The independent adapter boundaries are:
 
 - client adapter: MCP, CLI, SDK, or future HTTP;
-- runtime adapter: Bun, Node, or Deno;
+- runtime adapter: governed `deno_core` as the first engineering candidate, with Node or other
+  reviewed profiles remaining future portability/contingency options; Bun is retained only as
+  rejected historical evidence for the first profile;
 - isolation backend: fake lifecycle, Apple development-only Containerization, native
   libkrun/Hypervisor.framework candidate, OCI/gVisor comparison/contingency, or future microVM;
 - platform key/UI/IPC provider: native macOS first, later other operating systems;

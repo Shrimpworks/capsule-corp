@@ -543,6 +543,8 @@ real-backend reconciliation, signed evidence, and installed recovery are unresol
   [control/evidence matrix](security/CONTROL_EVIDENCE_MATRIX.md)
 - [Workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md) and
   [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md)
+- [Related systems and design influences](RELATED_SYSTEMS.md), including which external patterns
+  Capsule reuses, defers, or deliberately rejects
 - [ADR-0010: authority separation](adr/0010-separate-planning-approval-content-and-execution.md),
   [ADR-0011: registered plans and one-use attempts](adr/0011-supervisor-registered-plans-and-one-use-attempts.md),
   and [ADR-0015: composed receipts](adr/0015-supervisor-transcripts-and-composed-receipts.md)

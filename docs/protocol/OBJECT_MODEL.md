@@ -92,6 +92,33 @@ canonical-wrapper acceptance conditions.
 - `LifecycleTransition`
 - posture dimension records
 
+## Field-authority classification
+
+Before any target object freezes, every field in that object must appear in a closed,
+machine-readable authority manifest. Each entry identifies:
+
+- the object version and exact field path;
+- the only role permitted to originate the value;
+- the component responsible for structural validation and any trusted resolution;
+- whether the field changes authority, narrows authority, selects one predeclared alternative, or
+  records non-authoritative data/evidence;
+- whether trusted approval UI must render it and from which registered bytes;
+- whether it may contain user content or guest-controlled material;
+- the exact digest, signature, registration, or durable record that binds it; and
+- the required fail-closed behavior for unknown or unsupported values.
+
+The initial classification vocabulary must at least distinguish untrusted proposal data,
+approval-visible authority, Supervisor-authoritative state, content capabilities, runtime
+authority, backend authority, and evidence-only observations. A display label or identifier does
+not acquire authority merely because it is classified.
+
+Strict decoders already reject fields absent from an object's schema. The authority manifest adds
+a separate development invariant: adding a schema/CDDL field without deciding who may assert it,
+what it can authorize, how it is bound, and whether it is shown during approval fails repository
+verification. The manifest should begin with the passive candidate objects and expand only through
+the coordinated versioned migrations that add new target fields; it must not extend the deprecated
+mixed `Job` model.
+
 ## Semantics
 
 - `JobProposal`: untrusted desired work; never effective authority.
@@ -221,6 +248,8 @@ state/timing leakage.
 - Invalid Unicode/numbers, duplicate keys, unknown fields/versions, wrong object types, and
   cross-protocol signatures fail.
 - Proposal schemas cannot express unsupported authority.
+- Every target field has a closed authority-manifest entry, and repository verification rejects an
+  unclassified field or an unknown classification value.
 - Registration/attempt/evidence bindings are explicit.
 - Limit fields correspond to proven backend semantics or are rejected for that backend.
 - Examples and site copy no longer imply the current mixed `Job` is final.

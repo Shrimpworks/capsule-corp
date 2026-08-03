@@ -38,7 +38,10 @@ and startup-recovery behavior. Its lifecycle store remains bounded single-proces
 no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a future colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
-fake-only implementation plan; no durable lifecycle behavior is implemented yet. A focused unwired
+fake-only implementation plan. Slice E1 now provides passive runtime-neutral lifecycle record,
+effect, instance, result, binding, validation, ceiling, and defensive-copy types. It performs no
+I/O or adapter call and does not make lifecycle state durable; Slices E2 through E5 remain unwired.
+A focused unwired
 TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
 bindings. The next
@@ -50,9 +53,14 @@ remain pending. See the
 [unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md). The latest local Gate C
 checkpoint rejects stock Bun 1.3.14, its governed-construction branch, hardened full Deno v2.9.4,
 and the tested minimal `deno_core` 0.409.0 construction for the required runtime-authority contract.
-No first runtime is selected, `RUNTIME-001` remains unsupported, and the next bounded runtime
-experiment must retain the unchanged prohibited-power contract. The exact libkrun block-root
-profile also remains unsupported because the smallest `NullFs` removal prevents guest bootstrap.
+The later governed `deno_core` fork passed only the narrow physical-omission question; it did not
+select or admit a runtime. No first runtime is selected and `RUNTIME-001` remains unsupported. The
+libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
+but the current and prototype profiles remain unsupported until final governed installed bytes
+close P0-1 through P0-4. P0-3 retains a backend-independent 43-vector framing candidate and a local
+console-correctness patch; neither has run through the real transport, launcher, guest, or installed
+topology. P0-4A conditionally passed the no-host-root topology only; signing, notarization,
+Gatekeeper, clean-host, and minimum-OS admission remain open.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)

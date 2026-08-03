@@ -28,9 +28,12 @@ Status: initial decision spikes and all five Gate C implementation-readiness tra
 the currently available host/account environment. Gate C produced a required backend pivot and a
 conditional native candidate, plus explicit blockers for the exact native profile. Runtime P0-0
 has rejected the stock/governed Bun and tested full-Deno/minimal-`deno_core` constructions; no
-runtime is selected and `RUNTIME-001` remains unsupported. Session, MDM,
-power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
-rather than reasons to delay backend-independent contract implementation.
+runtime is selected and `RUNTIME-001` remains unsupported. The governed `deno_core` follow-up
+passed physical omission only. P0-1 is a `PATCH-CANDIDATE`, P0-2 selected `GOVERNED-PATCH` without
+admission, P0-3 has only a backend-independent candidate and local console patch, and P0-4A passed
+only the conditional no-host-root topology. Session, MDM, power-loss, independent-builder,
+clean-host, and Linux-worker cases remain later validation work rather than reasons to delay
+backend-independent contract implementation.
 
 Run bounded, disposable prototypes in parallel where practical:
 
@@ -61,12 +64,13 @@ Recorded outcome: bounded CBOR/COSE, macOS authority separation, release-key tra
 per-user services, content custody, and trust-transition ordering passed conditionally. Both stock
 Apple Container and direct Containerization failed the production lifecycle gate. libkrun/HVF
 remains the lead native candidate under evaluation, and its readiness tracks passed mechanics, but
-the exact profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs device. Guest
-completion, installed distribution, and release-byte admission also remain open. The post-track P0
-reconciliation adds runtime-authority closure, proposes bounded console ports for source/input
-and inline results, and defers filesystem-image output parsing until file artifacts. OCI plus
-gVisor remains independent; only its surrounding OCI/runc harness has run, so gVisor itself is
-unvalidated.
+the exact unpatched profile is blocked by mutable-path custody and an unexpected `NullFs` virtiofs
+device. Retained follow-ups made FD-native custody and direct-block-root removal credible without
+passing their final installed corpora. Guest transport/completion, installed distribution, and
+release-byte admission remain open. The post-track P0 reconciliation proposes bounded console
+ports for source/input and inline results, and defers filesystem-image output parsing until file
+artifacts. OCI plus gVisor remains independent; only its surrounding OCI/runc harness has run, so
+gVisor itself is unvalidated.
 
 Gate C now permits freezing backend-independent identifiers, exact-or-refused limits, typed
 admission and terminal classifications, and a fake backend that creates no guest. It does not
@@ -97,10 +101,13 @@ high-water; it remains unwired. The fake lifecycle accepts only committed create
 non-durable. [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) now selects
 colocating future lifecycle records and effect checkpoints in that same versioned Supervisor
 transaction domain, with a separate fake-only implementation and conformance plan. No durable
-lifecycle behavior is implemented yet. A focused local-only conformance handoff also carries copied
-TypeScript
-`ConstructedExecutionPlan` bytes and complete role bindings into the real Go `registrationstate`
-component. Neither path is a product-language/IPC seam or public consumer. The next
+store or driver behavior is implemented yet. Slice E1 has merged passive runtime-neutral lifecycle
+record/effect/instance/result types, domain validation, ceilings, and defensive-copy tests; it
+performs no store write or adapter call. Slices E2 through E5—snapshot v1/migration, transactional
+checkpoints, durable fake driver/startup, and capacity/coordination evidence—remain unwired. A
+focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
+bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
+product-language/IPC seam or public consumer. The next
 backend-independent boundary is implementing the proposed durable `AttemptID`-keyed lifecycle
 state and startup coordination against the no-guest fake backend in small unwired slices.
 Authenticated typed IPC, production approval signing/verification, reviewed Supervisor archival/
@@ -172,11 +179,12 @@ Exit evidence:
 
 ## Phase 5: dependency-free runtime development execution
 
-- Close the five reconciled P0 Gate C campaigns: continue the bounded runtime investigation under
-  the unchanged authority contract after stock/governed Bun and tested full-Deno/minimal-`deno_core`
-  constructions failed, selecting a runtime only after construction-level closure; then close
-  immutable runtime-root custody, independent `NullFs` disposition, typed port transport/completion
-  with bounded inline JSON, and an admissible complete installed development bundle.
+- Close the five reconciled P0 Gate C campaigns. Preserve the governed `deno_core`
+  `PHYSICAL-OMISSION-PASS` as construction evidence only and decide its packaging/provenance,
+  restoration/backstop, approved-byte TypeScript, external-isolation, and profile-admission gaps
+  before selecting a runtime. Carry the FD-native `PATCH-CANDIDATE` and direct-block-root
+  `GOVERNED-PATCH` through independent review, closed APIs/routes, mutation tests, and composed
+  final-profile reruns. Keep `RUNTIME-001` unsupported throughout.
 - Before transport implementation, freeze separate exact source, canonical-input, completion-frame,
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
@@ -184,6 +192,10 @@ Exit evidence:
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.
+- Reproduce the 43 P0-3 vectors in the selected host/launcher languages, finish review and
+  sanitizer/coverage work for the console patch, and run the exact frames through the governed
+  directional transport, distinct launcher, closed child/runner descriptor manifests, guest, and
+  forced-teardown lifecycle. The current model and 51-test library result do not cover those checks.
 - Bind an exact guest-kernel image, configuration, boot/module/debug policy, provenance, and
   launcher restriction set into the runtime profile. Minimize unused facilities where supported
   and retain deliberate restoration tests, while continuing to require containment of a fully
@@ -195,6 +207,15 @@ Exit evidence:
 - Deny network and all ambient host resources using the proven mechanisms.
 - Bind source, input, runtime, backend, controls, output, integrity evidence, and teardown into the
   attempt transcript.
+
+The exact non-credential work is independent source/API review and mutation coverage for the
+FD-native, direct-root, and console patches; cross-language P0-3 fixtures; runtime/TypeScript and
+build-provenance decisions; and completion of the final role, descriptor, source, SBOM, and
+minimum-OS build inputs. The credential-dependent rerun requires a valid Apple Development or
+Developer ID signing identity for the hardened App Sandbox runner, protected-container
+construction, and Team-enrolled process identity; Developer ID signing/notarization credentials
+for complete-bundle notarization, stapling, and Gatekeeper assessment; and installed-byte,
+clean-host, session, and support-floor validation of those exact signed bytes.
 
 Exit evidence:
 

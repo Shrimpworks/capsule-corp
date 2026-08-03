@@ -3,14 +3,16 @@
 Status: first-wave, Apple-credentialed, second-wave, and five Gate C implementation-readiness
 tracks completed on 2026-07-31. Spike code remains non-production and may be discarded. Gate C
 failed Apple Containerization as a production backend; libkrun/Hypervisor.framework remains the
-lead native candidate under evaluation, but its exact profile has unresolved custody and `NullFs`
-blockers and the current runtime bytes are not admissible. A post-track independent review and
+lead native candidate under evaluation, but its exact profile remains unadmitted. The FD-native
+root API is a `PATCH-CANDIDATE`; the direct-block-root `NullFs` disposition is `GOVERNED-PATCH`,
+making removal credible but not final; and the current runtime bytes are not admissible. A
+post-track independent review and
 source-research reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until
 file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
 stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
 the later governed-`deno_core` follow-up physically omitted 96 nonessential built-in ops through a
-one-file patch but did not select or admit a runtime. `RUNTIME-001` remains unsupported. OCI/gVisor remains an
-independent comparison and contingency. See the
+one-file patch but did not select or admit a runtime. `RUNTIME-001` remains unsupported. OCI/gVisor
+remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
@@ -133,8 +135,14 @@ and same-machine installed recovery, while also finding a mutable-path input rac
 `NullFs` virtiofs device, ambiguous runner-zero completion, incomplete output parsing/distribution,
 and a no-go for the current runtime bytes. Subsequent review found that libkrun's multiport console
 API may remove source/input and inline results from the raw-block path, while stock Bun's
-subprocess/FFI surface adds an earlier runtime-authority admission question. Both are hypotheses
-until exact spikes pass. The later
+subprocess/FFI surface adds an earlier runtime-authority admission question. Later retained P0
+experiments narrowed, but did not close, those gates: the FD-native raw-root API became a
+`PATCH-CANDIDATE`; a direct-block-root prototype selected `GOVERNED-PATCH` and reran the bounded
+device corpus without `NullFs`; a 43-vector backend-independent framing model conditionally passed;
+a 51-test local console patch established that stock console handling cannot proceed as-is; and
+P0-4A conditionally passed an 18-role no-host-root topology while exposing App Sandbox, signing,
+notarization, Gatekeeper, clean-host, and macOS-floor gaps. None of those results admits a backend
+or permits user bytes. The later
 [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md) also reached
 NO-GO: full Deno retained initial-graph, Worker, inspector, compatibility, and persistence routes,
 while `deno_core` physically registered 99 built-in ops and did not supply the TypeScript pipeline.
@@ -162,6 +170,12 @@ without turning spike code into product code:
 | Installed lifecycle and recovery | Conditional same-host mechanics pass; full distribution, authority separation, session/reboot cases, and corrupt-root terminal integrity remain open | [`RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
 | Adversarial VMM validation | Conditional fail for the exact profile because block-root adds a guest-visible `NullFs` virtiofs device | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md) |
 | Runtime supply chain | Conditional feasibility pass; current bytes fail the development admission checklist | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
+
+Later P0 checkpoints are retained separately: [FD-native root custody](../experiments/gate-c-libkrun-root-custody/RESULTS.md),
+[direct-block-root `NullFs` disposition](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md),
+[backend-independent P0-3 framing](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md),
+[console correctness](../experiments/gate-c-libkrun-console-correctness/RESULTS.md), and
+[P0-4A installed topology](../experiments/gate-c-installed-development-topology/RESULTS.md).
 
 Each track owns a separate directory under `experiments/` and records observed evidence separately
 from inference. Their integration permits backend-independent contract and fake-backend work, not

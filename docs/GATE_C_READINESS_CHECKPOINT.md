@@ -1,7 +1,7 @@
 # Gate C implementation-readiness synthesis
 
 Date: 2026-07-31
-P0 plan last reconciled: 2026-08-02
+P0 evidence last reconciled: 2026-08-02
 
 Status: completed cross-track synthesis. This document records spike decisions and coordination
 history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
@@ -22,15 +22,16 @@ The combined decision is:
 - do not claim `validated-local`, production readiness, absence of a host share, graceful shutdown,
   exact host CPU/memory quotas, or safe output extraction.
 
-The candidate solved Apple Containerization's hidden-helper lifecycle problem, but the follow-ups
-found two profile blockers and three release/composition blockers. Immutable block custody is not
-enforced through libkrun's pathname disk API, and the block-root path exposes an unexpected
-guest-visible `NullFs` virtiofs device. Typed guest completion, a production-safe output parser,
-and admissible signed/notarized runtime bytes were also incomplete. A subsequent independent review
-and targeted source research narrowed the first inline slice: source/input and bounded inline JSON
-may use dedicated virtio-console ports, making filesystem-image parsing a later artifact gate, while
-stock Bun's subprocess/FFI surface adds a P0 runtime-authority blocker. Those are actionable
-findings, not a failure of the overall architecture.
+The candidate solved Apple Containerization's hidden-helper lifecycle problem, but the completed
+readiness profile remained blocked. Later P0 evidence narrowed three paths without admitting them:
+an FD-native raw-root API is a `PATCH-CANDIDATE`; a direct-block-root prototype selected
+`GOVERNED-PATCH` and removed `NullFs` from that prototype; and a backend-independent typed framing
+candidate plus local console patch passed their bounded local tests. P0-4A conditionally supported
+the no-host-root topology but did not provide signed/notarized distribution. A subsequent
+independent review and targeted source research narrowed the first inline slice: source/input and
+bounded inline JSON may use dedicated virtio-console ports, making filesystem-image parsing a later
+artifact gate, while stock Bun's subprocess/FFI surface adds a P0 runtime-authority blocker. Those
+are actionable findings, not a failure of the overall architecture.
 
 ## Completed tracks
 
@@ -100,6 +101,10 @@ findings, not a failure of the overall architecture.
   but the device and its VMM-side attack surface are present.
 - Integration must either accept and independently validate that exact `NullFs` surface or remove
   it in a governed libkrun change and rerun the corpus. Until then the exact profile is not frozen.
+- The later direct-block-root prototype selected `GOVERNED-PATCH`: it booted without a virtiofs
+  device or mount and reran 36 adversarial plus four identity cases without the original failure.
+  That makes removal credible, not admitted; independent patch review, route closure, P0-1 custody,
+  P0-3 transport, and final signed installed reruns remain mandatory.
 - Optional virtiofs, vsock, GPU, sound, duplicate-disk, and missing-disk calls can return success
   before start even when the compiled feature is absent. A closed typed runner surface—not libkrun
   return codes—defines allowed capability.
@@ -208,12 +213,14 @@ claim.
    Sandbox profile. Separately pass stable attachment identity, frozen-object construction, and
    adversarial end-to-end custody, including FD reuse/shared-state, same-user pre-custody, pathname,
    hard-link, mapping, debugger/task-port attempt, crash, and recovery cases. A narrow FD-native
-   libkrun change is the fallback; failure of both rejects libkrun for v0.
-3. **`NullFs` disposition:** independently remove or validate the unexpected device and rerun the
-   exact device/cross-job corpus. Accepted residual surface requires the complete guest-reachable
-   virtiofs/FUSE/queue/worker path, sanitizer fuzzing, retained coverage/limitations, and zero
-   unresolved high-severity findings—not a claim that fuzzing proved the surface bug-free. Do not
-   couple this admission decision to custody merely because one fork could touch both mechanisms.
+   libkrun change is now a `PATCH-CANDIDATE` after local/four-owned-guest evidence; P0-1C still
+   requires the final signed installed App Sandbox/protected-construction corpus. Failure rejects
+   libkrun for v0.
+3. **`NullFs` disposition:** carry the selected `GOVERNED-PATCH` direct-block-root design through
+   independent source/API review, route-closure mutations, exact composed device/cross-job tests,
+   P0-1 custody, and final signed installed reruns. The earlier complete virtiofs/FUSE acceptance
+   campaign remains the fallback if governed removal fails; the current unpatched profile remains
+   unsupported.
 4. **Typed port transport and completion:** use dedicated bounded attempt-bound virtio-console
    ports for source/input and one typed completion frame containing bounded inline JSON. Freeze
    separate source, canonical-input, physical-frame, and JSON-payload caps plus per-channel role,
@@ -227,13 +234,26 @@ claim.
    exact VMM/control/queue/descriptor and stream corpus cannot fail closed. Freeze a distinct
    launcher that verifies inputs before child start, withholds completion authority, uses a closed
    child manifest, waits for child-tree termination, and commits last. Start the host runner with an
-   exact descriptor allowlist and reject every unexpected inherited authority.
+   exact descriptor allowlist and reject every unexpected inherited authority. The retained
+   43-vector framing candidate and 51-test console patch are inputs to this work, not transport,
+   launcher, guest, or P0-3 admission evidence.
 5. **Admissible complete development bundle:** pin all build inputs, govern patches, produce the
    complete manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, and
    sign/notarize/staple/read back the complete Supervisor/runner/runtime/per-user-service topology
    on clean hosts. Use an early installed harness for topology assumptions, then rebuild and rerun
-   affected P0 gates on final bytes after the mechanisms are selected. A runner-only ticket or
-   early harness does not pass.
+   affected P0 gates on final bytes after the mechanisms are selected. P0-4A conditionally passed
+   18-role topology enumeration, exact ad-hoc identities, per-user registration/explicit activation,
+   and same-session recovery, but App Sandbox failed before `main`, Gatekeeper rejected the bundle,
+   and the assembled candidate had a macOS 26.0 floor. A runner-only ticket or early harness does
+   not pass.
+
+The exact non-credential sequence is independent review/mutation coverage for the three governed
+patch branches, cross-language P0-3 fixtures and console sanitizer/coverage, the runtime/TypeScript
+and provenance decisions, and final role/descriptor/source/SBOM/minimum-OS build inputs. A valid
+Apple Development or Developer ID signing identity is then required for hardened App Sandbox,
+protected-container, and Team-enrolled installed-IPC evidence. Developer ID signing/notarization
+credentials are separately required for complete-bundle notarization, stapling, Gatekeeper, and
+exact signed-byte clean-host/session/support-floor reruns.
 
 The disposable bounded ext4/raw-image parser is deferred to the regular-file/file-artifact slice;
 it remains mandatory before any filesystem artifact is released.

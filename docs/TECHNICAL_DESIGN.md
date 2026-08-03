@@ -532,20 +532,21 @@ evidence, management channels, unsupported controls, and validation-record diges
 The Supervisor matches the plan to supported mechanisms; the backend cannot self-assert an
 authoritative tier. The native libkrun/HVF candidate binds one signed App-Sandboxed VMM process to
 one attempt, records and verifies its PID/start/code identity before authorizing VM start, compiles
-out network, and disables implicit vsock. Its current spike is conditional evidence only: the
-pathname disk API has an unresolved same-user mutation race, the block-root path creates a
-`NullFs` virtiofs device, and neither the Bun nor tested Deno-family constructions close
-`RUNTIME-001`; current runtime bytes are not admissible. P0 will test a genuine inherited read-only
-root descriptor through `/dev/fd/N` and dedicated virtio-console ports for source/input and
-fixed-cap typed inline results. Root custody must separately pass attachment identity, construction
-of a frozen object, and
-end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism. Runner exit is
-never guest success; guest-reported completion, input integrity, result validation, and teardown
-remain distinct evidence. The pinned multiport implementation's unchecked guest port IDs, non-stop-
-aware output wait, undocumented directional-FD convention, shared-status mutation, and partial-
-then-error handling are explicit P0 hazards, not trusted stream semantics. Filesystem-image parsing
-is a later artifact gate. gVisor resource limits bind the outer Linux worker, engine, host cgroup/OCI
-configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
+out network, and disables implicit vsock. Its evidence remains conditional: a narrow raw-only
+FD-native API is only a `PATCH-CANDIDATE`; the direct-block-root bootstrap selected
+`GOVERNED-PATCH` and removed the prototype's `NullFs` device, but neither change passed the final
+signed installed corpus. The backend-independent P0-3 framing candidate and local console patch
+have not passed the real transport/launcher/guest corpus. P0-4A conditionally supported the
+no-host-root topology but did not establish signed/notarized distribution or a supported macOS
+floor. Neither the Bun nor governed `deno_core` evidence closes `RUNTIME-001`; current runtime bytes
+are not admissible. Root custody must separately pass attachment identity, construction of a
+frozen object, and end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism.
+Runner exit is never guest success; guest-reported completion, input integrity, result validation,
+and teardown remain distinct evidence. The pinned multiport implementation's unchecked guest port
+IDs, non-stop-aware output wait, undocumented directional-FD convention, shared-status mutation,
+and partial-then-error handling are explicit P0 hazards, not trusted stream semantics. Filesystem-
+image parsing is a later artifact gate. gVisor resource limits bind the outer Linux worker, engine,
+host cgroup/OCI configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
 development-only because it has no supported durable VM/helper identity or restart reconciliation
 surface.
 

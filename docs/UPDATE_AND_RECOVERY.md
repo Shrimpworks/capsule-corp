@@ -36,7 +36,7 @@ The intended v0 flow is:
 9. Enter `swapping` with execution disabled and record every installer, migration, and Keychain
    effect through durable intent plus observation/reconciliation state.
 10. Start the new Supervisor in `pending-verification` and validate all installed components, key
-    access, stores, and migrations against the prepared record.
+    access, stores, owner-lock preservation/enrollment, and migrations against the prepared record.
 11. Enter `finalizing-epoch`; stage and sign epoch N+1, linking the prior epoch and transition
     reason.
 12. Atomically commit the authoritative epoch pointer, execution-disabled state, policy/profile/
@@ -48,6 +48,13 @@ The intended v0 flow is:
 
 No continuously running daemon or Supervisor receives installation-root authority merely to make
 background updates convenient.
+
+Ordinary component updates must preserve the enrolled Supervisor private state root and exact
+ADR-0033 lock inode. They do not replace it as a binary deployment side effect. A prepared update
+that changes storage location or cannot preserve the object remains execution-disabled and enters
+an explicitly authorized offline repair/new-installation path. Normal startup never repairs this
+by creating a missing lock. Restore to a new inode is not ordinary continuity and cannot enable
+attempts without complete store/checkpoint verification and a forward epoch decision.
 
 ## Interrupted update
 
@@ -137,6 +144,9 @@ Gate F process and fault-injection evidence makes these v0 requirements explicit
 
 - one authoritative Supervisor writer, with `BUSY`, `LOCKED`, `FULL`, `IOERR`, `CORRUPT`, and
   failed commit treated as refusal outcomes;
+- the enrolled ADR-0033 nonblocking BSD owner lock held before store open and through migration,
+  recovery, archive, backup, and repair checks, with a busy contender performing no store/core/
+  adapter work;
 - expected state sequence, epoch digest, transition ID, and execution-enable compare-and-swap on
   every security transition;
 - a cleanup/reconciliation intent committed before every external backend, installer, Keychain,

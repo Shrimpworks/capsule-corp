@@ -38,8 +38,11 @@ concurrency, fault, and startup-recovery behavior. The E4/E5 local checkpoint ad
 tests and now drives that no-guest fake through
 the colocated v1 fixed snapshot and retains exact effect identities, restart reconciliation,
 256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. The owner
-and coordinator remain injected in-process mechanics, not a production platform lock. There is no
-consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
+and coordinator remain injected in-process mechanics. Proposed ADR-0033 now selects an enrolled
+pre-created sibling object plus lifetime nonblocking BSD `flock` as the later macOS owner
+mechanism after a bounded local process/file experiment; no Go/Darwin product port or installed
+protected-storage evidence exists. There is no consumer, authenticated IPC, production approval,
+evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
 fake-only implementation plan. Slices E1 through E5 now provide the passive lifecycle contract,

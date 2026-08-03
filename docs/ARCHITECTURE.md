@@ -134,8 +134,10 @@ filesystem collection, and a hash-linked enforcement transcript.
 Proposed ADR-0029 selects one unprivileged per-user Supervisor process: a small native
 C/Objective-C XPC/Security front end linked in-process with the existing Go authority/lifecycle
 core. It adds no Swift Supervisor service, root LaunchDaemon, or privileged helper. The exact
-installed identity/session/owner-lock evidence remains open, so this topology is selected design,
-not an implemented authority boundary.
+installed identity/session evidence remains open. Proposed ADR-0033 selects a pre-created enrolled
+sibling object held by nonblocking BSD `flock` for the process lifetime, but the Go/Darwin port and
+installed protected-state-root matrix remain open, so this topology is selected design, not an
+implemented authority boundary.
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 
@@ -171,6 +173,11 @@ snapshot. It retains durable intents, stable effect IDs, cleanup/reconciliation 
 in-process owner/coordinator. This is repository-local mechanic evidence only: it is not the
 macOS installation lock, a production database, a real adapter, guest lifecycle evidence, or
 evidence composition.
+
+The development-only ADR-0033 experiment observed duplicate-process refusal, last-descriptor
+release, `CLOEXEC`, enrolled file checks, and replacement limitations on one host. It selected the
+mechanism but did not wire this fixed snapshot to it; installed protected-directory custody is a
+separate required boundary because advisory locks and mode bits do not contain a same-UID process.
 
 Proposed ADR-0031 defines the unimplemented next retention boundary. Only a complete expired
 registration cohort whose attempts are all durably destroyed with cleanup false after

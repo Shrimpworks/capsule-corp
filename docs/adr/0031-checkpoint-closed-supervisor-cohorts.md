@@ -382,11 +382,12 @@ and offline repair operation requires the same lifetime installation owner lock 
 Supervisor state mutation. Per-attempt coordinators are insufficient because an archive cohort may
 contain many attempts and updates global indexes.
 
-The current injected owner/session mechanics are not that lock. Archive behavior may be implemented
-only in an unwired single-process harness until ADR-0029's pre-created no-symlink mode-0600 sibling
-lock passes real duplicate-process, process-death, replacement, session, update, and hostile-file
-tests. A second owner refuses before reading a mutable candidate, creating a segment, changing an
-index, or calling any adapter.
+The current injected owner/session mechanics are not that lock. Proposed ADR-0033 selects the
+pre-created enrolled sibling plus BSD `flock` mechanism after duplicate-process, process-death,
+replacement, and hostile-file tests in an owned temporary harness. Archive behavior remains limited
+to an unwired single-process harness until the Go/Darwin port and installed protected-root,
+session, update, and reboot matrix pass. A second owner refuses before reading a mutable candidate,
+creating a segment, changing an index, or calling any adapter.
 
 ### Offline verification
 
@@ -569,7 +570,8 @@ verification slices are defined in
 This ADR remains Proposed and consumer activation remains blocked until all applicable work exists:
 
 1. the fixed-store conformance slices and byte-exact/corruption/fault corpus in the linked plan;
-2. the real ADR-0029 multi-process owner lock and installed hostile-file/session/update evidence;
+2. the ADR-0033 Go/Darwin owner-lock port and installed protected-root hostile-file/session/update
+   evidence;
 3. a separately selected production engine with real APFS/power-loss, locking, backup, migration,
    corruption, and quantitative performance evidence;
 4. an independently protected latest checkpoint/non-rollbackable anchor, or an explicit product

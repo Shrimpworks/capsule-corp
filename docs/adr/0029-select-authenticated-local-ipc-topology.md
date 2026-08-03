@@ -250,6 +250,12 @@ Startup follows ADR-0025 before normal call dispatch:
 5. keep all four calls fail-closed while recovery, quarantine, repair-required state, exhausted
    reconciliation, or unresolved cleanup prevents attempt enablement.
 
+Proposed ADR-0033 supplies the exact owner-lock decision for step 1: an installer-enrolled
+pre-created sibling object, exact descriptor identity checks, and lifetime nonblocking BSD
+`flock`. The lock is acquired before store access and a busy contender performs no core or adapter
+work. That design has local temporary-process evidence only; this ADR's installed identity/session/
+update gates still require the Go/Darwin port and protected-state-root matrix.
+
 Recovery never calls `RegisterPlan`, re-submits approval bytes, asks whether an approval is still
 usable, or rechecks registration/approval expiry for an already committed attempt. It never accepts
 a registration ID, approval reference, plan bytes, role bindings, backend flags, image, mount,
@@ -342,7 +348,8 @@ This ADR remains Proposed until the implementation/conformance plan retains pass
 fixtures and fault oracles, an ad-hoc no-product two-service harness proves the ordering and
 no-state refusals, and an Apple-signed installed package proves the exact identity/session/update
 matrix. Consumer activation additionally remains blocked on production Supervisor
-archive/compaction, real multi-process owner-lock evidence, production approval verification and
+archive/compaction, implementation and installed evidence for the selected multi-process owner
+lock, production approval verification and
 key authorization, protected storage, update/repair integration, and all existing runtime/backend/
 content/evidence gates.
 

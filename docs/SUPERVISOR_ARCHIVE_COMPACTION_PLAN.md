@@ -49,7 +49,7 @@ This work does not:
 
 - accept ADR-0019, ADR-0024, ADR-0025, ADR-0029, or ADR-0031;
 - select SQLite or another production engine;
-- implement the proposed macOS owner lock or protected production storage;
+- implement the selected ADR-0033 macOS owner lock or protected production storage;
 - authorize archive-history deletion, secure deletion, online backup, or restore activation;
 - establish rollback prevention or identifier non-reuse across a coherent older restore;
 - compose enforcement evidence or receipts; or
@@ -565,7 +565,7 @@ required operational property. Developer convenience is not sufficient.
 
 Even after F1-F5, all of these remain blockers:
 
-1. real ADR-0029 multi-process owner lock and installed storage protection;
+1. the ADR-0033 Go/Darwin multi-process owner-lock port and installed storage protection;
 2. production-engine selection and exact APFS/power-loss evidence;
 3. coherent restore/repair ceremony and an independent latest checkpoint or explicit permanently
    disabled rollback-uncertain posture;

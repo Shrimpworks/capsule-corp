@@ -113,7 +113,10 @@ adapter used is the closed no-guest fake, and the owner/coordinator remains inje
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
 product-language/IPC seam or public consumer. The next backend-independent boundaries are reviewed
-Supervisor archive/compaction and a selected real platform owner lock; neither is supplied by E5.
+Supervisor archive/compaction and an implemented real platform owner lock; neither is supplied by
+E5. Proposed ADR-0033 now selects a pre-created enrolled sibling object plus lifetime nonblocking
+BSD `flock` after one owned local descriptor/process corpus. Its Go/Darwin port and installed
+protected-state-root/session/update matrix remain unimplemented.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive
@@ -125,7 +128,8 @@ conformance plan. Complete expired registration cohorts may move to immutable re
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
 fixed-store v2 checkpoint is selected only as the next local oracle. Production-engine selection,
-real owner locking and power loss, coherent restore/anti-rollback, continuous service, and all
+implementation/installed validation of the selected owner lock and power loss, coherent
+restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
 
 Proposed ADR-0032 separately selects the pre-registration TypeScript Source Preparer and immutable

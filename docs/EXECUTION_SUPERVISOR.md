@@ -290,7 +290,8 @@ stable effect/instance identities, exact reconciliation, 256-active/4,096-retain
 repeated-startup/exhaustion evidence. Active capacity releases only after durable `destroyed`,
 cleanup false, and authoritative absence. The injected owner/coordinator is not a platform lock.
 
-Archive/compaction and replay retention, real multi-process locking, rollback/backup,
+Archive/compaction and replay retention, the selected but unimplemented multi-process lock,
+rollback/backup,
 authenticated IPC, production COSE/Swift/Keychain/user-presence signing
 and verification, production backend reconciliation, consumers, content, evidence composition,
 runtime/backend admission, and public cutover remain blocked. No guest exists in this checkpoint.
@@ -302,6 +303,14 @@ The Supervisor publishes an immutable full-record segment before activating a v2
 exact registration/approval/attempt/nonce/effect/instance/replay tombstones. Referenced history is
 not deletable, restore without an independent latest checkpoint is rollback-uncertain, and the
 finite fixed-store checkpoint remains unsuitable for consumers or continuous service.
+
+[Proposed ADR-0033](adr/0033-select-enrolled-flock-supervisor-owner.md) now selects the exact
+later owner primitive: validate one installer-enrolled pre-created sibling object through a
+retained protected state-root descriptor, acquire nonblocking BSD `flock`, and retain the opaque
+`CLOEXEC` descriptor for the full process lifetime. Its owned local harness observed duplicate
+refusal before store work, process-death release, fork/exec behavior, and rename/replacement risk.
+No Go/Darwin port, owner-required store opener, installed protected-state-root matrix, session,
+update, or reboot evidence exists, so the current E5 owner remains injected.
 
 ## Target acceptance tests
 

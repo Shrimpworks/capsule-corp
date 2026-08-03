@@ -476,9 +476,12 @@ attempts with missing or unfinished lifecycle work, and performs bounded reconci
 unknown results stop automatic retry rather than creating a restart storm. A consumed approval
 remains consumed throughout; safe retry of the job requires a new human approval.
 
-**Open production work.** The current owner/coordinator is injected in process, not a macOS
-multi-process lock. Production archive/compaction, backup and rollback handling, power-loss tests,
-real-backend reconciliation, signed evidence, and installed recovery are unresolved.
+**Open production work.** The current owner/coordinator remains injected in process. Proposed
+ADR-0033 selects a pre-created enrolled sibling object plus lifetime nonblocking BSD `flock` after
+one local temporary-process corpus, but the Go/Darwin port and Apple-signed protected-state-root,
+session, update, and reboot matrix remain unimplemented. Production archive/compaction, backup and
+rollback handling, power-loss tests, real-backend reconciliation, signed evidence, and installed
+recovery are unresolved.
 
 ## What exists today
 

@@ -8,6 +8,6 @@ index fcfe8ad..a76e66f 100644
  #[cfg(target_os = "macos")]
 -const KRUNFW_NAME: &str = "libkrunfw.5.dylib";
 +const KRUNFW_NAME: &str = "@rpath/libkrunfw.5.dylib";
-
+ 
  #[cfg(feature = "aws-nitro")]
  static KRUN_NITRO_DEBUG: Mutex<bool> = Mutex::new(false);

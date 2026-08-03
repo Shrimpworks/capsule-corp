@@ -5,6 +5,24 @@ experiment_dir=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 repository_dir=$(CDPATH='' cd -- "$experiment_dir/../.." && pwd)
 source_root=${CAPSULE_LIBKRUN_SOURCE:-/private/tmp/capsule-libkrun-v1.19.4}
 firmware_source=${CAPSULE_LIBKRUNFW_SOURCE:-/private/tmp/capsule-libkrunfw-v5.5.0/libkrunfw}
+firmware_patch="$repository_dir/experiments/gate-c-libkrun-hvf/patches/0001-pin-libkrunfw-rpath.patch"
+mount_patch="$repository_dir/experiments/gate-c-libkrun-hvf/patches/0002-read-only-block-root-mount-flags.patch"
+firmware_patch_sha256=a845cce3cd479a73c6a698164dc1b466e8d67796018b107077504478e0ec9cd5
+mount_patch_sha256=b2120d4cc848e138a28165906d6c5cc4da1efee8004e392a7ddddc2334136823
+
+verify_sha256() {
+    expected=$1
+    file=$2
+    actual=$(shasum -a 256 "$file" | awk '{print $1}')
+    if [ "$actual" != "$expected" ]; then
+        printf 'sha256 mismatch for %s: expected %s, got %s\n' \
+            "$file" "$expected" "$actual" >&2
+        exit 2
+    fi
+}
+
+verify_sha256 "$firmware_patch_sha256" "$firmware_patch"
+verify_sha256 "$mount_patch_sha256" "$mount_patch"
 
 for script in "$experiment_dir"/*.sh; do
     sh -n "$script"
@@ -40,5 +58,7 @@ if [ -f "$firmware_source/kernel.c" ]; then
 fi
 
 git -C "$repository_dir" diff --check -- experiments/gate-c-libkrun-supply-chain
+printf 'firmwarePatchSha256=%s\n' "$firmware_patch_sha256"
+printf 'mountPatchSha256=%s\n' "$mount_patch_sha256"
 printf 'supplyChainEvidence=valid\n'
 printf 'admissionDecision=no-go\n'

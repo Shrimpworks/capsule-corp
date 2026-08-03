@@ -560,16 +560,24 @@ one attempt, records and verifies its PID/start/code identity before authorizing
 out network, and disables implicit vsock. Its evidence remains conditional: a narrow raw-only
 FD-native API is only a `PATCH-CANDIDATE`; the direct-block-root bootstrap selected
 `GOVERNED-PATCH` and removed the prototype's `NullFs` device, but neither change passed the final
-signed installed corpus. The backend-independent P0-3 framing candidate and local console patch
-have not passed the real transport/launcher/guest corpus. P0-4A conditionally supported the
-no-host-root topology but did not establish signed/notarized distribution or a supported macOS
-floor. Neither the Bun nor governed `deno_core` evidence closes `RUNTIME-001`; current runtime bytes
-are not admissible. Root custody must separately pass attachment identity, construction of a
-frozen object, and end-to-end same-user attacks; `/dev/fd/N` alone is not an immutability mechanism.
-Runner exit is never guest success; guest-reported completion, input integrity, result validation,
-and teardown remain distinct evidence. The pinned multiport implementation's unchecked guest port
-IDs, non-stop-aware output wait, undocumented directional-FD convention, shared-status mutation,
-and partial-then-error handling are explicit P0 hazards, not trusted stream semantics. Filesystem-
+signed installed corpus. The public governed fork preserves its exact five-patch aggregate and now
+also contains merged bounded console/raw-FD follow-up source at
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`. That follow-up bounds the previously unchecked port-ID
+and shutdown paths, fixes a queued-backpressure shutdown loop and inactive-state lifecycle defect,
+and raises measured `port.rs`/`process_tx.rs` coverage from zero to 15/17 and 4/4 functions and
+111/137 and 82/96 lines. It does not close the remaining 2 functions/26 lines in `port.rs`, 14
+lines in `process_tx.rs`, a post-merge branch/verifier pin mismatch, the caller shared-status
+hazard, independent review, or real control/queue/descriptor fuzzing and composition. The
+backend-independent P0-3 framing candidate
+and governed library source have not passed the real transport/launcher/guest corpus. P0-4A
+conditionally supported the no-host-root topology but did not establish signed/notarized
+distribution or a supported macOS floor. Neither the Bun nor governed `deno_core` evidence closes
+`RUNTIME-001`; current runtime bytes are not admissible. Root custody must separately pass
+attachment identity, construction of a frozen object, and end-to-end same-user attacks;
+`/dev/fd/N` alone is not an immutability mechanism. Runner exit is never guest success;
+guest-reported completion, input integrity, result validation, and teardown remain distinct
+evidence. Undocumented directional-FD behavior and shared-open-description flag mutation remain
+explicit P0 hazards rather than trusted stream semantics. Filesystem-
 image parsing is a later artifact gate. gVisor resource limits bind the outer Linux worker, engine,
 host cgroup/OCI configuration, and exact `runsc`/shim identity. Direct Apple Containerization remains
 development-only because it has no supported durable VM/helper identity or restart reconciliation

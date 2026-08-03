@@ -425,11 +425,12 @@ input before starting the workload, waits for the exact child process tree, and 
 commit trailer last. This **commit-last** rule distinguishes a complete result from a partial write
 caused by a crash.
 
-**Experiment evidence.** Go and Node agreed on 43 backend-independent framing vectors, and a local
-libkrun console patch passed focused tests, sanitizers, static analysis, repetition, and deliberate
-restoration mutations. Coverage still missed important patched files, and no real transport,
-launcher, guest, App Sandbox, teardown path, or installed topology participated. The transport
-gate remains open.
+**Experiment and governed-source evidence.** Go and Node agreed on 43 backend-independent framing
+vectors. The later public governed libkrun merge added bounded console/property and raw-FD library
+tests, fixed two locally observed shutdown/lifecycle defects, and moved the four changed console
+files from 13/88 to 37/88 covered functions and 90/728 to 298/733 covered lines. It still leaves
+measured uncovered code, independent review, and the real transport, launcher, guest, App Sandbox,
+teardown, and installed topology untested. The transport gate remains open.
 
 ## Deny by default and fail closed
 

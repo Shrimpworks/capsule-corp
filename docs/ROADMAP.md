@@ -36,8 +36,12 @@ results establish bounded construction evidence but do not admit that runtime. T
 `dills122/deno` and `dills122/rusty_v8` forks now contain merged governed branches, but no governed
 release exists. The first fork-native Linux/arm64 construction stopped before building because the
 merged `rusty_v8` publication contract supports only Linux/amd64. P0-1 is a `PATCH-CANDIDATE`, P0-2
-selected `GOVERNED-PATCH` without admission, P0-3 has only a backend-independent candidate and local
-console patch, and P0-4A passed only the conditional no-host-root topology. Session, MDM,
+selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
+exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
+added bounded console/raw-FD library tests, and materially improved measured coverage, but retained
+uncovered code, a post-merge governed-branch/verifier mismatch, a pending Linux-arm64 unit job,
+absent independent review, and no real transport, launcher, guest/VMM, or installed composition.
+P0-4A passed only the conditional no-host-root topology. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
 rather than reasons to delay backend-independent contract implementation.
 
@@ -227,10 +231,11 @@ Exit evidence:
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.
 - Carry the independently reproduced Go/Node P0-3 vectors into the selected host/launcher languages,
-  close the measured console gaps (only 90/728 patched-file lines covered, with two files at zero),
-  and run the exact frames through the governed directional transport, distinct launcher, closed
-  child/runner descriptor manifests, guest, and forced-teardown lifecycle. The local process-pipe,
-  sanitizer, static-analysis, repetition, and mutation results do not cover those checks.
+  close the remaining measured console gaps (2 functions/26 lines in `port.rs` and 14 lines in
+  `process_tx.rs`), and run the exact frames through the governed directional transport, distinct
+  launcher, closed child/runner descriptor manifests, guest, and forced-teardown lifecycle. The
+  library/property/raw-FD, process-pipe, sanitizer, static-analysis, repetition, mutation, and CI
+  build results do not cover those checks.
 - Bind an exact guest-kernel image, configuration, boot/module/debug policy, provenance, and
   launcher restriction set into the runtime profile. Minimize unused facilities where supported
   and retain deliberate restoration tests, while continuing to require containment of a fully
@@ -243,10 +248,12 @@ Exit evidence:
 - Bind source, input, runtime, backend, controls, output, integrity evidence, and teardown into the
   attempt transcript.
 
-The exact non-credential work is independent source/API review and mutation coverage for the
-FD-native, direct-root, and console patches; cross-language P0-3 fixtures; runtime/TypeScript and
-build-provenance decisions; and completion of the final role, descriptor, source, SBOM, and
-minimum-OS build inputs. The credential-dependent rerun requires a valid Apple Development or
+The exact non-credential work first repairs the governed libkrun branch/verifier invariant without
+rewriting the five retained patch bytes, then obtains independent human/CODEOWNER source/API review
+of the exact merge, closes its measured uncovered code and hostile control/queue/descriptor surface,
+carries forward the cross-language P0-3 fixtures, resolves runtime/TypeScript and build-provenance
+decisions, and completes the final role, descriptor, source, SBOM, and minimum-OS build inputs. The
+credential-dependent rerun requires a valid Apple Development or
 Developer ID signing identity for the hardened App Sandbox runner, protected-container
 construction, and Team-enrolled process identity; Developer ID signing/notarization credentials
 for complete-bundle notarization, stapling, and Gatekeeper assessment; and installed-byte,

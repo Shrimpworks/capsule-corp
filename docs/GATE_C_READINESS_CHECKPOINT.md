@@ -2,6 +2,7 @@
 
 Date: 2026-07-31
 P0 evidence last reconciled: 2026-08-02
+Governed libkrun source last reconciled: 2026-08-03
 
 Status: completed cross-track synthesis. This document records spike decisions and coordination
 history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
@@ -26,8 +27,12 @@ The candidate solved Apple Containerization's hidden-helper lifecycle problem, b
 readiness profile remained blocked. Later P0 evidence narrowed three paths without admitting them:
 an FD-native raw-root API is a `PATCH-CANDIDATE`; a direct-block-root prototype selected
 `GOVERNED-PATCH` and removed `NullFs` from that prototype; and a backend-independent typed framing
-candidate plus local console patch passed their bounded local tests. P0-4A conditionally supported
-the no-host-root topology but did not provide signed/notarized distribution. A subsequent
+candidate plus local console baseline passed their bounded local tests. The exact public governed
+follow-up then merged as `cf0333cdba478cc34a8570a65b38412da7fd3ecc` from head
+`8a2c91943793668f31a1cf7af431933be935bb58`, preserving the five retained patch bytes and aggregate
+identity while adding bounded console/raw-FD tests and two source fixes. This is source-governance,
+library, and CI build evidence, not guest or product evidence. P0-4A conditionally supported the
+no-host-root topology but did not provide signed/notarized distribution. A subsequent
 independent review and targeted source research narrowed the first inline slice: source/input and
 bounded inline JSON may use dedicated virtio-console ports, making filesystem-image parsing a later
 artifact gate, while stock Bun's subprocess/FFI surface adds a P0 runtime-authority blocker. Those
@@ -117,9 +122,16 @@ are actionable findings, not a failure of the overall architecture.
 - The default build was path-dependent. Current runner/firmware metadata declares macOS 26, the
   sysroot and complete kernel/source materials are not fully pinned, the 115-component SBOM is only
   an input inventory, and final signed/notarized-byte identity is incomplete.
-- Both Capsule patches require a governed fork and review until they are upstreamed and the exact
-  released profile is revalidated. Update, rollback, disable, revocation, and corresponding-source
-  workflows are designs, not exercised product mechanisms.
+- The five retained Capsule patches now have a public governed fork record over upstream
+  `728df8125077d0db44265f6e997c72b81b65c015`, with unchanged aggregate identity
+  `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`. The merged follow-up source
+  sits above governed base `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`; it does not rewrite those
+  archived patch bytes. The current baseline branch resolves to the follow-up merge while its
+  verifier still requires the branch to remain at the earlier base, so a post-merge rerun fails
+  closed on that pin before reconstruction. Repairing this source-governance invariant,
+  independent human/CODEOWNER review, a final release/source mapping,
+  update/rollback/disable/revocation operations, corresponding-source publication, and exact
+  released-profile revalidation remain open.
 - Pinning Bun 1.3.14 proved that the runtime executed the fixture; it did not prove the documented
   no-subprocess/no-FFI contract. The 2026-08-02 stock investigation found the prohibited routes, and
   the follow-up governed-construction review triggered NO-GO at a 40-hand-authored plus
@@ -238,10 +250,15 @@ claim.
    launcher that verifies inputs before child start, withholds completion authority, uses a closed
    child manifest, waits for child-tree termination, and commits last. Start the host runner with an
    exact descriptor allowlist and reject every unexpected inherited authority. A later independent
-   Go/Node follow-up verified all 43 vectors and added local process-pipe faults. The 51-test console
-   patch then passed AddressSanitizer, Clippy, repetition, and four mutations, but measured only
-   90/728 changed-file lines with zero coverage in `port.rs` and `process_tx.rs`. These remain inputs
-   to the work, not transport, launcher, guest, or P0-3 admission evidence.
+   Go/Node follow-up verified all 43 vectors and added local process-pipe faults. The public
+   governed follow-up retained the 51-test baseline, passed a 53-test `blk` corpus, four bounded
+   console/property tests, two raw-FD library-boundary tests, AddressSanitizer, Clippy, two 25-run
+   repetition loops, five raw-FD mutations, and four console mutations. Four-file coverage moved
+   from 13/88 to 37/88 functions and 90/728 to 298/733 lines; `port.rs` reached 15/17 functions and
+   111/137 lines, while `process_tx.rs` reached 4/4 functions and 82/96 lines. The remaining 2
+   functions/26 lines and 0 functions/14 lines, independent review, real transport, launcher,
+   guest/VMM, and installed composition remain open. These are inputs to the work, not P0-3
+   admission evidence.
 5. **Admissible complete development bundle:** pin all build inputs, govern patches, produce the
    complete manifest/SBOM/provenance/source bundle, build the intended minimum-OS bytes, and
    sign/notarize/staple/read back the complete Supervisor/runner/runtime/per-user-service topology

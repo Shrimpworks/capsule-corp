@@ -2,6 +2,14 @@ import { createHash } from "node:crypto";
 
 import { isRetainedDecodedJobProposalCandidate } from "./decoded-job-proposal-candidate.js";
 import {
+  concatenateBytes,
+  encodeCborArrayHeader,
+  encodeCborByteString,
+  encodeCborMapHeader,
+  encodeCborText,
+  encodeCborUnsigned,
+} from "./internal-cbor-primitives.js";
+import {
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
   type DecodedJobProposalCandidate,
@@ -22,16 +30,20 @@ const MAX_CANONICAL_INLINE_INPUT_BYTES = 262_144;
 declare const resolvedScalarBrand: unique symbol;
 declare const trustedContextBrand: unique symbol;
 
+/** The digest roles this resolver computes. Distinct from {@link CandidateDigestRole}; these are resolver-local, hex-encoded, and computed from resolved bytes rather than decoded from the wire. */
 export type ResolvedDigestRole = "source-content" | "source-manifest" | "inline-input";
+/** A role-tagged lowercase-hex SHA-256 digest string computed by this resolver. */
 export type ResolvedDigestHex<Role extends ResolvedDigestRole> = string & {
   readonly [resolvedScalarBrand]: `sha256:${Role}:hex`;
 };
 
+/** An immutable defensive copy of resolved bytes, safe to hand to callers without aliasing internal buffers. */
 export interface RetainedExactBytes {
   readonly byteLength: number;
   readonly bytes: readonly number[];
 }
 
+/** Caller-supplied input to {@link createTrustedProfileRegistryContext}, before validation/branding. */
 export interface TrustedRuntimeProfileEntryInput {
   readonly alias: string;
   readonly status: "active" | "inactive";
@@ -41,6 +53,7 @@ export interface TrustedRuntimeProfileEntryInput {
   };
 }
 
+/** A validated, branded runtime profile entry as it appears inside a {@link TrustedProfileRegistryContext}. */
 export interface TrustedRuntimeProfileEntry {
   readonly alias: RuntimeProfileAlias;
   readonly status: "active" | "inactive";
@@ -50,11 +63,23 @@ export interface TrustedRuntimeProfileEntry {
   };
 }
 
+/**
+ * An immutable, provenance-checked registry of trusted runtime profiles,
+ * produced only by {@link createTrustedProfileRegistryContext}.
+ * resolveJobProposal refuses any object not created by that function, even
+ * if it has an identical shape.
+ */
 export interface TrustedProfileRegistryContext {
   readonly profiles: readonly TrustedRuntimeProfileEntry[];
   readonly [trustedContextBrand]: "profile-registry";
 }
 
+/**
+ * An immutable, provenance-checked trusted user resource policy, produced
+ * only by {@link createTrustedUserPolicyContext}. Encodes ADR-0009's
+ * trusted-default-plus-hard-ceiling model: a request above the ceiling is
+ * rejected, never silently clamped.
+ */
 export interface TrustedUserPolicyContext {
   readonly wallTimeMs: {
     readonly trustedDefault: PositiveSafeInteger;
@@ -63,17 +88,20 @@ export interface TrustedUserPolicyContext {
   readonly [trustedContextBrand]: "user-policy";
 }
 
+/** One resolved source file: its validated path, retained UTF-8 bytes, and content digest. */
 export interface ResolvedSourceFile {
   readonly path: SourcePath;
   readonly utf8Bytes: RetainedExactBytes;
   readonly contentDigest: ResolvedDigestHex<"source-content">;
 }
 
+/** The deterministic-CBOR-encoded source manifest and its digest, built from the resolved file set. */
 export interface ResolvedSourceManifest {
   readonly exactBytes: RetainedExactBytes;
   readonly digest: ResolvedDigestHex<"source-manifest">;
 }
 
+/** The fully resolved source bundle: entrypoint, sorted files, aggregate size, and manifest. */
 export interface ResolvedSourceBundle {
   readonly entrypoint: SourceEntrypoint;
   readonly files: readonly ResolvedSourceFile[];
@@ -81,12 +109,14 @@ export interface ResolvedSourceBundle {
   readonly manifest: ResolvedSourceManifest;
 }
 
+/** The resolved inline JSON input: its canonical encoded bytes and digest. */
 export interface ResolvedInlineInput {
   readonly slot: typeof PRIMARY_DATA_INPUT_SLOT;
   readonly exactBytes: RetainedExactBytes;
   readonly digest: ResolvedDigestHex<"inline-input">;
 }
 
+/** The resolved wall-time limit and whether it came from the request or the trusted default. */
 export interface ResolvedWallTime {
   readonly milliseconds: PositiveSafeInteger;
   readonly origin: "requested" | "trusted-default";
@@ -111,6 +141,12 @@ export interface ResolvedJobProposalPlanInputs {
   readonly outputMaxJsonBytes: PositiveSafeInteger;
 }
 
+/**
+ * The full output of a successful {@link resolveJobProposal} call: every
+ * field the caller requested resolved against trusted context, plus the
+ * narrower {@link ResolvedJobProposalPlanInputs} subset that
+ * constructExecutionPlan actually consumes.
+ */
 export interface ResolvedJobProposal {
   readonly source: ResolvedSourceBundle;
   readonly inlineInput: ResolvedInlineInput;
@@ -124,8 +160,16 @@ export interface ResolvedJobProposal {
   readonly planInputs: ResolvedJobProposalPlanInputs;
 }
 
+/**
+ * Why a resolution was refused. `SEMANTIC` means the proposal's own content
+ * is invalid (e.g. an oversized file); `POLICY` means it's well-formed but
+ * violates trusted policy (e.g. a wall-time ceiling); `BINDING` means a
+ * provenance/identity check failed (e.g. an unretained candidate or trusted
+ * context).
+ */
 export type JobProposalResolutionClassification = "SEMANTIC" | "POLICY" | "BINDING";
 
+/** The exhaustive set of refusal codes {@link resolveJobProposal} can return. */
 export type JobProposalResolutionRefusalCode =
   | "CANDIDATE_PROVENANCE"
   | "TRUSTED_CONTEXT_PROVENANCE"
@@ -144,6 +188,7 @@ export interface JobProposalResolutionRefusal {
   readonly code: JobProposalResolutionRefusalCode;
 }
 
+/** The outcome of {@link resolveJobProposal}: either a resolved proposal or a classified refusal. */
 export type JobProposalResolutionResult =
   | { readonly ok: true; readonly resolved: ResolvedJobProposal }
   | { readonly ok: false; readonly refusal: JobProposalResolutionRefusal };
@@ -151,6 +196,13 @@ export type JobProposalResolutionResult =
 const trustedProfileRegistries = new WeakSet<object>();
 const trustedUserPolicies = new WeakSet<object>();
 
+/**
+ * Validates and freezes a set of runtime profile entries into a
+ * provenance-branded {@link TrustedProfileRegistryContext}. Rejects
+ * duplicate aliases, unsupported statuses, and an inverted wall-time range.
+ * Callers must treat the returned object as opaque — resolveJobProposal
+ * only accepts contexts it can prove came from this function.
+ */
 export function createTrustedProfileRegistryContext(
   entries: readonly TrustedRuntimeProfileEntryInput[],
 ): TrustedProfileRegistryContext {
@@ -182,6 +234,11 @@ export function createTrustedProfileRegistryContext(
   return context;
 }
 
+/**
+ * Validates and freezes a trusted-default-plus-ceiling policy into a
+ * provenance-branded {@link TrustedUserPolicyContext} (ADR-0009). Rejects a
+ * default that exceeds its own ceiling.
+ */
 export function createTrustedUserPolicyContext(input: {
   readonly wallTimeMs: { readonly trustedDefault: number; readonly ceiling: number };
 }): TrustedUserPolicyContext {
@@ -473,7 +530,7 @@ function encodeSourceManifest(
   aggregateByteLength: number,
 ): Uint8Array {
   return concatenateBytes([
-    Uint8Array.of(0xa5),
+    encodeCborMapHeader(5),
     encodeCborUnsigned(1),
     encodeCborText("capsule.source-manifest"),
     encodeCborUnsigned(2),
@@ -491,57 +548,6 @@ function encodeSourceManifest(
     encodeCborUnsigned(5),
     encodeCborUnsigned(aggregateByteLength),
   ]);
-}
-
-function encodeCborUnsigned(value: number): Uint8Array {
-  return encodeCborHead(0, value);
-}
-
-function encodeCborArrayHeader(length: number): Uint8Array {
-  return encodeCborHead(4, length);
-}
-
-function encodeCborText(value: string): Uint8Array {
-  const bytes = new TextEncoder().encode(value);
-  return concatenateBytes([encodeCborHead(3, bytes.byteLength), bytes]);
-}
-
-function encodeCborByteString(bytes: Uint8Array): Uint8Array {
-  return concatenateBytes([encodeCborHead(2, bytes.byteLength), bytes]);
-}
-
-function encodeCborHead(majorType: number, value: number): Uint8Array {
-  const prefix = majorType << 5;
-  if (value < 24) {
-    return Uint8Array.of(prefix | value);
-  }
-  if (value <= 0xff) {
-    return Uint8Array.of(prefix | 24, value);
-  }
-  if (value <= 0xffff) {
-    return Uint8Array.of(prefix | 25, value >>> 8, value & 0xff);
-  }
-  if (value <= 0xffff_ffff) {
-    return Uint8Array.of(
-      prefix | 26,
-      (value >>> 24) & 0xff,
-      (value >>> 16) & 0xff,
-      (value >>> 8) & 0xff,
-      value & 0xff,
-    );
-  }
-  throw new TypeError("CBOR value is outside the source-manifest encoder range");
-}
-
-function concatenateBytes(chunks: readonly Uint8Array[]): Uint8Array {
-  const byteLength = chunks.reduce((total, chunk) => total + chunk.byteLength, 0);
-  const bytes = new Uint8Array(byteLength);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return bytes;
 }
 
 function retainExactBytes(bytes: Uint8Array): RetainedExactBytes {

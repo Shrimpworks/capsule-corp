@@ -27,8 +27,15 @@ export type {
   JobProposalRawRefusalCode,
 } from "./strict-job-proposal-json.js";
 
+/**
+ * Why the schema stage refused a proposal. `UNSUPPORTED` means an unknown
+ * apiVersion/kind/field; `SCHEMA` means a type/shape/required-field
+ * violation; `DOMAIN` means the right shape but a disallowed value (e.g. an
+ * input bound to the wrong slot).
+ */
 export type JobProposalSchemaClassification = "UNSUPPORTED" | "SCHEMA" | "DOMAIN";
 
+/** The exhaustive set of schema-stage refusal codes {@link decodeJobProposal} can return. */
 export type JobProposalSchemaRefusalCode =
   | "ROOT_TYPE"
   | "MISSING_FIELD"
@@ -54,8 +61,10 @@ export interface JobProposalSchemaRefusal {
   readonly code: JobProposalSchemaRefusalCode;
 }
 
+/** Either a raw (predecode) refusal or a schema-stage refusal — the two stages {@link decodeJobProposal} runs in sequence. */
 export type JobProposalDecodeRefusal = JobProposalRawRefusal | JobProposalSchemaRefusal;
 
+/** The outcome of {@link decodeJobProposal}: either a decoded candidate or a classified refusal. */
 export type JobProposalDecodeResult =
   | { readonly ok: true; readonly proposal: DecodedJobProposalCandidate }
   | { readonly ok: false; readonly refusal: JobProposalDecodeRefusal };

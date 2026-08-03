@@ -1,5 +1,13 @@
 import { createHash } from "node:crypto";
 
+import {
+  concatenateBytes,
+  encodeCborArrayHeader,
+  encodeCborByteString,
+  encodeCborMapHeader,
+  encodeCborText,
+  encodeCborUnsigned,
+} from "./internal-cbor-primitives.js";
 import type { ResolvedJobProposalPlanInputs, RetainedExactBytes } from "./job-proposal-resolver.js";
 import { isRetainedResolvedJobProposalPlanInputs } from "./resolved-job-proposal-provenance.js";
 
@@ -12,6 +20,7 @@ declare const executionPlanScalarBrand: unique symbol;
 declare const trustedExecutionPlanBindingBrand: unique symbol;
 declare const trustedExecutionPlanRegistrationRoleBindingsBrand: unique symbol;
 
+/** Digest roles a trusted (non-proposal-owned) ExecutionPlan binding may carry. */
 export type TrustedExecutionPlanDigestRole =
   | "trust-epoch"
   | "source-manifest"
@@ -24,6 +33,7 @@ export type TrustedExecutionPlanDigestRole =
   | "trust-snapshot"
   | "policy-decision";
 
+/** {@link TrustedExecutionPlanDigestRole} plus the two non-digest byte roles retained on a built plan. */
 export type ExecutionPlanRetainedByteRole =
   | "installation-id"
   | "trust-epoch"
@@ -38,6 +48,7 @@ export type ExecutionPlanRetainedByteRole =
   | "policy-decision"
   | "execution-plan";
 
+/** A role-tagged defensive byte copy retained on a plan or binding value. */
 export interface RetainedExecutionPlanBytes<Role extends ExecutionPlanRetainedByteRole> {
   readonly role: Role;
   readonly byteLength: number;
@@ -45,15 +56,18 @@ export interface RetainedExecutionPlanBytes<Role extends ExecutionPlanRetainedBy
   readonly [executionPlanScalarBrand]: Role;
 }
 
+/** A nonzero 16-byte installation ID, produced only by {@link createTrustedExecutionPlanInstallationId}. */
 export type TrustedExecutionPlanInstallationId = RetainedExecutionPlanBytes<"installation-id"> & {
   readonly [trustedExecutionPlanBindingBrand]: "installation-id";
 };
 
+/** A role-tagged 32-byte digest, produced only by {@link createTrustedExecutionPlanDigest} for that exact role. */
 export type TrustedExecutionPlanDigest<Role extends TrustedExecutionPlanDigestRole> =
   RetainedExecutionPlanBytes<Role> & {
     readonly [trustedExecutionPlanBindingBrand]: Role;
   };
 
+/** Caller-supplied input to {@link createTrustedExecutionPlanBindings}, before provenance/shape validation. */
 export interface TrustedExecutionPlanBindingsInput {
   readonly installationId: TrustedExecutionPlanInstallationId;
   readonly epochSequence: number;
@@ -68,6 +82,13 @@ export interface TrustedExecutionPlanBindingsInput {
   readonly expiresAt: number;
 }
 
+/**
+ * The trust-owned (non-proposal) half of an ExecutionPlan's bindings,
+ * produced only by {@link createTrustedExecutionPlanBindings}: installation
+ * identity, trust epoch, runtime bundle/profile/backend/policy digests, and
+ * expiry. Combined with {@link ResolvedJobProposalPlanInputs} by
+ * {@link constructExecutionPlan}.
+ */
 export interface TrustedExecutionPlanBindings {
   readonly installationId: TrustedExecutionPlanInstallationId;
   readonly epochSequence: number;
@@ -86,6 +107,7 @@ export interface TrustedExecutionPlanBindings {
   readonly [trustedExecutionPlanBindingBrand]: "execution-plan-bindings";
 }
 
+/** Caller-supplied input to {@link createTrustedExecutionPlanRegistrationRoleBindings}, before provenance/shape validation. */
 export interface TrustedExecutionPlanRegistrationRoleBindingsInput {
   readonly installationId: TrustedExecutionPlanInstallationId;
   readonly epochDigest: TrustedExecutionPlanDigest<"trust-epoch">;
@@ -100,6 +122,13 @@ export interface TrustedExecutionPlanRegistrationRoleBindingsInput {
   readonly policyDecisionDigest: TrustedExecutionPlanDigest<"policy-decision">;
 }
 
+/**
+ * The role-binding subset a Supervisor registration checks a submitted plan
+ * against, produced only by
+ * {@link createTrustedExecutionPlanRegistrationRoleBindings}. Deliberately
+ * narrower than {@link TrustedExecutionPlanBindings}: no epoch sequence or
+ * expiry, since registration binds identity/content roles, not time.
+ */
 export interface TrustedExecutionPlanRegistrationRoleBindings {
   readonly installationId: TrustedExecutionPlanInstallationId;
   readonly epochDigest: TrustedExecutionPlanDigest<"trust-epoch">;
@@ -118,6 +147,7 @@ export interface TrustedExecutionPlanRegistrationRoleBindings {
   readonly [trustedExecutionPlanRegistrationRoleBindingsBrand]: "registration-role-bindings";
 }
 
+/** The decoded field-by-field view of a constructed ExecutionPlan, mirroring the CBOR map's fields (ADR-0019). */
 export interface ExecutionPlanCandidateView {
   readonly objectType: typeof EXECUTION_PLAN_OBJECT_TYPE;
   readonly objectVersion: typeof EXECUTION_PLAN_OBJECT_VERSION;
@@ -148,6 +178,7 @@ export interface ExecutionPlanCandidateView {
   readonly expiresAt: number;
 }
 
+/** The output of a successful {@link constructExecutionPlan} call: the decoded view plus its exact canonical bytes and digest. */
 export interface ConstructedExecutionPlan {
   readonly candidate: ExecutionPlanCandidateView;
   readonly exactBytes: RetainedExactBytes;
@@ -156,12 +187,14 @@ export interface ConstructedExecutionPlan {
   copyDigestBytes(): Uint8Array;
 }
 
+/** The inert TypeScript-side handoff produced by {@link prepareExecutionPlanRegistrationHandoff}: exact plan bytes plus the role bindings a Supervisor registration would check them against. */
 export interface ExecutionPlanRegistrationHandoff {
   readonly exactPlanByteLength: number;
   readonly roleBindings: TrustedExecutionPlanRegistrationRoleBindings;
   copyExactPlanBytes(): Uint8Array;
 }
 
+/** The exhaustive set of refusal codes {@link prepareExecutionPlanRegistrationHandoff} can return. */
 export type ExecutionPlanRegistrationHandoffRefusalCode =
   | "PLAN_PROVENANCE"
   | "ROLE_BINDING_PROVENANCE"
@@ -174,10 +207,12 @@ export interface ExecutionPlanRegistrationHandoffRefusal {
   readonly code: ExecutionPlanRegistrationHandoffRefusalCode;
 }
 
+/** The outcome of {@link prepareExecutionPlanRegistrationHandoff}: either the handoff or a classified refusal. */
 export type ExecutionPlanRegistrationHandoffResult =
   | { readonly ok: true; readonly handoff: ExecutionPlanRegistrationHandoff }
   | { readonly ok: false; readonly refusal: ExecutionPlanRegistrationHandoffRefusal };
 
+/** The exhaustive set of refusal codes {@link constructExecutionPlan} can return. */
 export type ExecutionPlanConstructionRefusalCode =
   | "PLAN_INPUT_PROVENANCE"
   | "TRUSTED_BINDING_PROVENANCE";
@@ -188,6 +223,7 @@ export interface ExecutionPlanConstructionRefusal {
   readonly code: ExecutionPlanConstructionRefusalCode;
 }
 
+/** The outcome of {@link constructExecutionPlan}: either the constructed plan or a classified refusal. */
 export type ExecutionPlanConstructionResult =
   | { readonly ok: true; readonly plan: ConstructedExecutionPlan }
   | { readonly ok: false; readonly refusal: ExecutionPlanConstructionRefusal };
@@ -198,6 +234,7 @@ const trustedBindings = new WeakSet<object>();
 const trustedRegistrationRoleBindings = new WeakSet<object>();
 const constructedPlans = new WeakSet<object>();
 
+/** Validates and defensively copies a 16-byte nonzero installation ID for use in trusted ExecutionPlan bindings. */
 export function createTrustedExecutionPlanInstallationId(
   value: Uint8Array,
 ): TrustedExecutionPlanInstallationId {
@@ -217,6 +254,7 @@ export function createTrustedExecutionPlanInstallationId(
   return retained;
 }
 
+/** Validates and defensively copies a 32-byte digest for the given trusted role. */
 export function createTrustedExecutionPlanDigest<Role extends TrustedExecutionPlanDigestRole>(
   value: Uint8Array,
   role: Role,
@@ -234,6 +272,13 @@ export function createTrustedExecutionPlanDigest<Role extends TrustedExecutionPl
   return retained;
 }
 
+/**
+ * Validates a closed-shape {@link TrustedExecutionPlanBindingsInput} (exact
+ * key set, correct provenance on every nested ID/digest, one-to-eight
+ * review attestations) and freezes it into {@link TrustedExecutionPlanBindings}.
+ * Every field is defensively copied — the caller's original input objects
+ * are never aliased into the returned value.
+ */
 export function createTrustedExecutionPlanBindings(
   input: TrustedExecutionPlanBindingsInput,
 ): TrustedExecutionPlanBindings {
@@ -296,6 +341,12 @@ export function createTrustedExecutionPlanBindings(
   return bindings;
 }
 
+/**
+ * Validates a closed-shape {@link TrustedExecutionPlanRegistrationRoleBindingsInput}
+ * and freezes it into {@link TrustedExecutionPlanRegistrationRoleBindings},
+ * the same way {@link createTrustedExecutionPlanBindings} does for the
+ * fuller binding set.
+ */
 export function createTrustedExecutionPlanRegistrationRoleBindings(
   input: TrustedExecutionPlanRegistrationRoleBindingsInput,
 ): TrustedExecutionPlanRegistrationRoleBindings {
@@ -739,63 +790,6 @@ function encodeExecutionPlan(candidate: ExecutionPlanCandidateView): Uint8Array 
     encodeCborUnsigned(24),
     encodeCborUnsigned(candidate.expiresAt),
   ]);
-}
-
-function encodeCborUnsigned(value: number): Uint8Array {
-  return encodeCborHead(0, value);
-}
-
-function encodeCborMapHeader(length: number): Uint8Array {
-  return encodeCborHead(5, length);
-}
-
-function encodeCborArrayHeader(length: number): Uint8Array {
-  return encodeCborHead(4, length);
-}
-
-function encodeCborText(value: string): Uint8Array {
-  const bytes = new TextEncoder().encode(value);
-  return concatenateBytes([encodeCborHead(3, bytes.byteLength), bytes]);
-}
-
-function encodeCborByteString(value: readonly number[]): Uint8Array {
-  const bytes = Uint8Array.from(value);
-  return concatenateBytes([encodeCborHead(2, bytes.byteLength), bytes]);
-}
-
-function encodeCborHead(majorType: number, value: number): Uint8Array {
-  requireUInt53(value, "CBOR argument");
-  const prefix = majorType << 5;
-  if (value < 24) {
-    return Uint8Array.of(prefix | value);
-  }
-  if (value <= 0xff) {
-    return Uint8Array.of(prefix | 24, value);
-  }
-  if (value <= 0xffff) {
-    return Uint8Array.of(prefix | 25, value >>> 8, value & 0xff);
-  }
-  if (value <= 0xffff_ffff) {
-    const bytes = new Uint8Array(5);
-    bytes[0] = prefix | 26;
-    new DataView(bytes.buffer).setUint32(1, value, false);
-    return bytes;
-  }
-  const bytes = new Uint8Array(9);
-  bytes[0] = prefix | 27;
-  new DataView(bytes.buffer).setBigUint64(1, BigInt(value), false);
-  return bytes;
-}
-
-function concatenateBytes(chunks: readonly Uint8Array[]): Uint8Array {
-  const byteLength = chunks.reduce((total, chunk) => total + chunk.byteLength, 0);
-  const bytes = new Uint8Array(byteLength);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return bytes;
 }
 
 function rejected(code: ExecutionPlanConstructionRefusalCode): {

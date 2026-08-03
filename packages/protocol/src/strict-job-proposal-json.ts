@@ -4,6 +4,7 @@
  * owning raw boundary without treating a generic decoded value as a proposal.
  */
 
+/** Hard structural ceilings enforced during predecode, before any schema/domain check runs. */
 export const JOB_PROPOSAL_RAW_LIMITS = Object.freeze({
   rawBytes: 2_097_152,
   depth: 32,
@@ -17,6 +18,7 @@ export const JOB_PROPOSAL_RAW_LIMITS = Object.freeze({
   stringBytes: 65_536,
 } as const);
 
+/** A generic JSON value produced by the raw predecoder, before any JobProposal-specific schema check. */
 export type StrictJsonValue =
   | null
   | boolean
@@ -25,6 +27,7 @@ export type StrictJsonValue =
   | readonly StrictJsonValue[]
   | { readonly [key: string]: StrictJsonValue };
 
+/** The exhaustive set of raw-boundary refusal codes {@link predecodeStrictJobProposalJson} can return. */
 export type JobProposalRawRefusalCode =
   | "INPUT_TYPE"
   | "RAW_BYTES"
@@ -53,6 +56,7 @@ export interface JobProposalRawRefusal {
   readonly code: JobProposalRawRefusalCode;
 }
 
+/** The outcome of {@link predecodeStrictJobProposalJson}: either a generic JSON value or a classified raw refusal. */
 export type StrictJobProposalJsonResult =
   | { readonly ok: true; readonly value: StrictJsonValue }
   | { readonly ok: false; readonly refusal: JobProposalRawRefusal };

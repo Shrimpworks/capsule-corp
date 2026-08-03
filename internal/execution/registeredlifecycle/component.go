@@ -11,8 +11,8 @@ import (
 )
 
 // Component drives only durable created attempts from the Slice B store into
-// the concrete, no-guest FakeBackend. It is not wired to SupervisorCore, an
-// endpoint, content, evidence, a real backend, or a guest.
+// the concrete, no-guest FakeBackend. It is not wired to a deployed
+// Supervisor, an endpoint, content, evidence, a real backend, or a guest.
 type Component struct {
 	attempts        AttemptResolver
 	createdAttempts CreatedAttemptEnumerator

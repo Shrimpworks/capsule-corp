@@ -28,3 +28,10 @@ but it has not selected a public versioning or release policy yet.
 - An unwired exact plan-registration conformance handoff that passes copied TypeScript plan bytes
   and complete role bindings to the Go `registrationstate` component without defining product IPC
   or activating any daemon, approval, backend, or guest surface.
+
+### Removed
+
+- The legacy `internal/execution.SupervisorCore` in-memory scaffold (`SupervisorCore`,
+  `MemoryStateStore`, `DevelopmentLifecycle`, and the deprecated `Backend`/`RuntimeAdapter`
+  interfaces). It had no product wiring and was already superseded as the authoritative unwired
+  path by the `approvalattempt`/`registrationstate`/`registeredlifecycle` split. See ADR-0027.

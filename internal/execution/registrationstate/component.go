@@ -16,7 +16,7 @@ type Options struct {
 }
 
 // Component is the unwired Supervisor registration slice. It neither wraps
-// nor activates the older SupervisorCore path.
+// nor activates any other Supervisor implementation.
 type Component struct {
 	store       StateStore
 	clock       TrustedClock

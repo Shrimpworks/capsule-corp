@@ -6,8 +6,9 @@ immutable runtime-root custody, `NullFs` disposition, typed port transport/compl
 installed-bundle admission, and the OCI/gVisor comparison remain gated. Bounded filesystem-image
 parsing is a later gate before file artifacts.
 
-Implementation checkpoint: the older `internal/execution.SupervisorCore` remains in-memory scaffold
-evidence and is not the oracle for ADR-0024. The current unwired path instead comprises:
+Implementation checkpoint: the older `internal/execution.SupervisorCore` in-memory scaffold was
+never the oracle for ADR-0024 and has been retired (it had no product wiring and was already
+superseded as the authoritative unwired path). The current unwired path comprises:
 
 - `internal/execution/approvalattempt`: passive typed domains, fixed classifications/states, and a
   retained-vector-only bounded verifier;

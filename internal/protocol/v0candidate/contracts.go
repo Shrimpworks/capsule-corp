@@ -1,7 +1,7 @@
 // Package v0candidate contains strict, unwired wrappers and decoded views of
 // passive Phase 2 contract candidates. It does not persist registrations,
-// activate SupervisorCore, or authorize execution. Exact received
-// deterministic-CBOR bytes remain authoritative.
+// activate a Supervisor implementation, or authorize execution. Exact
+// received deterministic-CBOR bytes remain authoritative.
 package v0candidate
 
 import "fmt"

@@ -51,5 +51,6 @@ its core conclusion.
   — Proposed
 - [ADR-0026: Bind strip-only TypeScript emission before plan registration](0026-bind-pre-approval-typescript-erasure.md)
   — Proposed
+- [ADR-0027: Retire the SupervisorCore in-memory scaffold](0027-retire-supervisorcore-scaffold.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

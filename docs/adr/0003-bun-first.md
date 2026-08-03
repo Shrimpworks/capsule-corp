@@ -10,6 +10,7 @@
 - Governed `deno_core` reproducible-package refinement: 2026-08-02
 - Governed `deno_core` direction and V8 source/license refinement: 2026-08-02
 - TypeScript approved-byte refinement: 2026-08-03
+- Governed `deno_core` runtime-root and product-direction refinement: 2026-08-03
 
 ## Context
 
@@ -69,8 +70,9 @@ passed one narrower question left by that disposition. A one-file pre-registrati
 reduced the exact built-in registry from 99 ops to three bootstrap-required ops; two
 ASLR-controlled clean builds produced identical snapshots and binaries, and the final binary
 exposed only those three built-in op symbols. Fixed prohibited-power and restoration probes still
-refused. This removes the physical-built-in-registration objection for a governed construction, but it
-does not supply the excluded TypeScript transformation, independently reconstructible runtime
+refused. This removes the physical-built-in-registration objection for a governed patched
+construction, but it does not supply the excluded TypeScript transformation, independently
+reconstructible runtime
 package, complete runtime-profile admission, or external-isolation composition. The earlier
 full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
 is not superseded, and `RUNTIME-001` remains unsupported.
@@ -95,6 +97,23 @@ an independent rebuild and complete source/notice publication. Product direction
 portability/contingency proof. This direction does not select or admit a runtime profile,
 supersede this ADR, or change `RUNTIME-001`.
 
+The bounded [self-contained runtime-root follow-up](../../experiments/gate-c-deno-core-runtime-root/RESULTS.md)
+closed the candidate archive's ambient Bookworm dynamic-root dependency. The exact governed
+binary executes its fixed fixture through a packaged, snapshot-pinned loader and library closure
+inside a 22-entry immutable root; read-only syscall evidence found no host library, cache, NSS,
+locale, timezone, or package-database load, and deliberate loader, library, manifest, ownership,
+mode, relocation, environment, and entry-cap mutations failed closed. Two clean same-host
+containers produced the same normalized root bytes. This is bounded construction evidence, not
+independent-builder provenance, external-isolation validation, or profile admission.
+
+After the hard Bun pivot, governed `deno_core` is the intended first runtime engineering direction.
+That direction does not select or admit a runtime profile and does not promote `RUNTIME-001`.
+Continuation requires a real governed upstream fork and release/provenance workflow rather than a
+maintained copied registry tree or experiment-only patch stack, plus closure of the remaining V8
+source/notices, production transformation and protocol ownership, installed-root custody, external
+isolation, and full-profile evidence. The destination owner and repository for that fork remain an
+explicit governance decision; this experiment did not create one prematurely.
+
 The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
 passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
 deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-approval-typescript-erasure.md),
@@ -111,7 +130,7 @@ admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
 - The external isolation boundary must carry the primary security guarantee.
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
-- Runtime construction investigation remains blocking after the Bun and Deno-family NO-GOs;
-  governed `deno_core` is the intended engineering direction, while the physical-op, package, and
-  V8 source/license results narrow its blockers without admitting a runtime. Capsule does not relax
-  the advertised authority contract to preserve implementation sequencing.
+- Governed `deno_core` is the intended first runtime engineering direction after the Bun pivot.
+  Its physical-op, reproducible-package, V8 source/license, TypeScript approved-byte, and
+  self-contained-root results narrow the investigation but do not select or admit a runtime.
+  Capsule does not relax the advertised authority contract to preserve implementation sequencing.

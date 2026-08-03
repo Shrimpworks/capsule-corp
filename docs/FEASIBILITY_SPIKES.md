@@ -12,13 +12,15 @@ file artifacts, and added runtime authority as a blocker. Subsequent exact exper
 stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
 the later governed-`deno_core` follow-up physically omitted 96 nonessential built-in ops through a
 one-file patch. Its package follow-up reproduced the exact snapshot and binary in two clean
-same-host containers from a digest-pinned no-apt builder and complete Cargo source bundle, but
-failed the stronger selection-evidence question on independent-builder, V8 notice/source, and
-dynamic-runtime-root closure. The exact V8 follow-up proved the official archive-to-source and
-four-patch V8 relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publisher
-inputs, complete linked-component metadata, and generated notices are unavailable. Governed
-`deno_core` is the intended engineering direction, not an admitted profile. The later TypeScript
-approved-byte experiment separately passed a
+same-host containers from a digest-pinned no-apt builder and complete Cargo source bundle. A later
+self-contained-root experiment closed the standalone dynamic-root blocker for those exact bytes
+with a package-derived 22-entry root, explicit loader invocation, and retained file-open/mutation
+evidence. The exact V8 follow-up proved the official archive-to-source and four-patch V8
+relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publisher inputs,
+complete linked-component metadata, and generated notices are unavailable. Independent-builder
+and V8 source/license publication closure still fail the stronger selection-evidence question.
+Governed `deno_core` is the intended engineering direction, not an admitted profile. The later
+TypeScript approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
@@ -166,6 +168,10 @@ containers using a digest-pinned no-apt builder and complete offline Cargo sourc
 the prior binary and snapshot identities. It still returned NO-GO for runtime-selection evidence
 because no independent builder/host, complete archive-corresponding V8 source/notices, standalone
 dynamic runtime root, or production TypeScript ownership/wiring was available.
+The later [self-contained-root follow-up](../experiments/gate-c-deno-core-runtime-root/RESULTS.md)
+closed that standalone dynamic-root item only: exact Debian snapshot packages yielded a
+manifest-complete root whose fixed fixture and file-open/mutation corpus used no ambient Bookworm
+library/config data. It did not close the other blockers or admit a runtime.
 The bounded [approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
 subsequently passed the exact pre-approval byte-binding question for a strip-only ESM TypeScript
 subset. It selected no runtime, wired no component, and left production ownership, protocol

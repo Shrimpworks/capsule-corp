@@ -32,6 +32,13 @@ hashes, registers, and re-reads the exact bytes. The command's JSON wrapper is t
 not a local IPC contract or product transport. No authenticated TypeScript/Go process seam, daemon
 consumer, Broker, approval, real backend, or guest is connected.
 
+The same Go authority path now includes the unwired E1-E5 durable lifecycle checkpoint: one
+colocated fixed snapshot retains attempts, lifecycle intents, stable fake effect/instance
+identities, reconciliation, exact active/retained ceilings, and repeated-startup behavior while
+`FakeBackend.CreatesGuest() == false`. Proposed ADR-0029 selects a native-fronted, in-process Go
+Supervisor topology for the future authenticated boundary. No native bridge fixture, product XPC
+service, production owner lock, consumer, runtime, backend effect, or guest is connected.
+
 ## Reference workflow
 
 The first complete workflow is intentionally narrow:
@@ -55,8 +62,11 @@ The first complete workflow is intentionally narrow:
    environment, subprocesses, native addons, FFI, macros, inspector, package installation, or live
    host path. The exact runtime profile must prove those restrictions. Stock Bun 1.3.14, its
    governed-construction branch, hardened full Deno v2.9.4, and the tested minimal `deno_core`
-   0.409.0 construction failed P0-0. No real runtime may enter this step until another exact
-   construction closes the unchanged authority contract.
+   0.409.0 construction failed P0-0. Accepted ADR-0028 selects the later governed three-op
+   `deno_core` construction as the first engineering candidate, and its real Deno and `rusty_v8`
+   governed branches are merged. It is still unadmitted: Linux/arm64 fork-native construction,
+   TypeScript contract migration, complete profile composition, and runtime-admission evidence
+   remain open.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an
@@ -185,14 +195,16 @@ unless a documented narrow capability requires it.
 
 ### Least privilege and languages
 
-Go remains the initial daemon language. Swift is the preferred Broker language because the Broker
+Go remains the initial daemon language. Swift/native is preferred for the Broker because the Broker
 is primarily a macOS UI, Keychain, LocalAuthentication, XPC, and file-selection component.
 
-The Supervisor language and privilege model are deferred until the feasibility spike. The project
-will compare a native implementation, Go with narrow platform bindings, and an unprivileged
-Supervisor plus a tiny sealed-descriptor launcher if required. It does not assume root. Adding Rust
-or another language requires a narrow interface and a demonstrated reduction in privileged risk,
-not an assumption that language choice alone creates the security boundary.
+Proposed ADR-0029 selects one unprivileged per-user Supervisor process with a small native
+C/Objective-C XPC/Security front end and the existing Go authority/lifecycle core linked in-process
+through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
+process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains
+open, and any later separate or privileged component still requires a new ADR. Adding Rust or
+another language requires a narrow interface and a demonstrated reduction in privileged risk, not
+an assumption that language choice alone creates the security boundary.
 
 ## End-to-end protocol
 
@@ -686,6 +698,10 @@ See [Roadmap](ROADMAP.md) for exit evidence.
   `validated-local` claim
 
 ## External design references
+
+The scoped comparison, reusable lessons, and deliberately rejected patterns are summarized in
+[Related systems and design influences](RELATED_SYSTEMS.md). Those public references are planning
+inputs, not Capsule implementation evidence or dependency selections.
 
 - [W3C Decentralized Identifiers v1.0](https://www.w3.org/TR/did-core/)
 - [W3C Decentralized Identifiers v1.1](https://www.w3.org/TR/did-1.1/)

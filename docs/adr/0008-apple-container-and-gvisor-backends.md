@@ -37,7 +37,8 @@ The backends are alternatives under the same protocol. Capsule does not require 
 Apple lightweight VM. Neither backend receives an authoritative tier until its exact pinned
 implementation passes the mandatory adversarial corpus.
 
-Capsule does not implement a backend that executes untrusted Bun directly on the host.
+Capsule does not implement a backend that executes an untrusted workload runtime directly on the
+host.
 
 ## Consequences
 

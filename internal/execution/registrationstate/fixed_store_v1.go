@@ -326,11 +326,11 @@ func loadV0StateStrict(path string) (installationState, error) {
 }
 
 func readBoundedStoreFile(path string) ([]byte, error) {
-	file, err := os.Open(path)
+	file, err := os.Open(path) //nolint:gosec // G304: path is the store's own installation-configured path, not caller/network-supplied
 	if err != nil {
 		return nil, errors.New("open fixed supervisor store")
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	data, err := io.ReadAll(io.LimitReader(file, MaxSupervisorStateBytes+1))
 	if err != nil {
 		return nil, errors.New("read fixed supervisor store")
@@ -493,7 +493,7 @@ func persistEnvelopeV1(path string, envelope diskEnvelopeV1, faults MigrationFau
 			return fmt.Errorf("%w: injected after rename", ErrMigrationOutcomeIndeterminate)
 		}
 	}
-	directory, err := os.Open(parent)
+	directory, err := os.Open(parent) //nolint:gosec // G304: parent is the store's own installation-configured directory, not caller/network-supplied
 	if err != nil {
 		return fmt.Errorf("%w: open migration directory", ErrMigrationOutcomeIndeterminate)
 	}

@@ -34,8 +34,16 @@ jobs:
       - name: Vet
         run: go vet ./...
 
+      - name: Lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.12.2
+
+      - name: Vulnerability scan
+        run: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
       - name: Test
-        run: go test ./...
+        run: go test -cover ./...
 
       - name: Build
         run: go build ./...
@@ -67,6 +75,9 @@ jobs:
       - name: Validate schemas
         run: pnpm verify:schemas
 
+      - name: Validate ADR index
+        run: pnpm verify:adrs
+
       - name: Check
         run: pnpm check
 
@@ -76,5 +87,24 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Test coverage (informational)
+        run: pnpm --recursive exec -- sh -c 'node --experimental-test-coverage --test dist/*.test.js'
+        continue-on-error: true
+
       - name: Build
         run: pnpm build
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@v5

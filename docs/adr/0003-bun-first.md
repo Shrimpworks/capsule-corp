@@ -6,6 +6,7 @@
 - P0-0 stock-runtime refinement: 2026-08-02
 - P0-0 governed-construction refinement: 2026-08-02
 - Deno-family disposition refinement: 2026-08-02
+- Governed `deno_core` physical-omission refinement: 2026-08-02
 
 ## Context
 
@@ -60,6 +61,17 @@ did not include a TypeScript pipeline. The result is `DENO-FAMILY-NO-GO`: no can
 selected, this ADR is not superseded, its runtime-neutral portion remains accepted, and
 `RUNTIME-001` still refuses.
 
+The bounded [governed `deno_core` follow-up](../../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+passed one narrower question left by that disposition. A one-file pre-registration allowlist
+reduced the exact built-in registry from 99 ops to three bootstrap-required ops; two
+ASLR-controlled clean builds produced identical snapshots and binaries, and the final binary
+exposed only those three built-in op symbols. Fixed prohibited-power and restoration probes still
+refused. This removes the physical-built-in-registration objection for a governed fork, but it
+does not supply the excluded TypeScript transformation, independently reconstructible runtime
+package, complete runtime-profile admission, or external-isolation composition. The earlier
+full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
+is not superseded, and `RUNTIME-001` remains unsupported.
+
 ## Consequences
 
 - The initial product has a clear technical wedge.
@@ -69,4 +81,6 @@ selected, this ADR is not superseded, its runtime-neutral portion remains accept
 - External isolation does not make a promised runtime-level authority restriction true; unsupported
   profile powers cause admission refusal.
 - Runtime construction investigation remains blocking after the Bun and Deno-family NO-GOs;
-  Capsule does not relax the advertised authority contract to preserve implementation sequencing.
+  the governed `deno_core` physical-op result narrows that investigation but does not admit a
+  runtime. Capsule does not relax the advertised authority contract to preserve implementation
+  sequencing.

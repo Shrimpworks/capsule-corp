@@ -8,7 +8,8 @@ blockers and the current runtime bytes are not admissible. A post-track independ
 source-research reconciliation narrowed the first-slice P0 work, deferred filesystem parsing until
 file artifacts, and added runtime authority as a blocker. Subsequent exact experiments rejected
 stock/governed Bun and both the hardened full-Deno and tested minimal-`deno_core` constructions;
-`RUNTIME-001` remains unsupported. OCI/gVisor remains an
+the later governed-`deno_core` follow-up physically omitted 96 nonessential built-in ops through a
+one-file patch but did not select or admit a runtime. `RUNTIME-001` remains unsupported. OCI/gVisor remains an
 independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
@@ -137,6 +138,11 @@ until exact spikes pass. The later
 [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md) also reached
 NO-GO: full Deno retained initial-graph, Worker, inspector, compatibility, and persistence routes,
 while `deno_core` physically registered 99 built-in ops and did not supply the TypeScript pipeline.
+The bounded [physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+then passed that one construction question: the exact governed fork registers and links only three
+bootstrap ops with a reviewable one-file patch and reproducible ASLR-controlled snapshot. It did
+not address TypeScript, independent builder provenance, runtime-profile admission, or external
+isolation composition, so it does not reverse the family NO-GO or support `RUNTIME-001`.
 See
 [`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
 

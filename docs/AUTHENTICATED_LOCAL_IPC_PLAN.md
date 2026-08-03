@@ -82,36 +82,40 @@ this plan and requires an updated Proposed ADR before implementation.
 
 ## S1: passive contracts and fixed fixtures
 
-Add no-product native, Go, and Swift-readable fixtures for the common header, four requests, four
-success replies, and fixed refusal replies. Do not activate an XPC listener in a product target.
+Architecture decision: **follow ADR-0030's versioned atomic cutover**. The merged TypeScript
+approved-byte contract requires three distinct future plan source roles, while ADR-0029's proposed
+562-byte `RegisterPlanV0` record contains one source-manifest role and is v0-only. `RegisterPlanV0`
+and 562 bytes remain historical/current-plan-v0 design only and will not be frozen into an S1
+corpus. The observed 626-byte arithmetic is not an approved layout, cap, or known answer. See the
+bounded [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md).
 
-The fixture manifest records:
+S1 remains blocked until this dependency order completes:
 
-- protocol version, service, peer role, message tag, audience, purpose, request ID, installation,
-  epoch sequence/digest, body data lengths, deadline class, and expected first owner;
-- exact plan/registration/approval known answers already retained by the repository;
-- the exact 562-byte complete role-binding projection, including review count and zero-filled
-  unused slots;
-- classification, fixed reason code, `authorityStateChanged`, time-high-water change, trust-fence
-  change, core-call count, store digest before/after, and adapter-call count; and
-- exact copy-ownership mutation oracles for caller, native buffer, Go accessor, and reply buffer.
+1. an accepted transformation-owner and immutable source-store topology;
+2. finalized `ExecutionPlan` v1 and its complete nominal role model;
+3. integration of the separately developed canonical field-authority manifest;
+4. a newly versioned registration method and binding record with reviewed field order, exact caps,
+   cap-plus-one behavior, and cross-language known answers; and
+5. explicit review of the registration fetch, approval submission, and attempt-request projections,
+   including method version changes wherever their typed shape changes.
 
-Required positive fixtures:
+Only then may S1 add no-product native, Go, and Swift-readable fixtures for the finalized common
+header, four role-specific operations, success replies, and fixed refusals. The replacement fixture
+manifest must retain exact plan/registration/approval and complete-binding known answers; protocol,
+service, role, tag, audience, purpose, request, installation, epoch, length, deadline, and first-owner
+fields; exact maxima and cap-plus-one; closed classification/reason and state/time/trust/core/store/
+adapter oracles; copy-ownership mutations; response-loss/idempotency classifications; structural
+missing/extra/wrong-type and cross-object refusals; and byte equality across implementations.
 
-1. daemon `RegisterPlanV0` with the current exact plan and complete bindings;
-2. Broker `GetRegisteredPlanV0` returning byte-identical retained plan, bindings, and registration;
-3. Broker `SubmitApprovalV0` with the current exact candidate envelope; and
-4. daemon `RequestAttemptV0` returning the created `AttemptID` without driving lifecycle.
-
-Required structural negatives include every missing/extra key, wrong XPC value type, unknown
-version/tag, zero/wrong-domain identifier, role-binding count 0/8/9, nonzero unused review slot,
-short and long fixed record, each body at max and cap-plus-one, extra endpoint/descriptor/Mach
-right, and plan/registration/approval cross-object substitution.
-
-Exit evidence: every implementation consumes the same passive bytes and classifications; no
-fixture imports experiment code into product packages or claims ADR-0019 acceptance.
+There is no dual active v0/v1 acceptance, optional transformation role, generic fallback, or field
+inference. No fixture may import experiment code into product packages or claim ADR-0019 acceptance.
 
 ## S2: Go facade and store projection
+
+Status: **blocked** pending completion of the ADR-0030 dependency chain and shared newly versioned
+S1 bytes.
+S2 must not freeze `RegisterPlanV0`, 562 bytes, or the 626-byte arithmetic, and it must not define
+field authority inside the Go facade.
 
 Implement an internal, unwired facade with one Go entry point per method. The facade does not
 accept role or purpose from request bytes; each entry point constructs the existing fixed
@@ -119,15 +123,16 @@ accept role or purpose from request bytes; each entry point constructs the exist
 
 Work:
 
-1. keep `RegisterPlanV0`, `SubmitApprovalV0`, and `RequestAttemptV0` as thin method-specific calls
-   to the existing components after method-owned admission;
-2. add the intended read-only Broker `GetRegisteredPlanV0` facade, returning defensive copies of
-   the retained exact plan, complete role bindings, and wire registration only after Broker call
-   context, active installation/epoch/trust, registration binding, and expiry checks;
-3. treat the daemon's 562-byte record as submitted nominal identities, resolve every role through
-   fixed injected local resolvers, and construct the trusted `ExecutionPlanRoleBindings` passed to
-   `Component.RegisterPlan`; the first slice uses only retained fixed resolver fixtures and does
-   not claim production policy/profile/trust/content resolution;
+1. keep the finalized registration, approval-submission, and attempt-request entry points as thin
+   method-specific calls to the existing components after method-owned admission;
+2. add the intended read-only Broker fetch facade only after its typed projection and method version
+   are explicitly reviewed, returning defensive copies of the retained exact plan, complete role
+   bindings, and wire registration only after Broker call context, active installation/epoch/trust,
+   registration binding, and expiry checks;
+3. treat the finalized complete-role record as submitted nominal identities, resolve every role
+   through fixed injected local resolvers, and construct the trusted complete-role binding passed to
+   registration; the first slice uses only retained fixed resolver fixtures and does not claim
+   production policy/profile/trust/content resolution;
 4. expose no whole-store snapshot, approval bytes, created-attempt resolver, lifecycle driver,
    backend handle, key operation, or repair method;
 5. keep approval and attempt replay semantics in the authoritative store, not a transport cache;
@@ -151,6 +156,11 @@ Exit evidence: focused Go tests plus the existing registration, approval/attempt
 store, and conformance tests. No XPC or product consumer exists.
 
 ## S3: native authentication and cap harness
+
+Status: **blocked** pending completion of the ADR-0030 dependency chain and shared newly versioned
+S1 bytes.
+Native parsing must not create a de facto field layout, cap, known answer, or method-version
+decision.
 
 Build a strictly local, no-product C/Objective-C XPC harness from fixed identities/messages. It may
 use only ad-hoc signing unless the explicit S5 credentialed environment is active. It creates no

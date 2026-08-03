@@ -200,7 +200,8 @@ def main() -> int:
         "modeBits": oct(after.st_mode & 0o777),
         "linkCount": after.st_nlink,
         "descriptorTransfer": "direct-fork-exec-inheritance",
-        "attachmentPath": f"/dev/fd/{reader}",
+        "attachmentApi": "krun_add_read_only_raw_root_fd",
+        "attachmentRole": "runtime-root:vda:raw:read-only",
         "pathExistsAfterFinalization": path.exists(),
     }
 
@@ -251,6 +252,11 @@ def main() -> int:
         for line in completed.stderr.splitlines()
         if line.startswith("LIBKRUN_ROOT_OPEN ")
     ]
+    fd_native_accepts = [
+        line
+        for line in completed.stderr.splitlines()
+        if line.startswith("LIBKRUN_FD_NATIVE_ROOT_ACCEPT ")
+    ]
     guest_lines = [
         line
         for line in completed.stdout.splitlines()
@@ -264,20 +270,19 @@ def main() -> int:
         guest_length = int(fields["length"])
     record["runner"] = {
         "exit": completed.returncode,
-        "libkrunRootOpenCount": len(opens),
-        "bothOpenIdentityMatches": len(opens) == 2
-        and all("identityMatch=true" in line for line in opens),
-        "bothOpenReadOnly": len(opens) == 2
-        and all("requestedAccess=0" in line and "resultAccess=0" in line for line in opens),
+        "libkrunRootPathOpenCount": len(opens),
+        "fdNativeAccepted": len(fd_native_accepts) == 1,
+        "callerDescriptorClosedAfterApi": len(fd_native_accepts) == 1
+        and "callerDescriptorClosed=true" in fd_native_accepts[0],
         "guestDigest": guest_digest,
         "guestLength": guest_length,
         "postStopDescriptorDigest": post_digest,
     }
     record["conjunctivePass"] = (
         completed.returncode == 0
-        and len(opens) == 2
-        and record["runner"]["bothOpenIdentityMatches"]
-        and record["runner"]["bothOpenReadOnly"]
+        and len(opens) == 0
+        and record["runner"]["fdNativeAccepted"]
+        and record["runner"]["callerDescriptorClosedAfterApi"]
         and guest_digest == expected_digest
         and guest_length == expected_length
         and post_digest == expected_digest

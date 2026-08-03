@@ -2,10 +2,41 @@
 
 Date: 2026-08-02
 
-Decision: **PATCH-REQUIRED — narrow raw-only FD-native libkrun API, followed by the same installed
-App Sandbox corpus.** This is a fail-closed development decision, not backend admission. The local
-evidence does not support `REJECT-LIBKRUN-FOR-V0`, but P0-1C is incomplete and therefore does not
-support PASS.
+Decision: **PATCH-CANDIDATE — the narrow raw-only FD-native libkrun API passed the controlled local
+and owned-guest corpus; the same final installed App Sandbox corpus is still required.** This is a
+fail-closed development decision, not backend admission. P0-1C remains incomplete and therefore
+does not support PASS.
+
+## FD-native fallback result
+
+The governed patch adds only
+`krun_add_read_only_raw_root_fd(ctx, fd, expected_device, expected_inode, expected_length)` for the
+fixed `runtime-root:vda:raw:read-only` role. It immediately owns a `F_DUPFD_CLOEXEC` duplicate,
+validates the finalized `O_RDONLY` unlinked mode-`0400` regular file and exact identity/length, and
+routes imago directly from an owned `File`. It accepts no pathname, format, autodetection, mount,
+write, or backend option.
+
+Observed on the pinned source and owned local guest:
+
+- clean apply and reverse dry-run passed; composition with the retained P0-2 direct-root and P0-3
+  console patches applied, built, and passed 53 Rust tests;
+- the focused C contract passed 13/13 normally and under AddressSanitizer/UndefinedBehaviorSanitizer;
+- source audit found zero path inputs, device path opens, or runner pathname-disk imports;
+- pinned imago raw I/O remained one `preadv` and one `pwritev` site; positional reads preserved the
+  shared offset and writes were refused through both read-only raw configuration and `O_RDONLY`;
+- all five deliberate mutations were detected: pathname fallback, writable acceptance,
+  wrong-object duplication, shared-offset I/O, and caller-close/lifetime failure;
+- the local wrong/closed/reused/writable descriptor, CLOEXEC/fork, shared flags/offset, caller-close,
+  path replacement, alias/mapping, source isolation, and constructor/runner lifetime corpus passed;
+- four fixed-probe unsandboxed HVF guest runs matched finalized host descriptor, guest `/dev/vda`,
+  and post-stop host digest at
+  `b442fe91619a2542c059038b66221923f15fd5fae5de98ae531415ae12586ef1`, with zero root-path opens;
+  and
+- the ad-hoc App Sandbox runner again aborted in `secinit` before `main` because the host had no
+  valid signing identity. This is an environmental limitation and makes no custody inference.
+
+Patch/API/ABI/ownership, imago, supply-chain, and composition review is retained in
+`FD_NATIVE_PATCH_REVIEW.md`; selected evidence is in `evidence/2026-08-02-fd-native/`.
 
 ## Hypothesis and exact sequence
 
@@ -20,7 +51,7 @@ bytes observed by pinned libkrun after this exact sequence:
    length, and zero link count;
 6. SHA-256 and length calculation through that exact retained descriptor;
 7. direct fork/exec inheritance into the runner;
-8. `/dev/fd/N` block attachment and guest raw-device SHA-256 comparison.
+8. FD-native raw block attachment and guest raw-device SHA-256 comparison.
 
 The run used an owned 128 MiB ext4 root and `/usr/local/libexec/capsule-root-digest` as a fixed
 trusted guest probe. It did not run arbitrary or user-supplied code.
@@ -108,15 +139,16 @@ Not established:
 
 ## Decision and exact remaining test
 
-Choose **PATCH-REQUIRED**. Add one governed raw-only API that accepts an already validated
-read-only descriptor, duplicates/takes ownership immediately, stores no pathname, rejects writable,
-non-regular, or unsupported-format inputs, and constructs both device identity and imago storage
-from owned descriptors. Do not add a helper or new privilege.
+Choose **PATCH-CANDIDATE** for the retained governed API. It accepts an already finalized read-only
+descriptor, takes duplicate ownership immediately, stores no pathname, rejects writable,
+non-regular, linked, wrong-mode, wrong-identity, and unsupported control inputs, and constructs both
+device identity and imago storage from owned descriptors. It adds no helper or privilege.
 
 Then rebuild the final signed/notarized app and rerun this exact sequence inside the enrolled
 Supervisor's protected container, with direct inheritance to the hardened runner. The outside
 baseline same-UID attacker must know the in-progress pathname and still fail writable open, hard
 link, rename/replacement, mapping, debugger/task-port, and explicit-grant attempts. Both internal
 consumers (or their FD-native replacements), guest digest, crash/recovery cases, and closed FD
-manifest must pass on those final bytes. Failure of that narrow API plus corpus selects
-`REJECT-LIBKRUN-FOR-V0`.
+manifest must pass on those final bytes. Failure of the exact final installed form or its corpus
+selects `PATCH-NOT-VIABLE` or `REJECT-LIBKRUN-FOR-V0`; the passing local result alone cannot close
+P0-1.

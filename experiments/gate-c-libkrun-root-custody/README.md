@@ -1,6 +1,6 @@
 # Gate C P0-1: immutable runtime-root custody
 
-Status: **development-only retained experiment; PATCH-REQUIRED decision recorded 2026-08-02**.
+Status: **development-only retained experiment; FD-native PATCH-CANDIDATE recorded 2026-08-02**.
 Nothing here is product code, an admitted backend, or permission to execute user-supplied bytes.
 
 Owner: Capsule core. Retain until an exact installed, signed/notarized App Sandbox bundle using a
@@ -13,10 +13,11 @@ This experiment defensively validates P0-1 using only owned repository fixtures,
 the already pinned libkrun/libkrunfw build, locally cached OCI fixture images, and one owned local
 Hypervisor.framework guest. It does not access another system, identity, credential, or data.
 
-It separates three claims:
+It separates three claims and now evaluates the governed fallback selected by the original
+pathname experiment:
 
-1. P0-1A: whether both stock libkrun 1.19.4 block consumers open `/dev/fd/N` as the exact inherited
-   read-only object without returning to the original image pathname;
+1. P0-1A: whether a raw-only FD-native libkrun 1.19.4 route retains the exact inherited read-only
+   object without any pathname open, reconstruction, or fallback;
 2. P0-1B: whether exclusive construction, closure of every writable alias/mapping, unlink, and
    post-finalization digest produce a frozen object; and
 3. P0-1C: whether the whole topology resists the locally testable baseline same-user and crash
@@ -29,6 +30,8 @@ It separates three claims:
 - libkrunfw `v5.5.0`, embedded Linux `6.12.91`;
 - the two existing Gate C source patches for firmware `@rpath` resolution and exact read-only root
   mount flags;
+- governed patch `patches/0003-read-only-raw-root-fd.patch`, SHA-256
+  `48cdbc307b3fa1209fa0ec68fc3f817634af312983d68f0de259db86c0b43333`;
 - Alpine fixture
   `alpine@sha256:14358309a308569c32bdc37e2e0e9694be33a9d99e68afb0f5ff33cc1f695dce`;
 - Ubuntu builder
@@ -40,9 +43,10 @@ unchanged host backing bytes.
 
 ## Reproduce
 
-Build from the already prepared pinned libkrun tree and locally available tools:
+Prepare and build the exact patched pinned libkrun tree from local sources:
 
 ```sh
+./experiments/gate-c-libkrun-root-custody/prepare-fd-native-libkrun.sh
 ./experiments/gate-c-libkrun-root-custody/build.sh
 ./experiments/gate-c-libkrun-root-custody/prepare-root.sh
 ```
@@ -74,15 +78,15 @@ Focused verification, excluding the Docker/guest rerun by default:
 CAPSULE_RUN_GUEST=true ./experiments/gate-c-libkrun-root-custody/verify.sh
 ```
 
-Generated builds and raw reruns remain ignored under `.build/` and `.runs/`. Selected raw evidence
-is retained under `evidence/2026-08-02/`.
+Generated builds and raw reruns remain ignored under `.build/` and `.runs/`. The original pathname
+evidence is retained under `evidence/2026-08-02/`; selected FD-native evidence is under
+`evidence/2026-08-02-fd-native/`.
 
 ## Decision boundary
 
-The observed stock pathname route passed P0-1A and the unsandboxed full-guest construction path,
-but P0-1C did not close because same-UID construction protection and the exact installed App
-Sandbox runner could not be exercised without a valid signing identity. The retained decision is
-therefore **PATCH-REQUIRED**, not PASS: introduce one raw-only FD-native libkrun API with explicit
-descriptor ownership and no pathname fallback, then rerun this exact corpus on the final signed
-installed bytes. The evidence does not justify rejecting libkrun for v0, and the patch does not
-replace the still-required platform-protected construction-store test.
+The governed raw-only API passed the local attachment, ownership/lifetime, positional-I/O,
+deliberate-mutation, and four-run owned guest digest corpus with zero runtime-root pathname opens.
+It is therefore **PATCH-CANDIDATE**, not PASS: the exact signed/notarized installed App Sandbox
+runner and protected construction-store same-UID corpus could not be exercised without a valid
+signing identity. This evidence neither admits libkrun nor closes P0-1C, and the patch remains
+non-production material pending independent review and the final installed corpus.

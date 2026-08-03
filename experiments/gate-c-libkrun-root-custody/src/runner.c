@@ -149,20 +149,10 @@ int main(int argc, char *argv[]) {
         return 77;
     }
 
-    char root_path[64];
-    int path_length = snprintf(root_path, sizeof(root_path), "/dev/fd/%d", root_fd);
-    if (path_length < 0 || (size_t)path_length >= sizeof(root_path)) {
-        return 64;
-    }
-    if (setenv("CAPSULE_TRACE_ROOT_PATH", root_path, 1) != 0 ||
-        setenv("CAPSULE_TRACE_ROOT_FD", argv[1], 1) != 0) {
-        return fail("set trace environment");
-    }
     fprintf(stderr,
-            "RUNNER_DESCRIPTOR_ACCEPT fd=%d path=%s access=0 dev=%" PRIu64
+            "RUNNER_DESCRIPTOR_ACCEPT fd=%d access=0 dev=%" PRIu64
             " ino=%" PRIu64 " nlink=0 length=%" PRIu64 " digest=%s\n",
-            root_fd, root_path, expected_dev, expected_ino, expected_length,
-            actual_digest);
+            root_fd, expected_dev, expected_ino, expected_length, actual_digest);
 
     int result = krun_init_log(STDERR_FILENO, KRUN_LOG_LEVEL_WARN,
                                KRUN_LOG_STYLE_NEVER, 0);
@@ -181,10 +171,19 @@ int main(int argc, char *argv[]) {
     if (result != 0) {
         return fail_krun("krun_disable_implicit_vsock", result);
     }
-    result = krun_add_disk((uint32_t)context, "vda", root_path, true);
+    result = krun_add_read_only_raw_root_fd(
+        (uint32_t)context, root_fd, expected_dev, expected_ino, expected_length);
     if (result != 0) {
-        return fail_krun("krun_add_disk(root)", result);
+        return fail_krun("krun_add_read_only_raw_root_fd", result);
     }
+    if (close(root_fd) != 0) {
+        return fail("close caller root descriptor");
+    }
+    fprintf(stderr,
+            "LIBKRUN_FD_NATIVE_ROOT_ACCEPT role=runtime-root device=vda "
+            "callerDescriptorClosed=true dev=%" PRIu64 " ino=%" PRIu64
+            " length=%" PRIu64 "\n",
+            expected_dev, expected_ino, expected_length);
     result = krun_set_root_disk_remount((uint32_t)context, "/dev/vda", "ext4",
                                         "ro,nosuid,nodev");
     if (result != 0) {
@@ -203,7 +202,7 @@ int main(int argc, char *argv[]) {
         return fail_krun("krun_set_exec", result);
     }
 
-    fprintf(stderr, "RUNNER_START root=%s\n", root_path);
+    fprintf(stderr, "RUNNER_START root=fd-native-raw-read-only\n");
     fflush(stderr);
     result = krun_start_enter((uint32_t)context);
     if (result != 0) {

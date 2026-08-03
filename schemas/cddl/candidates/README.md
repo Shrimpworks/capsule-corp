@@ -14,7 +14,7 @@ to mint registration authority. Exact authenticated-IPC and optional exported-ev
 remain later decisions.
 
 [`typescript-approved-byte-v0.cddl`](typescript-approved-byte-v0.cddl) defines the separate passive
-ADR-0029 original/executable/profile/options/record object family.
+ADR-0030 original/executable/profile/options/record object family.
 [`execution-plan-v1-typescript-approved-byte.cddl`](execution-plan-v1-typescript-approved-byte.cddl)
 is an illustrative full-shape atomic migration candidate only. Neither changes the current plan v0
 wrapper or permits dual plan-version acceptance.

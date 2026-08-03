@@ -4,7 +4,7 @@ Status: proposed implementation plan; only passive Slice A conformance artifacts
 
 ## Decision checkpoint
 
-Proposed ADR-0029 defines the exact object family and records `OWNER-UNRESOLVED`. No consumer may
+Proposed ADR-0030 defines the exact object family and records `OWNER-UNRESOLVED`. No consumer may
 activate until a separate accepted owner/topology ADR names the pre-registration process and its
 packaging, custody, authentication, fault, and update boundaries. SDK-produced transformations
 remain untrusted hints; post-registration or post-approval transformation is always forbidden.

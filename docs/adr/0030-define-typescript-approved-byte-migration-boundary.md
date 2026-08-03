@@ -1,4 +1,4 @@
-# ADR-0029: Define the passive TypeScript approved-byte migration boundary
+# ADR-0030: Define the passive TypeScript approved-byte migration boundary
 
 - Status: Proposed
 - Date: 2026-08-03

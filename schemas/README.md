@@ -29,5 +29,5 @@ bytes are conformance inputs, not an activated planner or accepted ADR. Regenera
 `pnpm generate:conformance` and verify it with `pnpm verify:schemas`.
 
 [`conformance/typescript-approved-byte-v0/`](conformance/typescript-approved-byte-v0/) is a
-separate nine-fixture, fourteen-mutation passive corpus for Proposed ADR-0029. It has no consumer
+separate nine-fixture, fourteen-mutation passive corpus for Proposed ADR-0030. It has no consumer
 and does not change the active scaffold or the existing v0 conformance manifest.

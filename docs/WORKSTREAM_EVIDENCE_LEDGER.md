@@ -86,16 +86,17 @@ rejected, or narrowed conclusion is retained in
 - independent `NullFs` disposition;
 - bounded attempt-bound console-port source/input and typed completion for the inline slice;
 - deferral of the ext4/raw-image parser until file artifacts;
-- construction-level Bun runtime-authority closure;
+- construction-level governed runtime-authority closure;
 - a distinct trusted launcher and exact host/guest descriptor allowlists;
 - hostile virtio-console control, queue, descriptor, backpressure, shutdown, and partial-write
   coverage; and
 - early topology testing followed by final signed/notarized-byte rebuild and revalidation.
 
 The authoritative remaining P0 and P1 campaigns are in the Gate C synthesis and roadmap. Both the
-stock-runtime and governed-construction branches of Bun P0-0 are closed as failures. The runtime
-path is now alternate-runtime investigation plus an ADR-0003 superseding decision. The reviews and
-experiments did not authorize libkrun to handle user bytes.
+stock-runtime and governed-construction branches of Bun P0-0 are closed as failures. ADR-0028 now
+selects governed `deno_core` as the first engineering candidate and preserves the runtime-neutral
+protocol, but no profile is admitted. The reviews and experiments did not authorize libkrun to
+handle user bytes.
 
 ## Phase 2 parallel-task reconciliation
 
@@ -158,6 +159,18 @@ tests rather than manifest cases.
 | PR #41, FD-native custody | `e447ed8` | Promoted the narrow raw-only FD-native API to `PATCH-CANDIDATE` after local, mutation, and four owned unsandboxed guest runs; P0-1C remained open. |
 | PR #42, passive lifecycle E1 | `504e44c` | Implemented runtime-neutral passive lifecycle types and focused tests only; E2-E5 remained unwired. |
 | PR #43, physical omission | `5448943` | Recorded `PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION` for the governed `deno_core` construction; `RUNTIME-001` remained unsupported. |
+| PR #44, Gate C/Phase 2B reconciliation | `3b5fd40` | Reconciled P0-1 through P0-4 evidence and recorded E1 as the then-current durable lifecycle boundary. |
+| PR #45, fail-closed/schema fixes | `37fee54` | Replaced panic paths with fail-closed errors and tightened schema bounds without promoting a product claim. |
+| PR #46, TypeScript approved bytes | `990d602` | Recorded `BOUNDARY-PASS; NO RUNTIME ADMISSION` and Proposed ADR-0026 for exact strip-only transformation before registration and approval. |
+| PR #47, durable lifecycle E2 | `e815179` | Added explicit fixed-store v1 lifecycle-set validation and lock-asserted v0-to-v1 migration with fault/reopen/downgrade refusal. |
+| PR #48, output ceiling gap | `0b1adee` | Recorded the deferred output `maxBytes` ceiling as a known contract gap. |
+| PR #49, SupervisorCore retirement | `6cdd1bb` | Removed the unused legacy in-memory Supervisor scaffold under accepted ADR-0027; the approval/attempt/lifecycle split is now the sole implementation path. |
+| PR #50, governed runtime packaging | `cb987e1` | Reproduced the governed `deno_core` binary/snapshot from pinned inputs on one host, retained package/SBOM/provenance evidence, and kept selection evidence at NO-GO. |
+| PRs #51-#53, quality hardening | `64cf70e`, `711e290`, `0fcea59` | Added protocol/API documentation and fail-closed SDK response validation; no runtime/backend admission changed. |
+| PR #54, durable lifecycle E3 | `4200033` | Added the unwired fixed-store lifecycle transaction port, stable effect permits, exact fault/reopen/reconciliation behavior, and no adapter calls. |
+| PR #55, CI hardening | `a5cb64a` | Added security scanning, deeper linting, ADR-index validation, and coverage gates. |
+| PR #56, V8 source/license closure | `abfdaa5` | Recorded `SOURCE-LICENSE-CLOSURE-NO-GO`: exact official source/patch identity was mapped, but mutable publisher inputs, missing build closure, and absent generated notices block governed reuse. |
+| PR #57, self-contained runtime root | `96383a8` | Recorded `STANDALONE DYNAMIC ROOT PASS; NO RUNTIME ADMISSION` for the exact 22-entry package-derived root with no ambient library/config fallback. |
 
 The merge commits, not the former draft-PR state recorded in task responses, are the integration
 checkpoints. The repository was clean at `f6de7ec` except for the user-owned untracked `.claude/`
@@ -176,29 +189,37 @@ Completed and retained:
 - approval/attempt Slices A-C: passive typed contracts and fixture verifier, the unwired colocated
   fixed authority store with atomic consume/create, and the `AttemptID`-keyed no-guest fake
   lifecycle seam; and
-- durable-lifecycle Slice E1 passive runtime-neutral types and tests, with no store write, adapter
-  call, consumer, runtime, backend, or guest.
+- durable-lifecycle Slices E1-E3: passive runtime-neutral types, explicit fixed-store v1 migration
+  and validation, and unwired ensure/read/intent/result/indeterminate/reconciliation/recovery-set
+  transactions. No E3 path calls an adapter, consumer, runtime, backend, or guest; and
+- governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
+  and standalone dynamic-root evidence. Accepted ADR-0028 selects its engineering order without
+  admitting a profile; the real Deno and `rusty_v8` forks exist with no governed branches yet.
 
 Next backend-independent work:
 
-1. Continue [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) with Slice E2
-   in the [small fake-only durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md): add
-   fixed snapshot v1, explicit lock-held v0-to-v1 migration, and reopen/corruption/downgrade refusal.
-   E1 passive types are merged; E2 through E5 do not yet replace the single-process `MemoryStore`
-   or advance a product claim.
-2. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
+1. Continue [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) with Slice E4
+   in the [fake-only durable lifecycle plan](PHASE_2B_DURABLE_ATTEMPT_LIFECYCLE_PLAN.md): migrate
+   `registeredlifecycle` from `MemoryStore` to the E3 durable transaction port, add stable fake
+   effect/instance identities and startup coordination, and rerun the death/fault/reopen matrix.
+   Slice E5 remains separate and no product or guest claim advances.
+2. In parallel, bootstrap governed branches and reviewable draft PRs in `dills122/deno` and
+   `dills122/rusty_v8` from the exact ADR-0028 upstream commits. Follow the
+   [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md); do not substitute local copies or
+   experiment patches for real fork commits/releases.
+3. Separately design reviewed Supervisor archive/compaction and replay retention. The fixed
    no-eviction authority store is not a continuous-service store.
-3. After the Supervisor language/privilege topology is selected, design authenticated typed IPC
+4. After the Supervisor language/privilege topology is selected, design authenticated typed IPC
    and production Approval verification/authorization; do not promote the conformance JSON or
    injected caller context into a product transport.
-4. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
+5. Only after those decisions, consumers, evidence composition, and the daemon aggregate service
    envelope exist may a coordinated public cutover and mixed-`Job` removal be considered.
 
 This checkpoint does not decide IPC topology, authority-store archive/compaction, production
 COSE/Swift/Keychain/user-presence signing, consumer ownership, evidence composition, or public
-cutover. The authority store lacks multi-process locking and rollback-resistant identifier/nonce
-uniqueness; the lifecycle store is single-process and non-durable. Content, evidence, runtime,
-backend, and guest remain absent from the unwired approval/attempt path.
+cutover. The authority/lifecycle snapshot lacks real multi-process locking and rollback-resistant
+identifier/nonce/effect uniqueness, while the active driver remains single-process and
+non-durable. Content, evidence, runtime, backend, and guest remain absent from the unwired path.
 
 In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
 runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port

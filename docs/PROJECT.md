@@ -34,13 +34,15 @@ candidate approval known answer, a bounded fixture-only verifier, and one unwire
 colocated fixed registration/approval/attempt store. The no-guest fake lifecycle now resolves and
 recovers only committed `AttemptID` records, revalidates exact plan and copied bindings before fake
 prepare, and retains 12 top-level focused lifecycle tests for binding, replay, concurrency, fault,
-and startup-recovery behavior. Its lifecycle store remains bounded single-process memory. There is
+and startup-recovery behavior. Its active driver still uses bounded single-process memory. There is
 no consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
-[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a future colocated
+[Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
-fake-only implementation plan. Slice E1 now provides passive runtime-neutral lifecycle record,
-effect, instance, result, binding, validation, ceiling, and defensive-copy types. It performs no
-I/O or adapter call and does not make lifecycle state durable; Slices E2 through E5 remain unwired.
+fake-only implementation plan. Slices E1 through E3 now provide the passive lifecycle contract,
+explicit fixed-store v0-to-v1 migration and validation, and unwired durable ensure/read/intent/
+result/indeterminate/reconciliation/recovery-set transactions. None calls an adapter. Slice E4 must
+replace the active `MemoryStore` driver with those transactions while preserving the no-guest fake;
+Slice E5 remains the capacity, repeated-startup, and evidence checkpoint.
 A focused unwired
 TypeScript Task 3C slice now constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
@@ -62,10 +64,12 @@ library/config fallback. The subsequent exact V8 closure trace proved the offici
 publisher job, source gitlinks, V8 base, and patch stack, but returned
 `SOURCE-LICENSE-CLOSURE-NO-GO`: mutable publisher inputs, missing GN/Ninja link metadata, and absent
 generated notices prevent an independent rebuild and complete notice closure. Independent-builder
-provenance, governed hosted-fork/release ownership, and admission also remain open. Governed
-`deno_core` is the intended first engineering direction after the hard Bun pivot; that direction
-does not select or admit the runtime. ADR-0003 remains unsuperseded and `RUNTIME-001` remains
-unsupported. The
+provenance, governed release construction, and admission remain open. Accepted
+[ADR-0028](adr/0028-select-governed-deno-core-first.md) selects governed `deno_core` as the first
+runtime engineering candidate after the hard Bun pivot and records the real `dills122/deno` and
+`dills122/rusty_v8` forks. Their governed branches and releases do not exist yet. The decision
+supersedes ADR-0003's Bun-first ordering only; it does not admit a runtime, and `RUNTIME-001`
+remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes
 close P0-1 through P0-4. P0-3 retains a backend-independent 43-vector framing candidate and a local
@@ -74,15 +78,16 @@ topology. P0-4A conditionally passed the no-host-root topology only; signing, no
 Gatekeeper, clean-host, and minimum-OS admission remain open.
 The bounded TypeScript approved-byte follow-up passed only the pre-approval byte-ownership
 question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
-fixtures and Proposed ADR-0026 binds original and emitted roles before registration. It does not
-select governed `deno_core`, choose a production transformer owner, change current contracts, or
-admit a runtime.
+fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
+experiment did not make the later ADR-0028 selection, choose a production transformer owner,
+change current contracts, or admit a runtime.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
 and [governed package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 and [V8 source/license closure](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
 and [TypeScript approved-byte result](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+and [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 
 ## Problem

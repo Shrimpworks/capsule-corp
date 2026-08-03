@@ -18,13 +18,16 @@ with a package-derived 22-entry root, explicit loader invocation, and retained f
 evidence. The exact V8 follow-up proved the official archive-to-source and four-patch V8
 relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publisher inputs,
 complete linked-component metadata, and generated notices are unavailable. Independent-builder
-and V8 source/license publication closure still fail the stronger selection-evidence question.
-Governed `deno_core` is the intended engineering direction, not an admitted profile. The later
+and V8 source/license publication closure still fail the stronger admission-evidence question.
+Accepted ADR-0028 selects governed `deno_core` as the first engineering candidate, not an admitted
+profile. The real `dills122/deno` and `dills122/rusty_v8` forks exist, but governed branches,
+builders, and releases have not been established. The later
 TypeScript approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
+[governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 

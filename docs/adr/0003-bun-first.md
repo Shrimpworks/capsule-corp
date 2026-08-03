@@ -1,6 +1,6 @@
 # ADR-0003: Bun-first, runtime-neutral protocol
 
-- Status: Accepted
+- Status: Accepted; first-runtime implementation ordering superseded by ADR-0028
 - Date: 2026-07-30
 - Gate C refinement: 2026-07-31
 - P0-0 stock-runtime refinement: 2026-08-02
@@ -11,6 +11,7 @@
 - Governed `deno_core` direction and V8 source/license refinement: 2026-08-02
 - TypeScript approved-byte refinement: 2026-08-03
 - Governed `deno_core` runtime-root and product-direction refinement: 2026-08-03
+- Governed `deno_core` selection: superseded in part by ADR-0028 on 2026-08-03
 
 ## Context
 
@@ -54,7 +55,8 @@ Therefore the runtime-neutral protocol portion of this ADR remains accepted, but
 the selected first implementation candidate**. `RUNTIME-001` remains unsupported. The next runtime
 decision must compare alternate runtimes under the unchanged prohibited-power contract and must
 supersede this ADR's Bun-first implementation choice. Until that decision is accepted, no real
-runtime profile is selected for the first executable slice.
+runtime profile is selected for the first executable slice. ADR-0028 later fulfills the
+implementation-order decision without admitting a runtime profile.
 
 The subsequent [Deno-family experiment](../../experiments/gate-c-deno-runtime-authority/RESULTS.md)
 did not produce that superseding decision. Full Deno v2.9.4 retained initial-static-graph, Worker,
@@ -74,8 +76,8 @@ refused. This removes the physical-built-in-registration objection for a governe
 construction, but it does not supply the excluded TypeScript transformation, independently
 reconstructible runtime
 package, complete runtime-profile admission, or external-isolation composition. The earlier
-full-Deno and unpatched-`deno_core` NO-GO remains historical fact, no runtime is selected, this ADR
-is not superseded, and `RUNTIME-001` remains unsupported.
+full-Deno and unpatched-`deno_core` NO-GO remains historical fact. At that checkpoint no runtime was
+selected and this ADR was not superseded; `RUNTIME-001` remained unsupported.
 
 The subsequent [reproducible-package follow-up](../../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 closed the prior local builder-image ambiguity for that bounded candidate. A digest-pinned official
@@ -85,17 +87,18 @@ matched completely. This is not independent-builder provenance. The exact prebui
 lacks a complete corresponding source/third-party-notice record, the candidate archive depends on
 an unbundled dynamic Bookworm root, and production TypeScript ownership/wiring plus
 external-isolation/profile admission remain open. The experiment therefore returned NO-GO for
-runtime-selection evidence. No runtime is selected, this ADR is not superseded, and `RUNTIME-001`
-remains unsupported.
+runtime-selection evidence. At that checkpoint no runtime was selected and this ADR was not
+superseded; `RUNTIME-001` remained unsupported.
 
 The exact [V8 source/license follow-up](../../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
 then bound the official Linux/arm64 asset to its release job, exact `rusty_v8`/V8 source revisions,
 Chromium V8 base, and four-patch Deno V8 stack. It returned `SOURCE-LICENSE-CLOSURE-NO-GO` because
 mutable publisher inputs, missing exact GN/Ninja link metadata, and absent generated notices block
-an independent rebuild and complete source/notice publication. Product direction is now governed
+an independent rebuild and complete source/notice publication. Product direction is governed
 `deno_core` as the intended first engineering candidate, with Node reserved for a later
-portability/contingency proof. This direction does not select or admit a runtime profile,
-supersede this ADR, or change `RUNTIME-001`.
+portability/contingency proof. ADR-0028 now accepts that implementation ordering and supersedes
+this ADR's Bun-first ordering only. It does not select or admit a runtime profile or change
+`RUNTIME-001`.
 
 The bounded [self-contained runtime-root follow-up](../../experiments/gate-c-deno-core-runtime-root/RESULTS.md)
 closed the candidate archive's ambient Bookworm dynamic-root dependency. The exact governed
@@ -107,12 +110,12 @@ containers produced the same normalized root bytes. This is bounded construction
 independent-builder provenance, external-isolation validation, or profile admission.
 
 After the hard Bun pivot, governed `deno_core` is the intended first runtime engineering direction.
-That direction does not select or admit a runtime profile and does not promote `RUNTIME-001`.
-Continuation requires a real governed upstream fork and release/provenance workflow rather than a
-maintained copied registry tree or experiment-only patch stack, plus closure of the remaining V8
-source/notices, production transformation and protocol ownership, installed-root custody, external
-isolation, and full-profile evidence. The destination owner and repository for that fork remain an
-explicit governance decision; this experiment did not create one prematurely.
+ADR-0028 accepts that direction and records the real `dills122/deno` and `dills122/rusty_v8`
+forks. That decision does not select or admit a runtime profile and does not promote
+`RUNTIME-001`. Continuation requires governed branches and a release/provenance workflow in those
+forks rather than a maintained copied registry tree or experiment-only patch stack, plus closure
+of the remaining V8 source/notices, production transformation and protocol ownership,
+installed-root custody, external isolation, and full-profile evidence.
 
 The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
 passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
@@ -120,7 +123,8 @@ deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-
 which binds original and executable bytes before registration and forbids post-approval
 transformation. The experiment did not choose a production transformer owner, change product
 contracts, add a `deno_core` module loader, or close packaging, external isolation, or full runtime
-admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
+admission. ADR-0028 supersedes only this ADR's Bun-first ordering; `RUNTIME-001` continues to
+refuse.
 
 ## Consequences
 
@@ -132,5 +136,6 @@ admission. This ADR remains unsuperseded and `RUNTIME-001` continues to refuse.
   profile powers cause admission refusal.
 - Governed `deno_core` is the intended first runtime engineering direction after the Bun pivot.
   Its physical-op, reproducible-package, V8 source/license, TypeScript approved-byte, and
-  self-contained-root results narrow the investigation but do not select or admit a runtime.
+  self-contained-root results narrow the investigation but do not admit a runtime. ADR-0028 now
+  selects the engineering order and fork-governance direction.
   Capsule does not relax the advertised authority contract to preserve implementation sequencing.

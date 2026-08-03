@@ -1,9 +1,10 @@
 # Phase 2B durable attempt lifecycle implementation and conformance plan
 
-Status: Slice E1 passive lifecycle contracts implemented; Slices E2 through E5 unwired. Proposed
-ADR-0025 selects one colocated Supervisor snapshot and transaction domain for future durable
-`AttemptID`-keyed fake lifecycle state. The E1 types perform no I/O or adapter call and do not make
-lifecycle state durable. No consumer, IPC, evidence, runtime, real backend, or guest is implemented.
+Status: Slices E1 through E3 implemented; Slices E4 and E5 remain. Proposed ADR-0025 selects one
+colocated Supervisor snapshot and transaction domain for durable `AttemptID`-keyed fake lifecycle
+state. E2 provides explicit snapshot-v1 migration/open validation and E3 provides unwired durable
+transactions; no adapter call uses them yet. No consumer, IPC, evidence, runtime, real backend, or
+guest is implemented.
 
 Normative proposal:
 [ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md).
@@ -262,12 +263,10 @@ a permissive fallback.
 
 Acceptance: passive tests only; no store write, adapter call, consumer, or guest.
 
-Implemented checkpoint: `internal/execution/lifecyclestate` now contains the closed passive types,
-validations, ceilings, domain checks, and defensive-copy behavior with focused local tests. This is
-the complete E1 boundary only. E2 migration/storage, E3 transactions, E4 durable fake driver and
-startup, and E5 capacity/coordination evidence do not exist yet.
+Implemented checkpoint: `internal/execution/lifecyclestate` contains the closed passive types,
+validations, ceilings, domain checks, and defensive-copy behavior with focused local tests.
 
-### Slice E2: fixed snapshot v1 and explicit migration
+### Slice E2: fixed snapshot v1 and explicit migration — merged in PR #47
 
 - Add lifecycle collection/set digest and v1 validation.
 - Add explicit lock-held v0-to-v1 migration with pre/post-rename fault oracles.
@@ -275,7 +274,12 @@ startup, and E5 capacity/coordination evidence do not exist yet.
 
 Acceptance: reopen/migration/corruption tests pass; lifecycle still cannot call the fake backend.
 
-### Slice E3: transactional lifecycle checkpoints
+Implemented checkpoint: the fixed store has an explicit read/validate v1 format, lifecycle-set
+digest, strict cross-link validation, and lock-asserted v0-to-v1 migration with confirmed and
+indeterminate fault oracles. V0 and v1 readers refuse the other version and no automatic migration,
+creation, downgrade, or repair path exists.
+
+### Slice E3: transactional lifecycle checkpoints — merged in PR #54
 
 - Add ensure/read/begin/confirm/indeterminate/reconcile/recovery-set transactions.
 - Reserve lifecycle capacity when attempt creation commits or prove from matched ceilings that it
@@ -283,6 +287,11 @@ Acceptance: reopen/migration/corruption tests pass; lifecycle still cannot call 
 - Inject confirmed and indeterminate persistence failures at every transaction boundary.
 
 Acceptance: no transaction test calls a backend; every intent and after-effect oracle is exact.
+
+Implemented checkpoint: `registrationstate` now exposes the closed ensure/read/begin/confirm/
+indeterminate/reconcile/recovery-set transaction port with stable effect permits, defensive copied
+bindings, exact owner and instance checks, capacity reservation, fault fencing, reopen validation,
+and sorted `AttemptID` recovery. The transaction package imports and calls no lifecycle adapter.
 
 ### Slice E4: fake-only durable driver and startup coordinator
 
@@ -352,7 +361,8 @@ The fake-only fixed-store slice does not satisfy any of these:
    evidence. No real adapter is authorized by this plan.
 5. **Public cutover:** accepted ADR-0019/0024 dependencies as applicable, production Approval
    verification, authenticated IPC, consumer ownership, evidence composition, daemon aggregate
-   envelope, and atomic removal of dormant direct-execution paths.
+   envelope, and atomic mixed-`Job` cutover. The dormant `SupervisorCore` path was already removed
+   in PR #49 under ADR-0027.
 
 No blocker may be inferred complete from fixed-file or fake-backend evidence.
 

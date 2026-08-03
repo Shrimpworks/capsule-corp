@@ -164,21 +164,20 @@ bounded result and enforcement evidence</code></pre>
         <dl class="foundation">
           <div class="foundation__item">
             <dt>Current lifecycle work</dt>
-            <dd>No-guest fake lifecycle</dd>
+            <dd>Durable no-guest fake lifecycle</dd>
             <dd class="foundation__note">
-              An unwired in-memory lifecycle resolves a registered plan by ID and exercises create,
-              start, observe, cleanup, recovery, and fault states through a fake backend that is
-              hard-coded to create no guest.
+              An unwired Go path registers exact bytes, consumes a candidate approval into one
+              attempt, and records fake lifecycle intents, effects, cleanup, recovery, and capacity
+              state in one fixed local snapshot. The fake backend is hard-coded to create no guest.
             </dd>
           </div>
           <div class="foundation__item">
             <dt>Not yet connected</dt>
-            <dd>No complete execution path</dd>
+            <dd>No product execution path</dd>
             <dd class="foundation__note">
-              A product approval and attempt path is incomplete. Candidate state-machine code exists
-              separately, but it is not connected to the registered-plan fake lifecycle.
-              Authenticated local IPC, the Broker UI, content handling, composed evidence, and an
-              admitted real backend and runtime boundary remain incomplete or under investigation.
+              The internal mechanics have no product consumer. Authenticated local IPC, production
+              Broker signing and UI, content handling, composed evidence, an admitted runtime and
+              backend, and a signed installed topology remain incomplete or under investigation.
             </dd>
           </div>
         </dl>
@@ -235,6 +234,11 @@ bounded result and enforcement evidence</code></pre>
           <a href="https://github.com/dills122/capsule-corp/blob/main/docs/PROJECT.md">
             <span>Project definition</span>
             <span>Purpose, current status, scope, principles, and success criteria</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a href="https://github.com/dills122/capsule-corp/blob/main/docs/SECURITY_OVERVIEW.md">
+            <span>Security overview</span>
+            <span>Plain-language guide to the layers, mechanisms, evidence, and limitations</span>
             <span aria-hidden="true">↗</span>
           </a>
           <a href="https://github.com/dills122/capsule-corp/blob/main/docs/ARCHITECTURE.md">

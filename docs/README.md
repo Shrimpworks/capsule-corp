@@ -4,12 +4,14 @@ Capsule is a security boundary under design. Read these documents before changin
 policy, execution, identity, content, runtimes, backends, updates, or evidence:
 
 1. [Project definition](PROJECT.md) — scope, principles, agreed direction, and success criteria
-2. [Architecture](ARCHITECTURE.md) — daemon/Broker/Supervisor authority and storage boundaries
-3. [Technical design](TECHNICAL_DESIGN.md) — integrated v0 protocol, trust, lifecycle, and evidence
-4. [Threat model](security/THREAT_MODEL.md) — adversaries, invariants, attack surface, and severity
-5. [Feasibility spikes](FEASIBILITY_SPIKES.md) — disposable evidence gates before schema freeze
-6. [Roadmap](ROADMAP.md) — risk-reduction order and phase exit evidence
-7. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
+2. [Security overview](SECURITY_OVERVIEW.md) — approachable explanation of the layers, mechanisms,
+   evidence, and current limitations
+3. [Architecture](ARCHITECTURE.md) — daemon/Broker/Supervisor authority and storage boundaries
+4. [Technical design](TECHNICAL_DESIGN.md) — integrated v0 protocol, trust, lifecycle, and evidence
+5. [Threat model](security/THREAT_MODEL.md) — adversaries, invariants, attack surface, and severity
+6. [Feasibility spikes](FEASIBILITY_SPIKES.md) — disposable evidence gates before schema freeze
+7. [Roadmap](ROADMAP.md) — risk-reduction order and phase exit evidence
+8. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
 
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and

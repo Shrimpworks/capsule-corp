@@ -41,6 +41,8 @@ after their evidence gates.
 - Installation manifest, component identities, trust epochs, policy, and quarantine state
 - Pinned TUF roots, verified metadata checkpoints, local trust snapshots, and revocation state
 - Registered plan bytes/digests, approvals, nonces, and grant-consumption ledger
+- Original authoring bytes, emitted executable bytes, transformation objects, prepared source-set
+  lifecycle, and the proposed Source Preparer's immutable-store integrity and availability
 - Backend handles, cleanup leases, guest configuration, and management channels
 - Other jobs' source, inputs, outputs, state, and cached data
 - Runtime bundles, review attestations, registry activation, and backend validation records
@@ -86,6 +88,13 @@ For validated-local posture, Capsule initially trusts:
 - accepted trust roots, release processes, reviewers, and exact validation records within their
   delegated scopes;
 - the exact isolation backend implementation/configuration after it passes required evidence.
+
+If the proposed TypeScript profile is admitted, Capsule additionally trusts the enrolled Source
+Preparer native front, Go core, immutable-store implementation, and—until a child boundary is
+proven—Node/Amaro worker to choose emitted JavaScript and preparation claims faithfully before plan
+construction. Supervisor and Broker validation proves internal byte/digest/media/path/record
+consistency, not correct erasure or semantic equivalence. That planning and approval-understanding
+trust consequence must be rendered to the approver; it is not independent attestation.
 
 The daemon is trusted for plan correctness in ordinary operation, but the design explicitly limits
 what its compromise can authorize or disclose.
@@ -164,6 +173,13 @@ containers, relevant entitlements, and Supervisor-only backend control.
 
 PID, path, process name, same-user mode bits, or a diagram alone do not establish identity or
 containment. Broad shared app groups are disallowed.
+
+The proposed Source Preparer's sole role-namespaced store is an ownership topology, not a security
+boundary by itself. TypeScript P1 requires an exact OS-enforced protected container with the Source
+Preparer as its single enrolled member and negative open/link/replace/map/rename/handle-retention
+evidence for daemon, Broker, Supervisor, updater, stale component, and unrelated same-user process.
+Its one-shot Node worker also requires an exact child profile and process-tree cleanup proof; fixed
+argv/environment/cwd/descriptors alone do not prevent inherited same-user or parent authority.
 
 ### Supervisor to backend
 
@@ -249,7 +265,11 @@ enters `repair-required` rather than accepting whichever components start.
   approval; transformation from only an original digest after approval is forbidden.
 - Proposed ADR-0032 assigns those pre-registration bytes to one enrolled Source Preparer store.
   The daemon cannot mint a stored source set; the Supervisor and Broker independently validate all
-  digest/media/path/record relationships; neither validation claims semantic equivalence.
+  digest/media/path/record relationships; neither validation proves the selected toolchain ran,
+  that erasure was faithful, or semantic equivalence. Approval must distinguish every original and
+  executable role, show the fixed toolchain/options/record identity and dispositions, permit
+  bounded inspection of both byte roles, and disclose that executable selection is trusted rather
+  than independently reproduced.
 - Approval binds registration, installation, epoch, expected Supervisor, attempt nonce, purpose,
   audience, and expiry.
 - Approval is atomically consumed with attempt creation before backend side effects.
@@ -441,6 +461,15 @@ The detailed blast-radius and response matrix is
 is the Supervisor because it owns launch authority and enforcement claims. Supervisor compromise is
 not concealed by the presence of a valid user approval.
 
+A compromised proposed Source Preparer can choose mutually consistent executable JavaScript and
+preparation metadata before approval, retain or disclose agent-supplied source, exploit any omitted
+cross-role/version/install/epoch/source/path/media/digest/options/profile/record binding, deny
+preparation, and corrupt its own unregistered store state. It cannot thereby create Approval or
+Supervisor-evidence signatures, register or launch a plan, read Broker-only content, clear
+quarantine, or replace already registered bytes without a digest mismatch. Exact blast radius and
+P1 stop conditions are retained in the
+[P0 authority/TCB checkpoint](../TYPESCRIPT_SOURCE_PREPARER_P0_AUTHORITY_REVIEW.md).
+
 ### Abuse cases and required tests
 
 | Category | Cases |
@@ -450,6 +479,7 @@ not concealed by the presence of a valid user approval.
 | Cryptography | non-canonical bytes, wrong type/purpose/audience/epoch, `none`/algorithm confusion, key substitution, malformed DER/raw/high-S handling |
 | Identity/IPC | unsigned/same-team-wrong-ID/stale/debugged peer, wrong user/session, Keychain/store access, PID/path/name substitution |
 | Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume, synthetic input, Accessibility automation, overlay/focus substitution, signing without configured user presence |
+| Source preparation | compromised front/Go/Node/store, fabricated coherent emission, original/executable/profile/options/record substitution, cross-role/version/install/epoch/path/media replay, protected-store same-user access, stale-process handle retention, worker store/package/network/process/native-loading access, cap-plus-one, cancellation/death/orphan/stdio flood, genesis/update/rollback/release without authority |
 | Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
 | Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |
 | Process/runtime | workers/fork bomb, signals, inspector, orphan processes, subprocess APIs, native addons, FFI, macros, auto-install, `.env`, dynamic import abuse, completion-descriptor forgery |

@@ -32,6 +32,13 @@ role-separated immutable source set. It does not implement that component, accep
 ADR-0030, freeze `ExecutionPlan` v1 or `RegisterPlanV1`, activate a consumer, admit a runtime, or
 establish production process isolation.
 
+The retained
+[P0 authority/TCB checkpoint](../TYPESCRIPT_SOURCE_PREPARER_P0_AUTHORITY_REVIEW.md) adversarially
+reviewed this topology before passive P1 contracts or bytes are frozen. Its decision is a bounded
+**P1 HOLD**: the topology remains the least-dangerous viable TypeScript option, but it is not yet
+implementable or evidenceable without the entry criteria and stop conditions recorded below. This
+ADR therefore remains Proposed.
+
 ## Proposed decision
 
 ### One deliberately enrolled planning component
@@ -61,6 +68,13 @@ Preparer never talks to a backend or guest, and the Supervisor never asks it to 
 The Source Preparer has no Installation-root, Approval, Supervisor-evidence, content, TUF, or
 backend key. It cannot approve, register a plan, consume a grant, create an attempt, launch a guest,
 clear trust state, release user-only content, or sign an enforcement claim.
+
+It also has no installation-root or trust-snapshot signing key, Approval private key or keychain
+access group, Supervisor-evidence private key, content-unwrapping key or content access group,
+TUF-root/update signing key, runtime/backend credential, daemon authority database, or shared app
+group. Its package, store, sockets, audit handles, and temporary objects must not be reachable
+through a daemon/Broker/Supervisor access group. Absence is a signed-manifest and installed-artifact
+property, not an assumption derived from a process name or UID.
 
 ### Exact package and transformer custody
 
@@ -92,6 +106,12 @@ package, option, path, or output destination. Standard input and output carry on
 frame; standard error is drained to a fixed 16,384-byte diagnostic sink and is never returned or
 persisted as authoritative data. Only fixed refusal codes cross the parent boundary. The worker is
 killed on protocol violation, output cap, cancellation, or deadline.
+
+P0 does not yet accept the worker as less trusted than its parent. Until a platform-specific child
+profile proves that the worker cannot open the source store or package tree, inherit authority,
+spawn or retain descendants, load native code, use the network, attach to peers, or leave live
+temporary state, compromise of Node/Amaro is compromise of the complete Source Preparer planning
+and store TCB. Merely fixing argv, environment, cwd, and inherited descriptors is insufficient.
 
 The exact source archive is retained as governed reproduction material; it is not parsed or built
 on the live preparation path. A different Node, Amaro, platform, architecture, executable,
@@ -174,6 +194,15 @@ manifest data, never a store path or authority. Every store accessor reopens and
 role before returning a fresh copied buffer. No caller receives an mmap, mutable slice, file
 descriptor, bookmark, URL, or host path.
 
+“Only writer” and “protected private store” are security claims, not a pathname convention. A sole
+role-namespaced store is accepted only as the ownership topology. It is rejected as a same-user
+security boundary unless the P1 platform probe identifies one exact OS-enforced protected
+container whose single enrolled member is the Source Preparer and proves negative access from the
+daemon, Broker, Supervisor, updater, a stale Source Preparer, and an unrelated same-user process.
+Mode bits, pathname secrecy, PID checks, code signing without a protected container, and same-Team
+identity do not meet this requirement. If the probe cannot establish the boundary, TypeScript
+preparation is NO-GO under this ADR; the bounded fallback is JavaScript-only admission.
+
 The store accepts at most 32 prepared-but-unregistered sets, 256 registered nonterminal sets,
 4,096 lifecycle/tombstone records, and 536,870,912 exact blob bytes. It never evicts a prepared or
 registered set to admit another. Admission reserves the worst-case original plus emitted bytes and
@@ -189,6 +218,13 @@ references. Supervisor cohort eligibility under Proposed ADR-0031 does not by it
 source deletion: any explicit reproduction/evidence retention hold must already be discharged or
 transferred to a separately reviewed immutable source archive. Unknown or inconsistent references
 enter `quarantined`; startup never recreates an empty store or treats absence as release authority.
+
+P1 may freeze refusal, quarantine, tombstone, and reconciliation objects, but it must not freeze a
+positive blob-reference decrement until the archive/retention rule selects exactly one durable
+authority for release. Store genesis and migration likewise require a sealed, installer-owned,
+installation/epoch/store-format-bound descriptor. Neither an ordinary first open, a daemon request,
+nor a mutable updater request may authorize store creation, repair, migration, rollback, or
+quarantine clearance.
 
 ### Registration, approval, and execution integration
 
@@ -222,6 +258,14 @@ and returns the exact plan plus bounded copied source objects to the Broker. The
 Swift decoders repeat the complete relationship checks and render the original/executable roles
 and profile before signing. It trusts neither daemon prose nor a Source Preparer display string.
 
+For each ordered logical path, approval rendering must distinguish original and executable media,
+length, and digest; label pass-through versus strip-only transformation; show the exact profile,
+Node/Amaro/bootstrap identity, normalized options, record-set identity, and diagnostics/source-map/
+URL dispositions; and offer bounded inspection of both copied byte roles. It must warn that the
+Source Preparer selected the executable JavaScript and that independent validators prove internal
+consistency, not faithful TypeScript erasure or semantic equivalence. A Source Preparer-generated
+summary is never approval text.
+
 For execution, `ReadExecutableSourceSetV1` accepts only the Supervisor-authenticated registration
 and committed attempt identities derived from retained state. It returns only the executable
 manifest and executable file bytes. The Supervisor rehashes them against the registered plan before
@@ -239,12 +283,24 @@ aggregates plus a 2,359,296-byte bounded framing/object/staging allowance. The g
 reservation is therefore 8,912,896 bytes. There is no unbounded queue; saturation refuses before
 body copy or worker launch.
 
+Those numbers remain illustrative until P1 derives request, response, CBOR object, staging,
+diagnostic, per-connection, global reservation, and tombstone maxima from canonical bytes. Every
+admitted connection and read must reserve its complete worst case before copying. No partial copy,
+worker spawn, staging object, lifecycle transition, or nonce binding may survive a cap-plus-one,
+reservation failure, or saturation refusal.
+
 `PrepareSourceSetV0` has a ten-second end-to-end deadline, including a five-second worker deadline
 and a five-second validation/commit budget. Read, retain, abandon, and release methods have a
 two-second deadline. These are fail-closed protocol ceilings, not performance claims. Cancellation
 before commit terminates the worker and discards verified staging; cancellation or response loss
 after commit returns through idempotent replay. A timed-out caller never authorizes the service to
 publish a second set.
+
+Cancellation is response control after an authoritative transition: it cannot undo a committed
+publish, registration intent, retain, release, or quarantine transition. The caller must recover
+the exact result through the same idempotency or intent binding. Before a transition, cancellation
+must kill the exact worker process tree, drain bounded stdio, close every mapping and descriptor,
+unlink only transaction-owned staging, release reservations, and leave no authority state.
 
 Replies and logs contain only opaque IDs, fixed component/build identifiers, byte/count metrics,
 and closed codes such as `MALFORMED`, `UNSUPPORTED`, `BINDING`, `CAPACITY`, `TRUST_STATE`,
@@ -262,6 +318,12 @@ PID/start/code identity. After parent death, recovery terminates only that exact
 never a PID/path match alone, and resumes or aborts from store truth. A crash before publication
 has no visible set; a crash after publication returns the same set on idempotent replay.
 
+The spawn protocol must not leave an unbound live-child interval: the parent reserves and records a
+non-authoritative spawn nonce before launch, binds the returned process handle and immutable code
+identity before source is sent, and refuses preparation until recovery can prove the exact child is
+dead. PID alone is never identity. All pipes are nonblocking and drained under fixed caps so a
+stderr or stdout flood cannot deadlock cleanup.
+
 An identity, profile, Node, bootstrap, entitlement, or store-format change is a prepared trust-epoch
 transition. Preparation and new registration stop; active attempts drain or are explicitly
 reconciled; old connections close; store migration uses lock-held validate/write/sync/rename/sync/
@@ -269,6 +331,11 @@ reopen ordering; and all peers accept one exact new epoch before calls reopen. O
 new stores. Before epoch commit, only an explicitly reversible prepared transition may restore the
 old world; afterward repair is forward-only. Existing registered sets remain exact executable-byte
 authority across a compatible migration and need no re-transformation.
+
+Old-epoch services and connections lose store access before the new epoch accepts calls. A stale
+process may not retain an open store descriptor or mapping across transition. Incompatible
+store/profile changes require drain or an explicitly reviewed dual-reader migration; silent
+reinterpretation and rollback to an older writer are forbidden.
 
 Every retained set contains enough exact bytes and identities for offline reproduction: original
 and emitted files, all ADR-0030 objects, profile/options, Source Preparer release/bootstrap identity,
@@ -328,21 +395,35 @@ smaller authority topology.
 - A compromised daemon can submit malicious original source and cause denial of service, but it
   cannot itself mint a Source Preparer source set, select transformer options, or substitute
   emitted bytes after registration.
-- Compromise of the Source Preparer or Node worker can corrupt preparation claims and cause denial
-  of service. It still cannot approve, register, launch, use operational keys, bypass Supervisor
-  hard safety, or substitute bytes without changing the registered digest. This new component and
-  its parser/store are part of the planning and approval-understanding TCB.
+- Compromise of the native front, Go core, store implementation, or—until separately proven
+  confined—Node/Amaro worker can choose mutually consistent emitted JavaScript, profile/options,
+  records, digests, and prepared-set claims before plan construction; retain or disclose
+  agent-supplied proposal source; replay within any missing binding; exhaust bounded availability;
+  or destroy its own unregistered state. It still cannot approve, register, launch, use operational
+  keys, clear quarantine, read Broker-only content, or replace bytes after registration without a
+  digest mismatch. The entire component is planning and approval-understanding TCB.
 - Supervisor and Broker validators establish exact byte/digest/media/path/record consistency; they
-  do not independently implement TypeScript erasure or prove semantic equivalence.
+  do not independently implement TypeScript erasure, prove toolchain behavior, or establish
+  semantic equivalence. Deterministic independent reproduction is therefore not required for exact-
+  byte approval, but approval must expose this trusted-not-proven consequence. If faithful erasure
+  despite Source Preparer compromise becomes a required property, this topology is NO-GO and a new
+  ADR is required.
 - Source confidentiality is not added: proposal source is agent-facing data. This decision grants
   no access to Broker user-only inputs or outputs.
 - No live host path, transformer capability, original TypeScript, or post-registration option
   reaches the runtime or backend.
 
-Acceptance remains blocked on the passive method/store/field-authority fixtures, exact calculated
-object and XPC maxima, a fault-injected fixed-store implementation, governed Source Preparer/Node
-packaging, ad-hoc then Apple-signed installed identity and sandbox evidence, update/rollback tests,
-independent Go/Swift validators, and ADR-0030's atomic plan/registration/approval/lifecycle
-cutover. Source-reproduction archive/retention policy remains a separate blocker before blob
-release. The exact implementation and falsifiable evidence plan is
+P1 remains on hold until every entry criterion in the P0 checkpoint is satisfied without weakening
+the same-user adversary or moving responsibility into another component. In particular, P1 needs
+positive protected-container and child-confinement probe results, a closed genesis/update channel,
+canonical Source Preparer objects and recursive field-authority verification, exact calculated
+object/XPC/resource maxima, settled cancellation/death/cleanup semantics, and a selected retention
+rule before positive release is frozen. Any failed platform boundary, required daemon/Broker/
+Supervisor/runtime transformation, generic helper, live-path requirement, or unbounded/native-
+loading worker design is a stop condition and requires JavaScript-only admission or a new ADR.
+
+After those gates, acceptance remains blocked on a fault-injected fixed-store implementation,
+governed Source Preparer/Node packaging, ad-hoc then Apple-signed installed identity and sandbox
+evidence, update/rollback tests, independent Go/Swift validators, and ADR-0030's atomic plan/
+registration/approval/lifecycle cutover. The exact implementation and falsifiable evidence plan is
 [TypeScript Source Preparer implementation, conformance, and fault plan](../TYPESCRIPT_SOURCE_PREPARER_PLAN.md).

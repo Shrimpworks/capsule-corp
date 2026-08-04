@@ -7,11 +7,11 @@ scope-separated global/segment indexes, typed hot/archive locations and count eq
 distinct migration-genesis checkpoint. Generated answers and before/after semantics are retained in
 [the F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). It performs no file I/O or
 authority mutation. Proposed ADR-0031 still defines the unimplemented immutable retained archive
-and selects a minimal fixed-store checkpoint only as the conformance oracle. The stateful F2
-review then stopped before v2 bytes because a complete valid v1 source may contain one committed
-attempt and no lifecycle record, while the corrected v2 projection requires a lifecycle state on
-every attempt and equates lifecycle-index count with attempt-index count. The exact witness is
-retained in the [F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No migration,
+and selects a minimal fixed-store checkpoint only as the conformance oracle. The follow-on valid-v1
+mapping contradiction is now passively resolved with an explicit absent/present lifecycle union on
+attempt entries and independent lifecycle counts. The exact real-v1 witness, alternative analysis,
+decision, and fault plan are retained in the
+[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No migration,
 full v2 verifier, archive write/activation, retained lookup,
 consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
 deployment, or guest is implemented by this plan.
@@ -55,8 +55,8 @@ only. They implement closed generation/ordinal/digest/index/descriptor/checkpoin
 scope- and kind-separated record locations, exact candidate limits and generated known answers,
 defensive-copy behavior, and deterministic complete-cohort selection with `RecoveryAttemptIDs`
 exclusion. They do not open or write a store or segment, migrate v1, reconstruct a v2 archive set,
-release hot capacity, route lookup, or invoke the fake. Stateful F2 is blocked pending another
-passive format decision.
+release hot capacity, route lookup, or invoke the fake. The passive mapping decision is closed;
+stateful F2 remains unimplemented.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
@@ -111,7 +111,9 @@ The v2 envelope is closed and contains exactly:
 - sorted archive descriptors and descriptor-set digest;
 - one scope-tagged `retained-global` registration, approval, attempt, nonce, effect, instance,
   approval-replay, and attempt-replay projection plus one digest per index; every entry binds a
-  typed record location whose `hot` and `archive` arms are mutually exclusive;
+  typed record location whose `hot` and `archive` arms are mutually exclusive; every attempt also
+  binds an explicit lifecycle `absent` arm or a `present` arm with lifecycle state, separately typed
+  lifecycle-record location, and full-record digest;
 - an effect-tombstone coverage tag fixed to `visible-v1-seed-plus-all-v2-issued`, seed count, and
   seed digest;
 - one combined retained-global index digest;
@@ -158,6 +160,12 @@ positive segment/cohort/record ordinals in a referenced archive. The reconstruct
 - a tombstone without a full record;
 - a full record without every required tombstone; and
 - hot/archive overlap or a cross-cohort reference.
+
+Attempt/lifecycle reconstruction is a total one-to-zero-or-one join. Every attempt is indexed.
+Only a decoded lifecycle record may create a present arm; it must use the same hot/archive world as
+its attempt and the same segment/cohort when archived. An absent arm carries no state, location, or
+digest, remains hot active startup work, and cannot have effect or instance entries. Lifecycle
+counts and location counts derive only from present arms.
 
 For every family it also requires:
 
@@ -331,6 +339,9 @@ Required cases:
 - every v1 registration/approval/attempt/lifecycle identity reconstructs at its typed canonical hot
   ordinal, retained-global indexes/counts equal hot/total counts, and archived/descriptor/segment-
   derived counts remain zero;
+- a valid v1 attempt without lifecycle reconstructs on the absent arm, remains in
+  `RecoveryAttemptIDs`, contributes one attempt and zero lifecycles, and receives no lifecycle
+  state, record location, effect, or instance;
 - v2 records the exact count/digest of nonzero effect IDs visible at migration and never claims
   coverage for overwritten pre-v2 fake IDs;
 - migration recomputes the genesis checkpoint under its distinct domain and refuses an activation-
@@ -540,7 +551,19 @@ checkpoint cannot produce the required generation-one migration genesis. The ret
 Acceptance: passive types, digests, fixtures, and tests only. No v2 store bytes or lifecycle
 behavior changed.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier — blocked
+### Passive F2 v1 mapping correction — complete
+
+- Add the closed absent/present lifecycle union to retained attempt entries.
+- Derive lifecycle total and location counts only from present arms.
+- Bind a present lifecycle to its own typed record location/full-record digest and require the same
+  hot/archive world as its attempt.
+- Retain generated all-present and missing-lifecycle genesis answers plus the original real-v1
+  executable witness.
+
+Acceptance: passive types, digests, fixtures, and tests only. No v2 store bytes or lifecycle
+behavior changed.
+
+### Slice F2: explicit fixed-store v2 migration and full verifier — next
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.
@@ -549,13 +572,11 @@ behavior changed.
 Acceptance: no cohort leaves hot state and no archive segment exists. V1 behavior and E5 tests stay
 unchanged.
 
-Stop result: the current v1 crash oracle accepts and reopens a created attempt with no lifecycle
-record. The passive v2 `AttemptIndexEntry` cannot encode that absence, and its derived counts make
-one attempt imply one lifecycle. See the
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and
-`TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection`. No stateful F2 code may proceed until
-the passive contract represents this world without invented state or a separately reviewed
-migration restriction/ceremony.
+Entry condition: the passive contract now represents the valid v1 crash state without invention.
+See the [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md),
+`TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts`, and
+`TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection`. Stateful work must follow the exact
+join, no-adapter, downgrade, and confirmed/indeterminate matrix retained there.
 
 ### Slice F3: one immutable segment prepare/verify/activate transaction
 
@@ -608,6 +629,8 @@ Retain all current Slice B/E5 tests and add exact equivalents of:
 - `TestArchivePassiveKnownAnswersAndDefensiveCopies`;
 - `TestArchiveFormatCorrectionKnownAnswers`;
 - `TestArchiveRecordLocationsAreKindedDiscriminatedAndBoundIntoIndexes`;
+- `TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts`;
+- `TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection`;
 - `TestFixedStoreV1ToV2MigrationAndDowngradeRefusal`;
 - `TestFixedStoreV2ReconstructsEveryArchiveIndex`;
 - `TestArchiveSegmentPublishesBeforeActiveReference`;

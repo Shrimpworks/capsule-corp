@@ -101,11 +101,11 @@ construct the specified generation-one migration checkpoint. The passive
 [F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
 segment index domains, typed hot/archive record locations and counts, a distinct migration-genesis
 checkpoint, and generated known answers. It writes no store bytes and changes no v1 behavior. The
-stateful F2 review found one further contradiction and stopped before v2 bytes: v1 validly retains
-a committed attempt before lifecycle establishment, while the corrected v2 attempt index requires
-a lifecycle disposition and mechanically equates attempt and lifecycle counts. The executable
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) is retained. The fixed-store v2
-migration/full verifier remains unimplemented pending another passive contract decision.
+follow-on valid-v1 missing-lifecycle contradiction is now also passively resolved with a closed
+absent/present lifecycle union on each attempt entry and lifecycle counts derived only from present
+records. The executable [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md)
+retains the real committed-attempt-before-lifecycle witness and exact `attempts = 1, lifecycles =
+0` genesis answer. The fixed-store v2 migration/full verifier remains unimplemented.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

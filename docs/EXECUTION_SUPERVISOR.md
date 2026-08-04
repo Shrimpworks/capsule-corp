@@ -308,10 +308,10 @@ The Supervisor publishes an immutable full-record segment before activating a v2
 exact registration/approval/attempt/nonce/effect/instance/replay tombstones. Referenced history is
 not deletable, restore without an independent latest checkpoint is rollback-uncertain, and the
 finite fixed-store checkpoint remains unsuitable for consumers or continuous service.
-The stateful F2 review stopped before any v2 representation or migration was added because valid
-v1 may contain a committed attempt with no lifecycle record, while the corrected v2 attempt index
-requires a lifecycle disposition and derives lifecycle count from attempt count. See the
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md).
+The follow-on valid-v1 mapping contradiction is now passively resolved with a closed lifecycle
+absent/present union on attempt entries and lifecycle counts derived only from present records. See
+the [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No v2 representation,
+migration, or full verifier has been added.
 
 [Proposed ADR-0033](adr/0033-select-enrolled-flock-supervisor-owner.md) now selects the exact
 later owner primitive: validate one installer-enrolled pre-created sibling object through a

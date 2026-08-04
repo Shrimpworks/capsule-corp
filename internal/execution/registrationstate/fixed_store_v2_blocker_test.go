@@ -11,13 +11,12 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection retains the exact
-// F2 stop witness. A committed attempt without a lifecycle record is a valid
-// v1 startup-recovery state, but the corrected passive v2 indexes require a
-// lifecycle disposition on every attempt entry and derive the lifecycle count
-// from the attempt count. F2 therefore cannot migrate this valid v1 world
-// without inventing a lifecycle state/record or violating the count equations.
-func TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection(t *testing.T) {
+// TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection retains the
+// original F2 stop witness and proves the passive resolution. A committed
+// attempt without a lifecycle record remains a valid v1 startup-recovery state;
+// the v2 projection retains the attempt on the explicit absent arm and counts
+// zero lifecycles without inventing state or bytes.
+func TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection(t *testing.T) {
 	harness := newApprovalHarness(t)
 	vector := fixtureVector(t, harness, 0x66, 1_785_456_000, 1_785_456_300, 0)
 	component := mustApprovalAttemptComponent(
@@ -78,29 +77,30 @@ func TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection(t *testing.T) {
 		Attempts: []archivestate.AttemptIndexEntry{{
 			AttemptID: attempt.AttemptID, ApprovalID: attempt.ApprovalID,
 			RegistrationID: attempt.RegistrationID, CreatedAt: attempt.CreatedAt,
-			Location: location, FullRecordDigest: recordDigest,
+			Lifecycle: archivestate.NoAttemptLifecycle(), Location: location, FullRecordDigest: recordDigest,
 		}},
 		Nonces: make([]archivestate.NonceIndexEntry, 0), Effects: make([]archivestate.EffectIndexEntry, 0),
 		Instances:      make([]archivestate.InstanceIndexEntry, 0),
 		ApprovalReplay: make([]archivestate.ApprovalReplayIndexEntry, 0),
 		AttemptReplay:  make([]archivestate.AttemptReplayIndexEntry, 0),
 	}
-	if _, err := archivestate.NewArchiveIndexes(view); err == nil {
-		t.Fatal("v2 attempt index accepted the absent lifecycle disposition")
-	}
-
-	// Supplying a lifecycle state makes the index constructible only by
-	// inventing successor state that is absent from the valid v1 source.
-	view.Attempts[0].LifecycleState = lifecyclestate.StatePreparePending
 	indexes, err := archivestate.NewArchiveIndexes(view)
 	if err != nil {
-		t.Fatalf("construct invented-state witness: %v", err)
+		t.Fatalf("v2 attempt index rejected explicit lifecycle absence: %v", err)
+	}
+
+	// Presence cannot be asserted with an attempt-record anchor. A real present
+	// arm requires a separately typed lifecycle location and full-record digest.
+	if _, err := archivestate.NewPresentAttemptLifecycle(
+		lifecyclestate.StatePreparePending, location, recordDigest,
+	); err == nil {
+		t.Fatal("present lifecycle accepted an attempt-record anchor")
 	}
 	descriptorDigest, err := archivestate.DigestArchiveDescriptorSet([]archivestate.ArchiveDescriptor{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = archivestate.NewMigrationGenesisCheckpoint(archivestate.MigrationGenesisCheckpointView{
+	genesis, err := archivestate.NewMigrationGenesisCheckpoint(archivestate.MigrationGenesisCheckpointView{
 		StoreFormatVersion:       archivestate.SupervisorStoreFormatV2,
 		MigrationSourceVersion:   archivestate.MigrationSourceFormatV1,
 		ResultSnapshotGeneration: 1, ArchiveGeneration: 1,
@@ -114,7 +114,11 @@ func TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection(t *testing.T) {
 		InstallationID:      v0candidate.InstallationID{1}, SupervisorID: v0candidate.SupervisorID{1},
 		EpochDigest: v0candidate.TrustEpochDigest{1},
 	})
-	if err == nil {
-		t.Fatal("v2 migration genesis represented one hot attempt and zero hot lifecycles")
+	if err != nil {
+		t.Fatalf("v2 migration genesis rejected one hot attempt and zero hot lifecycles: %v", err)
+	}
+	if genesis.View().HotCounts.Attempts != 1 || genesis.View().HotCounts.Lifecycles != 0 {
+		t.Fatalf("resolved genesis counts = attempts %d, lifecycles %d, want 1/0",
+			genesis.View().HotCounts.Attempts, genesis.View().HotCounts.Lifecycles)
 	}
 }

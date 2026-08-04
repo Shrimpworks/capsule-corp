@@ -268,7 +268,8 @@ Proposed ADR-0033 supplies the exact owner-lock decision for step 1: an installe
 pre-created sibling object, exact descriptor identity checks, and lifetime nonblocking BSD
 `flock`. The lock is acquired before store access and a busy contender performs no core or adapter
 work. That design has local temporary-process evidence only; this ADR's installed identity/session/
-update gates still require the Go/Darwin port and protected-state-root matrix.
+update gates still require owner-required store/startup composition and the protected-state-root
+matrix. Passive G1's internal Go/Darwin acquisition does not close those gates.
 
 Recovery never calls `RegisterPlan`, re-submits approval bytes, asks whether an approval is still
 usable, or rechecks registration/approval expiry for an already committed attempt. It never accepts

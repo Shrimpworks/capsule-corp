@@ -392,9 +392,9 @@ contain many attempts and updates global indexes.
 The current injected owner/session mechanics are not that lock. Proposed ADR-0033 selects the
 pre-created enrolled sibling plus BSD `flock` mechanism after duplicate-process, process-death,
 replacement, and hostile-file tests in an owned temporary harness. Archive behavior remains limited
-to an unwired single-process harness until the Go/Darwin port and installed protected-root,
-session, update, and reboot matrix pass. A second owner refuses before reading a mutable candidate,
-creating a segment, changing an index, or calling any adapter.
+to an unwired single-process harness until G2 composes the passive Go/Darwin owner with the store
+and the installed protected-root/session/update/reboot matrix passes. A second owner refuses before
+reading a mutable candidate, creating a segment, changing an index, or calling any adapter.
 
 ### Offline verification
 

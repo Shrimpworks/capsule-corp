@@ -182,6 +182,7 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 ## Evidence and implementation plan
 
 - [Local owner-lock results](../../experiments/supervisor-owner-lock-boundary/RESULTS.md)
+- [Passive G1 Go/Darwin owner package](../../internal/execution/installationowner/)
 - [Owner-lock implementation and fault plan](../SUPERVISOR_OWNER_LOCK_PLAN.md)
 - [ADR-0025 durable lifecycle](0025-colocate-durable-attempt-lifecycle-state.md)
 - [ADR-0029 Supervisor topology](0029-select-authenticated-local-ipc-topology.md)

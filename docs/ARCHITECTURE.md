@@ -137,9 +137,11 @@ Proposed ADR-0029 selects one unprivileged per-user Supervisor process: a small 
 C/Objective-C XPC/Security front end linked in-process with the existing Go authority/lifecycle
 core. It adds no Swift Supervisor service, root LaunchDaemon, or privileged helper. The exact
 installed identity/session evidence remains open. Proposed ADR-0033 selects a pre-created enrolled
-sibling object held by nonblocking BSD `flock` for the process lifetime, but the Go/Darwin port and
-installed protected-state-root matrix remain open, so this topology is selected design, not an
-implemented authority boundary.
+sibling object held by nonblocking BSD `flock` for the process lifetime. Passive G1 now implements
+the internal opaque Go/Darwin acquisition capability and local temporary-root/process oracles only;
+the owner-required
+store/startup composition and installed matrix remain open, so this topology is not a product
+authority boundary.
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 

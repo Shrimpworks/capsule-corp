@@ -6,9 +6,10 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2, owner-lock G1, ADR-0034 `.mjs` M1/S1 passive contract work, and documentation/
-field-authority maintenance can proceed independently now. Conditional Source Preparer work is no
-longer on the first-release critical path. The fork-native runtime bundle waits on an accepted
+Archive F2 format correction, owner-lock G2 planning/composition, ADR-0034 `.mjs` M1/S1 passive
+contract work, and documentation/field-authority maintenance can proceed independently now.
+Conditional Source Preparer blocker work remains a later optional track and is no longer on the
+first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
 explicit owned-guest authorization. Installed signing/distribution and independent-builder
 matrices remain separate evidence lanes.
@@ -128,12 +129,14 @@ capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evid
 adapter used is the closed no-guest fake, and the owner/coordinator remains injected in-process. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next backend-independent boundaries are archive
-F2 and owner-lock G1; E5 supplies neither. Archive F1 now supplies passive types, known-answer
+product-language/IPC seam or public consumer. The next backend-independent boundaries are the
+archive F2 format correction and owner-lock G2; E5 supplies neither. Archive F1 now supplies
+passive types, known-answer
 digests, defensive copies, and eligibility selection only. Proposed ADR-0033 selects a pre-created
-enrolled sibling object plus lifetime nonblocking
-BSD `flock` after one owned local descriptor/process corpus. Its Go/Darwin port and installed
-protected-state-root/session/update matrix remain unimplemented.
+enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned local
+descriptor/process corpus. Passive owner-lock G1 now supplies the internal Go/Darwin acquisition
+and owned-temporary-root process/fault oracles only. Owner-required store/startup composition and
+the installed protected-state-root/session/update matrix remain unimplemented.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive
@@ -145,8 +148,9 @@ expired registration cohorts may move to immutable retained segments
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
 fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 is implemented passively
-and performs no file writing, migration, activation, retained lookup, or consumer behavior; F2's
-explicit v1-to-v2 migration and full verifier is next. Production-engine selection,
+and performs no file writing, migration, activation, retained lookup, or consumer behavior. F2's
+explicit v1-to-v2 migration and full verifier remain stopped until the retained format
+contradictions are corrected. Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.

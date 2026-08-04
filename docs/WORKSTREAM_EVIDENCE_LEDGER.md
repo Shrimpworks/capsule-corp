@@ -206,8 +206,12 @@ read-only offline verification. Slice F1 now implements passive archive projecti
 limits/known answers, defensive copies, and deterministic complete-cohort eligibility only. It
 writes no file, migrates no store, activates no archive, and routes no retained lookup. The passive
 F2 format correction now freezes scope-separated global/segment indexes, typed hot/archive
-locations/counts, a distinct migration-genesis checkpoint, and generated answers; the stateful F2
-migration/full verifier is next. The design deliberately leaves
+locations/counts, a distinct migration-genesis checkpoint, and generated answers. The stateful F2
+review stopped before v2 bytes because the corrected projection cannot represent a valid v1
+committed attempt with no lifecycle record without inventing state or violating exact counts. The
+[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and its executable witness are
+retained; migration/full verification now waits for another passive contract decision. The design
+deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
@@ -327,18 +331,20 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Independently actionable now:** implement archive F2 migration/full verification from the
-   corrected passive contract; retain bounded owner-lock G2 current-v1/no-guest composition while
-   planning its separate installed G3 matrix; follow accepted ADR-0034 for `.mjs` M1/S1 passive
-   contract work; and maintain exact documentation plus recursive field-authority design.
-2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
+1. **Blocked:** archive F2 migration/full verification waits for a reviewed representation of the
+   valid v1 committed-attempt-without-lifecycle world; do not choose v2 bytes or silently restrict
+   migration before that passive decision.
+2. **Independently actionable now:** retain bounded owner-lock G2 current-v1/no-guest composition
+   while planning its separate installed G3 matrix; follow accepted ADR-0034 for `.mjs` M1/S1
+   passive contract work; and maintain exact documentation plus recursive field-authority design.
+3. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
    `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
    not durable Capsule evidence and no workflow artifact may be reused yet.
-3. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
+4. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
    transport/launcher/root/device/teardown work, and explicit authorization for an owned disposable
    development guest. No current task authorizes a guest.
-4. **Credential/environment dependent:** Apple Development identities and provisioning profiles
+5. **Credential/environment dependent:** Apple Development identities and provisioning profiles
    must be deliberately authorized before the existing installed matrices run. Current Individual
    membership is Team `W4QUR9FUL4`, and read-only discovery reports a valid Apple Development
    identity for that Team. Local signed/provisioned experiments can proceed once exact W4 role

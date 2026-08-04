@@ -532,9 +532,13 @@ replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answer
 and complete-cohort eligibility now exist. The passive
 [F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated
 global/segment indexes, record-kind-bound hot/archive locations and count equations, and a distinct
-generation-one migration-genesis checkpoint with generated answers. No file write, v2 migration,
-archive activation, retained lookup, or authority mutation exists; F2 migration/full verification
-is next. The finite fixed-store checkpoint
+generation-one migration-genesis checkpoint with generated answers. The stateful F2 review found
+that valid v1 may retain a committed attempt without a lifecycle record, which the corrected v2
+attempt/index-count projection cannot represent exactly. The executable
+[F2 v1 mapping blocker](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) is retained. No file write,
+v2 migration, archive activation, retained lookup, or authority mutation exists; F2 migration/full
+verification is blocked pending another passive contract decision. The finite fixed-store
+checkpoint
 provides no production engine, multi-process lock, power-loss result, restore/anti-rollback
 mechanism, referenced-history deletion, continuous service, consumer, or guest evidence.
 

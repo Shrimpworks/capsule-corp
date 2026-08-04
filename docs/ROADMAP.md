@@ -6,8 +6,10 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2 format correction, owner-lock G2 planning/composition, and documentation/field-authority
-maintenance can proceed independently now. ADR-0034's M1 validator and downstream S1/M2 work are
+Archive F2's stateful migration/full verifier is blocked by the retained valid-v1
+missing-lifecycle mapping contradiction; owner-lock G2 planning/composition and
+documentation/field-authority maintenance can proceed independently. ADR-0034's M1 validator and
+downstream S1/M2 work are
 blocked on a separately reviewed exact ECMAScript parser/validation boundary; the passive
 source-byte/SourceManifest foundation is retained.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
@@ -137,10 +139,14 @@ capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evid
 adapter used is the closed no-guest fake. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next archive boundary is the F2 migration/full
-verifier; E5 supplies no archive mechanic. Archive F1 plus its passive format correction now supply
+product-language/IPC seam or public consumer. E5 supplies no archive mechanic. Archive F1 plus its
+passive format correction now supply
 scope-separated global/segment indexes, typed hot/archive locations/counts, a distinct
 migration-genesis checkpoint, generated answers, defensive copies, and eligibility selection only.
+The stateful F2 review stopped before v2 bytes because valid v1 can contain a committed attempt
+without a lifecycle record, while corrected v2 requires a lifecycle disposition and equates those
+counts. The [F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) must be resolved by
+another passive contract decision before migration/full verification.
 Proposed ADR-0033 selects a pre-created
 enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned local
 descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin acquisition. G2
@@ -160,8 +166,8 @@ only after all bound attempts are durably destroyed with authoritative absence. 
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
 fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and the passive F2 format
 correction are implemented and perform no file writing, migration, activation, retained lookup, or
-consumer behavior. F2's explicit v1-to-v2 migration and full verifier are next under the corrected
-contract. Production-engine selection,
+consumer behavior. F2's explicit v1-to-v2 migration and full verifier are blocked by the retained
+valid-v1 mapping contradiction; no v2 bytes were selected. Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.

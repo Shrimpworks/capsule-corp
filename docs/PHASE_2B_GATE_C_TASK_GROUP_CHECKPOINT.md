@@ -34,8 +34,11 @@ exist, while ownership is still injected in-process and `FakeBackend.CreatesGues
 Archive Slice F1 is now implemented as passive `internal/execution/archivestate` types, exact
 limits and known-answer digests, defensive copies, and a deterministic complete-cohort eligibility
 selector. F1 writes no file, migrates no store, moves no cohort, activates no archive, resolves no
-retained authority, deletes nothing, and calls no lifecycle adapter. F2—the explicit lock-held
-fixed-store v1-to-v2 migration and full empty-archive verifier—is the next archive slice.
+retained authority, deletes nothing, and calls no lifecycle adapter. The passive F2 format
+correction now adds scope-separated global/segment indexes, typed hot/archive locations/counts, a
+distinct migration-genesis checkpoint, and generated answers without changing that boundary. F2—
+the explicit lock-held fixed-store v1-to-v2 migration and full empty-archive verifier—is the next
+archive slice.
 
 Proposed ADR-0033 selects one installer-enrolled pre-created sibling inode plus a lifetime
 nonblocking BSD `flock` for cooperating Supervisor ownership. The retained harness covers local
@@ -105,7 +108,7 @@ governance reconciliation before Capsule reuses it.
 
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
-| Independently actionable now | Archive F2 | Build the explicit fixed-store v2 migration/full verifier from passive F1; no cohort leaves hot state and no archive segment exists. |
+| Independently actionable now | Archive F2 | Build the explicit fixed-store v2 migration/full verifier from the corrected passive format; no cohort leaves hot state and no archive segment exists. |
 | Independently actionable now | Owner-lock G1 | Port only the passive bootstrap/opaque owner boundary under owned temporary roots; do not claim protected storage. |
 | Independently actionable now | `.mjs` M1 and S1/M2 | Narrow and replace passive proposal/source fixtures, add canonical source-manifest/field-authority coverage, then generate the four closed IPC message projections and exact maxima. Add no product endpoint. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |

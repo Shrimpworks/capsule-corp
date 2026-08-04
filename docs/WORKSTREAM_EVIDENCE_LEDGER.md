@@ -202,8 +202,10 @@ complete closed registration cohorts, immutable full-record segments, exact repl
 tombstone indexes, publish-before-activate fault ordering, coherent backup verification, and
 read-only offline verification. Slice F1 now implements passive archive projections, exact
 limits/known answers, defensive copies, and deterministic complete-cohort eligibility only. It
-writes no file, migrates no store, activates no archive, and routes no retained lookup; F2 is next.
-The design deliberately leaves
+writes no file, migrates no store, activates no archive, and routes no retained lookup. The passive
+F2 format correction now freezes scope-separated global/segment indexes, typed hot/archive
+locations/counts, a distinct migration-genesis checkpoint, and generated answers; the stateful F2
+migration/full verifier is next. The design deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
@@ -314,8 +316,8 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Independently actionable now:** resolve the retained archive F2 format contradictions without
-   implementing around them; review and plan owner-lock G2 without silently changing the existing
+1. **Independently actionable now:** implement archive F2 migration/full verification from the
+   corrected passive contract; review and plan owner-lock G2 without silently changing the existing
    conformance constructors; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
    maintain exact documentation plus recursive field-authority design.
 2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64

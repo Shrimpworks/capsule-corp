@@ -65,11 +65,13 @@ selects a finite fixed-store checkpoint only as a local conformance oracle, not 
 engine, and authorizes no referenced-history deletion. Slice F1 now implements passive archive
 types, known-answer digests, defensive copies, and the pure complete-cohort eligibility selector.
 It writes no file, migrates no store, moves no cohort, activates no archive, and routes no consumer.
-The first F2 review stopped before implementation because merged F1 cannot represent a required
-nonzero visible-v1 effect seed with zero archive descriptors or construct the specified
-generation-one migration checkpoint. The retained
-[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) proposes the narrow contract correction
-required before the fixed-store v2 migration/full verifier can proceed.
+The first F2 review stopped before implementation because merged F1 could not represent a required
+nonzero visible-v1 effect seed with zero archive descriptors, reconstruct global hot indexes, or
+construct the specified generation-one migration checkpoint. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
+segment index domains, typed hot/archive record locations and counts, a distinct migration-genesis
+checkpoint, and generated known answers. It writes no store bytes and changes no v1 behavior. The
+fixed-store v2 migration/full verifier is the next F2 slice and remains unimplemented.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

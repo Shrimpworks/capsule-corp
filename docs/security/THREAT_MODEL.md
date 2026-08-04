@@ -526,11 +526,12 @@ same-UID-containment, installed-identity, rollback, runtime, backend, or guest c
 
 Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
 replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies,
-and complete-cohort eligibility now exist, but no file write, v2 migration, archive activation,
-retained lookup, or authority mutation exists. F2 review is format-blocked because the passive
-model cannot represent the required nonzero visible-v1 effect seed with zero archive descriptors or
-construct the specified generation-one migration checkpoint; see the retained
-[F2 format blocker](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). The finite fixed-store checkpoint
+and complete-cohort eligibility now exist. The passive
+[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated
+global/segment indexes, record-kind-bound hot/archive locations and count equations, and a distinct
+generation-one migration-genesis checkpoint with generated answers. No file write, v2 migration,
+archive activation, retained lookup, or authority mutation exists; F2 migration/full verification
+is next. The finite fixed-store checkpoint
 provides no production engine, multi-process lock, power-loss result, restore/anti-rollback
 mechanism, referenced-history deletion, continuous service, consumer, or guest evidence.
 

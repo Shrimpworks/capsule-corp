@@ -55,9 +55,11 @@ registration/approval/attempt/nonce/effect/instance/replay tombstones. The finit
 checkpoint is selected only as a fault-injectable conformance oracle. Slice F1 now implements
 passive archive types, exact limits/known-answer digests, defensive copies, and a pure complete-
 cohort selector. It performs no file I/O, v2 migration, archive activation, lookup, or authority
-mutation. F2 review is format-blocked on the nonzero visible-v1 effect seed/empty-descriptor count
-model and the generation-one migration checkpoint; see the retained
-[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Production-engine selection,
+mutation. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
+segment index domains, typed hot/archive record locations and counts, a distinct generation-one
+migration-genesis checkpoint, and generated answers. F2 migration/full verification remains next.
+Production-engine selection,
 referenced-history deletion, continuous service, coherent restore activation, and rollback-
 resistant non-reuse remain blocked.
 
@@ -682,11 +684,11 @@ publishes a fully verified immutable closed-cohort segment before atomically act
 snapshot that references it, installs exact tombstone indexes, and removes the same records from
 hot sets. Indeterminate publication or activation fences until reopen. Full cohort records remain
 retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. Passive
-F1 types, known answers, defensive copies, and eligibility selection now exist. No store migration,
-file/segment write, activation, retained lookup, or consumer exists. F2 is format-blocked pending
-the narrow passive-format correction retained in
-[the F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), and a production engine plus real
-power-loss proof remain deferred.
+F1 types, known answers, defensive copies, and eligibility selection now exist. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated global/
+segment indexes, typed locations/counts, and a distinct generated migration genesis. No store
+migration, file/segment write, activation, retained lookup, or consumer exists; F2 migration and
+full verification are next. A production engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -721,9 +723,9 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
    generated plan-v0 registration/fetch fixtures with complete field authority.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Resolve the retained ADR-0031/F1
-   [F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), then continue the passive/fault-
-   injectable fixed-store archive oracle into F2's explicit v1-to-v2 migration/full verifier and
+4. Continue from the resolved ADR-0031/F1
+   [F2 format contract](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) into F2's explicit v1-to-v2
+   migration/full verifier, then continue the fault-injectable fixed-store archive oracle and
    run the same logical corpus plus real
    locking, backup, corruption, APFS, and power-loss tests against a named production-engine
    candidate before selecting it.

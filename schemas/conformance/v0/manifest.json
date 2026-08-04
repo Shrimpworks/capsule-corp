@@ -1325,7 +1325,7 @@
     {
       "id": "approval-grant.fixture-verifier.envelope-bytes",
       "source": "ADR-0024#exact-signed-and-resolved-bindings",
-      "description": "The complete tagged envelope is bounded at 512 raw bytes before ordinary fixture verification.",
+      "description": "The complete tagged envelope is bounded at 512 raw bytes before ordinary fixture verification, and separately at the calculated closed-candidate maximum below that raw cap.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -1334,13 +1334,21 @@
         {
           "decision": "reject",
           "variant": "cap-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "calculated-maximum-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "raw-maximum"
         }
       ]
     },
     {
       "id": "approval-grant.fixture-verifier.payload-bytes",
       "source": "ADR-0024#exact-signed-and-resolved-bindings",
-      "description": "The embedded canonical payload is bounded at 256 raw bytes before ordinary fixture verification.",
+      "description": "The embedded canonical payload is bounded at 256 raw bytes before ordinary fixture verification, and separately at the calculated closed-candidate maximum below that raw cap.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -1349,13 +1357,21 @@
         {
           "decision": "reject",
           "variant": "cap-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "calculated-maximum-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "raw-maximum"
         }
       ]
     },
     {
       "id": "approval-grant.fixture-verifier.protected-bytes",
       "source": "ADR-0024#exact-signed-and-resolved-bindings",
-      "description": "The encoded protected-header map is bounded at 128 raw bytes before ordinary fixture verification.",
+      "description": "The encoded protected-header map is bounded at 128 raw bytes before ordinary fixture verification, and separately at the calculated closed-candidate maximum below that raw cap.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -1364,6 +1380,14 @@
         {
           "decision": "reject",
           "variant": "cap-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "calculated-maximum-plus-one"
+        },
+        {
+          "decision": "reject",
+          "variant": "raw-maximum"
         }
       ]
     },
@@ -20422,6 +20446,378 @@
       "expected": {
         "decision": "reject",
         "classification": "MALFORMED",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.envelope-calculated-maximum-plus-one",
+      "description": "Reject a 432-byte envelope: within the raw 512-byte gate but one over the calculated 431-byte candidate maximum.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.envelope-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "calculated-maximum-plus-one",
+      "fixture": {
+        "path": "approval-grant/envelope-calculated-maximum-plus-one.cose",
+        "sha256": "1fe2373734955e60c172999142934b52e69ba7ab9039b3c18ea54082ba32afcd",
+        "byteLength": 432
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-envelope-calculated-maximum-plus-one.operation.json",
+          "sha256": "dfc4960bd886766b5f10acdfd1ae8e3c1481e3ea5da3127dbf1e55ee3a4a7f8f",
+          "byteLength": 231
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/envelope-calculated-maximum-plus-one.payload.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        },
+        "protectedHeader": {
+          "path": "approval-grant/envelope-calculated-maximum-plus-one.protected.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.envelope-raw-maximum",
+      "description": "Reject an exactly-512-byte envelope: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.envelope-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "raw-maximum",
+      "fixture": {
+        "path": "approval-grant/envelope-raw-maximum.cose",
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+        "byteLength": 512
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-envelope-raw-maximum.operation.json",
+          "sha256": "1db998f4d0e513520e6918b6c37bdcbfc3eaa316a486e2dfbccb85eb8ec859ff",
+          "byteLength": 215
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/envelope-raw-maximum.payload.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        },
+        "protectedHeader": {
+          "path": "approval-grant/envelope-raw-maximum.protected.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.payload-calculated-maximum-plus-one",
+      "description": "Reject a 243-byte embedded payload: within the raw 256-byte gate but one over the calculated 242-byte candidate maximum.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.payload-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "calculated-maximum-plus-one",
+      "fixture": {
+        "path": "approval-grant/payload-calculated-maximum-plus-one.cose",
+        "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-payload-calculated-maximum-plus-one.operation.json",
+          "sha256": "02944d75ceb3b65cf64ac19e9058ebc04f7b2075e86e6e4e074d6bba622e5db0",
+          "byteLength": 230
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/payload-calculated-maximum-plus-one.payload.cbor",
+          "sha256": "e359325e557e4cf3ab0972ffbdcb10c51624ab4c41a0b1b31867cc7bd124e695",
+          "byteLength": 243
+        },
+        "protectedHeader": {
+          "path": "approval-grant/payload-calculated-maximum-plus-one.protected.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.payload-raw-maximum",
+      "description": "Reject an exactly-256-byte embedded payload: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.payload-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "raw-maximum",
+      "fixture": {
+        "path": "approval-grant/payload-raw-maximum.cose",
+        "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-payload-raw-maximum.operation.json",
+          "sha256": "1eaa9515ea8e53ba6f3618401a6495ec363edd417dd986e57f958bcc177a4903",
+          "byteLength": 214
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/payload-raw-maximum.payload.cbor",
+          "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1",
+          "byteLength": 256
+        },
+        "protectedHeader": {
+          "path": "approval-grant/payload-raw-maximum.protected.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.protected-calculated-maximum-plus-one",
+      "description": "Reject a 117-byte protected map: within the raw 128-byte gate but one over the calculated 116-byte candidate maximum.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.protected-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "calculated-maximum-plus-one",
+      "fixture": {
+        "path": "approval-grant/protected-calculated-maximum-plus-one.cose",
+        "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-protected-calculated-maximum-plus-one.operation.json",
+          "sha256": "9a6a64795b9be56fcee0b484b41a73117843625bf0c2d29f0b66d3bd537c1073",
+          "byteLength": 232
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/protected-calculated-maximum-plus-one.payload.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        },
+        "protectedHeader": {
+          "path": "approval-grant/protected-calculated-maximum-plus-one.protected.cbor",
+          "sha256": "fee3d3a17121f0dd0962d02ae385a9076d6e1ccc7b82085992ff41eca3c2811a",
+          "byteLength": 117
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "approval-attempt-contract",
+        "authorityStateChanged": false,
+        "timeHighWaterChanged": false,
+        "trustStateTightened": false,
+        "fakeBackendEffectPermitted": false,
+        "stateDelta": {
+          "kind": "exact",
+          "after": {
+            "path": "contexts/approval-attempt/empty.json",
+            "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+            "byteLength": 846
+          }
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "not-applicable",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "approval-grant.fixture-verifier.protected-raw-maximum",
+      "description": "Reject an exactly-128-byte protected map: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+      "ruleIds": [
+        "approval-grant.fixture-verifier.protected-bytes"
+      ],
+      "object": "ApprovalGrant",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.approval-grant+cbor;v=0",
+      "variant": "raw-maximum",
+      "fixture": {
+        "path": "approval-grant/protected-raw-maximum.cose",
+        "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "byteLength": 8
+      },
+      "context": {
+        "kind": "approval-attempt-state",
+        "operation": {
+          "path": "contexts/approval-attempt/approval-grant-fixture-verifier-protected-raw-maximum.operation.json",
+          "sha256": "082e420e428697dff25759a11387ea09d1c9614fd8bb947f583c5530cce05b21",
+          "byteLength": 216
+        },
+        "before": {
+          "path": "contexts/approval-attempt/empty.json",
+          "sha256": "1895c5815d3d41c8707f526f769f1a002abd373b57f74e10019cba18ddac7d52",
+          "byteLength": 846
+        },
+        "payload": {
+          "path": "approval-grant/protected-raw-maximum.payload.cbor",
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+          "byteLength": 1
+        },
+        "protectedHeader": {
+          "path": "approval-grant/protected-raw-maximum.protected.cbor",
+          "sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca",
+          "byteLength": 128
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
         "owner": "approval-attempt-contract",
         "authorityStateChanged": false,
         "timeHighWaterChanged": false,

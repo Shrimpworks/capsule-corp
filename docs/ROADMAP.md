@@ -200,6 +200,12 @@ bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation r
 file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
 fixed V1 bytes. Resume only with a newly reviewed/enrolled artifact and supported exact memory/
 confinement design; deprecated custom sandboxing is not a fallback.
+The supported replacement research slice now passes its design question while leaving product V2
+blocked. It rejects direct inherited helpers, identifies only a separately App-Sandboxed XPC
+launcher owning a fresh parser child, and retains the public footprint setter's `KERN_NO_ACCESS`.
+R0 must decide that topology, the writable-container residual, and either a supported hard memory
+mechanism or an explicit reactive-resource contract with no peak ceiling claim before any new
+profile bytes or separately authorized signing work begins.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
 one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed

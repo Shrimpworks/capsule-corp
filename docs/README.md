@@ -58,6 +58,10 @@ signature; it is not installation-signed, enrolled, wired, or confined. The
 launch/fault mechanics and the exact macOS stop: unsupported `RLIMIT_AS`, ambient authority without
 a sandbox, and supported App Sandbox child entitlements changing the fixed V1 bytes. V2 and the
 parent product work are `BLOCKED`; no product validator or runtime no-loader boundary is implemented.
+The [supported macOS replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) passes
+its design scope, rejects direct parent-sandbox inheritance, and retains the unprivileged public-
+footprint-limit denial. Its separately sandboxed XPC-launcher/fresh-child candidate remains blocked
+on topology, writable-container, hard-memory, signing, and installed-conformance decisions.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-

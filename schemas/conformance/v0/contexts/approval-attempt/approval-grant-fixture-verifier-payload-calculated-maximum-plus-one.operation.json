@@ -1,0 +1,8 @@
+{
+  "contextType": "capsule.conformance.approval-attempt-operation",
+  "contextVersion": 0,
+  "mode": "fixture-verifier",
+  "vector": "payload-calculated-maximum-plus-one",
+  "bindingMutation": "none",
+  "callerMutation": false
+}

@@ -65,6 +65,17 @@ not acceptable evidence. V2 and the parent V1-V5 work are therefore `BLOCKED`, n
 a newly reviewed/enrolled artifact and supported memory/confinement design. V0/V1 bytes and status
 remain unchanged.
 
+The supported-profile replacement research slice is now `PASSED` in its exact design scope and
+keeps that parent block. Direct App Sandbox helper inheritance is `NO_GO` for this parser because it
+preserves the launching daemon's or Broker's static sandbox rights. A separately sandboxed,
+method-specific XPC launcher owning one fresh parser child is the only plausible supported
+composition found, but its topology is unselected, its writable App Sandbox container conflicts
+with the current no-store rule, and macOS exposes no usable unprivileged hard memory cap on the
+observed host. Reactive physical-footprint monitoring plus kill is not an exact peak ceiling.
+Resume only through the architecture/resource-policy and signed installed R0-R5 plan in the
+[supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md).
+No user signing identity was used or authorized.
+
 Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
 and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80

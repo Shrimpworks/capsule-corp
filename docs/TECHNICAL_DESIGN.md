@@ -227,6 +227,18 @@ bytes, and deprecated custom profiles are not substituted. V2 and the product So
 parent are `BLOCKED` pending a new reviewed/enrolled artifact and supported resource/confinement
 design.
 
+The [supported replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) now makes the
+architecture correction exact. Direct App Sandbox inheritance is `NO_GO` for this parser because
+it preserves the launching daemon's or Broker's static rights. A supported lower-authority design
+would put a method-specific, separately App-Sandboxed XPC launcher in front of one fresh parser
+child; the launcher, not either authority parent, would own fixed pipes, rlimits, footprint
+observation, kill, drain, and reap. This remains a candidate rather than an added role. XPC service
+placement/reachability for both independent consumers is unresolved, App Sandbox grants a writable
+private container, and no public unprivileged hard memory control is usable on the observed host.
+`proc_pid_rusage` monitoring can only impose a reactive observed watermark. The current exact-
+memory/no-store rule therefore keeps V2, V3, and V4 `BLOCKED`; bounded input/output, CPU/wall,
+concurrency, monitoring, and system memory pressure are not represented as a hard peak cap.
+
 ### Trusted Host Broker
 
 The Broker is a native signed macOS process with no agent-facing interface. One v0 process may host
@@ -794,10 +806,14 @@ implemented.
    tombstone enforcement and F5 backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
-3. Resolve the Source Validator V2 block by defining a newly reviewed, signed/enrolled App-
-   Sandboxed artifact and a supported exact memory/resource-confinement design. V0 and V1 remain
-   passed in their bounded scopes, but V2 implementation and V3/V4 consumers do not resume until
-   that replacement contract is reviewed. Do not use deprecated custom sandbox profiles or the
+3. Resolve the Source Validator V2 block through R0-R5 in the
+   [supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md).
+   First decide the separately sandboxed launcher/container topology and either select a supported
+   hard memory control or explicitly revise the contract through a quantified reactive-resource
+   ADR. Only then define and construct newly versioned protocol/process/artifact identities and run
+   the separately authorized signed installed corpus. V0 and V1 remain passed in their bounded
+   scopes; V2 implementation and V3/V4 consumers do not resume before R0-R4 pass. Do not use direct
+   parent sandbox inheritance, deprecated custom profiles, private jetsam/spawn APIs, or the
    unbounded diagnostic mutation.
 4. Freeze the applicable signed-object set and independently review the narrow production CBOR
    wrapper. Use pinned `fxamacker/cbor` only for object-specific deterministic encoding and typed

@@ -1,0 +1,41 @@
+{
+  "schema": "capsule.mjs-source-validator-v2-replacement-observation/v0",
+  "workStatus": "PASSED",
+  "parentStatus": "BLOCKED",
+  "controlEvidence": "test-only-public-sdk-negative-observation",
+  "productAdmission": "none",
+  "observedHost": {
+    "os": "macOS 26.5.2",
+    "build": "25F84",
+    "kernel": "Darwin 25.5.0",
+    "architecture": "arm64",
+    "appleClang": "21.0.0"
+  },
+  "probe": {
+    "sourceBytes": 1730,
+    "sourceSha256": "593ba843c40b00c9d9297d35a7388e4cf8a71722a62caae8529f733db5b4d92d",
+    "temporaryBinarySha256": "8fa95aa3349bc25e1a1915bd0e22ff64f89e08b2f211b0b6307b1a387d845ffe",
+    "requestedPhysicalFootprintMiB": 128,
+    "result": "KERN_NO_ACCESS",
+    "kernelResult": 8,
+    "exitCode": 65,
+    "allocationRan": false
+  },
+  "disposition": {
+    "hardMemoryControlAvailable": false,
+    "reactiveProcPidRusageMonitoringIsHardCap": false,
+    "privateSpawnOrJetsamApiAllowed": false
+  },
+  "explicitNonClaims": [
+    "app-sandboxed",
+    "signed-or-enrolled",
+    "supported-on-other-hosts",
+    "product-memory-limit",
+    "product-profile",
+    "parser-execution",
+    "consumer",
+    "runtime",
+    "backend",
+    "guest"
+  ]
+}

@@ -120,6 +120,22 @@ interfaces are not used. No Keychain or Supervisor state was probed. Therefore V
 not passed or `NO_GO`, pending a newly reviewed/enrolled artifact and a supported exact memory/
 confinement design. The diagnostic mutation is test-only counterevidence and may not be wired.
 
+Supported replacement review: the exact design slice in
+[`MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md`](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
+is `PASSED`, while V2 and its parent remain `BLOCKED`. Apple's supported direct-helper App Sandbox
+inheritance gives the parser its daemon or Broker parent's static rights and is `NO_GO` for this
+exact boundary. The only plausible supported composition is a separately sandboxed, method-
+specific XPC launcher that owns one fresh parser child, fixed pipes, rlimits, monitoring, and
+kill/drain/reap. That composition is not selected: it requires an explicit launcher topology, App
+Sandbox gives it and its inherited child a writable private container, and no usable unprivileged
+hard memory cap exists on the observed host. A public-SDK `task_set_phys_footprint_limit` self-call
+returned `KERN_NO_ACCESS`; `proc_pid_rusage` monitoring is reactive rather than a peak ceiling.
+
+Resume V2 only through replacement slices R0-R5 in that review. Any build must use new protocol,
+process-profile, artifact-profile, signed-bundle, entitlement, Hardened Runtime, launch/library-
+constraint, resource-policy, and supported-host identities. V1/V2 bytes are never relabeled. No
+signing operation is authorized by this plan.
+
 ### V3 — daemon pre-plan integration
 
 - Decode M1's exact copied source bytes, validate cap/UTF-8/BOM according to its
@@ -128,6 +144,9 @@ confinement design. The diagnostic mutation is test-only counterevidence and may
   construction only for `valid + allow + all five zero counts`.
 - Map every child/protocol/local failure to a fixed refusal without retrying a
   different parser or falling back to lexical scanning.
+
+V3 consumes the accepted replacement protocol/profile version, not the passive V0 or unchanged V1
+test artifact. It may begin only after V2 replacement R0-R4 pass.
 
 Exit evidence: byte mutation between decode/validation/plan, wrong-child artifact,
 timeout/crash/malformed result, duplicate reply, process exhaustion, and daemon
@@ -143,6 +162,10 @@ restart cases. No path may accept caller-supplied validation facts.
   render child-supplied arbitrary text.
 - Refuse if the daemon's historical result is present, substituted, or treated as
   trusted.
+
+V4 invokes its own fresh parser child through the selected independently reachable launcher
+instance. It may not share a cached child, result, service state, app group, Keychain group, or
+daemon-owned container.
 
 Exit evidence: compromised-daemon simulations, source/result replay, digest and
 length mismatch, child failure, view mutation, and proof that zero Approval-key
@@ -207,3 +230,7 @@ on every supported host and the canonical docs reflect the final protocol and
 authority ownership. Runtime/profile admission additionally requires V6. A parser
 binary, IPC endpoint, or passing happy-path test alone is insufficient and leaves the parent work
 `IN_PROGRESS` or `BLOCKED`; it is not a pass or a `NO_GO` by itself.
+
+For macOS, V2 additionally requires an accepted R0 launcher/container/resource-policy decision and
+signed installed R1-R4 evidence from the supported-profile replacement review. Parent-side caps and
+reactive memory sampling alone do not meet the current exact-memory acceptance rule.

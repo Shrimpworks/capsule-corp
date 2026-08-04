@@ -123,3 +123,9 @@ not V2 and cannot be used as admission evidence.
 - V1 independent provenance, installation signature/enrollment, and vulnerability owner/SLA remain
   separate blockers.
 - V3/V4 consumers, V5 broader grammar evidence, and V6 runtime no-loader evidence remain absent.
+
+The later
+[supported-profile replacement review](../../docs/MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
+does not reinterpret these observations. It passes its scoped design question, rejects direct App
+Sandbox inheritance for preserving parent rights, and keeps the product blocked on a distinct
+launcher topology, writable-container disposition, and honest hard-memory/resource policy.

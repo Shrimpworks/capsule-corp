@@ -38,6 +38,13 @@ passive governed-runtime C1 controlled-development composition. Its separate sch
 known-answer validators pin intended app/runtime composition and non-admitted construction
 identities; they create no process, guest, consumer, or admission state.
 
+[`conformance/c2a-governed-deno-core/`](conformance/c2a-governed-deno-core/) contains the exact
+passive C2A execution-profile preparation. It consumes the unchanged C1 fixture, closes the
+numeric descriptor, candidate machine, transport, teardown, and C2B evidence contracts, and
+explicitly refuses while final runnable artifact identities and exactly enforceable resource
+fields remain unresolved. Its schema and independent Go/Node validators create no process, guest,
+runtime consumer, credential, release, or admission state.
+
 [`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
 and exact coverage notes. Repository verification compares its 228 field entries with 20 selected
 current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or

@@ -1,7 +1,8 @@
 # Governed deno_core work plan
 
 Status: active planning checkpoint after accepted ADR-0028, the governed Linux/arm64 construction
-handoff, and the passed passive C1 controlled-development composition contract.
+handoff, the passed passive C1 controlled-development composition contract, and the passed passive
+C2A execution-profile preparation contract.
 This plan selects work order; it does not admit a runtime, backend, profile, or guest.
 
 ## Current checkpoint
@@ -38,6 +39,12 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   [C1 composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md). C1 itself is `PASSED`
   only as a no-effect contract. Independent-builder equality, governed release publication,
   composed execution, and admission remain open.
+- [C2A execution-profile preparation](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md) is
+  `PASSED` only for its passive, refusing contract. It consumes the unchanged C1 bytes and freezes
+  the exact host/guest descriptor maps, bounded candidate machine and transport values, teardown,
+  known answer, restoration corpus, and complete C2B matrix. It creates no guest or runtime. C2B
+  is `BLOCKED` on final runnable artifact identities, the launcher-child contract, exact scratch
+  enforcement, remaining governed review/P0 closures, and separate guest authorization.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap
@@ -131,10 +138,15 @@ transport/launcher reproduction remain later requirements.
   `main.mjs`, JSON input/completion bindings, desired globals/ops/modules/files, loader absence,
   logical descriptor roles, resource references, and refusal/stop behavior without creating a
   guest or activating any consumer.
-- C2 must bind the exact governed runtime bundle, kernel/init, libkrun patches, launcher, closed
-  numeric descriptor manifest, enforceable machine resources, source/input/completion ports, and
-  teardown behavior into one candidate profile.
-- Run the fixed JSON-in/JSON-out job only in the owned disposable development guest.
+- C2A is `PASSED` only as passive preparation: its refusing fixture binds C1, governed source
+  identities, numeric FDs 0 through 7, one vCPU, 256 MiB guest RAM, 1,000 ms wall time,
+  concurrency one, source/input/completion caps, `SIGKILL` teardown deadlines, the fixed benign
+  known answer, and the 91-case C2B plus 18-mutation corpus. Unsupported CPU, host/VMM-memory, and
+  scratch ceilings remain null and refusing; all nine final runnable artifact identities and the
+  composed runtime-profile identity/digest remain unresolved.
+- C2B is `BLOCKED`. Once its named artifact, launcher, resource, review, and P0 dependencies close,
+  request separate authorization and run the fixed JSON-in/JSON-out job only in the owned
+  disposable development guest. C2B must not broaden the C2A fixture or imply admission.
 - Complete signed installed P0-1C/P0-4B custody, App Sandbox, Team identity, notarization, staple,
   Gatekeeper, clean-host, session/recovery, and supported-OS-floor evidence.
 - Make a separate admission ADR only after every required control row has exact retained evidence.

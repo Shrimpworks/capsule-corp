@@ -52,6 +52,13 @@ const fixtures = [
       import.meta.url,
     ),
   ],
+  [
+    "governed-deno-core-c2a-execution-profile.schema.json",
+    new URL(
+      "../schemas/conformance/c2a-governed-deno-core/passive-execution-profile.json",
+      import.meta.url,
+    ),
+  ],
 ];
 
 for (const [schemaName, fixtureUrl] of fixtures) {
@@ -111,4 +118,67 @@ for (const [name, fixture] of invalidProposals) {
     throw new Error(`invalid JobProposal fixture was accepted: ${name}`);
   }
   process.stdout.write(`rejected invalid JobProposal: ${name}\n`);
+}
+
+const c2aSchema = schemas.get("governed-deno-core-c2a-execution-profile.schema.json");
+const validateC2A = ajv.getSchema(c2aSchema.$id);
+const validC2A = JSON.parse(
+  await readFile(
+    new URL(
+      "../schemas/conformance/c2a-governed-deno-core/passive-execution-profile.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
+const invalidC2A = [
+  [
+    "invented final artifact digest",
+    mutate(validC2A, (fixture) => {
+      fixture.artifactClosure.required[0].sha256 = "0".repeat(64);
+    }),
+  ],
+  [
+    "missing runner descriptor",
+    mutate(validC2A, (fixture) => {
+      fixture.runnerDescriptorProfile.entries.pop();
+    }),
+  ],
+  [
+    "silent resource substitution",
+    mutate(validC2A, (fixture) => {
+      fixture.machineProfile.guestRamMiB = 512;
+    }),
+  ],
+  [
+    "invented runtime-profile identity",
+    mutate(validC2A, (fixture) => {
+      fixture.c1PlanAndProfileBindings.runtimeProfile.selectedIdentity = "candidate";
+    }),
+  ],
+  [
+    "activated runtime admission",
+    mutate(validC2A, (fixture) => {
+      fixture.effects.admission = true;
+    }),
+  ],
+  [
+    "unknown authority field",
+    mutate(validC2A, (fixture) => {
+      fixture.runnerDescriptorProfile.entries[0].hostPath = "/tmp";
+    }),
+  ],
+];
+
+for (const [name, fixture] of invalidC2A) {
+  if (validateC2A(fixture)) {
+    throw new Error(`invalid C2A fixture was accepted: ${name}`);
+  }
+  process.stdout.write(`rejected invalid C2A fixture: ${name}\n`);
+}
+
+function mutate(value, mutation) {
+  const copy = structuredClone(value);
+  mutation(copy);
+  return copy;
 }

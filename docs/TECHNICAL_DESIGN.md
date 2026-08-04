@@ -721,6 +721,13 @@ recovery, update, and cross-job state.
 No claim becomes implemented or validated merely because a mechanism is designed or a prototype
 passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MATRIX.md).
 
+Implementation planning also begins with the
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md). Its closed recommendation,
+trust classification, authority consequences, dependency checklist, and exact consuming slice must
+be recorded before adding a third-party/platform dependency or a new custom primitive. Candidate
+metadata and public conformance suites are planning inputs, not evidence that a Capsule control is
+implemented.
+
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
@@ -734,6 +741,9 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
    run the same logical corpus plus real
    locking, backup, corruption, APFS, and power-loss tests against a named production-engine
    candidate before selecting it.
+   Keep the fixed snapshot as the logical oracle through F2; compare the named SQLite candidate
+   only after F2 and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
+   power-loss corpus.
 5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 6. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
@@ -774,7 +784,9 @@ See [Roadmap](ROADMAP.md) for exit evidence.
 
 The scoped comparison, reusable lessons, and deliberately rejected patterns are summarized in
 [Related systems and design influences](RELATED_SYSTEMS.md). Those public references are planning
-inputs, not Capsule implementation evidence or dependency selections.
+inputs, not Capsule implementation evidence or dependency selections. Exact candidate metadata,
+trust/authority classification, recommendations, and consuming acceptance criteria are maintained
+in the [ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md).
 
 - [W3C Decentralized Identifiers v1.0](https://www.w3.org/TR/did-core/)
 - [W3C Decentralized Identifiers v1.1](https://www.w3.org/TR/did-1.1/)

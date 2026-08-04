@@ -276,6 +276,14 @@ tests rather than manifest cases.
 | PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 was the next slice at that merge. |
 | PR #75, passive archive F1 | `6fc31a049c476acf5085071c48d3d5e36f27240f` | Source head `20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef`; implemented passive archive types, limits, known answers, defensive copies, and eligibility only. No file write, migration, activation, lookup consumer, or adapter call exists; F2 is next. |
 
+The ecosystem reuse audit is retained in
+[`ECOSYSTEM_REUSE_AND_ADOPTION.md`](ECOSYSTEM_REUSE_AND_ADOPTION.md) on its delivery branch until
+its draft PR merges; its final merge commit must be added to this table during integration. It is
+a primary-source-backed planning map, not implementation or security evidence. It records three
+bounded decision lanes: production CBOR/COSE profiling, SQLite comparison after F2/G2, and the
+already-active `.mjs` parser boundary. It explicitly does not preempt M1, G2, F2, or the separate
+ARM64 `rusty_v8` work.
+
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
 PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->
 e930f9d` even though the PR numbers are 73, 75, and 74. The exact source heads above preserve review
@@ -390,6 +398,8 @@ For every future parallel task or external review that changes the project direc
    on the task handoff;
 3. reconcile design conclusions into the current ADR, synthesis, evidence matrix, and roadmap;
 4. mark superseded recommendations explicitly rather than deleting historical observations; and
-5. record the merge commit that integrated the result.
+5. record the merge commit that integrated the result; and
+6. for a dependency or new custom primitive, cite the matching reuse-map row and retain the
+   completed dependency-policy checklist with the consuming task or decision evidence.
 
 No task is complete for coordination purposes if its only useful output exists in chat history.

@@ -172,6 +172,12 @@ gh pr view --json url,isDraft --jq '{url, isDraft}'
   future disposable parser sandbox.
 - Treat spike code as non-production. Product packages must not import it; retain
   reproducible fixtures/evidence and record the resulting decision before reuse.
+- Before adding a dependency or implementing a new primitive, consult
+  `docs/ECOSYSTEM_REUSE_AND_ADOPTION.md`, identify the applicable roadmap row and
+  recommendation, and complete its dependency-policy checklist. An adoption
+  recommendation is not product admission; exact pins, authority, transitive
+  footprint, faults, reproducibility, restoration/mutation tests, and an
+  upgrade/removal owner must close in the consuming slice.
 - Do not add a new Supervisor responsibility or privileged helper without an ADR.
 - Record consequential architecture decisions in an ADR.
 - Never claim a backend, profile, control, integrity mode, or security tier is

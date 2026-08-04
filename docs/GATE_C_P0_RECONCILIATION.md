@@ -182,11 +182,13 @@ not substitute amd64. The smallest next fork change is a digest-pinned Linux/arm
 with network-disabled compilation/test/evidence collection. `RUNTIME-001` remains unsupported.
 See the [retained blocker](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
 
-Current external-work note (2026-08-03): governed `rusty_v8` PR #4 now carries that follow-up at
-exact unmerged head `aa921fa48901bf28774d61248b0187c8b91c55a4`. Its contract jobs pass while clean
-Linux/arm64 full-build work remains in progress. This is not a durable Capsule integration, accepted
-handoff, reusable artifact, release, or admission result. The retained blocked experiment above is
-unchanged until exact successful evidence is reviewed and merged.
+Current external-work note (2026-08-04): governed `rusty_v8` PR #4 now carries that follow-up at
+exact unmerged head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. A clean Linux/arm64
+build and fixed `get_version` test passed. A bounded diagnostic then identified the GN evidence-
+query interpreter mismatch, the exact collector correction was applied, and the corrected-head
+diagnostic passed. This is `IN_PROGRESS — TRENDING_GOOD`, not a durable Capsule integration,
+accepted handoff, reusable artifact, release, or admission result. One clean full-ARM64 bundle run,
+exact evidence review, and merge remain.
 
 Governed `deno_core` follow-up (2026-08-02): physical-omission slice **`PASSED`**; parent runtime
 workstream `IN_PROGRESS — TRENDING_GOOD`; product admission `BLOCKED`.

@@ -385,8 +385,9 @@ These are narrow construction results, not a complete runtime.
 **Selected design.** Accepted ADR-0028 chooses governed `deno_core` as the first runtime engineering
 candidate. The real Deno and `rusty_v8` forks have governed commits. Governed `rusty_v8` PR #4 is
 unmerged external work in progress at head
-`aa921fa48901bf28774d61248b0187c8b91c55a4`; contract checks pass while clean Linux/arm64 build
-work is still in progress. It has no accepted artifact or admission effect. Exact V8
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`; its clean Linux/arm64 build and fixed test
+pass, and the corrected GN evidence-query diagnostic passes. One complete clean bundle run,
+evidence review, and merge remain. It has no accepted artifact or admission effect. Exact V8
 build/source/notice closure, independent builders, closed `.mjs` module loading, external
 isolation composition, and runtime admission remain open.
 

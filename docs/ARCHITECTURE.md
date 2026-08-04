@@ -114,8 +114,10 @@ The retained V1 artifact packages that exact parse/visitor/semantic mode behind 
 has no product consumer. Its actual executable, build manifest, and assessment are bound by a V0
 artifact profile, but the profile is not enrolled: only an identity-free linker ad-hoc signature
 exists, the same-host provenance and assessment are unsigned, and no
-enrolled fixed launch descriptor or OS confinement evidence exists. V2 must seal the profile identity and
-prove sandbox/resource/deadline behavior before this process placement is a security boundary.
+enrolled fixed launch descriptor or OS confinement evidence exists. V2 cannot preserve that exact
+artifact identity: the supported App Sandbox child entitlement shape changes the Mach-O bytes.
+V2 therefore resumes only with a newly reviewed/enrolled artifact plus a supported exact memory/
+resource-confinement design before this process placement can become a security boundary.
 
 The first exact V2 macOS checkpoint retains a test-only fixed bootstrap and fault corpus but stops
 before confinement. `RLIMIT_AS` cannot be lowered on the observed host, the explicit unbounded

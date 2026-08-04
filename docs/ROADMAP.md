@@ -15,10 +15,12 @@ ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PAS
 scopes. V1 enrollment and V2-V5 process/consumer work are `BLOCKED` on the retained V1 enrollment
 and V2 resource/confinement stops; downstream S1/M2 remains `BLOCKED` on those gates.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
-first-release critical path. The fork-native runtime bundle waits on an accepted
-Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
-explicit owned-guest authorization. Installed signing/distribution and independent-builder
-matrices remain separate evidence lanes.
+first-release critical path. The fork-native runtime bundle waits on an accepted Linux/arm64
+`rusty_v8` handoff. A clean ARM64 build and fixed test now pass externally, but the corrected
+evidence collector still needs one complete clean bundle run, review, and merge before Capsule may
+consume it. Governed runtime/libkrun guest composition is later and requires explicit owned-guest
+authorization. Installed signing/distribution and independent-builder matrices remain separate
+evidence lanes.
 
 Every phase must consult the
 [ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) before adding a dependency or
@@ -57,10 +59,12 @@ question; the TypeScript follow-up passed a strip-only pre-approval byte-binding
 results establish bounded construction evidence but do not admit that runtime. The real
 `Shrimpworks/deno` and `dills122/rusty_v8` forks contain merged governed branches, but no governed
 release exists. The first fork-native Linux/arm64 construction stopped before building because the
-merged `rusty_v8` publication contract supported only Linux/amd64. Governed `rusty_v8` PR #4 is
-unmerged external work in progress at `aa921fa48901bf28774d61248b0187c8b91c55a4`; contract checks
-pass while clean Linux/arm64 full-build work remains in progress. No output is reusable without an
-exact successful handoff, review, and governance reconciliation. P0-1 is a `PATCH-CANDIDATE`, P0-2
+merged `rusty_v8` publication contract supported only Linux/amd64. Governed `rusty_v8` PR #4 now
+retains a passing clean ARM64 build and fixed test plus a corrected, passing GN evidence-query
+diagnostic at exact head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. It remains open and
+draft; one clean full-ARM64 bundle run, exact evidence review, and merge are still required. No
+output is reusable without that accepted handoff and governance reconciliation. P0-1 is a
+`PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
 added bounded console/raw-FD library tests, and materially improved measured coverage, but retained

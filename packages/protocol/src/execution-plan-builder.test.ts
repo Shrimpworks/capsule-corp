@@ -316,6 +316,45 @@ test("unwired registration handoff retains only defensive exact-byte and complet
   );
 });
 
+test("registration handoff accepts the same profile review attestation set in a different order", async () => {
+  const constructed = constructExecutionPlan(await ordinaryPlanInputs(), ordinaryTrustedBindings());
+  assert.equal(constructed.ok, true);
+  if (!constructed.ok) {
+    return;
+  }
+  assert.deepEqual(
+    constructed.plan.candidate.profileReviewAttestationDigests.map((digest) => digest.bytes[0]),
+    [0x66, 0x67],
+  );
+
+  const reordered = ordinaryRegistrationRoleBindings({
+    profileReviewAttestationDigests: [
+      trustedDigest(0x67, "profile-review-attestation"),
+      trustedDigest(0x66, "profile-review-attestation"),
+    ],
+  });
+  const prepared = prepareExecutionPlanRegistrationHandoff(constructed.plan, reordered);
+  assert.equal(prepared.ok, true);
+
+  const missingOneAddedAnother = ordinaryRegistrationRoleBindings({
+    profileReviewAttestationDigests: [
+      trustedDigest(0x66, "profile-review-attestation"),
+      trustedDigest(0x68, "profile-review-attestation"),
+    ],
+  });
+  assert.deepEqual(
+    prepareExecutionPlanRegistrationHandoff(constructed.plan, missingOneAddedAnother),
+    {
+      ok: false,
+      refusal: {
+        owner: "execution-plan-registration-handoff",
+        classification: "BINDING",
+        code: "ROLE_BINDING_MISMATCH",
+      },
+    },
+  );
+});
+
 test("TypeScript exact-plan output reaches Go registrationstate through the local conformance harness", async () => {
   const constructed = constructExecutionPlan(await ordinaryPlanInputs(), ordinaryTrustedBindings());
   assert.equal(constructed.ok, true);

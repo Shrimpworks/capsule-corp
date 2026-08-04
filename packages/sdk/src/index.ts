@@ -16,7 +16,10 @@ export class CapsuleClient {
   readonly #fetch: typeof globalThis.fetch;
 
   constructor(options: CapsuleClientOptions = {}) {
-    this.#baseUrl = new URL(options.baseUrl ?? "http://127.0.0.1:7777/");
+    const baseUrl = options.baseUrl ?? "http://127.0.0.1:7777/";
+    // URL's relative resolution drops the base's final path segment unless
+    // it ends in "/", silently mangling any baseUrl with a path prefix.
+    this.#baseUrl = new URL(baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`);
     this.#fetch = options.fetch ?? globalThis.fetch;
   }
 

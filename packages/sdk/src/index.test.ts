@@ -72,3 +72,18 @@ test("listRuntimes rejects a response whose profiles field is not an array", asy
 
   await assert.rejects(() => client.listRuntimes(), /malformed runtimes response/);
 });
+
+test("a baseUrl path prefix without a trailing slash is preserved, not dropped", async () => {
+  let requestedUrl: string | undefined;
+  const client = new CapsuleClient({
+    baseUrl: "http://localhost:7777/v2",
+    fetch: async (input) => {
+      requestedUrl = input.toString();
+      return Response.json({ status: "ok" });
+    },
+  });
+
+  await client.health();
+
+  assert.equal(requestedUrl, "http://localhost:7777/v2/healthz");
+});

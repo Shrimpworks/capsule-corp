@@ -341,6 +341,28 @@
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "passive-approved-byte-v0-exact-cbor-digest",
       "unknownBehavior": "reject-passive-fixture"
+    },
+    "mjs-source-manifest-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "passive-fixture-generator",
+      "validator": "source-manifest-cbor-decoder",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-mjs-source-manifest-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "mjs-source-manifest-content": {
+      "authorityClass": "content-capability",
+      "originRole": "passive-fixture-generator",
+      "validator": "source-manifest-cbor-decoder",
+      "resolver": "source-manifest-byte-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "passive-mjs-source-manifest-v0-exact-cbor-digest",
+      "unknownBehavior": "reject-passive-fixture"
     }
   },
   "targets": [
@@ -857,6 +879,45 @@
           "path": "/transformationRecordSetDigest",
           "sourceField": 5,
           "profile": "typescript-runtime"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-manifest",
+      "version": 0,
+      "definition": {
+        "kind": "cddl-map",
+        "path": "schemas/cddl/candidates/source-manifest-v0.cddl",
+        "rule": "capsule-source-manifest-v0"
+      },
+      "fields": [
+        { "path": "/objectType", "sourceField": 1, "profile": "mjs-source-manifest-discriminator" },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "mjs-source-manifest-discriminator"
+        },
+        { "path": "/entrypoint", "sourceField": 3, "profile": "mjs-source-manifest-content" },
+        { "path": "/members", "sourceField": 4, "profile": "mjs-source-manifest-content" },
+        {
+          "path": "/members/*/logicalPath",
+          "sourceField": "4/*/1",
+          "profile": "mjs-source-manifest-content"
+        },
+        {
+          "path": "/members/*/contentDigest",
+          "sourceField": "4/*/2",
+          "profile": "mjs-source-manifest-content"
+        },
+        {
+          "path": "/members/*/byteLength",
+          "sourceField": "4/*/3",
+          "profile": "mjs-source-manifest-content"
+        },
+        {
+          "path": "/aggregateByteLength",
+          "sourceField": 5,
+          "profile": "mjs-source-manifest-content"
         }
       ]
     }

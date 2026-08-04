@@ -21,11 +21,12 @@ Keep these evidence classes separate:
 
 ## Durable repository state
 
-The current closed conformance corpus remains 82 rules, 262 cases, and 368 fixtures. The unwired
-Go/TypeScript implementation covers the previously recorded 177 Go targets and 80 TypeScript
-proposal targets. The passive field-authority foundation covers 164 top-level fields across 15
-selected pre-freeze targets; it does not recursively classify future Source Preparer or plan-v1
-objects.
+The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
+Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
+targets plus 40 independently verified MJS byte/manifest targets in each language. Twenty-eight exact
+source-language adjudication cases remain `pending`. The passive field-authority foundation covers
+172 fields across 16 selected pre-freeze targets, including all three nested single-member fields
+of SourceManifest; it does not classify future Source Preparer or plan-v1 objects.
 
 The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
 approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
@@ -48,8 +49,11 @@ store composition and installed protected-root matrix remain later slices.
 
 Accepted ADR-0034 now freezes the first-release source contract as one byte-exact pass-through
 `main.mjs` member, one plan-v0 source-manifest role, and no static/dynamic dependency request or
-module-loader fallback. The next passive slices are M1 proposal/source/manifest fixtures and
-S1/M2 registration/fetch fixtures. `RegisterPlanV0` atomically submits exact plan bytes, the
+module-loader fallback. The passive source-byte and SourceManifest foundation is retained, while
+the M1 module-request/source-language validator is on the exact
+[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). JobProposal narrowing and all
+S1/M2 registration/fetch work are blocked on a separately reviewed exact parser/validation
+boundary. The proposed `RegisterPlanV0` would atomically submit exact plan bytes, the
 complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
 source bytes; `GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Candidate
 application-data maxima are 328,337 request bytes and 332,433 fetch-reply bytes, pending generated
@@ -107,7 +111,7 @@ governance reconciliation before Capsule reuses it.
 | --- | --- | --- |
 | Independently actionable now | Archive F2 | Build the explicit fixed-store v2 migration/full verifier from passive F1; no cohort leaves hot state and no archive segment exists. |
 | Independently actionable now | Owner-lock G1 | Port only the passive bootstrap/opaque owner boundary under owned temporary roots; do not claim protected storage. |
-| Independently actionable now | `.mjs` M1 and S1/M2 | Narrow and replace passive proposal/source fixtures, add canonical source-manifest/field-authority coverage, then generate the four closed IPC message projections and exact maxima. Add no product endpoint. |
+| Blocked | `.mjs` M1 validator and S1/M2 | Select a separately reviewed exact, pinned/governed bounded ECMAScript parser/validation boundary. Do not ship an ad hoc scanner or substitute runtime no-loader behavior. The byte/SourceManifest foundation is retained; add no product endpoint. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |

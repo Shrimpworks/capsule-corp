@@ -28,11 +28,13 @@ Phase 2A now includes verified passive candidates for the first narrow `JobPropo
 `ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
 decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
 
-Phase 2B now retains a closed 82-rule, 262-case, 368-fixture conformance corpus for raw decoding,
+Phase 2B now retains a closed 89-rule, 330-case, 433-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
 and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
 TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
-verifies 177 Go targets: 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
+verifies those 80 proposal targets plus 40 MJS byte/manifest targets in TypeScript. Go verifies
+217 targets: the previously retained 177 plus the same 40 MJS byte/manifest targets; the earlier
+177 comprise 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
 passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact
 candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
@@ -125,9 +127,11 @@ local F2, G1, or documentation mechanics.
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) now freezes the first release as
 one byte-exact pass-through `main.mjs` member under the existing plan-v0 source role, with no
 static/dynamic dependency request, CommonJS, package resolution, legacy Node module surface, or
-module-loader fallback. Its passive proposal/source/manifest and IPC registration/fetch fixtures,
-Supervisor source custody, Broker rendering, runtime no-loader evidence, and consumer remain
-unimplemented. The bounded TypeScript approved-byte follow-up passed only the pre-approval
+module-loader fallback. The exact source-byte and deterministic-CBOR SourceManifest foundation is
+implemented passively, but the module-request/source-language validator is on the retained
+[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). JobProposal narrowing,
+plan construction, IPC registration/fetch, Supervisor source custody, Broker rendering, runtime
+no-loader evidence, and every consumer remain unimplemented. The bounded TypeScript approved-byte follow-up passed only the pre-approval
 byte-ownership question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,

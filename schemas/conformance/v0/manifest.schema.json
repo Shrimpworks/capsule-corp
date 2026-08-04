@@ -38,6 +38,7 @@
     "variant": {
       "enum": [
         "ordinary",
+        "minimum",
         "exact-maximum",
         "cap-plus-one",
         "malformed",
@@ -201,6 +202,7 @@
         "attempt-nonce",
         "supervisor",
         "source-manifest",
+        "source-content",
         "inline-input",
         "execution-plan",
         "policy-decision",
@@ -251,6 +253,19 @@
               "const": "fixture"
             },
             "fixture": {
+              "$ref": "#/$defs/fixtureReference"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "source"],
+          "properties": {
+            "kind": {
+              "const": "source-manifest"
+            },
+            "source": {
               "$ref": "#/$defs/fixtureReference"
             }
           }
@@ -339,6 +354,9 @@
         "public-raw-decoder",
         "job-proposal-schema",
         "job-proposal-semantic-validator",
+        "mjs-source-byte-validator",
+        "mjs-source-language-validator",
+        "source-manifest-validator",
         "supervisor-plan-predecoder",
         "supervisor-registration-predecoder",
         "shared-scalar-validator",
@@ -481,7 +499,9 @@
             "AttemptReference",
             "ApprovalGrant",
             "approval-state",
-            "attempt-state"
+            "attempt-state",
+            "MjsSource",
+            "SourceManifest"
           ]
         },
         "wireFormat": {

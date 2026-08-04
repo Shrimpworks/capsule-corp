@@ -80,6 +80,7 @@
             "plan-registration-cbor-decoder",
             "approval-grant-cose-cbor-verifier",
             "approval-attempt-record-validator",
+            "source-manifest-cbor-decoder",
             "typescript-approved-byte-fixture-verifier"
           ]
         },
@@ -91,7 +92,8 @@
             "registration-state-resolver",
             "approval-ledger-binding-resolver",
             "attempt-cross-link-resolver",
-            "fixture-known-answer-resolver"
+            "fixture-known-answer-resolver",
+            "source-manifest-byte-resolver"
           ]
         },
         "authorityEffect": {
@@ -118,7 +120,8 @@
             "approval-grant-v0-signature-and-registration",
             "durable-approval-record",
             "atomic-execution-attempt-record",
-            "passive-approved-byte-v0-exact-cbor-digest"
+            "passive-approved-byte-v0-exact-cbor-digest",
+            "passive-mjs-source-manifest-v0-exact-cbor-digest"
           ]
         },
         "unknownBehavior": {

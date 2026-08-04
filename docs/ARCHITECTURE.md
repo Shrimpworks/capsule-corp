@@ -90,8 +90,10 @@ registration identifier.
 Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mjs` source under the
 existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
 canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
-copies. This is contract design only: passive fixtures, source custody, authenticated transport,
-consumer, runtime, backend, and guest remain unimplemented. Proposed ADR-0032's separately enrolled
+copies. Only the passive source-byte/SourceManifest foundation exists. The module-request validator
+is on the retained grammar-counterexample hold, so JobProposal narrowing, plan construction, source
+custody, authenticated transport, consumer, runtime, backend, and guest remain unimplemented.
+Proposed ADR-0032's separately enrolled
 Source Preparer is now only a conditional later TypeScript topology and remains on P1 HOLD.
 
 ### Proposed TypeScript Source Preparer

@@ -7,3 +7,5 @@
 *.pdf binary
 *.capture binary
 schemas/conformance/v0/shared/*.bin binary
+schemas/conformance/v0/mjs-source/* binary
+schemas/conformance/v0/mjs-source-manifest/* binary

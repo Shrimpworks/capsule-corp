@@ -102,7 +102,9 @@ handoff. PR #4 is the current external attempt, not a completed dependency:
    independent-builder equality is deferred.
 3. Follow accepted ADR-0034 for the first release: one byte-exact pass-through `main.mjs`, one
    plan-v0 source role, no static/dynamic dependency request, and no filesystem/network/package/
-   fallback module loader. Complete its passive M1-M4 source/registration/approval custody slices
+   fallback module loader. The passive M1 source-byte/SourceManifest foundation is retained, but
+   the module-request validator and downstream M2/S1 work are blocked by the exact
+   division-versus-regexp counterexample until a separate parser-boundary decision. Complete M1-M4
    before runtime integration, then prove M5 only under a separate runtime/profile admission plan.
    Proposed ADR-0032 remains on P1 HOLD for a conditional later TypeScript feature and is not a
    first-release dependency. Do not add CommonJS, package resolution, legacy Node module surface,

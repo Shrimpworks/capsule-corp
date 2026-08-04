@@ -9,9 +9,9 @@ const checkedInManifest = JSON.parse(await readFile(manifestUrl, "utf8"));
 
 test("verifies the checked-in passive field-authority manifest", async () => {
   assert.deepEqual(await verifyFieldAuthorityManifest({ rootDirectory: repositoryRoot }), {
-    fieldCount: 164,
-    profileCount: 30,
-    targetCount: 15,
+    fieldCount: 172,
+    profileCount: 32,
+    targetCount: 16,
   });
 });
 
@@ -62,6 +62,15 @@ test("rejects a classified field absent from the canonical target", async () => 
   await assert.rejects(
     verifyFieldAuthorityManifest({ manifest, rootDirectory: repositoryRoot }),
     /classified fields absent from canonical target capsule\.typescript-plan-source-bindings@0: 99/u,
+  );
+});
+
+test("rejects a missing nested SourceManifest member classification", async () => {
+  const manifest = cloneManifest();
+  target(manifest, "capsule.source-manifest").fields.splice(5, 1);
+  await assert.rejects(
+    verifyFieldAuthorityManifest({ manifest, rootDirectory: repositoryRoot }),
+    /missing field classifications for capsule\.source-manifest@0: 4\/\*\/2/u,
   );
 });
 

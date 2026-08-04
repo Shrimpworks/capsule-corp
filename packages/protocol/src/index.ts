@@ -10,6 +10,8 @@ export * from "./internal-contract-candidates.js";
 export * from "./job-proposal.js";
 export * from "./job-proposal-decoder.js";
 export * from "./job-proposal-resolver.js";
+export * from "./mjs-source-candidate.js";
+export * from "./source-manifest-candidate.js";
 export * from "./typescript-approved-byte-candidate.js";
 
 export const API_VERSION = "capsule.dev/v0" as const;

@@ -167,8 +167,12 @@ function inspectCddlMap(source, rule) {
   if (entries.length === 0) {
     throw new Error(`canonical CDDL rule has no numbered fields: ${rule}`);
   }
-  const fields = new Set(entries.map((entry) => entry[1]));
-  if (fields.size !== entries.length) {
+  const topLevelFields = entries.map((entry) => entry[1]);
+  const nestedFields = [...body.matchAll(/^\s*;\s*field-authority-nested:\s*([^\s]+)\s*$/gmu)].map(
+    (entry) => entry[1],
+  );
+  const fields = new Set([...topLevelFields, ...nestedFields]);
+  if (fields.size !== topLevelFields.length + nestedFields.length) {
     throw new Error(`canonical CDDL rule has duplicate field labels: ${rule}`);
   }
   const objectEntry = entries.find((entry) => entry[1] === "1");

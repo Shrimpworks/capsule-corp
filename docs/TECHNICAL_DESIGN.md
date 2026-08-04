@@ -67,13 +67,15 @@ The first complete workflow is intentionally narrow:
 
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
-   loader fallbacks refuse under accepted ADR-0034.
+   loader fallbacks must refuse under accepted ADR-0034. This workflow is blocked before plan
+   construction until the exact parser/validation boundary is selected.
 2. The Go daemon strictly decodes the proposal, validates the fixed source profile without
    executing it, resolves trusted policy, and constructs canonical `ExecutionPlan` v0 bytes plus
    the canonical single-member source manifest. Registration atomically validates and retains the
    exact plan, complete bindings, manifest, and pass-through source bytes. Proposed ADR-0032's
    Source Preparer and ADR-0030's plan-v1 cutover remain conditional later TypeScript work; they no
-   longer block the first release.
+   longer block the first release. These proposal/plan steps are target design, not current
+   implementation; only the passive source-byte/SourceManifest foundation exists.
 3. The daemon sends those exact bytes to the Execution Supervisor. The Supervisor independently
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
@@ -717,7 +719,9 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
-2. Complete ADR-0034 M1 and S1/M2: freeze the single-member `.mjs` source/manifest contract and
+2. Resolve ADR-0034's retained M1 grammar-counterexample hold by selecting a separately reviewed
+   exact, pinned/governed bounded ECMAScript parser/validation boundary. The passive source-byte
+   and SourceManifest foundation is retained; only then narrow JobProposal and continue S1/M2
    generated plan-v0 registration/fetch fixtures with complete field authority.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.

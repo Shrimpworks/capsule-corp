@@ -198,6 +198,15 @@ and compromised-child cases are retained on supported hosts, it is only a crash-
 and ADR-0035 remains Proposed. The child has zero authority effect; every abnormal outcome is a
 refusal. A same-UID process name, PID, or executable path is not identity evidence.
 
+The retained V2 macOS checkpoint now supplies negative evidence for this exact artifact/profile
+pair. The strict child refuses before `exec` because `RLIMIT_AS` cannot be lowered. When that limit
+is explicitly omitted only for diagnostic testing, the child process can open an owned out-of-cwd
+file, create IPv4 and Unix socket descriptors, mutate cwd metadata, create an empty file, and map
+512 MiB. The supported App Sandbox child entitlement shape changes the fixed V1 bytes; deprecated
+custom sandbox interfaces were not used. CPU/file/FD/child/wall ceilings, output faults, group
+kill/reap, and a clean later invocation are local-mechanic evidence only. V2 remains `BLOCKED` and
+no Keychain, Supervisor-state, installed-identity, sandbox, or product-containment claim follows.
+
 Separate authorities require proven macOS enforcement: XPC peer code requirements, effective user/
 session and exact build/epoch checks, Keychain access-group separation, protected storage
 containers, relevant entitlements, and Supervisor-only backend control.

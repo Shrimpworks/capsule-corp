@@ -94,7 +94,7 @@ Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mj
 existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
 canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
 copies. The passive source-byte/SourceManifest foundation and bounded Oxc parser/process selection
-are `PASSED`. Product Source Validator V1-V5 is `IN_PROGRESS — TRENDING_GOOD`; JobProposal
+are `PASSED`. Product Source Validator V1-V5 is `BLOCKED`; JobProposal
 narrowing, plan construction, source custody, authenticated transport, consumer, runtime, backend,
 and guest remain unimplemented.
 Proposed ADR-0032's separately enrolled
@@ -114,8 +114,15 @@ The retained V1 artifact packages that exact parse/visitor/semantic mode behind 
 has no product consumer. Its actual executable, build manifest, and assessment are bound by a V0
 artifact profile, but the profile is not enrolled: only an identity-free linker ad-hoc signature
 exists, the same-host provenance and assessment are unsigned, and no
-fixed launch descriptor or OS confinement evidence exists. V2 must seal the profile identity and
+enrolled fixed launch descriptor or OS confinement evidence exists. V2 must seal the profile identity and
 prove sandbox/resource/deadline behavior before this process placement is a security boundary.
+
+The first exact V2 macOS checkpoint retains a test-only fixed bootstrap and fault corpus but stops
+before confinement. `RLIMIT_AS` cannot be lowered on the observed host, the explicit unbounded
+diagnostic mutation retains file/socket/metadata-write authority, and Apple's supported App
+Sandbox child entitlements change the immutable V1 Mach-O bytes. No deprecated custom sandbox was
+used. This is crash and local process-mechanic evidence only; V2 is `BLOCKED` pending a newly
+reviewed/enrolled artifact plus a supported exact memory and confinement mechanism.
 
 The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
 does not parse rich source. The validator has no authority to approve, retain state, or launch a

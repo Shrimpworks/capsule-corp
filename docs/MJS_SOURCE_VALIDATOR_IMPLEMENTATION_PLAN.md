@@ -106,6 +106,20 @@ denial, fork/child escape, inherited-FD audit, memory/CPU/output exhaustion,
 deadline/reap behavior, and post-crash clean restart. Until this evidence exists,
 process separation is crash isolation only, not an admitted security boundary.
 
+Observed V2 checkpoint: [`artifacts/mjs-source-validator-v2/`](../artifacts/mjs-source-validator-v2/)
+retains the exact macOS arm64 stop plus a Darwin-only diagnostic harness. The strict test bootstrap
+fixes the V1 target and profile argument, empty environment, fresh cwd, three post-exec role FDs,
+one process group, and CPU/file/FD/child/output/wall limits, but lowering `RLIMIT_AS` to 256 MiB
+returns `EINVAL` and refuses before V1 `exec`. An explicitly named unbounded-memory diagnostic
+mutation then verifies ordinary/exact-maximum V0 results, partial/duplicate/trailing/oversize
+output refusal, crash/signal/timeout/cancellation, group kill/reap, and a clean later invocation.
+That mutation also permits a 512 MiB mapping, an owned out-of-cwd file read, IPv4 and Unix socket
+creation without connect, cwd metadata change, and empty-file creation. Apple's supported embedded
+App Sandbox child entitlement shape changes the fixed V1 Mach-O bytes; deprecated custom sandbox
+interfaces are not used. No Keychain or Supervisor state was probed. Therefore V2 is `BLOCKED`,
+not passed or `NO_GO`, pending a newly reviewed/enrolled artifact and a supported exact memory/
+confinement design. The diagnostic mutation is test-only counterevidence and may not be wired.
+
 ### V3 — daemon pre-plan integration
 
 - Decode M1's exact copied source bytes, validate cap/UTF-8/BOM according to its

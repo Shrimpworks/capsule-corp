@@ -1,6 +1,12 @@
-# M1 ECMAScript module-request validator hold
+# Historical M1 ECMAScript scanner stop
 
-Status: **HOLD — exact parser/validation boundary unselected and unimplemented**
+Status: handwritten scanner `NO_GO`; replacement parser/process selection `PASSED`; product Source
+Validator `IN_PROGRESS — TRENDING_GOOD`.
+
+This is the historical stop record for the removed handwritten scanner. Proposed ADR-0035 and the
+later bounded comparison selected exact Oxc 0.140.0 in a disposable Source Validator process. The
+counterexample below remains a required regression fixture; it no longer means the parser boundary
+is unselected.
 
 This record defensively evaluates only fixed repository-owned `.mjs` byte fixtures with a passive
 prototype. No fixture was executed as JavaScript, no runtime/backend/guest was launched, and no

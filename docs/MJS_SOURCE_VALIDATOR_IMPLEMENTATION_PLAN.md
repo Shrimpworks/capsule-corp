@@ -191,4 +191,5 @@ This gate belongs to runtime admission. Parser passage alone never satisfies it.
 ADR-0035 may move from Proposed only when V0–V5 have retained, reviewed evidence
 on every supported host and the canonical docs reflect the final protocol and
 authority ownership. Runtime/profile admission additionally requires V6. A parser
-binary, IPC endpoint, or passing happy-path test alone is a NO-GO.
+binary, IPC endpoint, or passing happy-path test alone is insufficient and leaves the parent work
+`IN_PROGRESS` or `BLOCKED`; it is not a pass or a `NO_GO` by itself.

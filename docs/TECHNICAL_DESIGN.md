@@ -76,8 +76,10 @@ The first complete workflow is intentionally narrow:
 
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
-   loader fallbacks must refuse under accepted ADR-0034. The merged M1 passive foundation remains
-   on HOLD before plan construction until Proposed ADR-0035's product gates pass.
+   loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
+   parser/process selection are `PASSED`; product Source Validator V1-V5 is
+   `IN_PROGRESS — TRENDING_GOOD`, and plan construction remains `BLOCKED` until its required gates
+   pass.
 2. The Go daemon strictly decodes the proposal and, under Proposed ADR-0035, sends an exact copied
    source to a fresh disposable Source Validator before planning. The validator parses but never
    executes source and returns only digest/length and fixed grammar-node facts. The daemon then

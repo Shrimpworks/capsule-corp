@@ -6,23 +6,14 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2's stateful migration/full verifier is blocked by the retained valid-v1
-
-missing-lifecycle mapping contradiction. Retained owner-lock G2 mechanics and documentation/
-field-authority maintenance can proceed independently. Owner-lock G3 is NO-GO pending a matching W4
-certificate/profile set plus a selected protected-root bootstrap/signed-record/store-open
-composition. ADR-0034's M1 bytes, Proposed ADR-0035's passive V0 fixed frames, and the bounded
-unwired V1 artifact/evidence checkpoint are retained. V1 does not pass enrollment because
-independent reproduction and installation-authority signatures are absent; V2-V5 process,
-consumer, and broader conformance gates and downstream S1/M2 work remain blocked.
-
-Archive F2's missing-lifecycle representation is passively resolved; its stateful migration/full
-verifier is the next unimplemented archive slice. Retained owner-lock G2 mechanics and
-documentation/field-authority maintenance can proceed independently. Owner-lock G3 is NO-GO
-pending a matching W4 certificate/profile set plus a selected protected-root bootstrap/
-signed-record/store-open composition. ADR-0034's M1 bytes and Proposed ADR-0035's passive V0 fixed
-frames are retained; the parser artifact/process/consumer gates V1-V5 and downstream S1/M2 work
-remain blocked.
+All labels below follow the [canonical work status language](STATUS_LANGUAGE.md). Archive F2 is
+`PASSED` for the passive missing-lifecycle representation; its stateful migration/full verifier is
+`IN_PROGRESS — TRENDING_GOOD` as the next archive slice. Owner-lock G2 is `PASSED` for its retained
+local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a selected
+protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
+ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in their exact
+scopes. V1 enrollment and V2-V5 process/consumer work are `IN_PROGRESS — TRENDING_GOOD`; downstream
+S1/M2 remains `BLOCKED` on those gates.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -202,10 +193,10 @@ SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without en
 slices must prove independent reproduction and signed enrollment, disposable OS profile,
 independent daemon/Broker invocation, grammar/mutation corpus, and fault recovery. No product
 validator or runtime enforcement exists.
-Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the
-PR #72 P1 HOLD/NO-GO for a conditional later feature. Its protected-store, worker, genesis/update,
-retention/release, recursive field-authority, lifecycle, installed evidence, and plan-v1 cutover no
-longer block first-release plan/IPC/runtime work.
+Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology is `BLOCKED` as
+a conditional later feature. Its protected-store, worker, genesis/update, retention/release,
+recursive field-authority, lifecycle, installed evidence, and plan-v1 cutover do not block
+first-release plan/IPC/runtime work.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed

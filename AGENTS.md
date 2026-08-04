@@ -65,6 +65,15 @@ Treat the brain/orchestrator task as the owner of integration and delivery.
 Before dispatch, it must choose and state whether work is a user-visible task,
 an internal sub-agent assignment, or a research/experiment assignment.
 
+Every plan, progress update, and handoff must use the canonical work vocabulary in
+`docs/STATUS_LANGUAGE.md`: `PASSED`, `IN_PROGRESS — TRENDING_GOOD`,
+`IN_PROGRESS — TRENDING_BAD`, `BLOCKED`, or `NO_GO`. `IN_PROGRESS` always includes
+its trend. Reserve `NO_GO` for an exact candidate or path that has been abandoned;
+missing evidence, unfinished testing, an unimplemented next slice, or a named
+dependency is `BLOCKED` or `IN_PROGRESS`, not `NO_GO`. Report a completed child
+slice separately from an incomplete parent workstream, and keep work status
+separate from ADR lifecycle, control-evidence state, and product admission.
+
 - A new user-visible task that may retain repository changes should normally use
   its own `codex/<topic>` branch and worktree. When its work is complete, the task
   must verify and commit the result, push the branch, open a pull request, and
@@ -82,7 +91,8 @@ an internal sub-agent assignment, or a research/experiment assignment.
   verification, commits, and the single shared PR.
 - A research or experiment assignment running in another task must always call
   back to its parent/orchestrator before completing. Its handoff must include the
-  question tested, defensive and authorized scope, method, results, retained
+  exact scoped work status (and parent status when different), question tested,
+  defensive and authorized scope, method, results, retained
   evidence or artifact paths, verification commands, confidence and limitations,
   unresolved questions, and any recommended decision. If it created a branch,
   commit, or PR, include those identifiers too.

@@ -1,5 +1,10 @@
 # Control Evidence Matrix
 
+The final column reports control/evidence maturity, not work progress. Use
+[`STATUS_LANGUAGE.md`](../STATUS_LANGUAGE.md) for `PASSED`, trended `IN_PROGRESS`, `BLOCKED`, and
+`NO_GO`. An `unsupported` control can coexist with a passed narrow experiment and an active parent
+workstream; do not collapse those dimensions into one label.
+
 Status: living claim registry; selected rows have spike evidence or implemented unwired local
 mechanics, while product controls remain proposed until their complete mechanisms and adversarial
 validation exist.

@@ -1,8 +1,9 @@
 # Supervisor owner-lock implementation and fault plan
 
-Status: G1 and bounded G2 current-v1/no-guest composition are implemented local mechanics. The
-first bounded G3 discovery/fixture slice is retained as **NO-GO**; installed G3 and the product
-boundary remain unimplemented.
+Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. Installed
+G3 is `BLOCKED` by the exact certificate/profile mismatch and protected-root composition named
+below; the path remains intended. The historical discovery result is retained as evidence, not as
+a current `NO_GO` work status.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
 backend, runtime, or guest is wired by this plan.
@@ -20,7 +21,7 @@ No store read/mutation, migration, recovery enumeration, `Recover`, archive, bac
 dispatch, or adapter call may occur before one exact enrolled object is exclusively held. The lock
 does not grant any of those operations; existing typed state and authority checks remain required.
 
-This plan does not close the Source Preparer P0 HOLD merged in PR #72 (head `a12041c`, merge
+This plan does not close the blocked Source Preparer P0 review merged in PR #72 (head `a12041c`, merge
 `2e268b0`). Process
 exclusion is not source-store confidentiality or integrity, protected-container membership,
 worker confinement, or store-genesis/update authority. Any later composition uses a separate
@@ -162,7 +163,7 @@ test-only and no product command or service consumes them.
 
 ### G3: installed identity/session/update evidence
 
-Observed 2026-08-03 result: **NO-GO before installed build**. Exact certificate SHA-1
+Observed 2026-08-03 result: installed G3 is **BLOCKED before installed build**. Exact certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its public X.509 subject OU and the
 TeamIdentifier emitted by a harmless exact-selector signing probe are both `3DDR84M4JS`. The
@@ -220,7 +221,7 @@ Retained checkpoint:
 
 ## Remaining blockers
 
-The retained local semantics and G3 NO-GO do not close protected installed storage,
+The retained local semantics and blocked G3 work do not close protected installed storage,
 matching W4 signing/profiles, authenticated bootstrap creation/signing,
 session/reboot/update behavior, support floor, real power loss, production engine, coherent
 restore/rollback, authenticated IPC, production approvals, content/evidence, runtime/backend, or

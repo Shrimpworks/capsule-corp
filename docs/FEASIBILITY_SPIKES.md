@@ -50,6 +50,12 @@ broad implementation.
 A spike is successful when it produces a trustworthy decision, including a negative one. It is not
 judged by product polish or how much code can be reused.
 
+Report spike execution and candidate disposition separately using the
+[canonical work status language](STATUS_LANGUAGE.md). A completed spike is `PASSED` when it
+answered its exact question with trustworthy evidence, even if the candidate it tested is
+`NO_GO`. Missing composed evidence, a deferred test, or an unavailable dependency makes the
+parent workstream `BLOCKED` or `IN_PROGRESS`; it does not turn a passed slice into `NO_GO`.
+
 ## Rules for every spike
 
 Each spike records:
@@ -61,7 +67,8 @@ Each spike records:
 - commands or tests that reproduce the observation;
 - observed results separated from inference;
 - unsupported behavior and residual risk;
-- a pass, conditional-pass, or fail decision;
+- one canonical work status, including trend for `IN_PROGRESS`, plus a separately scoped candidate
+  disposition and parent status when they differ;
 - the contract/ADR consequence and safe fallback;
 - whether prototype code, fixtures, or both are retained.
 
@@ -305,7 +312,11 @@ Hypothesis:
 Threat/control:
 Observed evidence:
 Counterevidence and limitations:
-Decision: pass | conditional-pass | fail
+Spike status: PASSED | IN_PROGRESS — TRENDING_GOOD | IN_PROGRESS — TRENDING_BAD | BLOCKED
+Candidate status: PASSED | BLOCKED | NO_GO
+Parent workstream status:
+Blocker and owner: # required when BLOCKED
+Replacement/fallback: # required when NO_GO
 Contract consequence:
 ADR consequence:
 Retained artifacts:

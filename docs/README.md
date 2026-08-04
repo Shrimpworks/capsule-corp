@@ -17,7 +17,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 10. [Ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) — roadmap-specific
     build-vs-adopt decisions, dependency authority/TCB classification, bounded spikes, and the
     mandatory dependency-policy checklist
-11. [Experiment archive](EXPERIMENT_ARCHIVE.md) — immutable migration identity, evidence-linking
+11. [Work status language](STATUS_LANGUAGE.md) — the required `PASSED`, trended `IN_PROGRESS`,
+    `BLOCKED`, and true-path-abandonment `NO_GO` vocabulary
+12. [Experiment archive](EXPERIMENT_ARCHIVE.md) — immutable migration identity, evidence-linking
     rules, and the boundary between product conformance fixtures and disposable spike code
 
 The completed Gate C tracks are synthesized in

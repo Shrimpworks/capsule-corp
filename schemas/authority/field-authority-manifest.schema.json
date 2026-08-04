@@ -70,7 +70,10 @@
             "trusted-policy-resolver",
             "approval-broker",
             "execution-supervisor",
-            "passive-fixture-generator"
+            "passive-fixture-generator",
+            "source-validator-parent",
+            "source-validator-child",
+            "installation-enrollment"
           ]
         },
         "validator": {
@@ -81,7 +84,8 @@
             "approval-grant-cose-cbor-verifier",
             "approval-attempt-record-validator",
             "source-manifest-cbor-decoder",
-            "typescript-approved-byte-fixture-verifier"
+            "typescript-approved-byte-fixture-verifier",
+            "source-validator-passive-verifier"
           ]
         },
         "resolver": {
@@ -93,7 +97,10 @@
             "approval-ledger-binding-resolver",
             "attempt-cross-link-resolver",
             "fixture-known-answer-resolver",
-            "source-manifest-byte-resolver"
+            "source-manifest-byte-resolver",
+            "source-validator-request-binding-resolver",
+            "source-validator-result-binding-resolver",
+            "source-validator-artifact-binding-resolver"
           ]
         },
         "authorityEffect": {
@@ -121,7 +128,11 @@
             "durable-approval-record",
             "atomic-execution-attempt-record",
             "passive-approved-byte-v0-exact-cbor-digest",
-            "passive-mjs-source-manifest-v0-exact-cbor-digest"
+            "passive-mjs-source-manifest-v0-exact-cbor-digest",
+            "passive-source-validator-request-v0-exact-frame",
+            "passive-source-validator-result-v0-exact-frame",
+            "passive-source-validator-candidate-v0-exact-frame",
+            "passive-source-validator-artifact-profile-v0-exact-frame"
           ]
         },
         "unknownBehavior": {

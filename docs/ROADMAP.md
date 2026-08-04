@@ -7,11 +7,10 @@ quality—is the deliverable.
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 Archive F2's stateful migration/full verifier is blocked by the retained valid-v1
-missing-lifecycle mapping contradiction; owner-lock G2 planning/composition and
-documentation/field-authority maintenance can proceed independently. ADR-0034's M1 validator and
-downstream S1/M2 work are
-blocked on a separately reviewed exact ECMAScript parser/validation boundary; the passive
-source-byte/SourceManifest foundation is retained.
+missing-lifecycle mapping contradiction; owner-lock G2 planning/composition and documentation/
+field-authority maintenance can proceed independently. ADR-0034's M1 bytes and Proposed ADR-0035's
+passive V0 fixed frames are retained; the parser artifact/process/consumer gates V1-V5 and
+downstream S1/M2 work remain blocked.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -174,13 +173,15 @@ consumer behavior remain open.
 
 Accepted ADR-0034 freezes the first release as one byte-exact pass-through `main.mjs` member under
 the existing plan-v0 source role, with no static/dynamic dependency request or module-loader
-fallback. Its passive source-byte/SourceManifest foundation is retained, but an exact
-division-versus-regexp counterexample places the M1 source-language validator and downstream
-S1/M2 registration/fetch slices on hold pending a separately reviewed parser/validation boundary.
+fallback. Its passive source-byte/SourceManifest foundation is retained, and an exact
+division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
+passive V0 frames are now exact, but the M1 product validator and downstream S1/M2
+registration/fetch slices remain on hold pending V1-V5.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
-one-shot Source Validator after a bounded parse-only comparison. Implementation follows M1 and
-must prove the fixed typed protocol, enrolled artifact and supply closure, disposable OS profile,
+one-shot Source Validator after a bounded parse-only comparison. V0 now observes only the fixed
+typed protocol and cross-language passive conformance. Later slices must prove enrolled artifact
+and supply closure, disposable OS profile,
 independent daemon/Broker invocation, grammar/mutation corpus, and fault recovery. No product
 validator or runtime enforcement exists.
 Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the

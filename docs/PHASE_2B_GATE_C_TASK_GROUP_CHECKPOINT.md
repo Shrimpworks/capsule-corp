@@ -2,8 +2,9 @@
 
 Date: 2026-08-03
 
-Status: integrated repository checkpoint through Capsule PR #76 merge
-`3cdac7f26aa4c0b14088bf14a514dca09642b627`. This is a status and dependency
+Status: repository checkpoint through merged Capsule PR #100
+`16e652e385d0535a93e0c8c80a9b07bd32ef404f` plus the passive V0 contract retained in this
+change. This is a status and dependency
 index. It does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 
@@ -21,12 +22,14 @@ Keep these evidence classes separate:
 
 ## Durable repository state
 
-The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
+The current closed conformance corpus has 94 rules, 458 cases, and 561 fixtures. The unwired
 Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
-targets plus 40 independently verified MJS byte/manifest targets in each language. Twenty-eight exact
-source-language adjudication cases remain `pending`. The passive field-authority foundation covers
-172 fields across 16 selected pre-freeze targets, including all three nested single-member fields
-of SourceManifest; it does not classify future Source Preparer or plan-v1 objects.
+targets plus 40 independently verified MJS byte/manifest targets in each language. Go and a
+standalone test-only Rust oracle additionally verify 128 exact passive Source Validator frames.
+Twenty-eight exact M1 HOLD result oracles are retained, but product source-language validation
+remains pending. The passive field-authority foundation covers 228 fields across 20 selected
+pre-freeze targets, including SourceManifest and the four passive Source Validator objects; it
+does not classify future Source Preparer or plan-v1 objects.
 
 The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
 approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
@@ -56,10 +59,12 @@ store composition and installed protected-root matrix remain later slices.
 Accepted ADR-0034 now freezes the first-release source contract as one byte-exact pass-through
 `main.mjs` member, one plan-v0 source-manifest role, and no static/dynamic dependency request or
 module-loader fallback. The passive source-byte and SourceManifest foundation is retained, while
-the M1 module-request/source-language validator is on the exact
-[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). JobProposal narrowing and all
-S1/M2 registration/fetch work are blocked on a separately reviewed exact parser/validation
-boundary. The proposed `RegisterPlanV0` would atomically submit exact plan bytes, the
+the M1 module-request/source-language validator remains on the exact
+[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). Proposed ADR-0035 now has an
+exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md), but no parser
+artifact, disposable process, endpoint, or consumer. JobProposal narrowing and all S1/M2
+registration/fetch work therefore remain blocked on the later validator gates. The proposed
+`RegisterPlanV0` would atomically submit exact plan bytes, the
 complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
 source bytes; `GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Candidate
 application-data maxima are 328,337 request bytes and 332,433 fetch-reply bytes, pending generated

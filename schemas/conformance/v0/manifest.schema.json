@@ -191,6 +191,30 @@
         }
       }
     },
+    "passiveEffects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "approval",
+        "key",
+        "ipcEndpoint",
+        "process",
+        "runtime",
+        "backend",
+        "guest"
+      ],
+      "properties": {
+        "state": { "const": false },
+        "approval": { "const": false },
+        "key": { "const": false },
+        "ipcEndpoint": { "const": false },
+        "process": { "const": false },
+        "runtime": { "const": false },
+        "backend": { "const": false },
+        "guest": { "const": false }
+      }
+    },
     "scalarRole": {
       "enum": [
         "backend-configuration",
@@ -326,6 +350,26 @@
               "$ref": "#/$defs/nullableFixtureReference"
             }
           }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "source",
+            "request",
+            "artifactProfile",
+            "engineeringCandidate",
+            "sourceManifest"
+          ],
+          "properties": {
+            "kind": { "const": "source-validator" },
+            "source": { "$ref": "#/$defs/nullableFixtureReference" },
+            "request": { "$ref": "#/$defs/nullableFixtureReference" },
+            "artifactProfile": { "$ref": "#/$defs/nullableFixtureReference" },
+            "engineeringCandidate": { "$ref": "#/$defs/nullableFixtureReference" },
+            "sourceManifest": { "$ref": "#/$defs/nullableFixtureReference" }
+          }
         }
       ]
     },
@@ -364,7 +408,8 @@
         "supervisor-registration-state",
         "channel-authentication",
         "approval-attempt-contract",
-        "approval-attempt-fixed-store"
+        "approval-attempt-fixed-store",
+        "source-validator-passive-contract"
       ]
     },
     "expectedAccept": {
@@ -424,6 +469,9 @@
         "fakeBackendEffectPermitted": {
           "type": "boolean"
         },
+        "effects": {
+          "$ref": "#/$defs/passiveEffects"
+        },
         "stateDelta": {
           "$ref": "#/$defs/exactStateDelta"
         }
@@ -447,6 +495,9 @@
           "$ref": "#/$defs/implementationStatus"
         },
         "swift": {
+          "$ref": "#/$defs/implementationStatus"
+        },
+        "rust": {
           "$ref": "#/$defs/implementationStatus"
         }
       }
@@ -501,11 +552,15 @@
             "approval-state",
             "attempt-state",
             "MjsSource",
-            "SourceManifest"
+            "SourceManifest",
+            "SourceValidatorRequest",
+            "SourceValidatorResult",
+            "SourceValidatorArtifactProfile",
+            "SourceValidatorEngineeringCandidate"
           ]
         },
         "wireFormat": {
-          "enum": ["json", "cbor", "media-type", "raw-bytes"]
+          "enum": ["json", "cbor", "media-type", "raw-bytes", "fixed-frame"]
         },
         "mediaType": {
           "anyOf": [

@@ -46,7 +46,9 @@ the 626-byte arithmetic as a layout.
 The follow-on grammar/process decision is [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
 It selects a one-shot disposable Source Validator and exact Oxc candidate from retained parse-only
-evidence; no product validator or runtime no-loader boundary is implemented.
+evidence. Its first [passive v0 contract slice](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md)
+fixes bytes and cross-language test oracles; no product validator or runtime no-loader boundary is
+implemented.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-

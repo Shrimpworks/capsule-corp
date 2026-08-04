@@ -1,7 +1,7 @@
 # Passive field-authority classification
 
 [`field-authority-manifest.json`](field-authority-manifest.json) is the closed, machine-readable
-development invariant for selected current passive targets. Its 172 entries cover 16 objects:
+development invariant for selected current passive targets. Its 228 entries cover 20 objects:
 
 - the `JobProposal` v0 candidate;
 - `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` v0 candidates;
@@ -9,7 +9,9 @@ development invariant for selected current passive targets. Its 172 entries cove
   `ExecutionAttempt` v0 structures; and
 - the passive TypeScript approved-byte original/executable manifests, transformer profile,
   normalized options, transformation record and set, and future-plan source-binding projection; and
-- the passive single-member MJS `SourceManifest`, including nested member path/digest/length.
+- the passive single-member MJS `SourceManifest`, including nested member path/digest/length; and
+- the passive Source Validator request, result, engineering-candidate, and artifact-profile
+  records, which have no endpoint or authority effect.
 
 Each field references one complete classification profile that fixes its origin role,
 validator/resolver, authority effect, approval visibility and source, content/guest-control

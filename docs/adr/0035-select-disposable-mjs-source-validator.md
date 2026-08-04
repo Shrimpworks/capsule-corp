@@ -204,14 +204,16 @@ Costs and risks:
 ## Status and evidence limits
 
 This ADR is Proposed. The retained experiment establishes a GO decision for
-implementation planning only. It does not implement a product validator, admit
-the parser graph or a sandbox profile, change schemas or field authority,
-replace or modify M1's merged passive byte/manifest contract, admit a
-runtime/backend/guest, or
-prove the runtime no-loader boundary.
+implementation planning only. The first V0 passive conformance slice now fixes the exact
+request/result/candidate/artifact-profile bytes, consumes M1's merged fixtures additively, and
+classifies the new passive fields; see the
+[`v0` passive contract](../protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). It does not implement
+a product validator, admit the parser graph, enroll an executable or artifact profile, define a
+sandbox or endpoint, replace or modify M1's merged bytes, admit a runtime/backend/guest, or prove
+the runtime no-loader boundary.
 
 Acceptance requires the gates in
 [`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md)
-and additive consumption of M1's authoritative passive fixtures. The retained
-mapping supplies research evidence only; M1's language implementations remain
-pending until the product gates pass.
+and additive consumption of M1's authoritative passive fixtures. The retained mapping and V0
+result frames are passive oracles only; product language validation remains pending until the
+later gates pass.

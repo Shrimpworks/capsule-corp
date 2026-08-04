@@ -33,6 +33,15 @@ export async function verifyConformanceCorpus({ rootDirectory = defaultRootDirec
     if (entry.expected.decision === "reject" && entry.expected.authorityStateChanged) {
       throw new Error(`rejected case ${entry.id} cannot change authority-bearing state`);
     }
+    if (
+      entry.expected.decision === "reject" &&
+      entry.expected.owner === "source-validator-passive-contract" &&
+      (!entry.expected.effects || Object.values(entry.expected.effects).some(Boolean))
+    ) {
+      throw new Error(
+        `rejected passive Source Validator case ${entry.id} must assert zero state/approval/key/endpoint/process/runtime/backend/guest effects`,
+      );
+    }
 
     assertScalarRoleContext(entry);
     await verifyFixture(root, entry.fixture, entry.id);
@@ -182,6 +191,17 @@ function contextFixtures(context) {
   }
   if (context.kind === "source-manifest") {
     return [["source bytes", context.source]];
+  }
+  if (context.kind === "source-validator") {
+    return [
+      ...(context.source ? [["source bytes", context.source]] : []),
+      ...(context.request ? [["validator request", context.request]] : []),
+      ...(context.artifactProfile ? [["validator artifact profile", context.artifactProfile]] : []),
+      ...(context.engineeringCandidate
+        ? [["validator engineering candidate", context.engineeringCandidate]]
+        : []),
+      ...(context.sourceManifest ? [["source manifest", context.sourceManifest]] : []),
+    ];
   }
   if (context.kind !== "proposal-resolution") {
     if (context.kind === "approval-attempt-state") {

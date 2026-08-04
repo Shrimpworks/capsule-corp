@@ -33,15 +33,19 @@ Accepted ADR-0034 freezes the first-release source contract to one dependency-fr
 comparison now supports [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md):
 exact Oxc 0.140.0 parser/AST/semantic checking is the engineering candidate inside a future
 one-shot disposable Source Validator, invoked independently before planning and before approval.
-The experiment is retained under `experiments/mjs-parser-boundary/`; no product validator,
+The experiment is retained under `experiments/mjs-parser-boundary/`. The first passive V0 slice
+freezes fixed request/result/candidate/artifact-profile frames and independent Go/Rust test
+oracles without launching or invoking a parser. No product validator,
 sandbox profile, runtime no-loader boundary, runtime, backend, or guest is implemented or admitted.
 
-Phase 2B now retains a closed 89-rule, 330-case, 433-fixture conformance corpus for raw decoding,
+Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
 and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
 TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
 verifies those 80 proposal targets plus 40 MJS byte/manifest targets in TypeScript. Go verifies
-217 targets: the previously retained 177 plus the same 40 MJS byte/manifest targets; the earlier
+345 targets: the previously retained 177 plus the same 40 MJS byte/manifest targets and 128
+passive Source Validator frame targets; a standalone test-only Rust oracle verifies those same
+128 frames and is not a product dependency. The earlier
 177 comprise 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
 passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact

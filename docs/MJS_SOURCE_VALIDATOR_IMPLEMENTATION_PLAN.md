@@ -52,6 +52,13 @@ wrong versions, counter overflow, trailing bytes, or multiple requests refuse.
 Exit evidence: byte-level known answers, exact/cap-plus-one frames, decoder
 predecode tables, and no disagreement with ADR-0034 or M1.
 
+Observed passive slice: the exact
+[`capsule.source-validator.protocol/v0`](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md)
+fixed-frame projection is retained with independent unwired Go and test-only Rust codecs. The
+generator consumes M1's canonical bytes in place and adds 5 rules, 128 cases, and 128 fixtures;
+228 fields across 20 passive targets are now classified. This closes only V0's byte/ownership
+question. It does not enroll Oxc or an executable, create a process or endpoint, or begin V1-V6.
+
 ### V1 — hermetic parser artifact
 
 - Package only the exact Oxc 0.140.0 parser/AST/visitor/semantic mode selected by

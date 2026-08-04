@@ -119,18 +119,21 @@ verification. The manifest should begin with the passive candidate objects and e
 the coordinated versioned migrations that add new target fields; it must not extend the deprecated
 mixed `Job` model.
 
-The first passive implementation now retains a closed 172-field manifest across 16 selected
+The first passive implementation now retains a closed 228-field manifest across 20 selected
 targets: the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` candidates;
 the passive approval reference, attempt reference, durable approval record, and immutable attempt;
-the TypeScript approved-byte object family plus its future-plan source-binding projection; and the
-single-member MJS `SourceManifest` including its nested path/digest/length fields.
+the TypeScript approved-byte object family plus its future-plan source-binding projection; the
+single-member MJS `SourceManifest` including its nested path/digest/length fields; and the passive
+Source Validator request, result, engineering-candidate, and artifact-profile records.
 Repository verification compares those classifications directly with the current JSON Schema,
 numbered CDDL maps, and version-marked Go passive structs. Focused mutations prove rejection of a
 missing field (including a nested member field), unknown classification, duplicate path, stale object version, and classification
 for a field absent from its canonical target. The durable approval envelope digest is classified
 as evidence-only and never as replay or ledger authority.
 
-This coverage remains pre-freeze and unwired. It does not classify or extend the deprecated mixed
+The Source Validator result fields are evidence-only observations, and its fixture artifact profile
+does not enroll an executable. This coverage remains pre-freeze and unwired. It does not classify
+or extend the deprecated mixed
 `Job`, activate an endpoint or consumer, classify the illustrative future `ExecutionPlan` v1 as a
 current object, resolve the TypeScript transformation owner, admit a runtime/backend, or authorize
 execution. Any versioned cutover must update its canonical target and authority classifications in

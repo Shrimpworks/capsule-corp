@@ -273,6 +273,12 @@ rerun S3/S4 with:
 Exit evidence: Apple Development installed-topology result only. It does not claim Developer ID,
 notarization, Gatekeeper, clean-host, shipping, or production authentication.
 
+A retained read-only provisioning and installed-test plan for this slice — proposed bundle
+identifiers, required App IDs/profiles, minimum and prohibited entitlements per role, XPC/Mach
+service identities, and an installation/rollback test matrix separating what is testable on the
+current owned Mac from what requires a second or clean host — is in
+[Apple Development provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md).
+
 ## S6: Developer ID and clean-host admission evidence
 
 This slice is blocked on the final intended package bytes, Developer ID identities, successful

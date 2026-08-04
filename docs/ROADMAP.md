@@ -7,10 +7,10 @@ quality—is the deliverable.
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 All labels below follow the [canonical work status language](STATUS_LANGUAGE.md). Archive F2 is
-`PASSED` for the passive missing-lifecycle representation; its stateful migration/full verifier is
-`IN_PROGRESS — TRENDING_GOOD` as the next archive slice. Owner-lock G2 is `PASSED` for its retained
-local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a selected
-protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
+`PASSED` for both the passive missing-lifecycle representation and the exact stateful local
+migration/full-verifier scope; F3 is the next archive slice. Owner-lock G2 is `PASSED` for its
+retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a
+selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
 ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in their exact
 scopes. V1 enrollment and V2-V5 process/consumer work are `BLOCKED` on the retained V1 enrollment
 and V2 resource/confinement stops; downstream S1/M2 remains `BLOCKED` on those gates.
@@ -148,7 +148,10 @@ migration-genesis checkpoint, generated answers, defensive copies, and eligibili
 The follow-on valid-v1 mapping contradiction is now passively resolved with a lifecycle
 absent/present union and independent attempt/lifecycle counts. The
 [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the exact crash
-witness and next fault plan; migration/full verification remains unimplemented.
+witness and fault plan. The [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now
+implements the owner-asserted migration, downgrade refusal, and empty-archive full verifier with
+exact known answers and local fault/corruption/capacity evidence, while preserving that witness
+without recovery or invention.
 Proposed ADR-0033 selects a pre-created
 enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned local
 descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin acquisition. G2
@@ -170,10 +173,11 @@ Proposed ADR-0031 defines the reviewed archive/compaction semantics and conforma
 expired registration cohorts may move to immutable retained segments
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
-fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and the passive F2 format
-correction plus missing-lifecycle mapping are implemented passively and perform no file writing,
-migration, activation, retained lookup, or consumer behavior. F2's explicit v1-to-v2 migration and
-full verifier are next; no v2 bytes were selected. Production-engine selection,
+fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and both passive F2
+corrections remain the contract foundation. Stateful F2 now writes only the all-hot, empty-archive
+v2 migration successor and fully verifies it; it performs no segment activation, cohort movement,
+retained lookup, v2 authority mutation, or consumer behavior. F3's one-segment transaction is next.
+Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
@@ -218,8 +222,8 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1 into
-  F2's explicit migration/full verifier, retaining full closed cohorts and exact tombstone indexes
+- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1/F2 into
+  F3's one-segment prepare/verify/activate transaction, retaining full closed cohorts and exact tombstone indexes
   without deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned

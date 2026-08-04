@@ -160,13 +160,14 @@ Gate F process and fault-injection evidence makes these v0 requirements explicit
 - bounded store growth and enough already-durable recovery identity to survive capacity exhaustion
   after an external effect.
 
-Proposed ADR-0031 narrows the next unimplemented archive boundary: only complete expired
+Proposed ADR-0031 narrows the archive boundary: only complete expired
 registration cohorts with every attempt durably destroyed after authoritative absence may move to
 immutable retained segments. Full records and exact replay/non-reuse tombstones remain referenced;
 capacity pressure cannot delete them. Segment publication precedes one active-snapshot activation,
 and either indeterminate edge fences until reopen. Its fixed-store v2 shape is a local conformance
-oracle only, not the required production database, real power-loss result, or continuous-service
-solution.
+oracle only. Its F2 owner-asserted v1-to-v2 migration and empty-archive full verifier now pass
+their exact repository-local scope; no segment or activation is implemented. This is not the
+required production database, real power-loss result, or continuous-service solution.
 
 A database plus ordinary sidecar on the same rollback domain detects partial restore but not a
 coherent older world. If coherent rollback detection is required, the latest checkpoint must be

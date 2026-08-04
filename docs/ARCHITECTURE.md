@@ -236,10 +236,14 @@ contradiction is also passively resolved: an attempt index now carries a closed 
 absent/present union, present lifecycle records bind their own typed location/digest, and lifecycle
 counts are independent of attempt counts. The exact
 [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the real crash
-witness and rejects a state-changing pre-migration ceremony. No v2 store, migration, or verifier
-was implemented. The
-selected fixed checkpoint is a finite conformance oracle, not a production engine or continuous-
-service mechanism, and referenced archive history is not deletable under that proposal.
+witness and rejects a state-changing pre-migration ceremony. Stateful F2 now migrates only a fully
+validated v1 file under the asserted owner to an all-hot, empty-archive v2 file and fully verifies
+it on reopen. Its closed absent/present join preserves the exact one-attempt/zero-lifecycle witness;
+the retained fault corpus proves byte-identical v1 before rename and an old-or-new complete world
+after an indeterminate rename/directory sync. The exact scope and known answers are in the
+[F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md). The selected fixed
+checkpoint remains a finite conformance oracle, not a production engine or continuous-service
+mechanism, and referenced archive history is not deletable under that proposal.
 
 ### Trust verifier and repository
 

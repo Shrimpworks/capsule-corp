@@ -65,8 +65,11 @@ is also passively resolved with a closed absent/present lifecycle union on attem
 lifecycle-record anchor on the present arm, and independently derived lifecycle counts. The
 executable [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the real
 committed-attempt-before-lifecycle witness and exact `attempts = 1, lifecycles = 0` genesis answer.
-Migration/full verification remains unimplemented.
-Production-engine selection,
+The [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now implements the owner-
+asserted closed v1-to-v2 migration and read-only full verifier with deterministic bytes, complete
+all-hot retained-global index reconstruction, exact migration genesis, downgrade refusal, and
+pre/post-rename fault oracles. It creates no archive segment, moves no cohort, mutates no v2
+authority, and calls no lifecycle adapter. Production-engine selection,
 referenced-history deletion, continuous service, coherent restore activation, and rollback-
 resistant non-reuse remain blocked.
 
@@ -735,9 +738,10 @@ hot sets. Indeterminate publication or activation fences until reopen. Full coho
 retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. Passive
 F1 types, known answers, defensive copies, and eligibility selection now exist. The passive
 [F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated global/
-segment indexes, typed locations/counts, and a distinct generated migration genesis. No store
-migration, file/segment write, activation, retained lookup, or consumer exists; F2 migration and
-full verification are next. A production engine plus real power-loss proof remain deferred.
+segment indexes, typed locations/counts, and a distinct generated migration genesis. F2 now adds
+only the owner-asserted v1-to-v2 file migration and read-only empty-archive full verifier; no
+segment write/activation, cohort movement, retained lookup, v2 authority mutation, or consumer
+exists. A production engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -785,14 +789,14 @@ implemented.
    those gates pass.
 4. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-5. Continue from the resolved ADR-0031/F1
-   [F2 format contract](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) into F2's explicit v1-to-v2
-   migration/full verifier, then continue the fault-injectable fixed-store archive oracle and
+5. Continue from the completed ADR-0031/F1 and stateful
+   [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) into F3's explicit
+   one-segment prepare/verify/activate transaction, then continue the fault-injectable fixed-store archive oracle and
    run the same logical corpus plus real
    locking, backup, corruption, APFS, and power-loss tests against a named production-engine
    candidate before selecting it.
-   Keep the fixed snapshot as the logical oracle through F2; compare the named SQLite candidate
-   only after F2 and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
+   Keep the fixed snapshot as the logical oracle through F5; compare the named SQLite candidate
+   only after the fixed oracle and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
    power-loss corpus.
 6. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 7. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,

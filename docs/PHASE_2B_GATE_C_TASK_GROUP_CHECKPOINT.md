@@ -49,7 +49,11 @@ distinct migration-genesis checkpoint, and generated answers without changing th
 follow-on valid-v1 mapping contradiction is also passively resolved with an explicit
 absent/present lifecycle union and independent lifecycle counts. The exact executable
 [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the real crash
-witness. Migration/full verification remains unimplemented.
+witness. The [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now retains exact v2
+known answers and implements only the owner-asserted v1-to-v2 migration, downgrade refusal, and
+empty-archive full verifier. It preserves the one-attempt/zero-lifecycle world without recovery or
+invention and adds deterministic fault, corruption, capacity, concurrency, and process-death
+oracles. It moves no cohort, publishes no segment, routes no retained lookup, and calls no adapter.
 
 Proposed ADR-0033 selects one installer-enrolled pre-created sibling inode plus a lifetime
 nonblocking BSD `flock` for cooperating Supervisor ownership. The retained harness covers local
@@ -130,7 +134,7 @@ governance reconciliation before Capsule reuses it.
 
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
-| `IN_PROGRESS — TRENDING_GOOD` | Archive F2 | Implement only the explicit v1-to-v2 migration/full verifier from the `PASSED` lifecycle-presence union; preserve exact absent/present joins, choose no invented lifecycle state, and invoke no recovery adapter inside migration. |
+| `PASSED` local conformance slice / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2 / F3+ | F2's explicit v1-to-v2 migration/full verifier passes with the exact absent/present join and zero adapter calls. Continue next with F3's one-segment prepare/verify/activate transaction; production archive/store admission remains later. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
 | `PASSED` prerequisites / V2 and parent `BLOCKED` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc parser/process selection, passive frames, and unwired V1 artifact passed their bounded scopes. V2 cannot confine the unchanged artifact with the tested supported primitives: resume only with a newly reviewed/enrolled artifact and supported exact memory/confinement design. Do not use deprecated custom sandboxing, the explicit unbounded diagnostic mutation, an ad hoc scanner, or runtime substitution; keep S1/M2 blocked. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |

@@ -631,8 +631,9 @@ verification slices are defined in
 The retained
 [valid-v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) selects the passive
 missing-lifecycle representation and rejects a narrower state-changing migration ceremony. The
-stateful F2 migration/full verifier is still unimplemented; this ADR remains Proposed and does not
-authorize v2 bytes beyond that separately verified slice.
+[stateful F2 migration/full verifier](../SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) is now `PASSED`
+in its exact local fixed-store scope. This ADR remains Proposed: F2 does not implement a segment,
+activation, retained lookup, v2 mutation, backup, production engine, or product consumer.
 
 ## Acceptance blockers
 

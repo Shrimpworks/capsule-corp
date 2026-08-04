@@ -236,7 +236,10 @@ locations/counts, a distinct migration-genesis checkpoint, and generated answers
 valid-v1 mapping contradiction is now passively resolved with a closed absent/present lifecycle
 union and counts derived only from present records. The
 [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and its real-v1 executable
-witness are retained; migration/full verification remains unimplemented. The design
+witness are retained. The [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now
+implements the owner-asserted v1-to-v2 migration, downgrade refusal, and read-only empty-archive
+full verifier with exact known answers and local fault/corruption/capacity/concurrency/process-
+death evidence. It preserves the absent-lifecycle witness without recovery or invention. The design
 deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
@@ -353,7 +356,9 @@ Completed and retained:
   including nested MJS SourceManifest member coverage without claiming recursive coverage for
   future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
-  eligibility selection. No file/store/archive behavior or consumer exists; and
+  eligibility selection, plus F2's owner-asserted all-hot v1-to-v2 migration and read-only full
+  verifier. No segment, cohort movement, retained lookup, v2 authority mutation, adapter call, or
+  consumer exists; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
   bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
   protected-root evidence remain unimplemented; installed G3 is blocked by the mismatched
@@ -371,9 +376,10 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Next archive slice:** the valid v1 committed-attempt-without-lifecycle world now has a reviewed
-   passive absent/present representation. Implement no more than the explicit F2 migration/full
-   verifier under its exact join, no-adapter, downgrade, and indeterminate-outcome plan.
+1. **Next archive slice:** F2's valid v1 committed-attempt-without-lifecycle mapping and explicit
+   migration/full verifier are `PASSED` in their exact local scopes. Implement no more than F3's
+   one immutable segment prepare/verify/activate transaction under the retained no-adapter,
+   publish-before-activate, and indeterminate-outcome plan.
 2. **Independently actionable now:** retain bounded owner-lock G2 current-v1/no-guest composition
    while G3 is blocked; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
    maintain exact documentation plus recursive field-authority design.
@@ -395,8 +401,8 @@ Current dependency and priority view:
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
-   and remains deferred activation/distribution evidence, not a blocker for F2 migration/full
-   verification; owner-lock installed G3 remains `BLOCKED` until the named credential and design
+   and remains deferred activation/distribution evidence, not a blocker for F3 local archive work;
+   owner-lock installed G3 remains `BLOCKED` until the named credential and design
    blockers close.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
@@ -432,7 +438,7 @@ continues.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. This checkpoint also does not decide
-stateful archive migration/activation or production-engine archive/compaction beyond passive F1,
+archive segment activation or production-engine archive/compaction beyond the F1/F2 local oracle,
 production COSE/Keychain/user-presence signing, consumer
 ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot

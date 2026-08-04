@@ -94,6 +94,11 @@ This ADR stays Proposed until all of the following hold:
 - [Gate A failure](../../experiments/gate-a-signing-canonicalization/README.md)
 - [Gate A2 deterministic CBOR/COSE result](../../experiments/gate-a2-cbor-cose/README.md)
 - [Gate A2 retained vectors](../../experiments/gate-a2-cbor-cose/fixtures/go-vectors.json)
+- [Pinned production-library comparison](../../experiments/production-cbor-cose-profile/RESULTS.md),
+  which conditionally passes `fxamacker/cbor` v2.9.2 for typed object encode/decode behind retained
+  Capsule predecode and policy controls, and rejects `go-cose` v1.3.0 as a production envelope
+  dependency. This is dependency-selection evidence only and does not close the acceptance
+  conditions above.
 - [Phase 2A contract foundation](../PHASE_2A_CONTRACT_FOUNDATION.md), including passive minimum
   `ExecutionPlan` and `PlanRegistration` CDDL candidates and byte-exact fixtures. These add object
   coverage but do not satisfy the production-wrapper, Swift, fuzzing, or integration acceptance

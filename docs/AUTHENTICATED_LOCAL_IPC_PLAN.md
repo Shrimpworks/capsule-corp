@@ -113,6 +113,12 @@ There is one active plan-v0/source shape, no optional transform field, generic f
 inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product
 packages or claim ADR-0019 acceptance.
 
+A retained dependency-aware implementation plan for the `RegisterPlanV0`/`GetRegisteredPlanV0` S1/M2
+slice — field ownership, request/reply derivation methodology, cap-calculation methodology, native/
+Go copy-ownership tests, the full refusal and response-loss/replay test matrices, field-authority
+manifest additions, and an explicit list of every value blocked on M1 — is in
+[M2/S1 conformance slice plan](M2_S1_CONFORMANCE_SLICE_PLAN.md).
+
 ## S2: Go facade and store projection
 
 Status: **blocked** only on M1 and the shared S1/M2 `.mjs` fixture bytes. Conditional TypeScript,

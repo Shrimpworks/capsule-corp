@@ -18,15 +18,10 @@ Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short:
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
 and G2 local owner composition are `PASSED` in their exact scopes. The archive F2 fixed-store
 v1-to-v2 migration/full verifier is also `PASSED` in its narrow local-conformance scope. Product
-Source Validator work, governed `deno_core`, and governed libkrun are `IN_PROGRESS —
-TRENDING_GOOD`. Installed owner-lock G3 and runtime/profile admission are `BLOCKED` on the named
-dependencies below. They are not `NO_GO`. Product admission and control-evidence maturity remain
-separate from those work statuses.
-and G2 local owner composition are `PASSED` in their exact scopes. Governed `deno_core` and
-governed libkrun are `IN_PROGRESS — TRENDING_GOOD`. Product Source Validator work, Archive F2,
-installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the named dependencies below. They
-are not `NO_GO`. Product admission and control-evidence maturity remain separate from those work
-statuses.
+Source Validator work, installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the
+named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
+TRENDING_GOOD`; the next local archive work starts at F3. None of those blocked or incomplete parent
+items is `NO_GO`. Product admission and control-evidence maturity remain separate from work status.
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
@@ -168,10 +163,13 @@ release construction, and admission remain open. Accepted
 runtime engineering candidate after the hard Bun pivot and records the real `Shrimpworks/deno` and
 `dills122/rusty_v8` forks. Their first governed branches are merged at exact commits. The first
 fork-native integration check stopped before construction because the merged `rusty_v8` fork had
-only a Linux/amd64 builder. Governed `rusty_v8` PR #4 is now unmerged external work in progress at
-head `aa921fa48901bf28774d61248b0187c8b91c55a4`; its contract checks pass while clean Linux/arm64
-full-build work remains in progress. It supplies no reusable artifact or accepted handoff. No fork
-release or new admitted runtime artifact exists. The decision supersedes ADR-0003's Bun-first
+only a Linux/amd64 builder. Governed `rusty_v8` PR #4 is still unmerged external work at head
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. A clean Linux/arm64 build and fixed `get_version`
+test have now passed, and a bounded diagnostic proved and fixed the remaining GN evidence-query
+interpreter mismatch. The corrected-head diagnostic passes; one clean full-ARM64 bundle run and
+its evidence review remain. Until that produces an accepted merged handoff, it supplies no reusable
+artifact, release, or admission effect. No fork release or new admitted runtime artifact exists.
+The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,

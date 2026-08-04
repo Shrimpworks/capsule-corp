@@ -25,9 +25,9 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   provides only Linux/amd64 and no Linux/arm64 builder/publication profile. No release or new
   runtime artifact exists.
 - Governed `rusty_v8` PR #4 is now unmerged external work in progress at exact head
-  `aa921fa48901bf28774d61248b0187c8b91c55a4`. Its contract checks pass while two clean Linux/arm64
-  `arm64-full-build` jobs remain in progress at the current checkpoint. No workflow output is
-  reusable until an exact successful
+  `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed test
+  pass, and the corrected GN evidence-query diagnostic passes. One clean full-ARM64 bundle run,
+  exact evidence review, and merge remain. No workflow output is reusable until that accepted
   handoff is reviewed and the source/governance state is reconciled.
 - Governed `deno_core` is the first runtime engineering candidate. `RUNTIME-001` remains
   unsupported and no product execution path may use these bytes.

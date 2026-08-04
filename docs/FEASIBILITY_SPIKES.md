@@ -27,10 +27,11 @@ merged at Deno head `9adb0b68...91bed` and `rusty_v8` follow-up head
 `a43ee748...33cf`. A fork-native integration experiment then stopped before prefetch or build:
 the merged `rusty_v8` contract is fully pinned only for Linux/amd64 and has no Linux/arm64 builder,
 so it cannot construct the intended profile and no amd64 substitution is permitted. No release or
-new runtime artifact was produced. Governed `rusty_v8` PR #4 is now unmerged external work in
-progress at `aa921fa48901bf28774d61248b0187c8b91c55a4`; its contract checks pass while clean
-Linux/arm64 full-build work remains in progress. It does not change the retained blocker or supply
-a reusable artifact, accepted handoff, release, or admission. The later
+new runtime artifact was produced. Governed `rusty_v8` PR #4 is now unmerged external work at
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`; its clean Linux/arm64 build and fixed test
+pass, and the corrected GN evidence-query diagnostic passes. One clean full-ARM64 bundle run,
+exact evidence review, and merge remain. It does not yet supply a reusable artifact, accepted
+handoff, release, or admission. The later
 TypeScript approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains

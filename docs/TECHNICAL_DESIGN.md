@@ -109,10 +109,11 @@ The first complete workflow is intentionally narrow:
    0.409.0 construction failed P0-0. Accepted ADR-0028 selects the later governed three-op
    `deno_core` construction as the first engineering candidate, and its real Deno and `rusty_v8`
    governed branches are merged. Governed `rusty_v8` PR #4 is unmerged at
-   `aa921fa48901bf28774d61248b0187c8b91c55a4`; its clean Linux/arm64 build is still in progress and
-   supplies no reusable artifact. The runtime remains unadmitted: Linux/arm64 fork-native
-   construction, `.mjs` source-custody/no-loader evidence, complete profile composition, and
-   runtime-admission evidence remain open.
+   `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed test
+   pass, and the corrected GN evidence-query diagnostic passes, but a complete clean bundle run,
+   evidence review, and merge remain. It supplies no reusable artifact yet. The runtime remains
+   unadmitted: accepted Linux/arm64 fork-native construction, `.mjs` source-custody/no-loader
+   evidence, complete profile composition, and runtime-admission evidence remain open.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an
@@ -779,38 +780,41 @@ implemented.
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
-2. Resolve ADR-0034's retained M1 grammar-counterexample hold by selecting a separately reviewed
-   exact, pinned/governed bounded ECMAScript parser/validation boundary. The passive source-byte
-   and SourceManifest foundation is retained; only then narrow JobProposal and continue S1/M2
-   generated plan-v0 registration/fetch fixtures with complete field authority.
-3. Reconcile Proposed ADR-0035 with M1's exact bytes, then complete the disposable Source
-   Validator V0-V5 protocol, hermetic-artifact, sandbox, independent daemon/Broker, conformance,
-   mutation, and fault gates. Do not activate a parser endpoint or claim runtime enforcement before
-   those gates pass.
-4. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
-   lifecycle using a locally seeded development trust snapshot.
-5. Continue from the completed ADR-0031/F1 and stateful
+2. Continue from the completed ADR-0031/F1 and stateful
    [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) into F3's explicit
-   one-segment prepare/verify/activate transaction, then continue the fault-injectable fixed-store archive oracle and
-   run the same logical corpus plus real
-   locking, backup, corruption, APFS, and power-loss tests against a named production-engine
-   candidate before selecting it.
-   Keep the fixed snapshot as the logical oracle through F5; compare the named SQLite candidate
-   only after the fixed oracle and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
-   power-loss corpus.
-6. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-7. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
+   one-segment prepare/verify/activate transaction. Continue through F4 retained lookup/v2
+   tombstone enforcement and F5 backup/orphan/offline reporting before the bounded SQLite
+   comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
+   store.
+3. Resolve the Source Validator V2 block by defining a newly reviewed, signed/enrolled App-
+   Sandboxed artifact and a supported exact memory/resource-confinement design. V0 and V1 remain
+   passed in their bounded scopes, but V2 implementation and V3/V4 consumers do not resume until
+   that replacement contract is reviewed. Do not use deprecated custom sandbox profiles or the
+   unbounded diagnostic mutation.
+4. Freeze the applicable signed-object set and independently review the narrow production CBOR
+   wrapper. Use pinned `fxamacker/cbor` only for object-specific deterministic encoding and typed
+   field decoding; retain Capsule predecode, caps, canonical-on-wire comparison, bindings, and
+   replay checks. Keep `go-cose` test-only.
+5. After Source Validator V2-V5 pass, narrow JobProposal and generate S1/M2 plan-v0 registration/
+   fetch fixtures from complete field authority. Then implement the authenticated native-to-Go IPC
+   bridge and independent daemon/Broker validator consumers without widening the four-call surface.
+6. Connect that product path to the already-passed no-guest registration, approval/attempt, durable
+   lifecycle, owner-lock G2, and archive oracle. Add composed evidence only from retained Supervisor
+   state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.
+7. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
+8. In parallel, finish the governed Linux/arm64 runtime handoff, then close runtime authority,
+   immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
-8. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
+9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.
-9. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
+10. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
    bounded outputs.
-10. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
+11. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
    Containerization explicitly development-only unless a future supported lifecycle API reopens
    its gate.
-10. Operationalize production TUF/update infrastructure.
-11. Evaluate optional Guardian and external witness mechanisms.
+12. Operationalize production TUF/update infrastructure.
+13. Evaluate optional Guardian and external witness mechanisms.
 
 See [Roadmap](ROADMAP.md) for exit evidence.
 

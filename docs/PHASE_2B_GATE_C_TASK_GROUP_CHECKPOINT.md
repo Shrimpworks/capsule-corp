@@ -58,9 +58,11 @@ oracles. It moves no cohort, publishes no segment, routes no retained lookup, an
 Proposed ADR-0033 selects one installer-enrolled pre-created sibling inode plus a lifetime
 nonblocking BSD `flock` for cooperating Supervisor ownership. The retained harness covers local
 process/descriptor behavior and refusal-before-store ordering only. It is not same-UID containment,
-protected storage, rollback protection, or Source Preparer store protection. G1—the passive
-Go/Darwin bootstrap and opaque-owner port using owned temporary roots—is next; the owner-required
-store composition and installed protected-root matrix remain later slices.
+protected storage, rollback protection, or Source Preparer store protection. G1's passive
+Go/Darwin bootstrap and G2's owner-required current-v1/no-guest startup composition are both
+`PASSED` in their local owned-temporary-root scopes. G3's installed protected-root, signed
+bootstrap, and session/update matrix remains `BLOCKED` on the exact Team/profile and composition
+dependencies below.
 
 ## First-release source and authenticated IPC
 
@@ -123,12 +125,12 @@ hazard, hostile control/queue/descriptor work, real transport, distinct launcher
 installed composition, release obligations, and final profile reruns remain open. This is governed
 fork source and local library evidence only; no guest, backend, or profile is admitted.
 
-Governed `rusty_v8` PR #4 remains external work in progress at exact head
-`aa921fa48901bf28774d61248b0187c8b91c55a4`. At the publication check on
-2026-08-03T23:57:25Z, its contract jobs had passed and two clean Linux/arm64 `arm64-full-build` jobs
-were still in progress. The PR is unmerged and has no accepted handoff, reusable artifact, release,
-or admission effect. A successful job would still need exact artifact/evidence review and merge/
-governance reconciliation before Capsule reuses it.
+Governed `rusty_v8` PR #4 remains external `IN_PROGRESS — TRENDING_GOOD` work at exact head
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed
+`get_version` test passed. A bounded diagnostic then proved and corrected the GN evidence-query
+interpreter mismatch, and the corrected-head diagnostic passed. The PR remains open and draft; one
+clean full-ARM64 bundle run, exact evidence review, and merge are still required. It has no accepted
+handoff, reusable artifact, release, or admission effect until those steps complete.
 
 ## Priority and dependency view
 
@@ -137,9 +139,11 @@ governance reconciliation before Capsule reuses it.
 | `PASSED` local conformance slice / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2 / F3+ | F2's explicit v1-to-v2 migration/full verifier passes with the exact absent/present join and zero adapter calls. Continue next with F3's one-segment prepare/verify/activate transaction; production archive/store admission remains later. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
 | `PASSED` prerequisites / V2 and parent `BLOCKED` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc parser/process selection, passive frames, and unwired V1 artifact passed their bounded scopes. V2 cannot confine the unchanged artifact with the tested supported primitives: resume only with a newly reviewed/enrolled artifact and supported exact memory/confinement design. Do not use deprecated custom sandboxing, the explicit unbounded diagnostic mutation, an ad hoc scanner, or runtime substitution; keep S1/M2 blocked. |
+| Independently actionable design | Source Validator V2 replacement profile | Define the newly signed/enrolled App-Sandboxed artifact identity and a supported exact memory/resource-confinement design. This design slice may proceed, but V2 implementation and V3/V4 consumers remain blocked until it produces a reviewable contract. |
+| Independently actionable conformance | Production CBOR wrapper preparation | Freeze the applicable signed-object set and specify the narrow `fxamacker/cbor` wrapper responsibilities while retaining Capsule's predecode, cap, canonical-byte, binding, and replay checks. Keep `go-cose` test-only. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
-| Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |
+| Waiting | Fork-native runtime bundle | Wait for PR #4's corrected-head clean full-ARM64 bundle run, exact evidence review, and merge. The earlier passing build/test and diagnostic close risk but are not a reusable handoff. |
 | Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
 | Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference: certificate SHA-1 `1638...61E3` has subject OU and signed-byte TeamIdentifier `3DDR84M4JS`, and all cached profiles are also 3DDR. A matching/reissued W4 certificate and exact W4 profiles are required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |

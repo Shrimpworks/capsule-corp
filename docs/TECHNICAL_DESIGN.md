@@ -7,6 +7,13 @@ This document is the integration-level design for Capsule v0. Narrow companion d
 detailed protocol, trust, integrity, Supervisor, update, compromise, and evidence rules linked
 below.
 
+The intended macOS product packaging and staged setup/update scope is in the
+[macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). It keeps
+the user experience to one Swift application while preserving the internal daemon, Broker,
+Supervisor, Source Validator launcher, Runner, and later update-role boundaries. No proposed
+Trust Coordinator or Bundle Replacer is product authority until a separate ADR and signed installed
+corpus support it.
+
 ## Current versus intended state
 
 The repository currently contains buildable Go and TypeScript scaffolding. It does not yet launch a

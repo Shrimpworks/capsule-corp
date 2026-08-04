@@ -360,6 +360,14 @@ SQLite comparison only after the F4-F5 remainder of the logical archive oracle, 
 V2 replacement-profile boundary. It does not preempt F4, owner-lock G3, or the separate ARM64
 `rusty_v8` work.
 
+The 2026-08-04 external macOS installation/update/repair/uninstall review is retained through the
+[reconciled installation plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md), not as product
+evidence. Its one-app/DMG direction and state-machine work are carried forward. Its direct
+daemon/Broker parser-child topology is superseded by the supported-profile result: only distinct
+App-Sandboxed role-specific launcher candidates proceed. Its App Group, protected-root bootstrap,
+Trust Coordinator, Bundle Replacer, minimum-OS, update, and erasure claims remain explicit
+decisions or signed-evidence gates rather than accepted platform facts.
+
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
 PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->
 e930f9d` even though the PR numbers are 73, 75, and 74. The exact source heads above preserve review
@@ -386,18 +394,20 @@ Completed and retained:
   including nested MJS SourceManifest member coverage without claiming recursive coverage for
   future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
-  eligibility selection, plus F2's owner-asserted all-hot v1-to-v2 migration and read-only full
-  verifier. No segment, cohort movement, retained lookup, v2 authority mutation, adapter call, or
-  consumer exists; and
+  eligibility selection; F2's owner-asserted all-hot v1-to-v2 migration and read-only full
+  verifier; and F3's one immutable complete-cohort segment publication and atomic activation.
+  Retained lookup, v2 authority mutation, second activation, backup/orphan cleanup, adapter calls,
+  and consumers remain absent; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
   bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
   protected-root evidence remain unimplemented; installed G3 is blocked by the mismatched
   Team/profile plus unresolved protected-bootstrap/store-open composition; and
 - governed `deno_core` physical omission, same-host package reproduction, the abandoned official
   V8 asset-publication route,
-  standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
+  standalone dynamic-root evidence, and the now-closed fork Linux/arm64 construction blocker.
+  Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
-  governed baseline branches are merged, but no governed arm64 release or admitted artifact exists.
+  governed baseline branches are merged, but no governed release or admitted artifact exists.
 - exact public governed libkrun source identity through merge
   `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, with the unchanged five-patch aggregate, bounded
   console/raw-FD library evidence, two local lifecycle fixes, and improved coverage. The Linux-
@@ -418,15 +428,18 @@ Current dependency and priority view:
    V2 implementation, and S1/M2 do not begin before R0. Independently freeze the signed-object set,
    narrow `fxamacker/cbor` wrapper responsibilities, and maintain exact documentation plus field
    authority.
-3. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
-   `rusty_v8` source/artifact handoff. External PR #4 is open and draft at exact head
-   `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean ARM64 build/fixed test and
-   corrected-head GN diagnostic pass, but one complete clean bundle run, exact evidence review, and
-   merge remain. No workflow artifact may be reused before that accepted handoff.
-4. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
+3. **Installation plan:** start I0's passive app-bundle/role/bootstrap contract and keep the first
+   developer MVP on manual whole-bundle replacement. Protected Supervisor bootstrap, pairwise IPC,
+   Source Validator launchers, and replacement behavior are I1-I4. Automatic TUF/update-replacer,
+   Developer ID distribution, a support-floor matrix, and complete uninstall remain I5-I6.
+4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original
+   construction blocker is closed. Next consume only an independently reviewed exact fork artifact
+   into the fork-native Capsule bundle/reproduction path; governed release publication,
+   independent-builder equality, and runtime/profile admission remain open.
+5. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
    transport/launcher/root/device/teardown work, and explicit authorization for an owned disposable
    development guest. No current task authorizes a guest.
-5. **Credential/environment dependent:** Apple Development identities and provisioning profiles
+6. **Credential/environment dependent:** Apple Development identities and provisioning profiles
    must be deliberately authorized before the existing installed matrices run. Exact G3 discovery
    disproved the display-name inference: SHA-1 `1638...61E3` says W4 in its common name, but its
    subject OU and emitted TeamIdentifier are `3DDR84M4JS`. All three Xcode 26.6-cached profiles
@@ -443,7 +456,7 @@ Current dependency and priority view:
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.
-6. **Next Source Validator path:** accepted ADR-0034's M1 bytes, Proposed ADR-0035's passive V0
+7. **Next Source Validator path:** accepted ADR-0034's M1 bytes, Proposed ADR-0035's passive V0
    frames, and the bounded V1 artifact/evidence checkpoint are retained. V1 enrollment remains
    incomplete; the unchanged V1 artifact cannot satisfy the tested V2 profile. Product work is
    `BLOCKED` pending R0's accepted launcher/container/resource decision, a newly reviewed/enrolled
@@ -452,7 +465,7 @@ Current dependency and priority view:
    SLA. V3-V5 still own independent daemon/Broker consumers and expanded grammar evidence.
    S1/M2 remain blocked until those gates can support the revised `RegisterPlanV0`/fetch projections
    and exact caps. No S1 fixture or product endpoint is authorized.
-7. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
+8. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
    first-release critical path. M1 narrows the proposal/source/manifest to one byte-exact
    `main.mjs`; S1/M2 then generates the revised `RegisterPlanV0`/fetch projections and exact caps
    from complete field authority. No S1 fixtures exist and no product endpoint is authorized.

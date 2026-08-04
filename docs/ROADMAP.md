@@ -16,12 +16,19 @@ ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PAS
 scopes. V1 enrollment and V2-V5 process/consumer work are `BLOCKED` on the retained V1 enrollment
 and V2 resource/confinement stops; downstream S1/M2 remains `BLOCKED` on those gates.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
-first-release critical path. The fork-native runtime bundle waits on an accepted Linux/arm64
-`rusty_v8` handoff. A clean ARM64 build and fixed test now pass externally, but the corrected
-evidence collector still needs one complete clean bundle run, review, and merge before Capsule may
-consume it. Governed runtime/libkrun guest composition is later and requires explicit owned-guest
-authorization. Installed signing/distribution and independent-builder matrices remain separate
-evidence lanes.
+first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker is now
+closed in its bounded fork scope; fork-native bundle reproduction, evidence review, governed
+release publication, runtime/profile admission, and governed runtime/libkrun guest composition
+remain later work. Guest composition requires explicit owned-guest authorization. Installed
+signing/distribution and independent-builder matrices remain separate evidence lanes.
+
+Installation packaging now has its own staged
+[macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). The current
+direction is one visible Swift application in a DMG with embedded per-user services and no
+permanent privileged helper. I0 passive role/bundle/bootstrap contracts and I1-I4 developer-signed
+composition/manual-replacement work precede any automatic updater. TUF, a mechanical Bundle
+Replacer, Developer ID/notarized distribution, a frozen minimum OS, and complete uninstall are
+later I5-I6 gates and do not block the no-guest development MVP.
 
 Every phase must consult the
 [ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) before adding a dependency or
@@ -447,12 +454,17 @@ Exit evidence:
 
 ## Phase 8: production trust repository and updates
 
+- Complete I0-I4 from the macOS installation plan first: closed bundle/role contracts, protected
+  Supervisor bootstrap, pairwise authenticated IPC, Source Validator launchers, and manual
+  whole-bundle replacement with service re-registration and retained-state recovery.
 - Operate root, targets, snapshot, timestamp, and delegated TUF roles.
 - Publish releases, runtime bundles, review records, validation records, and Capsule-defined
   revocation/disable objects.
 - Produce compact signed local trust snapshots outside the live Supervisor path.
 - Support offline bundles and pinned self-hosted repositories.
 - Implement explicit crash-safe install, update, repair, and key-replacement ceremonies.
+- Keep Trust Coordinator and Bundle Replacer authority in separate reviewed ADRs; neither role is
+  implied by choosing a DMG or a TUF metadata format.
 
 ## Phase 9: optional Guardian and external witness
 

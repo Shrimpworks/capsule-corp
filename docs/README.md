@@ -21,6 +21,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     `BLOCKED`, and true-path-abandonment `NO_GO` vocabulary
 12. [Experiment archive](EXPERIMENT_ARCHIVE.md) — immutable migration identity, evidence-linking
     rules, and the boundary between product conformance fixtures and disposable spike code
+13. [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md) — one-
+    application packaging direction, role boundaries, setup/update/repair/uninstall sequencing,
+    staged MVP scope, blockers, and the focused Apple-platform research brief
 
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and
@@ -80,6 +83,7 @@ a transformer, endpoint, runtime, or execution path and is not a first-release d
 - [Execution Supervisor](EXECUTION_SUPERVISOR.md)
 - [Trust repositories](TRUST_REPOSITORIES.md)
 - [Update and recovery](UPDATE_AND_RECOVERY.md)
+- [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
 - [Protocol object model](protocol/OBJECT_MODEL.md)
 
 The top-level JSON Schemas and current mixed `Job` TypeScript types remain canonical for the

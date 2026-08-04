@@ -3,6 +3,11 @@
 Status: intended crash-safe model; Gate F process/storage-ordering evidence is positive, while the
 real Supervisor store, installer, backend, Keychain anchor, and power-loss behavior remain pending.
 
+The [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
+separates development-MVP manual bundle replacement from later automatic update infrastructure.
+Choosing one app in a DMG does not select TUF processing, replacement authority, installation
+location, rollback, or minimum-OS support.
+
 ## Objectives
 
 An update must not create a window in which old and new components, keys, policy, profile state, or
@@ -20,6 +25,13 @@ changes. Routine timestamp refresh that does not change active enrolled state ne
 epoch.
 
 ## Prepared update ceremony
+
+The complete ceremony below is a beta/production target. The development MVP first proves manual
+whole-bundle replacement with execution disabled, exact service stop/re-registration/restart,
+retained owner-lock and store identity, component verification, and recovery. It has no background
+update schedule or automatic target selection. A future update verifier may resolve network TUF
+metadata, while a separately reviewed mechanical replacer may install only an already authorized
+exact bundle; neither receives installation-root, Supervisor-store, or execution authority.
 
 The intended v0 flow is:
 
@@ -166,8 +178,11 @@ immutable retained segments. Full records and exact replay/non-reuse tombstones 
 capacity pressure cannot delete them. Segment publication precedes one active-snapshot activation,
 and either indeterminate edge fences until reopen. Its fixed-store v2 shape is a local conformance
 oracle only. Its F2 owner-asserted v1-to-v2 migration and empty-archive full verifier now pass
-their exact repository-local scope; no segment or activation is implemented. This is not the
-required production database, real power-loss result, or continuous-service solution.
+their exact repository-local scope. F3 now passes one sealed complete-cohort segment publication
+and atomic active-reference transition in its local fault-injectable scope. Retained lookup, v2
+authority mutation, second activation, backup/orphan handling, and production-engine behavior
+remain absent. This is not the required production database, real power-loss result, or
+continuous-service solution.
 
 A database plus ordinary sidecar on the same rollback domain detects partial restore but not a
 coherent older world. If coherent rollback detection is required, the latest checkpoint must be

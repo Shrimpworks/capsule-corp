@@ -1,0 +1,517 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capsule.local/schemas/governed-deno-core-c1-composition.schema.json",
+  "title": "Passive governed deno_core C1 controlled-development composition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "version",
+    "status",
+    "evidence",
+    "forks",
+    "artifacts",
+    "application",
+    "runtimeSurface",
+    "descriptors",
+    "resources",
+    "refusalCodes",
+    "stopConditions",
+    "effects"
+  ],
+  "properties": {
+    "contract": { "const": "capsule.governed-deno-core.controlled-development-composition/c1" },
+    "version": { "const": 1 },
+    "status": { "const": "passive-not-admitted" },
+    "evidence": { "$ref": "#/$defs/evidence" },
+    "forks": { "$ref": "#/$defs/forks" },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rustyV8Raw",
+        "rustyV8Gzip",
+        "denoCoreBinary",
+        "snapshot",
+        "twoFileBundle",
+        "rootManifest",
+        "rootTar",
+        "rootGzip"
+      ],
+      "properties": {
+        "rustyV8Raw": {
+          "const": {
+            "role": "governed-rusty-v8-static-archive-raw",
+            "sha256": "e964d6b1b3689e91f8cf488d8a9f05764a03434b2e2e8347be5067300d39a7de",
+            "admitted": false
+          }
+        },
+        "rustyV8Gzip": {
+          "const": {
+            "role": "governed-rusty-v8-static-archive-gzip",
+            "sha256": "1ae209c9e4ba5803d010d2c79ee4cc0af0126c5a7ebcca211c7e41deaede4cd2",
+            "admitted": false
+          }
+        },
+        "denoCoreBinary": {
+          "const": {
+            "role": "governed-deno-core-binary",
+            "sha256": "56d3acefd2cc2f5136a0b8143c47131e49a58fbf66382dfd3e84f715ce8e2898",
+            "admitted": false
+          }
+        },
+        "snapshot": {
+          "const": {
+            "role": "governed-deno-core-startup-snapshot",
+            "sha256": "4e8965217d5a6675a880326eee6f690bbeec7e7cb243decf2f3e9f453a871a2c",
+            "admitted": false
+          }
+        },
+        "twoFileBundle": {
+          "const": {
+            "role": "governed-deno-core-two-file-bundle",
+            "sha256": "0cc08f93e82fcfe68b033e8807975a3bd67068a817da811a87a73aedc3f23937",
+            "admitted": false
+          }
+        },
+        "rootManifest": {
+          "const": {
+            "role": "governed-runtime-root-manifest",
+            "sha256": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8",
+            "admitted": false
+          }
+        },
+        "rootTar": {
+          "const": {
+            "role": "governed-runtime-root-tar",
+            "sha256": "9c46b45c4d220aedcc47c9ee53e875bc71d31d0b881b51740aaa9b882b5741e6",
+            "admitted": false
+          }
+        },
+        "rootGzip": {
+          "const": {
+            "role": "governed-runtime-root-gzip",
+            "sha256": "e847651b35cd425dd8f6fe3bd45d693aff0af244e3a7bd30c629fa125cac62e8",
+            "admitted": false
+          }
+        }
+      }
+    },
+    "application": { "$ref": "#/$defs/application" },
+    "runtimeSurface": { "$ref": "#/$defs/runtimeSurface" },
+    "descriptors": { "$ref": "#/$defs/descriptors" },
+    "resources": { "$ref": "#/$defs/resources" },
+    "refusalCodes": {
+      "const": [
+        "C1_CONTRACT_MISMATCH",
+        "C1_ARTIFACT_MISMATCH",
+        "C1_SOURCE_MISMATCH",
+        "C1_INPUT_MISMATCH",
+        "C1_GLOBAL_SURFACE_MISMATCH",
+        "C1_OP_SURFACE_MISMATCH",
+        "C1_LOADER_PRESENT",
+        "C1_MAIN_BINDING_INVALID",
+        "C1_RESULT_INVALID",
+        "C1_DESCRIPTOR_PROFILE_UNSELECTED",
+        "C1_RESOURCE_PROFILE_UNSELECTED",
+        "C1_RUNTIME_NOT_ADMITTED"
+      ]
+    },
+    "stopConditions": {
+      "const": [
+        "Any governed fork commit or artifact digest differs.",
+        "Any built-in op, extension, module, loader, or permitted global is added.",
+        "Any forbidden global remains reachable or string code generation remains usable.",
+        "Source or input bytes come from outside committed registration state.",
+        "The workload owns the completion endpoint or can forge the commit trailer.",
+        "A live host path, filesystem API, network, subprocess, FFI, inspector, Worker, WebAssembly, or native loader is reachable.",
+        "C2 cannot close numeric descriptor ownership without ambient authority.",
+        "C2 cannot select exact vCPU, RAM, wall-time, scratch, console, and teardown mechanisms from retained composed evidence.",
+        "P0-1 root custody, P0-2 device closure, P0-3 transport, or P0-4 installed composition is incomplete.",
+        "A runtime/profile admission record for these exact composed bytes is absent, expired, or mismatched."
+      ]
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["process", "runtime", "backend", "guest", "admission", "signing", "release"],
+      "properties": {
+        "process": { "const": false },
+        "runtime": { "const": false },
+        "backend": { "const": false },
+        "guest": { "const": false },
+        "admission": { "const": false },
+        "signing": { "const": false },
+        "release": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evidence": {
+      "const": {
+        "repository": "Shrimpworks/capsule-experiments",
+        "pullRequest": 1,
+        "mergeCommit": "fa03d7043b4f0653081d6c5733d597f49f6efd1c",
+        "handoffPath": "experiments/gate-c-fork-native-deno-runtime-bundle/HANDOFF.md"
+      }
+    },
+    "fork": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "head", "merge", "upstream"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "head": { "$ref": "#/$defs/commit" },
+        "merge": { "$ref": "#/$defs/commit" },
+        "upstream": { "$ref": "#/$defs/commit" }
+      }
+    },
+    "forks": {
+      "const": {
+        "deno": {
+          "repository": "Shrimpworks/deno",
+          "head": "9adb0b68b55bca81644827f1e7749a3acb091bed",
+          "merge": "ea18b9dc21ff8ebd19347be7095f47937ee14ec2",
+          "upstream": "14eea3160ae5834476aa3b9d317b8d41d991b982"
+        },
+        "rustyV8": {
+          "repository": "Shrimpworks/rusty_v8",
+          "head": "80e863ddb942a4aa2b384e794fc23e35b9d2bb15",
+          "merge": "cbf56de2e1156b1cf1561fdbaea7172a0aa056f4",
+          "upstream": "d305e6afa7736f6e298c30ae6646f7709ee9382b"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "sha256", "admitted"],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "admitted": { "const": false }
+      }
+    },
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "input", "main", "completion"],
+      "properties": {
+        "source": { "$ref": "#/$defs/source" },
+        "input": { "$ref": "#/$defs/input" },
+        "main": { "$ref": "#/$defs/main" },
+        "completion": { "$ref": "#/$defs/completion" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "mediaType",
+        "fileCount",
+        "path",
+        "entrypoint",
+        "minimumBytes",
+        "maximumBytes",
+        "binding",
+        "transformation"
+      ],
+      "properties": {
+        "profile": { "const": "capsule.mjs-source/v0" },
+        "mediaType": { "const": "application/capsule.javascript-source;v=0;module=esm" },
+        "fileCount": { "const": 1 },
+        "path": { "const": "main.mjs" },
+        "entrypoint": { "const": "main.mjs" },
+        "minimumBytes": { "const": 0 },
+        "maximumBytes": { "const": 262144 },
+        "binding": {
+          "const": "ExecutionPlan.sourceManifestDigest+sourceByteLength+sourceEntrypoint"
+        },
+        "transformation": { "const": "none-byte-exact" }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "mediaType", "encoding", "maximumBytes", "binding", "injection"],
+      "properties": {
+        "slot": { "const": "primary-data" },
+        "mediaType": { "const": "application/json" },
+        "encoding": { "const": "capsule.canonical-inline-json/v0" },
+        "maximumBytes": { "const": 262144 },
+        "binding": { "const": "ExecutionPlan.inlineInputDigest+inlineInputByteLength" },
+        "injection": { "const": "single-copied-argument" }
+      }
+    },
+    "main": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "binding",
+        "receiver",
+        "requiredType",
+        "invocations",
+        "awaitResult",
+        "arguments"
+      ],
+      "properties": {
+        "binding": { "const": "globalThis.capsuleMain" },
+        "receiver": { "const": "globalThis" },
+        "requiredType": { "const": "function" },
+        "invocations": { "const": 1 },
+        "awaitResult": { "const": true },
+        "arguments": { "const": ["parsed-canonical-inline-json"] }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot",
+        "mediaType",
+        "serialization",
+        "maximumJsonBytes",
+        "maximumPhysicalFrameBytes",
+        "limitBinding",
+        "attemptBinding",
+        "workloadOwnsEndpoint",
+        "successRequires"
+      ],
+      "properties": {
+        "slot": { "const": "transformed-json" },
+        "mediaType": { "const": "application/json" },
+        "serialization": { "const": "JSON.stringify-exact-utf8" },
+        "maximumJsonBytes": { "const": 262144 },
+        "maximumPhysicalFrameBytes": { "const": 262368 },
+        "limitBinding": { "const": "ExecutionPlan.outputMaxJsonBytes" },
+        "attemptBinding": { "const": "P0-3-attempt-bound-completion-frame" },
+        "workloadOwnsEndpoint": { "const": false },
+        "successRequires": {
+          "const": [
+            "source-binding-valid",
+            "input-binding-valid",
+            "runtime-integrity-valid",
+            "main-module-evaluated",
+            "capsuleMain-called-once",
+            "result-json-valid-and-bounded",
+            "completion-frame-committed",
+            "runner-lifecycle-terminal",
+            "teardown-authoritative"
+          ]
+        }
+      }
+    },
+    "runtimeSurface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "denoCore",
+        "snapshotSha256",
+        "v8Flags",
+        "extensions",
+        "builtinOps",
+        "moduleLoader",
+        "modules",
+        "permittedGlobals",
+        "forbiddenGlobals",
+        "workloadFiles"
+      ],
+      "properties": {
+        "target": { "const": "aarch64-unknown-linux-gnu" },
+        "denoCore": { "const": "0.409.0" },
+        "snapshotSha256": {
+          "const": "4e8965217d5a6675a880326eee6f690bbeec7e7cb243decf2f3e9f453a871a2c"
+        },
+        "v8Flags": { "const": ["--jitless", "--random-seed=42"] },
+        "extensions": { "const": [] },
+        "builtinOps": {
+          "const": [
+            "op_get_ext_import_meta_proto",
+            "op_get_extras_binding_object",
+            "op_set_captured_bootstrap"
+          ]
+        },
+        "moduleLoader": { "const": "none" },
+        "modules": {
+          "const": [
+            { "identity": "capsule:main.mjs", "role": "main", "source": "registered-main.mjs" }
+          ]
+        },
+        "permittedGlobals": {
+          "const": [
+            "AggregateError",
+            "Array",
+            "ArrayBuffer",
+            "Boolean",
+            "DataView",
+            "Error",
+            "EvalError",
+            "Float32Array",
+            "Float64Array",
+            "Infinity",
+            "Int16Array",
+            "Int32Array",
+            "Int8Array",
+            "JSON",
+            "Map",
+            "Math",
+            "NaN",
+            "Number",
+            "Object",
+            "Promise",
+            "Proxy",
+            "RangeError",
+            "ReferenceError",
+            "Reflect",
+            "RegExp",
+            "Set",
+            "String",
+            "Symbol",
+            "SyntaxError",
+            "TypeError",
+            "URIError",
+            "Uint16Array",
+            "Uint32Array",
+            "Uint8Array",
+            "Uint8ClampedArray",
+            "WeakMap",
+            "WeakSet",
+            "decodeURI",
+            "decodeURIComponent",
+            "encodeURI",
+            "encodeURIComponent",
+            "globalThis",
+            "isFinite",
+            "isNaN",
+            "parseFloat",
+            "parseInt",
+            "undefined"
+          ]
+        },
+        "forbiddenGlobals": {
+          "const": [
+            "Atomics",
+            "BigInt",
+            "BigInt64Array",
+            "BigUint64Array",
+            "BroadcastChannel",
+            "Date",
+            "Deno",
+            "EventSource",
+            "FinalizationRegistry",
+            "Function",
+            "Intl",
+            "SharedArrayBuffer",
+            "Temporal",
+            "TextDecoder",
+            "TextEncoder",
+            "URL",
+            "URLPattern",
+            "WeakRef",
+            "WebAssembly",
+            "WebSocket",
+            "Worker",
+            "__bootstrap",
+            "clearInterval",
+            "clearTimeout",
+            "console",
+            "crypto",
+            "eval",
+            "fetch",
+            "localStorage",
+            "navigator",
+            "performance",
+            "process",
+            "queueMicrotask",
+            "sessionStorage",
+            "setInterval",
+            "setTimeout"
+          ]
+        },
+        "workloadFiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["readable", "writable", "runtimeRootManifestSha256", "runtimeRootEntries"],
+          "properties": {
+            "readable": { "const": [] },
+            "writable": { "const": [] },
+            "runtimeRootManifestSha256": {
+              "const": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8"
+            },
+            "runtimeRootEntries": { "const": 22 }
+          }
+        }
+      }
+    },
+    "descriptors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "constructionProbeObserved",
+        "logicalRoles",
+        "numericAssignment",
+        "workloadCompletionAccess"
+      ],
+      "properties": {
+        "constructionProbeObserved": { "const": [0, 1, 2] },
+        "logicalRoles": {
+          "const": [
+            {
+              "role": "runtime-root",
+              "owner": "supervisor-to-host-runner",
+              "direction": "read-only-host-custody",
+              "workloadAccess": "none"
+            },
+            {
+              "role": "registered-source",
+              "owner": "host-writer-to-guest-launcher-reader",
+              "direction": "host-to-guest",
+              "workloadAccess": "indirect-input-only"
+            },
+            {
+              "role": "approved-inline-input",
+              "owner": "host-writer-to-guest-launcher-reader",
+              "direction": "host-to-guest",
+              "workloadAccess": "indirect-input-only"
+            },
+            {
+              "role": "completion-result",
+              "owner": "guest-launcher-writer-to-host-reader",
+              "direction": "guest-to-host",
+              "workloadAccess": "none"
+            }
+          ]
+        },
+        "numericAssignment": { "const": "c2-required-unselected" },
+        "workloadCompletionAccess": { "const": "none" }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transportProfileRef", "planReferenceRoles", "machineProfileRef", "activation"],
+      "properties": {
+        "transportProfileRef": { "const": "capsule.gate-c.p0-3.measured-limits/v0" },
+        "planReferenceRoles": {
+          "const": [
+            "runtimeBundleDigest",
+            "profileRegistryDigest",
+            "backendValidationDigest",
+            "backendConfigurationDigest"
+          ]
+        },
+        "machineProfileRef": { "const": null },
+        "activation": { "const": "refuse-until-c2-and-admission" }
+      }
+    }
+  }
+}

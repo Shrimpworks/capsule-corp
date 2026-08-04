@@ -150,6 +150,15 @@ evidence collection, and unsigned bundle upload. The parent governed-runtime wor
 `IN_PROGRESS — TRENDING_GOOD`: no governed release, accepted Capsule runtime bundle, independent-
 builder equality, or runtime/profile admission follows from that fork result.
 
+The follow-on `Shrimpworks/capsule-experiments` PR #1 construction handoff is `PASSED` at merge
+`fa03d7043b4f0653081d6c5733d597f49f6efd1c`: it reconstructed the governed Linux/arm64
+`rusty_v8`, `deno_core` binary/snapshot/two-file bundle, and 22-entry root from empty outputs under
+the retained method. The passive [C1 composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md)
+pins all eight raw/compressed identities and freezes the intended `.mjs` JSON-in/JSON-out surface.
+C1 is `PASSED` only for exact passive bytes and zero effects. The parent governed-runtime work is
+`IN_PROGRESS — TRENDING_GOOD`; `RUNTIME-001` remains `unsupported`, and runtime/profile admission
+remains `BLOCKED`.
+
 ## Priority and dependency view
 
 | Priority | Work | Dependency boundary |
@@ -161,8 +170,8 @@ builder equality, or runtime/profile admission follows from that fork result.
 | `PASSED` bounded unwired conformance / signed parent `BLOCKED` | Production CBOR wrapper preparation | The [v0 object-set/wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only `SourceManifest` v0 as eligible and adds one unwired fxamacker v2.9.2 codec behind Capsule predecode, caps, canonical-byte comparison, binding, and exact-byte ownership. Plan, registration, approval, Swift, same-byte consumers, and production COSE remain blocked; `go-cose` stays test-only. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
-| Independently actionable now | Fork-native runtime bundle | Consume only the exact merged Deno and `rusty_v8` governed heads, reconstruct the Linux/arm64 Capsule binary/snapshot/runtime-root bundle from empty outputs and caches, compare it with retained known answers, and retain provenance/SBOM/source/notice evidence. Do not publish, sign, admit, or compose a guest in this slice. |
-| Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
+| `PASSED` bounded construction and passive contract | Fork-native bundle and C1 composition | The merged handoff reconstructs the exact Linux/arm64 binary/snapshot/root identities; C1 fixes the no-effect app/runtime/logical-descriptor/resource contract. Neither result releases or admits bytes. |
+| Later C2 composition | Governed runtime plus libkrun | Requires exact governed runner/kernel/init/libkrun/launcher identities, a selected closed numeric descriptor and machine-resource manifest, and explicit authorization for an owned disposable development guest, followed by the exact runtime-surface/transport/fault/teardown corpus. |
 | Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference: certificate SHA-1 `1638...61E3` has subject OU and signed-byte TeamIdentifier `3DDR84M4JS`, and all cached profiles are also 3DDR. A matching/reissued W4 certificate and exact W4 profiles are required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 

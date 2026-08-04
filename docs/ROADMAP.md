@@ -20,10 +20,11 @@ product Source Validator and downstream S1/M2 remain `BLOCKED` on separately aut
 signing/install, confinement/resource/residue evidence, and sequential daemon then Broker
 consumers.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
-first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker is now
-closed in its bounded fork scope; fork-native bundle reproduction, evidence review, governed
-release publication, runtime/profile admission, and governed runtime/libkrun guest composition
-remain later work. Guest composition requires explicit owned-guest authorization. Installed
+first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker and the
+fork-native bundle reproduction are now closed in their bounded scopes. The passive C1 composition
+contract also passes without effects. Evidence review, governed release publication, C2
+runtime/libkrun guest composition, and runtime/profile admission remain later work. Guest
+composition requires explicit owned-guest authorization. Installed
 signing/distribution and independent-builder matrices remain separate evidence lanes.
 
 Installation packaging now has its own staged
@@ -76,7 +77,10 @@ is merged at exact head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
 `cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its clean ARM64 build, fixed test, corrected GN
 evidence query, network-disabled full build, and unsigned bundle upload passed. The fork has
 transferred to `Shrimpworks/rusty_v8` with its branch, PR, and Actions history intact. Independent-
-builder equality, evidence review, governed release publication, and admission remain open. P0-1 is a
+builder equality, evidence review, governed release publication, and admission remain open. The
+merged experiments handoff reconstructs the eight exact Linux/arm64 runtime/root identities, and
+the passive C1 fixture freezes their intended JSON-in/JSON-out composition without creating a
+guest. C2 remains the first composed execution boundary. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,

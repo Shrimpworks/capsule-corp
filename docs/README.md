@@ -43,6 +43,12 @@ The next Supervisor retention boundary is defined in
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
+The governed runtime's first composed-profile slice is the passive
+[C1 controlled-development composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md).
+It fixes the intended `.mjs` JSON-in/JSON-out surface and exact governed construction identities
+without creating a guest or admitting a runtime; C2 owns the first separately authorized composed
+execution evidence.
+
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/
 manifest fixtures precede S1/M2 registration/fetch fixtures. The retained

@@ -883,9 +883,10 @@ implemented.
    lifecycle, owner-lock G2, and archive oracle. Add composed evidence only from retained Supervisor
    state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.
 7. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-8. In parallel, finish the governed Linux/arm64 runtime handoff, then close runtime authority,
-   immutable root custody, `NullFs`, typed port transport,
-   and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
+8. Retain the exact governed Linux/arm64 handoff and passed passive C1 composition contract, then
+   close C2 runtime authority, immutable root custody, `NullFs`, closed numeric descriptors,
+   enforceable machine resources, typed port transport, and complete installed-bundle admission;
+   do not connect user bytes to libkrun before all pass.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

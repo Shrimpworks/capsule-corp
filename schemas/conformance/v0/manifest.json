@@ -227,6 +227,96 @@
       ]
     },
     {
+      "id": "source-validator-v1.role-families",
+      "source": "ADR-0036#two-role-specific-private-launcher-services",
+      "description": "The daemon and Approval Broker use distinct v1 request, result, process, artifact, and consumer families; cross-role substitution refuses.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "source-validator-v1.request-boundary",
+      "source": "MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1#role-separated-request-ownership",
+      "description": "Each role-specific request is exactly 216 through 262360 bytes and owns one copied M1 source.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "source-validator-v1.result-binding",
+      "source": "MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1#role-separated-result-ownership",
+      "description": "Each fixed 248-byte result binds its exact current role request and complete cleanup disposition.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "source-validator-v1.inactive-resource-policy",
+      "source": "MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1#resource-policy-boundary",
+      "description": "R1 freezes the inactive resource-policy shape and structural caps while refusing every invented active measurement.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "source-validator-v1.profile-bindings",
+      "source": "MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1#required-passive-r1-targets",
+      "description": "Fixture-only process, artifact, and consumer projections bind one exact role family without enrolling an artifact or consumer.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "source-validator-v1.cross-version-refusal",
+      "source": "ADR-0036#new-v1-protocol-and-profile-families",
+      "description": "Historical v0 request/result bytes are never relabeled or accepted by the v1 family.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
       "id": "job-proposal.raw.bytes",
       "source": "ADR-0023#strict-jobproposal-raw-profile",
       "description": "Raw JSON is at most 2,097,152 bytes.",
@@ -10546,6 +10636,1926 @@
         "typescript": "not-applicable",
         "swift": "pending",
         "rust": "verified"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.resource-policy-inactive",
+      "description": "Accept the fixture-only daemon resource policy inactive known answer.",
+      "ruleIds": [
+        "source-validator-v1.inactive-resource-policy",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ResourcePolicy",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/resource-policy-inactive.bin",
+        "sha256": "c198dac71f3b5c2d2e8cca34fc3e9c01ff7b8093ef1a881d8160a34800ff1098",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.process-profile",
+      "description": "Accept the fixture-only daemon process profile known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ProcessProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/process-profile.bin",
+        "sha256": "272ed9a2bda282a455c042070824bad317c5756cf90c9b62cd417eb27e3ab1e8",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.artifact-profile",
+      "description": "Accept the fixture-only daemon artifact profile known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ArtifactProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/artifact-profile.bin",
+        "sha256": "6a35faadeaafb2161af879922f4055dd515335654e8bb27d98060efe5b974208",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.consumer-projection",
+      "description": "Accept the fixture-only daemon consumer projection known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ConsumerProjection",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/consumer-projection.bin",
+        "sha256": "0785bf0c4dbedf0a0c4f07eb27c529b74638f05e95ac9021d8362135aad80cb2",
+        "byteLength": 192
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-ordinary",
+      "description": "Accept the fixture-only daemon request ordinary known answer.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary",
+        "source-validator-v1.role-families",
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/request-ordinary.bin",
+        "sha256": "7e388687da643527d37118bf7d2bc6c77a1bbdabab9b7c23e0c05e90993ba932",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        },
+        "request": null,
+        "artifactProfile": null,
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.result-ordinary",
+      "description": "Accept the fixture-only daemon result ordinary known answer.",
+      "ruleIds": [
+        "source-validator-v1.result-binding",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/result-ordinary.bin",
+        "sha256": "afbc80dd7256bd2b86ae40fcef4ff5c44527f80625bad974b32eb27be4d181cb",
+        "byteLength": 248
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/daemon/request-ordinary.bin",
+          "sha256": "7e388687da643527d37118bf7d2bc6c77a1bbdabab9b7c23e0c05e90993ba932",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/daemon/artifact-profile.bin",
+          "sha256": "6a35faadeaafb2161af879922f4055dd515335654e8bb27d98060efe5b974208",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-exact-maximum",
+      "description": "Accept the exact daemon request maximum without clamping.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/request-exact-maximum.bin",
+        "sha256": "ce4ab493a95bfe4dfd7f0c61bea27fc14a8451dc4f2043a6aacac0c97ecd5c20",
+        "byteLength": 262360
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": {
+          "path": "mjs-source/exact-maximum.mjs",
+          "sha256": "dd3dde87623d9a6b354c68c943d189c89c63652d945e7bbdf0986cae91a49521",
+          "byteLength": 262144
+        },
+        "request": null,
+        "artifactProfile": null,
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-cap-plus-one",
+      "description": "Refuse the daemon request cap plus one before source allocation growth.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-cap-plus-one.bin",
+        "sha256": "b11f26c106aa43b652aac6030fc31bf804f74206cef635d8634b26c1b129ba7c",
+        "byteLength": 262361
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-cross-role",
+      "description": "Refuse a daemon request cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-cross-role.bin",
+        "sha256": "895c7fecf96a4dcfde5a912c07ec5620ad50fefa41d9926148ee02fb12b7033d",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.result-cross-role",
+      "description": "Refuse a daemon result cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-result-cross-role.bin",
+        "sha256": "e41639dc2423e068d43ab3f18145fa0c960099248ecfd4bd438709706d6da1ab",
+        "byteLength": 248
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/daemon/request-ordinary.bin",
+          "sha256": "7e388687da643527d37118bf7d2bc6c77a1bbdabab9b7c23e0c05e90993ba932",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/daemon/artifact-profile.bin",
+          "sha256": "6a35faadeaafb2161af879922f4055dd515335654e8bb27d98060efe5b974208",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.process-cross-role",
+      "description": "Refuse a daemon process cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ProcessProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-process-cross-role.bin",
+        "sha256": "0c5213563ac7d146f5e6ce94ad5c26db49821e0d83f4c1a4e0c03a5e8282a74d",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.artifact-cross-role",
+      "description": "Refuse a daemon artifact cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ArtifactProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-artifact-cross-role.bin",
+        "sha256": "4c4e7d05a750d53c3494953ad94c96f988b81130b30e5fc59f9241dc4abce954",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.consumer-cross-role",
+      "description": "Refuse a daemon consumer cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ConsumerProjection",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-consumer-cross-role.bin",
+        "sha256": "467e9ccc25b1d4681ef84f008d1b581457bf62b31fbed151ba36b8aa6a8c473c",
+        "byteLength": 192
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-unknown-version",
+      "description": "Refuse an unknown daemon request protocol version.",
+      "ruleIds": [
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-unknown-version.bin",
+        "sha256": "aafde1b9a83069f4d3c326863173b10ca26d70136acab558752212a1bd01708d",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-correlation-mismatch",
+      "description": "Refuse the daemon request correlation mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-correlation-mismatch.bin",
+        "sha256": "14da302b0888eac463f1fcf431a4c287c32a952a52419db3fe2b66fe2c737e9c",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-installation-mismatch",
+      "description": "Refuse the daemon request installation mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-installation-mismatch.bin",
+        "sha256": "f407aa2c4e56c731ca5d67921b2baa2297edc22fb3d231262be59ca25c7c1d7e",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-epoch-sequence-mismatch",
+      "description": "Refuse the daemon request epoch sequence mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-epoch-sequence-mismatch.bin",
+        "sha256": "56e66fd5e7a7edbf2dffdac51d974c1b2effba28ab9fc5940d5163c60a5b6c7d",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-epoch-digest-mismatch",
+      "description": "Refuse the daemon request epoch digest mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-epoch-digest-mismatch.bin",
+        "sha256": "852d4b140a217bf1410914e7135715b7bd781c8b9e705ad058a3c34272009496",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-artifact-profile-mismatch",
+      "description": "Refuse the daemon request artifact profile mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-artifact-profile-mismatch.bin",
+        "sha256": "39dfb6f64bbccf1b6246522507f991f01aa11eda50d6f59edf7a847c651649fa",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.request-resource-policy-mismatch",
+      "description": "Refuse the daemon request resource policy mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-request-resource-policy-mismatch.bin",
+        "sha256": "566baa76c83e43d71f95cb23fb0393aefd52de649b6bc174dee1bfa65c33da94",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.result-trailing",
+      "description": "Refuse trailing bytes after the fixed daemon result.",
+      "ruleIds": [
+        "source-validator-v1.result-binding"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-result-trailing.bin",
+        "sha256": "c0cbf01a98a672bfe3e9ce8650e723b0eaea1a8f628fa27e967b51fd26154da9",
+        "byteLength": 249
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/daemon/request-ordinary.bin",
+          "sha256": "7e388687da643527d37118bf7d2bc6c77a1bbdabab9b7c23e0c05e90993ba932",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/daemon/artifact-profile.bin",
+          "sha256": "6a35faadeaafb2161af879922f4055dd515335654e8bb27d98060efe5b974208",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.policy-invented-threshold",
+      "description": "Refuse an invented daemon physical-footprint threshold in inactive R1 policy.",
+      "ruleIds": [
+        "source-validator-v1.inactive-resource-policy"
+      ],
+      "object": "SourceValidatorV1ResourcePolicy",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-policy-invented-threshold.bin",
+        "sha256": "6735eabb52f599860799722de461c09cf0f974f1288928fb8ab650bb706fc2c8",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.resource-policy-inactive",
+      "description": "Accept the fixture-only approval-broker resource policy inactive known answer.",
+      "ruleIds": [
+        "source-validator-v1.inactive-resource-policy",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ResourcePolicy",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/resource-policy-inactive.bin",
+        "sha256": "b0ce8504190b5fe9b0a0296c22340a6439ab453cb32f32c19ddb6e594698568d",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.process-profile",
+      "description": "Accept the fixture-only approval-broker process profile known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ProcessProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/process-profile.bin",
+        "sha256": "99e48f3de3ab673f131019db5aa39d2689cc4b1264e11a204643f3af95319383",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.artifact-profile",
+      "description": "Accept the fixture-only approval-broker artifact profile known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ArtifactProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/artifact-profile.bin",
+        "sha256": "fec134344e26cfd3cdfdb85e1398d2bc915c47e106b24a94ffaf4f159549a256",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.consumer-projection",
+      "description": "Accept the fixture-only approval-broker consumer projection known answer.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1ConsumerProjection",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/consumer-projection.bin",
+        "sha256": "ecc2baa63c5b74a5f290d352f01cd8fc11c9a04cd7a10b6bff7664bf59d9e599",
+        "byteLength": 192
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-ordinary",
+      "description": "Accept the fixture-only approval-broker request ordinary known answer.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary",
+        "source-validator-v1.role-families",
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/request-ordinary.bin",
+        "sha256": "a19eea21d15a7e8b414de140f563f7acdaf64427be052419313a79ace9351824",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        },
+        "request": null,
+        "artifactProfile": null,
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.result-ordinary",
+      "description": "Accept the fixture-only approval-broker result ordinary known answer.",
+      "ruleIds": [
+        "source-validator-v1.result-binding",
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/result-ordinary.bin",
+        "sha256": "4ee78a722f8da48d1529aad31a12aa9481e4a291665d4276a9e1bdfa1f9c98ee",
+        "byteLength": 248
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/approval-broker/request-ordinary.bin",
+          "sha256": "a19eea21d15a7e8b414de140f563f7acdaf64427be052419313a79ace9351824",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/approval-broker/artifact-profile.bin",
+          "sha256": "fec134344e26cfd3cdfdb85e1398d2bc915c47e106b24a94ffaf4f159549a256",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-exact-maximum",
+      "description": "Accept the exact approval-broker request maximum without clamping.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/request-exact-maximum.bin",
+        "sha256": "ee9b8d75228d9faa5df5ddb525c93f2bdcdae07c7322b39ec3c1585e32a26dd5",
+        "byteLength": 262360
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": {
+          "path": "mjs-source/exact-maximum.mjs",
+          "sha256": "dd3dde87623d9a6b354c68c943d189c89c63652d945e7bbdf0986cae91a49521",
+          "byteLength": 262144
+        },
+        "request": null,
+        "artifactProfile": null,
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-cap-plus-one",
+      "description": "Refuse the approval-broker request cap plus one before source allocation growth.",
+      "ruleIds": [
+        "source-validator-v1.request-boundary"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-cap-plus-one.bin",
+        "sha256": "8a7b18cb09eee8d5c34c9b0a1023bed32dd6927a645031fcf8c17a9da5c0b91c",
+        "byteLength": 262361
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-cross-role",
+      "description": "Refuse a approval-broker request cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-cross-role.bin",
+        "sha256": "2686660de45b30694a1a3cf9e1bec70a9d31ed03075c454ff76afb2b94f4e39d",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.result-cross-role",
+      "description": "Refuse a approval-broker result cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-result-cross-role.bin",
+        "sha256": "f655026e9fc1822640749e7e74c5df029c6a8fefd8364ed2caff1f0cd1b057c0",
+        "byteLength": 248
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/approval-broker/request-ordinary.bin",
+          "sha256": "a19eea21d15a7e8b414de140f563f7acdaf64427be052419313a79ace9351824",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/approval-broker/artifact-profile.bin",
+          "sha256": "fec134344e26cfd3cdfdb85e1398d2bc915c47e106b24a94ffaf4f159549a256",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.process-cross-role",
+      "description": "Refuse a approval-broker process cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ProcessProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-process-cross-role.bin",
+        "sha256": "6d60a5dbeda6ffd0e7f949e55abf2ab8b1be1bc056c75dfc19f35563e4f4aaec",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.artifact-cross-role",
+      "description": "Refuse a approval-broker artifact cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ArtifactProfile",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-artifact-cross-role.bin",
+        "sha256": "bab3d90ac54b7a345fe189e9b2eda6d49797ab103dad1d006c93a2a4f13d3129",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.consumer-cross-role",
+      "description": "Refuse a approval-broker consumer cross role substitution.",
+      "ruleIds": [
+        "source-validator-v1.profile-bindings"
+      ],
+      "object": "SourceValidatorV1ConsumerProjection",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-consumer-cross-role.bin",
+        "sha256": "a2c9dc13675c75e35aa7e83bff8344e385864a21ef6dbe0cccedfc737fc716bc",
+        "byteLength": 192
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-unknown-version",
+      "description": "Refuse an unknown approval-broker request protocol version.",
+      "ruleIds": [
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-unknown-version.bin",
+        "sha256": "db976a8a96c3b6638be0de9a2c9f6f4851f504ca31c841636e1ac661af42ddd7",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-correlation-mismatch",
+      "description": "Refuse the approval-broker request correlation mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-correlation-mismatch.bin",
+        "sha256": "c8673f5d4e8d10a0469c2d2d96cea1286f91a80e637a0a5076f4ef5aedafa370",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-installation-mismatch",
+      "description": "Refuse the approval-broker request installation mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-installation-mismatch.bin",
+        "sha256": "b03e8b519967bb752817b9d1bca2e7d697a9fa02de6fc3d699df5d0212e2fef3",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-epoch-sequence-mismatch",
+      "description": "Refuse the approval-broker request epoch sequence mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-epoch-sequence-mismatch.bin",
+        "sha256": "b2b08c691fd4a1eebedecf099717bac12280d447ef13aa7e26991dd6de21f7d7",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-epoch-digest-mismatch",
+      "description": "Refuse the approval-broker request epoch digest mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-epoch-digest-mismatch.bin",
+        "sha256": "27b265303d4120f209e4920bddfe410a263c420c02a9259d49002b8461fd760c",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-artifact-profile-mismatch",
+      "description": "Refuse the approval-broker request artifact profile mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-artifact-profile-mismatch.bin",
+        "sha256": "8b3145d46e284cccd3c7d1b34d74bd3c4a04814497227ab36c5daeba10e9e9e2",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.request-resource-policy-mismatch",
+      "description": "Refuse the approval-broker request resource policy mismatch against the trusted current context.",
+      "ruleIds": [
+        "source-validator-v1.role-families"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-request-resource-policy-mismatch.bin",
+        "sha256": "92c98d1954e128474b7d09516a7add4e80612c549b729209056b3efec7ad29f4",
+        "byteLength": 273
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "BINDING",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.result-trailing",
+      "description": "Refuse trailing bytes after the fixed approval-broker result.",
+      "ruleIds": [
+        "source-validator-v1.result-binding"
+      ],
+      "object": "SourceValidatorV1Result",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-result-trailing.bin",
+        "sha256": "f0af2265780665c79a0ee439c70233ab7efbed7fc82ac22bde8ee44d6a45946d",
+        "byteLength": 249
+      },
+      "context": {
+        "kind": "source-validator",
+        "source": null,
+        "request": {
+          "path": "mjs-source-validator-v1/approval-broker/request-ordinary.bin",
+          "sha256": "a19eea21d15a7e8b414de140f563f7acdaf64427be052419313a79ace9351824",
+          "byteLength": 273
+        },
+        "artifactProfile": {
+          "path": "mjs-source-validator-v1/approval-broker/artifact-profile.bin",
+          "sha256": "fec134344e26cfd3cdfdb85e1398d2bc915c47e106b24a94ffaf4f159549a256",
+          "byteLength": 256
+        },
+        "engineeringCandidate": null,
+        "sourceManifest": null
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.policy-invented-threshold",
+      "description": "Refuse an invented approval-broker physical-footprint threshold in inactive R1 policy.",
+      "ruleIds": [
+        "source-validator-v1.inactive-resource-policy"
+      ],
+      "object": "SourceValidatorV1ResourcePolicy",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-policy-invented-threshold.bin",
+        "sha256": "231992a507f916a72b9d26a857aae50c267530158f063500b89a2c330d785a98",
+        "byteLength": 256
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.daemon.v0-request-as-v1",
+      "description": "Refuse the historical v0 request as a daemon v1 request.",
+      "ruleIds": [
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/daemon/reject-v0-request-as-v1.bin",
+        "sha256": "5ea0960c1b8200f483ee29fa2756b15c69a62aadcb1dc675c244569b295795fc",
+        "byteLength": 137
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
+      }
+    },
+    {
+      "id": "source-validator-v1.approval-broker.v0-request-as-v1",
+      "description": "Refuse the historical v0 request as a approval-broker v1 request.",
+      "ruleIds": [
+        "source-validator-v1.cross-version-refusal"
+      ],
+      "object": "SourceValidatorV1Request",
+      "wireFormat": "fixed-frame",
+      "mediaType": "application/capsule.source-validator-frame;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-validator-v1/approval-broker/reject-v0-request-as-v1.bin",
+        "sha256": "5ea0960c1b8200f483ee29fa2756b15c69a62aadcb1dc675c244569b295795fc",
+        "byteLength": 137
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-validator-passive-v1-contract",
+        "authorityStateChanged": false,
+        "effects": {
+          "state": false,
+          "approval": false,
+          "key": false,
+          "ipcEndpoint": false,
+          "process": false,
+          "runtime": false,
+          "backend": false,
+          "guest": false
+        }
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending",
+        "rust": "pending"
       }
     },
     {

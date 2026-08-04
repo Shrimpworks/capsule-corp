@@ -85,7 +85,8 @@
             "approval-attempt-record-validator",
             "source-manifest-cbor-decoder",
             "typescript-approved-byte-fixture-verifier",
-            "source-validator-passive-verifier"
+            "source-validator-passive-verifier",
+            "source-validator-passive-v1-verifier"
           ]
         },
         "resolver": {
@@ -100,7 +101,10 @@
             "source-manifest-byte-resolver",
             "source-validator-request-binding-resolver",
             "source-validator-result-binding-resolver",
-            "source-validator-artifact-binding-resolver"
+            "source-validator-artifact-binding-resolver",
+            "source-validator-v1-role-binding-resolver",
+            "source-validator-v1-result-binding-resolver",
+            "source-validator-v1-profile-binding-resolver"
           ]
         },
         "authorityEffect": {
@@ -132,7 +136,13 @@
             "passive-source-validator-request-v0-exact-frame",
             "passive-source-validator-result-v0-exact-frame",
             "passive-source-validator-candidate-v0-exact-frame",
-            "passive-source-validator-artifact-profile-v0-exact-frame"
+            "passive-source-validator-artifact-profile-v0-exact-frame",
+            "passive-source-validator-request-v1-exact-role-frame",
+            "passive-source-validator-result-v1-exact-role-frame",
+            "passive-source-validator-resource-policy-v1-inactive-frame",
+            "passive-source-validator-process-profile-v1-exact-role-frame",
+            "passive-source-validator-artifact-profile-v1-exact-role-frame",
+            "passive-source-validator-consumer-projection-v1-exact-role-frame"
           ]
         },
         "unknownBehavior": {

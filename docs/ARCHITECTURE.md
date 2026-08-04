@@ -94,7 +94,8 @@ Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mj
 existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
 canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
 copies. The passive source-byte/SourceManifest foundation and bounded Oxc parser/process selection
-are `PASSED`. Product Source Validator R1-R5B is `BLOCKED`; JobProposal
+and passive R1 role-separated contracts are `PASSED`. Product Source Validator R2-R5B is
+`BLOCKED`; JobProposal
 narrowing, plan construction, source custody, authenticated transport, consumer, runtime, backend,
 and guest remain unimplemented.
 Proposed ADR-0032's separately enrolled

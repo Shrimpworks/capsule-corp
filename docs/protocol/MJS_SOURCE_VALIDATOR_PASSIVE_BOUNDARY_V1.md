@@ -1,8 +1,8 @@
 # `.mjs` Source Validator passive implementation boundary v1
 
-Status: accepted R0 architecture boundary; passive R1 bytes and fixtures are not yet implemented.
-This document defines the closed role/version/ownership surface that the next passive slice must
-encode. It does not assign production resource measurements, create an endpoint, run a parser,
+Status: R1 passive contracts and fixtures `PASSED`; product implementation remains `BLOCKED`.
+This document defines the implemented, unwired role/version/ownership surface. It does not assign
+production resource measurements, create an endpoint, run a parser,
 build or sign a binary, use an entitlement or credential, or admit a product control.
 
 Decision: [ADR-0036](../adr/0036-select-role-separated-source-validator-launchers.md).
@@ -122,8 +122,20 @@ must reject cross-role, v0-as-v1, unknown/newer/older version, wrong installatio
 policy, partial/duplicate/trailing, reserved-field, and mixed-update cases. A shared result fixture
 or a role field that can be rewritten after decode is a design failure.
 
-The existing 228-field/20-target manifest and all V0 fixture counts remain unchanged until R1 lands.
-This document is planning authority only and must not be listed as implemented field coverage.
+R1 adds 107 classifications across six v1 targets, bringing the canonical manifest to 335 fields,
+26 targets, and 50 closed profiles. The historical 228-field/20-target coverage and all V0 bytes
+remain unchanged. The generated corpus now contains 46 v1 cases with separate role known answers;
+Go and Node independently decode them.
+
+## R1 retained result
+
+The daemon and Broker request maximum is 262,360 bytes: a 216-byte header plus the existing
+262,144-byte source maximum. The fixed result is 248 bytes, the inactive resource policy and each
+process/artifact profile are 256 bytes, and the consumer projection is 192 bytes. Exact maxima
+accept; cap-plus-one, historical v0, wrong role/version/family, trailing bytes, and invented active
+policy measurements refuse with zero authority or process effects. The inactive policy carries
+only structural concurrency and frame bounds. Threshold, cadence, baseline, overshoot, kill
+latency, active cleanup dispositions, and supported-host identity remain unset until R4.
 
 ## Passive stop conditions
 

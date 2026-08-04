@@ -46,7 +46,7 @@ Apple-credentialed results remain the evidence for those distinct observations.
 ```text
 accepted ADR-0034 + passed M1 source/manifest fixtures
   -> accepted Source Validator R0 / ADR-0036
-       -> R1 passive role-specific v1 contracts/field-authority fixtures
+       -> R1 passive role-specific v1 contracts/field-authority fixtures (PASSED)
        -> R2 unsigned launcher/parser construction
        -> separately authorized R3 signing/install
        -> R4 confinement/reactive-resource/residue corpus
@@ -68,7 +68,7 @@ Existing independent blockers that S0-S6 do not close:
   runtime/backend/profile admission and evidence composition
 ```
 
-R1-R5B are sequential. S1 fixtures may proceed in parallel by language only after the M2/S1
+Source Validator R1 is retained; R2-R5B are sequential. S1 fixtures may proceed in parallel by language only after the M2/S1
 checkpoint. S2 and S3 may proceed in parallel after the shared fixture contract. S5 requires S4 and valid Apple Development identities. S6 requires
 final intended package bytes, Developer ID/notarization authority, and clean disposable hosts.
 
@@ -88,7 +88,7 @@ Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 Exit evidence: accepted or explicitly revised ADR text. A topology or responsibility change stops
 this plan and requires an updated Proposed ADR before implementation.
 
-## M1, Source Validator R1-R5B, and S1/M2: sequential contract boundary
+## M1, Source Validator R2-R5B, and S1/M2: sequential contract boundary
 
 Accepted ADR-0034 removes TypeScript and the Source Preparer from the first-release critical path.
 The first active contract is one byte-exact pass-through `main.mjs` member under the existing
@@ -139,7 +139,7 @@ cannot become a registration field, cache, or substitute for Supervisor byte/man
 
 ## S2: Go facade and store projection
 
-Status: **blocked** on Source Validator R1-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
+Status: **blocked** on Source Validator R2-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
 fixture bytes. Conditional TypeScript,
 plan v1, and Source Preparer evidence are not first-release dependencies. S2 must not define field
 authority inside the Go facade or treat the 626-byte TypeScript arithmetic as a record.
@@ -185,7 +185,7 @@ store, and conformance tests. No XPC or product consumer exists.
 
 ## S3: native authentication and cap harness
 
-Status: **blocked** on Source Validator R1-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
+Status: **blocked** on Source Validator R2-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
 fixture bytes. Native parsing must not
 create a de facto field layout, cap, known answer, or method-version decision.
 

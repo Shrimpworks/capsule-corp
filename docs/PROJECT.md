@@ -88,17 +88,20 @@ confidentiality proof. The unavailable hard ceiling is replaced with a later evi
 reactive physical-footprint watermark, one direct child per launcher request, bounded combined
 two-role concurrency, and kill/drain/reap; it is not a hard peak/exact cap or host-availability
 guarantee. Threshold, cadence, baseline, and overshoot remain unset until the separately authorized
-signed corpus. Resume with the [new passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md)
-and sequential R1-R5B plan. No user signing identity was used or authorized.
+signed corpus. R1's [passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md) is
+now `PASSED`: 46 generated cases freeze role-distinct request/result/profile/consumer bytes,
+inactive policy shape, exact caps, and cross-role/cross-version refusal with independent Go/Node
+decoding. The product remains `BLOCKED`; continue sequentially with R2-R5B. No service, parser
+process, signing identity, consumer, or active resource measurement was created or used.
 
-Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
+Phase 2B now retains a closed 100-rule, 510-case, 631-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
 and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
 TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
-verifies those 80 proposal targets plus 40 MJS byte/manifest targets in TypeScript. Go verifies
-345 targets: the previously retained 177 plus the same 40 MJS byte/manifest targets and 128
-passive Source Validator frame targets; a standalone test-only Rust oracle verifies those same
-128 frames and is not a product dependency. The earlier
+verifies those 80 proposal targets plus 40 MJS byte/manifest targets and 46 passive v1 Source
+Validator targets in TypeScript. Go verifies 391 targets: the previously retained 177 plus the same
+40 MJS byte/manifest targets, 128 passive v0 Source Validator frame targets, and 46 passive v1
+targets; a standalone test-only Rust oracle verifies the 128 v0 frames and does not cover v1. The earlier
 177 comprise 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
 passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact

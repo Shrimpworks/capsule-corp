@@ -16,11 +16,12 @@ boundary and must not be used to execute hostile code without another trusted sa
 
 Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short: the passive
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
-and G2 local owner composition are `PASSED` in their exact scopes. The archive F2 fixed-store
-v1-to-v2 migration/full verifier is also `PASSED` in its narrow local-conformance scope. Product
+and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's fixed-store
+v1-to-v2 migration/full verifier and F3's first immutable-segment activation are also `PASSED` in
+their narrow local-conformance scopes. Product
 Source Validator work, installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the
 named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
-TRENDING_GOOD`; the next local archive work starts at F3. None of those blocked or incomplete parent
+TRENDING_GOOD`; the next local archive work starts at F4. None of those blocked or incomplete parent
 items is `NO_GO`. Product admission and control-evidence maturity remain separate from work status.
 
 The concise current dependency and claim checkpoint is
@@ -131,7 +132,15 @@ invention, reconstructs all-hot retained-global indexes and migration genesis, a
 known answers plus pre/post-rename, corruption, capacity, concurrency, and subprocess-death tests.
 See the [F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md). It moves no
 cohort, creates no segment, routes no retained lookup, calls no adapter, and is not a production
-store or durability claim.
+store or durability claim. Stateful F3 now adds exactly one sealed segment prepare/verify/publish/
+activate transaction. It publishes the fully reopened digest-addressed immutable segment before
+atomically installing its generation-two active reference, preserves every full cohort record and
+visible identity/tombstone, reports valid unreferenced artifacts without deleting them, and retains
+pre/post-publication, pre/post-activation, response-loss, corruption/substitution, concurrency,
+owner-loss, and subprocess-death oracles. See the
+[F3 stateful activation result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md). It adds no retained
+lookup or v2 authority mutation, second segment, orphan deletion, backup, adapter, IPC, runtime,
+backend, guest, production engine, or real power-loss claim.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

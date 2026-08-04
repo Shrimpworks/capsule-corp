@@ -71,7 +71,14 @@ all-hot retained-global index reconstruction, exact migration genesis, downgrade
 pre/post-rename fault oracles. It creates no archive segment, moves no cohort, mutates no v2
 authority, and calls no lifecycle adapter. Production-engine selection,
 referenced-history deletion, continuous service, coherent restore activation, and rollback-
-resistant non-reuse remain blocked.
+resistant non-reuse remain blocked. The
+[stateful F3 result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) now adds exactly one sealed
+immutable-segment prepare/verify/publish/activate transaction. It preserves every selected full
+record and visible tombstone, publishes and directory-syncs the verified segment before the atomic
+generation-two active reference, and fully reopens either the complete predecessor or successor
+under retained fault, response-loss, concurrency, corruption/substitution, owner-loss, and process-
+death oracles. It adds no retained lookup, v2 mutation, second segment, backup/orphan cleanup,
+production engine, consumer, adapter, runtime, backend, or guest.
 
 ## Reference workflow
 
@@ -740,9 +747,10 @@ retained and referenced-history deletion is forbidden; fixed total caps eventual
 F1 types, known answers, defensive copies, and eligibility selection now exist. The passive
 [F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated global/
 segment indexes, typed locations/counts, and a distinct generated migration genesis. F2 now adds
-only the owner-asserted v1-to-v2 file migration and read-only empty-archive full verifier; no
-segment write/activation, cohort movement, retained lookup, v2 authority mutation, or consumer
-exists. A production engine plus real power-loss proof remain deferred.
+the owner-asserted v1-to-v2 file migration and read-only empty-archive full verifier. F3 now adds
+one closed cohort segment and atomic generation-two activation with full reopen verification. It
+still adds no retained lookup, v2 authority mutation, second segment, consumer, or deletion. A
+production engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -780,9 +788,9 @@ implemented.
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
-2. Continue from the completed ADR-0031/F1 and stateful
-   [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) into F3's explicit
-   one-segment prepare/verify/activate transaction. Continue through F4 retained lookup/v2
+2. Continue from the completed ADR-0031/F1, stateful
+   [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md), and
+   [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) into F4 retained lookup/v2
    tombstone enforcement and F5 backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.

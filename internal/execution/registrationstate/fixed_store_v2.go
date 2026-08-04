@@ -39,17 +39,21 @@ type V1ToV2MigrationOptions struct {
 	Faults MigrationFaultInjector
 }
 
-// FixedFileStoreV2 is the read-only F2 view of a completely verified v2
-// snapshot. F2 authorizes no archive activation, authority mutation, adapter
-// invocation, consumer, or guest.
+// FixedFileStoreV2 is the completely verified fixed-oracle v2 view. F2 adds
+// migration genesis and F3 adds exactly one sealed immutable-segment
+// activation. Neither slice authorizes retained lookup, v2 authority mutation,
+// adapter invocation, a consumer, or a guest.
 type FixedFileStoreV2 struct {
+	path       string
 	state      installationState
 	lifecycles []lifecyclestate.Record
 	active     archivestate.ActiveStateV2
 	genesis    archivestate.MigrationGenesisCheckpoint
+	segments   []loadedArchiveSegmentV0
+	orphans    uint16
 }
 
-// FixedFileStoreV2VerificationReport is the bounded, content-free F2 full
+// FixedFileStoreV2VerificationReport is the bounded, content-free F2/F3 full
 // verification result. It deliberately includes no path or retained bytes.
 type FixedFileStoreV2VerificationReport struct {
 	StoreFormatVersion     uint64
@@ -61,6 +65,8 @@ type FixedFileStoreV2VerificationReport struct {
 	HotCounts              archivestate.ArchiveCounts
 	ArchivedCounts         archivestate.ArchiveCounts
 	TotalCounts            archivestate.ArchiveCounts
+	SegmentCount           uint16
+	OrphanSegmentCount     uint16
 }
 
 type fixedStoreV2Snapshot struct {
@@ -91,9 +97,10 @@ type diskEnvelopeV2 struct {
 	VisibleV1EffectSeedCount  uint64                               `json:"visibleV1EffectSeedCount"`
 	VisibleV1EffectSeedDigest archivestate.ArchiveEffectSeedDigest `json:"visibleV1EffectSeedDigest"`
 
-	PreviousCheckpoint archivestate.ArchiveCheckpointReference `json:"previousCheckpoint"`
-	CurrentCheckpoint  archivestate.ArchiveCheckpointReference `json:"currentCheckpoint"`
-	MigrationGenesis   migrationGenesisDisk                    `json:"migrationGenesis"`
+	PreviousCheckpoint   archivestate.ArchiveCheckpointReference `json:"previousCheckpoint"`
+	CurrentCheckpoint    archivestate.ArchiveCheckpointReference `json:"currentCheckpoint"`
+	MigrationGenesis     migrationGenesisDisk                    `json:"migrationGenesis"`
+	ActivationCheckpoint *archiveCheckpointDisk                  `json:"activationCheckpoint,omitempty"`
 
 	HotCounts      archivestate.ArchiveCounts `json:"hotCounts"`
 	ArchivedCounts archivestate.ArchiveCounts `json:"archivedCounts"`
@@ -225,13 +232,15 @@ type loadedV2State struct {
 	Lifecycles []lifecyclestate.Record
 	Active     archivestate.ActiveStateV2
 	Genesis    archivestate.MigrationGenesisCheckpoint
+	Segments   []loadedArchiveSegmentV0
+	Orphans    uint16
 }
 
 var fixedStoreV2MigrationMu sync.Mutex
 
-// OpenFixedFileStoreV2 opens only an existing, complete, empty-archive v2
-// world and runs the F2 full verifier. It never creates, migrates, downgrades,
-// normalizes, or rewrites a store.
+// OpenFixedFileStoreV2 opens only an existing, complete, version-specific v2
+// world and runs the full fixed-oracle verifier. It never creates, migrates,
+// downgrades, normalizes, repairs, or rewrites a store or segment.
 func OpenFixedFileStoreV2(path string) (*FixedFileStoreV2, error) {
 	if path == "" {
 		return nil, errors.New("fixed supervisor v2 store path is required")
@@ -244,9 +253,11 @@ func OpenFixedFileStoreV2(path string) (*FixedFileStoreV2, error) {
 		return nil, fmt.Errorf("%w: %v", ErrStoreRepairRequired, err)
 	}
 	return &FixedFileStoreV2{
+		path:       path,
 		state:      cloneState(loaded.State),
 		lifecycles: cloneLifecycleRecords(loaded.Lifecycles, loaded.State.TimeHighWaterUnixSeconds),
 		active:     loaded.Active, genesis: loaded.Genesis,
+		segments: cloneLoadedArchiveSegments(loaded.Segments), orphans: loaded.Orphans,
 	}, nil
 }
 
@@ -263,6 +274,8 @@ func VerifyFixedFileStoreV2(path string) (FixedFileStoreV2VerificationReport, er
 		SnapshotGeneration: view.SnapshotGeneration, ArchiveGeneration: view.ArchiveGeneration,
 		DurableTimeHighWater: view.DurableTimeHighWater, CurrentCheckpoint: view.CurrentCheckpoint,
 		HotCounts: view.HotCounts, ArchivedCounts: view.ArchivedCounts, TotalCounts: view.TotalCounts,
+		SegmentCount:       uint16(len(store.segments)), //nolint:gosec // G115: full verifier caps descriptors at 64 before construction.
+		OrphanSegmentCount: store.orphans,
 	}, nil
 }
 
@@ -531,8 +544,8 @@ func loadV2State(path string) (loadedV2State, error) {
 	if envelope.Lifecycles == nil || envelope.Descriptors == nil {
 		return loadedV2State{}, errors.New("fixed supervisor v2 collection is missing")
 	}
-	if len(envelope.Descriptors) != 0 {
-		return loadedV2State{}, errors.New("fixed supervisor F2 v2 store references unsupported archive segments")
+	if len(envelope.Descriptors) > archivestate.MaxReferencedArchiveSegments {
+		return loadedV2State{}, errors.New("fixed supervisor v2 store exceeds archive descriptor capacity")
 	}
 	if len(envelope.Lifecycles) > MaxRetainedLifecycleRecords {
 		return loadedV2State{}, errors.New("fixed lifecycle state exceeds retained capacity")
@@ -561,7 +574,11 @@ func loadV2State(path string) (loadedV2State, error) {
 	if err != nil {
 		return loadedV2State{}, err
 	}
-	reconstructed, err := reconstructV2Indexes(envelope.State, records)
+	segments, orphans, err := loadArchiveSegmentsForEnvelope(path, envelope)
+	if err != nil {
+		return loadedV2State{}, err
+	}
+	reconstructed, err := reconstructV2IndexesForWorld(envelope.State, records, segments)
 	if err != nil {
 		return loadedV2State{}, err
 	}
@@ -572,7 +589,15 @@ func loadV2State(path string) (loadedV2State, error) {
 		storedIndexes.CombinedDigest() != envelope.CombinedIndexDigest {
 		return loadedV2State{}, errors.New("fixed supervisor v2 index digest mismatch")
 	}
-	genesis, err := validateMigrationGenesisDisk(envelope, storedIndexes)
+	genesisIndexes, err := reconstructMigrationGenesisIndexes(envelope.State, records, segments)
+	if err != nil {
+		return loadedV2State{}, err
+	}
+	genesisHotDigests, err := reconstructMigrationGenesisHotSetDigests(envelope.State, records, segments)
+	if err != nil {
+		return loadedV2State{}, err
+	}
+	genesis, err := validateMigrationGenesisDisk(envelope, genesisIndexes, genesisHotDigests)
 	if err != nil {
 		return loadedV2State{}, err
 	}
@@ -603,41 +628,52 @@ func loadV2State(path string) (loadedV2State, error) {
 	if err != nil {
 		return loadedV2State{}, err
 	}
-	if envelope.SnapshotGeneration != 1 || envelope.ArchiveGeneration != 1 ||
-		envelope.ArchivedCounts != (archivestate.ArchiveCounts{}) ||
-		envelope.CurrentCheckpoint != genesis.Reference() ||
-		envelope.PreviousCheckpoint != archivestate.NoArchiveCheckpointReference() {
-		return loadedV2State{}, errors.New("fixed supervisor F2 v2 world is not migration genesis")
+	switch envelope.CurrentCheckpoint.Kind {
+	case archivestate.ArchiveCheckpointMigrationGenesis:
+		if envelope.SnapshotGeneration != 1 || envelope.ArchiveGeneration != 1 ||
+			envelope.ArchivedCounts != (archivestate.ArchiveCounts{}) || len(segments) != 0 ||
+			envelope.CurrentCheckpoint != genesis.Reference() ||
+			envelope.PreviousCheckpoint != archivestate.NoArchiveCheckpointReference() ||
+			envelope.ActivationCheckpoint != nil {
+			return loadedV2State{}, errors.New("fixed supervisor v2 genesis world mismatch")
+		}
+	case archivestate.ArchiveCheckpointActivation:
+		if len(segments) != 1 || envelope.SnapshotGeneration != 2 || envelope.ArchiveGeneration != 2 ||
+			envelope.PreviousCheckpoint != genesis.Reference() || envelope.ActivationCheckpoint == nil {
+			return loadedV2State{}, errors.New("fixed supervisor F3 v2 activation world mismatch")
+		}
+		if _, checkpointErr := validateActivationCheckpointDisk(envelope, storedIndexes, segments[0]); checkpointErr != nil {
+			return loadedV2State{}, checkpointErr
+		}
+	default:
+		return loadedV2State{}, errors.New("fixed supervisor v2 checkpoint kind is unsupported")
 	}
 	return loadedV2State{
 		Envelope: envelope, State: cloneState(envelope.State),
 		Lifecycles: cloneLifecycleRecords(records, envelope.State.TimeHighWaterUnixSeconds),
-		Active:     active, Genesis: genesis,
+		Active:     active, Genesis: genesis, Segments: cloneLoadedArchiveSegments(segments), Orphans: orphans,
 	}, nil
 }
 
 func validateMigrationGenesisDisk(
 	envelope diskEnvelopeV2,
 	indexes archivestate.ArchiveIndexes,
+	hotSetDigests archivestate.HotSetDigests,
 ) (archivestate.MigrationGenesisCheckpoint, error) {
 	disk := envelope.MigrationGenesis
+	emptyDescriptors, emptyDescriptorErr := archivestate.DigestArchiveDescriptorSet([]archivestate.ArchiveDescriptor{})
 	if disk.Kind != migrationGenesisKind || disk.IndexDigests != indexes.Digests() ||
 		disk.CombinedIndexDigest != indexes.CombinedDigest() ||
 		disk.StoreFormatVersion != *envelope.StoreFormatVersion ||
 		disk.MigrationSourceVersion != *envelope.MigrationSourceVersion ||
-		disk.ResultSnapshotGeneration != envelope.SnapshotGeneration ||
-		disk.ArchiveGeneration != envelope.ArchiveGeneration ||
-		disk.DescriptorSetDigest != envelope.DescriptorSetDigest ||
-		disk.HotCounts != envelope.HotCounts || disk.InstallationID != envelope.State.InstallationID ||
+		disk.ResultSnapshotGeneration != 1 || disk.ArchiveGeneration != 1 || emptyDescriptorErr != nil ||
+		disk.DescriptorSetDigest != emptyDescriptors || disk.HotCounts != countsForIndexView(indexes.View()) ||
+		disk.InstallationID != envelope.State.InstallationID ||
 		disk.SupervisorID != envelope.State.SupervisorID || disk.EpochSequence != envelope.State.EpochSequence ||
 		disk.EpochDigest != envelope.State.EpochDigest || disk.DurableTimeHighWater != envelope.State.TimeHighWaterUnixSeconds {
 		return archivestate.MigrationGenesisCheckpoint{}, errors.New("fixed supervisor v2 migration genesis cross-link mismatch")
 	}
-	wantHotDigests := archivestate.HotSetDigests{
-		Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
-		Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
-	}
-	if disk.HotSetDigests != wantHotDigests {
+	if disk.HotSetDigests != hotSetDigests {
 		return archivestate.MigrationGenesisCheckpoint{}, errors.New("fixed supervisor v2 migration genesis hot-set mismatch")
 	}
 	seed := make([]lifecyclestate.EffectID, len(disk.VisibleV1EffectSeed))

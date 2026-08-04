@@ -70,10 +70,14 @@ mapping contradiction is also passively resolved: each attempt index entry now c
 derive only from present arms. The executable
 [v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the original
 committed-attempt-before-lifecycle witness and exact `attempts = 1, lifecycles = 0` genesis answer.
-Migration and full verification remain unimplemented. The passive work performs no file I/O, migration,
-archive activation, lookup, or authority mutation. The later stateful slices preserve the current
-full-snapshot validation and exact rename fault
-boundaries while proving the archive protocol. It is not selected as the production engine.
+Stateful F2 implements the explicit owner-asserted v1-to-v2 migration and empty-archive full
+verifier. Stateful F3 implements exactly one sealed immutable-segment prepare/verify/publish/
+activate transaction with publish-before-reference ordering, atomic generation-two activation,
+valid-orphan reporting without deletion, and complete predecessor-or-successor reopen. The
+[F3 result](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) retains its exact known answers and
+fault/corruption/substitution/concurrency/owner-loss/process-death limitations. Retained lookup,
+v2 authority mutation, multi-segment growth, backup, cleanup policy, and later slices remain
+unimplemented. The fixed oracle is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
 evidence-backed selection. Convenience, familiarity, or avoiding a migration is not a selection
@@ -632,8 +636,11 @@ The retained
 [valid-v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) selects the passive
 missing-lifecycle representation and rejects a narrower state-changing migration ceremony. The
 [stateful F2 migration/full verifier](../SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) is now `PASSED`
-in its exact local fixed-store scope. This ADR remains Proposed: F2 does not implement a segment,
-activation, retained lookup, v2 mutation, backup, production engine, or product consumer.
+in its exact local fixed-store scope. The
+[stateful F3 first-segment activation](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) is also
+`PASSED` in its exact local fixed-store scope. This ADR remains Proposed: F3 does not implement
+retained lookup, v2 authority mutation, a second segment, backup/orphan cleanup, a production
+engine, or a product consumer.
 
 ## Acceptance blockers
 

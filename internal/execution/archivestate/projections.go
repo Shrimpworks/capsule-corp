@@ -331,6 +331,40 @@ func archiveSetDigests(cohorts []CohortProjection, derived ArchiveIndexes) Archi
 	}
 }
 
+// DeriveArchiveSegmentSets returns the exact record/projection digests and
+// counts that NewArchiveSegment requires. It preserves the package's domain-
+// separated digest implementation while allowing the fixed-store adapter to
+// serialize full records without duplicating digest primitives.
+func DeriveArchiveSegmentSets(
+	cohorts []CohortProjection,
+	derived ArchiveIndexes,
+) (ArchiveSetDigests, ArchiveCounts, error) {
+	if cohorts == nil {
+		return ArchiveSetDigests{}, ArchiveCounts{}, classified(ClassificationSchema, "archive-segment-cohorts-nil")
+	}
+	validated, err := NewArchiveIndexes(derived.View())
+	if err != nil {
+		return ArchiveSetDigests{}, ArchiveCounts{}, err
+	}
+	if validated.scope() != ArchiveIndexScopeSegmentDerived ||
+		!validated.allLocationsAre(RecordLocationArchive) {
+		return ArchiveSetDigests{}, ArchiveCounts{}, classified(ClassificationDomain, "archive-segment-derived-index-scope")
+	}
+	for _, cohort := range cohorts {
+		if err := validateCohortProjectionView(cohort.View()); err != nil {
+			return ArchiveSetDigests{}, ArchiveCounts{}, err
+		}
+	}
+	counts := countsForCohorts(cohorts)
+	derivedCounts := validated.counts()
+	counts.Nonces = derivedCounts.Nonces
+	counts.Effects = derivedCounts.Effects
+	counts.Instances = derivedCounts.Instances
+	counts.ApprovalReplay = derivedCounts.ApprovalReplay
+	counts.AttemptReplay = derivedCounts.AttemptReplay
+	return archiveSetDigests(cohorts, validated), counts, nil
+}
+
 func digestCohortRecordSet(name string, cohorts []CohortProjection, kind RecordKind) ArchiveIndexDigest {
 	encoder := newDigestEncoder("capsule.supervisor.archive-segment-set.v0")
 	encoder.text(name)

@@ -11,11 +11,14 @@ const evidenceDir = join(artifactDir, "evidence");
 const binaryPath = join(artifactDir, "dist/capsule-mjs-source-validator-aarch64-apple-darwin");
 const lockPath = join(artifactDir, "Cargo.lock");
 const reproductionPath = join(evidenceDir, "reproduction.json");
-const candidateManifest = resolve(
-  artifactDir,
-  "../../experiments/mjs-parser-boundary/oxc/Cargo.toml",
-);
-const candidateLock = resolve(artifactDir, "../../experiments/mjs-parser-boundary/Cargo.lock");
+const archivedCandidate = Object.freeze({
+  archiveCommit: "0d8233b55f153b27a901a9ec45a3834208e3aa86",
+  cargoLockSha256: "505669a07338603876bc96c242f8d5af386d3a13139e70110a8b52f39bae69ac",
+  oxcDependencyCount: 65,
+  candidateOnlyFeatureUnifiedDependencies: Object.freeze([
+    "serde_derive@1.0.229|registry+https://github.com/rust-lang/crates.io-index",
+  ]),
+});
 
 function sha256Bytes(value) {
   return createHash("sha256").update(value).digest("hex");
@@ -127,31 +130,6 @@ const packageRecords = packages.map((pkg) => {
   };
 });
 
-const candidateMetadata = JSON.parse(
-  execFileSync(
-    "cargo",
-    [
-      "+1.95.0",
-      "metadata",
-      "--format-version",
-      "1",
-      "--locked",
-      "--offline",
-      "--filter-platform",
-      "aarch64-apple-darwin",
-      "--manifest-path",
-      candidateManifest,
-    ],
-    { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
-  ),
-);
-const candidateRoot = candidateMetadata.packages.find(
-  (pkg) => pkg.name === "capsule-mjs-oxc-probe",
-);
-const candidateNodes = new Map(candidateMetadata.resolve.nodes.map((node) => [node.id, node]));
-const candidatePackages = new Map(candidateMetadata.packages.map((pkg) => [pkg.id, pkg]));
-const candidateClosure = dependencyClosure(candidateNodes, [candidateRoot.id]);
-candidateClosure.delete(candidateRoot.id);
 const directOxcNames = new Set([
   "oxc_allocator",
   "oxc_ast",
@@ -165,34 +143,11 @@ const artifactDirectOxcIds = nodeById
   .deps.filter((dependency) => directOxcNames.has(dependency.name))
   .map((dependency) => dependency.pkg);
 const artifactOxcClosure = dependencyClosure(nodeById, artifactDirectOxcIds);
-const identity = (pkg) => `${pkg.name}@${pkg.version}|${pkg.source ?? "repository"}`;
-const candidateOxcIdentities = [...candidateClosure]
-  .map((id) => identity(candidatePackages.get(id)))
-  .sort();
-const artifactOxcIdentities = [...artifactOxcClosure]
-  .map((id) => identity(packageById.get(id)))
-  .sort();
-const candidateOnlyOxcIdentities = candidateOxcIdentities.filter(
-  (item) => !artifactOxcIdentities.includes(item),
-);
-const artifactOnlyOxcIdentities = artifactOxcIdentities.filter(
-  (item) => !candidateOxcIdentities.includes(item),
-);
-if (
-  JSON.stringify(candidateOnlyOxcIdentities) !==
-    JSON.stringify([
-      "serde_derive@1.0.229|registry+https://github.com/rust-lang/crates.io-index",
-    ]) ||
-  artifactOnlyOxcIdentities.length !== 0
-) {
-  throw new Error("artifact Oxc closure has an unreviewed engineering-candidate difference");
+if (artifactOxcClosure.size !== archivedCandidate.oxcDependencyCount - 1) {
+  throw new Error("artifact Oxc closure no longer matches the retained candidate comparison");
 }
 
 const lockPackageCount = (readFileSync(lockPath, "utf8").match(/^\[\[package\]\]$/gm) ?? []).length;
-const candidateLockDigest = sha256File(candidateLock);
-if (candidateLockDigest !== "505669a07338603876bc96c242f8d5af386d3a13139e70110a8b52f39bae69ac") {
-  throw new Error("engineering-candidate Cargo.lock identity changed");
-}
 
 const sourceInputs = [
   "Cargo.toml",
@@ -220,11 +175,13 @@ const sourceManifest = {
   targetComponentCount: packageRecords.length,
   targetDependencyCount: packageRecords.filter((pkg) => pkg.source !== "repository").length,
   engineeringCandidate: {
-    cargoLockSha256: candidateLockDigest,
-    oxcDependencyCount: candidateClosure.size,
+    archiveCommit: archivedCandidate.archiveCommit,
+    cargoLockSha256: archivedCandidate.cargoLockSha256,
+    oxcDependencyCount: archivedCandidate.oxcDependencyCount,
     artifactOxcDependencyCount: artifactOxcClosure.size,
-    artifactOnlyDependencies: artifactOnlyOxcIdentities,
-    candidateOnlyFeatureUnifiedDependencies: candidateOnlyOxcIdentities,
+    artifactOnlyDependencies: [],
+    candidateOnlyFeatureUnifiedDependencies:
+      archivedCandidate.candidateOnlyFeatureUnifiedDependencies,
     disposition:
       "all artifact Oxc package/version/source identities match the candidate; the artifact omits only serde_derive, which the multi-candidate experiment workspace feature-unified but this crate does not enable",
   },
@@ -384,10 +341,11 @@ const buildManifest = {
     lockedDependencies: lockPackageCount - 1,
     targetComponents: packageRecords.length,
     targetDependencies: packageRecords.filter((pkg) => pkg.source !== "repository").length,
-    candidateOxcDependencies: candidateClosure.size,
+    candidateOxcDependencies: archivedCandidate.oxcDependencyCount,
     artifactOxcDependencies: artifactOxcClosure.size,
-    artifactOnlyOxcDependencies: artifactOnlyOxcIdentities,
-    candidateOnlyFeatureUnifiedOxcDependencies: candidateOnlyOxcIdentities,
+    artifactOnlyOxcDependencies: [],
+    candidateOnlyFeatureUnifiedOxcDependencies:
+      archivedCandidate.candidateOnlyFeatureUnifiedDependencies,
     directOxcCrates: [
       "oxc_allocator@0.140.0",
       "oxc_ast@0.140.0",

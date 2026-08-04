@@ -32,3 +32,8 @@ reproduction, V0 fixture agreement, and mutation/restoration results. The Mach-O
 linker ad-hoc signature and CodeDirectory digest are recorded; they are not an installation
 signature. This is also not independent-builder reproduction. `ASSESSMENT.md` lists the admission
 blockers and the update/rollback rule.
+
+The earlier multi-candidate parser experiment is retained separately at
+`Shrimpworks/capsule-experiments` commit `0d8233b55f153b27a901a9ec45a3834208e3aa86`.
+Offline artifact reproduction binds its reviewed Cargo lock digest and comparison result as
+historical provenance; it does not require a live `experiments/` checkout in this repository.

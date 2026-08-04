@@ -29,7 +29,7 @@
   },
   "inputs": {
     "cargoLockSha256": "a79e9fd9fb6c1273c56fdada6eeea02f547b45a4dd8a146264f697fea6bdee45",
-    "sourceManifestSha256": "c3aca1b7088064348db1604ffee633c2884dd3b202791968074e509563134b7a",
+    "sourceManifestSha256": "c360ecae060856ff48f44de7b23986e15edb063f3e6597c75b6b0ee8000c0779",
     "licenseReportSha256": "ef2ee476f3b8dc543ff007d40d9e1aa0ee45cb80785328ed0da26584cd8db747",
     "sbomSha256": "59e5521445938dd3ac6257aa7a29d31d28db3a5f62b2b62bd305019b540c4e21",
     "reproductionSha256": "3f9363ce08700a38a437f089cba615a977c050e33f48942fe2bd59239a2a54f8"

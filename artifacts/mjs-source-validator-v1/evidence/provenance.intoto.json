@@ -31,7 +31,7 @@
         {
           "uri": "file:evidence/source-manifest.json",
           "digest": {
-            "sha256": "c3aca1b7088064348db1604ffee633c2884dd3b202791968074e509563134b7a"
+            "sha256": "c360ecae060856ff48f44de7b23986e15edb063f3e6597c75b6b0ee8000c0779"
           }
         }
       ]
@@ -47,7 +47,7 @@
         {
           "name": "evidence/build-manifest.json",
           "digest": {
-            "sha256": "642e0dd13feda0f49e67bbf9de12318069e520a2a72bf3f68614568265e30156"
+            "sha256": "c008a2879bb1c76451b2021784cdd854ffe7e6d6027baf3cb2be7b87093466a0"
           }
         }
       ]

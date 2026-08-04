@@ -79,7 +79,7 @@ all 28 M1 HOLD cases, retains a 74-dependency lock, complete checksum/source/lic
 CycloneDX inventories, and reproduces the 1,146,656-byte macOS arm64 executable byte-for-byte in
 two clean source/target directories on one host. The executable SHA-256 is
 `ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600`; its not-enrolled V0
-artifact-profile identity is `6a6056a2f43a3c33c84879724821f511d076d156200fb5c4fbe0858ea1e10ac1`.
+artifact-profile identity is `cfadcedc3e983377b964e0465c1f7127a307acbfda15ad8a02d7a302e82b4ce7`.
 
 This checkpoint does not satisfy V1 enrollment: the Mach-O has only an identity-free linker ad-hoc
 signature, provenance and assessment are unsigned, both

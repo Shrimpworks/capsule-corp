@@ -7,6 +7,7 @@
   "targetComponentCount": 74,
   "targetDependencyCount": 73,
   "engineeringCandidate": {
+    "archiveCommit": "0d8233b55f153b27a901a9ec45a3834208e3aa86",
     "cargoLockSha256": "505669a07338603876bc96c242f8d5af386d3a13139e70110a8b52f39bae69ac",
     "oxcDependencyCount": 65,
     "artifactOxcDependencyCount": 64,
@@ -54,8 +55,8 @@
     },
     {
       "path": "scripts/generate-evidence.mjs",
-      "bytes": 19281,
-      "sha256": "5773d9fbb77e7a63b3b7edb7783e93e2af43aba51aa2b6926ddc23906f609b50"
+      "bytes": 17873,
+      "sha256": "514746f3d634251727ad84a53dd0047e825b3b7a81468fb34cbf34572c9bcad2"
     },
     {
       "path": "scripts/verify-evidence.mjs",

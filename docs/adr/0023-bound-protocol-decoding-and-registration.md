@@ -2,6 +2,7 @@
 
 - Status: Proposed
 - Date: 2026-08-01
+- First-release source-profile refinement: ADR-0034 on 2026-08-03
 - Refines if accepted: ADR-0009, ADR-0011, ADR-0017, and the object profiles proposed by ADR-0019
 
 ## Context
@@ -93,6 +94,11 @@ elements. Its cap-plus-one case necessarily also exceeds at least one collection
 overlap is recorded rather than misrepresented as an independently reachable limit.
 
 ### Source path and source-manifest identity
+
+Accepted ADR-0034 narrows the first release to exactly one logical path and entrypoint,
+`main.mjs`, with a 262,144-byte aggregate maximum. The broader ASCII path grammar and six
+entrypoint suffixes below remain historical passive-corpus rules until M1 replaces incompatible
+accepts; they are not the first-release source profile.
 
 The first slice keeps the Phase 2A ASCII path grammar:
 

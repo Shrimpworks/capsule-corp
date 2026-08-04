@@ -100,11 +100,13 @@ handoff. PR #4 is the current external attempt, not a completed dependency:
    same-host Linux/arm64 builders. A genuinely independent Linux/arm64 builder is viable but not
    currently planned; same-host and GitHub-CI equality must remain explicitly limited, and
    independent-builder equality is deferred.
-3. Keep Proposed ADR-0032 at its PR #72 P1 HOLD until its protected-store, worker, bootstrap/update,
-   retention/release, recursive field-authority, and lifecycle gates close. If they do not, prepare
-   a separate exact contract/ADR update for a modern ESM `.mjs`-only JavaScript first-release
-   fallback. Do not add CommonJS, package resolution, legacy Node module surface, or wider runtime
-   authority, and do not treat this direction as a frozen media/profile decision.
+3. Follow accepted ADR-0034 for the first release: one byte-exact pass-through `main.mjs`, one
+   plan-v0 source role, no static/dynamic dependency request, and no filesystem/network/package/
+   fallback module loader. Complete its passive M1-M4 source/registration/approval custody slices
+   before runtime integration, then prove M5 only under a separate runtime/profile admission plan.
+   Proposed ADR-0032 remains on P1 HOLD for a conditional later TypeScript feature and is not a
+   first-release dependency. Do not add CommonJS, package resolution, legacy Node module surface,
+   or wider runtime authority.
 4. Assemble one immutable runtime bundle manifest from governed fork releases and the exact dynamic
    root; rerun physical-op, final-link, file-open, syscall-seal, descriptor, and restoration tests.
 5. Run an independent review of the combined libkrun FD-native, direct-block-root, and console

@@ -25,10 +25,9 @@ is implemented or validated.
 │  ├── proposal handling and plan construction                        │
 │  ├── policy resolution and immutable planning                       │
 │  └── no approval key, backend launch, or user-only content          │
-│             ├── copied source → Proposed TypeScript Source Preparer │
-│             │   ├── exact one-shot Node/Amaro strip-only worker     │
-│             │   ├── immutable original/emitted/object source store  │
-│             │   └── fixed prepared-source projection → daemon       │
+│             ├── exact first-release `main.mjs` pass-through source   │
+│             │   └── atomic plan/source registration and readback     │
+│             ├── future conditional TypeScript Source Preparer       │
 │             │                                                       │
 │             └── register exact plan / request registered attempt    │
 │             ▼                                                       │
@@ -88,19 +87,17 @@ The daemon cannot authorize its own plan. It sends exact bytes to the Supervisor
 validation and durable registration. After registration, execute APIs accept only the returned
 registration identifier.
 
-Proposed ADR-0032 removes production TypeScript emission and immutable approved-byte custody from
-the daemon. The daemon may submit copied untrusted source to a separately enrolled Source Preparer
-and use only its fixed source-set projection during plan construction. This topology is design
-only and PR #72 retains P1 at a bounded HOLD/NO-GO pending protected-store, exact worker,
-genesis/update, retention/release, recursive field-authority, and lifecycle evidence. No P1
-contract, service, store, transformer consumer, or authenticated endpoint exists. If those gates
-fail, a modern-ESM `.mjs`-only JavaScript fallback is acceptable planning direction, but it requires
-an exact later contract/ADR update and may not add CommonJS, package resolution, legacy Node module
-surface, or runtime authority.
+Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mjs` source under the
+existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
+canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
+copies. This is contract design only: passive fixtures, source custody, authenticated transport,
+consumer, runtime, backend, and guest remain unimplemented. Proposed ADR-0032's separately enrolled
+Source Preparer is now only a conditional later TypeScript topology and remains on P1 HOLD.
 
 ### Proposed TypeScript Source Preparer
 
-The proposed unprivileged Source Preparer owns exact pre-registration Node 22.22.1/Amaro 1.1.5
+If TypeScript is later selected, the proposed unprivileged Source Preparer owns exact
+pre-registration Node 22.22.1/Amaro 1.1.5
 strip-only emission and a single role-namespaced immutable store for original, executable, profile,
 options, manifest, record, and record-set bytes. It accepts no caller path or transform option,
 returns defensive copies only, and has no Approval/content/backend/evidence key or guest route.
@@ -247,10 +244,10 @@ Same-user mode bits alone are not sufficient containment against a compromised s
 
 | Store | Owner | Contents |
 | --- | --- | --- |
-| Daemon store | Daemon | Proposals, untrusted agent-source copies, planning state, prepared-source references, plan references, fixed agent summaries, non-authoritative receipt indexes |
+| Daemon store | Daemon | Proposals, untrusted agent-source copies, planning state, conditional prepared-source references, plan references, fixed agent summaries, non-authoritative receipt indexes |
 | Proposed Source Preparer store | TypeScript Source Preparer | Immutable role-namespaced original/emitted/profile/options/manifest/record bytes plus bounded prepare/retain/release/quarantine state |
 | Broker store | Trusted Host Broker | Input snapshots, original-path/user labels, user-only artifacts, retention policy, approval audit records, Approval key reference |
-| Supervisor store | Execution Supervisor | Registered plan bytes, grant ledger, attempts, integrity/quarantine state, backend handles, cleanup leases, transcript chain, evidence-key reference, trust-epoch checkpoint |
+| Supervisor store | Execution Supervisor | Registered plan bytes and first-release exact `main.mjs` manifest/bytes, grant ledger, attempts, integrity/quarantine state, backend handles, cleanup leases, transcript chain, evidence-key reference, trust-epoch checkpoint |
 | Trust cache | Updater/trust verifier | Pinned roots, verified TUF metadata, profile/review/revocation material, signed local trust snapshots |
 
 Cross-store operations use explicit idempotent saga states. No component treats another store's

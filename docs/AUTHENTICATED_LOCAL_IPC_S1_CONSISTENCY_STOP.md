@@ -2,9 +2,10 @@
 
 Date: 2026-08-03
 
-Status: architecture decision recorded; fixture work remains blocked. The architecture owner
-selected ADR-0030's versioned atomic-cutover path. No S1 message, bridge, reply, refusal, or
-field-authority fixture was generated.
+Status: retained historical TypeScript stop; first-release dependency superseded by accepted
+ADR-0034. The architecture owner originally selected ADR-0030's versioned atomic-cutover path, and
+no S1 message, bridge, reply, refusal, or field-authority fixture was generated. That stop still
+governs any later TypeScript cutover, but it no longer blocks the `.mjs` first-release S1 path.
 
 ## Defensive scope
 
@@ -22,6 +23,13 @@ stays stopped until the dependency chain below produces a finalized plan, comple
 newly versioned registration method and binding record. Encoding a fixture now would either omit
 approved-byte authority, conflate nominal roles, or reinterpret a v0 method as v1. Each option is
 an authority change, not a fixture-only implementation choice.
+
+Accepted ADR-0034 later chose a different first-release premise: one byte-exact pass-through
+`main.mjs` member has one authoring/executable source role and therefore fits plan v0 without the
+three TypeScript roles. The current 562-byte complete role projection can now be retained for that
+first-release contract, while exact source-manifest and source bytes are separately validated
+atomic registration inputs. The revised passive S1 work is defined in ADR-0034 and the
+authenticated local IPC plan. Nothing here turns the 626-byte TypeScript arithmetic into a layout.
 
 ## Exact conflict
 
@@ -82,7 +90,7 @@ Relevant retained known answers are:
 There is no retained 562-byte S1 record and no 626-byte successor known answer. Producing either
 would violate the selected atomic-cutover path.
 
-## Selected integration path
+## Retained TypeScript integration path
 
 S1 may resume only after this dependency order completes:
 
@@ -93,6 +101,9 @@ S1 may resume only after this dependency order completes:
    exact caps, cap-plus-one behavior, and cross-language known answers; and
 5. explicitly review the other registration fetch, approval submission, and attempt-request
    method projections and version each one whose typed shape changes.
+
+This sequence now applies only if the conditional TypeScript feature resumes. First-release S1
+instead follows ADR-0034's M1/M2 single-member `.mjs` contract and keeps one active plan-v0 shape.
 
 There is no dual active v0/v1 acceptance, optional transformation role, generic fallback, or field
 inference. This task did not duplicate the field-authority manifest, infer its field ownership, or

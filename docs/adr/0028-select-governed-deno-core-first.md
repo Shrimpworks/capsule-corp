@@ -98,8 +98,9 @@ for bootstrapping the forks, not the shipping integration mechanism.
   Linux/amd64 and has no intended Linux/arm64 profile. A pinned arm64 builder/publication profile,
   actual fork-native outputs, and a release still must exist before another packaging or admission
   claim can advance.
-- Independent-builder evidence, TypeScript contract migration, libkrun/launcher/transport
-  composition, installed signing/notarization, and final profile admission remain separate gates.
+- Independent-builder evidence, ADR-0034 `.mjs` source custody/no-loader evidence, libkrun/
+  launcher/transport composition, installed signing/notarization, and final profile admission
+  remain separate gates.
 - A failure of the governed fork to retain a small reviewable authority surface, reproduce exact
   bytes, publish complete materials, or pass the composed hostile-runtime corpus reopens the
   candidate decision. It does not silently weaken the v0 authority contract.

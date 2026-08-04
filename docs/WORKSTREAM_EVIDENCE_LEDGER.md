@@ -332,14 +332,14 @@ Current dependency and priority view:
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.
-5. **Sequentially blocked:** authenticated IPC S1 and `RegisterPlanV1` wait for the Source Preparer
-   evidence/decision, finalized plan-v1 roles, recursive field-authority integration, and coordinated
-   ADR-0030 cutover. No S1 fixtures exist and P1 has not begun.
+5. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
+   first-release critical path. M1 narrows the proposal/source/manifest to one byte-exact
+   `main.mjs`; S1/M2 then generates the revised `RegisterPlanV0`/fetch projections and exact caps
+   from complete field authority. No S1 fixtures exist and no product endpoint is authorized.
 
-If Source Preparer P0A cannot close without widening authority, user direction accepts a later-
-reviewed modern ESM `.mjs`-only JavaScript first-release fallback. CommonJS, package resolution,
-legacy Node module surface, and widening of the governed runtime contract remain forbidden. This
-direction requires an exact contract/ADR update before implementation and is not a frozen profile.
+TypeScript remains conditional. If later selected, Source Preparer P0A and ADR-0030's atomic
+plan-v1/RegisterPlanV1 cutover still apply with no dual active v0/v1 acceptance. CommonJS, package
+resolution, legacy Node module surface, and runtime-contract widening remain forbidden.
 
 The idle governed Deno fork has transferred from `dills122/deno` to
 [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) with its fork relationship, default and

@@ -59,19 +59,15 @@ coherent restore activation, and rollback-resistant non-reuse remain blocked.
 
 The first complete workflow is intentionally narrow:
 
-1. An agent proposes a dependency-free, one-shot TypeScript transformation with inline JSON input
-   and bounded JSON output.
-2. The Go daemon strictly decodes the proposal and resolves trusted policy. Proposed ADR-0032
-   assigns copied pre-registration TypeScript source to a separately enrolled Source Preparer,
-   which owns exact Node/Amaro emission and the immutable original/executable/object source store.
-   The daemon then uses only its fixed prepared-source projection to construct canonical
-   `ExecutionPlan` bytes. PR #72 retained this topology at a P1 HOLD/NO-GO pending its exact
-   protected-store, worker, bootstrap/update, retention, field-authority, and lifecycle evidence;
-   no P1 contracts exist. A modern-ESM `.mjs`-only JavaScript fallback is acceptable planning
-   direction if those gates fail, but it requires a later exact contract/ADR update before
-   implementation. Proposed ADR-0026 still
-   requires transformation to finish before plan construction and no post-approval transformation
-   is permitted.
+1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
+   bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
+   loader fallbacks refuse under accepted ADR-0034.
+2. The Go daemon strictly decodes the proposal, validates the fixed source profile without
+   executing it, resolves trusted policy, and constructs canonical `ExecutionPlan` v0 bytes plus
+   the canonical single-member source manifest. Registration atomically validates and retains the
+   exact plan, complete bindings, manifest, and pass-through source bytes. Proposed ADR-0032's
+   Source Preparer and ADR-0030's plan-v1 cutover remain conditional later TypeScript work; they no
+   longer block the first release.
 3. The daemon sends those exact bytes to the Execution Supervisor. The Supervisor independently
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
@@ -88,9 +84,9 @@ The first complete workflow is intentionally narrow:
    `deno_core` construction as the first engineering candidate, and its real Deno and `rusty_v8`
    governed branches are merged. Governed `rusty_v8` PR #4 is unmerged at
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; its clean Linux/arm64 build is still in progress and
-   supplies no reusable artifact. The runtime remains unadmitted: Linux/arm64 fork-native construction,
-   TypeScript contract migration, complete profile composition, and runtime-admission evidence
-   remain open.
+   supplies no reusable artifact. The runtime remains unadmitted: Linux/arm64 fork-native
+   construction, `.mjs` source-custody/no-loader evidence, complete profile composition, and
+   runtime-admission evidence remain open.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an
@@ -192,10 +188,11 @@ separable even while deployed in one process.
 
 ### Execution Supervisor
 
-The Supervisor is the sole hostile-guest launch authority. It owns registered plan bytes,
-registration sequences, independent hard-safety validation, approval verification and consumption,
-attempts, integrity/quarantine state, backend capability matching, staging verification, backend
-handles, cleanup leases, safe filesystem collection, transcript events, and its evidence key.
+The Supervisor is the sole hostile-guest launch authority. It owns registered plan bytes, the exact
+first-release registered `main.mjs` manifest/bytes, registration sequences, independent hard-safety
+validation, approval verification and consumption, attempts, integrity/quarantine state, backend
+capability matching, staging verification, backend handles, cleanup leases, safe filesystem
+collection, transcript events, and its evidence key.
 
 It does not own public agent parsing, policy authoring, file-picking UX, arbitrary DID/TUF/network
 resolution, rich content parsing, profile building, dependency installation, or general updater UX.
@@ -711,7 +708,8 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
-2. Freeze backend-independent contracts using the measured results.
+2. Complete ADR-0034 M1 and S1/M2: freeze the single-member `.mjs` source/manifest contract and
+   generated plan-v0 registration/fetch fixtures with complete field authority.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
 4. Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1 into

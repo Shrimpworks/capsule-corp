@@ -4,7 +4,9 @@ Date: 2026-08-03
 
 Status: retained adversarial design review; **P1 HOLD / conditional topology decision**. No Source
 Preparer service, store, worker contract, endpoint, key, runtime, backend, guest, or deployment is
-implemented or admitted by this review.
+implemented or admitted by this review. Accepted ADR-0034 subsequently selected the review's
+JavaScript-only alternative for the first release; this evidence now applies only if TypeScript is
+later reselected.
 
 Decision owner: Capsule architecture and security review.
 
@@ -50,13 +52,13 @@ cross-role lookup and deduplication confusion; they do not constrain a compromis
 do not stop an ordinary same-user writer. The security boundary requires an exact OS-protected,
 single-member storage mechanism plus installed adversarial evidence.
 
-The least-dangerous viable alternative is JavaScript-only pass-through with TypeScript unsupported.
+The least-dangerous viable alternative identified by this review was JavaScript-only pass-through
+with TypeScript unsupported.
 It removes the parser, transformation claim, worker, source-set saga, and semantic-substitution
 trust. User planning direction accepts that bounded first-release fallback only as modern ESM
 `.mjs`: no CommonJS, package resolution, legacy Node module surface, or widening of the governed
-runtime contract. This is not an already frozen media/profile decision; the exact contract and
-applicable ADRs must be updated before implementation. Moving Node into the daemon, Broker,
-Supervisor, updater, runtime, or backend is
+runtime contract. Accepted ADR-0034 subsequently froze that exact first-release decision. Moving
+Node into the daemon, Broker, Supervisor, updater, runtime, or backend is
 rejected. A second independent transformer could change the trust claim, but adds an authority,
 protocol, store/update seam, and must be decided in a new ADR.
 

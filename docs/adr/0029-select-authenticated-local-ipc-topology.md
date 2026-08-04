@@ -2,6 +2,7 @@
 
 - Status: Proposed
 - Date: 2026-08-03
+- First-release source-contract refinement: ADR-0034 on 2026-08-03
 - Refines if accepted: ADR-0005, ADR-0011, ADR-0012, ADR-0013, ADR-0018, ADR-0019,
   ADR-0023, ADR-0024, and ADR-0025
 
@@ -164,8 +165,8 @@ Method bodies and successful replies are exactly:
 
 | Call | Request body owned by caller, copied before Go decode | Successful reply |
 | --- | --- | --- |
-| `RegisterPlanV0` | exact plan data, 1..65,536 bytes; complete typed role-binding record, exactly 562 bytes | exact Supervisor-issued `PlanRegistration`, at most 4,096 bytes |
-| `GetRegisteredPlanV0` | nonzero `RegistrationID`, exactly 16 bytes | exact retained plan, at most 65,536 bytes; exact 562-byte binding record; exact retained registration, at most 4,096 bytes |
+| `RegisterPlanV0` | exact plan data, 1..65,536 bytes; complete typed role-binding record, exactly 562 bytes; exact canonical single-member source manifest, 87..95 bytes; exact `main.mjs` data, 0..262,144 bytes | exact Supervisor-issued `PlanRegistration`, at most 4,096 bytes |
+| `GetRegisteredPlanV0` | nonzero `RegistrationID`, exactly 16 bytes | exact retained plan, at most 65,536 bytes; exact 562-byte binding record; exact retained registration, at most 4,096 bytes; exact 87..95-byte source manifest; exact 0..262,144-byte `main.mjs` data |
 | `SubmitApprovalV0` | nonzero `RegistrationID`, 16 bytes; exact candidate envelope, 1..512 bytes | `ApprovalID`, 16 bytes; closed approval-state tag |
 | `RequestAttemptV0` | nonzero `RegistrationID`, 16 bytes; nonzero `ApprovalID`, 16 bytes | `AttemptID`, 16 bytes; closed attempt-state tag |
 
@@ -184,6 +185,14 @@ match before state change. The current no-product slice may use only the fixed r
 fixture and must not claim that production resolvers exist. Broker fetch returns the Supervisor-
 retained resolved binding projection, not caller labels reinterpreted on read.
 
+Accepted ADR-0034 freezes the first-release plan-v0 source role as one byte-exact pass-through
+`main.mjs` member. Registration additionally validates and atomically retains the exact canonical
+source manifest and member bytes; Broker fetch returns defensive copies of those same retained
+bytes. This does not add a role to the 562-byte plan-binding projection. The source manifest and
+member data are method-owned registration inputs, not replacement plan bytes or execute-time
+authority. Registration commits none of plan, registration, bindings, manifest, or source unless
+all validate and commit together.
+
 The native layer owns each received XPC object and fixed-cap buffer. It copies no body until peer,
 session, flow slot, outer shape, installation, and epoch checks pass. Each bridge call is
 method-specific; there is no opcode entry point. Calls run synchronously on one dedicated core
@@ -193,11 +202,16 @@ memory. Expected refusals return a closed numeric status and fixed reason code. 
 short write, bridge version disagreement, or pointer/length inconsistency terminates the process as
 a local integrity fault.
 
-The exact application-visible aggregate request-data caps are 66,098 bytes for
+The exact application-visible aggregate request-data caps are 328,337 bytes for
 `RegisterPlanV0`, 16 for `GetRegisteredPlanV0`, 528 for `SubmitApprovalV0`, and 32 for
-`RequestAttemptV0`, excluding the fixed common header whose fields have the widths above. XPC owns
-its transport framing; Capsule does not claim a raw Mach-message byte cap it cannot observe. A
-cap-plus-one data value is rejected before allocation growth or Go decode.
+`RequestAttemptV0`, excluding the fixed common header whose fields have the widths above. The
+`GetRegisteredPlanV0` successful reply-data cap is 332,433 bytes. The revised registration/fetch
+caps come from the complete ADR-0034 field-authority projection: 65,536 plan bytes, 562 binding
+bytes, at most 95 canonical manifest bytes, 262,144 source bytes, and—on fetch—at most 4,096
+registration bytes. XPC owns its transport framing; Capsule does not claim a raw Mach-message byte
+cap it cannot observe. Passive fixtures must generate and verify the aggregate maxima from the
+closed message definitions before implementation; the prose arithmetic alone is not a known
+answer. A cap-plus-one data value is rejected before allocation growth or Go decode.
 
 ### Flow control, deadlines, cancellation, and partial delivery
 

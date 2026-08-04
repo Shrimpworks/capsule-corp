@@ -1,10 +1,16 @@
 # ADR-0030: Define the passive TypeScript approved-byte migration boundary
 
-- Status: Proposed
+- Status: Proposed; future-conditional and removed from the first-release critical path by ADR-0034
 - Date: 2026-08-03
 - Refines if accepted: ADR-0011, ADR-0019, ADR-0023, ADR-0024, ADR-0025, and ADR-0026
 
 ## Context
+
+Accepted ADR-0034 freezes the first release as one byte-exact pass-through `main.mjs` source under
+the existing plan-v0 source role. This ADR remains the conditional later TypeScript migration
+design; it does not block plan-v0, authenticated-IPC, runtime packaging, or admission work for the
+`.mjs` release. If TypeScript is later selected, this ADR's atomic plan-v1 rule still applies with
+no dual active v0/v1 acceptance.
 
 ADR-0026 and the retained TypeScript approved-byte experiment establish the ordering rule: exact
 Node 22.22.1/Amaro 1.1.5 strip-only emission can finish before plan construction, and the emitted

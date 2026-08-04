@@ -71,10 +71,12 @@ The first complete workflow is intentionally narrow:
 
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
-   loader fallbacks must refuse under accepted ADR-0034. This workflow is blocked before plan
-   construction until the exact parser/validation boundary is selected.
-2. The Go daemon strictly decodes the proposal, validates the fixed source profile without
-   executing it, resolves trusted policy, and constructs canonical `ExecutionPlan` v0 bytes plus
+   loader fallbacks must refuse under accepted ADR-0034. The merged M1 passive foundation remains
+   on HOLD before plan construction until Proposed ADR-0035's product gates pass.
+2. The Go daemon strictly decodes the proposal and, under Proposed ADR-0035, sends an exact copied
+   source to a fresh disposable Source Validator before planning. The validator parses but never
+   executes source and returns only digest/length and fixed grammar-node facts. The daemon then
+   resolves trusted policy and constructs canonical `ExecutionPlan` v0 bytes plus
    the canonical single-member source manifest. Registration atomically validates and retains the
    exact plan, complete bindings, manifest, and pass-through source bytes. Proposed ADR-0032's
    Source Preparer and ADR-0030's plan-v1 cutover remain conditional later TypeScript work; they no
@@ -84,8 +86,10 @@ The first complete workflow is intentionally narrow:
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
 4. The Trusted Host Broker fetches the registered bytes directly from the Supervisor, independently
-   validates them, renders a bounded human-readable view, requires fresh user presence, and signs
-   one attempt-bound `ApprovalGrant`.
+   validates them, invokes a separate fresh Source Validator over its exact copied source, binds
+   the fixed result to digest and length, renders a bounded human-readable view, requires fresh
+   user presence, and signs one attempt-bound `ApprovalGrant`. Any validator failure refuses before
+   an Approval-key operation.
 5. The Supervisor performs runtime-integrity preflight, atomically consumes the grant, and creates
    one `ExecutionAttempt` before any hostile side effect.
 6. The selected runtime executes in a disposable development backend with no network, ambient
@@ -176,6 +180,22 @@ It may not:
 - clear quarantine, repair-required, epoch, or grant-consumption state;
 - receive user-only input or artifact content by default;
 - forge Supervisor terminal evidence or declare success without it.
+
+### Proposed disposable Source Validator
+
+Proposed ADR-0035 adds one method-specific, one-shot parse-only child process for the first-release
+`.mjs` grammar policy. Exact Oxc 0.140.0 is the engineering candidate. The child receives only a
+copied source frame and returns a closed typed result with recomputed digest, length, parse/policy
+status, and four bounded node counts. It has no store, keys, network, paths, package/loader API,
+runtime, backend, guest, or authority effect. Crash, hang, parser/semantic diagnostic, malformed
+result, artifact mismatch, or sandbox failure refuses.
+
+The daemon and Approval Broker invoke independent instances over the bytes each owns at that
+stage. The parser is not linked into either parent and is never placed in the Supervisor. This
+boundary is only Proposed until artifact enrollment, protocol, sandbox/resource, supply-chain,
+conformance, and fault evidence pass the
+[`implementation plan`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md). Runtime no-loader admission
+remains a separate mandatory control.
 
 ### Trusted Host Broker
 
@@ -737,9 +757,13 @@ implemented.
    exact, pinned/governed bounded ECMAScript parser/validation boundary. The passive source-byte
    and SourceManifest foundation is retained; only then narrow JobProposal and continue S1/M2
    generated plan-v0 registration/fetch fixtures with complete field authority.
-3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
+3. Reconcile Proposed ADR-0035 with M1's exact bytes, then complete the disposable Source
+   Validator V0-V5 protocol, hermetic-artifact, sandbox, independent daemon/Broker, conformance,
+   mutation, and fault gates. Do not activate a parser endpoint or claim runtime enforcement before
+   those gates pass.
+4. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Continue from the resolved ADR-0031/F1
+5. Continue from the resolved ADR-0031/F1
    [F2 format contract](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) into F2's explicit v1-to-v2
    migration/full verifier, then continue the fault-injectable fixed-store archive oracle and
    run the same logical corpus plus real
@@ -748,15 +772,15 @@ implemented.
    Keep the fixed snapshot as the logical oracle through F2; compare the named SQLite candidate
    only after F2 and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
    power-loss corpus.
-5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
-6. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
+6. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
+7. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
-7. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
+8. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.
-8. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
+9. Add immutable regular-file snapshots, a disposable bounded filesystem-image parser, and broader
    bounded outputs.
-9. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
+10. Compare the exact libkrun/HVF and OCI/gVisor profiles before stronger posture; keep Apple
    Containerization explicitly development-only unless a future supported lifecycle API reopens
    its gate.
 10. Operationalize production TUF/update infrastructure.

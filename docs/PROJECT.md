@@ -28,6 +28,14 @@ Phase 2A now includes verified passive candidates for the first narrow `JobPropo
 `ExecutionPlan`, and `PlanRegistration`, with byte-exact internal fixtures and Go/TypeScript
 decoded views. They do not replace the scaffold, activate an endpoint, or authorize execution.
 
+Accepted ADR-0034 freezes the first-release source contract to one dependency-free, byte-exact
+`main.mjs`. The merged M1 passive byte/manifest foundation is canonical. A bounded parse-only
+comparison now supports [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md):
+exact Oxc 0.140.0 parser/AST/semantic checking is the engineering candidate inside a future
+one-shot disposable Source Validator, invoked independently before planning and before approval.
+The experiment is retained under `experiments/mjs-parser-boundary/`; no product validator,
+sandbox profile, runtime no-loader boundary, runtime, backend, or guest is implemented or admitted.
+
 Phase 2B now retains a closed 89-rule, 330-case, 433-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
 and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80

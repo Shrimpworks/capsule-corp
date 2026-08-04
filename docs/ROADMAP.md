@@ -172,6 +172,11 @@ fallback. Its passive source-byte/SourceManifest foundation is retained, but an 
 division-versus-regexp counterexample places the M1 source-language validator and downstream
 S1/M2 registration/fetch slices on hold pending a separately reviewed parser/validation boundary.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
+Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
+one-shot Source Validator after a bounded parse-only comparison. Implementation follows M1 and
+must prove the fixed typed protocol, enrolled artifact and supply closure, disposable OS profile,
+independent daemon/Broker invocation, grammar/mutation corpus, and fault recovery. No product
+validator or runtime enforcement exists.
 Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the
 PR #72 P1 HOLD/NO-GO for a conditional later feature. Its protected-store, worker, genesis/update,
 retention/release, recursive field-authority, lifecycle, installed evidence, and plan-v1 cutover no
@@ -260,6 +265,8 @@ Exit evidence:
 - Daemon/MCP credentials cannot retrieve user-only content.
 - Agent-observable fields stay within the documented channel budget.
 - Rich parsing is absent from the daemon and Supervisor.
+- Keep the proposed `.mjs` parser outside daemon, Broker, and Supervisor address spaces; validator
+  failure refuses, and runtime no-loader admission remains independently required.
 
 ## Phase 5: dependency-free runtime development execution
 
@@ -268,6 +275,7 @@ Exit evidence:
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, ADR-0034's byte-exact `.mjs` source custody and no-loader evidence,
+  Proposed ADR-0035's disposable validator V0-V5 gates,
   external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported

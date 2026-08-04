@@ -11,6 +11,8 @@
       "!!experiments/**/.runs",
       "!!experiments/**/.swiftpm",
       "!!experiments/**/target",
+      "!!experiments/mjs-parser-boundary/evidence",
+      "!!experiments/mjs-parser-boundary/fixtures",
       "!!experiments/typescript-approved-byte-boundary/options.json",
       "!!experiments/typescript-approved-byte-boundary/evidence",
       "!!experiments/typescript-approved-byte-boundary/fixtures",

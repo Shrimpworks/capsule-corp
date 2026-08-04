@@ -48,6 +48,8 @@ after their evidence gates.
 - Backend handles, cleanup leases, guest configuration, and management channels
 - The exact registered `main.mjs` manifest/bytes and their pass-through custody from proposal
   through Broker rendering and runtime staging
+- The integrity, availability, artifact identity, and fixed results of the proposed disposable
+  `.mjs` Source Validator before planning and approval
 - Other jobs' source, inputs, outputs, state, and cached data
 - Runtime bundles, review attestations, registry activation, and backend validation records
 - Artifact manifests, enforcement transcripts, receipt composition, and witness checkpoints
@@ -100,6 +102,15 @@ construction. Supervisor and Broker validation proves internal byte/digest/media
 consistency, not correct erasure or semantic equivalence. That planning and approval-understanding
 trust consequence must be rendered to the approver; it is not independent attestation.
 
+If Proposed ADR-0035 is accepted, approval correctness additionally depends on the enrolled Oxc
+parser artifact and the separately proven disposable-process profile classifying the exact copied
+bytes faithfully. The validator is still attacker-exposed: parser input, diagnostics, crashes,
+resource behavior, and returned facts are untrusted until the parent checks the fixed protocol,
+artifact identity, digest, length, status, and deadline. Its compromise may cause false source
+facts or denial of service, but must not expose an Approval key, mutate Supervisor state, or create
+a guest. Independent runtime no-loader enforcement limits a false allow from becoming module-
+loading authority.
+
 The daemon is trusted for plan correctness in ordinary operation, but the design explicitly limits
 what its compromise can authorize or disclose.
 
@@ -139,6 +150,12 @@ trust administration, quarantine reset, or backend control.
 Raw input is bounded before ordinary decoding. Unknown versions, fields, powers, and malformed
 content fail closed.
 
+Under Proposed ADR-0035, the daemon sends one exact copied `main.mjs` frame to a fresh one-shot
+Source Validator before plan construction. The child has no path/package/loader API, store, keys,
+network, backend route, or inherited ambient descriptors. A parser/semantic diagnostic, crash,
+timeout, resource ceiling, malformed/extra output, wrong artifact/version, or digest/length
+mismatch refuses. There is no lexical-scanner or second-parser fallback.
+
 Per-request parser limits do not establish daemon availability. Before activating the candidate
 public endpoint, the daemon must also enforce a configured aggregate envelope for connections,
 concurrent requests, in-flight bytes, queues, request time, cancellation, and stalled downstream
@@ -162,6 +179,10 @@ an attempt-bound approval after user presence. It transfers only attempt-scoped 
 Trusted UI must safely render untrusted labels, sizes, and source/content metadata. It never claims
 that the user understood generated source merely because presence was proven.
 
+Before rendering or key use, the Broker invokes an independent fresh Source Validator over the
+exact source bytes fetched from Supervisor registration state. It does not trust a daemon result
+or child-supplied prose. The Supervisor retains and rehashes source but never performs rich parsing.
+
 UI activation, focus, or a synthetic click is not user presence. Approval requires the configured
 LocalAuthentication/Keychain-gated private-key operation over the exact registered-plan binding.
 Baseline synthetic-event attempts must fail to produce a grant without that operation. Accessibility,
@@ -170,6 +191,12 @@ posture with separately recorded limitations and tests; Capsule does not imply t
 ordinary anti-spoofing UI.
 
 ### Local process and storage boundary
+
+The proposed Source Validator adds a hostile-input local child boundary. Until fixed artifact
+enrollment, OS sandboxing, descriptor closure, memory/CPU/wall/output ceilings, kill/reap recovery,
+and compromised-child cases are retained on supported hosts, it is only a crash-isolation design
+and ADR-0035 remains Proposed. The child has zero authority effect; every abnormal outcome is a
+refusal. A same-UID process name, PID, or executable path is not identity evidence.
 
 Separate authorities require proven macOS enforcement: XPC peer code requirements, effective user/
 session and exact build/epoch checks, Keychain access-group separation, protected storage

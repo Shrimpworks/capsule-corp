@@ -3,7 +3,7 @@
 Date: 2026-08-03
 
 Status: retained dependency-aware implementation plan for the next
-[S1/M2 passive contracts and fixed fixtures](AUTHENTICATED_LOCAL_IPC_PLAN.md#m1-source-validator-r1-r5b-and-s1m2-sequential-contract-boundary)
+[S1/M2 passive contracts and fixed fixtures](AUTHENTICATED_LOCAL_IPC_PLAN.md#m1-source-validator-r2-r5b-and-s1m2-sequential-contract-boundary)
 slice. No byte maximum in this document is calculated or invented; every number is either quoted
 verbatim from ADR-0029/ADR-0034 prose (marked as unverified until fixture-generated) or explicitly
 marked "blocked on M1."

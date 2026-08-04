@@ -8,6 +8,11 @@ service name, and test step below is a proposal for the user/orchestrator to exe
 [S5: Apple Development installed matrix](AUTHENTICATED_LOCAL_IPC_PLAN.md#s5-apple-development-installed-matrix),
 not a decision this repository has already made unless the exact doc/ADR making it is cited.
 
+The canonical practical inventory, Team-ID stop, replacement-input checklist, environment and
+component matrices, credential/key custody rules, and safe setup/verification commands now live in
+[Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
+This retained plan remains the detailed installed-test proposal and historical W4/3DDR discovery.
+
 Correction after exact G3 discovery: the earlier inference that the displayed certificate was a
 W4 Team identity is false. Certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as

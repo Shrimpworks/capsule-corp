@@ -345,8 +345,14 @@ The idle governed Deno fork has transferred from `dills122/deno` to
 [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) with its fork relationship, default and
 `capsule/upstream-v2.9.4` branches, merged PR #1, and Actions history intact. This is repository-
 governance state, not source review, build provenance, security evidence, release admission, or
-profile validation. Capsule, `rusty_v8`, and libkrun ownership remains unchanged while their current
-work is active or queued; any later transfer remains separate governance work.
+profile validation. The governed libkrun fork has also transferred from `dills122/libkrun` to
+[`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), still a public fork of
+`libkrun/libkrun`. PRs #1 and #2 retain their history; `capsule/upstream-v1.19.4` points to exact
+merge `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, with verified ancestry from upstream anchor
+`728df8125077d0db44265f6e997c72b81b65c015`. This is likewise governance only. Integration must pin
+exact commits/digests and verify ancestry rather than consume the movable baseline branch.
+`capsule-corp` and `rusty_v8` deliberately remain at their current owners while active work
+continues.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. This checkpoint also does not decide

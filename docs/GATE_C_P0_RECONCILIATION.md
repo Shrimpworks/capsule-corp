@@ -391,6 +391,15 @@ See the [retained console result](../experiments/gate-c-libkrun-console-correctn
 
 Governed-fork reconciliation (public state read 2026-08-03T22:57:43Z):
 
+Repository-governance update: the historical public read below occurred at `dills122/libkrun`.
+The current governed integration destination is
+[`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), still a public fork of
+`libkrun/libkrun`. PRs #1 and #2 and their exact identities transferred unchanged;
+`capsule/upstream-v1.19.4` now points to merge
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`, whose verified ancestry reaches exact upstream anchor
+`728df8125077d0db44265f6e997c72b81b65c015`. This changes repository ownership only. Any reuse must
+pin exact commits/digests and verify ancestry rather than trusting that movable branch name.
+
 - [`dills122/libkrun` PR #2](https://github.com/dills122/libkrun/pull/2) merged exact source head
   `8a2c91943793668f31a1cf7af431933be935bb58` as merge commit
   `cf0333cdba478cc34a8570a65b38412da7fd3ecc`. The merge parents are governed base

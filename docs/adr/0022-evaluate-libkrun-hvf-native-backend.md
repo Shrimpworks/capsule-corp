@@ -188,3 +188,11 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
   and exact [merge commit](https://github.com/dills122/libkrun/commit/cf0333cdba478cc34a8570a65b38412da7fd3ecc)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)
+
+Repository-governance update: the retained PR links above identify the historical location used by
+the evidence review. The current governed integration destination is
+[`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), transferred with PR history and
+exact source/merge identities unchanged. This does not change this ADR's evidence or admission
+state. Consumers must pin exact commits/digests and verify ancestry from upstream
+`728df8125077d0db44265f6e997c72b81b65c015` instead of trusting the movable
+`capsule/upstream-v1.19.4` branch.

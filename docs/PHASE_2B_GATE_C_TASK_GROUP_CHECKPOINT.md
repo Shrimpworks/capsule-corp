@@ -73,7 +73,16 @@ unimplemented.
 
 ## Governed runtime and libkrun source state
 
-The governed libkrun follow-up merged external fork PR #2 from head
+The current governed integration destination is
+[`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), transferred from the historical
+`dills122/libkrun` location. It remains a public fork of `libkrun/libkrun`; transferred PRs #1 and
+#2 retain their exact history, and `capsule/upstream-v1.19.4` currently points to
+`cf0333cdba478cc34a8570a65b38412da7fd3ecc`. This transfer is repository governance only. Consumers
+must pin exact reviewed commits and digests and verify ancestry from upstream anchor
+`728df8125077d0db44265f6e997c72b81b65c015`, never consume the movable baseline branch name as
+authority.
+
+The governed libkrun follow-up merged PR #2 from head
 `8a2c91943793668f31a1cf7af431933be935bb58` as
 `cf0333cdba478cc34a8570a65b38412da7fd3ecc`. It preserves the five-patch aggregate
 `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`, fixes the observed
@@ -125,8 +134,11 @@ governance reconciliation before Capsule reuses it.
 - The idle governed Deno fork has transferred from `dills122/deno` to
   [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) with its fork relationship, branches,
   merged PR #1, and Actions history intact. This is repository governance only; it does not
-  validate bytes, reviews, controls, releases, or admission. Transfers of Capsule, `rusty_v8`, or
-  libkrun are later work and must not disturb their active or queued work.
+  validate bytes, reviews, controls, releases, or admission. The governed libkrun fork has likewise
+  transferred from `dills122/libkrun` to
+  [`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun) with PR history and exact commit
+  identities intact; that is also governance only. Capsule and `rusty_v8` deliberately remain at
+  their current owners while their active work continues.
 
 ## Historical and exact integration record
 

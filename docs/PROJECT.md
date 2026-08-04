@@ -228,6 +228,14 @@ passed at the merged head. The fork and its retained branch, PR, and Actions his
 from `dills122/rusty_v8` to `Shrimpworks/rusty_v8`. This closes the fork's bounded ARM64 construction
 blocker; independent-builder equality, evidence review, governed release publication, and runtime
 admission remain open. No fork release or new admitted runtime artifact exists.
+The follow-on `Shrimpworks/capsule-experiments` PR #1 handoff is now `PASSED` for exact clean
+Linux/arm64 construction at merge `fa03d7043b4f0653081d6c5733d597f49f6efd1c`. The passive
+[C1 controlled-development composition](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md) pins its
+eight runtime/root identities and fixes the desired one-file `.mjs` JSON-in/JSON-out surface,
+loader absence, globals/ops/modules/files, logical descriptor roles, resource references, and
+refusal boundary. C1 creates no guest or runtime and admits nothing. The parent governed-runtime
+work remains `IN_PROGRESS — TRENDING_GOOD`; C2 owns numeric descriptors, machine resources, and
+the first separately authorized composed execution evidence.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

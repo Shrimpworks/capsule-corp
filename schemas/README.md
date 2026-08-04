@@ -33,6 +33,11 @@ subcorpus freezes fixed frames and test oracles only; it launches no parser or p
 separate nine-fixture, fourteen-mutation passive corpus for Proposed ADR-0030. It has no consumer
 and does not change the active scaffold or the existing v0 conformance manifest.
 
+[`conformance/c1-governed-deno-core/`](conformance/c1-governed-deno-core/) contains the exact
+passive governed-runtime C1 controlled-development composition. Its separate schema and Go/Node
+known-answer validators pin intended app/runtime composition and non-admitted construction
+identities; they create no process, guest, consumer, or admission state.
+
 [`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
 and exact coverage notes. Repository verification compares its 228 field entries with 20 selected
 current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or

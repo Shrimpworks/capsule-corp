@@ -1,7 +1,7 @@
 # Governed deno_core work plan
 
-Status: active planning checkpoint after accepted ADR-0028, the merged fork-governance branches,
-and the first fork-native Linux/arm64 fail-fast result.
+Status: active planning checkpoint after accepted ADR-0028, the governed Linux/arm64 construction
+handoff, and the passed passive C1 controlled-development composition contract.
 This plan selects work order; it does not admit a runtime, backend, profile, or guest.
 
 ## Current checkpoint
@@ -32,6 +32,12 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   builder equality, exact evidence review, governed release publication, and admission remain.
 - Governed `deno_core` is the first runtime engineering candidate. `RUNTIME-001` remains
   unsupported and no product execution path may use these bytes.
+- `Shrimpworks/capsule-experiments` PR #1 is merged at
+  `fa03d7043b4f0653081d6c5733d597f49f6efd1c`. Its exact Linux/arm64 construction handoff is
+  `PASSED`; all eight raw/compressed runtime and root identities are pinned in the passive
+  [C1 composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md). C1 itself is `PASSED`
+  only as a no-effect contract. Independent-builder equality, governed release publication,
+  composed execution, and admission remain open.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap
@@ -84,14 +90,14 @@ Repository: `Shrimpworks/rusty_v8`.
 - Add advisory ownership, upstream-update/rebase policy, review gates, and byte/restoration tests.
 - Do not fork `denoland/v8` unless the governed work actually changes that source.
 
-Exit: partially completed by merged follow-up head `a43ee748...33cf`. The exact 20-gitlink source
-lock and an offline build/publication contract exist for Linux/amd64 only. The intended
-Linux/arm64 exit remains blocked, and no release candidate was built or published.
+Exit: completed through the later merged Linux/arm64 head `80e863dd...2bb15`. The exact
+20-gitlink source lock and offline build/publication contract now have retained clean Linux/arm64
+construction evidence. No governed release candidate was published or admitted.
 
 ## Priority 2: Linux/arm64 construction and evidence closure
 
-Start only after the smallest required `rusty_v8` fork change lands with an accepted successful
-handoff. PR #4 is the current external attempt, not a completed dependency:
+The fork-native Linux/arm64 construction subset is `PASSED`; remaining Priority 2 evidence is
+`IN_PROGRESS — TRENDING_GOOD`. Neither status implies runtime admission:
 
 1. Add a fully digest-pinned Linux/arm64 sibling builder/publication profile to `rusty_v8` at or
    after `a43ee748...33cf`, covering the builder image, host tools, aarch64 sysroot/target, offline
@@ -115,10 +121,19 @@ handoff. PR #4 is the current external attempt, not a completed dependency:
 5. Run an independent review of the combined libkrun FD-native, direct-block-root, and console
    patches and reproduce the 43 P0-3 frames in the selected host and launcher languages.
 
+Items 1 through the same-host construction part of item 4 passed in the merged experiments handoff.
+Independent-builder equality, a governed release, the combined libkrun review, and real
+transport/launcher reproduction remain later requirements.
+
 ## Priority 3: composed development profile
 
-- Bind the governed runtime bundle, exact kernel/init, libkrun patches, launcher, closed descriptor
-  manifests, source/input/completion ports, and teardown behavior into one candidate profile.
+- C1 is `PASSED`: the passive fixture freezes exact artifact identities, one byte-exact
+  `main.mjs`, JSON input/completion bindings, desired globals/ops/modules/files, loader absence,
+  logical descriptor roles, resource references, and refusal/stop behavior without creating a
+  guest or activating any consumer.
+- C2 must bind the exact governed runtime bundle, kernel/init, libkrun patches, launcher, closed
+  numeric descriptor manifest, enforceable machine resources, source/input/completion ports, and
+  teardown behavior into one candidate profile.
 - Run the fixed JSON-in/JSON-out job only in the owned disposable development guest.
 - Complete signed installed P0-1C/P0-4B custody, App Sandbox, Team identity, notarization, staple,
   Gatekeeper, clean-host, session/recovery, and supported-OS-floor evidence.

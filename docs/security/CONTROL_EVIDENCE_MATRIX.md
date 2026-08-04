@@ -72,6 +72,19 @@ mechanic without promoting the larger production or guest-facing claim.
 | TUF-001 | External trust data is locally verified without live execution dependency | Malicious/stale service, rollback | Updater/trust verifier | Pinned TUF root plus signed local TrustSnapshot | Version/expiry/hash/checkpoint verification | Freeze, rollback, mix-and-match, delegated-scope abuse | Trust snapshot/checkpoint/freshness | Capsule defines revocation semantics | proposed |
 | EVID-001 | User receipt contains attributable approval and enforcement claims | Daemon-forged success | Broker + Supervisor | Purpose-separated signatures over same registration/attempt | Independent signature and binding verification | Remove/swap/replay/cross-object evidence | Embedded grant, transcript, authorizations | Not platform attestation or proof of truth | proposed |
 
+## 2026-08-04 governed-runtime C1 reconciliation
+
+The exact Linux/arm64 fork-native construction rerun is now `PASSED` in its bounded scope at
+`Shrimpworks/capsule-experiments` merge
+`fa03d7043b4f0653081d6c5733d597f49f6efd1c`. The passive
+[C1 composition contract](../protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md) pins its eight
+runtime/root identities and desired app/runtime surface with all authority effects false. This
+supersedes the older RUNTIME-001 and SUPPLY-001 row text only where it says fork-native
+reconstruction is still missing. It does not promote either row: RUNTIME-001 remains
+`unsupported`, SUPPLY-001 remains `spike-observed`, and release review, independent-builder
+equality, C2 external-isolation/descriptor/resource/transport evidence, final installed evidence,
+and explicit runtime/profile admission remain open.
+
 ## Update rule
 
 When a mechanism or spike changes, update the corresponding row with an evidence link, exact

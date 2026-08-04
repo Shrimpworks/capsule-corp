@@ -45,6 +45,13 @@ const fixtures = [
     new URL("../examples/jobs/hello.proposal.json", import.meta.url),
   ],
   ["profile.schema.json", new URL("../profiles/bun-data/profile.json", import.meta.url)],
+  [
+    "governed-deno-core-c1-composition.schema.json",
+    new URL(
+      "../schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+      import.meta.url,
+    ),
+  ],
 ];
 
 for (const [schemaName, fixtureUrl] of fixtures) {

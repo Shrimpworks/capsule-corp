@@ -44,8 +44,8 @@ Evidence: the governed build registered and linked only the three required boots
 
 Parent: governed runtime construction and admission
 Status: IN_PROGRESS — TRENDING_GOOD
-Remaining work: accepted Linux/arm64 artifact, source/notice closure, external-isolation
-composition, and the installed profile corpus.
+Remaining work: governed release review, C2 external-isolation composition, and the installed
+profile corpus.
 Control evidence: RUNTIME-001 unsupported
 ```
 
@@ -88,8 +88,9 @@ limitations remain in the linked plans, ledger, ADRs, and control matrix.
 | Installed owner-lock G3 | `BLOCKED` | Resume when a certificate/profile set with matching Team identity and a selected protected-root bootstrap, signed record, and descriptor-relative store-open composition are available. |
 | Archive fixed-store F2 migration, F3 first-segment activation, and F4A read-only lookup | `PASSED` | F2's owner-asserted migration/full verifier, F3's sealed first-segment transaction, and F4A's retained-global lookup/replay/passive-collision/hot-only-recovery routing pass their exact local scopes, including missing-history preservation, publish-before-reference ordering, atomic old-or-new reopen, complete visible tombstones, hot/archive semantic equality, and retained fault/corruption/substitution/concurrency/restoration oracles. |
 | Archive fixed-store F4B atomic mutation | `BLOCKED` | F4A reconstructs and resolves only the lifecycle record's current effect, while ADR-0031 requires every earlier v2 effect tombstone to remain after later operations replace that field. Resume after a passive versioned effect-history/lookup/segment correction is reviewed and merged; see the [exact blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md). F4C bounded growth and F5-F6 backup/engine work remain deferred. |
-| Governed `deno_core` runtime engineering | `IN_PROGRESS — TRENDING_GOOD` | Physical omission, same-host reproduction, and standalone-root slices passed; the selected fork path continues toward an accepted Linux/arm64 artifact and composed profile. |
-| Runtime/profile admission | `BLOCKED` | It needs an accepted fork-native Linux/arm64 handoff, complete reviewed source/notices, external-isolation composition, and final installed/profile evidence. |
+| Governed `deno_core` C1 passive composition | `PASSED` | Exact governed construction identities and the intended `.mjs` JSON-in/JSON-out, runtime-surface, logical-descriptor, resource-reference, and refusal contracts pass as zero-effect fixtures; no runtime or guest was created. |
+| Governed `deno_core` runtime engineering | `IN_PROGRESS — TRENDING_GOOD` | Physical omission, same-host reproduction, standalone root, fork-native Linux/arm64 reconstruction, and C1 passive composition passed; C2 owns the first authorized composed-profile execution evidence. |
+| Runtime/profile admission | `BLOCKED` | It needs governed release review, exact C2 external-isolation/descriptor/resource/transport evidence, the remaining P0 controls, and final installed/profile evidence. |
 | Governed libkrun source and local library hardening | `IN_PROGRESS — TRENDING_GOOD` | The governed fork and several bounded library/custody/transport slices passed; independent review, real guest transport, launcher, installed composition, and final profile reruns remain. |
 | macOS installation and distribution | `IN_PROGRESS — TRENDING_GOOD` | One Swift app in a DMG with embedded per-user roles is the current direction. I0 passive contracts and I1-I4 developer-signed setup/protected-root/IPC/manual-replacement work come first; automatic updates, Developer ID distribution, a support-floor matrix, and complete uninstall are later gates. |
 | TypeScript Source Preparer | `BLOCKED` | It is a conditional later feature, not a first-release dependency. Resume only if TypeScript returns to scope and its protected-store/worker/update/retention authority blockers are closed. |

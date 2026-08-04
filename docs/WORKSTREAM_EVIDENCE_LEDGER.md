@@ -256,9 +256,16 @@ The [standalone comparison](https://github.com/Shrimpworks/capsule-experiments/b
 local-only selection evidence. It pins and records `fxamacker/cbor` v2.9.2,
 `veraison/go-cose` v1.3.0, and `x448/float16` v0.8.4, replays the retained object and
 cross-language known answers, exercises restoration mutations and trusted-key/binding refusal, and
-retains bounded fuzz/resource/footprint results. It selects only future object-specific fxamacker
-typed encode/decode and records a production NO-GO for go-cose. No root dependency, production
-wrapper, signing key, consumer, IPC, runtime, backend, guest, or security-control status is added.
+retains bounded fuzz/resource/footprint results. It selects only object-specific fxamacker typed
+encode/decode and records a production NO-GO for go-cose.
+
+The later [v0 object-set and wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only
+`SourceManifest` v0 as implementation-eligible, retains plan/registration/approval and the
+conditional TypeScript family as pre-freeze, and adds exact fxamacker v2.9.2 plus float16 v0.8.4 to
+the root module behind one unwired object-specific codec. Existing authority packages do not
+import it. The retained handwritten implementation remains the independent oracle; no signing key,
+COSE dependency, consumer, IPC, store, runtime, backend, guest, ADR promotion, or product-control
+status is added.
 
 ## Integrated pull-request checkpoints
 

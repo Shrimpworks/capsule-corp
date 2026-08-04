@@ -456,6 +456,13 @@ func mapStoreFailure(err error) error {
 	if errors.Is(err, registrationstate.ErrCommitOutcomeIndeterminate) {
 		return classified(ClassificationRecoveryRequired, "durable-lifecycle-commit-indeterminate")
 	}
+	if errors.Is(err, registrationstate.ErrStoreOwnerFenced) ||
+		errors.Is(err, registrationstate.ErrStoreOwnerSessionMismatch) {
+		return classified(ClassificationRecoveryRequired, "durable-lifecycle-owner-fenced")
+	}
+	if errors.Is(err, registrationstate.ErrStoreClosed) {
+		return classified(ClassificationRecoveryRequired, "durable-lifecycle-store-closed")
+	}
 	if errors.Is(err, registrationstate.ErrLifecycleNotFound) ||
 		errors.Is(err, registrationstate.ErrLifecycleBindingMismatch) ||
 		errors.Is(err, registrationstate.ErrLifecycleVersionConflict) {

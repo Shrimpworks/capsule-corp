@@ -113,6 +113,12 @@ There is one active plan-v0/source shape, no optional transform field, generic f
 inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product
 packages or claim ADR-0019 acceptance.
 
+A retained dependency-aware implementation plan for the `RegisterPlanV0`/`GetRegisteredPlanV0` S1/M2
+slice — field ownership, request/reply derivation methodology, cap-calculation methodology, native/
+Go copy-ownership tests, the full refusal and response-loss/replay test matrices, field-authority
+manifest additions, and an explicit list of every value blocked on M1 — is in
+[M2/S1 conformance slice plan](M2_S1_CONFORMANCE_SLICE_PLAN.md).
+
 ## S2: Go facade and store projection
 
 Status: **blocked** only on M1 and the shared S1/M2 `.mjs` fixture bytes. Conditional TypeScript,
@@ -272,6 +278,12 @@ rerun S3/S4 with:
 
 Exit evidence: Apple Development installed-topology result only. It does not claim Developer ID,
 notarization, Gatekeeper, clean-host, shipping, or production authentication.
+
+A retained read-only provisioning and installed-test plan for this slice — proposed bundle
+identifiers, required App IDs/profiles, minimum and prohibited entitlements per role, XPC/Mach
+service identities, and an installation/rollback test matrix separating what is testable on the
+current owned Mac from what requires a second or clean host — is in
+[Apple Development provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md).
 
 ## S6: Developer ID and clean-host admission evidence
 

@@ -144,6 +144,7 @@ func (root *TrustedStateRoot) Close() error {
 type darwinInstallationOwner struct {
 	mu             sync.Mutex
 	fd             int
+	root           *TrustedStateRoot
 	enrollment     OwnerLockEnrollment
 	ownerSessionID lifecyclestate.OwnerSessionID
 	operations     darwinOperations
@@ -225,7 +226,7 @@ func acquireDarwinInstallationOwner(
 	}
 	closeOnFailure = false
 	return &darwinInstallationOwner{
-		fd: fd, enrollment: enrollment, ownerSessionID: ownerSessionID, operations: root.operations,
+		fd: fd, root: root, enrollment: enrollment, ownerSessionID: ownerSessionID, operations: root.operations,
 	}, nil
 }
 
@@ -351,8 +352,9 @@ func (owner *darwinInstallationOwner) OwnerSessionID() lifecyclestate.OwnerSessi
 }
 
 // CheckHeld verifies the opaque wrapper remains live, enrolled, read-only, and
-// close-on-exec. BSD flock is advisory; this check does not authenticate peers
-// or prove unrelated processes cooperate with it.
+// close-on-exec and that the retained state-root entry still names the held
+// inode. BSD flock is advisory; this check does not authenticate peers or prove
+// unrelated processes cooperate with it.
 func (owner *darwinInstallationOwner) CheckHeld(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return err
@@ -365,8 +367,22 @@ func (owner *darwinInstallationOwner) CheckHeld(ctx context.Context) error {
 	if owner.fd < 0 {
 		return ErrOwnerClosed
 	}
+	if owner.root == nil {
+		return invariant("owner-state-root-missing")
+	}
+	owner.root.mu.Lock()
+	defer owner.root.mu.Unlock()
+	if owner.root.fd < 0 || owner.root.operations == nil {
+		return invariant("owner-state-root-closed")
+	}
 	if err := validateOwnerDescriptor(owner.fd, owner.enrollment, owner.operations); err != nil {
 		return invariant("owner-check-held")
+	}
+	if err := validateStateRootDescriptor(owner.root.fd, owner.enrollment, owner.root.operations); err != nil {
+		return invariant("owner-check-state-root")
+	}
+	if err := validateNamedOwnerEntry(owner.root.fd, owner.enrollment, owner.root.operations); err != nil {
+		return invariant("owner-check-entry")
 	}
 	if owner.ownerSessionID.IsZero() {
 		return invariant("owner-session-zero")

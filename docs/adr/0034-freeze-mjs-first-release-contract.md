@@ -81,7 +81,10 @@ before plan construction. It must distinguish grammar from comments and strings 
 substring denylist. This precheck is a usability and contract check, not the runtime security
 boundary: an admitted runtime profile must also install no filesystem, network, package, import-map,
 or fallback module loader, and every static or dynamically constructed module request must fail
-closed. Parser selection and runtime enforcement remain unimplemented blockers.
+closed. Parser selection and runtime enforcement remain unimplemented blockers. An independent
+defensive review of the validation boundary itself, including concrete false-accept/false-refusal
+counterexamples and a parser-selection recommendation, is retained in
+[`.mjs` module-request validation boundary review](../MJS_VALIDATION_BOUNDARY_REVIEW.md).
 
 #### M1 validator implementation hold
 

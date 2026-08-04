@@ -1,13 +1,14 @@
 # Supervisor archive, compaction, and replay-retention conformance plan
 
-Status: proposed and local-only. Slice F1 now implements passive archive projections, exact
+Status: proposed and local-only. Slice F1 implements passive archive projections, exact
 limits/domain-separated known answers, defensive copies, and the pure closed-cohort eligibility
-selector. It performs no file I/O or authority mutation. F2 review found an exact-format blocker
-between the required nonzero visible-v1 effect seed, archive-only counts/locations, and the
-generation-one checkpoint; the retained evidence and narrow proposed correction are in
-[the F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Proposed ADR-0031 still defines
-the unimplemented immutable retained archive and selects a minimal fixed-store checkpoint only as
-the conformance oracle. No migration, full v2 verifier, archive write/activation, retained lookup,
+selector. The passive F2 format-correction slice has resolved PR #78's three contradictions with
+scope-separated global/segment indexes, typed hot/archive locations and count equations, and a
+distinct migration-genesis checkpoint. Generated answers and before/after semantics are retained in
+[the F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). It performs no file I/O or
+authority mutation. Proposed ADR-0031 still defines the unimplemented immutable retained archive
+and selects a minimal fixed-store checkpoint only as the conformance oracle. F2 migration/full
+verification is next. No migration, full v2 verifier, archive write/activation, retained lookup,
 consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
 deployment, or guest is implemented by this plan.
 
@@ -45,12 +46,12 @@ The stateful implementation oracle is current Slice B/E5:
 - indeterminate rename/directory-sync outcomes fence the open store until reopen; and
 - the only lifecycle adapter is the no-guest fake.
 
-Slice F1 adds passive `internal/execution/archivestate` values and tests only. It implements the
-closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections, their exact
-candidate limits and literal known answers, defensive-copy behavior, and deterministic complete-
-cohort selection with `RecoveryAttemptIDs` exclusion. It does not open or write a store or segment,
-migrate v1, reconstruct a v2 archive set, release hot capacity, route lookup, or invoke the fake.
-F2 is format-blocked pending the retained passive-format correction linked above.
+Slice F1 plus its passive format correction add `internal/execution/archivestate` values and tests
+only. They implement closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections,
+scope- and kind-separated record locations, exact candidate limits and generated known answers,
+defensive-copy behavior, and deterministic complete-cohort selection with `RecoveryAttemptIDs`
+exclusion. They do not open or write a store or segment, migrate v1, reconstruct a v2 archive set,
+release hot capacity, route lookup, or invoke the fake. F2 is the next retained slice.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
@@ -103,16 +104,20 @@ The v2 envelope is closed and contains exactly:
 - the existing installation state and complete hot authority collections;
 - the existing lifecycle collection and lifecycle-set digest;
 - sorted archive descriptors and descriptor-set digest;
-- sorted registration, approval, attempt, nonce, effect, instance, approval-replay, and attempt-
-  replay indexes plus one digest per index;
+- one scope-tagged `retained-global` registration, approval, attempt, nonce, effect, instance,
+  approval-replay, and attempt-replay projection plus one digest per index; every entry binds a
+  typed record location whose `hot` and `archive` arms are mutually exclusive;
 - an effect-tombstone coverage tag fixed to `visible-v1-seed-plus-all-v2-issued`, seed count, and
   seed digest;
-- one combined archive-index digest;
-- prior/current archive-checkpoint digests; and
+- one combined retained-global index digest;
+- prior/current kinded checkpoint references; and
 - exact hot/archive/total counts for every collection/index.
 
 All arrays are non-null even when empty. Unknown, missing, duplicate, trailing, nonpreferred, or
-wrong-version data refuses. The empty descriptor/index/checkpoint known answers are fixed fixtures.
+wrong-version data refuses. `segment-derived` index digests are domain-separated from
+`retained-global` digests and are valid only inside one archive segment. The exact descriptor,
+index, visible-v1 seed, migration-genesis, and activation-checkpoint answers are generated into the
+retained fixture named by the blocker resolution.
 
 ### Archive segment v0
 
@@ -133,9 +138,11 @@ known answers.
 
 ### Index reconstruction oracle
 
-Full verification discards serialized indexes in memory, reconstructs them from all decoded hot and
-archived records, and requires exact equality with the serialized sorted projections and their
-digests. The reconstruction must detect:
+Full verification discards serialized retained-global indexes in memory, reconstructs them from all
+decoded hot and archived records, and requires exact equality with the serialized sorted
+projections and their scope-separated digests. Every reconstructed entry binds the expected record
+kind plus exactly one location arm: a positive ordinal in the canonical sorted hot record set, or
+positive segment/cohort/record ordinals in a referenced archive. The reconstruction must detect:
 
 - one identifier at two locations;
 - one nonce bound to two payloads;
@@ -147,6 +154,19 @@ digests. The reconstruction must detect:
 - a full record without every required tombstone; and
 - hot/archive overlap or a cross-cohort reference.
 
+For every family it also requires:
+
+```text
+hotCounts + archivedCounts = totalCounts
+retainedGlobalIndexes.counts = totalCounts
+retainedGlobalIndexes.hotLocationCounts = hotCounts
+retainedGlobalIndexes.archiveLocationCounts = archivedCounts
+sum(referencedDescriptor.counts) = archivedCounts
+```
+
+Thus the migration visible-v1 effect seed is a hot retained-global effect entry and does not
+increase archive descriptors, segment-derived entries, or archived counts.
+
 A hash collision does not merge records. Exact bytes and complete typed bindings decide whether a
 case is idempotent replay or `REPLAY`/repair-required.
 
@@ -155,6 +175,20 @@ seed plus v2 hot/archive effect tombstones, and the tombstone commits atomically
 Confirmed/indeterminate intent behavior remains the E5 oracle: no adapter call occurs before that
 transaction, and reopen finds neither ID/intent or both ID/intent. A tombstone without its issuing
 intent/archived lifecycle cross-link is repair-required.
+
+### Checkpoint kinds
+
+Migration creates `MigrationGenesisCheckpoint` under
+`capsule.supervisor.archive-migration-genesis.v0`. It is the only constructor that accepts result
+snapshot generation one. It requires archive generation one, no previous checkpoint, no segment,
+the empty descriptor digest, all-hot retained-global indexes, exact hot set digests/counts, the
+sorted visible-v1 seed/count/digest, and installation/Supervisor/epoch/time bindings.
+
+Archive activation creates `ArchiveCheckpoint` under
+`capsule.supervisor.archive-checkpoint.v0`. It requires a kinded genesis-or-activation predecessor,
+one nonzero new segment digest, descriptor/index/hot-set digests, and a result snapshot generation
+strictly greater than its source. Active-state references bind checkpoint kind as well as digest;
+wrong-kind substitution refuses. The generated fixture retains literal answers for both domains.
 
 ## Eligibility oracle
 
@@ -276,7 +310,8 @@ quantitative budget and production-engine campaign is required before consumer a
 
 The explicit v1-to-v2 migrator checks the owner lock three times: before source open, immediately
 before commit, and before returned reopen. It accepts only a complete valid v1 file and constructs
-empty archive structures.
+an empty descriptor/segment world plus a complete all-hot retained-global index and the dedicated
+generation-one migration-genesis checkpoint.
 
 Required cases:
 
@@ -288,8 +323,13 @@ Required cases:
 - pre-rename failure leaves byte-identical valid v1;
 - post-rename indeterminate reopens as exactly valid v1 or valid v2;
 - v2 authority/lifecycle sets equal the v1 source byte-for-byte and digest-for-digest;
+- every v1 registration/approval/attempt/lifecycle identity reconstructs at its typed canonical hot
+  ordinal, retained-global indexes/counts equal hot/total counts, and archived/descriptor/segment-
+  derived counts remain zero;
 - v2 records the exact count/digest of nonzero effect IDs visible at migration and never claims
   coverage for overwritten pre-v2 fake IDs;
+- migration recomputes the genesis checkpoint under its distinct domain and refuses an activation-
+  kind reference, wrong hot digest, wrong seed, wrong index scope, or archive location;
 - repeated migration refuses v2 and does not reset archive generation/checkpoints; and
 - unknown segment/index versions refuse the entire v2 set without ignoring the unknown object.
 
@@ -415,6 +455,9 @@ type ArchiveSegmentDigest [32]byte
 type ArchiveCheckpointDigest [32]byte
 type ArchiveIndexDigest [32]byte
 type ArchiveDescriptorSetDigest [32]byte
+type ArchiveCheckpointKind string
+type ArchiveIndexScope string
+type RecordLocation struct { /* kinded hot ordinal or archive ordinals plus RecordKind */ }
 
 type ArchiveLimits struct {
     MaxCohorts uint16
@@ -424,6 +467,7 @@ type ArchiveLimits struct {
 type ArchivePlan struct { /* sealed immutable source/candidate projection */ }
 type PreparedArchive struct { /* sealed segment bytes + candidate v2 projection */ }
 type VerifiedArchive struct { /* sealed reopened bytes/digests/owner projection */ }
+type MigrationGenesisCheckpoint struct { /* generation-one v1-to-v2 checkpoint */ }
 type ArchiveCheckpoint struct { /* defensive fixed fields */ }
 type ArchiveVerificationReport struct { /* bounded fields above */ }
 ```
@@ -475,13 +519,23 @@ Retained result: merged in PR #75 from exact head
 `6fc31a049c476acf5085071c48d3d5e36f27240f`. The focused race run reported 86.0% statement
 coverage for the passive package. This is a local-mechanic checkpoint, not archive activation.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier — format-blocked
+### Passive F2 format correction — complete
 
 The first implementation review stopped before choosing bytes because merged F1 cannot represent
 a required nonzero visible-v1 effect seed with zero archive descriptors, and its activation-shaped
-checkpoint cannot produce the required generation-one migration genesis. Resolve the retained
-[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) in ADR-0031, this plan, and F1 before
-implementing the following work.
+checkpoint cannot produce the required generation-one migration genesis. The retained
+[F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes:
+
+- `retained-global` versus `segment-derived` index domains;
+- typed, record-kind-bound `hot` versus `archive` location arms for all global entries;
+- exact hot/archive/total/index/descriptor count equations;
+- a dedicated migration-genesis constructor/domain/kind distinct from activation; and
+- generated digests/counts plus wrong-kind/domain/order/count/cap/collision/copy/mutation cases.
+
+Acceptance: passive types, digests, fixtures, and tests only. No v2 store bytes or lifecycle
+behavior changed.
+
+### Slice F2: explicit fixed-store v2 migration and full verifier — next
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.
@@ -539,6 +593,8 @@ Retain all current Slice B/E5 tests and add exact equivalents of:
 - `TestArchiveSelectorNeverSplitsMultiAttemptRegistration`;
 - `TestArchiveSelectorAgreesWithRecoveryAttemptIDs`;
 - `TestArchivePassiveKnownAnswersAndDefensiveCopies`;
+- `TestArchiveFormatCorrectionKnownAnswers`;
+- `TestArchiveRecordLocationsAreKindedDiscriminatedAndBoundIntoIndexes`;
 - `TestFixedStoreV1ToV2MigrationAndDowngradeRefusal`;
 - `TestFixedStoreV2ReconstructsEveryArchiveIndex`;
 - `TestArchiveSegmentPublishesBeforeActiveReference`;

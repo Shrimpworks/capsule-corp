@@ -16,6 +16,7 @@ import (
 	"sync"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/installationowner"
 	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
@@ -62,8 +63,9 @@ var (
 )
 
 // FixedFileStoreV1 is the E3 transactional view of a validated v1 snapshot.
-// It remains an unwired, single-process fixed-file checkpoint with no
-// consumer, adapter invocation, or platform owner-lock claim.
+// G2 can bind it to the opaque Darwin installation owner, but it remains an
+// unwired fixed-file checkpoint with no consumer, adapter invocation, installed
+// protected-storage, or production platform claim.
 type FixedFileStoreV1 struct {
 	mu                  sync.Mutex
 	path                string
@@ -77,6 +79,10 @@ type FixedFileStoreV1 struct {
 	issuedPermits       map[approvalattempt.AttemptID]lifecyclestate.EffectPermit
 	recoveryRequired    bool
 	repairRequired      bool
+	owner               installationowner.InstallationOwner
+	ownerRequired       bool
+	ownerFenced         bool
+	closed              bool
 }
 
 type fixedStoreV1Snapshot struct {
@@ -170,6 +176,10 @@ func OpenFixedFileStoreV1(path string) (*FixedFileStoreV1, error) {
 // installs trusted local identifier sources. The options exist for retained,
 // deterministic fault and collision tests; they authorize no external effect.
 func OpenFixedFileStoreV1WithOptions(path string, options FixedFileStoreV1Options) (*FixedFileStoreV1, error) {
+	return openFixedFileStoreV1WithOptions(path, options)
+}
+
+func openFixedFileStoreV1WithOptions(path string, options FixedFileStoreV1Options) (*FixedFileStoreV1, error) {
 	if path == "" {
 		return nil, errors.New("fixed supervisor v1 store path is required")
 	}
@@ -197,12 +207,61 @@ func OpenFixedFileStoreV1WithOptions(path string, options FixedFileStoreV1Option
 	}, nil
 }
 
+// OpenFixedFileStoreV1WithOwner is the G2-only v1 opener. It requires the
+// opaque installation owner to be live before any store path inspection or
+// read, binds the store to that exact owner session, and rechecks ownership
+// before returning the validated store. It never creates or migrates state.
+func OpenFixedFileStoreV1WithOwner(
+	ctx context.Context,
+	path string,
+	owner installationowner.InstallationOwner,
+	options FixedFileStoreV1Options,
+) (*FixedFileStoreV1, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if owner == nil {
+		return nil, ErrStoreOwnerRequired
+	}
+	if err := owner.CheckHeld(ctx); err != nil {
+		return nil, fmt.Errorf("%w: initial owner check: %v", ErrStoreOwnerFenced, err)
+	}
+	ownerSessionID := owner.OwnerSessionID()
+	if ownerSessionID.IsZero() {
+		return nil, fmt.Errorf("%w: zero owner session", ErrStoreOwnerFenced)
+	}
+	if !options.OwnerSessionID.IsZero() && options.OwnerSessionID != ownerSessionID {
+		return nil, ErrStoreOwnerSessionMismatch
+	}
+	options.OwnerSessionID = ownerSessionID
+	store, err := openFixedFileStoreV1WithOptions(path, options)
+	if err != nil {
+		return nil, err
+	}
+	store.owner = owner
+	store.ownerRequired = true
+	if err := owner.CheckHeld(ctx); err != nil {
+		store.ownerFenced = true
+		store.recoveryRequired = true
+		return nil, fmt.Errorf("%w: post-open owner check: %v", ErrStoreOwnerFenced, err)
+	}
+	if owner.OwnerSessionID() != store.ownerSessionID {
+		store.ownerFenced = true
+		store.recoveryRequired = true
+		return nil, ErrStoreOwnerSessionMismatch
+	}
+	return store, nil
+}
+
 func (store *FixedFileStoreV1) snapshot(ctx context.Context) (fixedStoreV1Snapshot, error) {
 	if err := ctx.Err(); err != nil {
 		return fixedStoreV1Snapshot{}, err
 	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
+	if err := store.requireReadableLocked(); err != nil {
+		return fixedStoreV1Snapshot{}, err
+	}
 	return fixedStoreV1Snapshot{
 		SourceFormatVersion: store.sourceFormatVersion,
 		State:               cloneState(store.state),

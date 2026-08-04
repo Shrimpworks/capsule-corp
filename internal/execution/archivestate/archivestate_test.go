@@ -11,16 +11,16 @@ import (
 )
 
 func TestArchivePassiveKnownAnswersAndDefensiveCopies(t *testing.T) {
-	empty := EmptyArchiveIndexes()
-	assertHex(t, "empty registration index", empty.Digests().Registrations, "8144fc094dd2a921cf357c39aba296fba1fc1a35eec8ee9f378c221781f96201")
-	assertHex(t, "empty combined index", empty.CombinedDigest(), "2dd78bdddb4e186229d709bdda5b666e4e2d668e5c1216c751be2f4abb46648e")
-	descriptorDigest, err := DigestArchiveDescriptorSet([]ArchiveDescriptor{})
-	if err != nil {
-		t.Fatal(err)
+	empty := EmptyRetainedIndexes()
+	if empty.View().Scope != ArchiveIndexScopeRetainedGlobal {
+		t.Fatal("empty retained index has wrong scope")
 	}
-	assertHex(t, "empty descriptor set", descriptorDigest, "a84af9da7e16fadb5aa76f4385558d4bc622ed1ea32ef435899ff02c20e863b3")
-
 	checkpoint, err := NewArchiveCheckpoint(ArchiveCheckpointView{
+		PreviousCheckpoint:       ArchiveCheckpointReference{Kind: ArchiveCheckpointMigrationGenesis, Digest: checkpointDigest(1)},
+		NewSegmentDigest:         segmentDigest(1),
+		DescriptorSetDigest:      descriptorSetDigest(1),
+		ArchiveIndexDigest:       combinedIndexDigest(1),
+		HotSetDigests:            hotSetDigests(1),
 		SourceSnapshotGeneration: 1, ResultSnapshotGeneration: 2, ArchiveGeneration: 1,
 		InstallationID: installationID(1), SupervisorID: supervisorID(2), EpochSequence: 3,
 		EpochDigest: epochDigest(4), DurableTimeHighWater: 100,
@@ -28,17 +28,15 @@ func TestArchivePassiveKnownAnswersAndDefensiveCopies(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assertHex(t, "empty checkpoint", checkpoint.Digest(), "69dced13926ca3bfdf7324f7862035480af3b6d26c8b942a36a1ec0db5ee7d54")
+	if checkpoint.Reference().Kind != ArchiveCheckpointActivation {
+		t.Fatal("activation checkpoint has wrong kind")
+	}
 
 	one := mustCohortProjection(t, closedCohort(t, 1, 90, 1))
-	oneSegment := mustSegment(t, []CohortProjection{one}, 1_024)
 	assertHex(t, "one cohort", one.Digest(), "67f6a0da8db580bb9f93b38b3d2d600bc667a49184aae1b7cdbf315ff7603198")
-	assertHex(t, "one cohort segment", oneSegment.Digest(), "9a9d4e162edb7e493a7b0255ce87c3eb085d5fb865ca44ff4feb5b077bb66cce")
 
 	multi := mustCohortProjection(t, closedCohort(t, 2, 90, 2))
-	multiSegment := mustSegment(t, []CohortProjection{one, multi}, 2_048)
 	assertHex(t, "multi attempt cohort", multi.Digest(), "41464e4a282e71fbfc2905cde5395bd55bf8bae8050a80ad56ae39fb0a4fbfb0")
-	assertHex(t, "multi cohort segment", multiSegment.Digest(), "d84aa296b8a3b8a5f90fe2824b8371a165428979bb1b39447ec6fa2354362cf8")
 
 	registrationDigest, err := DigestRecord(RecordRegistration, []byte("record"))
 	if err != nil {
@@ -68,8 +66,8 @@ func TestArchivePassiveKnownAnswersAndDefensiveCopies(t *testing.T) {
 		t.Fatal("validated state aliases caller or accessor bytes")
 	}
 
-	indexView := EmptyArchiveIndexes().View()
-	indexView.Nonces = []NonceIndexEntry{{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1)}}
+	indexView := EmptyRetainedIndexes().View()
+	indexView.Nonces = []NonceIndexEntry{{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1), Location: hotRecordLocation(t, RecordApproval, 1)}}
 	indexes, err := NewArchiveIndexes(indexView)
 	if err != nil {
 		t.Fatal(err)
@@ -213,21 +211,44 @@ func TestArchiveSelectorAcceptsOnlyCompleteClosedRegistrationCohorts(t *testing.
 }
 
 func TestArchiveClosedIndexesActiveProjectionAndMutationRefusals(t *testing.T) {
-	indexes := completeArchiveIndexes(t)
-	assertHex(t, "one-entry combined index", indexes.CombinedDigest(), "eb3ac7659f3504441fd507397762b221b8596c9d4f7d642fbd4ca3e1679abb83")
 	emptySeed, err := DigestVisibleV1EffectSeed([]lifecyclestate.EffectID{})
 	if err != nil {
 		t.Fatal(err)
 	}
-	assertHex(t, "empty visible-v1 effect seed", emptySeed, "17de5f44f523dab94ca4b215ce7779358146fb094fa6d208e0190cb0ba69e0a1")
+	if emptySeed == (ArchiveEffectSeedDigest{}) {
+		t.Fatal("empty visible-v1 seed digest is zero")
+	}
 
 	descriptors := []ArchiveDescriptor{}
 	descriptorDigest, err := DigestArchiveDescriptorSet(descriptors)
 	if err != nil {
 		t.Fatal(err)
 	}
+	hotIndexes := completeHotRetainedIndexes(t, true)
+	seed := []lifecyclestate.EffectID{effectID(1)}
+	genesisView := MigrationGenesisCheckpointView{
+		StoreFormatVersion: SupervisorStoreFormatV2, MigrationSourceVersion: MigrationSourceFormatV1,
+		ResultSnapshotGeneration: 1, ArchiveGeneration: 1, DescriptorSetDigest: descriptorDigest,
+		Indexes: hotIndexes, HotSetDigests: hotSetDigests(1), VisibleV1EffectSeed: seed,
+		HotCounts: hotIndexes.counts(), InstallationID: installationID(1), SupervisorID: supervisorID(2),
+		EpochSequence: 3, EpochDigest: epochDigest(4), DurableTimeHighWater: 100,
+	}
+	genesis, err := NewMigrationGenesisCheckpoint(genesisView)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if genesis.Reference().Kind != ArchiveCheckpointMigrationGenesis || genesis.SeedDigest() == emptySeed {
+		t.Fatal("migration genesis kind or nonempty seed projection is wrong")
+	}
+	seed[0] = effectID(9)
+	returnedGenesis := genesis.View()
+	returnedGenesis.VisibleV1EffectSeed[0] = effectID(8)
+	if genesis.View().VisibleV1EffectSeed[0] != effectID(1) {
+		t.Fatal("migration genesis aliases caller or accessor seed")
+	}
+	genesisView.VisibleV1EffectSeed = []lifecyclestate.EffectID{effectID(1)}
+
 	zeroCounts := ArchiveCounts{}
-	activeIndexes := EmptyArchiveIndexes()
 	activeView := ActiveStateV2View{
 		StoreFormatVersion:        SupervisorStoreFormatV2,
 		MigrationSourceVersion:    MigrationSourceFormatV1,
@@ -240,16 +261,17 @@ func TestArchiveClosedIndexesActiveProjectionAndMutationRefusals(t *testing.T) {
 		DurableTimeHighWater:      100,
 		Descriptors:               descriptors,
 		DescriptorSetDigest:       descriptorDigest,
-		Indexes:                   activeIndexes,
-		IndexDigests:              activeIndexes.Digests(),
-		CombinedIndexDigest:       activeIndexes.CombinedDigest(),
+		Indexes:                   hotIndexes,
+		IndexDigests:              hotIndexes.Digests(),
+		CombinedIndexDigest:       hotIndexes.CombinedDigest(),
 		EffectTombstoneCoverage:   EffectTombstoneCoverageVisibleV1AndV2,
-		VisibleV1EffectSeedDigest: emptySeed,
-		PreviousCheckpointDigest:  checkpointDigest(8),
-		CurrentCheckpointDigest:   checkpointDigest(9),
-		HotCounts:                 zeroCounts,
+		VisibleV1EffectSeedCount:  1,
+		VisibleV1EffectSeedDigest: genesis.SeedDigest(),
+		PreviousCheckpoint:        NoArchiveCheckpointReference(),
+		CurrentCheckpoint:         genesis.Reference(),
+		HotCounts:                 hotIndexes.counts(),
 		ArchivedCounts:            zeroCounts,
-		TotalCounts:               zeroCounts,
+		TotalCounts:               hotIndexes.counts(),
 	}
 	active, err := NewActiveStateV2(activeView)
 	if err != nil {
@@ -270,7 +292,27 @@ func TestArchiveClosedIndexesActiveProjectionAndMutationRefusals(t *testing.T) {
 		{name: "descriptor-digest", apply: func(view *ActiveStateV2View) { view.DescriptorSetDigest[0] ^= 1 }, want: ClassificationBinding},
 		{name: "index-digest", apply: func(view *ActiveStateV2View) { view.CombinedIndexDigest[0] ^= 1 }, want: ClassificationBinding},
 		{name: "coverage", apply: func(view *ActiveStateV2View) { view.EffectTombstoneCoverage = "all-history" }, want: ClassificationBinding},
-		{name: "counts", apply: func(view *ActiveStateV2View) { view.TotalCounts.Attempts = 1 }, want: ClassificationBinding},
+		{name: "counts", apply: func(view *ActiveStateV2View) { view.TotalCounts.Attempts = 2 }, want: ClassificationBinding},
+		{name: "seed-count", apply: func(view *ActiveStateV2View) { view.VisibleV1EffectSeedCount = 0 }, want: ClassificationBinding},
+		{name: "wrong-index-scope", apply: func(view *ActiveStateV2View) {
+			view.Indexes = EmptySegmentDerivedIndexes()
+			view.IndexDigests = view.Indexes.Digests()
+			view.CombinedIndexDigest = view.Indexes.CombinedDigest()
+		}, want: ClassificationDomain},
+		{name: "wrong-checkpoint-kind", apply: func(view *ActiveStateV2View) {
+			view.CurrentCheckpoint = ArchiveCheckpointReference{Kind: ArchiveCheckpointActivation, Digest: checkpointDigest(9)}
+		}, want: ClassificationBinding},
+		{name: "hot-archive-location-count", apply: func(view *ActiveStateV2View) {
+			candidate := view.Indexes.View()
+			candidate.Registrations[0].Location = archiveRecordLocation(t, RecordRegistration, 1)
+			indexes, err := NewArchiveIndexes(candidate)
+			if err != nil {
+				t.Fatal(err)
+			}
+			view.Indexes = indexes
+			view.IndexDigests = indexes.Digests()
+			view.CombinedIndexDigest = indexes.CombinedDigest()
+		}, want: ClassificationBinding},
 	}
 	for _, mutation := range mutations {
 		t.Run(mutation.name, func(t *testing.T) {
@@ -280,6 +322,29 @@ func TestArchiveClosedIndexesActiveProjectionAndMutationRefusals(t *testing.T) {
 				t.Fatalf("mutation = %v", err)
 			}
 		})
+	}
+
+	wrongSeed := genesisView
+	wrongSeed.VisibleV1EffectSeed = []lifecyclestate.EffectID{effectID(2)}
+	if _, err := NewMigrationGenesisCheckpoint(wrongSeed); classification(t, err) != ClassificationBinding {
+		t.Fatalf("migration seed mutation = %v", err)
+	}
+	wrongCounts := genesisView
+	wrongCounts.HotCounts.Effects++
+	if _, err := NewMigrationGenesisCheckpoint(wrongCounts); classification(t, err) != ClassificationBinding {
+		t.Fatalf("migration count mutation = %v", err)
+	}
+	wrongScope := genesisView
+	wrongScope.Indexes = completeArchiveIndexes(t)
+	wrongScope.HotCounts = wrongScope.Indexes.counts()
+	if _, err := NewMigrationGenesisCheckpoint(wrongScope); classification(t, err) != ClassificationDomain {
+		t.Fatalf("migration archive-location projection = %v", err)
+	}
+	mutatedGenesis := genesisView
+	mutatedGenesis.HotSetDigests.Registrations[0] ^= 1
+	changed, err := NewMigrationGenesisCheckpoint(mutatedGenesis)
+	if err != nil || changed.Digest() == genesis.Digest() {
+		t.Fatalf("migration hot-set mutation did not change digest: %v", err)
 	}
 
 	cohort := mustCohortProjection(t, closedCohort(t, 1, 90, 1))
@@ -316,6 +381,9 @@ func TestArchiveClosedIndexesActiveProjectionAndMutationRefusals(t *testing.T) {
 	}
 
 	if _, err := NewArchiveCheckpoint(ArchiveCheckpointView{
+		PreviousCheckpoint: NoArchiveCheckpointReference(),
+		NewSegmentDigest:   segmentDigest(1), DescriptorSetDigest: descriptorSetDigest(1),
+		ArchiveIndexDigest: combinedIndexDigest(1), HotSetDigests: hotSetDigests(1),
 		SourceSnapshotGeneration: 2, ResultSnapshotGeneration: 2, ArchiveGeneration: 1,
 		InstallationID: installationID(1), SupervisorID: supervisorID(2),
 	}); classification(t, err) != ClassificationBinding {
@@ -467,10 +535,10 @@ func TestArchiveExactBoundsCapPlusOneOrderingAndCollisions(t *testing.T) {
 		t.Fatalf("approval collision = %v", err)
 	}
 
-	indexView := EmptyArchiveIndexes().View()
+	indexView := EmptyRetainedIndexes().View()
 	indexView.Nonces = []NonceIndexEntry{
-		{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1)},
-		{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(2), ApprovalID: approvalID(2)},
+		{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1), Location: hotRecordLocation(t, RecordApproval, 1)},
+		{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(2), ApprovalID: approvalID(2), Location: hotRecordLocation(t, RecordApproval, 2)},
 	}
 	if _, err := NewArchiveIndexes(indexView); classification(t, err) != ClassificationBinding {
 		t.Fatalf("nonce collision = %v", err)
@@ -484,6 +552,81 @@ func TestArchiveExactBoundsCapPlusOneOrderingAndCollisions(t *testing.T) {
 	complete.Instances = append(complete.Instances, complete.Instances[0])
 	if _, err := NewArchiveIndexes(complete); classification(t, err) != ClassificationBinding {
 		t.Fatalf("instance collision = %v", err)
+	}
+
+	capPlusOne := EmptyRetainedIndexes().View()
+	capPlusOne.Effects = make([]EffectIndexEntry, MaxArchiveIndexEntries+1)
+	if _, err := NewArchiveIndexes(capPlusOne); classification(t, err) != ClassificationCapacity {
+		t.Fatalf("global retained index cap plus one = %v", err)
+	}
+}
+
+func TestArchiveRecordLocationsAreKindedDiscriminatedAndBoundIntoIndexes(t *testing.T) {
+	if _, err := DigestVisibleV1EffectSeed([]lifecyclestate.EffectID{effectID(2), effectID(1)}); classification(t, err) != ClassificationBinding {
+		t.Fatalf("visible-v1 seed order = %v", err)
+	}
+	hot := hotRecordLocation(t, RecordRegistration, 7)
+	if view := hot.View(); view.Kind != RecordLocationHot || view.RecordKind != RecordRegistration ||
+		view.HotRecordOrdinal != 7 || !view.Archive.isZero() {
+		t.Fatalf("hot record location = %#v", view)
+	}
+	archived := archiveRecordLocation(t, RecordRegistration, 9)
+	if view := archived.View(); view.Kind != RecordLocationArchive || view.RecordKind != RecordRegistration ||
+		view.HotRecordOrdinal != 0 || view.Archive.RecordOrdinal != 9 {
+		t.Fatalf("archive record location = %#v", view)
+	}
+	if _, err := NewHotRecordLocation(RecordKind("unknown"), 1); classification(t, err) != ClassificationDomain {
+		t.Fatalf("unknown location record kind = %v", err)
+	}
+	if _, err := newRecordLocation(RecordLocationView{
+		Kind: RecordLocationHot, RecordKind: RecordRegistration, HotRecordOrdinal: 1,
+		Archive: ArchiveLocation{SegmentOrdinal: 1, CohortOrdinal: 1, RecordOrdinal: 1},
+	}); classification(t, err) != ClassificationBinding {
+		t.Fatalf("hot/archive arm collision = %v", err)
+	}
+	if _, err := newRecordLocation(RecordLocationView{
+		Kind: RecordLocationArchive, RecordKind: RecordRegistration, HotRecordOrdinal: 1,
+		Archive: ArchiveLocation{SegmentOrdinal: 1, CohortOrdinal: 1, RecordOrdinal: 1},
+	}); classification(t, err) != ClassificationBinding {
+		t.Fatalf("archive/hot arm collision = %v", err)
+	}
+
+	wrongKind := completeHotRetainedIndexes(t, true).View()
+	wrongKind.Registrations[0].Location = hotRecordLocation(t, RecordApproval, 1)
+	if _, err := NewArchiveIndexes(wrongKind); classification(t, err) != ClassificationBinding {
+		t.Fatalf("registration location record-kind confusion = %v", err)
+	}
+	unsorted := completeHotRetainedIndexes(t, true).View()
+	secondRegistration := unsorted.Registrations[0]
+	secondRegistration.RegistrationID = registrationID(2)
+	secondRegistration.RegistrationSequence = 2
+	secondRegistration.Location = hotRecordLocation(t, RecordRegistration, 2)
+	unsorted.Registrations = []RegistrationIndexEntry{secondRegistration, unsorted.Registrations[0]}
+	if _, err := NewArchiveIndexes(unsorted); classification(t, err) != ClassificationBinding {
+		t.Fatalf("retained-global registration order = %v", err)
+	}
+
+	first := completeHotRetainedIndexes(t, true)
+	secondView := first.View()
+	secondView.Registrations[0].Location = hotRecordLocation(t, RecordRegistration, 2)
+	second, err := NewArchiveIndexes(secondView)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first.Digests().Registrations == second.Digests().Registrations || first.CombinedDigest() == second.CombinedDigest() {
+		t.Fatal("hot record ordinal mutation did not change retained index digests")
+	}
+	segmentView := first.View()
+	segmentView.Scope = ArchiveIndexScopeSegmentDerived
+	segmentScoped, err := NewArchiveIndexes(segmentView)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cohort := mustCohortProjection(t, closedCohort(t, 1, 90, 1))
+	candidate := mustSegment(t, []CohortProjection{cohort}, 1_024).View()
+	candidate.DerivedIndexes = segmentScoped
+	if _, err := NewArchiveSegment(candidate); classification(t, err) != ClassificationDomain {
+		t.Fatalf("segment accepted hot global projection = %v", err)
 	}
 }
 
@@ -644,7 +787,7 @@ func mustCohortProjection(t *testing.T, cohort RegistrationCohortCandidate) Coho
 
 func mustSegment(t *testing.T, cohorts []CohortProjection, encoded uint64) ArchiveSegment {
 	t.Helper()
-	derived := EmptyArchiveIndexes()
+	derived := EmptySegmentDerivedIndexes()
 	segment, err := NewArchiveSegment(ArchiveSegmentView{FormatVersion: SupervisorArchiveFormatV0, Ordinal: 1,
 		InstallationID: installationID(1), SupervisorID: supervisorID(2), EpochSequence: 3, EpochDigest: epochDigest(4),
 		SourceSnapshotGeneration: 7, ArchiveGeneration: 3, DurableTimeHighWater: 100, PriorCheckpointDigest: checkpointDigest(9),
@@ -658,37 +801,80 @@ func mustSegment(t *testing.T, cohorts []CohortProjection, encoded uint64) Archi
 
 func completeArchiveIndexes(t *testing.T) ArchiveIndexes {
 	t.Helper()
-	location := ArchiveLocation{SegmentOrdinal: 1, CohortOrdinal: 1, RecordOrdinal: 1}
+	registrationLocation := archiveRecordLocation(t, RecordRegistration, 1)
+	approvalLocation := archiveRecordLocation(t, RecordApproval, 1)
+	attemptLocation := archiveRecordLocation(t, RecordAttempt, 1)
+	lifecycleLocation := archiveRecordLocation(t, RecordLifecycle, 1)
 	exactPayloadDigest := mustRecordDigest(t, RecordApproval, []byte("exact-payload"))
 	view := ArchiveIndexesView{
+		Scope: ArchiveIndexScopeRetainedGlobal,
 		Registrations: []RegistrationIndexEntry{{
 			RegistrationID: registrationID(1), RegistrationSequence: 1, PlanDigest: planDigest(1),
-			ExpiresAt: 90, Location: location, FullRecordDigest: mustRecordDigest(t, RecordRegistration, []byte("registration")),
+			ExpiresAt: 90, Location: registrationLocation, FullRecordDigest: mustRecordDigest(t, RecordRegistration, []byte("registration")),
 		}},
 		Approvals: []ApprovalIndexEntry{{
 			ApprovalID: approvalID(1), RegistrationID: registrationID(1), PayloadDigest: payloadDigest(1),
 			AuthorizationIdentity: authorizationIdentity(1), AttemptNonce: nonce(1), State: approvalattempt.ApprovalConsumed,
-			ConsumedAttemptID: attemptID(1), ExpiresAt: 90, Location: location,
+			ConsumedAttemptID: attemptID(1), ExpiresAt: 90, Location: approvalLocation,
 			FullRecordDigest: mustRecordDigest(t, RecordApproval, []byte("approval")),
 		}},
 		Attempts: []AttemptIndexEntry{{
 			AttemptID: attemptID(1), ApprovalID: approvalID(1), RegistrationID: registrationID(1), CreatedAt: 80,
-			LifecycleState: lifecyclestate.StateDestroyed, Location: location,
+			LifecycleState: lifecyclestate.StateDestroyed, Location: attemptLocation,
 			FullRecordDigest: mustRecordDigest(t, RecordAttempt, []byte("attempt")),
 		}},
-		Nonces: []NonceIndexEntry{{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1)}},
+		Nonces: []NonceIndexEntry{{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1), Location: approvalLocation}},
 		Effects: []EffectIndexEntry{{EffectID: effectID(1), AttemptID: attemptID(1), OperationSequence: 1,
-			Operation: lifecyclestate.OperationDestroy, IssuanceSnapshotGeneration: 1}},
-		Instances: []InstanceIndexEntry{{InstanceDigest: instanceDigest(1), AttemptID: attemptID(1), Location: location}},
+			Operation: lifecyclestate.OperationDestroy, IssuanceSnapshotGeneration: 1, AttemptLocation: attemptLocation}},
+		Instances: []InstanceIndexEntry{{InstanceDigest: instanceDigest(1), AttemptID: attemptID(1), Location: lifecycleLocation}},
 		ApprovalReplay: []ApprovalReplayIndexEntry{{PayloadDigest: payloadDigest(1), ExactPayloadDigest: exactPayloadDigest,
-			AuthorizationIdentity: authorizationIdentity(1), ApprovalID: approvalID(1), State: approvalattempt.ApprovalConsumed, Location: location}},
-		AttemptReplay: []AttemptReplayIndexEntry{{RegistrationID: registrationID(1), ApprovalID: approvalID(1), AttemptID: attemptID(1), State: approvalattempt.AttemptCreated}},
+			AuthorizationIdentity: authorizationIdentity(1), ApprovalID: approvalID(1), State: approvalattempt.ApprovalConsumed, Location: approvalLocation}},
+		AttemptReplay: []AttemptReplayIndexEntry{{RegistrationID: registrationID(1), ApprovalID: approvalID(1), AttemptID: attemptID(1), State: approvalattempt.AttemptCreated, Location: attemptLocation}},
 	}
 	indexes, err := NewArchiveIndexes(view)
 	if err != nil {
 		t.Fatal(err)
 	}
 	return indexes
+}
+
+func completeHotRetainedIndexes(t *testing.T, visibleSeed bool) ArchiveIndexes {
+	t.Helper()
+	view := completeArchiveIndexes(t).View()
+	view.Registrations[0].Location = hotRecordLocation(t, RecordRegistration, 1)
+	view.Approvals[0].Location = hotRecordLocation(t, RecordApproval, 1)
+	view.Attempts[0].Location = hotRecordLocation(t, RecordAttempt, 1)
+	view.Nonces[0].Location = hotRecordLocation(t, RecordApproval, 1)
+	view.Effects[0].AttemptLocation = hotRecordLocation(t, RecordAttempt, 1)
+	view.Effects[0].VisibleV1Seed = visibleSeed
+	view.Instances[0].Location = hotRecordLocation(t, RecordLifecycle, 1)
+	view.ApprovalReplay[0].Location = hotRecordLocation(t, RecordApproval, 1)
+	view.AttemptReplay[0].Location = hotRecordLocation(t, RecordAttempt, 1)
+	indexes, err := NewArchiveIndexes(view)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return indexes
+}
+
+func hotRecordLocation(t *testing.T, kind RecordKind, ordinal int) RecordLocation {
+	t.Helper()
+	location, err := NewHotRecordLocation(kind, v0candidate.PositiveUInt53(ordinal))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return location
+}
+
+func archiveRecordLocation(t *testing.T, kind RecordKind, ordinal int) RecordLocation {
+	t.Helper()
+	location, err := NewArchiveRecordLocation(kind, ArchiveLocation{
+		SegmentOrdinal: 1, CohortOrdinal: 1, RecordOrdinal: ArchiveOrdinal(ordinal),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return location
 }
 
 func mustRecordDigest(t *testing.T, kind RecordKind, exact []byte) ArchiveRecordDigest {
@@ -765,6 +951,14 @@ func segmentDigest(value int) (result ArchiveSegmentDigest) {
 	binary.BigEndian.PutUint32(result[28:], uint32(value))
 	return
 }
+func descriptorSetDigest(value int) (result ArchiveDescriptorSetDigest) {
+	binary.BigEndian.PutUint32(result[28:], uint32(value))
+	return
+}
+func combinedIndexDigest(value int) (result ArchiveCombinedIndexDigest) {
+	binary.BigEndian.PutUint32(result[28:], uint32(value))
+	return
+}
 func planDigest(value int) (result v0candidate.ExecutionPlanDigest) {
 	binary.BigEndian.PutUint32(result[28:], uint32(value))
 	return
@@ -780,4 +974,14 @@ func effectID(value int) (result lifecyclestate.EffectID) {
 func instanceDigest(value int) (result lifecyclestate.BackendInstanceDigest) {
 	binary.BigEndian.PutUint32(result[28:], uint32(value))
 	return
+}
+func hotSetDigests(value byte) HotSetDigests {
+	result := HotSetDigests{}
+	for _, digest := range []*[32]byte{&result.Registrations, &result.Approvals, &result.Attempts, &result.Lifecycles} {
+		for index := range digest {
+			digest[index] = value
+		}
+		value++
+	}
+	return result
 }

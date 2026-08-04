@@ -163,8 +163,8 @@ activating a consumer:
 | E5 | Joined v1 capacity and repeated-startup checkpoint | `TestFixedStoreV1ExactActiveCapacityReleasesOnlyAfterDurableDestroy` proves 256 active and destroyed-only release; `TestFixedStoreV1ExactRetainedLifecycleCapacityNeverEvicts` proves 4,096 retained and cap-plus-one no rewrite/eviction with a 30,321,818-byte population; repeated/concurrent startup tests prove terminal omission, unresolved/exhausted retention, no fourth observation, and owner/coordinator mismatch refusal |
 
 This is an unwired `local-mechanic` result. Passive archive F1 types and selection now exist, but
-archive file/store behavior, a real platform/multi-process lock, backup/rollback, production
-reconciliation, consumers, content, evidence, runtime, backend, and guest remain absent.
+archive file/store behavior, installed protected-root/bootstrap evidence, backup/rollback,
+production reconciliation, consumers, content, evidence, runtime, backend, and guest remain absent.
 
 ## Supervisor owner-lock design checkpoint
 
@@ -180,11 +180,12 @@ enrollment and entry-name validation, retained-root `openat`, exact descriptor f
 nonblocking independent-process contention, opaque owner/session/close behavior, fault injection,
 inheritance, process-death, replacement, descriptor-reuse, and refusal-before-downstream markers
 are covered under owned temporary roots. The existing migration assertion is also exercised with
-an actual held owner without changing the store API. The E5 store still injects its owner and
-coordinator. No owner-required store/startup composition, Apple-signed protected state root,
-wrong-user/session/update/reboot result, production engine, archive behavior, consumer, runtime,
-backend, or guest exists. The advisory lock does not contain a same-UID process that can mutate its
-parent directory.
+an actual held owner. Bounded G2 now adds the owner-required current-v1 opener, same-session
+store/coordinator, exact ownership-before-store-before-sorted-recovery composition, permanent
+post-open fence, ordered close, response-loss recovery, and child-process death/reopen. No signed
+bootstrap, Apple-signed protected state root, wrong-user/session/update/reboot result, production
+engine, archive behavior, consumer, runtime, real backend, or guest exists. The advisory lock does
+not contain a same-UID process that can mutate its parent directory.
 
 Source Preparer P0 remains a separate bounded NO-GO/HOLD merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -203,8 +204,10 @@ complete closed registration cohorts, immutable full-record segments, exact repl
 tombstone indexes, publish-before-activate fault ordering, coherent backup verification, and
 read-only offline verification. Slice F1 now implements passive archive projections, exact
 limits/known answers, defensive copies, and deterministic complete-cohort eligibility only. It
-writes no file, migrates no store, activates no archive, and routes no retained lookup; F2 is next.
-The design deliberately leaves
+writes no file, migrates no store, activates no archive, and routes no retained lookup. The passive
+F2 format correction now freezes scope-separated global/segment indexes, typed hot/archive
+locations/counts, a distinct migration-genesis checkpoint, and generated answers; the stateful F2
+migration/full verifier is next. The design deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
@@ -274,6 +277,14 @@ tests rather than manifest cases.
 | PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 was the next slice at that merge. |
 | PR #75, passive archive F1 | `6fc31a049c476acf5085071c48d3d5e36f27240f` | Source head `20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef`; implemented passive archive types, limits, known answers, defensive copies, and eligibility only. No file write, migration, activation, lookup consumer, or adapter call exists; F2 is next. |
 
+The ecosystem reuse audit is retained in
+[`ECOSYSTEM_REUSE_AND_ADOPTION.md`](ECOSYSTEM_REUSE_AND_ADOPTION.md) on its delivery branch until
+its draft PR merges; its final merge commit must be added to this table during integration. It is
+a primary-source-backed planning map, not implementation or security evidence. It records three
+bounded decision lanes: production CBOR/COSE profiling, SQLite comparison after F2/G2, and the
+already-active `.mjs` parser boundary. It explicitly does not preempt M1, G2, F2, or the separate
+ARM64 `rusty_v8` work.
+
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
 PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->
 e930f9d` even though the PR numbers are 73, 75, and 74. The exact source heads above preserve review
@@ -301,9 +312,9 @@ Completed and retained:
   future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
   eligibility selection. No file/store/archive behavior or consumer exists; and
-- Proposed ADR-0033's local owner-lock mechanism selection plus passive G1 Go/Darwin acquisition,
-  while owner-required store/startup composition and installed protected-root evidence remain
-  unimplemented; and
+- Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
+  bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
+  protected-root evidence remain unimplemented; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
@@ -316,10 +327,10 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Independently actionable now:** resolve the retained archive F2 format contradictions without
-   implementing around them; review and plan owner-lock G2 without silently changing the existing
-   conformance constructors; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
-   maintain exact documentation plus recursive field-authority design.
+1. **Independently actionable now:** implement archive F2 migration/full verification from the
+   corrected passive contract; retain bounded owner-lock G2 current-v1/no-guest composition while
+   planning its separate installed G3 matrix; follow accepted ADR-0034 for `.mjs` M1/S1 passive
+   contract work; and maintain exact documentation plus recursive field-authority design.
 2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
    `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
@@ -337,8 +348,8 @@ Current dependency and priority view:
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
-   and remains deferred activation/distribution evidence, not a blocker for F2 format correction
-   or owner-lock G2 planning.
+   and remains deferred activation/distribution evidence, not a blocker for F2 migration/full
+   verification or owner-lock G3 planning.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.
@@ -389,6 +400,8 @@ For every future parallel task or external review that changes the project direc
    on the task handoff;
 3. reconcile design conclusions into the current ADR, synthesis, evidence matrix, and roadmap;
 4. mark superseded recommendations explicitly rather than deleting historical observations; and
-5. record the merge commit that integrated the result.
+5. record the merge commit that integrated the result; and
+6. for a dependency or new custom primitive, cite the matching reuse-map row and retain the
+   completed dependency-policy checklist with the consuming task or decision evidence.
 
 No task is complete for coordination purposes if its only useful output exists in chat history.

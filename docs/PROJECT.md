@@ -44,13 +44,16 @@ prepare, and retains the original 12 top-level focused lifecycle tests for bindi
 concurrency, fault, and startup-recovery behavior. The E4/E5 local checkpoint adds focused durable
 tests and now drives that no-guest fake through
 the colocated v1 fixed snapshot and retains exact effect identities, restart reconciliation,
-256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. The owner
-and coordinator remain injected in-process mechanics. Proposed ADR-0033 now selects an enrolled
+256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. Proposed
+ADR-0033 now selects an enrolled
 pre-created sibling object plus lifetime nonblocking BSD `flock` as the later macOS owner
-mechanism after a bounded local process/file experiment. Passive G1 now adds an internal, unwired
-Go/Darwin acquisition capability and owned-temporary-root fault/process tests. It does not compose
-product startup or an
-owner-required store opener, and no installed protected-storage evidence exists. There is no
+mechanism after a bounded local process/file experiment. Passive G1 adds the internal opaque
+Go/Darwin acquisition capability. G2 now composes that capability with an owner-required current
+v1 opener, the same owner-session ID in the store and per-attempt coordinator, sorted `AttemptID`
+recovery, permanent post-open ownership fencing, and store-before-owner shutdown ordering. The
+retained race/fault/process tests use owned temporary roots and the no-guest fake only. This is not
+product startup, a signed bootstrap record, protected installed storage, v2/archive composition,
+or production evidence. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate
@@ -67,11 +70,13 @@ selects a finite fixed-store checkpoint only as a local conformance oracle, not 
 engine, and authorizes no referenced-history deletion. Slice F1 now implements passive archive
 types, known-answer digests, defensive copies, and the pure complete-cohort eligibility selector.
 It writes no file, migrates no store, moves no cohort, activates no archive, and routes no consumer.
-The first F2 review stopped before implementation because merged F1 cannot represent a required
-nonzero visible-v1 effect seed with zero archive descriptors or construct the specified
-generation-one migration checkpoint. The retained
-[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) proposes the narrow contract correction
-required before the fixed-store v2 migration/full verifier can proceed.
+The first F2 review stopped before implementation because merged F1 could not represent a required
+nonzero visible-v1 effect seed with zero archive descriptors, reconstruct global hot indexes, or
+construct the specified generation-one migration checkpoint. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
+segment index domains, typed hot/archive record locations and counts, a distinct migration-genesis
+checkpoint, and generated known answers. It writes no store bytes and changes no v1 behavior. The
+fixed-store v2 migration/full verifier is the next F2 slice and remains unimplemented.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
@@ -305,4 +310,8 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md), [Technical Design](TECHNICAL_DE
 [Roadmap](ROADMAP.md). The exact branch point is recorded in the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). Public precedents and the boundary between
 reusable lessons and Capsule evidence are recorded in
-[Related systems and design influences](RELATED_SYSTEMS.md).
+[Related systems and design influences](RELATED_SYSTEMS.md). The canonical
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) ties platform, library,
+standard, tool, and governed-fork choices to exact roadmap slices. Future work consults that map
+and completes its dependency-policy checklist before adding a dependency or inventing a primitive;
+the map does not admit a product component or advance a security claim.

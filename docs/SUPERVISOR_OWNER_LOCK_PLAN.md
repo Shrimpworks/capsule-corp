@@ -1,6 +1,7 @@
 # Supervisor owner-lock implementation and fault plan
 
-Status: G1 passive local mechanic implemented; G2/G3 and the product boundary remain unimplemented.
+Status: G1 and bounded G2 current-v1/no-guest composition are implemented local mechanics; G3 and
+the product boundary remain unimplemented.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
 backend, runtime, or guest is wired by this plan.
@@ -65,9 +66,11 @@ Darwin operations and needs no native shim.
 
 The capability owns exactly one descriptor. It has no `File`, `FD`, `Dup`, `Unlock`, or transfer
 accessor. `CheckHeld` verifies the wrapper is live, the descriptor identity remains enrolled, and
-`FD_CLOEXEC` remains set; it cannot prove that an unrelated process obeys advisory locks. G2 must
-make store openers, migrations, lifecycle transactions, archive sealed values, backups, and
-repairs accept the opaque capability and reject a mismatched owner session.
+`FD_CLOEXEC` remains set, and G2 also reopens the enrolled name through the retained root on each
+held-owner check so post-open rename/replacement fences the current store. It cannot prove that an
+unrelated process obeys advisory locks. The current owner-required v1 opener and lifecycle
+transactions accept the opaque capability and reject a mismatched owner session; future migrations,
+archive sealed values, backups, and repairs remain separate ports.
 
 The first integration must add an owner-required v1 opener rather than silently changing the
 existing conformance constructor. Existing path-based constructors remain explicitly test-only
@@ -129,18 +132,32 @@ Retained G1 evidence covers closed enrollment/name validation, exact root and lo
 checks, nonblocking independent-process contention, refusal-before-store/migration/recovery/IPC/
 archive/adapter markers, ordinary `CLOEXEC` omission, explicit inherited-description lifetime,
 process death, entry/root replacement, descriptor reuse, close faults, repetition, and the existing
-`OfflineMigrationLock` assertion using an actual held owner. Store/session/startup composition and
-the G2/G3 cases below remain open.
+`OfflineMigrationLock` assertion using an actual held owner. G2 composition evidence is described
+below; G3 remains open.
 
-### G2: owner-required fixed-store and startup composition
+### G2: owner-required fixed-store and startup composition — implemented local mechanic
 
-- Add owner-required v1 open/migration and the future v2/archive ports.
-- Generate the owner session only after lock plus store validation.
-- Compose the no-guest fake startup order and all E5 recovery tests across child processes.
-- Keep the per-attempt coordinator under the same owner session.
+- The internal composition opens the trusted root, acquires G1, checks it, opens the current v1
+  store through an owner-required non-creating opener, and only then enumerates sorted `AttemptID`
+  recovery and calls `Recover(AttemptID)`.
+- The one fresh G1 owner-session ID binds both `FixedFileStoreV1` and the per-attempt coordinator;
+  any supplied mismatch refuses before store-path inspection.
+- Every owner-required lifecycle read/mutation rechecks the opaque owner. A failed check is a
+  permanent store fence requiring ordered shutdown and full reacquisition/reopen.
+- Shutdown disables lifecycle work, closes the logical store handle, releases the owner descriptor,
+  and closes the retained root descriptor in that order.
+- Focused Darwin tests cover exact ordering, two-attempt sorted recovery, duplicate owner before a
+  deliberately corrupt store, wrong enrollment before a missing store, wrong session, post-open
+  entry replacement, recovery response loss, repeated reopen, and abrupt child-process death.
 
 Acceptance: disposable process harness only, `FakeBackend.CreatesGuest() == false`, duplicate owner
 refuses before store mutation or fake work, and ownerless product constructors are impossible.
+
+The composition intentionally exposes no migration, archive, backup, repair, IPC, adapter-selection,
+runtime, real-backend, or guest port. The existing owner-asserted v0-to-v1 migration test remains a
+separate offline conformance oracle. F2's passive format correction is complete, while its v1-to-v2
+migration/full verifier remains unimplemented and outside G2. Existing path-based v1 openers remain
+test-only and no product command or service consumes them.
 
 ### G3: installed identity/session/update evidence
 

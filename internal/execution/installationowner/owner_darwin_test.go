@@ -116,9 +116,9 @@ func TestDarwinOwnerAcceptsOnlyEnrolledRegularObject(t *testing.T) {
 	if err != nil || statusFlags&unix.O_ACCMODE != unix.O_RDONLY {
 		t.Fatalf("owner status flags = %#x, %v", statusFlags, err)
 	}
-	if len(operations.openatFlags) != 2 || operations.openatFlags[0] != ownerLockOpenFlags ||
-		operations.openatFlags[1] != ownerLockOpenFlags {
-		t.Fatalf("openat flags = %#v, want two %#x", operations.openatFlags, ownerLockOpenFlags)
+	if len(operations.openatFlags) != 3 || operations.openatFlags[0] != ownerLockOpenFlags ||
+		operations.openatFlags[1] != ownerLockOpenFlags || operations.openatFlags[2] != ownerLockOpenFlags {
+		t.Fatalf("openat flags = %#v, want three %#x", operations.openatFlags, ownerLockOpenFlags)
 	}
 	if len(operations.flockOperations) != 1 || operations.flockOperations[0] != unix.LOCK_EX|unix.LOCK_NB {
 		t.Fatalf("flock operations = %#v", operations.flockOperations)
@@ -378,8 +378,8 @@ func TestDarwinOwnerRenameUnlinkReplacementNeverMatchesEnrollment(t *testing.T) 
 	if _, err := AcquireDarwinInstallationOwner(context.Background(), fixture.root, fixture.enrollment); !errors.Is(err, ErrRepairRequired) {
 		t.Fatalf("replacement while held = %v", err)
 	}
-	if err := owner.CheckHeld(context.Background()); err != nil {
-		t.Fatalf("held descriptor did not remain attached to moved inode: %v", err)
+	if err := owner.CheckHeld(context.Background()); !errors.Is(err, ErrOwnerInvariant) {
+		t.Fatalf("replaced enrolled entry check = %v", err)
 	}
 	if err := owner.CloseAfterShutdown(context.Background()); err != nil {
 		t.Fatal(err)

@@ -42,11 +42,13 @@ service, production owner lock, consumer, runtime, backend effect, or guest is c
 Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
 installer-enrolled pre-created sibling object, acquire nonblocking BSD `flock`, and retain the
 opaque `CLOEXEC` descriptor for the Supervisor lifetime. Its bounded local harness observed
-process/descriptor semantics and refusal-before-store ordering only. Passive G1 now adds an
-internal Go/Darwin owner package using the selected descriptor-relative syscalls plus
-owned-temporary-root process, fault,
-replacement, inheritance, and close tests. It is not wired to product startup or the v1 store, and
-installed protected-root evidence remains absent.
+process/descriptor semantics and refusal-before-store ordering only. Passive G1 adds the internal
+Go/Darwin owner package using the selected descriptor-relative syscalls. G2 now composes it before
+the existing v1 store and sorted no-guest recovery, uses its one owner-session ID for both store
+and coordinator, permanently fences lifecycle reads/mutations after a failed held-owner check, and
+closes lifecycle/store state before the descriptor. The owned-temporary-root fault/process corpus
+does not wire product startup, authenticate the bootstrap projection, or provide installed
+protected-root evidence.
 
 Proposed ADR-0031 defines the next archive boundary. A complete expired
 registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
@@ -55,9 +57,11 @@ registration/approval/attempt/nonce/effect/instance/replay tombstones. The finit
 checkpoint is selected only as a fault-injectable conformance oracle. Slice F1 now implements
 passive archive types, exact limits/known-answer digests, defensive copies, and a pure complete-
 cohort selector. It performs no file I/O, v2 migration, archive activation, lookup, or authority
-mutation. F2 review is format-blocked on the nonzero visible-v1 effect seed/empty-descriptor count
-model and the generation-one migration checkpoint; see the retained
-[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Production-engine selection,
+mutation. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
+segment index domains, typed hot/archive record locations and counts, a distinct generation-one
+migration-genesis checkpoint, and generated answers. F2 migration/full verification remains next.
+Production-engine selection,
 referenced-history deletion, continuous service, coherent restore activation, and rollback-
 resistant non-reuse remain blocked.
 
@@ -231,8 +235,9 @@ Proposed ADR-0029 selects one unprivileged per-user Supervisor process with a sm
 C/Objective-C XPC/Security front end and the existing Go authority/lifecycle core linked in-process
 through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
 process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains
-open at the product-evidence level: ADR-0033 selects the mechanism, while its owner-required store
-port and installed protected-root matrix remain unimplemented. Any later separate or privileged
+open at the product-evidence level: ADR-0033 selects the mechanism and G2 composes the local current
+v1/no-guest port, while the signed bootstrap and installed protected-root matrix remain
+unimplemented. Any later separate or privileged
 component still requires a new ADR. Adding Rust or
 another language requires a narrow interface and a demonstrated reduction in privileged risk, not
 an assumption that language choice alone creates the security boundary.
@@ -668,15 +673,17 @@ recovery. Slices E1 through E5 now implement the passive contract, explicit fixe
 migration/open validation, durable lifecycle transactions, the no-guest FakeBackend driver, exact
 256-active/4,096-retained capacity behavior, and repeated-startup/exhaustion checks. Active
 capacity is released only by a durable `destroyed` record with cleanup false after authoritative
-absence. The owner/coordinator is still injected in-process; production archive, platform locking,
-rollback, backup, and real-backend reconciliation mechanisms remain unselected.
+absence. G2 now composes the local Darwin owner with the current v1/no-guest startup and retains the
+same-session coordinator; production archive, protected installed storage, rollback, backup, and
+real-backend reconciliation mechanisms remain unselected.
 
 Proposed ADR-0033 selects BSD `flock` over POSIX process locks, macOS 26 OFD locks, and `O_EXLOCK`
 after one owned local corpus. The selected opener validates the pre-created object by UID, mode,
 type, link count, device, and inode relative to a retained protected state-root descriptor before
 store access. Passive G1 implements that internal Go/Darwin acquisition and its local refusal
-oracles, but not the owner-required store/startup composition or installed same-UID pathname
-protection, so E5 still uses its injected owner.
+oracles. G2 adds the owner-required v1 opener/startup composition, exact sorted recovery and close
+ordering, plus post-open entry-replacement fencing. It still supplies no installed same-UID
+pathname protection, signed bootstrap provenance, archive composition, or product service.
 
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the local
 conformance shape for archive and replay retention. Under the sole owner lock, the Supervisor
@@ -684,11 +691,11 @@ publishes a fully verified immutable closed-cohort segment before atomically act
 snapshot that references it, installs exact tombstone indexes, and removes the same records from
 hot sets. Indeterminate publication or activation fences until reopen. Full cohort records remain
 retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. Passive
-F1 types, known answers, defensive copies, and eligibility selection now exist. No store migration,
-file/segment write, activation, retained lookup, or consumer exists. F2 is format-blocked pending
-the narrow passive-format correction retained in
-[the F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), and a production engine plus real
-power-loss proof remain deferred.
+F1 types, known answers, defensive copies, and eligibility selection now exist. The passive
+[F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated global/
+segment indexes, typed locations/counts, and a distinct generated migration genesis. No store
+migration, file/segment write, activation, retained lookup, or consumer exists; F2 migration and
+full verification are next. A production engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -716,6 +723,13 @@ recovery, update, and cross-job state.
 No claim becomes implemented or validated merely because a mechanism is designed or a prototype
 passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MATRIX.md).
 
+Implementation planning also begins with the
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md). Its closed recommendation,
+trust classification, authority consequences, dependency checklist, and exact consuming slice must
+be recorded before adding a third-party/platform dependency or a new custom primitive. Candidate
+metadata and public conformance suites are planning inputs, not evidence that a Capsule control is
+implemented.
+
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
@@ -725,12 +739,15 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
    generated plan-v0 registration/fetch fixtures with complete field authority.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Resolve the retained ADR-0031/F1
-   [F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), then continue the passive/fault-
-   injectable fixed-store archive oracle into F2's explicit v1-to-v2 migration/full verifier and
+4. Continue from the resolved ADR-0031/F1
+   [F2 format contract](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) into F2's explicit v1-to-v2
+   migration/full verifier, then continue the fault-injectable fixed-store archive oracle and
    run the same logical corpus plus real
    locking, backup, corruption, APFS, and power-loss tests against a named production-engine
    candidate before selecting it.
+   Keep the fixed snapshot as the logical oracle through F2; compare the named SQLite candidate
+   only after F2 and G2 can drive the same fault, corruption, restore, locking, archive, APFS, and
+   power-loss corpus.
 5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 6. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.
@@ -771,7 +788,9 @@ See [Roadmap](ROADMAP.md) for exit evidence.
 
 The scoped comparison, reusable lessons, and deliberately rejected patterns are summarized in
 [Related systems and design influences](RELATED_SYSTEMS.md). Those public references are planning
-inputs, not Capsule implementation evidence or dependency selections.
+inputs, not Capsule implementation evidence or dependency selections. Exact candidate metadata,
+trust/authority classification, recommendations, and consuming acceptance criteria are maintained
+in the [ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md).
 
 - [W3C Decentralized Identifiers v1.0](https://www.w3.org/TR/did-core/)
 - [W3C Decentralized Identifiers v1.1](https://www.w3.org/TR/did-1.1/)

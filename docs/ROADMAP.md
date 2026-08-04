@@ -16,6 +16,12 @@ Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is la
 explicit owned-guest authorization. Installed signing/distribution and independent-builder
 matrices remain separate evidence lanes.
 
+Every phase must consult the
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) before adding a dependency or
+custom primitive. The task records the matching row and closed recommendation and completes the
+dependency-policy checklist. `ADOPT-PLATFORM`, `ADOPT-PINNED`, or `GOVERN/FORK` is a planning
+direction, not product admission or evidence closure.
+
 ## Phase 0: architecture and claim baseline
 
 - Align project, architecture, technical design, threat model, security policy, and ADRs on the
@@ -128,17 +134,20 @@ records and effect checkpoints in that same versioned Supervisor transaction dom
 through E5 now retain passive contracts, explicit fixed-store v1 migration/open validation,
 durable lifecycle transactions, the FakeBackend-only driver, exact 256-active/4,096-retained
 capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evidence. The only
-adapter used is the closed no-guest fake, and the owner/coordinator remains injected in-process. A
+adapter used is the closed no-guest fake. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next backend-independent boundaries are the
-archive F2 format correction and owner-lock G2; E5 supplies neither. Archive F1 now supplies
-passive types, known-answer
-digests, defensive copies, and eligibility selection only. Proposed ADR-0033 selects a pre-created
+product-language/IPC seam or public consumer. The next archive boundary is the F2 migration/full
+verifier; E5 supplies no archive mechanic. Archive F1 plus its passive format correction now supply
+scope-separated global/segment indexes, typed hot/archive locations/counts, a distinct
+migration-genesis checkpoint, generated answers, defensive copies, and eligibility selection only.
+Proposed ADR-0033 selects a pre-created
 enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned local
-descriptor/process corpus. Passive owner-lock G1 now supplies the internal Go/Darwin acquisition
-and owned-temporary-root process/fault oracles only. Owner-required store/startup composition and
-the installed protected-state-root/session/update matrix remain unimplemented.
+descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin acquisition. G2
+now supplies the owner-required current v1/no-guest startup composition, same-session
+store/coordinator, sorted recovery, post-open fencing, and ordered close under owned temporary
+roots. The signed bootstrap and installed protected-state-root/session/update matrix remain
+unimplemented.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive
@@ -149,10 +158,10 @@ Proposed ADR-0031 defines the reviewed archive/compaction semantics and conforma
 expired registration cohorts may move to immutable retained segments
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
-fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 is implemented passively
-and performs no file writing, migration, activation, retained lookup, or consumer behavior. F2's
-explicit v1-to-v2 migration and full verifier remain stopped until the retained format
-contradictions are corrected. Production-engine selection,
+fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and the passive F2 format
+correction are implemented and perform no file writing, migration, activation, retained lookup, or
+consumer behavior. F2's explicit v1-to-v2 migration and full verifier are next under the corrected
+contract. Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
@@ -188,6 +197,14 @@ scaffold was removed in PR #49 under ADR-0027. See the
   F2's explicit migration/full verifier, retaining full closed cohorts and exact tombstone indexes
   without deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
+- Run the bounded production CBOR/COSE dependency comparison from the reuse map before replacing
+  the handwritten conformance oracle: exact graph/license/provenance, object-specific caps and
+  canonical-on-wire wrappers, cross-language fixtures, sustained fuzz/resource bounds, and
+  restoration mutations must pass.
+- After F2 and G2 close their active logical/ownership work, run the single bounded SQLite
+  production-engine comparison from the reuse map. Do not turn the fixed snapshot into an
+  unbounded product store or select a driver before the complete graph and C/native boundary are
+  measured.
 
 Exit evidence:
 

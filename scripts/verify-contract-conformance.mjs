@@ -180,6 +180,9 @@ function contextFixtures(context) {
   if (context.kind === "fixture") {
     return [["context", context.fixture]];
   }
+  if (context.kind === "source-manifest") {
+    return [["source bytes", context.source]];
+  }
   if (context.kind !== "proposal-resolution") {
     if (context.kind === "approval-attempt-state") {
       return [

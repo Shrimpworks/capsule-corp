@@ -17,6 +17,12 @@ const (
 	PlanRegistrationMaxCBORItems         = 33
 	PlanRegistrationMaxCBORMapEntries    = 16
 	PlanRegistrationMaxCBORArrayElements = 0
+	SourceManifestMinCBORBytes           = 87
+	SourceManifestMaxCBORBytes           = 95
+	SourceManifestMaxCBORDepth           = 4
+	SourceManifestMaxCBORItems           = 15
+	SourceManifestMaxCBORMapEntries      = 5
+	SourceManifestMaxCBORArrayElements   = 3
 )
 
 // cborProfile bounds the allocation-independent predecoder for one object
@@ -45,6 +51,14 @@ var planRegistrationCBORProfile = cborProfile{
 	maxArrayElements: PlanRegistrationMaxCBORArrayElements,
 }
 
+var sourceManifestCBORProfile = cborProfile{
+	maxBytes:         SourceManifestMaxCBORBytes,
+	maxDepth:         SourceManifestMaxCBORDepth,
+	maxItems:         SourceManifestMaxCBORItems,
+	maxMapEntries:    SourceManifestMaxCBORMapEntries,
+	maxArrayElements: SourceManifestMaxCBORArrayElements,
+}
+
 // PredecodeExecutionPlanCBOR applies the allocation-independent deterministic
 // CBOR profile for an ExecutionPlan. It does not imply that the bytes have the
 // ExecutionPlan object shape.
@@ -57,6 +71,14 @@ func PredecodeExecutionPlanCBOR(received []byte) error {
 // the bytes have the PlanRegistration object shape.
 func PredecodePlanRegistrationCBOR(received []byte) error {
 	return predecodeCBOR(received, planRegistrationCBORProfile)
+}
+
+// PredecodeSourceManifestCBOR applies the exact passive v0 manifest profile.
+func PredecodeSourceManifestCBOR(received []byte) error {
+	if len(received) < SourceManifestMinCBORBytes {
+		return malformed("SourceManifest is shorter than its minimum canonical encoding")
+	}
+	return predecodeCBOR(received, sourceManifestCBORProfile)
 }
 
 type cborScanner struct {

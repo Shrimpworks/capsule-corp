@@ -14,12 +14,26 @@ const MaxSafeInteger uint64 = 9_007_199_254_740_991
 // ObjectVersion is the closed candidate object-version discriminator.
 type ObjectVersion uint64
 
+// Closed M1 source identifiers remain nominal across their distinct roles.
+type JobProposalMedia string
+type MJSSourceProfileID string
+type MJSSourceMemberMedia string
+type SourceManifestMedia string
+type MJSMainLogicalPath string
+type MJSMainEntrypoint string
+
 // CandidateObjectVersion is the only object version this decoder accepts; any other value is unsupported protocol.
 const CandidateObjectVersion ObjectVersion = 0
 
 const (
+	JobProposalMediaType       = "application/capsule.job-proposal+json;v=0"
 	ExecutionPlanObjectType    = "capsule.execution-plan"
 	PlanRegistrationObjectType = "capsule.plan-registration"
+	SourceManifestObjectType   = "capsule.source-manifest"
+	MJSSourceProfile           = "capsule.mjs-source/v0"
+	MJSSourceMediaType         = "application/capsule.javascript-source;v=0;module=esm"
+	SourceManifestMediaType    = "application/capsule.source-manifest+cbor;v=0"
+	MJSMainPath                = "main.mjs"
 )
 
 // InstallationID, RegistrationID, and SupervisorID are distinct nominal
@@ -38,6 +52,7 @@ type SupervisorID [16]byte
 type ExecutionPlanDigest [32]byte
 type TrustEpochDigest [32]byte
 type SourceManifestDigest [32]byte
+type SourceContentDigest [32]byte
 type InlineInputDigest [32]byte
 type RuntimeBundleManifestDigest [32]byte
 type ProfileReviewAttestationDigest [32]byte
@@ -46,6 +61,23 @@ type BackendValidationRecordDigest [32]byte
 type BackendConfigurationDigest [32]byte
 type TrustSnapshotDigest [32]byte
 type PolicyDecisionDigest [32]byte
+
+// SourceManifestMember is the sole passive main.mjs member projection.
+type SourceManifestMember struct {
+	LogicalPath   MJSMainLogicalPath
+	ContentDigest SourceContentDigest
+	ByteLength    UInt53
+}
+
+// SourceManifest is the exact passive v0 single-member source identity. It
+// grants no plan, registration, approval, runtime, or execution authority.
+type SourceManifest struct {
+	ObjectType          string
+	ObjectVersion       ObjectVersion
+	Entrypoint          MJSMainEntrypoint
+	Members             []SourceManifestMember
+	AggregateByteLength UInt53
+}
 
 // UInt53 is an unsigned integer bounded to the safe-integer range (0 through MaxSafeInteger).
 type UInt53 uint64
@@ -150,6 +182,10 @@ func NewTrustEpochDigest(value []byte) (TrustEpochDigest, error) {
 
 func NewSourceManifestDigest(value []byte) (SourceManifestDigest, error) {
 	return newDigest[SourceManifestDigest](value, "source-manifest")
+}
+
+func NewSourceContentDigest(value []byte) (SourceContentDigest, error) {
+	return newDigest[SourceContentDigest](value, "source-content")
 }
 
 func NewInlineInputDigest(value []byte) (InlineInputDigest, error) {

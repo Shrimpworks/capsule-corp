@@ -14,7 +14,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 262, fixtureCount: 368, ruleCount: 82 });
+  assert.deepEqual(result, { caseCount: 330, fixtureCount: 433, ruleCount: 89 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -123,6 +123,25 @@ test("retains independently specified source-manifest and canonical-input known 
     assert.deepEqual(encodeSourceManifestForTest(proposal.source), sourceManifest, path);
     assert.deepEqual(canonicalInlineJsonForTest(proposal.input.value), canonicalInlineInput, path);
   }
+});
+
+test("retains the independently specified M1 source-manifest foundation known answer", async () => {
+  const source = await corpusBytes("mjs-source/ordinary.mjs");
+  const manifest = await corpusBytes("mjs-source-manifest/ordinary.cbor");
+  const expectedHex =
+    "a5017763617073756c652e736f757263652d6d616e6966657374020003686d61696e2e6d6a73048183686d61696e2e6d6a7358202412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d751839051839";
+
+  assert.equal(source.length, 57);
+  assert.equal(
+    sha256Hex(source),
+    "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+  );
+  assert.equal(manifest.length, 89);
+  assert.equal(manifest.toString("hex"), expectedHex);
+  assert.equal(
+    sha256Hex(manifest),
+    "052dce0c353e1efeb70f93405a8757ef6fa4d29f91a4d6bcaa67d00c45abc0d6",
+  );
 });
 
 test("retains independently specified execution-plan and registration known answers", async () => {

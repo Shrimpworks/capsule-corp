@@ -18,6 +18,8 @@
       "!!schemas/conformance/v0/canonical-inline-input",
       "!!schemas/conformance/v0/contexts",
       "!!schemas/conformance/v0/job-proposal",
+      "!!schemas/conformance/v0/mjs-source",
+      "!!schemas/conformance/v0/mjs-source-manifest",
       "!!schemas/conformance/v0/source-manifest",
       "!!schemas/conformance/typescript-approved-byte-v0",
       "!!**/.codex/skills",

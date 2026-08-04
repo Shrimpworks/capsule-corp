@@ -47,6 +47,111 @@
       ]
     },
     {
+      "id": "mjs-source.closed-identifiers",
+      "source": "ADR-0034#exact-source-profile",
+      "description": "The passive source foundation closes profile, member media, manifest media, path, and entrypoint values.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "mjs-source.byte-length",
+      "source": "ADR-0034#exact-source-profile",
+      "description": "Exact main.mjs bytes are 0 through 262144 bytes inclusive.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "mjs-source.utf8-bom",
+      "source": "ADR-0034#exact-source-profile",
+      "description": "main.mjs is strict UTF-8 and does not begin with a UTF-8 BOM.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "mjs-source.byte-identity",
+      "source": "ADR-0034#canonical-source-identity",
+      "description": "Newline, Unicode, embedded-BOM, and trailing-newline bytes are retained without rewriting.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "source-manifest.exact-cbor",
+      "source": "ADR-0034#canonical-source-identity",
+      "description": "SourceManifest v0 is the exact deterministic-CBOR single-member source identity.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "exact-maximum"
+        },
+        {
+          "decision": "reject",
+          "variant": "cap-plus-one"
+        }
+      ]
+    },
+    {
+      "id": "source-manifest.closed-shape-binding",
+      "source": "ADR-0034#canonical-source-identity",
+      "description": "Object role, version, member count/path/digest/length, aggregate length, and map order are closed and source-bound.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
+      "id": "mjs-source.language-validator-hold",
+      "source": "ADR-0034#closed-module-loading-policy",
+      "description": "Live module requests and CommonJS must refuse, but the separately reviewed exact ECMAScript parser boundary is unimplemented.",
+      "requiredCases": [
+        {
+          "decision": "accept",
+          "variant": "ordinary"
+        },
+        {
+          "decision": "reject",
+          "variant": "malformed"
+        }
+      ]
+    },
+    {
       "id": "job-proposal.raw.bytes",
       "source": "ADR-0023#strict-jobproposal-raw-profile",
       "description": "Raw JSON is at most 2,097,152 bytes.",
@@ -1712,6 +1817,2199 @@
         "go": "verified",
         "typescript": "pending",
         "swift": "not-applicable"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.profile",
+      "description": "Accept the exact profile value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "media-type",
+      "mediaType": "capsule.mjs-source/v0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/profile-exact.txt",
+        "sha256": "521e7129291447cf142b04bb32485bfef683c7d0a460259aaee430e098608231",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.profile-reject",
+      "description": "Reject the closed profile value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "media-type",
+      "mediaType": "capsule.mjs-source/v1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/profile-reject.txt",
+        "sha256": "aef48141df4d4918c6fb79489c3401c060fbff578f4a3a097e0e9df18ec78e2a",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.member-media",
+      "description": "Accept the exact member-media value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/member-media-exact.txt",
+        "sha256": "5ff3f5f0206444597c5b004040ed5137b55364dbfade1df34e4ea11360f974e2",
+        "byteLength": 52
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.member-media-reject",
+      "description": "Reject the closed member-media value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "media-type",
+      "mediaType": "application/typescript",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/member-media-reject.txt",
+        "sha256": "582143ac22d488ecab3a722fc4b23bd4d6b0a200bb030b58e374a229b1490d76",
+        "byteLength": 22
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.manifest-media",
+      "description": "Accept the exact manifest-media value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-manifest/media-exact.txt",
+        "sha256": "5aec01c32e46b9de69b1798507e0d3794dc33118ebc7b1cf54f0382e72b80b8e",
+        "byteLength": 44
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.closed-identifiers.manifest-media-reject",
+      "description": "Reject the closed manifest-media value.",
+      "ruleIds": [
+        "mjs-source.closed-identifiers"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "media-type",
+      "mediaType": "application/capsule.source-manifest+cbor;v=1",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/media-reject.txt",
+        "sha256": "af7dc915181171e108601ca7743114ef8ce5e579e201081cc7cec4bc7a9b99ea",
+        "byteLength": 44
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-length.minimum",
+      "description": "Accept the minimum source-byte case.",
+      "ruleIds": [
+        "mjs-source.byte-length"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "minimum",
+      "fixture": {
+        "path": "mjs-source/minimum.mjs",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "byteLength": 0
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-length.ordinary",
+      "description": "Accept the ordinary source-byte case.",
+      "ruleIds": [
+        "mjs-source.byte-length"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/ordinary.mjs",
+        "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+        "byteLength": 57
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-length.exact-maximum",
+      "description": "Accept the exact-maximum source-byte case.",
+      "ruleIds": [
+        "mjs-source.byte-length"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "mjs-source/exact-maximum.mjs",
+        "sha256": "dd3dde87623d9a6b354c68c943d189c89c63652d945e7bbdf0986cae91a49521",
+        "byteLength": 262144
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-length.cap-plus-one",
+      "description": "Reject the cap-plus-one source-byte case.",
+      "ruleIds": [
+        "mjs-source.byte-length"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "mjs-source/cap-plus-one.mjs",
+        "sha256": "c592f4a6b099700b5050ce8bc67367f0c8f44810203124e86405c3e7b6f1a2ba",
+        "byteLength": 262145
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.utf8-bom.invalid-utf8",
+      "description": "Reject invalid utf8 source bytes.",
+      "ruleIds": [
+        "mjs-source.utf8-bom"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/invalid-utf8.mjs",
+        "sha256": "8dd06b5ab6b594257e41b7d8dd440a4062eddc67fdab5c13b4dc300176896f6e",
+        "byteLength": 2
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.utf8-bom.unpaired-surrogate-utf8",
+      "description": "Reject unpaired surrogate utf8 source bytes.",
+      "ruleIds": [
+        "mjs-source.utf8-bom"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/unpaired-surrogate-utf8.mjs",
+        "sha256": "91a681b998555fb475479817b126c94e57e52011fa1842c5d188795a4a05226b",
+        "byteLength": 3
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.utf8-bom.leading-bom",
+      "description": "Reject leading bom source bytes.",
+      "ruleIds": [
+        "mjs-source.utf8-bom"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/leading-bom.mjs",
+        "sha256": "1951c7860e968e742658b3af34e60741eb4aaf2a8d2ecc3993727016b12e81e8",
+        "byteLength": 4
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.utf8-bom.ordinary",
+      "description": "Accept ordinary strict UTF-8 without a leading BOM.",
+      "ruleIds": [
+        "mjs-source.utf8-bom"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/ordinary.mjs",
+        "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+        "byteLength": 57
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.lf",
+      "description": "Retain the lf bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-lf.mjs",
+        "sha256": "d0b91dd7da1bffa98c36f8c8d312fedba54e27c4860e4050c7a04415af7a1b1f",
+        "byteLength": 22
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.crlf",
+      "description": "Retain the crlf bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-crlf.mjs",
+        "sha256": "feac2c9a071446626f23bf6b373fd61309c6ec6cccecdeafb6743a3e5eb16ba1",
+        "byteLength": 23
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.lone-cr",
+      "description": "Retain the lone cr bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-lone-cr.mjs",
+        "sha256": "984bf409dd597669732f0af53583733186244ab0a65799a04a92bba4142954b4",
+        "byteLength": 22
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.line-separator",
+      "description": "Retain the line separator bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-line-separator.mjs",
+        "sha256": "0450b914d148017ac418bb742190cbbb3e6ecd52f2a0ff9932a135b28d199b3b",
+        "byteLength": 23
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.paragraph-separator",
+      "description": "Retain the paragraph separator bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-paragraph-separator.mjs",
+        "sha256": "1a70b72c61222361fc0bb29b986081a4f8ec19b5df2f44bb492237286bd33ded",
+        "byteLength": 23
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.composed",
+      "description": "Retain the composed bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-composed.mjs",
+        "sha256": "4022a659a97ad9f07a71833d995a4dbf82b9d6b57b76905400b94f0eeadad72d",
+        "byteLength": 20
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.decomposed",
+      "description": "Retain the decomposed bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-decomposed.mjs",
+        "sha256": "bc62e1443baf86a462f5461f14ffbcdfeec4c5b84d081c320869ec53df4de009",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.embedded-bom",
+      "description": "Retain the embedded bom bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-embedded-bom.mjs",
+        "sha256": "c2795b7db92907528ddfaf4af3a34ccb6f80a7af1020ca0f1185706a892b6c2b",
+        "byteLength": 23
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.no-trailing-newline",
+      "description": "Retain the no trailing newline bytes exactly.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/identity-no-trailing-newline.mjs",
+        "sha256": "e12440ccce35d02f329626306331c7dfc03ed899304d6f7946a192a3ef3020d5",
+        "byteLength": 19
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-byte-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.byte-identity.digest-mutation",
+      "description": "Reject a manifest digest after a one-byte source identity change.",
+      "ruleIds": [
+        "mjs-source.byte-identity"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-identity-digest.cbor",
+        "sha256": "ba4f52b5cfa3c0dec1bc40a231868c123c7e269625105787b7c2e4af00385bd1",
+        "byteLength": 87
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/identity-lf.mjs",
+          "sha256": "d0b91dd7da1bffa98c36f8c8d312fedba54e27c4860e4050c7a04415af7a1b1f",
+          "byteLength": 22
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.exact-cbor.minimum",
+      "description": "Accept the exact minimum SourceManifest.",
+      "ruleIds": [
+        "source-manifest.exact-cbor"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "minimum",
+      "fixture": {
+        "path": "mjs-source-manifest/minimum.cbor",
+        "sha256": "b29a880488898dbac54c5890ec56b97a8aca461cbf6585af60fa3a56bc9e9044",
+        "byteLength": 87
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/minimum.mjs",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "byteLength": 0
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.exact-cbor.ordinary",
+      "description": "Accept the exact ordinary SourceManifest.",
+      "ruleIds": [
+        "source-manifest.exact-cbor"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-manifest/ordinary.cbor",
+        "sha256": "052dce0c353e1efeb70f93405a8757ef6fa4d29f91a4d6bcaa67d00c45abc0d6",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.exact-cbor.exact-maximum",
+      "description": "Accept the exact exact-maximum SourceManifest.",
+      "ruleIds": [
+        "source-manifest.exact-cbor"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "exact-maximum",
+      "fixture": {
+        "path": "mjs-source-manifest/exact-maximum.cbor",
+        "sha256": "21b9b521ed0ab6973be563b14f1eae4591097423e17d4d00ba0025c3fe4298d8",
+        "byteLength": 95
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/exact-maximum.mjs",
+          "sha256": "dd3dde87623d9a6b354c68c943d189c89c63652d945e7bbdf0986cae91a49521",
+          "byteLength": 262144
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.exact-cbor.cap-plus-one-raw",
+      "description": "Reject a 96-byte SourceManifest raw encoding.",
+      "ruleIds": [
+        "source-manifest.exact-cbor"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "mjs-source-manifest/cap-plus-one.cbor",
+        "sha256": "cef559b3adf96840e5e58b3844590556bb30ab5bfebebefcdd9725233b83a5a9",
+        "byteLength": 96
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/exact-maximum.mjs",
+          "sha256": "dd3dde87623d9a6b354c68c943d189c89c63652d945e7bbdf0986cae91a49521",
+          "byteLength": 262144
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.exact-cbor.cap-plus-one-source",
+      "description": "Reject source bytes above the source cap before manifest binding.",
+      "ruleIds": [
+        "source-manifest.exact-cbor"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "cap-plus-one",
+      "fixture": {
+        "path": "mjs-source-manifest/ordinary.cbor",
+        "sha256": "052dce0c353e1efeb70f93405a8757ef6fa4d29f91a4d6bcaa67d00c45abc0d6",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/cap-plus-one.mjs",
+          "sha256": "c592f4a6b099700b5050ce8bc67367f0c8f44810203124e86405c3e7b6f1a2ba",
+          "byteLength": 262145
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.object-type",
+      "description": "Reject the object type mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-object-type.cbor",
+        "sha256": "41a73d05dc11c7efa6c17a0335f5b533b86ae5097488aa136f75adffc46619d7",
+        "byteLength": 88
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.object-version",
+      "description": "Reject the object version mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-object-version.cbor",
+        "sha256": "a2a56f19e9d89f16513332c04e431942755e0e1c208afee266e5dc2937838607",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "UNSUPPORTED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.entrypoint",
+      "description": "Reject the entrypoint mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-entrypoint.cbor",
+        "sha256": "6b6477f23d5a402fcdd838611c0a22c3dfbe773cf7faf4ffe0a7ef82219d68cf",
+        "byteLength": 90
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.member-path",
+      "description": "Reject the member path mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-member-path.cbor",
+        "sha256": "6a792104a0efc33ef31885d013aaaaf2d893909430905dad0fe0f72a6d864c9d",
+        "byteLength": 90
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.member-count",
+      "description": "Reject the member count mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-member-count.cbor",
+        "sha256": "34fb5bf8856cb871141a55206ff8f05f6feba2addd573dbcf1c594c2717791ab",
+        "byteLength": 43
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.digest",
+      "description": "Reject the digest mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-digest.cbor",
+        "sha256": "8ad346ea79ac6ca0e78c3ef5e0da87cc2999967528ce9a6db07357e0f135903e",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.cross-role-digest",
+      "description": "Reject the cross role digest mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-cross-role-digest.cbor",
+        "sha256": "8671b524c56d9003539ecbb6ff3f5f7309a813dc97cdd9a5baab0602a5bbd578",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.member-length",
+      "description": "Reject the member length mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-member-length.cbor",
+        "sha256": "579c361b5d0edb46d776ffac490d434329b2cc08079ab3c0aed98f6e0283f14a",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.aggregate-length",
+      "description": "Reject the aggregate length mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-aggregate-length.cbor",
+        "sha256": "e05d1908aa95d579209dba9e2f2f379956a10936fe7a43de08743f55bdb17e62",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "DOMAIN",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.map-order",
+      "description": "Reject the map order mutation.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source-manifest/reject-map-order.cbor",
+        "sha256": "3e2aca8e46170af9a7b373c268ad889306bf6121c0aaeaefcbf6196b58ac80f5",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "source-manifest.closed-shape-binding.ordinary",
+      "description": "Accept the exact ordinary single-member manifest and source binding.",
+      "ruleIds": [
+        "source-manifest.closed-shape-binding"
+      ],
+      "object": "SourceManifest",
+      "wireFormat": "cbor",
+      "mediaType": "application/capsule.source-manifest+cbor;v=0",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source-manifest/ordinary.cbor",
+        "sha256": "052dce0c353e1efeb70f93405a8757ef6fa4d29f91a4d6bcaa67d00c45abc0d6",
+        "byteLength": 89
+      },
+      "context": {
+        "kind": "source-manifest",
+        "source": {
+          "path": "mjs-source/ordinary.mjs",
+          "sha256": "2412c601eb0977eac9a5d4d30f459f48ab787c3f80551e080c38103543d89d75",
+          "byteLength": 57
+        }
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "source-manifest-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "verified",
+        "typescript": "verified",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.property-import-meta",
+      "description": "Accept property import meta only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/language-hold-property-import-meta.mjs",
+        "sha256": "9328f4f497d8615dbff886fa141f4531a37dd4eca7c5293012744568d1f93dc1",
+        "byteLength": 17
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.method-import",
+      "description": "Accept method import only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/language-hold-method-import.mjs",
+        "sha256": "87e3e4470ff42c9ea7f33ada365a3677e307b3598dace1dd5c05db3be698e6c2",
+        "byteLength": 19
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.template-interpolation-import",
+      "description": "Reject template interpolation import only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-template-interpolation-import.mjs",
+        "sha256": "ce6ea8f685f6d84fe2476e7db953ea659240785e2721e0e4fbcee9749a7b81f4",
+        "byteLength": 47
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.eval-string-data",
+      "description": "Accept eval string data only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/language-hold-eval-string-data.mjs",
+        "sha256": "9b89c1cbf0cb542cab03b271a5224e4cbc86be1671761deedf8fd1dcd9806dd6",
+        "byteLength": 30
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.division-regexp-counterexample",
+      "description": "Reject division regexp counterexample only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-division-regexp-counterexample.mjs",
+        "sha256": "f5d7998154870fabd6f99ccc53c88e4f9edbe82bf50d63abd8e5db6138b663a1",
+        "byteLength": 45
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.static-import",
+      "description": "Reject static import only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-static-import.mjs",
+        "sha256": "ad05f9160760122a37b1b42df1bcf10a1c4635fcd52357d57c7cbaed34186a11",
+        "byteLength": 32
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.side-effect-import",
+      "description": "Reject side effect import only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-side-effect-import.mjs",
+        "sha256": "ecc69fcf2b72b3d11d965b40d7fa4a39797c3a2aabd6134f41d2c987383921c3",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.export-from",
+      "description": "Reject export from only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-export-from.mjs",
+        "sha256": "f630d6ce720ab59b5e1c35ba5e57191a48319eb97440fbe3918c31fe2d1481c4",
+        "byteLength": 36
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.export-star",
+      "description": "Reject export star only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-export-star.mjs",
+        "sha256": "a6678b882109909bc79804e5c9064d3eb88ae49a184f5e267e0a29463215b94c",
+        "byteLength": 28
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.import-meta",
+      "description": "Reject import meta only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-import-meta.mjs",
+        "sha256": "56c52866834e54fe37a2c43a1be0881e18bf56bb9933cbd1f80903427acd8417",
+        "byteLength": 27
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-absolute",
+      "description": "Reject specifier absolute only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-absolute.mjs",
+        "sha256": "0322e63cd297a01087b977f0ddbe528cda3d09d2438c2b9903bd680ba53a05f7",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-bare",
+      "description": "Reject specifier bare only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-bare.mjs",
+        "sha256": "e0a88136daac69a1175b36adbc81df30888b22260886a750dd7c008ac7a81769",
+        "byteLength": 16
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-node",
+      "description": "Reject specifier node only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-node.mjs",
+        "sha256": "578831f89a74e01acd670de816d6aa5dbc3bed18889f2e5c0a11f863a0795124",
+        "byteLength": 19
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-npm",
+      "description": "Reject specifier npm only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-npm.mjs",
+        "sha256": "98b0cc6daa01075073dfec85862d3932823eb3849836c35c904a1a60d8a66d38",
+        "byteLength": 20
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-http",
+      "description": "Reject specifier http only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-http.mjs",
+        "sha256": "1ef13c1e4b0838e0723a00c48226a7353bff1926df54dd827c096db6ea8d97da",
+        "byteLength": 35
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-https",
+      "description": "Reject specifier https only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-https.mjs",
+        "sha256": "d8b27dc77cc5094bd09dcc4c70bd83cea76da190cc0288909bf9bf40f02a7c95",
+        "byteLength": 36
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-data",
+      "description": "Reject specifier data only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-data.mjs",
+        "sha256": "65bbc0ea60b551f5c27915cc0c43f66eeae4a402920bac6d9e9b68ffd378a621",
+        "byteLength": 41
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-blob",
+      "description": "Reject specifier blob only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-blob.mjs",
+        "sha256": "5c30fe5817637cfee835ab9aa6efd1c132b4e875c98bb54a8648aad7ef09edf7",
+        "byteLength": 23
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-file",
+      "description": "Reject specifier file only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-file.mjs",
+        "sha256": "bb07ed52bfe84e902e8a7b91c7b02a2b4a2598c1692142704438e6d712676c81",
+        "byteLength": 28
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.specifier-capsule",
+      "description": "Reject specifier capsule only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-specifier-capsule.mjs",
+        "sha256": "c167dbcfd8a1a25989265f79164d0e89ef1300afa998142febbb65cf5a3b5a90",
+        "byteLength": 24
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-require",
+      "description": "Reject commonjs require only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-require.mjs",
+        "sha256": "44485fdd7e95cf42ac33d888c8a8ef69d72e25598725db6454844a2e4454e756",
+        "byteLength": 31
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-require-resolve",
+      "description": "Reject commonjs require resolve only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-require-resolve.mjs",
+        "sha256": "e651af8fde44e8f26a91e173ca58137506c59251ed63f71123b8c3dce339b662",
+        "byteLength": 25
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-module-exports",
+      "description": "Reject commonjs module exports only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-module-exports.mjs",
+        "sha256": "8222b8169ee86f25cdccd84d340340060ae3f0cff55e2ea9d344d7c332733b71",
+        "byteLength": 21
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-exports",
+      "description": "Reject commonjs exports only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-exports.mjs",
+        "sha256": "58ed80237f90130317f771ecd7947b0fcdee9ddc43f64124d2d66fa5300b759b",
+        "byteLength": 19
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-dirname",
+      "description": "Reject commonjs dirname only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-dirname.mjs",
+        "sha256": "70f9fc3ac2057d9d1333565c82631ce28f62e165001065ee3bdbccc611a8360e",
+        "byteLength": 25
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.commonjs-filename",
+      "description": "Reject commonjs filename only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "malformed",
+      "fixture": {
+        "path": "mjs-source/language-hold-commonjs-filename.mjs",
+        "sha256": "55b4ab8534157a2a34addf51a5f414bb141d029ee0ffc9b216b1afb6fd451489",
+        "byteLength": 26
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "reject",
+        "classification": "SEMANTIC",
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.local-export",
+      "description": "Accept local export only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/language-hold-local-export.mjs",
+        "sha256": "0489451e8c21cf12663b93f272e3ad33f39ac62c552f5af9a79507a2ee61c476",
+        "byteLength": 35
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
+      }
+    },
+    {
+      "id": "mjs-source.language-validator-hold.noncode-spellings",
+      "description": "Accept noncode spellings only after the parser boundary is implemented.",
+      "ruleIds": [
+        "mjs-source.language-validator-hold"
+      ],
+      "object": "MjsSource",
+      "wireFormat": "raw-bytes",
+      "mediaType": "application/capsule.javascript-source;v=0;module=esm",
+      "variant": "ordinary",
+      "fixture": {
+        "path": "mjs-source/language-hold-noncode-spellings.mjs",
+        "sha256": "2a13c56546e92c798f25e8398a0c627b97a7f0c115d5478b882776ce25260032",
+        "byteLength": 72
+      },
+      "context": {
+        "kind": "none"
+      },
+      "expected": {
+        "decision": "accept",
+        "classification": null,
+        "owner": "mjs-source-language-validator",
+        "authorityStateChanged": false
+      },
+      "implementations": {
+        "fixture-integrity": "verified",
+        "go": "pending",
+        "typescript": "pending",
+        "swift": "pending"
       }
     },
     {

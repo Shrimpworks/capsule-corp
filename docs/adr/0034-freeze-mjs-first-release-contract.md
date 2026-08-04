@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-03
+- Implementation hold recorded: 2026-08-04
 - Refines: ADR-0011, ADR-0017, ADR-0023, ADR-0028, and ADR-0029
 - Defers for a conditional later release: ADR-0026, ADR-0030, and ADR-0032
 
@@ -84,6 +85,22 @@ closed. Parser selection and runtime enforcement remain unimplemented blockers. 
 defensive review of the validation boundary itself, including concrete false-accept/false-refusal
 counterexamples and a parser-selection recommendation, is retained in
 [`.mjs` module-request validation boundary review](../MJS_VALIDATION_BOUNDARY_REVIEW.md).
+
+#### M1 validator implementation hold
+
+The first M1 implementation attempt independently reproduced a division-versus-regexp grammar
+counterexample in which a lightweight token scanner accepted live `import()` syntax. The exact
+bytes, observations, and decision are retained in the
+[M1 ECMAScript module-request validator hold](../MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). The scanner
+is not retained, TypeScript or another broad parser is not added as an unreviewed shortcut, and the
+closed no-module-request contract is unchanged.
+
+Only the separable passive source-byte and deterministic-CBOR SourceManifest foundation may land
+while this hold is active. JobProposal narrowing, semantic resolution and plan construction for
+this profile, M2/S1 registration/fetch activation, custody, approval, staging, and runtime work are
+blocked until a separate reviewed decision selects an exact pinned/governed bounded ECMAScript
+parser/validation boundary. Syntax validation treats `eval("import(...)")` as string data and can
+never substitute for the separately admitted runtime no-loader enforcement required below.
 
 ### Canonical source identity
 
@@ -261,8 +278,9 @@ After
 
 The next work is dependency-ordered and independently testable:
 
-1. **M1 proposal/source fixtures:** atomically narrow the passive `JobProposal` schema and semantic
-   resolver to one `main.mjs`, add exact UTF-8/BOM/newline/Unicode and zero/exact/cap-plus-one
+1. **M1 proposal/source fixtures:** after the parser-boundary hold above is resolved, atomically
+   narrow the passive `JobProposal` schema and semantic resolver to one `main.mjs`, add exact
+   UTF-8/BOM/newline/Unicode and zero/exact/cap-plus-one
    vectors, module-request refusals, the canonical 87/95-byte manifest boundaries, defensive
    copies, and the source-manifest field-authority target. Replace—not supplement—the old active
    `.js`/`.cjs`/`.ts`/`.mts`/`.cts` accepts.
@@ -295,9 +313,10 @@ claim that no consumer, authenticated IPC, runtime/backend, or guest is implemen
   smaller approval, custody, parsing, IPC, and runtime surface.
 - Exact source custody becomes part of registration and Broker fetch, increasing the proposed XPC
   data budget; passive generated-cap and fault evidence is required before implementation.
-- A bounded non-executing module-request validator, Supervisor source-store projection, independent
-  Broker validation/rendering, source transport framing, and runtime no-loader evidence remain
-  unimplemented.
+- The source-byte/SourceManifest foundation is passive; the bounded non-executing module-request
+  validator remains on the retained grammar-counterexample hold. Supervisor source-store
+  projection, independent Broker validation/rendering, source transport framing, and runtime
+  no-loader evidence remain unimplemented.
 - ADR-0019 wrapper acceptance, ADR-0029 installed identity/session evidence, production Supervisor
   archive/owner/store work, approval key authorization, runtime/profile admission, libkrun/launcher/
   transport composition, content/evidence paths, and every guest/backend gate remain independent

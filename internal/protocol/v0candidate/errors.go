@@ -14,6 +14,7 @@ const (
 	ClassificationMalformed   Classification = "MALFORMED"
 	ClassificationUnsupported Classification = "UNSUPPORTED"
 	ClassificationSchema      Classification = "SCHEMA"
+	ClassificationSemantic    Classification = "SEMANTIC"
 	ClassificationDomain      Classification = "DOMAIN"
 )
 
@@ -56,6 +57,10 @@ func unsupported(detail string) error {
 
 func schema(detail string) error {
 	return classified(ClassificationSchema, detail)
+}
+
+func semantic(detail string) error {
+	return classified(ClassificationSemantic, detail)
 }
 
 func domain(detail string) error {

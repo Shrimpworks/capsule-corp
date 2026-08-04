@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { addApprovalAttemptRulesAndCases } from "./generate-approval-attempt-conformance-fixtures.mjs";
+import { addMjsSourceFoundationRulesAndCases } from "./generate-mjs-source-foundation-conformance-fixtures.mjs";
 import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
@@ -34,6 +35,7 @@ const cases = [];
 const fixtures = new Map();
 
 addMediaTypeRulesAndCases();
+addMjsSourceFoundationRulesAndCases({ addCase, addRule, cborEncode, retainFixture });
 addJsonRulesAndCases();
 addScalarRulesAndCases();
 addCborRulesAndCases();
@@ -54,19 +56,61 @@ addApprovalAttemptRulesAndCases({
   retainFixture,
 });
 
-await mkdir(sharedDirectory, { recursive: true });
-for (const [path, bytes] of [...fixtures].sort(([left], [right]) => left.localeCompare(right))) {
-  const destination = new URL(path, corpusRoot);
-  await mkdir(new URL("./", destination), { recursive: true });
-  await writeFile(destination, bytes);
-}
-await writeFile(
-  new URL("manifest.json", corpusRoot),
+const manifestBytes = utf8(
   `${JSON.stringify({ manifestVersion: "capsule.conformance/v0", rules, cases }, null, 2)}\n`,
 );
+if (process.argv.includes("--check")) {
+  await checkGeneratedCorpus(manifestBytes);
+} else {
+  await mkdir(sharedDirectory, { recursive: true });
+  for (const [path, bytes] of [...fixtures].sort(([left], [right]) => left.localeCompare(right))) {
+    const destination = new URL(path, corpusRoot);
+    await mkdir(new URL("./", destination), { recursive: true });
+    await writeFile(destination, bytes);
+  }
+  await writeFile(new URL("manifest.json", corpusRoot), manifestBytes);
+}
 process.stdout.write(
-  `generated conformance corpus: ${rules.length} rules, ${cases.length} cases, ${fixtures.size} fixtures\n`,
+  `${process.argv.includes("--check") ? "verified" : "generated"} conformance corpus: ${rules.length} rules, ${cases.length} cases, ${fixtures.size} fixtures\n`,
 );
+
+async function checkGeneratedCorpus(expectedManifest) {
+  const expected = new Map(fixtures);
+  expected.set("manifest.json", expectedManifest);
+  const actualPaths = await listGeneratedCorpusFiles(corpusRoot);
+  const expectedPaths = [...expected.keys()].sort();
+  if (JSON.stringify(actualPaths) !== JSON.stringify(expectedPaths)) {
+    const actual = new Set(actualPaths);
+    const wanted = new Set(expectedPaths);
+    const extra = actualPaths.filter((path) => !wanted.has(path));
+    const missing = expectedPaths.filter((path) => !actual.has(path));
+    throw new Error(
+      `generated conformance corpus file set is stale; extra=${JSON.stringify(extra)} missing=${JSON.stringify(missing)}`,
+    );
+  }
+  for (const path of expectedPaths) {
+    const actual = await readFile(new URL(path, corpusRoot));
+    if (!actual.equals(Buffer.from(expected.get(path)))) {
+      throw new Error(`generated conformance fixture is stale: ${path}`);
+    }
+  }
+}
+
+async function listGeneratedCorpusFiles(root) {
+  const paths = [];
+  await visit(root, "");
+  return paths.sort();
+
+  async function visit(directory, prefix) {
+    for (const entry of await readdir(directory, { withFileTypes: true })) {
+      const path = prefix.length === 0 ? entry.name : `${prefix}/${entry.name}`;
+      if (path === "manifest.schema.json") continue;
+      if (entry.isDirectory()) await visit(new URL(`${entry.name}/`, directory), path);
+      else if (entry.isFile()) paths.push(path);
+      else throw new Error(`unexpected generated corpus entry: ${path}`);
+    }
+  }
+}
 
 function addMediaTypeRulesAndCases() {
   const profiles = [

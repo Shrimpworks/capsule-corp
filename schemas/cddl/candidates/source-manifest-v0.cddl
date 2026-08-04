@@ -1,0 +1,21 @@
+; Capsule single-member SourceManifest v0 passive candidate.
+; Evaluate with common-v0.cddl. The exact deterministic-CBOR bytes and their
+; SHA-256 digest are the manifest identity. The source bytes remain a separate
+; retained object and are never inferred from a path or digest alone.
+
+capsule-source-manifest-v0 = {
+  1: "capsule.source-manifest", ; objectType
+  2: 0, ; objectVersion
+  3: "main.mjs", ; entrypoint
+  4: [capsule-source-manifest-member-v0], ; exact single member
+  ; field-authority-nested: 4/*/1
+  ; field-authority-nested: 4/*/2
+  ; field-authority-nested: 4/*/3
+  5: 0..262144, ; aggregate byte length
+}
+
+capsule-source-manifest-member-v0 = [
+  "main.mjs", ; logical path
+  capsule-sha256-v0, ; SHA-256 over exact main.mjs bytes
+  0..262144, ; exact main.mjs byte length
+]

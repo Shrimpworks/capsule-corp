@@ -119,13 +119,14 @@ verification. The manifest should begin with the passive candidate objects and e
 the coordinated versioned migrations that add new target fields; it must not extend the deprecated
 mixed `Job` model.
 
-The first passive implementation now retains a closed 164-field manifest across 15 selected
+The first passive implementation now retains a closed 172-field manifest across 16 selected
 targets: the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` candidates;
 the passive approval reference, attempt reference, durable approval record, and immutable attempt;
-and the TypeScript approved-byte object family plus its future-plan source-binding projection.
+the TypeScript approved-byte object family plus its future-plan source-binding projection; and the
+single-member MJS `SourceManifest` including its nested path/digest/length fields.
 Repository verification compares those classifications directly with the current JSON Schema,
 numbered CDDL maps, and version-marked Go passive structs. Focused mutations prove rejection of a
-missing field, unknown classification, duplicate path, stale object version, and classification
+missing field (including a nested member field), unknown classification, duplicate path, stale object version, and classification
 for a field absent from its canonical target. The durable approval envelope digest is classified
 as evidence-only and never as replay or ledger authority.
 
@@ -159,7 +160,9 @@ the executable role and may never transform from an original-only digest after a
 ADR-0032 selects a separately enrolled Source Preparer and immutable source store as the
 conditional later TypeScript topology. Accepted ADR-0034 removes that path from the first-release
 critical path: plan v0 binds one canonical single-member `SourceManifest` and exact pass-through
-`main.mjs` bytes. TypeScript remains unimplemented and would still require the atomic plan-v1
+`main.mjs` bytes. The byte/manifest foundation is passive; JobProposal narrowing and plan
+construction remain blocked by the M1 source-language parser-boundary hold. TypeScript remains
+unimplemented and would still require the atomic plan-v1
 cutover if later selected.
 
 ## V0 proposal shape

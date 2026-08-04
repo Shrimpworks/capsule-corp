@@ -6,10 +6,10 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2 migration/full verification after the completed passive format correction, ADR-0034
-`.mjs` M1/S1 passive contract work, and documentation/field-authority maintenance can proceed
-independently now. Bounded owner-lock G2 current-v1/no-guest composition is implemented as a local
-mechanic; its installed G3 matrix remains later work.
+Archive F2 format correction, owner-lock G2 planning/composition, and documentation/field-authority
+maintenance can proceed independently now. ADR-0034's M1 validator and downstream S1/M2 work are
+blocked on a separately reviewed exact ECMAScript parser/validation boundary; the passive
+source-byte/SourceManifest foundation is retained.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -168,7 +168,9 @@ consumer behavior remain open.
 
 Accepted ADR-0034 freezes the first release as one byte-exact pass-through `main.mjs` member under
 the existing plan-v0 source role, with no static/dynamic dependency request or module-loader
-fallback. Its passive M1 source/manifest and S1/M2 registration/fetch fixture slices are next;
+fallback. Its passive source-byte/SourceManifest foundation is retained, but an exact
+division-versus-regexp counterexample places the M1 source-language validator and downstream
+S1/M2 registration/fetch slices on hold pending a separately reviewed parser/validation boundary.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the
 PR #72 P1 HOLD/NO-GO for a conditional later feature. Its protected-store, worker, genesis/update,

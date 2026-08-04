@@ -9,11 +9,29 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # golang.org/x/sys is pre-1.0, so its minor releases can raise the
+      # supported Go floor. Keep patch updates automated and review broader
+      # upgrades together with an explicit Go toolchain decision.
+      - dependency-name: "golang.org/x/sys"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-major"
 
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Major compiler and Node type changes are coordinated toolchain
+      # migrations. Patch/minor updates within the selected lines remain
+      # automated, and these rules do not suppress Dependabot security updates.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "@types/node"
+        update-types:
+          - "version-update:semver-major"
     groups:
       repository-tooling:
         patterns:

@@ -281,6 +281,98 @@ func TestArchiveActivationFaultMatrixPreservesExactlyOldOrNewWorld(t *testing.T)
 	}
 }
 
+// TestArchiveActivationRetriesReuseExistingSegmentAfterPublishFault exercises
+// the idempotent retry path documented in
+// docs/SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md: after an indeterminate
+// fault at FaultArchiveAfterSegmentPublish/FaultArchiveAfterSegmentDirSync,
+// the segment file is already durably renamed into place even though
+// activation never completed. The documented recovery is a fresh
+// Plan/Prepare/Verify/Activate cycle on a reopened store; publishArchiveSegment
+// must recognize the byte-identical existing segment and reuse it rather than
+// fail or rewrite it. Previously this recovery path was only proven by
+// code-reading, not by an executed retry (see issue #129, and the identical
+// pattern already fixed for owned-startup shutdown in issue #95).
+func TestArchiveActivationRetriesReuseExistingSegmentAfterPublishFault(t *testing.T) {
+	for _, point := range []ArchiveFault{FaultArchiveAfterSegmentPublish, FaultArchiveAfterSegmentDirSync} {
+		t.Run(string(point), func(t *testing.T) {
+			path, store, owner := newEligibleFixedStoreV2(t)
+			verified := mustPreparedArchive(t, store, owner)
+			segmentDigest := verified.SegmentDigest()
+
+			if _, err := store.ActivateArchive(context.Background(), owner, verified, archiveFaultStub{point: point}); !errors.Is(err, ErrArchiveOutcomeIndeterminate) {
+				t.Fatalf("injected fault at %s = %v, want ErrArchiveOutcomeIndeterminate", point, err)
+			}
+			faultedReport, err := VerifyFixedFileStoreV2(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if faultedReport.SnapshotGeneration != 1 || faultedReport.SegmentCount != 0 ||
+				faultedReport.OrphanSegmentCount != 1 {
+				t.Fatalf("post-fault report = %#v, want the old world intact with one orphaned segment", faultedReport)
+			}
+
+			segmentPath := archiveSegmentPath(path, segmentDigest)
+			orphanBytes := mustReadFile(t, segmentPath)
+			orphanInfo, err := os.Lstat(segmentPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			reopened, err := OpenFixedFileStoreV2(path)
+			if err != nil {
+				t.Fatalf("reopen after fault: %v", err)
+			}
+			limits, err := archivestate.NewArchiveLimits(1, uint64(archivestate.MaxSupervisorArchiveBytes))
+			if err != nil {
+				t.Fatal(err)
+			}
+			retryPlan, err := reopened.PlanArchive(context.Background(), owner, limits)
+			if err != nil {
+				t.Fatalf("retry plan: %v", err)
+			}
+			retryPrepared, err := reopened.PrepareArchive(context.Background(), owner, retryPlan)
+			if err != nil {
+				t.Fatalf("retry prepare: %v", err)
+			}
+			if retryPrepared.SegmentDigest() != segmentDigest {
+				t.Fatalf("retry segment digest = %x, want the orphaned segment's %x", retryPrepared.SegmentDigest(), segmentDigest)
+			}
+			retryVerified, err := reopened.VerifyPreparedArchive(context.Background(), owner, retryPrepared)
+			if err != nil {
+				t.Fatalf("retry verify: %v", err)
+			}
+			activated, err := reopened.ActivateArchive(context.Background(), owner, retryVerified, nil)
+			if err != nil {
+				t.Fatalf("retry activate did not reuse the existing segment: %v", err)
+			}
+
+			finalReport, err := VerifyFixedFileStoreV2(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if finalReport.SnapshotGeneration != 2 || finalReport.ArchiveGeneration != 2 ||
+				finalReport.SegmentCount != 1 || finalReport.OrphanSegmentCount != 0 {
+				t.Fatalf("retry did not reach a clean single-segment activated world: %#v", finalReport)
+			}
+			if activated.active.View().CurrentCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
+				t.Fatal("retry activation did not install activation checkpoint")
+			}
+
+			reusedInfo, err := os.Lstat(segmentPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reusedInfo.ModTime().Equal(orphanInfo.ModTime()) || reusedInfo.Size() != orphanInfo.Size() {
+				t.Fatalf("segment was rewritten instead of reused: mtime %v -> %v, size %d -> %d",
+					orphanInfo.ModTime(), reusedInfo.ModTime(), orphanInfo.Size(), reusedInfo.Size())
+			}
+			if !bytes.Equal(mustReadFile(t, segmentPath), orphanBytes) {
+				t.Fatal("reused segment bytes changed")
+			}
+		})
+	}
+}
+
 func TestArchiveActivationDuplicateOwnerAndStaleConcurrencyRefuse(t *testing.T) {
 	path, store, owner := newEligibleFixedStoreV2(t)
 	verified := mustPreparedArchive(t, store, owner)

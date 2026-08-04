@@ -61,7 +61,13 @@ v1 opener, the same owner-session ID in the store and per-attempt coordinator, s
 recovery, permanent post-open ownership fencing, and store-before-owner shutdown ordering. The
 retained race/fault/process tests use owned temporary roots and the no-guest fake only. This is not
 product startup, a signed bootstrap record, protected installed storage, v2/archive composition,
-or production evidence. There is no
+or production evidence. The first bounded G3 discovery returned **NO-GO** before installed build:
+the authorized Apple Development certificate's display name ends in `W4QUR9FUL4`, but its public
+subject OU and an exact signed-byte `TeamIdentifier` are `3DDR84M4JS`; all three cached profiles
+are also 3DDR. The retained G3 fixture fixes test-only role/state/bootstrap fields and reruns the
+noncredential G1/G2 corpus, but no W4 app, service, protected root, signed per-installation record,
+session, or update case ran. A matching W4 certificate/profile set, selected protected-root
+bootstrap ceremony, signed record, and descriptor-relative store open remain blockers. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate

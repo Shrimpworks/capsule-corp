@@ -116,23 +116,23 @@ governance reconciliation before Capsule reuses it.
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
 | Blocked | Archive F2 | Resolve the retained valid-v1 missing-lifecycle mapping contradiction before choosing any v2 bytes; do not invent lifecycle state, narrow migration implicitly, or invoke recovery/adapters inside migration. |
-| Independently actionable now | Owner-lock G1 | Port only the passive bootstrap/opaque owner boundary under owned temporary roots; do not claim protected storage. |
+| Retained local mechanic / blocked installed lane | Owner-lock G2/G3 | Keep the merged current-v1/no-guest composition. G3 is NO-GO: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
 | Blocked | `.mjs` M1 validator and S1/M2 | Select a separately reviewed exact, pinned/governed bounded ECMAScript parser/validation boundary. Do not ship an ad hoc scanner or substitute runtime no-loader behavior. The byte/SourceManifest foundation is retained; add no product endpoint. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |
 | Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
-| Credential/environment dependent | Apple Development/provisioning and installed matrices | Current Individual Team `W4QUR9FUL4` has a valid local Apple Development identity, so signed/provisioned experiments can proceed after exact W4 role identifiers, entitlements, and profiles are deliberately created. The three cached profiles belong to historical Team `3DDR84M4JS` and are not reusable. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices are not planned now and remain deferred activation/distribution evidence, not blockers for F2, G1, or other local mechanics. |
+| Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference: certificate SHA-1 `1638...61E3` has subject OU and signed-byte TeamIdentifier `3DDR84M4JS`, and all cached profiles are also 3DDR. A matching/reissued W4 certificate and exact W4 profiles are required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 
 ## Maintainer decisions and resources that can unblock work
 
 - TypeScript remains conditional and off the first-release critical path. Follow accepted ADR-0034
   for `.mjs`; do not implement around Source Preparer P0A or widen the runtime contract.
-- Current Apple Developer membership is Individual / Team `W4QUR9FUL4`, and read-only
-  `security find-identity -v -p codesigning` now reports a valid Apple Development identity for
-  that Team. Local signed/provisioned experiments can proceed once exact W4 role identifiers,
-  entitlements, and profiles are deliberately created. The three profiles Xcode 26.6 cached through
+- The intended Team remains `W4QUR9FUL4`, but exact G3 readback found that the local certificate
+  displayed with that suffix has subject OU and emitted TeamIdentifier `3DDR84M4JS`; it is not W4
+  evidence. Local W4 signed/provisioned experiments require a matching/reissued certificate plus
+  exact W4 profiles. The three profiles Xcode 26.6 cached through
   Download Manual Profiles all belong to historical Team `3DDR84M4JS` (Gate B Broker, Gate B
   Supervisor, and wildcard); they are not reusable for W4 tests. A separate Developer ID
   Application identity for historical Team `3DDR84M4JS` is later distribution authority only: its

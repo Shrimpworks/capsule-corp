@@ -251,11 +251,12 @@ This slice requires deliberately authorized Apple Development identities and pro
 for the exact daemon, Source Preparer, Supervisor, and Broker fixtures. Do not inspect or use
 unrelated identities.
 
-Current non-secret resource discovery: the Individual membership Team ID is `W4QUR9FUL4`, and
-`security find-identity -v -p codesigning` reports a valid Apple Development identity for that
-Team. Local signed/provisioned experiments can proceed once exact W4 role identifiers, entitlements,
-and profiles are deliberately created. Xcode 26.6 cached three profiles, all for historical Team
-`3DDR84M4JS` (Gate B Broker, Gate B Supervisor, and wildcard); they are not reusable for W4 tests
+Current non-secret resource discovery: the intended Team is `W4QUR9FUL4`, but exact G3 readback
+found that the certificate displayed with that suffix has subject OU and emitted TeamIdentifier
+`3DDR84M4JS`; it is not W4 evidence. Local signed/provisioned experiments require a matching W4
+certificate plus exact role identifiers, entitlements, and profiles. Xcode 26.6 cached three
+profiles, all for historical Team `3DDR84M4JS` (Gate B Broker, Gate B Supervisor, and wildcard);
+they are not reusable for W4 tests
 and do not include a Source Preparer role. A separate Developer ID Application identity for
 historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
 matching-Team package design. It must not be used as W4 development evidence and does not make

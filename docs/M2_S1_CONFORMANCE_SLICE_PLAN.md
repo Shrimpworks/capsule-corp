@@ -3,10 +3,18 @@
 Date: 2026-08-03
 
 Status: retained dependency-aware implementation plan for the next
-[S1/M2 passive contracts and fixed fixtures](AUTHENTICATED_LOCAL_IPC_PLAN.md#m1-and-s1m2-passive-contracts-and-fixed-fixtures)
+[S1/M2 passive contracts and fixed fixtures](AUTHENTICATED_LOCAL_IPC_PLAN.md#m1-source-validator-r1-r5b-and-s1m2-sequential-contract-boundary)
 slice. No byte maximum in this document is calculated or invented; every number is either quoted
 verbatim from ADR-0029/ADR-0034 prose (marked as unverified until fixture-generated) or explicitly
 marked "blocked on M1."
+
+Current dependency reconciliation (2026-08-04): M1 has passed, but this slice remains `BLOCKED`.
+Accepted ADR-0036 requires the sequential Source Validator path first: R1 passive role-specific v1
+contracts/field authority, R2 unsigned launcher/parser construction, separately authorized R3
+signing/install, R4 confinement/reactive-resource/residue corpus, R5D daemon consumer, and R5B
+Approval Broker consumer. Only then does the M2/S1 checkpoint update the historical M1-blocked
+items below and decide whether to run this plan. V0/V1/V2 evidence remains unchanged; no Source
+Validator result becomes a Supervisor registration/fetch field.
 
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
@@ -206,6 +214,11 @@ All seven are pure Go/fixture-store tests against the already-implemented
 require M1.
 
 ## Field-authority manifest additions
+
+These additions are deferred to the post-R5B M2/S1 checkpoint. R1 owns a separate additive set of
+role-specific Source Validator v1 request/result/process/profile/resource-policy classifications;
+it must not pre-create these Supervisor IPC targets or treat its unmeasured resource fields as an
+active policy.
 
 Per ADR-0034's explicit instruction that the passive field-authority manifest must add canonical
 targets for the source manifest and the method-specific registration/fetch projections "in the same

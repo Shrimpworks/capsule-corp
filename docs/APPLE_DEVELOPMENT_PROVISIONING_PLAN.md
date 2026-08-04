@@ -105,13 +105,24 @@ one:
 | Agent-facing daemon (if packaged separately) | `com.capsulecorp.capsule.daemon` | Needs its own code identity regardless of A/B — ADR-0029 authenticates it as a distinct Supervisor peer |
 | Execution Supervisor | `com.capsulecorp.capsule.supervisor` | Embeds the in-process native front end; no separate ID for that front end |
 | Approval Broker | `com.capsulecorp.capsule.broker` | Swift/native per ADR-0018 |
+| Daemon-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.daemon.v1` | Future ADR-0036 R3 only; embedded in `com.capsulecorp.capsule.daemon`, never shared with Broker |
+| Broker-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Future ADR-0036 R3 only; embedded in `com.capsulecorp.capsule.broker`, never shared with daemon |
+| Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Future nested signed code for only the daemon-private launcher profile |
+| Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Future nested signed code for only the Broker-private launcher profile |
 | Native front-end (Supervisor's C/Obj-C shim) | N/A — not a separate bundle | Shares `com.capsulecorp.capsule.supervisor`'s code identity |
-| Guest launcher/runner (flagged for completeness, out of this request's four components) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
+| Guest launcher/runner (flagged for completeness, outside this provisioning plan) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
 
 The `com.capsulecorp.capsule.*` namespace is not invented — it is lifted directly from ADR-0029's
 own Mach service names (below). The spike namespace `com.capsulecorp.spike.*` and the Gate B
 historical namespace are disposable/experiment-only and tied to the wrong team; neither is reused
 for product App IDs. None of the IDs above exist as registered App IDs yet.
+
+ADR-0036 narrows daemon packaging for the Source Validator path: the daemon execution role has the
+enrolled containing-bundle identity `com.capsulecorp.capsule.daemon` even if a user-visible main app
+also exists. Its private validator service is not embedded in or reachable from the installer/main
+app as an alternate peer. These are passive R0 identifiers only; R1-R2 use no signing identity, and
+R3 remains a separately authorized credentialed task after official private-XPC reachability is
+confirmed. This plan does not request, reserve, create, or use any App ID/profile for them now.
 
 ## Required App IDs and provisioning profiles (development-only)
 

@@ -3,6 +3,7 @@
 - Status: Proposed
 - Date: 2026-08-03
 - First-release source-contract refinement: ADR-0034 on 2026-08-03
+- Source Validator launcher refinement: ADR-0036 on 2026-08-04
 - Refines if accepted: ADR-0005, ADR-0011, ADR-0012, ADR-0013, ADR-0018, ADR-0019,
   ADR-0023, ADR-0024, and ADR-0025
 
@@ -36,6 +37,12 @@ that host root or another process is necessary.
 This ADR selects the narrowest implementation topology for the four current local authority calls.
 It does not activate an endpoint, freeze a public API, implement production signing or approval,
 admit a backend/runtime, create a guest, or accept ADR-0019, ADR-0023, ADR-0024, or ADR-0025.
+
+Accepted ADR-0036 adds two private role-specific Source Validator launcher services outside the
+Supervisor boundary. They do not change this ADR's two Supervisor Mach services or four calls.
+Each launcher is embedded for exactly one consumer role, owns no durable authority/state/key or
+backend route, and cannot accept the other role. They are parser-confinement boundaries, not
+Supervisor helpers, lifecycle owners, or a daemon-to-backend path.
 
 ## Proposed decision
 
@@ -330,6 +337,12 @@ identity needs can remain in the Supervisor process. Any later exception require
 sealed descriptor protocol; it may not receive plan, approval, content, paths, images, mounts,
 flags, or public messages.
 
+This rejection does not prohibit ADR-0036's unprivileged role-specific Source Validator launchers.
+Those launchers cannot create/start/stop/destroy/reconcile a guest, read or mutate Supervisor
+state, use keys, or accept plan/approval/content/backend inputs. They expose one role-bound copied
+parse operation and remain separately blocked on passive contracts, supported private-XPC
+reachability, signed installed confinement/resource/residue evidence, and independent consumers.
+
 ### One multiplexed service or generic NSXPC/Codable/JSON command envelope
 
 Rejected. A broad listener requirement and generic decode surface create role/type confusion and
@@ -357,6 +370,9 @@ for safe response-loss recovery.
 - The Broker fetches the exact Supervisor-retained typed plan and submits approval directly; the
   daemon never forwards approval bytes or receives the Approval private key.
 - No added process or helper receives backend, key, content, or recovery authority.
+- ADR-0036's two parser launchers remain outside this Supervisor process and service namespace;
+  neither is a shared bus or a route to the Supervisor, and their failure cannot change a
+  registration, approval, attempt, or lifecycle record.
 - Registration response loss may leave an expired retained registration; solving that operational
   cost requires changing ADR-0023 rather than hiding a deduplication key in transport.
 

@@ -1,6 +1,6 @@
 # `.mjs` Source Validator passive contract v0
 
-Status: observed passive conformance slice for Proposed ADR-0035. This document fixes bytes and
+Status: observed historical passive conformance slice for Accepted ADR-0035. This document fixes bytes and
 test oracles only. It does not define a product endpoint, launch a process, invoke Oxc, enroll the
 fixture artifact, authorize planning or Approval, or implement runtime no-loader enforcement.
 
@@ -207,6 +207,8 @@ map's standard-cryptography and Rust-test recommendations: reuse a pinned primit
 Capsule-specific fixed framing narrow, run offline, and remove the oracle once an independently
 reviewed enrolled child owns the same codec. The crate gains no product authority.
 
-Artifact construction/admission (V1), process confinement (V2), daemon and Broker consumers
-(V3/V4), broader grammar evidence (V5), and runtime no-loader enforcement (V6) remain
-unimplemented. Proposed ADR-0035 therefore remains Proposed.
+The supported macOS replacement uses new role-specific v1 identities defined by ADR-0036 and the
+[passive v1 boundary](MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md). These V0 bytes and all retained
+V1/V2 evidence remain unchanged and are never relabeled. Product construction/admission,
+confinement/resource/residue evidence, daemon and Broker consumers, broader grammar evidence, and
+runtime no-loader enforcement remain unimplemented; product Source Validator stays `BLOCKED`.

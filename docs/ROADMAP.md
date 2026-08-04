@@ -11,10 +11,12 @@ All labels below follow the [canonical work status language](STATUS_LANGUAGE.md)
 migration/full-verifier scope; F3's first immutable-segment activation is also `PASSED`, and F4 is
 the next archive slice. Owner-lock G2 is `PASSED` for its
 retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a
-selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
-ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in their exact
-scopes. V1 enrollment and V2-V5 process/consumer work are `BLOCKED` on the retained V1 enrollment
-and V2 resource/confinement stops; downstream S1/M2 remains `BLOCKED` on those gates.
+selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes,
+Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
+their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision. The
+product Source Validator and downstream S1/M2 remain `BLOCKED` on passive v1 contracts, unsigned
+construction, separately authorized signing/install, confinement/resource/residue evidence, and
+sequential daemon then Broker consumers.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker is now
 closed in its bounded fork scope; fork-native bundle reproduction, evidence review, governed
@@ -204,25 +206,33 @@ the existing plan-v0 source role, with no static/dynamic dependency request or m
 fallback. Its passive source-byte/SourceManifest foundation is retained, and an exact
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
 passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
-but the M1 product validator and downstream S1/M2 registration/fetch slices remain on hold pending
-V1 enrollment closure and V2-V5. The exact V2 macOS checkpoint is now `BLOCKED`: its strict
+but the product validator and downstream S1/M2 registration/fetch slices remain on hold pending
+R1-R5B. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
 bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation retains ambient
 file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
 fixed V1 bytes. Resume only with a newly reviewed/enrolled artifact and supported exact memory/
 confinement design; deprecated custom sandboxing is not a fallback.
-The supported replacement research slice now passes its design question while leaving product V2
-blocked. It rejects direct inherited helpers, identifies only a separately App-Sandboxed XPC
-launcher owning a fresh parser child, and retains the public footprint setter's `KERN_NO_ACCESS`.
-R0 must decide that topology, the writable-container residual, and either a supported hard memory
-mechanism or an explicit reactive-resource contract with no peak ceiling claim before any new
-profile bytes or separately authorized signing work begins.
+The supported replacement research and R0 architecture slices pass their exact questions while the
+product remains blocked. Direct inherited helpers are `NO_GO`. ADR-0036 selects two role-specific
+private App-Sandboxed XPC launchers and matching fresh parser children, with no shared service,
+result, cache, container, group, key, or accepted profile. Each private container is residual
+scratch authority only, with mandatory cleanup/residue testing that is not a confidentiality
+proof. The public footprint setter returned `KERN_NO_ACCESS`, so the accepted contract is a later
+evidence-derived reactive footprint watermark with one direct child per launcher request, bounded
+combined two-role concurrency, fixed sampling, and kill/drain/reap—not a hard peak/exact cap or
+host-availability guarantee. R1 must not invent threshold/cadence/overshoot values.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
-Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
+Accepted ADR-0035 selects exact Oxc 0.140.0 as the engineering candidate for a separate
 one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed
 protocol and cross-language passive conformance. V1 observes exact build bytes, graph, licenses,
 SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without enrollment. Later
 slices must prove independent reproduction and signed enrollment, disposable OS profile,
-independent daemon/Broker invocation, grammar/mutation corpus, and fault recovery. No product
+independent role-private daemon/Broker invocation, grammar/mutation corpus, resource/residue
+evidence, and fault recovery. Work proceeds strictly as R1 passive contracts/fixtures, R2 unsigned
+construction, R3 separately authorized signing/install, R4 confinement/resource/residue corpus,
+R5D daemon consumer, R5B Broker consumer, then M2/S1 checkpoint. Unsupported private-XPC
+reachability, widened authority/native loading/network/filesystem escape, orphan/cleanup failure,
+mixed-version acceptance, or unacceptable measured host risk stops the exact candidate. No product
 validator or runtime enforcement exists.
 Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology is `BLOCKED` as
 a conditional later feature. Its protected-store, worker, genesis/update, retention/release,
@@ -323,7 +333,7 @@ Exit evidence:
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, ADR-0034's byte-exact `.mjs` source custody and no-loader evidence,
-  Proposed ADR-0035's disposable validator V0-V5 gates,
+  Accepted ADR-0035/0036's disposable validator R1-R5B product-evidence gates,
   external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported

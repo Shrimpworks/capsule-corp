@@ -139,6 +139,15 @@ current object, resolve the TypeScript transformation owner, admit a runtime/bac
 execution. Any versioned cutover must update its canonical target and authority classifications in
 the same reviewed change.
 
+Accepted ADR-0036 now defines the
+[passive Source Validator v1 implementation boundary](MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md)
+with separate daemon and Approval-Broker request/result/process/artifact-profile families plus an
+evidence-derived reactive-resource-policy family. Those are planned R1 targets, not part of the
+current 228-field/20-target manifest. R1 must add every top-level and nested classification in the
+same change as its canonical layouts and known answers, preserve all V0 targets unchanged, reject
+cross-role/cross-version reuse, and leave active threshold/cadence/overshoot values unset until the
+signed R4 corpus.
+
 ## Semantics
 
 - `JobProposal`: untrusted desired work; never effective authority.

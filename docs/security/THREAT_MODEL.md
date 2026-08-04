@@ -102,8 +102,8 @@ construction. Supervisor and Broker validation proves internal byte/digest/media
 consistency, not correct erasure or semantic equivalence. That planning and approval-understanding
 trust consequence must be rendered to the approver; it is not independent attestation.
 
-If Proposed ADR-0035 is accepted, approval correctness additionally depends on the enrolled Oxc
-parser artifact and the separately proven disposable-process profile classifying the exact copied
+Under Accepted ADR-0035/0036, approval correctness additionally depends on the enrolled Oxc parser
+artifact and the separately proven role-specific launcher/process profile classifying the exact copied
 bytes faithfully. The validator is still attacker-exposed: parser input, diagnostics, crashes,
 resource behavior, and returned facts are untrusted until the parent checks the fixed protocol,
 artifact identity, digest, length, status, and deadline. Its compromise may cause false source
@@ -150,8 +150,9 @@ trust administration, quarantine reset, or backend control.
 Raw input is bounded before ordinary decoding. Unknown versions, fields, powers, and malformed
 content fail closed.
 
-Under Proposed ADR-0035, the daemon sends one exact copied `main.mjs` frame to a fresh one-shot
-Source Validator before plan construction. The child has no path/package/loader API, store, keys,
+Under Accepted ADR-0035/0036, the daemon sends one exact copied `main.mjs` frame through its
+daemon-private launcher to a fresh one-shot Source Validator child before plan construction. The
+child has no path/package/loader API, persistent Capsule product store, keys,
 network, backend route, or inherited ambient descriptors. A parser/semantic diagnostic, crash,
 timeout, resource ceiling, malformed/extra output, wrong artifact/version, or digest/length
 mismatch refuses. There is no lexical-scanner or second-parser fallback.
@@ -192,11 +193,12 @@ ordinary anti-spoofing UI.
 
 ### Local process and storage boundary
 
-The proposed Source Validator adds a hostile-input local child boundary. Until fixed artifact
-enrollment, OS sandboxing, descriptor closure, memory/CPU/wall/output ceilings, kill/reap recovery,
-and compromised-child cases are retained on supported hosts, it is only a crash-isolation design
-and ADR-0035 remains Proposed. The child has zero authority effect; every abnormal outcome is a
-refusal. A same-UID process name, PID, or executable path is not identity evidence.
+The accepted Source Validator architecture adds hostile-input local launcher/child boundaries.
+Until fixed role-specific artifact enrollment, private-XPC reachability, OS sandboxing, descriptor
+closure, reactive-resource evidence, kill/drain/reap recovery, cleanup, and compromised-child cases
+are retained on supported hosts, the product control is only a design plus historical crash-
+isolation evidence. The child has zero authority effect; every abnormal outcome is a refusal. A
+same-UID process name, PID, or executable path is not identity evidence.
 
 The retained V2 macOS checkpoint now supplies negative evidence for this exact artifact/profile
 pair. The strict child refuses before `exec` because `RLIMIT_AS` cannot be lowered. When that limit
@@ -208,16 +210,35 @@ kill/reap, and a clean later invocation are local-mechanic evidence only. V2 rem
 no Keychain, Supervisor-state, installed-identity, sandbox, or product-containment claim follows.
 
 The later [supported-profile review](../MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) rejects
-direct App Sandbox inheritance for this exact boundary because the child receives its daemon or
-Broker parent's static sandbox rights. A separately sandboxed, method-specific XPC launcher that
-owns a fresh parser child is the only plausible supported composition found, but it is not selected
-or implemented. Its installed reachability/topology is unresolved, App Sandbox gives it and the
-inherited parser child read/write access to a private container, and the observed host exposes no
-usable public unprivileged hard memory cap. A public-SDK physical-footprint setter returned
-`KERN_NO_ACCESS`; `proc_pid_rusage` sampling plus kill is reactive and can overshoot between
-samples. Therefore bounded source/result bytes, one-child concurrency, CPU/wall ceilings, and
-kill/reap do not bound peak host-memory impact. Under the current exact-memory/no-store acceptance
-rule this remains a release blocker, not an admitted residual-risk claim.
+direct App Sandbox inheritance because the child receives daemon/Broker static rights. Accepted
+ADR-0036 selects two distinct role-private App-Sandboxed XPC launchers, each owning one fresh
+matching parser child. No service, result, cache, container, group, key, profile, or accepted request
+crosses daemon/Broker roles; neither launcher reaches Supervisor state or backend authority.
+
+App Sandbox gives each launcher/child read/write access to its private container. That is accepted
+only as residual scratch authority: persistent Capsule product state, cache, source/diagnostic log,
+and reusable result are forbidden, and cleanup/residue testing is required after every request,
+crash, restart, update, and startup. Cleanup reduces persistence and supplies evidence but cannot
+prove confidentiality or secure erasure against a compromised parser, swap, backup, or forensic
+recovery.
+
+The observed host exposes no usable public unprivileged hard memory cap; the public-SDK footprint
+setter returned `KERN_NO_ACCESS`. ADR-0036 accepts an evidence-derived reactive physical-footprint
+watermark with one child per launcher request, bounded per-role and combined two-role concurrency,
+fixed sampling cadence, and process-group kill/drain/reap. Sampling can overshoot before kill, so
+the claim is neither a hard peak/exact cap nor a host-availability guarantee. Threshold, cadence,
+baseline, maximum observed overshoot, and kill latency remain unset until the separately authorized
+signed corpus. Product use remains blocked until that evidence and both independent consumers pass.
+
+The replacement threat set includes cross-role request/result replay; a generic or shared service;
+old/new consumer-service-parser-profile mixes; parent/responsible/self or library-constraint
+substitution; native/JIT/DYLD/debug loading; inherited file descriptors, Mach/bootstrap rights,
+network/IPC, out-of-container filesystem and authority-store access; container residue across calls
+or updates; descendants and parser survival after launcher death; delayed/missed footprint samples;
+two-role concurrent overshoot; and system-pressure collateral damage. Any unsupported private-XPC
+reachability, authority/native-loading/filesystem/network escape, unbounded orphan/cleanup result,
+accepted mixed version, or measured host risk beyond the reviewed profile stops the exact candidate
+rather than enabling a shared bus, private API, custom sandbox, or privileged helper.
 
 Separate authorities require proven macOS enforcement: XPC peer code requirements, effective user/
 session and exact build/epoch checks, Keychain access-group separation, protected storage
@@ -545,6 +566,7 @@ P1 stop conditions are retained in the
 | Cryptography | non-canonical bytes, wrong type/purpose/audience/epoch, `none`/algorithm confusion, key substitution, malformed DER/raw/high-S handling |
 | Identity/IPC | unsigned/same-team-wrong-ID/stale/debugged peer, wrong user/session, Keychain/store access, PID/path/name substitution |
 | Plan/approval | plan mutation, registration swap, replay, wrong Supervisor, stale nonce, expiry, concurrent/double attempt, crash-after-consume, synthetic input, Accessibility automation, overlay/focus substitution, signing without configured user presence |
+| Source validation | cross-role/cross-version result, shared launcher/cache, wrong private service/profile/epoch, direct inherited helper, container residue, out-of-container/store/key/network access, native/JIT/DYLD/debug loading, inherited FD/Mach/bootstrap rights, descendant/orphan, launcher/child/consumer death, missed footprint sample, combined-role overshoot, cleanup/update/startup refusal |
 | Source preparation | compromised front/Go/Node/store, fabricated coherent emission, original/executable/profile/options/record substitution, cross-role/version/install/epoch/path/media replay, protected-store same-user access, stale-process handle retention, worker store/package/network/process/native-loading access, cap-plus-one, cancellation/death/orphan/stdio flood, genesis/update/rollback/release without authority |
 | Filesystem/content | traversal, live path, mutation, symlink/hard link, devices/FIFO/socket, sparse file, archive, parser/formula/terminal/bidi/HTML hazards |
 | Network/IPC | TCP, UDP, DNS, IPv4/6, loopback, metadata, Unix/vsock/management sockets, inherited descriptors |

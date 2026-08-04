@@ -3,7 +3,7 @@
 Status: handwritten scanner `NO_GO`; replacement parser/process selection `PASSED`; product Source
 Validator `IN_PROGRESS — TRENDING_GOOD`.
 
-This is the historical stop record for the removed handwritten scanner. Proposed ADR-0035 and the
+This is the historical stop record for the removed handwritten scanner. Accepted ADR-0035/0036 and the
 later bounded comparison selected exact Oxc 0.140.0 in a disposable Source Validator process. The
 counterexample below remains a required regression fixture; it no longer means the parser boundary
 is unselected.

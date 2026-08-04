@@ -1,0 +1,122 @@
+[
+  {
+    "id": "restore-application-files",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": false,
+      "installationRootAvailable": true,
+      "stateRootContinuityProven": true,
+      "ownerLockContinuityProven": true,
+      "storeAndHistoryComplete": true,
+      "cleanupObligationsResolved": true,
+      "currentEpochExact": true,
+      "forwardTransitionAuthorized": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "restore-current-release-preserve-state",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "restore-current-release-preserve-state"
+      }
+    }
+  },
+  {
+    "id": "authorized-forward-transition",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": true,
+      "installationRootAvailable": true,
+      "stateRootContinuityProven": true,
+      "ownerLockContinuityProven": true,
+      "storeAndHistoryComplete": true,
+      "cleanupObligationsResolved": true,
+      "currentEpochExact": false,
+      "forwardTransitionAuthorized": true
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "authorized-forward-trust-transition",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "forward-trust-transition-authorized"
+      }
+    }
+  },
+  {
+    "id": "protected-state-repair",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": true,
+      "installationRootAvailable": true,
+      "stateRootContinuityProven": false,
+      "ownerLockContinuityProven": false,
+      "storeAndHistoryComplete": true,
+      "cleanupObligationsResolved": true,
+      "currentEpochExact": true,
+      "forwardTransitionAuthorized": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "protected-state-repair-required",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "protected-state-continuity-unproven"
+      }
+    }
+  },
+  {
+    "id": "new-installation",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": false,
+      "installationRootAvailable": false,
+      "stateRootContinuityProven": false,
+      "ownerLockContinuityProven": false,
+      "storeAndHistoryComplete": false,
+      "cleanupObligationsResolved": false,
+      "currentEpochExact": false,
+      "forwardTransitionAuthorized": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "new-installation-required",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "installation-root-unavailable"
+      }
+    }
+  },
+  {
+    "id": "refuse-history-loss",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": true,
+      "installationRootAvailable": true,
+      "stateRootContinuityProven": true,
+      "ownerLockContinuityProven": true,
+      "storeAndHistoryComplete": false,
+      "cleanupObligationsResolved": false,
+      "currentEpochExact": true,
+      "forwardTransitionAuthorized": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "refuse-automatic-repair",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "history-or-cleanup-unresolved"
+      }
+    }
+  }
+]

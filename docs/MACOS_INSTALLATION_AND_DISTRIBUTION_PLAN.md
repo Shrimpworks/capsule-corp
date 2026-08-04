@@ -14,8 +14,8 @@ Evidence or reason: the review supplied a coherent one-application distribution 
   those recommendations with current Source Validator, owner-lock, archive, IPC, and trust work.
 Remaining work: every installed mechanism and authority-bearing helper below remains subject to
   its named ADR, implementation, signed installed corpus, and product-admission gate.
-Next action: freeze the passive bundle/role/bootstrap contract, then run the developer-signed
-  protected Supervisor-root composition before implementing automatic updates.
+Next action: continue from passed passive I0 into the execution-disabled developer-signed I1 app
+  shell, then run the protected Supervisor-root I2 composition before automatic updates.
 Parent status: macOS product installation and distribution are IN_PROGRESS — TRENDING_GOOD.
 ```
 
@@ -52,6 +52,12 @@ The current engineering direction is:
 
 Users install, open, update, repair, and remove one product. The internal services are security
 roles, not separate products the user configures manually.
+
+Accepted [ADR-0037](adr/0037-freeze-passive-macos-installation-i0-contract.md) and the
+[I0 passive contract](protocol/MACOS_INSTALLATION_I0_PASSIVE_CONTRACT.md) now freeze the exact
+one-visible-app, seven-role, service, entitlement, bootstrap, update, repair, and uninstall
+candidate without activating it. Signing, bootstrap-owner, product-store, and IPC-transport values
+that current evidence cannot support are explicit inactive refusal gates.
 
 ## Authority boundaries
 
@@ -232,9 +238,9 @@ service-registration evidence exists.
 
 | Slice | Scope | Status and exit |
 | --- | --- | --- |
-| I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `IN_PROGRESS — TRENDING_GOOD`; generated closed profile and authority review required |
-| I1 | Developer-signed app shell, Swift setup/status UI, embedded daemon/Supervisor registration, execution always disabled | `BLOCKED` on I0 and exact signed bundle composition |
-| I2 | Protected Supervisor container, one-time bootstrap, ADR-0033 owner-lock/store open, same-user mutation and restart corpus | `BLOCKED` on bootstrap decision and matching signed identities/profiles |
+| I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `PASSED`; exact inactive profile, generated cases/digests, field authority, and pure missing/mixed/extra/transition/retention validators retained; no installed behavior |
+| I1 | Developer-signed app shell, Swift setup/status UI, embedded daemon/Supervisor registration, execution always disabled | `BLOCKED` on matching Team/profile material and proof of the exact supported signed bundle/service composition |
+| I2 | Protected Supervisor container, one-time bootstrap, ADR-0033 owner-lock/store open, same-user mutation and restart corpus | `BLOCKED` on I1, the bootstrap-owner decision, product-store selection, and matching signed identities/profiles |
 | I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R1-R4 contract/construction/signed evidence; the Source Validator architecture/resource decision itself is `PASSED` |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |

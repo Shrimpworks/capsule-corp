@@ -1,0 +1,272 @@
+[
+  {
+    "id": "remove-application-preserve-state",
+    "input": "remove-application-preserve-state",
+    "expected": {
+      "recordVersion": 0,
+      "mode": "remove-application-preserve-state",
+      "attemptsState": "disabled",
+      "dispositions": [
+        {
+          "recordVersion": 0,
+          "dataClass": "application-bundle",
+          "disposition": "remove",
+          "reason": "selected-local-application-removal"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "service-registrations",
+          "disposition": "remove",
+          "reason": "stop-and-unregister-per-user-services"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "non-authoritative-daemon-cache",
+          "disposition": "remove",
+          "reason": "contains-no-installation-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "source-validator-container-residue",
+          "disposition": "defer",
+          "reason": "cleanup-must-first-prove-empty-inventory"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "supervisor-state-root",
+          "disposition": "retain",
+          "reason": "authoritative-state-and-recovery-history"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "owner-lock-object",
+          "disposition": "retain",
+          "reason": "installation-continuity-identity"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "grant-attempt-and-cleanup-history",
+          "disposition": "retain",
+          "reason": "replay-and-reconciliation-required"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "archive-and-nonreuse-history",
+          "disposition": "retain",
+          "reason": "referenced-history-deletion-not-authorized"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "quarantine-and-repair-state",
+          "disposition": "retain",
+          "reason": "cannot-clear-by-uninstall"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "exported-receipts-external-witnesses-and-backups",
+          "disposition": "outside-local-scope",
+          "reason": "not-local-erasure-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "installation-and-operational-keys",
+          "disposition": "retain",
+          "reason": "preserve-reinstall-and-recovery-path"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "broker-user-content",
+          "disposition": "retain",
+          "reason": "application-only-removal-does-not-delete-content"
+        }
+      ],
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "passive-uninstall-classification"
+      }
+    }
+  },
+  {
+    "id": "remove-local-where-safe",
+    "input": "remove-local-where-safe",
+    "expected": {
+      "recordVersion": 0,
+      "mode": "remove-local-where-safe",
+      "attemptsState": "disabled",
+      "dispositions": [
+        {
+          "recordVersion": 0,
+          "dataClass": "application-bundle",
+          "disposition": "remove",
+          "reason": "selected-local-application-removal"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "service-registrations",
+          "disposition": "remove",
+          "reason": "stop-and-unregister-per-user-services"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "non-authoritative-daemon-cache",
+          "disposition": "remove",
+          "reason": "contains-no-installation-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "source-validator-container-residue",
+          "disposition": "defer",
+          "reason": "cleanup-must-first-prove-empty-inventory"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "supervisor-state-root",
+          "disposition": "retain",
+          "reason": "authoritative-state-and-recovery-history"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "owner-lock-object",
+          "disposition": "retain",
+          "reason": "installation-continuity-identity"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "grant-attempt-and-cleanup-history",
+          "disposition": "retain",
+          "reason": "replay-and-reconciliation-required"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "archive-and-nonreuse-history",
+          "disposition": "retain",
+          "reason": "referenced-history-deletion-not-authorized"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "quarantine-and-repair-state",
+          "disposition": "retain",
+          "reason": "cannot-clear-by-uninstall"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "exported-receipts-external-witnesses-and-backups",
+          "disposition": "outside-local-scope",
+          "reason": "not-local-erasure-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "installation-and-operational-keys",
+          "disposition": "defer",
+          "reason": "remove-only-after-authority-and-cleanup-safety-check"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "broker-user-content",
+          "disposition": "defer",
+          "reason": "remove-only-when-no-retention-or-release-obligation-remains"
+        }
+      ],
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "passive-uninstall-classification"
+      }
+    }
+  },
+  {
+    "id": "abandon-installation-identity",
+    "input": "abandon-installation-identity",
+    "expected": {
+      "recordVersion": 0,
+      "mode": "abandon-installation-identity",
+      "attemptsState": "disabled",
+      "dispositions": [
+        {
+          "recordVersion": 0,
+          "dataClass": "application-bundle",
+          "disposition": "remove",
+          "reason": "selected-local-application-removal"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "service-registrations",
+          "disposition": "remove",
+          "reason": "stop-and-unregister-per-user-services"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "non-authoritative-daemon-cache",
+          "disposition": "remove",
+          "reason": "contains-no-installation-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "source-validator-container-residue",
+          "disposition": "defer",
+          "reason": "cleanup-must-first-prove-empty-inventory"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "supervisor-state-root",
+          "disposition": "retain",
+          "reason": "authoritative-state-and-recovery-history"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "owner-lock-object",
+          "disposition": "retain",
+          "reason": "installation-continuity-identity"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "grant-attempt-and-cleanup-history",
+          "disposition": "retain",
+          "reason": "replay-and-reconciliation-required"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "archive-and-nonreuse-history",
+          "disposition": "retain",
+          "reason": "referenced-history-deletion-not-authorized"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "quarantine-and-repair-state",
+          "disposition": "retain",
+          "reason": "cannot-clear-by-uninstall"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "exported-receipts-external-witnesses-and-backups",
+          "disposition": "outside-local-scope",
+          "reason": "not-local-erasure-authority"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "installation-identity",
+          "disposition": "mark-abandoned",
+          "reason": "make-local-installation-unusable-with-erasure-limit-record"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "installation-and-operational-keys",
+          "disposition": "defer",
+          "reason": "retire-only-after-abandonment-record-and-cleanup-safety-check"
+        },
+        {
+          "recordVersion": 0,
+          "dataClass": "broker-user-content",
+          "disposition": "defer",
+          "reason": "remove-only-when-no-retention-or-release-obligation-remains"
+        }
+      ],
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "passive-uninstall-classification"
+      }
+    }
+  }
+]

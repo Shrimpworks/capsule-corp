@@ -86,7 +86,8 @@
             "source-manifest-cbor-decoder",
             "typescript-approved-byte-fixture-verifier",
             "source-validator-passive-verifier",
-            "source-validator-passive-v1-verifier"
+            "source-validator-passive-v1-verifier",
+            "macos-installation-i0-passive-validator"
           ]
         },
         "resolver": {
@@ -104,7 +105,10 @@
             "source-validator-artifact-binding-resolver",
             "source-validator-v1-role-binding-resolver",
             "source-validator-v1-result-binding-resolver",
-            "source-validator-v1-profile-binding-resolver"
+            "source-validator-v1-profile-binding-resolver",
+            "macos-installation-i0-profile-resolver",
+            "macos-installation-i0-transition-resolver",
+            "macos-installation-i0-retention-resolver"
           ]
         },
         "authorityEffect": {
@@ -142,7 +146,10 @@
             "passive-source-validator-resource-policy-v1-inactive-frame",
             "passive-source-validator-process-profile-v1-exact-role-frame",
             "passive-source-validator-artifact-profile-v1-exact-role-frame",
-            "passive-source-validator-consumer-projection-v1-exact-role-frame"
+            "passive-source-validator-consumer-projection-v1-exact-role-frame",
+            "passive-macos-installation-i0-profile-exact-json",
+            "passive-macos-installation-i0-transition-exact-json",
+            "passive-macos-installation-i0-retention-exact-json"
           ]
         },
         "unknownBehavior": {

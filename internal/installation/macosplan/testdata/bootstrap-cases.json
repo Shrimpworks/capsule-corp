@@ -1,0 +1,114 @@
+[
+  {
+    "id": "begin-creates-disabled-journal-state",
+    "input": {
+      "recordVersion": 0,
+      "profileId": "capsule.macos-installation.no-guest/i0",
+      "state": "absent",
+      "event": "begin",
+      "inventoryDecision": "accept",
+      "signingState": "inactive-refusing",
+      "bootstrapAuthorityState": "inactive-refusing",
+      "protectedRootState": "",
+      "ownerLockState": "",
+      "storeState": "",
+      "epochState": "",
+      "recoveryState": "",
+      "attemptsEnabled": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "state": "journaled-disabled",
+      "attemptsEnabled": false,
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "bootstrap-transition-exact"
+      }
+    }
+  },
+  {
+    "id": "identity-step-refuses-inactive-bootstrap-authority",
+    "input": {
+      "recordVersion": 0,
+      "profileId": "capsule.macos-installation.no-guest/i0",
+      "state": "journaled-disabled",
+      "event": "record-installation-identity",
+      "inventoryDecision": "accept",
+      "signingState": "inactive-refusing",
+      "bootstrapAuthorityState": "inactive-refusing",
+      "protectedRootState": "",
+      "ownerLockState": "",
+      "storeState": "",
+      "epochState": "",
+      "recoveryState": "",
+      "attemptsEnabled": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "state": "repair-required",
+      "attemptsEnabled": false,
+      "result": {
+        "decision": "refuse",
+        "classification": "trust-state",
+        "reason": "bootstrap-authority-inactive"
+      }
+    }
+  },
+  {
+    "id": "attempts-enabled-before-ready-enters-repair",
+    "input": {
+      "recordVersion": 0,
+      "profileId": "capsule.macos-installation.no-guest/i0",
+      "state": "services-prepared-disabled",
+      "event": "enroll-protected-root",
+      "inventoryDecision": "accept",
+      "signingState": "active",
+      "bootstrapAuthorityState": "active",
+      "protectedRootState": "",
+      "ownerLockState": "",
+      "storeState": "",
+      "epochState": "",
+      "recoveryState": "",
+      "attemptsEnabled": true
+    },
+    "expected": {
+      "recordVersion": 0,
+      "state": "repair-required",
+      "attemptsEnabled": false,
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "attempts-enabled-before-ready"
+      }
+    }
+  },
+  {
+    "id": "clean-owner-store-recovery-is-only-ready-transition",
+    "input": {
+      "recordVersion": 0,
+      "profileId": "capsule.macos-installation.no-guest/i0",
+      "state": "epoch-committed-recovering",
+      "event": "complete-owner-store-recovery",
+      "inventoryDecision": "accept",
+      "signingState": "active",
+      "bootstrapAuthorityState": "active",
+      "protectedRootState": "enrolled-exact",
+      "ownerLockState": "enrolled-exact",
+      "storeState": "open-without-create-exact",
+      "epochState": "epoch-one-prepared-exact",
+      "recoveryState": "owner-store-recovery-clean",
+      "attemptsEnabled": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "state": "repair-required",
+      "attemptsEnabled": false,
+      "result": {
+        "decision": "refuse",
+        "classification": "trust-state",
+        "reason": "i0-active-bootstrap-profile-unsupported"
+      }
+    }
+  }
+]

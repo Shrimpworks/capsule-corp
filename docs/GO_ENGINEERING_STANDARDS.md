@@ -108,16 +108,18 @@ those apply. Where it is specific, the specifics here win for this repository.
 ## Lint and CI wiring
 
 - `gofmt` is mandatory and covers `cmd` and `internal` (`make fmt` / `make check`).
-- `.golangci.yml` enables the standard linter set plus `gosec`. **Note:** `make check` currently
-  runs only `gofmt -l` and `go vet`; it does not invoke `golangci-lint run ./...`, even though
-  `AGENTS.md`'s verification list requires it before handoff. Run `golangci-lint run ./...`
-  yourself until `make check`/`make ci` are updated to include it — don't rely on `make ci` alone
-  to catch what `.golangci.yml` is configured to catch.
-- Run `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` per `AGENTS.md` before handoff;
-  it is also not currently wired into `make`.
-- `golangci-lint`'s own version is not pinned anywhere in the repository (no `tools.go`, no CI
-  version file at the time of writing). Pin one when wiring it into `make`/CI, so "lint passes
-  locally" and "lint passes in CI" mean the same thing.
+- `.golangci.yml` enables the standard linter set plus `gosec`. `make check` (and therefore
+  `make ci`) runs `golangci-lint run ./...` and `govulncheck ./...` alongside `gofmt`/`go vet`, so
+  a clean `make ci` locally means the same thing as a clean Go job in CI (`.github/workflows/ci.yml`
+  pins `golangci-lint` to `v2.12.2` via `golangci-lint-action`; match that version locally).
+- If `golangci-lint run ./...` reports issues whose file paths don't match anything in your working
+  tree, or that vanish after touching unrelated files, suspect a stale cache from a different git
+  worktree sharing your `~/.cache/golangci-lint` (or platform equivalent) — run
+  `golangci-lint cache clean` before trusting the result. This is a caching quirk of running
+  multiple worktrees of the same module, not a lint config problem.
+- `govulncheck` needs a newer Go toolchain than `go.mod` currently pins for the project itself;
+  run it with `GOTOOLCHAIN=auto` (as `make check` and CI both do) so `go run` can fetch a matching
+  toolchain for the tool alone, instead of bumping the project's own pin.
 
 ## Security-adjacent Go hygiene
 

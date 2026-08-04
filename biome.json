@@ -9,6 +9,7 @@
       "!!experiments",
       "!!artifacts/**/target",
       "!!artifacts/mjs-source-validator-v1/evidence",
+      "!!artifacts/mjs-source-validator-r2/evidence",
       "!!schemas/conformance/v0/manifest.json",
       "!!schemas/conformance/v0/canonical-inline-input",
       "!!schemas/conformance/v0/contexts",

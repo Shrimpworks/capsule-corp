@@ -161,10 +161,19 @@ policy refusals but must not invent active reactive-resource measurements.
 
 ### R2 — unsigned role-specific construction
 
-Construct the two smallest private XPC launcher bundles and their matching parser children from the
-reviewed lock, offline and without a product consumer. Retain exact source/SBOM/notice/provenance,
-two-builder, static linked-closure, descriptor, and no-generic-bus evidence. Do not sign, install,
-use an Apple credential, or run arbitrary/user source.
+Status: `PASSED` for the exact unsigned-construction scope. Two private role-specific XPC bundle
+layouts and matching role-specific parser children build offline from Rust 1.95.0 and exact Oxc
+0.140.0. Two clean same-host source/target/bundle directories produce byte-identical retained
+files. Source, lock, license/notice, CycloneDX, static dynamic-library closure, exact benign known
+answers, and unsigned in-toto evidence are retained under
+[`artifacts/mjs-source-validator-r2`](../artifacts/mjs-source-validator-r2/README.md). This is not an
+independent-builder result.
+
+The launchers accept only one `request` data value and validate exact role/frame/source/policy
+bindings. The only canonical R1 policy is inactive, so they refuse without spawning. This preserves
+the R1/R4 boundary: R2 does not invent spawn limits, reactive measurements, cleanup dispositions,
+or supported-host identity. No product consumer, Apple credential, signing, installation,
+enrollment, reachable endpoint, arbitrary/user source, runtime, backend, or guest participated.
 
 ### R3 — separately authorized signing and installation
 
@@ -293,7 +302,7 @@ This gate belongs to runtime admission. Parser passage alone never satisfies it.
 ## Acceptance rule
 
 ADR-0035 and ADR-0036 are Accepted architecture decisions. Product Source Validator remains
-`BLOCKED` until R2-R5B retain reviewed evidence on every supported host and the canonical docs,
+`BLOCKED` until R3-R5B retain reviewed evidence on every supported host and the canonical docs,
 field-authority material, and M2/S1 checkpoint agree. Runtime/profile admission additionally
 requires V6. A parser binary, endpoint, signed package, cleanup pass, or happy-path result alone is
 insufficient and does not make the product control passed or admitted.

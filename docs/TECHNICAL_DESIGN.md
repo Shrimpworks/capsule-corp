@@ -98,9 +98,9 @@ The first complete workflow is intentionally narrow:
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
    loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
-   parser/process selection and passive R1 contracts are `PASSED`; product Source Validator R2-R5B
-   is `BLOCKED`, and plan construction remains `BLOCKED` until its required gates
-   pass.
+   parser/process selection, passive R1 contracts, and unsigned R2 construction are `PASSED`;
+   product Source Validator R3-R5B is `BLOCKED`, and plan construction remains `BLOCKED` until its
+   required gates pass.
 2. The Go daemon strictly decodes the proposal and, under Accepted ADR-0035/0036, sends an exact
    copied source through its private role-specific Source Validator launcher before planning. The
    launcher owns a fresh parser child; the validator parses but never
@@ -234,6 +234,13 @@ sandbox/resource, consumer, broader conformance, and fault evidence pass the
 [`implementation plan`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md). Runtime no-loader admission
 remains a separate mandatory control.
 
+R2 now retains two unsigned role-specific XPC bundle layouts and matching role-specific parser
+children. Exact Oxc/Rust sources build offline in two clean same-host directories with identical
+bundle bytes; source, dependency, license/notice, SBOM, static dynamic-library closure, and
+unsigned provenance records are retained. The bundled R1 resource policies are inactive, so the
+launchers perform exact fixed-key/frame/policy predecode and refuse without spawning. This is
+construction evidence, not an installed service or active process-boundary result.
+
 The exact V2 local macOS checkpoint does not advance that boundary. Its strict bootstrap refuses
 before `exec` because `RLIMIT_AS` cannot be lowered; its explicitly unbounded diagnostic mutation
 proves deterministic process/fault mechanics while also proving ambient file, socket, metadata-
@@ -260,11 +267,12 @@ kill/drain/reap. It is not a hard peak/exact cap or host-availability guarantee.
 cadence, baseline, overshoot, and kill latency remain unset until the separately authorized signed
 corpus.
 
-The passive v1 contract is now `PASSED`: fixed role-distinct frames and an explicitly inactive
-resource-policy shape have independent Go/Node decoders and no process or authority effect.
-Product implementation remains `BLOCKED` on sequential unsigned construction, signed installed
-reachability/confinement, measured resource/residue corpus, daemon
-consumer, and Broker consumer. Unsupported private-XPC reachability, authority/native-loading/
+The passive v1 contract and unsigned R2 construction are now `PASSED`: fixed role-distinct frames
+and an explicitly inactive resource-policy shape have independent Go/Node decoders, while two
+offline role-specific bundle/parser builds retain same-host byte equality and inactive
+predecode/refusal with no child or authority effect. Product implementation remains `BLOCKED` on
+signed installed reachability/confinement, measured resource/residue corpus, daemon consumer, and
+Broker consumer. Unsupported private-XPC reachability, authority/native-loading/
 filesystem/network escape, orphan cleanup, mixed update, or unacceptable measured host risk stops
 the candidate rather than widening the bus.
 
@@ -846,8 +854,9 @@ implemented.
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
 3. Continue the Source Validator replacement after accepted R0/ADR-0036 in this strict order:
-   passive role-specific v1 contracts/fixtures and field authority; unsigned two-launcher/parser
-   construction; separately authorized signing/install and private reachability; confinement,
+   completed passive role-specific v1 contracts/fixtures, field authority, and unsigned
+   two-launcher/parser construction; separately authorized signing/install and private
+   reachability; confinement,
    reactive-resource, and residue corpus; daemon consumer; Broker consumer; then the M2/S1
    checkpoint. V0/V1/V2 bytes remain historical and unchanged. No threshold, sample cadence, or
    overshoot is chosen before the signed corpus, and no direct parent inheritance, shared service,

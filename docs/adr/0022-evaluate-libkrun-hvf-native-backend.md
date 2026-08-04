@@ -183,9 +183,9 @@ invalidation triggers; it cannot be relabeled for `validated-local`.
 - [`experiments/gate-c-libkrun-root-custody/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-root-custody/RESULTS.md)
 - [`experiments/gate-c-p0-3-protocol-conformance/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-p0-3-protocol-conformance/RESULTS.md)
 - [`experiments/gate-c-libkrun-console-correctness/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-console-correctness/RESULTS.md)
-- [`dills122/libkrun` PR #2](https://github.com/dills122/libkrun/pull/2), exact
-  [source head](https://github.com/dills122/libkrun/commit/8a2c91943793668f31a1cf7af431933be935bb58),
-  and exact [merge commit](https://github.com/dills122/libkrun/commit/cf0333cdba478cc34a8570a65b38412da7fd3ecc)
+- [`Shrimpworks/libkrun` PR #2](https://github.com/Shrimpworks/libkrun/pull/2), exact
+  [source head](https://github.com/Shrimpworks/libkrun/commit/8a2c91943793668f31a1cf7af431933be935bb58),
+  and exact [merge commit](https://github.com/Shrimpworks/libkrun/commit/cf0333cdba478cc34a8570a65b38412da7fd3ecc)
 - [Gate C implementation-readiness synthesis](../GATE_C_READINESS_CHECKPOINT.md)
 - [Gate C P0 reconciliation](../GATE_C_P0_RECONCILIATION.md)
 

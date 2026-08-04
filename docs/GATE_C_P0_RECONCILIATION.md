@@ -411,7 +411,7 @@ The current governed integration destination is
 `728df8125077d0db44265f6e997c72b81b65c015`. This changes repository ownership only. Any reuse must
 pin exact commits/digests and verify ancestry rather than trusting that movable branch name.
 
-- [`dills122/libkrun` PR #2](https://github.com/dills122/libkrun/pull/2) merged exact source head
+- [`Shrimpworks/libkrun` PR #2](https://github.com/Shrimpworks/libkrun/pull/2) merged exact source head
   `8a2c91943793668f31a1cf7af431933be935bb58` as merge commit
   `cf0333cdba478cc34a8570a65b38412da7fd3ecc`. The merge parents are governed base
   `4ea8d1de861ed1c0636fc800b6da8fb71a086aa5` and that exact head. At read time the source branch

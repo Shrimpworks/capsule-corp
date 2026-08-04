@@ -41,6 +41,8 @@
         "minimum",
         "exact-maximum",
         "cap-plus-one",
+        "calculated-maximum-plus-one",
+        "raw-maximum",
         "malformed",
         "nonzero",
         "all-zero",

@@ -1,8 +1,9 @@
 # Supervisor owner-lock implementation and fault plan
 
-Status: proposed and unimplemented product boundary. The retained development-only experiment
-selects BSD `flock` semantics for later implementation; no product startup, service, protected
-store, backend, runtime, or guest is wired by this plan.
+Status: G1 passive local mechanic implemented; G2/G3 and the product boundary remain unimplemented.
+The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
+Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
+backend, runtime, or guest is wired by this plan.
 
 Decision: [Proposed ADR-0033](adr/0033-select-enrolled-flock-supervisor-owner.md).
 
@@ -35,6 +36,7 @@ type OwnerLockEnrollment struct {
     ExpectedUID     uint32
     StateRootDevice uint64
     StateRootInode  uint64
+    LockEntryName   string
     LockDevice      uint64
     LockInode       uint64
 }
@@ -48,22 +50,24 @@ type InstallationOwner interface {
 
 func AcquireDarwinInstallationOwner(
     context.Context,
-    TrustedStateRoot,
+    *TrustedStateRoot,
     OwnerLockEnrollment,
 ) (InstallationOwner, error)
 ```
 
-`TrustedStateRoot` is constructed only from installed bootstrap/platform state. It retains a
-validated directory descriptor and closed entry names; no caller path crosses this API. The Darwin
-implementation uses the smallest reviewed syscall surface: `openat`, `fstat`, `fcntl(F_GETFD)`,
-`flock`, and `close`. A native shim is unnecessary if the pinned Go syscall dependency exposes
-those exact operations; any shim remains in-process, method-specific, and descriptor-opaque.
+`TrustedStateRoot` is intended to be constructed only from installed bootstrap/platform state.
+G1's internal `OpenDarwinTrustedStateRoot` consumes a future installation composition's bootstrap
+path once and retains only a validated directory descriptor plus the closed entry name; owner
+acquisition accepts no path. G1 validates the in-process projection but does not authenticate its
+provenance. The Darwin implementation uses the smallest reviewed syscall surface: `openat`, `fstat`,
+`fcntl(F_GETFD/F_GETFL)`, `flock`, and `close`. G1 pins `golang.org/x/sys/unix` for those exact
+Darwin operations and needs no native shim.
 
 The capability owns exactly one descriptor. It has no `File`, `FD`, `Dup`, `Unlock`, or transfer
 accessor. `CheckHeld` verifies the wrapper is live, the descriptor identity remains enrolled, and
-`FD_CLOEXEC` remains set; it cannot prove that an unrelated process obeys advisory locks. Store
-openers, migrations, lifecycle transactions, archive sealed values, backups, and repairs accept
-the opaque capability and reject a mismatched owner session.
+`FD_CLOEXEC` remains set; it cannot prove that an unrelated process obeys advisory locks. G2 must
+make store openers, migrations, lifecycle transactions, archive sealed values, backups, and
+repairs accept the opaque capability and reject a mismatched owner session.
 
 The first integration must add an owner-required v1 opener rather than silently changing the
 existing conformance constructor. Existing path-based constructors remain explicitly test-only
@@ -71,11 +75,12 @@ until all callers migrate. No product build may expose an ownerless store opener
 
 ## Bootstrap record and store binding
 
-Define one closed bootstrap projection and byte-exact fixture before implementation. It binds the
-installation/Supervisor IDs, expected UID, protected state-root device/inode, closed lock/store
-names, enrolled lock device/inode/policy, expected store format, and trust epoch. Unknown fields,
-versions, missing identities, zero values, path separators, `.`/`..`, or non-ASCII entry names
-refuse.
+G1 defines and validates only the immutable in-process `OwnerLockEnrollment` projection: nonzero
+installation/Supervisor/UID/root/lock identities plus one closed ASCII lock entry name. The
+complete signed bootstrap record and byte-exact fixture remain G2/G3 work because they must also
+bind the mutable store name/format and active trust epoch without freezing a partial authority
+record. Missing identities, zero values, path separators, `.`/`..`, non-ASCII names, and names over
+the platform component limit refuse now.
 
 The trusted installer creates the state root and lock, syncs them, reopens them, and signs/enrolls
 the observed identities. Startup reads no daemon-supplied path. The store may change inode on each
@@ -111,7 +116,7 @@ temporary transaction, owner session, recovery call, archive file, or fake call 
 
 ## Implementation slices
 
-### G1: passive bootstrap and opaque owner types
+### G1: passive bootstrap and opaque owner types — implemented local mechanic
 
 - Add closed enrollment/state-root/owner-session types and validation.
 - Add Darwin build-tagged acquisition using owned temporary roots only.
@@ -119,6 +124,13 @@ temporary transaction, owner session, recovery call, archive file, or fake call 
 - Adapt the existing `OfflineMigrationLock` assertion to an actual held owner in tests.
 
 Acceptance: internal package only; no product command/service wiring, consumer, backend, or guest.
+
+Retained G1 evidence covers closed enrollment/name validation, exact root and lock descriptor
+checks, nonblocking independent-process contention, refusal-before-store/migration/recovery/IPC/
+archive/adapter markers, ordinary `CLOEXEC` omission, explicit inherited-description lifetime,
+process death, entry/root replacement, descriptor reuse, close faults, repetition, and the existing
+`OfflineMigrationLock` assertion using an actual held owner. Store/session/startup composition and
+the G2/G3 cases below remain open.
 
 ### G2: owner-required fixed-store and startup composition
 

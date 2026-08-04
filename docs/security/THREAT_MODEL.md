@@ -519,6 +519,11 @@ runtime security control, production lock, consumer, real backend, or guest. The
 claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows advance only for the
 exact retained mechanism and evidence they name.
 
+Passive owner-lock G1 separately implements the internal Darwin enrolled-object acquisition,
+opaque lifetime capability, and temporary-root/process fault corpus. It is an unwired local
+mechanic: E5 and product startup do not consume it, and it supplies no protected-storage,
+same-UID-containment, installed-identity, rollback, runtime, backend, or guest claim.
+
 Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
 replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies,
 and complete-cohort eligibility now exist, but no file write, v2 migration, archive activation,

@@ -295,7 +295,7 @@ stable effect/instance identities, exact reconciliation, 256-active/4,096-retain
 repeated-startup/exhaustion evidence. Active capacity releases only after durable `destroyed`,
 cleanup false, and authoritative absence. The injected owner/coordinator is not a platform lock.
 
-Archive/compaction and replay retention, the selected but unimplemented multi-process lock,
+Archive/compaction and replay retention, the selected but product-uncomposed multi-process lock,
 rollback/backup,
 authenticated IPC, production COSE/Swift/Keychain/user-presence signing
 and verification, production backend reconciliation, consumers, content, evidence composition,
@@ -314,8 +314,9 @@ later owner primitive: validate one installer-enrolled pre-created sibling objec
 retained protected state-root descriptor, acquire nonblocking BSD `flock`, and retain the opaque
 `CLOEXEC` descriptor for the full process lifetime. Its owned local harness observed duplicate
 refusal before store work, process-death release, fork/exec behavior, and rename/replacement risk.
-No Go/Darwin port, owner-required store opener, installed protected-state-root matrix, session,
-update, or reboot evidence exists, so the current E5 owner remains injected.
+Passive G1 now implements the internal Go/Darwin acquisition and owned-temporary-root process/fault
+oracles. No owner-required store/startup composition, installed protected-state-root matrix,
+session/update/reboot evidence, or product wiring exists, so the current E5 owner remains injected.
 
 ## Target acceptance tests
 

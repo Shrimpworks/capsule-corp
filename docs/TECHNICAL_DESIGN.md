@@ -42,8 +42,11 @@ service, production owner lock, consumer, runtime, backend effect, or guest is c
 Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
 installer-enrolled pre-created sibling object, acquire nonblocking BSD `flock`, and retain the
 opaque `CLOEXEC` descriptor for the Supervisor lifetime. Its bounded local harness observed
-process/descriptor semantics and refusal-before-store ordering only. No Go/Darwin port or installed
-protected-state-root evidence is connected.
+process/descriptor semantics and refusal-before-store ordering only. Passive G1 now adds an
+internal Go/Darwin owner package using the selected descriptor-relative syscalls plus
+owned-temporary-root process, fault,
+replacement, inheritance, and close tests. It is not wired to product startup or the v1 store, and
+installed protected-root evidence remains absent.
 
 Proposed ADR-0031 defines the next archive boundary. A complete expired
 registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
@@ -669,8 +672,9 @@ rollback, backup, and real-backend reconciliation mechanisms remain unselected.
 Proposed ADR-0033 selects BSD `flock` over POSIX process locks, macOS 26 OFD locks, and `O_EXLOCK`
 after one owned local corpus. The selected opener validates the pre-created object by UID, mode,
 type, link count, device, and inode relative to a retained protected state-root descriptor before
-store access. Implementation and installed same-UID pathname protection remain unproven, so E5
-still uses its injected owner.
+store access. Passive G1 implements that internal Go/Darwin acquisition and its local refusal
+oracles, but not the owner-required store/startup composition or installed same-UID pathname
+protection, so E5 still uses its injected owner.
 
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the local
 conformance shape for archive and replay retention. Under the sole owner lock, the Supervisor

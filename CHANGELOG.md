@@ -28,6 +28,11 @@ but it has not selected a public versioning or release policy yet.
 - An unwired exact plan-registration conformance handoff that passes copied TypeScript plan bytes
   and complete role bindings to the Go `registrationstate` component without defining product IPC
   or activating any daemon, approval, backend, or guest surface.
+- A passive internal Go/Darwin Supervisor owner capability that validates one enrolled pre-created
+  sibling object, acquires lifetime nonblocking BSD `flock`, retains an opaque `CLOEXEC`
+  descriptor, and refuses duplicate or mismatched local owners before downstream test markers.
+  Product startup, owner-required store opening, protected storage, and installed evidence remain
+  unimplemented.
 
 ### Removed
 

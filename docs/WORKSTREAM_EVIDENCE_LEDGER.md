@@ -174,8 +174,13 @@ duplicate-process refusal before store/recovery markers, last-description/proces
 dup/fork/exec/`CLOEXEC` behavior, POSIX record-lock any-close risk, macOS 26 OFD behavior,
 `O_EXLOCK` interoperability, retained-directory `openat`, and rename/unlink/replacement limits.
 
-This is a `spike-observed` local-semantics decision only. The E5 store still injects its owner and
-coordinator. No Go/Darwin port, owner-required store opener, Apple-signed protected state root,
+Passive G1 advances the exact internal Go/Darwin acquisition to `local-mechanic`: closed
+enrollment and entry-name validation, retained-root `openat`, exact descriptor flags and identity,
+nonblocking independent-process contention, opaque owner/session/close behavior, fault injection,
+inheritance, process-death, replacement, descriptor-reuse, and refusal-before-downstream markers
+are covered under owned temporary roots. The existing migration assertion is also exercised with
+an actual held owner without changing the store API. The E5 store still injects its owner and
+coordinator. No owner-required store/startup composition, Apple-signed protected state root,
 wrong-user/session/update/reboot result, production engine, archive behavior, consumer, runtime,
 backend, or guest exists. The advisory lock does not contain a same-UID process that can mutate its
 parent directory.
@@ -265,7 +270,7 @@ tests rather than manifest cases.
 | PR #71, Source Preparer topology | `c68dfb1535b6763ad7c89d5f401fa9002f225b26` | Source head `5edc7fd90025c918291b5967ae0f06297b72540e`; proposed the separate enrolled owner/store topology and P0-P7 plan without implementing it. |
 | PR #72, Source Preparer P0 authority review | `2e268b01d4174fe90397c00abc5973a3dd785606` | Source head `a12041c36d90815474598f0929c595b32dc68e11`; retained P1 HOLD/NO-GO pending protected-store, worker, bootstrap/update, retention/release, recursive field-authority, and lifecycle evidence. No P1 contract exists. |
 | PR #73, governed libkrun reconciliation | `f6fcf172af752a425afb29ce62680d0b115f6998` | Source head `5e17ac8cec21320c3693049c53e7575bb9dbc15a`; reconciled external fork PR #2 head `8a2c91943793668f31a1cf7af431933be935bb58` and merge `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, two lifecycle fixes, and 37/88-function plus 298/733-line four-file coverage without guest/backend/profile admission. |
-| PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 is next. |
+| PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 was the next slice at that merge. |
 | PR #75, passive archive F1 | `6fc31a049c476acf5085071c48d3d5e36f27240f` | Source head `20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef`; implemented passive archive types, limits, known answers, defensive copies, and eligibility only. No file write, migration, activation, lookup consumer, or adapter call exists; F2 is next. |
 
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
@@ -294,8 +299,9 @@ Completed and retained:
   targets, without claiming recursive coverage for future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
   eligibility selection. No file/store/archive behavior or consumer exists; and
-- Proposed ADR-0033's local owner-lock mechanism selection, while G1, owner-required store
-  composition, and installed protected-root evidence remain unimplemented; and
+- Proposed ADR-0033's local owner-lock mechanism selection plus passive G1 Go/Darwin acquisition,
+  while owner-required store/startup composition and installed protected-root evidence remain
+  unimplemented; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
@@ -308,9 +314,10 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Independently actionable now:** implement archive F2 from the completed passive F1 boundary;
-   implement owner-lock G1 under owned temporary roots; run only bounded Source Preparer P0A
-   blocker/design work; and maintain exact documentation plus recursive field-authority design.
+1. **Independently actionable now:** resolve the retained archive F2 format contradictions without
+   implementing around them; review and plan owner-lock G2 without silently changing the existing
+   conformance constructors; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
+   maintain exact documentation plus recursive field-authority design.
 2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
    `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
@@ -328,7 +335,8 @@ Current dependency and priority view:
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
-   and remains deferred activation/distribution evidence, not a blocker for local F2/G1 mechanics.
+   and remains deferred activation/distribution evidence, not a blocker for F2 format correction
+   or owner-lock G2 planning.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.

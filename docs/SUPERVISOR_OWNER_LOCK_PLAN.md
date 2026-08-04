@@ -174,6 +174,13 @@ requiring explicit authorization and matching-Team package design; it is not W4 
 evidence and does not make Developer ID/notarization work current. Paid owned clean-host/minimum-OS
 coverage remains deferred activation evidence.
 
+The 2026-08-04 exact-selector follow-up confirmed that no Developer ID/fallback identity was
+selected: the selected development certificate itself supplies the 3DDR subject OU. It also found
+that the certificate's default designated requirement binds the misleading W4 common name without
+binding the Team OU. That default requirement is diagnostic only. The tightened harness requires
+an explicit W4 OU requirement plus emitted Team, exact signing identifier, CDHash, and effective
+entitlement checks, and scans both standard local profile caches. It still finds no W4 profile.
+
 The retained G3 experiment fixes only test identifiers, closed entitlement/profile requirements,
 state/lock/store names, the complete bootstrap field projection, and a pure v1/v2 exact-tuple
 update/refusal model. Its noncredential run reuses the real G1/G2 Darwin corpus. This adds no

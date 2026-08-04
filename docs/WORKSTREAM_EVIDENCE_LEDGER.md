@@ -200,6 +200,11 @@ service, entitlement/profile, state/lock/store, and complete bootstrap-field fix
 v1/v2 exact-tuple refusal model. Its noncredential run passes the real G1/G2 Darwin corpus. It
 creates no signed bootstrap or installed/protected result and additionally records the unresolved
 trusted-installer-to-private-container bootstrap and descriptor-relative store-open blockers.
+The 2026-08-04 exact-selector follow-up confirms the selector never chose Developer ID or another
+fallback: the development certificate itself emits 3DDR. It also rejects the default designated
+requirement as W4 evidence because that requirement binds only the misleading common name, not the
+Team OU. An explicit W4 OU requirement refuses, both standard local profile caches contain only the
+same three 3DDR profiles, and installed G3 remains blocked before build or launch.
 
 Source Preparer P0 remains a separate bounded NO-GO/HOLD merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as

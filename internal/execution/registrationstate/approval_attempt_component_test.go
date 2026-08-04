@@ -679,6 +679,23 @@ func TestApprovalAttemptReopenRejectsCorruptionAndCrossLinks(t *testing.T) {
 	}
 }
 
+func TestFixedStoreRejectsUnsafeFilePermissionsWithoutRewrite(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "permissions-v0.json")
+	if _, err := NewFixedFileStore(path, ordinaryInitialState()); err != nil {
+		t.Fatalf("create store: %v", err)
+	}
+	if err := os.Chmod(path, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	before := mustReadFile(t, path)
+	if _, err := NewFixedFileStore(path, InitialState{}); err == nil {
+		t.Fatal("v0 open accepted unsafe file permissions")
+	}
+	if after := mustReadFile(t, path); !bytes.Equal(after, before) {
+		t.Fatal("unsafe file refusal rewrote evidence")
+	}
+}
+
 func TestApprovalAttemptAuthenticationAndPreflightFailuresDoNotChangeAuthority(t *testing.T) {
 	harness := newApprovalHarness(t)
 	vector := fixtureVector(t, harness, 0x66, 1_785_456_000, 1_785_456_300, 0)

@@ -183,6 +183,11 @@ service, the two sandboxes/containers and code requirements are distinct, launch
 constraints and entitlements match, and old/mixed packages refuse. Unsupported private-XPC
 reachability stops; it never widens to a shared/global service or app group.
 
+The exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) records Team
+`3DDR84M4JS`, the R2 byte digests and placement, entitlement/profile requirements, refusal matrix,
+cleanup, and every mutation that still needs separate authorization. R3 is `BLOCKED` until its
+containing fixtures, exact role profiles, and finalized signed constraint bytes exist.
+
 ### R4 — confinement, reactive-resource, and residue corpus
 
 Use only fixed benign parse-only evidence to run the complete authority-denial, descriptor,

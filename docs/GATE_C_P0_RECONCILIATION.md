@@ -526,13 +526,13 @@ Gatekeeper assessment; and installed-byte, clean-host, session/recovery, and sup
 validation on those exact signed bytes. P0-4B and final P0-1/P0-2/P0-3 installed reruns cannot pass
 without that evidence. Those identities/profiles must be deliberately authorized. Exact G3
 discovery found that certificate SHA-1 `1638...61E3` is displayed with a W4 suffix, but its X.509
-subject OU and emitted code-signing TeamIdentifier are `3DDR84M4JS`; it is not W4 evidence. The
-three Xcode 26.6-cached profiles all belong to historical Team `3DDR84M4JS` and are likewise not
-reusable for W4 tests. Local W4 work requires a matching/reissued certificate and exact profiles,
-not only role identifiers and entitlements. A separate
-Developer ID Application identity for historical Team `3DDR84M4JS` remains later distribution
-authority requiring explicit authorization and matching-Team package design; it is not W4
-development evidence and does not make Developer ID or notarization work current. Paid owned clean-host/
+subject OU and emitted code-signing TeamIdentifier are `3DDR84M4JS`. Apple Membership Details later
+confirmed 3DDR is the account Team and W4 is a member/display suffix. The three Xcode 26.6-cached
+profiles share Team 3DDR but have nonmatching Gate B/wildcard App IDs. Local work requires exact
+role profiles, identifiers, and entitlements. A new Apple Development identity SHA-1
+`80A4...D3793` is locally present but not authorized. A separate Developer ID Application identity
+for Team `3DDR84M4JS` remains later distribution authority requiring explicit authorization and
+matching-Team package design; it does not make Developer ID or notarization work current. Paid owned clean-host/
 minimum-OS validation is not currently planned and remains deferred activation/distribution
 evidence rather than a blocker for local mechanics. A
 genuinely independent Linux/arm64 builder is viable but not currently planned; same-host and

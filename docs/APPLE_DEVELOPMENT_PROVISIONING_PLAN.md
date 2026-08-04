@@ -1,41 +1,53 @@
-# Apple Development provisioning and installed-test plan (Team `W4QUR9FUL4`)
+# Apple Development provisioning and installed-test plan (Team `3DDR84M4JS`)
 
-Date: 2026-08-03
+Date: 2026-08-04
 
-Status: retained read-only provisioning and installed-test plan. Nothing in this repository, the
-Apple Developer portal, or any Keychain was modified to produce it. Every bundle ID, entitlement,
-service name, and test step below is a proposal for the user/orchestrator to execute later against
+Status: retained provisioning and installed-test plan, updated from user-provided non-secret
+identity discovery. This documentation task did not mutate the Apple Developer portal, any
+Keychain, profile, signed byte, or installed service. Every bundle ID, entitlement, service name,
+and test step below is a proposal for the user/orchestrator to execute later against
 [S5: Apple Development installed matrix](AUTHENTICATED_LOCAL_IPC_PLAN.md#s5-apple-development-installed-matrix),
 not a decision this repository has already made unless the exact doc/ADR making it is cited.
 
-The canonical practical inventory, Team-ID stop, replacement-input checklist, environment and
+The canonical practical inventory, Team-ID reconciliation, replacement-input checklist, environment and
 component matrices, credential/key custody rules, and safe setup/verification commands now live in
 [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
 This retained plan remains the detailed installed-test proposal and historical W4/3DDR discovery.
 
-Correction after exact G3 discovery: the earlier inference that the displayed certificate was a
-W4 Team identity is false. Certificate SHA-1
+Identity reconciliation: the earlier inference that the parenthesized value in an Apple
+Development certificate display name was the signing Team ID is false. Certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its X.509 subject OU and an exact signed-byte
-TeamIdentifier are `3DDR84M4JS`. No cached profile belongs to W4. Treat the bundle/profile tables
-below as future W4 requirements only; do not use that certificate or the historical profiles as
-W4 evidence. Installed G3 is currently `BLOCKED`; see the retained
+TeamIdentifier are `3DDR84M4JS`. On 2026-08-04 the account's Apple Membership Details independently
+identified `3DDR84M4JS` as the Apple Developer Program Team ID for the Individual membership.
+`W4QUR9FUL4` is therefore a certificate common-name/member display suffix, not Capsule's Team ID.
+Installed G3 remains `BLOCKED` on its protected-root/bootstrap composition and exact role profiles;
+see the retained
 [historical G3 result](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
 The 2026-08-04 exact-selector follow-up also proved that the `codesign` default designated
 requirement repeats the misleading W4 common name without binding the certificate Team OU. That
-requirement is not W4 admission evidence. The future W4 run must require the explicit Team OU,
-emitted TeamIdentifier, role signing identifier, enrolled exact CDHashes, and effective entitlement
-digest. Both standard local profile caches were checked; only the same three 3DDR profiles exist.
+common name is not Team admission evidence. Every future run must require Team OU and emitted
+TeamIdentifier `3DDR84M4JS`, the role signing identifier, enrolled exact CDHashes, and the effective
+entitlement digest. The cached 3DDR Gate B profiles still do not match the Capsule product bundle
+IDs and must not be reused as generic Team profiles.
+
+A user-run `security find-identity -v -p codesigning` on 2026-08-04 reported a new valid Apple
+Development identity, SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793`, and Keychain Access showed
+it under My Certificates. This discovery records local private-key pairing but does not authorize
+use. The older Apple Development identity `1638...61E3` and Developer ID Application identity
+`AD70...F750` remain distinct and are neither revoked nor selected by this plan. The first
+separately authorized harmless signing readback must still prove that the exact selected identity
+emits TeamIdentifier `3DDR84M4JS` before any installed matrix continues.
 
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
 
 ## Scope and method
 
-This plan originally relied on the display-name inference for an Apple Development identity
-expected to belong to Team `W4QUR9FUL4` (not a paid Developer ID/notarization identity). Exact G3
-readback later disproved that Team inference. It read `AGENTS.md`,
+This plan originally relied on the false display-name inference that `W4QUR9FUL4` was the signing
+Team. Exact G3 readback and the later Apple Membership Details screen establish `3DDR84M4JS` as the
+Team ID. It read `AGENTS.md`,
 [`ARCHITECTURE.md`](ARCHITECTURE.md), [`AUTHENTICATED_LOCAL_IPC_PLAN.md`](AUTHENTICATED_LOCAL_IPC_PLAN.md)
 and its [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md),
 [`SUPERVISOR_OWNER_LOCK_PLAN.md`](SUPERVISOR_OWNER_LOCK_PLAN.md),
@@ -46,7 +58,7 @@ ADR-0029, plus the retained real spikes in the commit-pinned
 [`gate-c-installed-development-topology`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology)
 (P0-4A) and
 [`macos-authority-separation`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation)
-(Gate B, historical Team `3DDR84M4JS`).
+(Gate B, the same Team but different experimental bundle identifiers and profiles).
 
 It did not access the Apple Developer portal, create any identifier, download any provisioning
 profile, sign any component, or modify the repository beyond adding this document.
@@ -61,20 +73,23 @@ target-of-signing binaries.
 
 Per S5 and `WORKSTREAM_EVIDENCE_LEDGER.md`:
 
-- The user confirms Individual membership under development Team `W4QUR9FUL4`; the locally
-  available certificate does not belong to that Team at the code-signing boundary.
-- `security find-identity -v -p codesigning` reports a certificate whose display name ends in W4,
-  but its subject OU and signed-byte TeamIdentifier are `3DDR84M4JS`; it is not W4 evidence.
-- Xcode 26.6 has three cached provisioning profiles, all belonging to the historical Team
-  `3DDR84M4JS` (Gate B Broker, Gate B Supervisor, wildcard). None are reusable for W4.
-- A separate Developer ID Application identity exists only for historical Team `3DDR84M4JS`. It is
-  not W4 evidence and does not make Developer ID/notarization current for W4.
-- No matching W4 signing certificate or W4 role profile is locally available.
+- Apple Membership Details confirms Individual Apple Developer Program membership under Team
+  `3DDR84M4JS`.
+- `security find-identity -v -p codesigning` reports two valid Apple Development identities whose
+  common names end in `W4QUR9FUL4`: SHA-1 `1638...61E3` and new SHA-1 `80A4...D3793`. That suffix is
+  not the Team ID; exact signed-byte Team readback remains mandatory for whichever identity is
+  separately authorized.
+- Xcode 26.6 has three cached profiles under Team `3DDR84M4JS` (Gate B Broker, Gate B Supervisor,
+  wildcard). Their bundle identifiers and entitlements do not match the Capsule roles, so none is
+  reusable for this plan.
+- A separate Developer ID Application identity SHA-1 `AD70...F750` also belongs to Team
+  `3DDR84M4JS`. It is later distribution authority and does not authorize Developer ID signing or
+  make notarization current.
+- No exact Capsule role provisioning profile is locally confirmed.
 - No paid owned clean-host / minimum-OS validation hardware is currently planned.
 
-The task confirms Individual membership. Actual App ID/profile capacity and portal availability
-must still be observed under the selected W4 team during certificate/profile creation; repository
-text cannot establish Apple account state.
+Actual App ID/profile capacity and portal availability must still be observed under Team
+`3DDR84M4JS` during identifier/profile creation; repository text cannot establish portal state.
 
 ## Component inventory and bundle-identifier proposal
 
@@ -131,8 +146,9 @@ confirmed. This plan does not request, reserve, create, or use any App ID/profil
 
 ## Required App IDs and provisioning profiles (development-only)
 
-The future W4 lane requires an Apple Development identity whose certificate subject OU and signed
-TeamIdentifier both equal `W4QUR9FUL4`; every profile below is then a macOS Development profile,
+The development lane requires an explicitly authorized Apple Development identity whose
+certificate subject OU and emitted TeamIdentifier both equal `3DDR84M4JS`; every profile below is
+then a macOS Development profile,
 not Developer ID/Distribution:
 
 | Explicit App ID | Capabilities | Profile type | Notes |
@@ -143,7 +159,8 @@ not Developer ID/Distribution:
 | `com.capsulecorp.capsule.broker` | App Sandbox, Keychain Sharing | macOS App Development | |
 
 For each App ID: one macOS App Development provisioning profile scoped to the exact App ID, the one
-matching W4 Apple Development certificate after reissue/verification, and this Mac's device UDID.
+matching authorized Apple Development certificate after exact verification, and this Mac's device
+UDID.
 Development profiles are inherently single-Team, non-notarizable, and Gatekeeper-rejecting by
 design — P0-4A's `spctl --assess` already returned status 3 against ad-hoc-signed bytes, and this
 plan should not chase a Gatekeeper-pass result with a Development profile.
@@ -220,27 +237,27 @@ Peer-validation order any provisioning/entitlement plan must support (ADR-0029):
 ADR-0029's own S3 slice (native authentication/cap harness) has not run yet; the most recent passive
 evidence exercised only requirement parsing on ad-hoc processes and "does not authenticate a peer,
 inspect or use an Apple-issued identity, establish Team or distribution enrollment, or validate
-production IPC." Any Team-W4-enrolled test of the table above is new work, not a rerun.
+production IPC." Any Team-3DDR-enrolled test of the table above is new work, not a rerun.
 
 ## Team ID / update-channel / CDHash / update expectations
 
-- `InstallationManifest` must record, per component: signing identifier, Team ID (`W4QUR9FUL4` for
-  every W4-scoped test — never mixed with `3DDR84M4JS`), peer code requirements, and the exact
+- `InstallationManifest` must record, per component: signing identifier, Team ID `3DDR84M4JS`, peer
+  code requirements, and the exact
   active CodeDirectory hashes — the designated requirement/Team match never replaces the active
   CDHash set (ADR-0029).
 - Every trusted IPC call, plan registration, approval, attempt, and receipt binds the active epoch
   (installation ID + sequence-ordered epoch digest); a component from a different epoch must fail
   closed as partial-update/stale-peer (`security/INSTALLATION_TRUST.md`).
-- Epochs are sequence-ordered, not rollback-proof — never describe a W4 test result as defeating
+- Epochs are sequence-ordered, not rollback-proof — never describe a development test result as defeating
   rollback; only a non-rollbackable anchor or external witness would, and none exists here.
 - Keychain access groups are epoch-scoped, not identity-scoped (ADR-0021): every identity-changing
   epoch should provision a fresh access group and a fresh, non-migrated Secure Enclave key. Gate B's
   evidence proved a stable Keychain group is a Team/profile boundary, not a build/epoch boundary.
 - Update-channel expectations follow `UPDATE_AND_RECOVERY.md`'s 14-step prepared-update ceremony;
-  none of it exists as running code yet, so a W4 install validates the mechanics categories it
+  none of it exists as running code yet, so a development install validates the mechanics categories it
   implies (old/new component pairing, stale-peer refusal, partial-update fail-closed), not the
   ceremony itself.
-- Every W4 test rebuild changes the CDHash and must rebuild-and-repin at every step that changes any
+- Every test rebuild changes the CDHash and must rebuild-and-repin at every step that changes any
   signed byte, per the explicit warning in the archived
   [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md).
 
@@ -275,9 +292,9 @@ owned Mac unless noted.
 ## What's testable on the current single Mac vs. what needs another machine
 
 **Testable on this one Mac** once App IDs/profiles/entitlements exist: rows 1–13, 16, 17, 20 above
-(all already demonstrated feasible on one host by P0-4A or Gate B, against a different team but a
-host-local mechanism); the full XPC peer-validation matrix (§6) with real W4-signed binaries instead
-of ad-hoc signing; real Keychain access-group separation and epoch-key rotation for W4-owned App
+(all already demonstrated feasible on one host by P0-4A or Gate B, against different experimental
+App IDs/profiles but a host-local mechanism); the full XPC peer-validation matrix (§6) with real 3DDR-signed binaries instead
+of ad-hoc signing; real Keychain access-group separation and epoch-key rotation for Team-owned App
 IDs; real `SMAppService.agent` lifecycle with a genuine Development-signed, sandboxed bundle (P0-4A's
 sandboxed runner failed before `main` under ad-hoc signing with AMFI error `-423`; a real Development
 profile should get past that specific failure).
@@ -309,24 +326,25 @@ Per this plan's explicit scope (no paid Developer ID/notarization identity):
 
 ## Explicit action list for the user/orchestrator
 
-Nothing below has been executed:
+Items marked confirmed are discovery only, not signing/install authorization:
 
-1. Select the user-confirmed Individual Team `W4QUR9FUL4` explicitly in the Apple portal/Xcode and
-   verify the portal's current App ID/profile capacity.
-2. Reissue/create an Apple Development certificate under that selected Team whose public subject OU and harmless
-   signed-byte TeamIdentifier both read back exactly `W4QUR9FUL4`; revoke/retire the misleading
-   certificate according to Apple account policy rather than relabeling it locally.
+1. **Confirmed:** Apple Membership Details identifies Individual Team `3DDR84M4JS`; Xcode and the
+   portal must continue with that exact Team.
+2. **Confirmed only as locally present:** Apple Development identity SHA-1
+   `80A4969BCD1B3926020888094B9D812A283D3793`. On a later explicitly authorized harmless signing
+   probe, require subject OU and emitted TeamIdentifier `3DDR84M4JS`; stop on any mismatch. Do not
+   select another identity by common name and do not revoke any identity in this task.
 3. Decide Option A vs. Option B (§3) before reserving App IDs — it changes whether 3 or 4 distinct
    App IDs are needed.
 4. In the Apple Developer portal, register the exact explicit App IDs from §4, enabling App Sandbox
    and Keychain Sharing where listed.
 5. Register this Mac's device UDID as a development test device under the team.
 6. Create one macOS App Development provisioning profile per App ID.
-7. Download/install the profiles via Xcode — not by copying Gate B's cached `3DDR84M4JS` profiles,
-   which are unusable here.
+7. Download/install only the exact role profiles via Xcode — the cached Gate B profiles share the
+   Team but have the wrong App IDs/entitlements and are unusable here.
 8. Author the four `.entitlements` files (§5/§6) using the archived
    [`Provisioned/Entitlements`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/Entitlements)
-   files as a structural template but with W4-scoped,
+   files as a structural template but with Team-3DDR-scoped,
    epoch-suffixed group names.
 9. Once real Xcode targets exist (they don't yet — only `cmd/capsuled/main.go` is real product
    source), wire `CODE_SIGN_ENTITLEMENTS` and `PRODUCT_BUNDLE_IDENTIFIER` per target, matching the

@@ -17,8 +17,9 @@ cleanup, update composition, parser-child residue, or host availability.
 
 ## Next exact boundary
 
-R3 may use these exact bundle bytes only in a separately authorized Apple Development signing and
-installed private-XPC reachability experiment. Any source, lock, compiler, target, bundle layout,
+R3 may use these exact bundle bytes only under the separately authorized
+[R3 execution packet](../../docs/SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) for an Apple Development
+signing and installed private-XPC reachability experiment. Any source, lock, compiler, target, bundle layout,
 plist, policy, launcher, or parser change creates a new artifact identity and requires R2 replay.
 R4 remains responsible for deriving active resource values and proving monitored spawn, kill,
 drain, reap, cleanup, mixed-update refusal, and residue behavior before any consumer exists.

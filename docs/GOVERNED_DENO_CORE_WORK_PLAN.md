@@ -141,13 +141,13 @@ transport/launcher reproduction remain later requirements.
 
 The composed guest step requires explicit authorization for an owned disposable development guest.
 Apple Development identities and provisioning profiles must likewise be deliberately authorized
-before the existing installed matrices run. Exact G3 readback found that the certificate displayed
-with a W4 suffix has subject OU and emitted TeamIdentifier `3DDR84M4JS`; it is not W4 evidence.
-Local signed/provisioned experiments require a matching/reissued W4 certificate plus exact role
-identifiers, entitlements, and profiles. All three Xcode 26.6-cached profiles belong to historical
-Team `3DDR84M4JS` and are not reusable for W4 tests. A separate Developer ID Application identity
-for historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
-matching-Team package design; it is not W4 development evidence or evidence that Developer ID/
+before the existing installed matrices run. Exact G3 readback and later Apple Membership Details
+confirm Team `3DDR84M4JS`; the W4 common-name suffix is not a Team ID. Local signed/provisioned
+experiments require an explicitly authorized exact identity plus role identifiers, entitlements,
+and matching 3DDR profiles. The three cached Gate B/wildcard profiles have the wrong App IDs and
+are not reusable. A separate Developer ID Application identity for Team `3DDR84M4JS` is later
+distribution authority requiring explicit authorization and
+matching-Team package design; it is not current development authority or evidence that Developer ID/
 notarization work is currently planned. Paid owned clean-host/
 minimum-OS coverage is not currently planned; it remains deferred activation/distribution evidence,
 not a blocker for current local mechanics.

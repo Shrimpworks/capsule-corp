@@ -270,15 +270,15 @@ no `RegistrationID`-keyed lifecycle path or `SupervisorCore` symbol exists.
 This slice requires deliberately authorized Apple Development identities and provisioning profiles
 for the exact daemon, Broker, and Supervisor fixtures. Do not inspect or use unrelated identities.
 
-Current non-secret resource discovery: the intended Team is `W4QUR9FUL4`, but exact G3 readback
-found that the certificate displayed with that suffix has subject OU and emitted TeamIdentifier
-`3DDR84M4JS`; it is not W4 evidence. Local signed/provisioned experiments require a matching W4
-certificate plus exact role identifiers, entitlements, and profiles. Xcode 26.6 cached three
-profiles, all for historical Team `3DDR84M4JS` (Gate B Broker, Gate B Supervisor, and wildcard);
-they are not reusable for W4 tests. A
-separate Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution
+Current non-secret resource discovery: Apple Membership Details confirms Team `3DDR84M4JS` and
+shows that `W4QUR9FUL4` in the Apple Development common name is a member/display suffix, not the
+Team ID. A new Apple Development identity SHA-1 `80A4...D3793` is locally present but not
+authorized for use. Local signed/provisioned experiments still require exact role identifiers,
+entitlements, and Team-3DDR profiles. Xcode 26.6 cached three 3DDR Gate B/wildcard profiles, but
+their App IDs/entitlements do not match these roles and they are not reusable. A
+separate Developer ID Application identity for Team `3DDR84M4JS` is later distribution
 authority requiring explicit authorization and matching-Team package design. It must not be used
-as W4 development evidence and does not make Developer ID or notarization work current.
+for current development work and does not make Developer ID or notarization work current.
 
 Package the same single Supervisor executable as an embedded per-user `SMAppService.agent` and
 rerun S3/S4 with:

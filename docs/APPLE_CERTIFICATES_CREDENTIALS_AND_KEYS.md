@@ -33,42 +33,38 @@ identities or profiles, opening an Apple account, generating or exporting a key,
 notarizing, installing a service, or changing a portal resource. Those operations require a
 separately authorized task with the exact selected team and targets.
 
-## Stop first: choose one Apple Team ID
+## Team ID reconciled; exact role inputs still stop credentialed work
 
-Credentialed R3/I1 work must stop until Dylan makes and records one explicit choice between
-`W4QUR9FUL4` and `3DDR84M4JS`. Apple defines the Team ID as the unique 10-character identifier
-assigned to a program membership; a certificate's friendly name is not that definition
-([Apple Team ID glossary](https://developer.apple.com/help/glossary/team-id/)).
+Apple Membership Details confirms `3DDR84M4JS` is Dylan's Individual Apple Developer Program Team
+ID. `W4QUR9FUL4` in the Apple Development common name is a member/display suffix, not Capsule's
+Team ID. Apple defines the Team ID as the unique 10-character identifier assigned to a program
+membership; a certificate's friendly name is not that definition
+([Apple Team ID glossary](https://developer.apple.com/help/glossary/team-id/)). Credentialed R3/I1
+work still stops until the exact role/profile inputs below exist and their use is separately
+authorized.
 
 ### Retained observations
 
 | Material | Public metadata observed | What it proves | What it does not prove |
 | --- | --- | --- | --- |
-| Apple Development certificate | SHA-1 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3`; display text ended in `W4QUR9FUL4`; X.509 subject OU and signed-byte `TeamIdentifier` were `3DDR84M4JS` | The exact certificate belongs to Team `3DDR84M4JS` at the code-signing boundary | Any usable W4 identity, profile, private-key availability, current validity, or portal ownership |
-| Cached development profiles | Three historical profiles; all `3DDR84M4JS` | No inspected cached profile was W4 | Current portal inventory or the existence of an uninspected W4 profile |
-| Developer ID Application certificate | SHA-1 `AD70CEDCA605604676C2853A229AA4664AD3F750`; Team `3DDR84M4JS` | A historical 3DDR Developer ID Application identity was reported | A W4 distribution identity, current validity, private-key custody, or notarization eligibility |
-| Membership | Dylan reports an Individual Apple Developer membership and intended Team ID `W4QUR9FUL4` | User-reported intent and account type | Portal state, accepted agreements, exact current Team ID, role state, or certificate/profile eligibility |
+| Apple Development certificate | SHA-1 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3`; display text ended in `W4QUR9FUL4`; X.509 subject OU and signed-byte `TeamIdentifier` were `3DDR84M4JS` | The exact certificate belongs to Team `3DDR84M4JS` at the code-signing boundary | Authorization for current use or an exact Capsule role profile |
+| New Apple Development identity | User-run `security find-identity` reported SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793`; Keychain Access showed it under My Certificates | A valid local identity/private-key pairing was reported | Authorization for use, exact subject OU, emitted signed-byte TeamIdentifier, or role-profile match |
+| Cached development profiles | Three Gate B/wildcard profiles; all `3DDR84M4JS` | The cache shares the selected Team | Reusability for Capsule; their App IDs/entitlements do not match the current roles |
+| Developer ID Application certificate | User-run discovery reported SHA-1 `AD70CEDCA605604676C2853A229AA4664AD3F750`; Team `3DDR84M4JS` | A local Developer ID Application identity for the selected Team was reported | Authorization for use or current notarization/distribution admission |
+| Membership | Apple Membership Details showed Team ID `3DDR84M4JS`, Apple Developer Program, Individual | The selected account Team ID and account type | Accepted agreements, role state, App ID/profile eligibility, or credential authorization |
 
 **Conclusion:** the display string `Apple Development: Dylan Steele (W4QUR9FUL4)` was misleading
-for the inspected certificate. Neither that display string nor the default designated requirement
-may be used as W4 admission evidence. Do not infer or search for a matching W4 profile from the
-display label.
+when treated as a Team ID. Neither that display string nor the default designated requirement is
+Team admission evidence. Require exact subject OU/profile Team metadata and emitted signed-byte
+TeamIdentifier `3DDR84M4JS`.
 
 ### Exact decision and replacement inputs
 
-Choose one of these paths and record it in the authorized R3/I1 task:
-
-- **Select W4:** confirm the Membership details page says `W4QUR9FUL4`; create or obtain a new
-  Apple Development identity whose X.509 subject OU and emitted `TeamIdentifier` are both W4;
-  register the final explicit App IDs and any narrowly accepted App Groups under W4; generate new
-  W4 Mac App Development profiles containing that certificate, the exact identifiers and
-  entitlements, and the test Mac; later obtain a W4 Developer ID Application identity and W4
-  notarization credentials for distribution. The historical 3DDR materials remain historical.
-- **Select 3DDR:** first establish that Dylan currently owns or is authorized to use the 3DDR
-  membership and intentionally changes Capsule's selected team from W4 to 3DDR. Then regenerate or
-  verify every identifier, profile, certificate, notarization credential, installation manifest,
-  peer requirement, and epoch input under 3DDR. The W4 intent is retired by an explicit repository
-  decision; it is not silently overridden by available local material.
+The selected path is Team `3DDR84M4JS`. `W4QUR9FUL4` is retired only as a Team-ID interpretation;
+it remains historical common-name evidence. Every identifier, profile, certificate selection,
+installation manifest, peer requirement, and epoch input must now be created or verified under
+3DDR. The new local Apple Development identity is a candidate only after an explicitly authorized
+exact subject/profile/signed-byte readback; availability never selects it implicitly.
 
 Before any credentialed R3/I1 build, the task must receive these replacement inputs as public
 metadata or exact local selections, never as secret bytes in Git:
@@ -191,9 +187,9 @@ substituted for the other.
 
 | Material | System | Custodian | Purpose | Private/exportable? | Current state |
 | --- | --- | --- | --- | --- | --- |
-| Apple Development identity | Apple | Authorized developer/signing host | Development signing for installed tests | Private key is normally Keychain-held and may be exportable | Matching selected-team identity `BLOCKED` |
+| Apple Development identity | Apple | Authorized developer/signing host | Development signing for installed tests | Private key is normally Keychain-held and may be exportable | Team selected; candidate SHA-1 `80A4...D3793` present, exact readback/use authorization `BLOCKED` |
 | Mac App Development profile | Apple | Build/Xcode; public signed metadata | Authorize App ID, device, certificate, entitlements | No private key | Matching selected-team profiles `BLOCKED` |
-| Developer ID Application identity | Apple | Release custodian | Sign direct-distribution code | High-value exportable private key unless separately hardware-backed | W4 unknown; 3DDR historical only |
+| Developer ID Application identity | Apple | Release custodian | Sign direct-distribution code | High-value exportable private key unless separately hardware-backed | Team-3DDR identity present; use/distribution admission deferred and unauthorized |
 | Developer ID Installer identity | Apple | Package release custodian | Sign selected `.pkg` outer package | High-value private key | Unnecessary unless `.pkg` selected |
 | Notarization API key or app-specific password | Apple/App Store Connect | Release/notarization operator | Authenticate uploads and status/log reads | Secret; API `.p8` is downloadable once | Deferred |
 | Installation-root key | Capsule protocol | One-shot installation/Host Broker ceremony; final owner unresolved | Enroll operational keys and authorize trust transitions | Prefer nonexportable Secure Enclave reference; never daemon | Design selected; creation owner unresolved |
@@ -559,11 +555,8 @@ rewinds trust history. See [Update and Recovery](UPDATE_AND_RECOVERY.md).
 
 The order is mandatory; later items do not compensate for an earlier mismatch.
 
-1. **Resolve `W4QUR9FUL4` versus `3DDR84M4JS`.** `[APPLE PORTAL]` Open Membership details and
-   choose the one team Capsule will use. Record only the selected Team ID and account type. If W4
-   is selected, explicitly retire the historical 3DDR certificates/profiles from future Capsule
-   admission. If 3DDR is selected, document current authorization and revise the intended team in
-   a reviewed repository decision.
+1. **Confirmed: use Team `3DDR84M4JS`.** Membership Details identifies this Individual Apple
+   Developer Program Team. Treat `W4QUR9FUL4` only as a historical certificate display suffix.
 2. **Maintain active Apple Developer Program membership.** `[COST] [APPLE PORTAL]` Confirm renewal,
    agreements, and Developer ID/notarization eligibility. The annual membership is the Apple cost;
    this guide creates no additional Apple service purchase.
@@ -575,9 +568,10 @@ The order is mandatory; later items do not compensate for an earlier mismatch.
 5. **Register final explicit App IDs and capabilities.** `[APPLE PORTAL]` Use the selected team and
    exact bundle/service identifiers from the frozen topology, including the two Source Validator
    launcher identities only when R3 is authorized.
-6. **Obtain a matching Apple Development certificate.** `[APPLE PORTAL OR XCODE]` Its public X.509
-   OU and signed `TeamIdentifier` must equal the selected team. The current observed certificate is
-   3DDR regardless of its W4 display suffix.
+6. **Authorize and verify one matching Apple Development certificate.** `[APPLE PORTAL OR XCODE]`
+   Candidate SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793` is locally present. Its public X.509
+   OU, selected profile Team, and signed `TeamIdentifier` must all equal `3DDR84M4JS`; stop on any
+   mismatch and never select by common name.
 7. **Register the authorized test Mac and create matching profiles.** `[APPLE PORTAL OR XCODE]`
    Generate exact Mac App Development profiles for the selected certificate, IDs, entitlements,
    and device. Inspect metadata and entitlements before use.
@@ -615,8 +609,9 @@ Known historical rows, with unknown fields deliberately left unknown:
 
 | Item ID | Type | SHA-1 | Subject OU / Team ID | Status | Observation boundary |
 | --- | --- | --- | --- | --- | --- |
-| `apple-dev-historical-3ddr` | Apple Development | `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` | `3DDR84M4JS` | historical; not W4 evidence | Exact prior X.509/signed-byte readback; private-key presence and current validity not re-inspected here |
-| `developer-id-app-historical-3ddr` | Developer ID Application | `AD70CEDCA605604676C2853A229AA4664AD3F750` | `3DDR84M4JS` | historical; not W4 evidence | User-reported prior identity; no Keychain, portal, validity, or private-key inspection here |
+| `apple-dev-legacy-3ddr` | Apple Development | `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` | `3DDR84M4JS` | legacy; not selected | Exact prior X.509/signed-byte readback; current use is not authorized |
+| `apple-dev-candidate-3ddr` | Apple Development | `80A4969BCD1B3926020888094B9D812A283D3793` | exact readback pending; expected selected Team `3DDR84M4JS` | locally present; not authorized | User-run identity output and My Certificates view; exact subject/profile/signed-byte readback pending |
+| `developer-id-app-3ddr` | Developer ID Application | `AD70CEDCA605604676C2853A229AA4664AD3F750` | `3DDR84M4JS` | present; distribution use deferred and unauthorized | User-run identity output; no current distribution/notarization admission follows |
 
 Never inventory private-key bytes, `.p12`/`.p8` contents, passwords, recovery codes, JWTs, session
 tokens, temporary notarization upload credentials, raw Keychain exports, or secret-store values.

@@ -169,19 +169,20 @@ Observed 2026-08-03 result: installed G3 is **BLOCKED before installed build**. 
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its public X.509 subject OU and the
 TeamIdentifier emitted by a harmless exact-selector signing probe are both `3DDR84M4JS`. The
 display name is not Team enrollment evidence. The three Xcode 26.6-cached profiles are likewise
-historical Team `3DDR84M4JS` fixtures and are not reusable for W4 tests. No W4 app was built,
-signed, installed, registered, or launched, and no ad-hoc/3DDR fallback was used. A separate
-Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution authority
-requiring explicit authorization and matching-Team package design; it is not W4 development
-evidence and does not make Developer ID/notarization work current. Paid owned clean-host/minimum-OS
+Team `3DDR84M4JS` fixtures with nonmatching App IDs and are not reusable. No signed app was built,
+signed, installed, registered, or launched, and no ad-hoc fallback was used. A separate Developer
+ID Application identity for Team `3DDR84M4JS` is later distribution authority requiring explicit
+authorization and matching-Team package design; it is not current development authority and does
+not make Developer ID/notarization work current. Paid owned clean-host/minimum-OS
 coverage remains deferred activation evidence.
 
 The 2026-08-04 exact-selector follow-up confirmed that no Developer ID/fallback identity was
 selected: the selected development certificate itself supplies the 3DDR subject OU. It also found
 that the certificate's default designated requirement binds the misleading W4 common name without
 binding the Team OU. That default requirement is diagnostic only. The tightened harness requires
-an explicit W4 OU requirement plus emitted Team, exact signing identifier, CDHash, and effective
-entitlement checks, and scans both standard local profile caches. It still finds no W4 profile.
+an explicit Team OU requirement plus emitted Team, exact signing identifier, CDHash, and effective
+entitlement checks, and scans both standard local profile caches. Apple Membership Details now
+confirms 3DDR is the account Team; it still finds no exact Capsule role profile.
 
 The retained G3 experiment fixes only test identifiers, closed entitlement/profile requirements,
 state/lock/store names, the complete bootstrap field projection, and a pure v1/v2 exact-tuple
@@ -223,7 +224,7 @@ Retained checkpoint:
 ## Remaining blockers
 
 The retained local semantics and blocked G3 work do not close protected installed storage,
-matching W4 signing/profiles, authenticated bootstrap creation/signing,
+exact Team-3DDR role profiles, authenticated bootstrap creation/signing,
 session/reboot/update behavior, support floor, real power loss, production engine, coherent
 restore/rollback, authenticated IPC, production approvals, content/evidence, runtime/backend, or
 guest gates. `flock` remains advisory and supplies no same-UID containment without the installed

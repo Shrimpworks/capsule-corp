@@ -216,8 +216,12 @@ trusted-installer-to-private-container bootstrap and descriptor-relative store-o
 The 2026-08-04 exact-selector follow-up confirms the selector never chose Developer ID or another
 fallback: the development certificate itself emits 3DDR. It also rejects the default designated
 requirement as W4 evidence because that requirement binds only the misleading common name, not the
-Team OU. An explicit W4 OU requirement refuses, both standard local profile caches contain only the
-same three 3DDR profiles, and installed G3 remains blocked before build or launch.
+Team OU. Apple Membership Details later confirmed `3DDR84M4JS` is the Individual account Team ID
+and `W4QUR9FUL4` is a member/display suffix. User-run discovery also reported new valid Apple
+Development SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793` with private-key pairing; presence is
+not authorization. Both standard local profile caches contain only the same three 3DDR Gate
+B/wildcard profiles with nonmatching App IDs, and installed G3 remains blocked before build or
+launch on exact role profiles and the protected-root composition.
 
 Source Preparer P0 remains `BLOCKED` as a separate conditional later feature merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -456,13 +460,14 @@ Current dependency and priority view:
 6. **Credential/environment dependent:** Apple Development identities and provisioning profiles
    must be deliberately authorized before the existing installed matrices run. Exact G3 discovery
    disproved the display-name inference: SHA-1 `1638...61E3` says W4 in its common name, but its
-   subject OU and emitted TeamIdentifier are `3DDR84M4JS`. All three Xcode 26.6-cached profiles
-   also belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. Local W4
-   signed/provisioned experiments require a matching/reissued certificate plus exact W4 profiles,
-   as well as the selected protected-root bootstrap/signed-record/store-open composition. A separate
-   Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution
-   authority requiring explicit authorization and matching-Team package design; it is not W4
-   development evidence and does not make Developer ID/notarization work current. Paid owned
+   subject OU and emitted TeamIdentifier are `3DDR84M4JS`. Apple Membership Details confirms 3DDR
+   is the account Team and W4 is a member/display suffix. New Apple Development SHA-1
+   `80A4...D3793` is locally present but not authorized. All three Xcode 26.6-cached profiles are
+   3DDR Gate B/wildcard profiles with nonmatching App IDs. Local signed/provisioned experiments
+   require exact 3DDR role profiles, as well as the selected protected-root bootstrap/signed-record/
+   store-open composition. A separate Developer ID Application identity for Team `3DDR84M4JS` is
+   later distribution authority requiring explicit authorization and matching-Team package design;
+   it does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
    and remains deferred activation/distribution evidence, not a blocker for F4 local archive work;
    owner-lock installed G3 remains `BLOCKED` until the named credential and design
@@ -480,8 +485,11 @@ Current dependency and priority view:
    frames, and the bounded V1/V2 evidence checkpoints are retained unchanged. Accepted ADR-0036
    closes R0 with two role-specific private launchers, residual private-container scratch plus
    mandatory cleanup, and an evidence-derived reactive watermark with no hard-peak/availability
-   claim. R1 passive v1 contracts/field authority and R2 unsigned construction are retained;
-   product work remains `BLOCKED` and proceeds sequentially: separately authorized R3 signing/install; R4 confinement/
+   claim. Its exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) records Team 3DDR,
+   R2 byte identities/placement, profiles/entitlements, refusal/cleanup, and mutation gates. R1
+   passive v1 contracts/field authority and R2 unsigned construction are retained; R3 remains
+   `BLOCKED` on containing fixtures, exact role profiles, finalized signed constraints, and separate
+   authorization. Product work then proceeds sequentially: R4 confinement/
    resource/residue evidence; R5D daemon consumer; R5B Broker consumer; then M2/S1 checkpoint.
    Threshold/cadence/overshoot values remain unset until R4. No S1 fixture or product endpoint is
    authorized.

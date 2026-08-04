@@ -7,8 +7,12 @@ scope-separated global/segment indexes, typed hot/archive locations and count eq
 distinct migration-genesis checkpoint. Generated answers and before/after semantics are retained in
 [the F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). It performs no file I/O or
 authority mutation. Proposed ADR-0031 still defines the unimplemented immutable retained archive
-and selects a minimal fixed-store checkpoint only as the conformance oracle. F2 migration/full
-verification is next. No migration, full v2 verifier, archive write/activation, retained lookup,
+and selects a minimal fixed-store checkpoint only as the conformance oracle. The stateful F2
+review then stopped before v2 bytes because a complete valid v1 source may contain one committed
+attempt and no lifecycle record, while the corrected v2 projection requires a lifecycle state on
+every attempt and equates lifecycle-index count with attempt-index count. The exact witness is
+retained in the [F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No migration,
+full v2 verifier, archive write/activation, retained lookup,
 consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
 deployment, or guest is implemented by this plan.
 
@@ -51,7 +55,8 @@ only. They implement closed generation/ordinal/digest/index/descriptor/checkpoin
 scope- and kind-separated record locations, exact candidate limits and generated known answers,
 defensive-copy behavior, and deterministic complete-cohort selection with `RecoveryAttemptIDs`
 exclusion. They do not open or write a store or segment, migrate v1, reconstruct a v2 archive set,
-release hot capacity, route lookup, or invoke the fake. F2 is the next retained slice.
+release hot capacity, route lookup, or invoke the fake. Stateful F2 is blocked pending another
+passive format decision.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
@@ -535,7 +540,7 @@ checkpoint cannot produce the required generation-one migration genesis. The ret
 Acceptance: passive types, digests, fixtures, and tests only. No v2 store bytes or lifecycle
 behavior changed.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier — next
+### Slice F2: explicit fixed-store v2 migration and full verifier — blocked
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.
@@ -543,6 +548,14 @@ behavior changed.
 
 Acceptance: no cohort leaves hot state and no archive segment exists. V1 behavior and E5 tests stay
 unchanged.
+
+Stop result: the current v1 crash oracle accepts and reopens a created attempt with no lifecycle
+record. The passive v2 `AttemptIndexEntry` cannot encode that absence, and its derived counts make
+one attempt imply one lifecycle. See the
+[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and
+`TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection`. No stateful F2 code may proceed until
+the passive contract represents this world without invented state or a separately reviewed
+migration restriction/ceremony.
 
 ### Slice F3: one immutable segment prepare/verify/activate transaction
 

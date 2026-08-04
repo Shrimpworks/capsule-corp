@@ -1,6 +1,6 @@
 # Supervisor archive F2 format blocker resolution
 
-Status: resolved passive format contradiction; F2 store implementation is next and remains absent.
+Status: original passive format contradiction resolved; stateful F2 remains absent and is stopped on a follow-on v1 mapping contradiction.
 
 Date opened: 2026-08-04
 
@@ -170,12 +170,16 @@ multi-attempt indivisibility, `RecoveryAttemptIDs` agreement, and every no-resur
 
 ## Remaining boundary
 
-The original contradiction is resolved. F2 may now implement the explicit owner-lock-asserted
-fixed-store v1-to-v2 migration, downgrade refusal, closed v2 opener, and empty-archive full verifier
-against this oracle.
+The original three contradictions are resolved. A later implementation review found a separate
+contradiction: v1 validly retains a committed attempt before lifecycle establishment, while the
+corrected v2 attempt index requires a lifecycle disposition and derives lifecycle count from
+attempt count. The exact executable witness and stop decision are retained in the
+[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). F2 therefore may not yet add
+the explicit owner-lock-asserted fixed-store v1-to-v2 migration, downgrade refusal, closed v2
+opener, or empty-archive full verifier.
 
 This correction does not implement `FixedFileStoreV2`, v1-to-v2 file migration, archive segment
 writing or activation, cohort movement, retained lookup, deletion, production storage, owner-lock
 G2, adapter calls, a runtime/backend/process/service/guest, or any consumer. Overwritten pre-v2
-EffectIDs remain unknowable. If F2 finds another format contradiction, it must stop and retain the
-exact blocker rather than choosing new bytes implicitly.
+EffectIDs remain unknowable. F2 found another format contradiction and stopped without choosing
+new bytes, as this document required.

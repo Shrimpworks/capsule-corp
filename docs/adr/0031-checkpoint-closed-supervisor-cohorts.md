@@ -64,8 +64,12 @@ resolves PR #78's three contradictions with scope-separated retained-global/segm
 indexes, kinded hot/archive record locations, exact hot/archive/total count equations, and a
 domain-separated generation-one migration-genesis checkpoint. Generated exact answers and the
 before/after contract are retained in the
-[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). F2 migration and full
-verification are next and remain unimplemented. The passive work performs no file I/O, migration,
+[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). A subsequent stateful
+review found that a valid v1 committed-attempt-before-lifecycle world has no exact corrected-v2
+projection: every v2 attempt entry requires a lifecycle disposition and the index counts equate
+lifecycles with attempts. F2 stopped before choosing bytes and retained the executable
+[v1 mapping blocker](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). Migration and full
+verification remain unimplemented. The passive work performs no file I/O, migration,
 archive activation, lookup, or authority mutation. The later stateful slices preserve the current
 full-snapshot validation and exact rename fault
 boundaries while proving the archive protocol. It is not selected as the production engine.
@@ -596,6 +600,9 @@ byte caps and returns `CAPACITY` without authority change when retained history 
 The exact passive types, migration, archive activation, replay, fault, backup, and offline-
 verification slices are defined in
 [the Supervisor archive/compaction conformance plan](../SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md).
+The stateful F2 step is blocked by the retained
+[valid-v1 mapping contradiction](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md); this ADR remains
+Proposed and does not implicitly choose a missing-lifecycle representation or narrower migration.
 
 ## Acceptance blockers
 

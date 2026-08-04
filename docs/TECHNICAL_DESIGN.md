@@ -60,7 +60,12 @@ cohort selector. It performs no file I/O, v2 migration, archive activation, look
 mutation. The passive
 [F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now freezes separate global/
 segment index domains, typed hot/archive record locations and counts, a distinct generation-one
-migration-genesis checkpoint, and generated answers. F2 migration/full verification remains next.
+migration-genesis checkpoint, and generated answers. The stateful F2 review then stopped on a
+follow-on exact-mapping contradiction: current v1 accepts a committed attempt with no lifecycle
+record, while corrected v2 requires a lifecycle state on each attempt and derives lifecycle count
+from attempt count. The executable
+[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) is retained. Migration/full
+verification remains unimplemented pending another passive format decision.
 Production-engine selection,
 referenced-history deletion, continuous service, coherent restore activation, and rollback-
 resistant non-reuse remain blocked.

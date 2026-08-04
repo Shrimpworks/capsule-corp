@@ -1,8 +1,11 @@
 package runtimecompositionpassive
 
 import (
+	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -56,6 +59,97 @@ func TestC1ExactBytesAndSemanticMutationsRefuse(t *testing.T) {
 	if err := Validate(contract); err == nil {
 		t.Fatal("invented machine profile was accepted")
 	}
+}
+
+// TestC1ValidateRefusesEveryMutationClass extends the hand-picked mutation cases in
+// TestC1ExactBytesAndSemanticMutationsRefuse with one case per remaining Validate() refusal
+// branch, so a future regression that silently loosens any single check fails this suite instead
+// of only passing because a different branch happened to catch the same input.
+func TestC1ValidateRefusesEveryMutationClass(t *testing.T) {
+	t.Parallel()
+	exact := readContract(t)
+
+	zeroCommit := strings.Repeat("0", 40)
+	cases := []struct {
+		name   string
+		mutate func(*Contract)
+	}{
+		{"evidence-repository", func(c *Contract) { c.Evidence.Repository = "Shrimpworks/other" }},
+		{"evidence-merge-commit", func(c *Contract) { c.Evidence.MergeCommit = zeroCommit }},
+		{"fork-deno-head", func(c *Contract) { c.Forks.Deno.Head = zeroCommit }},
+		{"fork-rustyv8-upstream", func(c *Contract) { c.Forks.RustyV8.Upstream = zeroCommit }},
+		{"effects-process-true", func(c *Contract) { c.Effects.Process = true }},
+		{"effects-runtime-true", func(c *Contract) { c.Effects.Runtime = true }},
+		{"effects-guest-true", func(c *Contract) { c.Effects.Guest = true }},
+		{"effects-admission-true", func(c *Contract) { c.Effects.Admission = true }},
+		{"effects-signing-true", func(c *Contract) { c.Effects.Signing = true }},
+		{"effects-release-true", func(c *Contract) { c.Effects.Release = true }},
+		{"refusal-codes-truncated", func(c *Contract) {
+			c.RefusalCodes = c.RefusalCodes[:len(c.RefusalCodes)-1]
+		}},
+		{"stop-conditions-truncated", func(c *Contract) {
+			c.StopConditions = c.StopConditions[:len(c.StopConditions)-1]
+		}},
+		{"runtime-surface-globals-mismatch", func(c *Contract) {
+			// A permitted global can never legally overlap a forbidden one, but the closest
+			// reachable mutation is widening the permitted list, which the exact-match check
+			// (and, if it did not exist, the overlap check) must both refuse.
+			c.RuntimeSurface.PermittedGlobals = append(
+				append([]string(nil), c.RuntimeSurface.PermittedGlobals...), "eval")
+		}},
+	}
+
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			contract, err := Decode(exact)
+			if err != nil {
+				t.Fatal(err)
+			}
+			testCase.mutate(contract)
+			if err := Validate(contract); err == nil {
+				t.Fatalf("%s mutation was accepted", testCase.name)
+			}
+		})
+	}
+}
+
+// TestC1DecoderRejectsUnknownFieldsAndTrailingData exercises Decode's JSON-decoding defenses
+// (DisallowUnknownFields, requireEOF) directly. Decode's fixed byte-length/SHA-256 gate runs
+// before those defenses and rejects any mutated payload on its own, so a mutation that adds an
+// unknown field or trailing bytes can never reach them through the public Decode entry point.
+// decodeOnly replicates only Decode's JSON-parsing stage to prove those defenses still fire on
+// their own.
+func TestC1DecoderRejectsUnknownFieldsAndTrailingData(t *testing.T) {
+	t.Parallel()
+	exact := readContract(t)
+
+	var asObject map[string]any
+	if err := json.Unmarshal(exact, &asObject); err != nil {
+		t.Fatal(err)
+	}
+	asObject["unexpectedField"] = true
+	withExtraField, err := json.Marshal(asObject)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := decodeOnly(withExtraField); err == nil {
+		t.Fatal("unknown top-level field was accepted")
+	}
+
+	withTrailingData := append(append([]byte(nil), exact...), []byte("\n{}")...)
+	if err := decodeOnly(withTrailingData); err == nil {
+		t.Fatal("trailing data after the JSON object was accepted")
+	}
+}
+
+func decodeOnly(payload []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(payload))
+	decoder.DisallowUnknownFields()
+	var contract Contract
+	if err := decoder.Decode(&contract); err != nil {
+		return err
+	}
+	return requireEOF(decoder)
 }
 
 func TestC1DecodedValueOwnsDefensiveCopies(t *testing.T) {

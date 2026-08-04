@@ -44,8 +44,9 @@ Apple-credentialed results remain the evidence for those distinct observations.
 ## Dependency graph
 
 ```text
-S0 decision review
-  -> S1 passive message/bridge fixtures
+S0 decision review + accepted ADR-0034 `.mjs` source contract
+  -> M1 passive proposal/source/manifest fixtures
+       -> S1/M2 passive message/bridge fixtures
        -> S2 Go method-specific facade and Broker fetch projection
        -> S3 native authentication/cap harness
             -> S4 single-process ad-hoc composition with fixed store + fake lifecycle
@@ -80,42 +81,43 @@ Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 Exit evidence: accepted or explicitly revised ADR text. A topology or responsibility change stops
 this plan and requires an updated Proposed ADR before implementation.
 
-## S1: passive contracts and fixed fixtures
+## M1 and S1/M2: passive contracts and fixed fixtures
 
-Architecture decision: **follow ADR-0030's versioned atomic cutover**. The merged TypeScript
-approved-byte contract requires three distinct future plan source roles, while ADR-0029's proposed
-562-byte `RegisterPlanV0` record contains one source-manifest role and is v0-only. `RegisterPlanV0`
-and 562 bytes remain historical/current-plan-v0 design only and will not be frozen into an S1
-corpus. The observed 626-byte arithmetic is not an approved layout, cap, or known answer. See the
-bounded [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md).
+Accepted ADR-0034 removes TypeScript and the Source Preparer from the first-release critical path.
+The first active contract is one byte-exact pass-through `main.mjs` member under the existing
+plan-v0 source role. The retained [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md)
+still governs a conditional later TypeScript plan-v1 cutover; its 626-byte arithmetic remains no
+layout, cap, or known answer.
 
-S1 remains blocked until this dependency order completes:
+M1 first atomically narrows the passive proposal/source contract, generates the single-member
+87..95-byte canonical source-manifest boundary, closes the non-executing no-module-request oracle,
+and adds recursive source-manifest field-authority coverage. It replaces incompatible `.js`,
+`.cjs`, `.ts`, `.mts`, and `.cts` accepts rather than adding a second active source profile.
 
-1. an accepted transformation-owner and immutable source-store topology;
-2. finalized `ExecutionPlan` v1 and its complete nominal role model;
-3. integration of the separately developed canonical field-authority manifest;
-4. a newly versioned registration method and binding record with reviewed field order, exact caps,
-   cap-plus-one behavior, and cross-language known answers; and
-5. explicit review of the registration fetch, approval submission, and attempt-request projections,
-   including method version changes wherever their typed shape changes.
+S1/M2 then adds no-product native, Go, and Swift-readable fixtures for the finalized common header,
+four role-specific operations, success replies, and fixed refusals. `RegisterPlanV0` atomically
+carries exact plan bytes, the complete 562-byte plan-role projection, the exact source manifest,
+and exact `main.mjs` bytes. `GetRegisteredPlanV0` returns defensive Supervisor-retained copies of
+all four plus the registration. Candidate application-data maxima are 328,337 request bytes and
+332,433 fetch-reply bytes, but the fixture generator must derive and verify them from closed
+canonical definitions and the field-authority manifest before code treats them as caps.
 
-Only then may S1 add no-product native, Go, and Swift-readable fixtures for the finalized common
-header, four role-specific operations, success replies, and fixed refusals. The replacement fixture
-manifest must retain exact plan/registration/approval and complete-binding known answers; protocol,
-service, role, tag, audience, purpose, request, installation, epoch, length, deadline, and first-owner
-fields; exact maxima and cap-plus-one; closed classification/reason and state/time/trust/core/store/
-adapter oracles; copy-ownership mutations; response-loss/idempotency classifications; structural
-missing/extra/wrong-type and cross-object refusals; and byte equality across implementations.
+The fixture manifest must retain exact plan/registration/approval and complete-binding known
+answers; protocol, service, role, tag, audience, purpose, request, installation, epoch, source,
+length, deadline, and first-owner fields; exact maxima and cap-plus-one; closed classification/
+reason and state/time/trust/core/store/adapter oracles; copy-ownership mutations; response-loss/
+idempotency classifications; structural missing/extra/wrong-type and cross-object refusals; and
+byte equality across implementations.
 
-There is no dual active v0/v1 acceptance, optional transformation role, generic fallback, or field
-inference. No fixture may import experiment code into product packages or claim ADR-0019 acceptance.
+There is one active plan-v0/source shape, no optional transform field, generic fallback, field
+inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product
+packages or claim ADR-0019 acceptance.
 
 ## S2: Go facade and store projection
 
-Status: **blocked** pending completion of the ADR-0030 dependency chain and shared newly versioned
-S1 bytes.
-S2 must not freeze `RegisterPlanV0`, 562 bytes, or the 626-byte arithmetic, and it must not define
-field authority inside the Go facade.
+Status: **blocked** only on M1 and the shared S1/M2 `.mjs` fixture bytes. Conditional TypeScript,
+plan v1, and Source Preparer evidence are not first-release dependencies. S2 must not define field
+authority inside the Go facade or treat the 626-byte TypeScript arithmetic as a record.
 
 Implement an internal, unwired facade with one Go entry point per method. The facade does not
 accept role or purpose from request bytes; each entry point constructs the existing fixed
@@ -127,8 +129,9 @@ Work:
    method-specific calls to the existing components after method-owned admission;
 2. add the intended read-only Broker fetch facade only after its typed projection and method version
    are explicitly reviewed, returning defensive copies of the retained exact plan, complete role
-   bindings, and wire registration only after Broker call context, active installation/epoch/trust,
-   registration binding, and expiry checks;
+   bindings, wire registration, canonical source manifest, and exact `main.mjs` bytes only after
+   Broker call context, active installation/epoch/trust, registration binding, source revalidation,
+   and expiry checks;
 3. treat the finalized complete-role record as submitted nominal identities, resolve every role
    through fixed injected local resolvers, and construct the trusted complete-role binding passed to
    registration; the first slice uses only retained fixed resolver fixtures and does not claim
@@ -157,10 +160,8 @@ store, and conformance tests. No XPC or product consumer exists.
 
 ## S3: native authentication and cap harness
 
-Status: **blocked** pending completion of the ADR-0030 dependency chain and shared newly versioned
-S1 bytes.
-Native parsing must not create a de facto field layout, cap, known answer, or method-version
-decision.
+Status: **blocked** only on M1 and the shared S1/M2 `.mjs` fixture bytes. Native parsing must not
+create a de facto field layout, cap, known answer, or method-version decision.
 
 Build a strictly local, no-product C/Objective-C XPC harness from fixed identities/messages. It may
 use only ad-hoc signing unless the explicit S5 credentialed environment is active. It creates no

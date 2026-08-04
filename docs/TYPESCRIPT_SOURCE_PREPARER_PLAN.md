@@ -1,13 +1,18 @@
 # TypeScript Source Preparer implementation, conformance, and fault plan
 
-Status: proposed implementation plan. It retains a design decision only; no Source Preparer,
-transformer consumer, product endpoint, store, key, runtime, backend, guest, or deployment exists.
+Status: future-conditional proposed implementation plan. It retains a design decision only; no
+Source Preparer, transformer consumer, product endpoint, store, key, runtime, backend, guest, or
+deployment exists. Accepted ADR-0034 removes P0-P7 from the first-release critical path.
 
 Owner: proposed TypeScript Source Preparer planning component.
 
 Decision: [Proposed ADR-0032](adr/0032-select-enrolled-typescript-source-preparer.md).
 
 ## Defensive scope and claim boundary
+
+The first release follows ADR-0034's single-file byte-exact `.mjs` plan-v0 contract. Run this plan
+only if Capsule later reselects TypeScript; it does not block first-release source/plan, IPC,
+runtime packaging, or admission work.
 
 Defensively validate the pre-registration TypeScript approved-byte control using only passive
 repository fixtures, exact retained Node 22.22.1/Amaro 1.1.5 benign sources, fixed local process

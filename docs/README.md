@@ -33,18 +33,19 @@ The next Supervisor retention boundary is defined in
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
-The authenticated local IPC S1 fixture slice follows ADR-0030's selected versioned atomic-cutover
-path and remains blocked on its dependency chain. The retained
-[S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md) records why ADR-0029's
-562-byte v0 binding record will not be frozen or silently absorb ADR-0030's three approved-byte
-source roles.
+Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
+authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/
+manifest fixtures precede S1/M2 registration/fetch fixtures. The retained
+[S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md) still records why a
+conditional later TypeScript cutover may not reinterpret the 562-byte v0 binding record or treat
+the 626-byte arithmetic as a layout.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-
 implemented [Source Preparer implementation, conformance, and fault plan](TYPESCRIPT_SOURCE_PREPARER_PLAN.md).
 Proposed ADR-0032 assigns transformation and immutable original/emitted/object custody to a
-separately enrolled planning component; it does not activate a transformer, endpoint, runtime, or
-execution path.
+separately enrolled planning component only if TypeScript is later selected; it does not activate
+a transformer, endpoint, runtime, or execution path and is not a first-release dependency.
 
 ## Detailed authority and trust documents
 

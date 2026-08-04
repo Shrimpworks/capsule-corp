@@ -1,10 +1,14 @@
 # ADR-0032: Select an enrolled TypeScript Source Preparer and immutable source store
 
-- Status: Proposed
+- Status: Proposed; future-conditional and removed from the first-release critical path by ADR-0034
 - Date: 2026-08-03
 - Refines if accepted: ADR-0010, ADR-0013, ADR-0018, ADR-0026, ADR-0029, and ADR-0030
 
 ## Context
+
+Accepted ADR-0034 selects a single-file byte-exact `.mjs` first release. This Source Preparer
+topology remains only a conditional later TypeScript design. Its P0A/P1 dependencies no longer
+block first-release plan-v0, authenticated-IPC, governed-runtime packaging, or admission work.
 
 ADR-0026 fixes the ordering rule for the first TypeScript profile: exact Node 22.22.1/Amaro 1.1.5
 strip-only emission finishes before plan construction, registration, Broker rendering, approval,
@@ -201,10 +205,9 @@ container whose single enrolled member is the Source Preparer and proves negativ
 daemon, Broker, Supervisor, updater, a stale Source Preparer, and an unrelated same-user process.
 Mode bits, pathname secrecy, PID checks, code signing without a protected container, and same-Team
 identity do not meet this requirement. If the probe cannot establish the boundary, TypeScript
-preparation is NO-GO under this ADR. User planning direction accepts a bounded modern ESM
-`.mjs`-only JavaScript first-release fallback, with no CommonJS, package resolution, legacy Node
-module surface, or widening of the governed runtime contract. This ADR does not freeze that media/
-profile decision; the exact contract and applicable ADRs must be updated before implementation.
+preparation is NO-GO under this ADR. Accepted ADR-0034 now independently freezes the bounded
+single-file `.mjs` first-release contract; it has no CommonJS, package resolution, legacy Node
+module surface, or governed-runtime widening. This TypeScript ADR does not define that path.
 
 The store accepts at most 32 prepared-but-unregistered sets, 256 registered nonterminal sets,
 4,096 lifecycle/tombstone records, and 536,870,912 exact blob bytes. It never evicts a prepared or

@@ -1,9 +1,15 @@
 # TypeScript approved-byte atomic cutover plan
 
-Status: proposed implementation plan; passive Slice A conformance artifacts and the Slice B design
-decision exist, but no owner/store implementation or consumer is active.
+Status: future-conditional proposed implementation plan; passive Slice A conformance artifacts and
+the Slice B design decision exist, but no owner/store implementation or consumer is active.
+Accepted ADR-0034 removes this graph from the first-release critical path.
 
 ## Decision checkpoint
+
+The first release is now the single-file byte-exact `.mjs` plan-v0 contract in accepted ADR-0034.
+This document is retained for a later decision to add TypeScript. It does not block first-release
+proposal/plan, authenticated-IPC, runtime packaging, or admission work, and none of its v1 objects
+may be accepted alongside active plan v0 as equivalent authority.
 
 Proposed ADR-0030 defines the exact object family and originally records `OWNER-UNRESOLVED`.
 [Proposed ADR-0032](adr/0032-select-enrolled-typescript-source-preparer.md) now selects a separate
@@ -17,11 +23,8 @@ The retained
 Source Preparer P1 work on hold. The topology is conditionally retained as the least-dangerous
 TypeScript option, but its role-namespaced store is not a same-user security boundary by itself and
 Node/Amaro remains full planning/store TCB until proven confined. P1 cannot freeze APIs or bytes
-until every checkpoint entry criterion is satisfied. User planning direction accepts a bounded
-modern ESM `.mjs`-only JavaScript first-release fallback if a stop condition fires, with no
-CommonJS, package resolution, legacy Node module surface, or governed-runtime widening. That exact
-media/profile contract is not frozen here and requires an applicable ADR/contract update before
-implementation.
+until every checkpoint entry criterion is satisfied. Accepted ADR-0034 now owns the bounded modern
+ESM `.mjs` first-release contract. This document neither defines nor blocks that path.
 
 ## Dependency graph
 
@@ -42,6 +45,10 @@ A. passive object family + known answers (complete)
 
 Runtime admission, module loading, and real-backend work depend on `I`; they are not part of this
 graph and do not become valid because the graph completes.
+
+That dependency statement applies only to a future TypeScript-enabled runtime profile. The
+first-release `.mjs` runtime/profile path instead depends on ADR-0034's M1-M5 slices and retains no
+TypeScript or Source Preparer dependency.
 
 ## Atomic implementation slices
 

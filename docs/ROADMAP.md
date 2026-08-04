@@ -6,8 +6,9 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2, owner-lock G1, bounded Source Preparer blocker work, and documentation/field-authority
-maintenance can proceed independently now. The fork-native runtime bundle waits on an accepted
+Archive F2, owner-lock G1, ADR-0034 `.mjs` M1/S1 passive contract work, and documentation/
+field-authority maintenance can proceed independently now. Conditional Source Preparer work is no
+longer on the first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
 explicit owned-guest authorization. Installed signing/distribution and independent-builder
 matrices remain separate evidence lanes.
@@ -150,15 +151,14 @@ implementation/installed validation of the selected owner lock and power loss, c
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
 
-Proposed ADR-0032 separately selects the pre-registration TypeScript Source Preparer and immutable
-source-store topology. PR #72 retained a bounded P1 HOLD/NO-GO: protected-store, exact worker
-confinement, sealed genesis/update, retention/release, recursive nested field-authority, and
-lifecycle/cancellation evidence must close before passive P1 contracts begin. Its passive method/
-store fixtures, fault-injected store, governed Node package, installed identity/sandbox evidence,
-and plan-v1 atomic cutover remain unimplemented. If those gates fail, the accepted planning
-fallback is a later-reviewed modern ESM `.mjs`-only JavaScript contract with no CommonJS, package
-resolution, legacy Node module surface, or runtime-contract widening; that fallback is not yet a
-frozen media/profile decision.
+Accepted ADR-0034 freezes the first release as one byte-exact pass-through `main.mjs` member under
+the existing plan-v0 source role, with no static/dynamic dependency request or module-loader
+fallback. Its passive M1 source/manifest and S1/M2 registration/fetch fixture slices are next;
+Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
+Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the
+PR #72 P1 HOLD/NO-GO for a conditional later feature. Its protected-store, worker, genesis/update,
+retention/release, recursive field-authority, lifecycle, installed evidence, and plan-v1 cutover no
+longer block first-release plan/IPC/runtime work.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
@@ -242,8 +242,7 @@ Exit evidence:
   `Shrimpworks/deno` and `dills122/rusty_v8` governed branches from their exact retained upstream
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
-  restoration/backstop, coordinated approved-byte TypeScript migration under Proposed ADR-0026,
-  ADR-0030, and Proposed ADR-0032's Source Preparer evidence plan,
+  restoration/backstop, ADR-0034's byte-exact `.mjs` source custody and no-loader evidence,
   external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported

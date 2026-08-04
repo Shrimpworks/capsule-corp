@@ -16,7 +16,9 @@ The target architecture has three principal local authorities:
 - the Trusted Host Broker owns user presence and user content;
 - the Execution Supervisor alone creates hostile guests and signs enforcement transcripts.
 
-The initial executable workload is dependency-free inline JSON in and bounded JSON out. File
+The initial executable workload is one byte-exact dependency-free `main.mjs`, inline JSON in, and
+bounded JSON out. Static/dynamic dependency requests, CommonJS, packages, and module-loader
+fallbacks are outside the accepted first-release source contract. File
 snapshots, broader output formats, stronger backend posture, and production updates follow only
 after their evidence gates.
 
@@ -44,6 +46,8 @@ after their evidence gates.
 - Original authoring bytes, emitted executable bytes, transformation objects, prepared source-set
   lifecycle, and the proposed Source Preparer's immutable-store integrity and availability
 - Backend handles, cleanup leases, guest configuration, and management channels
+- The exact registered `main.mjs` manifest/bytes and their pass-through custody from proposal
+  through Broker rendering and runtime staging
 - Other jobs' source, inputs, outputs, state, and cached data
 - Runtime bundles, review attestations, registry activation, and backend validation records
 - Artifact manifests, enforcement transcripts, receipt composition, and witness checkpoints
@@ -268,6 +272,9 @@ enters `repair-required` rather than accepting whichever components start.
 
 - Hashes are byte identities, not origin proof without a trusted binding.
 - Broker approval and Supervisor registration bind the same canonical plan digest/bytes.
+- For the first release, registration atomically retains one canonical single-member source
+  manifest and the exact pass-through `main.mjs` bytes; Broker and execution rehash those retained
+  bytes. There is no transform, second source role, dependency request, or execute-time byte input.
 - When TypeScript is supported, the registered plan separately binds exact original authoring
   bytes, exact emitted executable JavaScript bytes, and the closed transformation identity before
   approval; transformation from only an original digest after approval is forbidden.

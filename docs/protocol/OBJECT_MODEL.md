@@ -156,8 +156,11 @@ without changing the current candidate: an original-authoring source manifest, a
 JavaScript source manifest, and an ordered transformation-record set all bind into a future plan v1
 before registration. Approval continues to bind the exact plan digest; the runtime may receive only
 the executable role and may never transform from an original-only digest after approval. Proposed
-ADR-0032 selects a separately enrolled Source Preparer and immutable source store as the production
-topology, but that owner is not implemented or accepted and remains an activation blocker.
+ADR-0032 selects a separately enrolled Source Preparer and immutable source store as the
+conditional later TypeScript topology. Accepted ADR-0034 removes that path from the first-release
+critical path: plan v0 binds one canonical single-member `SourceManifest` and exact pass-through
+`main.mjs` bytes. TypeScript remains unimplemented and would still require the atomic plan-v1
+cutover if later selected.
 
 ## V0 proposal shape
 

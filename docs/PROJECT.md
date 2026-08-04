@@ -120,18 +120,22 @@ distribution/source/SBOM obligations, and final profile reruns remain open.
 P0-4A conditionally passed the no-host-root topology only; Gatekeeper, clean-host, and minimum-OS
 admission also remain open as deferred activation/distribution evidence. They do not block current
 local F2, G1, or documentation mechanics.
-The bounded TypeScript approved-byte follow-up passed only the pre-approval byte-ownership
-question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
+Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) now freezes the first release as
+one byte-exact pass-through `main.mjs` member under the existing plan-v0 source role, with no
+static/dynamic dependency request, CommonJS, package resolution, legacy Node module surface, or
+module-loader fallback. Its passive proposal/source/manifest and IPC registration/fetch fixtures,
+Supervisor source custody, Broker rendering, runtime no-loader evidence, and consumer remain
+unimplemented. The bounded TypeScript approved-byte follow-up passed only the pre-approval
+byte-ownership question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,
 change current contracts, or admit a runtime. Proposed ADR-0032 selects a separate enrolled Source
 Preparer with a one-shot exact Node worker and a role-namespaced immutable source store, but PR #72
 retained P1 at a bounded HOLD/NO-GO pending protected-store, worker-confinement, genesis/update,
 retention/release, recursive field-authority, and lifecycle evidence. P1 passive contracts have not
-begun. No component, store, endpoint, consumer, installed identity, or cutover exists. If those
-blockers cannot close, the accepted planning fallback is a later-reviewed modern ESM `.mjs`-only
-JavaScript contract—without CommonJS, package resolution, legacy Node module surface, or runtime-
-authority widening—not an already frozen media/profile decision.
+begun. No component, store, endpoint, consumer, installed identity, or cutover exists. ADR-0034
+removes that conditional TypeScript path from the first-release critical path; ADR-0030/0032
+remain future-conditional and still require an atomic plan-v1 cutover if resumed.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
@@ -176,7 +180,8 @@ The platform scope is broader than file processing: it is intended for bounded a
 JS/TS tasks. The first executable slice is deliberately smaller:
 
 - Local macOS control experience
-- A pinned JS/TS runtime selected only after P0-0 authority closure
+- One byte-exact pass-through `main.mjs`; TypeScript remains conditional later work
+- A pinned JavaScript runtime selected only after runtime/profile authority closure
 - One-shot, dependency-free execution
 - Inline JSON input and bounded JSON output
 - Explicit prepare, register, human-readable approval, attempt, and execute phases

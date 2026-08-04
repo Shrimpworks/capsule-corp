@@ -387,7 +387,7 @@ candidate. The real Deno and `rusty_v8` forks have governed commits. Governed `r
 unmerged external work in progress at head
 `aa921fa48901bf28774d61248b0187c8b91c55a4`; contract checks pass while clean Linux/arm64 build
 work is still in progress. It has no accepted artifact or admission effect. Exact V8
-build/source/notice closure, independent builders, module loading, TypeScript ownership, external
+build/source/notice closure, independent builders, closed `.mjs` module loading, external
 isolation composition, and runtime admission remain open.
 
 **Experiment evidence.** A fixed Node/Amaro strip-only TypeScript experiment produced deterministic
@@ -396,9 +396,9 @@ emitted JavaScript, plus the exact transformer identity, to be bound before plan
 approval. No production component owns or performs that transformation today. PR #72 kept the
 proposed Source Preparer's P1 contracts on HOLD until protected-store, worker-confinement,
 genesis/update, retention/release, recursive field-authority, and lifecycle evidence closes.
-JavaScript-only is an acceptable planning fallback if those gates fail, but a first-release
-fallback must be separately frozen as modern ESM `.mjs` only—without CommonJS, package resolution,
-legacy Node module authority, or runtime-contract widening—before implementation.
+Accepted ADR-0034 now freezes the first release as one byte-exact pass-through `main.mjs`, without
+CommonJS, static/dynamic dependencies, package resolution, legacy Node module authority, or a
+module-loader fallback. TypeScript and its Source Preparer remain conditional later work.
 
 ### libkrun/HVF, immutable roots, and direct block attachment
 

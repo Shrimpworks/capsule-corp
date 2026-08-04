@@ -2,9 +2,8 @@
 
 Date: 2026-08-03
 
-Status: integrated repository checkpoint through Capsule PR #74 merge
-`e930f9dbd877bea0cbd55870060f48c9c7fdd72f`, including PR #75 merge
-`6fc31a049c476acf5085071c48d3d5e36f27240f`. This is a status and dependency
+Status: integrated repository checkpoint through Capsule PR #76 merge
+`3cdac7f26aa4c0b14088bf14a514dca09642b627`. This is a status and dependency
 index. It does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 
@@ -14,7 +13,7 @@ Keep these evidence classes separate:
 
 | Class | Meaning at this checkpoint |
 | --- | --- |
-| Selected design | Accepted ADR-0028 selects governed `deno_core` as the first runtime engineering candidate. Proposed ADRs describe reviewable directions only. |
+| Selected design | Accepted ADR-0028 selects governed `deno_core` as the first runtime engineering candidate; accepted ADR-0034 freezes the single-file `.mjs` first-release source/plan direction. Proposed ADRs describe reviewable directions only. |
 | Implemented local mechanics | Unwired repository code and tests implement only their named passive or no-guest behavior. They are not product authority boundaries. |
 | Experiment evidence | A bounded mechanism was observed in its recorded local environment. The result does not transfer automatically to an installed product or composed profile. |
 | Governed external source | A named fork commit or merge establishes source identity and maintenance provenance. It does not admit artifacts, releases, runtimes, backends, or profiles. |
@@ -45,11 +44,21 @@ protected storage, rollback protection, or Source Preparer store protection. G1â
 Go/Darwin bootstrap and opaque-owner port using owned temporary rootsâ€”is next; the owner-required
 store composition and installed protected-root matrix remain later slices.
 
-## Source preparation and authenticated IPC
+## First-release source and authenticated IPC
+
+Accepted ADR-0034 now freezes the first-release source contract as one byte-exact pass-through
+`main.mjs` member, one plan-v0 source-manifest role, and no static/dynamic dependency request or
+module-loader fallback. The next passive slices are M1 proposal/source/manifest fixtures and
+S1/M2 registration/fetch fixtures. `RegisterPlanV0` atomically submits exact plan bytes, the
+complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
+source bytes; `GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Candidate
+application-data maxima are 328,337 request bytes and 332,433 fetch-reply bytes, pending generated
+fixture verification from the complete field-authority projection. No S1 fixture, facade, bridge,
+endpoint, consumer, or source-custody store extension exists yet.
 
 PR #72 retained Source Preparer P0 as a bounded **P1 HOLD / NO-GO today**. A separately enrolled
-unprivileged Source Preparer remains only a conditional design. P1 passive contracts have not
-begun. Its entry blockers include:
+unprivileged Source Preparer remains only a conditional later TypeScript design. P1 passive
+contracts have not begun. Its entry blockers remain:
 
 - an exact single-member protected store with baseline same-user negative-access evidence;
 - exact one-shot Node worker confinement and bounded process-tree death/cleanup evidence;
@@ -59,17 +68,9 @@ begun. Its entry blockers include:
   classification and every independent validator; and
 - closed cancellation, recovery, epoch, rollback, resource, and refusal-side state semantics.
 
-JavaScript-only is an acceptable bounded first-release fallback if those gates do not close. User
-direction narrows that future fallback to modern ESM `.mjs` only: no CommonJS, package resolution,
-legacy Node module surface, or widening of the governed runtime contract. This is planning
-direction, not a frozen media/profile decision. The exact contract and applicable ADRs must be
-updated and reviewed before implementation.
-
-Authenticated IPC S1 and `RegisterPlanV1` remain blocked behind the Source Preparer decision/evidence
-and the coordinated ADR-0030 plan-v1 authority model. There is no retained 562-byte S1 fixture and
-the 626-byte arithmetic is not a layout, cap, or known answer. The native/Go bridge, installed
-authenticated endpoints, production identities, Approval verification, and consumers remain
-unimplemented.
+Those TypeScript blockers no longer block the first release. If TypeScript is later selected,
+ADR-0030 still requires one atomic plan-v1/RegisterPlanV1 cutover with no dual active v0/v1
+acceptance. The 626-byte TypeScript arithmetic remains no layout, cap, or known answer.
 
 ## Governed runtime and libkrun source state
 
@@ -106,7 +107,8 @@ governance reconciliation before Capsule reuses it.
 | --- | --- | --- |
 | Independently actionable now | Archive F2 | Build the explicit fixed-store v2 migration/full verifier from passive F1; no cohort leaves hot state and no archive segment exists. |
 | Independently actionable now | Owner-lock G1 | Port only the passive bootstrap/opaque owner boundary under owned temporary roots; do not claim protected storage. |
-| Independently actionable now | Source Preparer blockers | Run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
+| Independently actionable now | `.mjs` M1 and S1/M2 | Narrow and replace passive proposal/source fixtures, add canonical source-manifest/field-authority coverage, then generate the four closed IPC message projections and exact maxima. Add no product endpoint. |
+| Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |
 | Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
@@ -115,9 +117,8 @@ governance reconciliation before Capsule reuses it.
 
 ## Maintainer decisions and resources that can unblock work
 
-- TypeScript remains conditional. If its P0A evidence cannot close without widening authority,
-  proceed toward a separately reviewed modern-ESM `.mjs`-only JavaScript fallback contract rather
-  than implementing around the stop.
+- TypeScript remains conditional and off the first-release critical path. Follow accepted ADR-0034
+  for `.mjs`; do not implement around Source Preparer P0A or widen the runtime contract.
 - Current Apple Developer membership is Individual / Team `W4QUR9FUL4`, and read-only
   `security find-identity -v -p codesigning` now reports a valid Apple Development identity for
   that Team. Local signed/provisioned experiments can proceed once exact W4 role identifiers,

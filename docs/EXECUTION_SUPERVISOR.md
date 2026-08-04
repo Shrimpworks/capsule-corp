@@ -69,8 +69,11 @@ The Supervisor must not own:
 The exact wire contracts remain pending, but the conceptual interfaces are:
 
 ```text
-registerPlan(exactCanonicalPlanBytes) -> PlanRegistration
-getRegisteredPlan(registrationId) -> exactCanonicalPlanBytes
+registerPlan(exactCanonicalPlanBytes, completeRoleBindings,
+             exactSourceManifestBytes, exactMainMjsBytes) -> PlanRegistration
+getRegisteredPlan(registrationId) -> exactCanonicalPlanBytes, completeRoleBindings,
+                                     PlanRegistration, exactSourceManifestBytes,
+                                     exactMainMjsBytes
 submitApproval(registrationId, exactSignedApprovalEnvelopeBytes) -> approvalReference
 requestAttempt(registrationId, approvalReference) -> attemptReference
 cancelAttempt(attemptId) -> acceptedState
@@ -219,8 +222,10 @@ authorizes `validated-local`.
 
 ## Content access
 
-The Supervisor necessarily receives transient access to exact source/input bytes and produced
-output while staging/collecting. The security property is scoped capability, not impossible access.
+Under ADR-0034 the Supervisor durably retains the exact registered first-release `main.mjs`
+manifest/bytes and later receives transient access to exact input bytes and produced output while
+staging/collecting. The security property is exact registered source plus scoped content
+capability, not impossible Supervisor access.
 
 Handles bind installation, epoch, registration, attempt, content identity, direction, operation,
 byte limit, expiry, and redemption state. The daemon cannot redeem them. The Supervisor never gets

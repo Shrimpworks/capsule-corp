@@ -575,6 +575,9 @@ real-backend reconciliation, signed evidence, and installed recovery are unresol
 ## Deeper technical reading
 
 - [Project definition](PROJECT.md) and [roadmap](ROADMAP.md)
+- [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
+  for the Team-ID stop, Apple/Capsule key distinction, setup, custody, rotation, and redacted
+  inventory
 - [Architecture](ARCHITECTURE.md), [technical design](TECHNICAL_DESIGN.md), and
   [Execution Supervisor](EXECUTION_SUPERVISOR.md)
 - [Threat model](security/THREAT_MODEL.md) and

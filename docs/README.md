@@ -24,6 +24,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 13. [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md) — one-
     application packaging direction, role boundaries, setup/update/repair/uninstall sequencing,
     staged MVP scope, blockers, and the focused Apple-platform research brief
+14. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
+    — canonical Team-ID decision, environment/component matrices, safe setup and verification,
+    storage/rotation policy, redacted inventory, and Dylan's next actions
 
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and
@@ -95,6 +98,7 @@ a transformer, endpoint, runtime, or execution path and is not a first-release d
 - [Trust repositories](TRUST_REPOSITORIES.md)
 - [Update and recovery](UPDATE_AND_RECOVERY.md)
 - [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
+- [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
 - [Protocol object model](protocol/OBJECT_MODEL.md)
 
 The top-level JSON Schemas and current mixed `Job` TypeScript types remain canonical for the

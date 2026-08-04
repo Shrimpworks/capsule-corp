@@ -467,6 +467,12 @@ Current dependency and priority view:
    and remains deferred activation/distribution evidence, not a blocker for F4 local archive work;
    owner-lock installed G3 remains `BLOCKED` until the named credential and design
    blockers close.
+   The canonical practical guide is now
+   [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
+   Its documentation slice is `PASSED`; it changes no credential or product admission. It requires
+   one explicit W4-versus-3DDR decision, final bundle/App Group topology, and matching selected-team
+   certificates/profiles before R3/I1, and defers Developer ID/notarization/CI release custody to
+   separately authorized work.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.

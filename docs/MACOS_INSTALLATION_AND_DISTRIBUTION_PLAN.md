@@ -29,6 +29,12 @@ Replacer, updater implementation, application location, or minimum supported mac
 defines what may be implemented now, what requires another decision, and which work can be deferred
 without blocking the first developer MVP.
 
+The canonical Apple-material and Capsule-key guide is
+[Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
+It records the exact W4/3DDR Team-ID stop, required replacement inputs, signable-component matrix,
+credential custody, rotation/recovery rules, and the user action order without selecting any of the
+unresolved authorities in this plan.
+
 ## Product shape
 
 The current engineering direction is:

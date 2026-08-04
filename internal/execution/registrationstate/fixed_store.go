@@ -93,6 +93,9 @@ func NewFixedFileStore(path string, initial InitialState) (*FixedFileStore, erro
 		if info.Mode()&os.ModeSymlink != 0 || !info.Mode().IsRegular() {
 			return nil, errors.New("fixed registration store must be a regular file")
 		}
+		if info.Mode().Perm() != 0o600 {
+			return nil, errors.New("fixed registration store permissions must be 0600")
+		}
 		state, loadErr := loadState(path)
 		if loadErr != nil {
 			return nil, fmt.Errorf("%w: %v", ErrStoreRepairRequired, loadErr)

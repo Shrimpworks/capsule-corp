@@ -139,12 +139,14 @@ hazard, hostile control/queue/descriptor work, real transport, distinct launcher
 installed composition, release obligations, and final profile reruns remain open. This is governed
 fork source and local library evidence only; no guest, backend, or profile is admitted.
 
-Governed `rusty_v8` PR #4 remains external `IN_PROGRESS — TRENDING_GOOD` work at exact head
-`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed
-`get_version` test passed. A bounded diagnostic then proved and corrected the GN evidence-query
-interpreter mismatch, and the corrected-head diagnostic passed. The PR remains open and draft; one
-clean full-ARM64 bundle run, exact evidence review, and merge are still required. It has no accepted
-handoff, reusable artifact, release, or admission effect until those steps complete.
+Governed `rusty_v8` PR #4 is `PASSED` for its exact bounded fork-construction scope and merged at
+head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Exact-head workflow-dispatch run
+[`30925045754`](https://github.com/Shrimpworks/rusty_v8/actions/runs/30925045754) passed the clean
+Linux/arm64 network-disabled build, fixed `get_version` test, corrected GN evidence query,
+evidence collection, and unsigned bundle upload. The parent governed-runtime work remains
+`IN_PROGRESS — TRENDING_GOOD`: no governed release, accepted Capsule runtime bundle, independent-
+builder equality, or runtime/profile admission follows from that fork result.
 
 ## Priority and dependency view
 
@@ -157,7 +159,7 @@ handoff, reusable artifact, release, or admission effect until those steps compl
 | `PASSED` bounded unwired conformance / signed parent `BLOCKED` | Production CBOR wrapper preparation | The [v0 object-set/wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only `SourceManifest` v0 as eligible and adds one unwired fxamacker v2.9.2 codec behind Capsule predecode, caps, canonical-byte comparison, binding, and exact-byte ownership. Plan, registration, approval, Swift, same-byte consumers, and production COSE remain blocked; `go-cose` stays test-only. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
-| Waiting | Fork-native runtime bundle | Wait for PR #4's corrected-head clean full-ARM64 bundle run, exact evidence review, and merge. The earlier passing build/test and diagnostic close risk but are not a reusable handoff. |
+| Independently actionable now | Fork-native runtime bundle | Consume only the exact merged Deno and `rusty_v8` governed heads, reconstruct the Linux/arm64 Capsule binary/snapshot/runtime-root bundle from empty outputs and caches, compare it with retained known answers, and retain provenance/SBOM/source/notice evidence. Do not publish, sign, admit, or compose a guest in this slice. |
 | Later composition | Governed runtime plus libkrun | Requires governed runtime artifacts and explicit authorization for an owned disposable development guest, followed by the exact transport/launcher/root/device/teardown corpus. |
 | Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference: certificate SHA-1 `1638...61E3` has subject OU and signed-byte TeamIdentifier `3DDR84M4JS`, and all cached profiles are also 3DDR. A matching/reissued W4 certificate and exact W4 profiles are required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |

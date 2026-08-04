@@ -66,5 +66,6 @@ its core conclusion.
 - [ADR-0034: Freeze a single-file `.mjs` first-release contract](0034-freeze-mjs-first-release-contract.md)
 - [ADR-0035: Select a disposable `.mjs` Source Validator](0035-select-disposable-mjs-source-validator.md)
 - [ADR-0036: Select role-separated Source Validator launchers and reactive footprint policy](0036-select-role-separated-source-validator-launchers.md)
+- [ADR-0037: Freeze the passive one-application macOS installation I0 contract](0037-freeze-passive-macos-installation-i0-contract.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

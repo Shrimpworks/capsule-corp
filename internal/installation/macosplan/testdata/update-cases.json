@@ -1,0 +1,161 @@
+[
+  {
+    "id": "exact-passive-identity-refuses-inactive-signing",
+    "input": {
+      "recordVersion": 0,
+      "predecessor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "e577d365797333ea5e96b2e3eef0dcfdd4dcccac24d0bb15ea608957df0547cf",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "successor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "e577d365797333ea5e96b2e3eef0dcfdd4dcccac24d0bb15ea608957df0547cf",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "completeBundleObserved": true,
+      "stateRootIdentityPreserved": true,
+      "ownerLockIdentityPreserved": true,
+      "storeMigrationAuthorized": false,
+      "bothValidatorTuplesExact": true,
+      "servicesStopped": true,
+      "componentInventoryResult": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "component-inventory-exact"
+      }
+    },
+    "expected": {
+      "recordVersion": 0,
+      "compatibility": "refused",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "trust-state",
+        "reason": "update-signing-profile-inactive"
+      }
+    }
+  },
+  {
+    "id": "mixed-role-set-refuses",
+    "input": {
+      "recordVersion": 0,
+      "predecessor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "e577d365797333ea5e96b2e3eef0dcfdd4dcccac24d0bb15ea608957df0547cf",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "successor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "completeBundleObserved": true,
+      "stateRootIdentityPreserved": true,
+      "ownerLockIdentityPreserved": true,
+      "storeMigrationAuthorized": false,
+      "bothValidatorTuplesExact": true,
+      "servicesStopped": true,
+      "componentInventoryResult": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "component-inventory-exact"
+      }
+    },
+    "expected": {
+      "recordVersion": 0,
+      "compatibility": "refused",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "update-identity-mixed"
+      }
+    }
+  },
+  {
+    "id": "incomplete-whole-bundle-refuses",
+    "input": {
+      "recordVersion": 0,
+      "predecessor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "e577d365797333ea5e96b2e3eef0dcfdd4dcccac24d0bb15ea608957df0547cf",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "successor": {
+        "recordVersion": 0,
+        "profileId": "capsule.macos-installation.no-guest/i0",
+        "roleSetDigest": "e577d365797333ea5e96b2e3eef0dcfdd4dcccac24d0bb15ea608957df0547cf",
+        "serviceSetDigest": "089821c10c3097275e57484100af2e2f0f84dde2df2a371e947fd5ba24020e0e",
+        "entitlementsSetDigest": "1420f6a6449739047ca0d92991e5595e11edce3ae15d60e26f62f04538c94f3e",
+        "bootstrapContractId": "capsule.macos-installation.bootstrap/i0",
+        "storeFormatIdentity": "capsule.supervisor.product-store/unselected",
+        "supervisorIpcGeneration": 0,
+        "validatorGeneration": 1,
+        "signingState": "inactive-refusing",
+        "releaseIdentity": ""
+      },
+      "completeBundleObserved": false,
+      "stateRootIdentityPreserved": true,
+      "ownerLockIdentityPreserved": true,
+      "storeMigrationAuthorized": false,
+      "bothValidatorTuplesExact": true,
+      "servicesStopped": true,
+      "componentInventoryResult": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "component-inventory-exact"
+      }
+    },
+    "expected": {
+      "recordVersion": 0,
+      "compatibility": "refused",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "refuse",
+        "classification": "repair-required",
+        "reason": "update-incomplete-or-mixed"
+      }
+    }
+  }
+]

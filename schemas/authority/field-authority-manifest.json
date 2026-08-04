@@ -672,6 +672,83 @@
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "passive-source-validator-consumer-projection-v1-exact-role-frame",
       "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "installation-enrollment",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-profile-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-profile-identity": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "installation-enrollment",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-profile-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-profile-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-inactive-gate": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "installation-enrollment",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-profile-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-profile-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-transition-input": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "passive-fixture-generator",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-transition-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-transition-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-transition-output": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-transition-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-transition-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-retention-input": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "passive-fixture-generator",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-retention-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-retention-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "macos-installation-i0-retention-output": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "macos-installation-i0-passive-validator",
+      "resolver": "macos-installation-i0-retention-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-macos-installation-i0-retention-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
     }
   },
   "targets": [
@@ -2620,6 +2697,806 @@
           "path": "/processProfileDigest",
           "sourceField": "ProcessProfileDigest",
           "profile": "source-validator-v1-consumer-projection"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-role-projection",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "RoleProjection"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/roleId",
+          "sourceField": "RoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/containingRoleId",
+          "sourceField": "ContainingRoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/packaging",
+          "sourceField": "Packaging",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/visibility",
+          "sourceField": "Visibility",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/bundlePath",
+          "sourceField": "BundlePath",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/executablePath",
+          "sourceField": "ExecutablePath",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/serviceDescriptorPath",
+          "sourceField": "ServiceDescriptorPath",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/resourcePolicyPath",
+          "sourceField": "ResourcePolicyPath",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/bundleIdentifier",
+          "sourceField": "BundleIdentifier",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/signingIdentifier",
+          "sourceField": "SigningIdentifier",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/serviceIdentifier",
+          "sourceField": "ServiceIdentifier",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/required",
+          "sourceField": "Required",
+          "profile": "macos-installation-i0-profile-identity"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-entitlement-projection",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "EntitlementProjection"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/roleId",
+          "sourceField": "RoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/key",
+          "sourceField": "Key",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/disposition",
+          "sourceField": "Disposition",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/valueIdentity",
+          "sourceField": "ValueIdentity",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/source",
+          "sourceField": "Source",
+          "profile": "macos-installation-i0-profile-identity"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-service-projection",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "ServiceProjection"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/serviceId",
+          "sourceField": "ServiceID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/serviceName",
+          "sourceField": "ServiceName",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/serviceClass",
+          "sourceField": "ServiceClass",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/ownerRoleId",
+          "sourceField": "OwnerRoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/peerRoleId",
+          "sourceField": "PeerRoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/protocolIdentity",
+          "sourceField": "ProtocolIdentity",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/methodIdentities",
+          "sourceField": "MethodIdentities",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/reachability",
+          "sourceField": "Reachability",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/activationState",
+          "sourceField": "ActivationState",
+          "profile": "macos-installation-i0-inactive-gate"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-signing-projection",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "SigningProjection"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/teamIdentifier",
+          "sourceField": "TeamIdentifier",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/distributionChannel",
+          "sourceField": "DistributionChannel",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/provisioningProfileSetId",
+          "sourceField": "ProvisioningProfileSetID",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/codeDirectoryHashSetId",
+          "sourceField": "CodeDirectoryHashSetID",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/entitlementsDigestSetId",
+          "sourceField": "EntitlementsDigestSetID",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/blocker",
+          "sourceField": "Blocker",
+          "profile": "macos-installation-i0-inactive-gate"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-bootstrap-contract",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "BootstrapContract"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/contractId",
+          "sourceField": "ContractID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/bootstrapOwner",
+          "sourceField": "BootstrapOwner",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/stateRootClass",
+          "sourceField": "StateRootClass",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/ownerLockEntryName",
+          "sourceField": "OwnerLockEntryName",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/ownerLockMode",
+          "sourceField": "OwnerLockMode",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/ownerLockLinkCount",
+          "sourceField": "OwnerLockLinkCount",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/storeEntryName",
+          "sourceField": "StoreEntryName",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/storeFormatIdentity",
+          "sourceField": "StoreFormatIdentity",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/ownerMechanismIdentity",
+          "sourceField": "OwnerMechanismIdentity",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/ordinaryStartupOperation",
+          "sourceField": "OrdinaryStartupOperation",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/initialAttemptState",
+          "sourceField": "InitialAttemptState",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/localEvidenceState",
+          "sourceField": "LocalEvidenceState",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/installedEvidenceState",
+          "sourceField": "InstalledEvidenceState",
+          "profile": "macos-installation-i0-inactive-gate"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-profile",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "Profile"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/profileId",
+          "sourceField": "ProfileID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/productName",
+          "sourceField": "ProductName",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/applicationPath",
+          "sourceField": "ApplicationPath",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/visibleRoleId",
+          "sourceField": "VisibleRoleID",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/roles",
+          "sourceField": "Roles",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/entitlements",
+          "sourceField": "Entitlements",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/services",
+          "sourceField": "Services",
+          "profile": "macos-installation-i0-profile-identity"
+        },
+        {
+          "path": "/signing",
+          "sourceField": "Signing",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/bootstrap",
+          "sourceField": "Bootstrap",
+          "profile": "macos-installation-i0-inactive-gate"
+        },
+        {
+          "path": "/excludedRoles",
+          "sourceField": "ExcludedRoles",
+          "profile": "macos-installation-i0-profile-identity"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-bootstrap-input",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "BootstrapInput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/profileId",
+          "sourceField": "ProfileID",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/event",
+          "sourceField": "Event",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/inventoryDecision",
+          "sourceField": "InventoryDecision",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/signingState",
+          "sourceField": "SigningState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/bootstrapAuthorityState",
+          "sourceField": "BootstrapAuthorityState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/protectedRootState",
+          "sourceField": "ProtectedRootState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/ownerLockState",
+          "sourceField": "OwnerLockState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/storeState",
+          "sourceField": "StoreState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/epochState",
+          "sourceField": "EpochState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/recoveryState",
+          "sourceField": "RecoveryState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/attemptsEnabled",
+          "sourceField": "AttemptsEnabled",
+          "profile": "macos-installation-i0-transition-input"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-bootstrap-output",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "BootstrapOutput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "macos-installation-i0-transition-output"
+        },
+        {
+          "path": "/attemptsEnabled",
+          "sourceField": "AttemptsEnabled",
+          "profile": "macos-installation-i0-transition-output"
+        },
+        {
+          "path": "/result",
+          "sourceField": "Result",
+          "profile": "macos-installation-i0-transition-output"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-update-identity",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "UpdateIdentity"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/profileId",
+          "sourceField": "ProfileID",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/roleSetDigest",
+          "sourceField": "RoleSetDigest",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/serviceSetDigest",
+          "sourceField": "ServiceSetDigest",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/entitlementsSetDigest",
+          "sourceField": "EntitlementsSetDigest",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/bootstrapContractId",
+          "sourceField": "BootstrapContractID",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/storeFormatIdentity",
+          "sourceField": "StoreFormatIdentity",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/supervisorIpcGeneration",
+          "sourceField": "SupervisorIPCGeneration",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/validatorGeneration",
+          "sourceField": "ValidatorGeneration",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/signingState",
+          "sourceField": "SigningState",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/releaseIdentity",
+          "sourceField": "ReleaseIdentity",
+          "profile": "macos-installation-i0-transition-input"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-update-input",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "UpdateInput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/predecessor",
+          "sourceField": "Predecessor",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/successor",
+          "sourceField": "Successor",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/completeBundleObserved",
+          "sourceField": "CompleteBundleObserved",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/stateRootIdentityPreserved",
+          "sourceField": "StateRootIdentityPreserved",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/ownerLockIdentityPreserved",
+          "sourceField": "OwnerLockIdentityPreserved",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/storeMigrationAuthorized",
+          "sourceField": "StoreMigrationAuthorized",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/bothValidatorTuplesExact",
+          "sourceField": "BothValidatorTuplesExact",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/servicesStopped",
+          "sourceField": "ServicesStopped",
+          "profile": "macos-installation-i0-transition-input"
+        },
+        {
+          "path": "/componentInventoryResult",
+          "sourceField": "ComponentInventoryResult",
+          "profile": "macos-installation-i0-transition-input"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-update-output",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "UpdateOutput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/compatibility",
+          "sourceField": "Compatibility",
+          "profile": "macos-installation-i0-transition-output"
+        },
+        {
+          "path": "/attemptsState",
+          "sourceField": "AttemptsState",
+          "profile": "macos-installation-i0-transition-output"
+        },
+        {
+          "path": "/result",
+          "sourceField": "Result",
+          "profile": "macos-installation-i0-transition-output"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-repair-input",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "RepairInput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/applicationFilesExact",
+          "sourceField": "ApplicationFilesExact",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/installationRootAvailable",
+          "sourceField": "InstallationRootAvailable",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/stateRootContinuityProven",
+          "sourceField": "StateRootContinuityProven",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/ownerLockContinuityProven",
+          "sourceField": "OwnerLockContinuityProven",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/storeAndHistoryComplete",
+          "sourceField": "StoreAndHistoryComplete",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/cleanupObligationsResolved",
+          "sourceField": "CleanupObligationsResolved",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/currentEpochExact",
+          "sourceField": "CurrentEpochExact",
+          "profile": "macos-installation-i0-retention-input"
+        },
+        {
+          "path": "/forwardTransitionAuthorized",
+          "sourceField": "ForwardTransitionAuthorized",
+          "profile": "macos-installation-i0-retention-input"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-repair-output",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "RepairOutput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/class",
+          "sourceField": "Class",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/attemptsState",
+          "sourceField": "AttemptsState",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/result",
+          "sourceField": "Result",
+          "profile": "macos-installation-i0-retention-output"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-uninstall-disposition",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "UninstallDisposition"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/dataClass",
+          "sourceField": "DataClass",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/disposition",
+          "sourceField": "Disposition",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/reason",
+          "sourceField": "Reason",
+          "profile": "macos-installation-i0-retention-output"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-installation-uninstall-output",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/installation/macosplan/types.go",
+        "type": "UninstallOutput"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "macos-installation-i0-discriminator"
+        },
+        {
+          "path": "/mode",
+          "sourceField": "Mode",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/attemptsState",
+          "sourceField": "AttemptsState",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/dispositions",
+          "sourceField": "Dispositions",
+          "profile": "macos-installation-i0-retention-output"
+        },
+        {
+          "path": "/result",
+          "sourceField": "Result",
+          "profile": "macos-installation-i0-retention-output"
         }
       ]
     }

@@ -14,6 +14,11 @@ Supervisor, Source Validator launcher, Runner, and later update-role boundaries.
 Trust Coordinator or Bundle Replacer is product authority until a separate ADR and signed installed
 corpus support it.
 
+Accepted ADR-0037 and the generated passive I0 profile now freeze the no-guest application's exact
+seven-role tree, service/entitlement projections, lifecycle classifiers, and inactive gates. That
+slice is `PASSED` only as deterministic local contract evidence; it does not build, sign, install,
+register, launch, update, repair, uninstall, or admit any component.
+
 ## Current versus intended state
 
 The repository currently contains buildable Go and TypeScript scaffolding. It does not yet launch a

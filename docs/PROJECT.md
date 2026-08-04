@@ -39,6 +39,13 @@ container bootstrap, App Group/private-XPC residual authority, two role-specific
 launchers, and any Trust Coordinator or Bundle Replacer authority require separate decisions and
 signed installed evidence.
 
+The passive I0 installation slice is now `PASSED` in its exact no-side-effect scope. Accepted
+[ADR-0037](adr/0037-freeze-passive-macos-installation-i0-contract.md) retains one visible Broker
+app, six embedded required roles, the ADR-0029/0036 service identities, inactive entitlement and
+signing gates, bootstrap/update/repair/uninstall classifiers, generated fixtures, and field
+authority. Missing, mixed, extra, inactive-signing, and unsafe transition states refuse. No app,
+profile, state, service, process, update, deletion, runtime, backend, or guest was created.
+
 The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
 the repository's current API surface, but they intentionally do not define the target v0 protocol.
 Blocking feasibility spikes must determine what the platform can actually enforce before those

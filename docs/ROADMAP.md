@@ -14,10 +14,10 @@ retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate
 selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes,
 Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
 their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
-R1 passive v1 contracts/fixtures are `PASSED`. The product Source Validator and downstream S1/M2
-remain `BLOCKED` on unsigned construction, separately authorized signing/install,
-confinement/resource/residue evidence, and
-sequential daemon then Broker consumers.
+R1 passive v1 contracts/fixtures and R2 unsigned role-specific construction are `PASSED`. The
+product Source Validator and downstream S1/M2 remain `BLOCKED` on separately authorized
+signing/install, confinement/resource/residue evidence, and sequential daemon then Broker
+consumers.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker is now
 closed in its bounded fork scope; fork-native bundle reproduction, evidence review, governed
@@ -208,7 +208,8 @@ fallback. Its passive source-byte/SourceManifest foundation is retained, and an 
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
 passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
 but the product validator and downstream S1/M2 registration/fetch slices remain on hold pending
-R2-R5B. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
+R3-R5B. R2 retains exact unsigned role-specific bundle/parser construction with inactive
+predecode/refusal and no spawn. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
 bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation retains ambient
 file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
 fixed V1 bytes. Resume only with a newly reviewed/enrolled artifact and supported exact memory/
@@ -230,8 +231,10 @@ protocol and cross-language passive conformance. V1 observes exact build bytes, 
 SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without enrollment. Later
 slices must prove independent reproduction and signed enrollment, disposable OS profile,
 independent role-private daemon/Broker invocation, grammar/mutation corpus, resource/residue
-evidence, and fault recovery. R1 passive contracts/fixtures are now retained. Work proceeds
-strictly as R2 unsigned construction, R3 separately authorized signing/install, R4
+evidence, and fault recovery. R1 passive contracts/fixtures and R2 unsigned construction are now
+retained. R2's role-specific bundles and parser children reproduce offline across two clean
+same-host directories; their exact inactive policies predecode and refuse without spawning. Work
+proceeds strictly as R3 separately authorized signing/install, R4
 confinement/resource/residue corpus,
 R5D daemon consumer, R5B Broker consumer, then M2/S1 checkpoint. Unsupported private-XPC
 reachability, widened authority/native loading/network/filesystem escape, orphan/cleanup failure,

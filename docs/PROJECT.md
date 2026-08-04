@@ -19,9 +19,8 @@ single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Su
 and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's fixed-store
 v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F4A's read-only
 retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
-scopes. Product
-Source Validator work, installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the
-named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
+scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
+`BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
 TRENDING_GOOD`; the next local archive work starts at F4B. None of those blocked or incomplete parent
 items is `NO_GO`. Product admission and control-evidence maturity remain separate from work status.
 
@@ -91,8 +90,15 @@ guarantee. Threshold, cadence, baseline, and overshoot remain unset until the se
 signed corpus. R1's [passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md) is
 now `PASSED`: 46 generated cases freeze role-distinct request/result/profile/consumer bytes,
 inactive policy shape, exact caps, and cross-role/cross-version refusal with independent Go/Node
-decoding. The product remains `BLOCKED`; continue sequentially with R2-R5B. No service, parser
-process, signing identity, consumer, or active resource measurement was created or used.
+decoding. R2's [unsigned role bundles](../artifacts/mjs-source-validator-r2/README.md) are also
+`PASSED` in their exact construction scope: two private role-specific XPC bundle layouts and
+matching Oxc parser children rebuild offline and compare byte-for-byte across two clean same-host
+directories. Complete source/lock/notice/SBOM/unsigned-provenance inventories and the launchers'
+`libSystem`-only dynamic closure are retained. The exact R1 policies remain inactive, so each
+launcher predecodes and refuses without spawning rather than inventing R4 values. No Apple
+identity, installation, enrollment, reachable service, product consumer, or active resource
+measurement was used. The product remains `BLOCKED`; continue sequentially with separately
+authorized R3, then R4-R5B.
 
 Phase 2B now retains a closed 100-rule, 510-case, 631-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,

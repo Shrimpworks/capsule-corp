@@ -14,10 +14,11 @@ Evidence or reason: Accepted ADR-0036 selects two role-specific private App-Sand
   services, accepts each private container as residual scratch authority under a narrowed no-store
   rule, and replaces the unavailable hard ceiling with an evidence-derived reactive footprint
   watermark and explicit availability limitations.
-Remaining work: R1 passive contracts/fixtures are `PASSED`; continue with R2 unsigned role-specific construction; separately
-  authorized R3 signing/install; R4 confinement/resource/residue evidence; R5 daemon then Broker
+Remaining work: R1 passive contracts/fixtures and R2 unsigned role-specific construction are
+  `PASSED`; continue with separately authorized R3 signing/install; R4 confinement/resource/residue evidence; R5 daemon then Broker
   consumers; and the later M2/S1 checkpoint.
-Next action: implement only R2's unsigned, role-specific launcher/parser construction.
+Next action: separately authorize only R3 signing/install and private reachability for the exact R2
+  bytes.
 Parent status: Product Source Validator and downstream M2/S1 remain BLOCKED. ADR-0035 and ADR-0036
   are Accepted architecture decisions, but no product artifact, endpoint, consumer, runtime,
   backend, or guest is admitted.
@@ -224,13 +225,13 @@ every supported host; profile review must accept the measured risk before consum
 
 ### R2 — unsigned role-specific launcher/parser construction only
 
-- Rebuild Oxc from the exact reviewed lock with the v1 codec and no formatter, transformer,
-  resolver, runtime, package, or loader.
-- Build the two smallest native role-specific launchers that only predecode the fixed frame, apply
-  the fixed spawn descriptor/rlimits, monitor, drain, kill, reap, clean, verify, and return a fixed
-  role-bound result.
-- Retain no product consumer. Run offline source/SBOM/notice/provenance and two-builder review before
-  any enrollment request.
+Status: `PASSED` for exact unsigned construction. Two role-specific bundle layouts, native
+launchers, and parser children rebuild offline and compare byte-for-byte across two clean same-host
+directories. The retained source/lock/license/notice/SBOM/provenance/static-closure evidence is not
+independent-builder evidence. The launchers accept only the fixed role-specific `request` data
+field and validate frame/source/policy bindings. Because the exact R1 policy is inactive, they
+refuse without parser spawn; active descriptor/resource/monitor/drain/kill/reap/cleanup behavior
+remains R4 after R3 installation evidence. No product consumer or Apple credential was used.
 
 ### R3 — separately authorized signing and installation
 
@@ -302,9 +303,9 @@ rejected.
 
 ## Claim boundary
 
-This document records the accepted R0 design but selects no admitted product profile. It does not
-authorize creation of an XPC service, login item,
-background helper, app group, signing operation, user identity, parser rebuild, daemon/Broker
+This document records the accepted R0 design and bounded R1/R2 evidence but selects no admitted
+product profile. R2 creates unsigned bundle layouts and parser bytes only. It does not authorize an
+installed/reachable XPC service, login item, background helper, app group, signing operation, user identity, daemon/Broker
 consumer, Keychain access, runtime, backend, or guest. It does not prove private-XPC reachability,
 App Sandbox denial, Hardened Runtime/library constraints, clean-host compatibility, reactive
 memory behavior, cleanup, or product admission. V0/V1/V2 evidence remains scoped and unchanged;

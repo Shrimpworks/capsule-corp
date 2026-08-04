@@ -16,7 +16,9 @@ superseded as the authoritative unwired path). The current unwired path comprise
   effective-time high-water, approvals, and immutable created attempts, including atomic
   consume/create, snapshot-v1 lifecycle migration/validation, and unwired durable lifecycle
   transactions; its separate F2 read-only oracle migrates a fully validated v1 snapshot to one
-  all-hot empty-archive v2 snapshot and fully verifies it on reopen;
+  all-hot empty-archive v2 snapshot and fully verifies it on reopen, F3 activates one immutable
+  closed-cohort segment, and F4A performs only fresh full-verification retained lookup/replay/
+  passive-collision and hot-only recovery routing;
 - `internal/execution/lifecyclestate`: passive closed lifecycle, effect, binding, instance, and
   reconciliation contracts; and
 - `internal/execution/registeredlifecycle`: an `AttemptID`-keyed, no-guest fake lifecycle that
@@ -25,7 +27,9 @@ superseded as the authoritative unwired path). The current unwired path comprise
 
 These are implemented local mechanics with retained Go tests, not a deployed Supervisor. The F2
 migration/full verifier moves no cohort, writes no segment, routes no retained lookup, and invokes
-no adapter. The authority store has no production archive/compaction or multi-process locking. The
+no adapter. F3 adds one segment/activation and F4A adds read-only retained routing; neither adds v2
+authority/lifecycle mutation, a second segment, or an adapter call. The authority store has no
+production archive/compaction or multi-process locking. The
 fixed snapshot and coordinator remain bounded local mechanics, and no consumer, authenticated IPC,
 macOS code identity, Keychain/user presence, protected production storage, production cryptography,
 content, evidence, runtime/backend authority, or guest is present. ADR-0019 and ADR-0024 remain

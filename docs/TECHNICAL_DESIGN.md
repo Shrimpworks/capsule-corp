@@ -86,6 +86,10 @@ generation-two active reference, and fully reopens either the complete predecess
 under retained fault, response-loss, concurrency, corruption/substitution, owner-loss, and process-
 death oracles. It adds no retained lookup, v2 mutation, second segment, backup/orphan cleanup,
 production engine, consumer, adapter, runtime, backend, or guest.
+The [read-only F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) now adds fresh full-verification
+retained-global lookup/replay/passive-collision routing across typed hot/archive locations and
+hot-only `AttemptID` recovery. It adds no v2 mutation, new effect tombstone, second segment,
+consumer, adapter, runtime, backend, or guest; F4B mutation and F4C growth remain open.
 
 ## Reference workflow
 
@@ -768,8 +772,10 @@ F1 types, known answers, defensive copies, and eligibility selection now exist. 
 segment indexes, typed locations/counts, and a distinct generated migration genesis. F2 now adds
 the owner-asserted v1-to-v2 file migration and read-only empty-archive full verifier. F3 now adds
 one closed cohort segment and atomic generation-two activation with full reopen verification. It
-still adds no retained lookup, v2 authority mutation, second segment, consumer, or deletion. A
-production engine plus real power-loss proof remain deferred.
+still adds no retained lookup, v2 authority mutation, second segment, consumer, or deletion. F4A
+now adds only read-only retained-global lookup/replay/passive-collision routing and hot-only
+`AttemptID` recovery. F4B authority/lifecycle mutation and F4C second-segment/bounded growth remain
+open. A production engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -809,8 +815,9 @@ implemented.
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
 2. Continue from the completed ADR-0031/F1, stateful
    [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md), and
-   [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) into F4 retained lookup/v2
-   tombstone enforcement and F5 backup/orphan/offline reporting before the bounded SQLite
+   [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md), and
+   [F4A retained lookup](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) into F4B atomic v2 mutation/new
+   effect-tombstone enforcement and F4C bounded growth, then F5 backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
 3. Resolve the Source Validator V2 block through R0-R5 in the

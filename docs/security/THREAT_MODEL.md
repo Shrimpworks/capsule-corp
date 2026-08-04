@@ -593,7 +593,12 @@ sealed immutable-segment prepare/verify/publish/activate transaction. It retains
 record and visible tombstone, publishes before reference, atomically installs the generation-two
 checkpoint, reports valid orphans without deletion, and refuses missing/corrupt/substituted
 referenced bytes without fallback. It performs no retained lookup, v2 authority mutation, second
-segment, backup, orphan cleanup, or adapter call. The finite fixed-store checkpoint provides no
+segment, backup, orphan cleanup, or adapter call. The follow-on
+[read-only F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) routes exact retained objects,
+replays, passive collision checks, and hot-only recovery through freshly full-verified retained-
+global typed locations. It refuses corrupt/substituted/stale/wrong-domain storage without fallback
+or rewrite and performs no v2 mutation, new tombstone commit, second segment, or adapter call. The
+finite fixed-store checkpoint still provides no
 production engine, multi-process lock, power-loss result,
 restore/anti-rollback mechanism, referenced-history deletion, continuous service, consumer, or
 guest evidence.

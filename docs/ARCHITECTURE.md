@@ -263,7 +263,11 @@ generation-two active checkpoint, preserves every selected full record and visib
 retains old-or-new fault/death oracles; see the
 [F3 stateful activation result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md). Retained lookup, v2
 authority mutation, multi-segment growth, backup/orphan-cleanup policy, and production-engine work
-remain F4+. The fixed checkpoint remains a finite conformance oracle, not a production engine or
+remain outside F3. Read-only F4A now routes exact retained registration/approval/attempt/nonce/
+effect/instance and replay identities exclusively through freshly verified retained-global typed
+locations, retains passive collision checks, and excludes archived terminal attempts from hot
+`AttemptID` recovery; see the [F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). F4B mutation,
+F4C bounded growth, and F5+ backup/orphan/engine work remain open. The fixed checkpoint remains a finite conformance oracle, not a production engine or
 continuous-service mechanism, and referenced archive history is not deletable under that proposal.
 
 ### Trust verifier and repository

@@ -489,7 +489,7 @@ continues.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. This checkpoint also does not decide
-retained archive lookup/mutation/growth or production-engine archive/compaction beyond the F1-F3 local oracle,
+retained archive mutation/growth or production-engine archive/compaction beyond the F1-F4A local oracle,
 production COSE/Keychain/user-presence signing, consumer
 ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot

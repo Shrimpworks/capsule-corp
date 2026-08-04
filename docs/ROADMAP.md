@@ -191,7 +191,9 @@ corrections remain the contract foundation. Stateful F2 writes the all-hot, empt
 migration successor and fully verifies it. Stateful F3 publishes and activates exactly one
 immutable complete-cohort segment under the owner assertion and fully verifies the generation-two
 successor. It performs no retained lookup, v2 authority mutation, second activation, deletion, or
-consumer behavior. F4's retained lookup/mutation/growth boundary is next.
+consumer behavior. F4A now adds only read-only retained-global lookup/replay/passive-collision
+routing and excludes archived attempts from hot recovery. F4B mutation/new effect tombstones and
+F4C second-segment/bounded growth are next.
 Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
@@ -243,8 +245,8 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1-F3 into
-  F4 retained lookup/mutation/growth and F5 backup/orphan/reporting, retaining full closed cohorts
+- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1-F4A into
+  F4B atomic mutation/new effect tombstones, F4C bounded growth, and F5 backup/orphan/reporting, retaining full closed cohorts
   and exact tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned

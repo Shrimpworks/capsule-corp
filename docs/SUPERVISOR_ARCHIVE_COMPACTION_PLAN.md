@@ -21,8 +21,11 @@ deployment, or guest. The follow-on
 immutable-segment prepare/verify/publish/activate transaction. It retains the complete cohort and
 all visible identities/tombstones, publishes before reference, atomically installs the generation-
 two checkpoint, reports valid orphans without deleting them, and fully reopens either the complete
-predecessor or successor under the owner assertion. F4+ behavior and production admission remain
-outside that passed scope.
+predecessor or successor under the owner assertion. The follow-on
+[F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) now implements only read-only retained-global
+lookup, replay, passive collision routing, and hot-only `AttemptID` recovery. F4B authority/
+lifecycle mutation and new effect tombstones, F4C second-segment/bounded-growth activation, and
+production admission remain outside that passed scope.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -68,7 +71,7 @@ lookup, mutate v2 authority, or invoke the fake.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 records this as a migration limitation and seeds tombstones from every nonzero ID still
-visible in v1. F4 must add v2 mutation behavior so `BeginEffect` commits
+visible in v1. F4B must add v2 mutation behavior so `BeginEffect` commits
 the new effect tombstone in the same transaction as the intent. Tests must not imply that
 overwritten pre-v2 fake IDs were reconstructed or that a transcript exists.
 
@@ -287,7 +290,7 @@ All archive/migration/backup/offline-verifier tests install a `FakeBackend` call
 zero prepare/create/start/observe/stop/destroy/reconcile calls. The archive packages must not import
 `registeredlifecycle`; a test-only hook observes that no lifecycle entry point was invoked.
 
-## Hot/archive lookup and replay oracle
+## Hot/archive lookup and replay oracle — F4A complete
 
 After one committed archive activation, rerun the existing registration/approval/attempt tests
 against both a hot cohort and an archived cohort:
@@ -309,7 +312,7 @@ against both a hot cohort and an archived cohort:
 The state oracle records before/after hot set digests, archive checkpoint/index digests, counts,
 references, time high water, and complete file bytes for every refusal.
 
-## Capacity and bounded-growth oracle
+## Capacity and bounded-growth oracle — F4C pending
 
 Tests use compact generated records and encoded-size estimators to prove:
 
@@ -496,35 +499,53 @@ type ArchiveCheckpoint struct { /* defensive fixed fields */ }
 type ArchiveVerificationReport struct { /* bounded fields above */ }
 ```
 
-Extend `internal/execution/registrationstate` with:
+The planned mutation and backup surface remains partitioned behind the internal archive store
+boundary; F4A does not implement or call these methods:
 
 ```go
 type SupervisorArchiveStore interface {
     PlanArchive(context.Context, ArchiveLimits) (archivestate.ArchivePlan, error)
     PrepareArchive(context.Context, archivestate.ArchivePlan) (archivestate.PreparedArchive, error)
-    VerifyPreparedArchive(context.Context, archivestate.PreparedArchive) (archivestate.VerifiedArchive, error)
-    ActivateArchive(context.Context, archivestate.VerifiedArchive) (archivestate.ArchiveCheckpoint, error)
-    VerifyArchiveSet(context.Context, archivestate.VerificationMode) (archivestate.ArchiveVerificationReport, error)
-    CreateCoherentBackup(context.Context, archivestate.BackupDestination) (archivestate.BackupManifest, error)
-    VerifyCoherentBackup(context.Context, archivestate.BackupManifest) (archivestate.ArchiveVerificationReport, error)
-}
-
-type RetainedAuthorityLookup interface {
-    ResolveRegistration(context.Context, v0candidate.RegistrationID) (RetainedRegistration, error)
-    ResolveApprovalReplay(context.Context, approvalattempt.ApprovalPayloadDigest, []byte,
-        approvalattempt.ApprovalKeyAuthorizationIdentity) (approvalattempt.ApprovalReference,
-        approvalattempt.ApprovalState, error)
-    ResolveAttemptReplay(context.Context, v0candidate.RegistrationID,
-        approvalattempt.ApprovalID) (approvalattempt.AttemptReference,
-        approvalattempt.AttemptState, error)
-    CheckIdentifierSet(context.Context, archivestate.CandidateIdentifiers) error
+    VerifyPrepared(context.Context, archivestate.PreparedArchive) (archivestate.VerifiedArchive, error)
+    Activate(context.Context, archivestate.VerifiedArchive) error
+    VerifyArchiveSet(context.Context, StoreRoot, VerificationMode)
+        (archivestate.ArchiveVerificationReport, error)
+    CreateCoherentBackup(context.Context, StoreRoot, BackupRoot) (BackupManifest, error)
+    VerifyCoherentBackup(context.Context, BackupRoot) (BackupVerificationReport, error)
 }
 ```
 
-The store constructs all archive paths from its trusted root and segment digest. No archive API
-accepts plan bytes, approval envelope bytes, backend bindings, instance values, caller-selected
-records, or arbitrary filesystem paths. Normal approval/attempt components invoke retained lookup
-inside their existing transactions; no caller can request hot versus archive resolution.
+F4A extends `internal/execution/registrationstate` with these read-only
+`FixedFileStoreV2` methods and closed, location-independent response projections:
+
+```go
+ResolveRegistration(context.Context, RegistrationID) (RetainedRegistration, error)
+ResolveApproval(context.Context, ApprovalID) (ApprovalRecord, error)
+ResolveAttempt(context.Context, AttemptID) (RetainedAttempt, error)
+ResolveNonce(context.Context, AttemptNonce) (RetainedNonce, error)
+ResolveEffect(context.Context, EffectID) (RetainedEffect, error)
+ResolveInstance(context.Context, BackendInstanceDigest) (RetainedInstance, error)
+ResolveApprovalReplay(context.Context, ApprovalPayloadDigest, []byte,
+    ApprovalKeyAuthorizationIdentity) (ApprovalReference, ApprovalState, error)
+ResolveAttemptReplay(context.Context, RegistrationID, ApprovalID)
+    (AttemptReference, AttemptState, error)
+QueryRetainedIdentityCollisions(context.Context, RetainedIdentityCandidates)
+    (RetainedIdentityCollisions, error)
+CheckRetainedIdentityAvailability(context.Context, RetainedIdentityCandidates) error
+RecoveryAttemptIDs(context.Context) ([]AttemptID, error)
+```
+
+Every call freshly full-verifies the active snapshot and referenced immutable segment set, starts
+from the `retained-global` index, follows only its record-kind-bound typed location, and rechecks the
+full record, digest, cross-links, and applicable replay/uniqueness tombstones. Results exclude the
+location, so exact hot and archive records have identical semantics. Missing or corrupt locations
+never scan another record collection, fall back to hot history, or try another segment.
+
+The store constructs all archive paths from its trusted root and segment digest. No lookup accepts
+plan bytes, approval envelope bytes, backend bindings, caller-selected record bytes, or arbitrary
+filesystem paths. F4A's collision result is passive and reserves nothing; F4B must repeat the
+complete uniqueness check inside its future atomic mutation. No caller can request hot versus
+archive resolution.
 
 ## Small implementation slices
 
@@ -609,15 +630,48 @@ oracles, and limitations are recorded in the
 v2 authority mutation, second segment, orphan deletion, backup, production engine, consumer, IPC,
 adapter, runtime, backend, or guest was added.
 
-### Slice F4: retained lookup, replay, uniqueness, and bounded growth
+### Slice F4A: read-only retained lookup, replay, and uniqueness routing — complete
 
 - Route registration lookup and approval/attempt replay through hot plus archive indexes.
-- Check new IDs/nonces/effects/instances against tombstones.
-- Add 64-segment/index/byte cap oracles and exact no-eviction refusal.
+- Add object-specific registration, approval, attempt, nonce, effect, and instance lookup through
+  typed hot/archive locations with identical closed results.
+- Add passive candidate collision queries for registration, approval, attempt, nonce, effect,
+  instance, approval-replay, and attempt-replay identities.
 - Prove archived attempts never enter startup recovery.
 
-Acceptance: existing Slice B/E5 tests plus archived equivalents pass. `FakeBackend.CreatesGuest()`
-remains false and no consumer exists.
+Acceptance: every call freshly full-verifies active and referenced immutable bytes; missing,
+corrupt, substituted, stale, wrong-kind, or wrong-index-domain locations return the existing
+fail-closed classification without fallback or rewrite. Existing Slice B/E5 tests plus archived
+equivalents pass. `FakeBackend.CreatesGuest()` remains false and no consumer exists.
+
+Observed result: `PASSED` in this exact read-only scope. The exact APIs, routing semantics, focused
+race/corruption/reopen/cap/copy/restoration evidence, and limitations are retained in the
+[F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md).
+
+### Slice F4B: atomic v2 authority/lifecycle mutation and effect tombstones — pending
+
+- Add ordinary v2 registration, approval, attempt, and lifecycle mutations without routing any
+  mutation from caller-selected archive bytes or locations.
+- Check every new registration, approval, attempt, nonce, effect, instance, approval-replay, and
+  attempt-replay identity against the complete retained-global indexes in the same transaction.
+- Commit every newly issued v2 effect tombstone atomically with its `BeginEffect` intent and retain
+  it when later lifecycle operations replace the current effect field.
+
+Acceptance: existing Slice B/E5 mutation, replay, response-loss, fault, and recovery tests pass on
+v2 with archived collision equivalents. No second segment, new tombstone-only commit, consumer,
+adapter call, runtime, backend, or guest is added.
+
+### Slice F4C: second-segment activation and bounded growth — pending
+
+- Generalize the sealed F3 activation transaction to a second and later segment within the exact
+  64-segment bound.
+- Add 64-segment, 262,144-entry-per-index, active-byte, segment-byte, and cap-plus-one no-eviction
+  refusal oracles.
+- Preserve publish-before-reference ordering and complete old-or-new reopen for every activation.
+
+Acceptance: a second eligible cohort activates into a second referenced segment; every exact cap
+accepts and cap plus one refuses with all hot and referenced history unchanged. No cleanup,
+deletion, backup, production engine, consumer, adapter, runtime, backend, or guest is added.
 
 ### Slice F5: coherent backup, orphan handling, and offline verification
 
@@ -662,6 +716,12 @@ Retain all current Slice B/E5 tests and add exact equivalents of:
 - `TestArchivedApprovalReplayReturnsOriginalApprovalAndState`;
 - `TestArchivedAttemptReplayReturnsOriginalAttempt`;
 - `TestArchivedNoncePayloadEffectAndInstanceCollisionsRefuse`;
+- `TestFixedStoreV2RetainedLookupsHotAndArchiveAreSemanticallyIdentical`;
+- `TestFixedStoreV2RetainedCollisionAndReplayQueries`;
+- `TestFixedStoreV2RetainedLookupMissingAndCorruptLocationsFailClosed`;
+- `TestFixedStoreV2RetainedLookupReadFaultCapSubstitutionAndRestoration`;
+- `TestFixedStoreV2RetainedLookupConcurrencyCancellationAndNoRewrite`;
+- `TestFixedStoreV2RecoveryAttemptIDsPreserveHotAbsenceAndExcludeArchive`;
 - `TestArchivedAttemptNeverEntersStartupRecovery`;
 - `TestArchiveReleasesHotRetainedButNeverActiveCleanupCapacity`;
 - `TestArchiveCapsNeverEvictOrDeleteReferencedHistory`;

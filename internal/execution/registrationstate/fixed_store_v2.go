@@ -40,9 +40,10 @@ type V1ToV2MigrationOptions struct {
 }
 
 // FixedFileStoreV2 is the completely verified fixed-oracle v2 view. F2 adds
-// migration genesis and F3 adds exactly one sealed immutable-segment
-// activation. Neither slice authorizes retained lookup, v2 authority mutation,
-// adapter invocation, a consumer, or a guest.
+// migration genesis, F3 adds exactly one sealed immutable-segment activation,
+// and F4A adds read-only retained-global lookup and collision routing. No slice
+// through F4A authorizes v2 authority mutation, adapter invocation, a consumer,
+// or a guest.
 type FixedFileStoreV2 struct {
 	path       string
 	state      installationState

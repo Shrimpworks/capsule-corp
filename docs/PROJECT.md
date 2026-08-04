@@ -20,8 +20,10 @@ and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's 
 v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F4A's read-only
 retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
-`BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
-TRENDING_GOOD`. Archive F4B is now `BLOCKED` on a passive effect-history contract correction:
+`BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
+`IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A is `PASSED` only for passive execution-profile
+preparation and C2B remains `BLOCKED`. Archive F4B is now `BLOCKED` on a passive effect-history
+contract correction:
 F4A binds retained effect lookup to the lifecycle record's single current effect, while ADR-0031
 requires every earlier v2 effect tombstone to survive replacement of that field. None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
@@ -249,8 +251,16 @@ Linux/arm64 construction at merge `fa03d7043b4f0653081d6c5733d597f49f6efd1c`. Th
 eight runtime/root identities and fixes the desired one-file `.mjs` JSON-in/JSON-out surface,
 loader absence, globals/ops/modules/files, logical descriptor roles, resource references, and
 refusal boundary. C1 creates no guest or runtime and admits nothing. The parent governed-runtime
-work remains `IN_PROGRESS — TRENDING_GOOD`; C2 owns numeric descriptors, machine resources, and
-the first separately authorized composed execution evidence.
+work remains `IN_PROGRESS — TRENDING_GOOD`; C2A prepares numeric descriptors and candidate
+machine resources, while C2B owns the first separately authorized composed execution evidence.
+The passive [C2A execution-profile contract](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md)
+now consumes those exact unchanged C1 bytes and freezes numeric host/guest descriptors, one vCPU,
+256 MiB guest RAM, a 1,000 ms wall candidate, concurrency one, transport/drain caps, teardown,
+fixed known-answer bytes, artifact blockers, and the complete C2B/restoration matrix. C2A creates
+no guest or runtime and is `PASSED` only for passive preparation. Missing final runnable artifact
+and composed runtime-profile identities, launcher-child and exact scratch contracts, governed
+review/P0 closure, and separate guest authorization keep C2B `BLOCKED`; admission and
+`RUNTIME-001`/`VMM-001` remain unchanged.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

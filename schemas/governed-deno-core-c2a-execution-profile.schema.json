@@ -1,0 +1,600 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capsule.local/schemas/governed-deno-core-c2a-execution-profile.schema.json",
+  "title": "Passive governed deno_core C2A execution-profile preparation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "version",
+    "status",
+    "scope",
+    "c1Binding",
+    "c1PlanAndProfileBindings",
+    "evidencePins",
+    "governedSource",
+    "artifactClosure",
+    "knownAnswer",
+    "runnerDescriptorProfile",
+    "guestDescriptorProfile",
+    "machineProfile",
+    "transportProfile",
+    "teardownProfile",
+    "c2bMatrix",
+    "restorationMutations",
+    "evidenceRetention",
+    "blockers",
+    "refusalCodes",
+    "stopConditions",
+    "workStatus",
+    "effects"
+  ],
+  "properties": {
+    "contract": {
+      "const": "capsule.governed-deno-core.execution-profile-preparation/c2a"
+    },
+    "version": { "const": 1 },
+    "status": { "const": "passive-preparation-refusing" },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workItem",
+        "defensiveIntent",
+        "authorizedEnvironment",
+        "guestAuthorization",
+        "credentialsAuthorization"
+      ],
+      "properties": {
+        "workItem": { "const": "C2A passive execution-profile preparation" },
+        "defensiveIntent": { "type": "string", "minLength": 1 },
+        "authorizedEnvironment": { "const": "repository-local passive schema and validation only" },
+        "guestAuthorization": { "const": "not-granted" },
+        "credentialsAuthorization": { "const": "not-granted" }
+      }
+    },
+    "c1Binding": {
+      "const": {
+        "contract": "capsule.governed-deno-core.controlled-development-composition/c1",
+        "fixture": "schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+        "bytes": 9289,
+        "sha256": "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+        "consumption": "exact-byte-read-only",
+        "mutation": "forbidden"
+      }
+    },
+    "c1PlanAndProfileBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executionPlan", "runtimeProfile"],
+      "properties": {
+        "executionPlan": {
+          "const": {
+            "objectType": "capsule.execution-plan",
+            "objectVersion": 0,
+            "mediaType": "application/capsule.execution-plan+cbor;v=0",
+            "sourceProfile": "capsule.mjs-source/v0",
+            "sourceBinding": "sourceManifestDigest+sourceByteLength+sourceEntrypoint",
+            "inputEncoding": "capsule.canonical-inline-json/v0",
+            "inputBinding": "inlineInputDigest+inlineInputByteLength",
+            "outputLimitBinding": "outputMaxJsonBytes",
+            "requiredReferenceRoles": [
+              "runtimeBundleDigest",
+              "profileRegistryDigest",
+              "backendValidationDigest",
+              "backendConfigurationDigest"
+            ]
+          }
+        },
+        "runtimeProfile": {
+          "const": {
+            "selectedIdentity": null,
+            "selectedDigest": null,
+            "machineProfileIdentity": "capsule.c2a.libkrun-hvf-controlled-development/v1",
+            "transportProfileIdentity": "capsule.c2a.c1-narrowed-p0-3/v1",
+            "state": "missing-composed-runtime-profile-identity-refuse"
+          }
+        }
+      }
+    },
+    "evidencePins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "archive",
+        "p0_1",
+        "p0_2",
+        "p0_3",
+        "consoleLifecycle",
+        "consoleCorrectness",
+        "supplyChain"
+      ],
+      "properties": {
+        "archive": {
+          "const": {
+            "repository": "Shrimpworks/capsule-experiments",
+            "commit": "0d8233b55f153b27a901a9ec45a3834208e3aa86"
+          }
+        },
+        "p0_1": { "type": "string", "minLength": 1 },
+        "p0_2": { "type": "string", "minLength": 1 },
+        "p0_3": { "type": "string", "minLength": 1 },
+        "consoleLifecycle": { "type": "string", "minLength": 1 },
+        "consoleCorrectness": { "type": "string", "minLength": 1 },
+        "supplyChain": { "type": "string", "minLength": 1 }
+      }
+    },
+    "governedSource": { "$ref": "#/$defs/governedSource" },
+    "artifactClosure": { "$ref": "#/$defs/artifactClosure" },
+    "knownAnswer": { "$ref": "#/$defs/knownAnswer" },
+    "runnerDescriptorProfile": { "$ref": "#/$defs/runnerDescriptorProfile" },
+    "guestDescriptorProfile": { "$ref": "#/$defs/guestDescriptorProfile" },
+    "machineProfile": { "$ref": "#/$defs/machineProfile" },
+    "transportProfile": { "$ref": "#/$defs/transportProfile" },
+    "teardownProfile": { "$ref": "#/$defs/teardownProfile" },
+    "c2bMatrix": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["group", "cases"],
+        "properties": {
+          "group": { "type": "string", "minLength": 1 },
+          "cases": { "$ref": "#/$defs/nonemptyUniqueStrings" }
+        }
+      }
+    },
+    "restorationMutations": {
+      "type": "array",
+      "minItems": 18,
+      "maxItems": 18,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^MUT-[0-9]{3}-" }
+    },
+    "evidenceRetention": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+    "blockers": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+    "refusalCodes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^C2A_[A-Z0-9_]+$" }
+    },
+    "stopConditions": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+    "workStatus": {
+      "const": {
+        "c2a": "PASSED-passive-preparation-only",
+        "parentGovernedRuntime": "IN_PROGRESS-TRENDING_GOOD",
+        "c2b": "BLOCKED",
+        "runtimeProfileAdmission": "BLOCKED",
+        "runtime001": "unsupported",
+        "vmm001": "unsupported"
+      }
+    },
+    "effects": {
+      "const": {
+        "process": false,
+        "runtime": false,
+        "adapter": false,
+        "backend": false,
+        "guest": false,
+        "credential": false,
+        "signing": false,
+        "release": false,
+        "admission": false,
+        "consumer": false
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "nonemptyUniqueStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "governedSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "denoHead",
+        "rustyV8Head",
+        "runtimeBinarySha256",
+        "startupSnapshotSha256",
+        "twoFileRuntimeBundleSha256",
+        "runtimeRootManifestSha256",
+        "runtimeRootTarSha256",
+        "runtimeRootGzipSha256",
+        "libkrun",
+        "libkrunfw",
+        "kernel",
+        "imago"
+      ],
+      "properties": {
+        "denoHead": { "$ref": "#/$defs/commit" },
+        "rustyV8Head": { "$ref": "#/$defs/commit" },
+        "runtimeBinarySha256": { "$ref": "#/$defs/digest" },
+        "startupSnapshotSha256": { "$ref": "#/$defs/digest" },
+        "twoFileRuntimeBundleSha256": { "$ref": "#/$defs/digest" },
+        "runtimeRootManifestSha256": { "$ref": "#/$defs/digest" },
+        "runtimeRootTarSha256": { "$ref": "#/$defs/digest" },
+        "runtimeRootGzipSha256": { "$ref": "#/$defs/digest" },
+        "libkrun": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "upstreamCommit",
+            "governedBase",
+            "followUpHead",
+            "mergeCommit",
+            "fivePatchAggregateSha256",
+            "rootFdPatchSha256",
+            "consolePatchSha256",
+            "state"
+          ],
+          "properties": {
+            "upstreamCommit": { "$ref": "#/$defs/commit" },
+            "governedBase": { "$ref": "#/$defs/commit" },
+            "followUpHead": { "$ref": "#/$defs/commit" },
+            "mergeCommit": { "$ref": "#/$defs/commit" },
+            "fivePatchAggregateSha256": { "$ref": "#/$defs/digest" },
+            "rootFdPatchSha256": { "$ref": "#/$defs/digest" },
+            "consolePatchSha256": { "$ref": "#/$defs/digest" },
+            "state": { "const": "governed-source-candidate-not-release" }
+          }
+        },
+        "libkrunfw": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "releaseArchiveSha256"],
+          "properties": {
+            "version": { "const": "5.5.0" },
+            "releaseArchiveSha256": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "kernel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "kernelCInputSha256"],
+          "properties": {
+            "version": { "const": "Linux 6.12.91" },
+            "kernelCInputSha256": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "imago": {
+          "const": { "version": "0.2.3", "io": "positional-preadv-pwritev" }
+        }
+      }
+    },
+    "artifactClosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["activation", "required", "historicalEvidenceNotReusable"],
+      "properties": {
+        "activation": { "const": "refuse-until-every-required-sha256-is-non-null-and-revalidated" },
+        "required": {
+          "type": "array",
+          "minItems": 9,
+          "maxItems": 9,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "selectedPath", "sha256", "state", "admitted"],
+            "properties": {
+              "role": { "type": "string", "minLength": 1 },
+              "selectedPath": { "type": ["string", "null"] },
+              "sha256": { "type": "null" },
+              "state": { "type": "string", "pattern": "^missing-" },
+              "admitted": { "const": false }
+            }
+          }
+        },
+        "historicalEvidenceNotReusable": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z-]+:[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "knownAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "canonicalInput", "expectedCompletion"],
+      "properties": {
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "utf8",
+            "bytes",
+            "sha256",
+            "sourceManifestBytes",
+            "sourceManifestSha256"
+          ],
+          "properties": {
+            "path": { "const": "main.mjs" },
+            "utf8": { "type": "string" },
+            "bytes": { "const": 103 },
+            "sha256": { "$ref": "#/$defs/digest" },
+            "sourceManifestBytes": { "const": 89 },
+            "sourceManifestSha256": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "canonicalInput": { "$ref": "#/$defs/byteKnownAnswer" },
+        "expectedCompletion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "terminalStatus",
+            "jsonUtf8",
+            "jsonBytes",
+            "jsonSha256",
+            "commit",
+            "runnerExitAlone"
+          ],
+          "properties": {
+            "terminalStatus": { "const": "succeeded" },
+            "jsonUtf8": { "type": "string" },
+            "jsonBytes": { "const": 35 },
+            "jsonSha256": { "$ref": "#/$defs/digest" },
+            "commit": { "const": "required-last" },
+            "runnerExitAlone": { "const": "never-success" }
+          }
+        }
+      }
+    },
+    "byteKnownAnswer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["utf8", "bytes", "sha256"],
+      "properties": {
+        "utf8": { "type": "string" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "runnerDescriptorProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "numericRange",
+        "entries",
+        "portCalls",
+        "inheritanceSequence",
+        "forbiddenExtras",
+        "runtimeCreatedDescriptors"
+      ],
+      "properties": {
+        "identity": { "const": "capsule.c2a.host-runner-fd-manifest/v1" },
+        "numericRange": { "const": { "minimum": 0, "maximum": 7, "closeFromInclusive": 8 } },
+        "entries": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": { "$ref": "#/$defs/descriptorEntry" }
+        },
+        "portCalls": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/portCall" }
+        },
+        "inheritanceSequence": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "forbiddenExtras": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "runtimeCreatedDescriptors": { "type": "string", "minLength": 1 }
+      }
+    },
+    "descriptorEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fd",
+        "role",
+        "accessMode",
+        "producer",
+        "consumer",
+        "direction",
+        "inheritance",
+        "cloexec",
+        "lifetime"
+      ],
+      "properties": {
+        "fd": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "role": { "type": "string", "minLength": 1 },
+        "accessMode": { "enum": ["O_RDONLY", "O_WRONLY"] },
+        "producer": { "type": "string", "minLength": 1 },
+        "consumer": { "type": "string", "minLength": 1 },
+        "direction": { "type": "string", "minLength": 1 },
+        "inheritance": { "const": "exact-dup2-at-exec" },
+        "cloexec": { "type": "string", "minLength": 1 },
+        "lifetime": { "type": "string", "minLength": 1 }
+      }
+    },
+    "portCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["portId", "name", "inputFd", "outputFd", "guestNode"],
+      "properties": {
+        "portId": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "name": { "type": "string", "pattern": "^capsule\\." },
+        "inputFd": { "type": "integer", "minimum": -1, "maximum": 7 },
+        "outputFd": { "type": "integer", "minimum": -1, "maximum": 7 },
+        "guestNode": { "type": "string", "pattern": "^/dev/" }
+      }
+    },
+    "guestDescriptorProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "preChild",
+        "closeFromInclusive",
+        "workloadCompletionAccess",
+        "childManifest",
+        "state"
+      ],
+      "properties": {
+        "identity": { "const": "capsule.c2a.guest-launcher-fd-manifest/v1" },
+        "preChild": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["fd", "role", "accessMode"],
+            "properties": {
+              "fd": { "type": "integer", "minimum": 0, "maximum": 5 },
+              "role": { "type": "string", "minLength": 1 },
+              "accessMode": { "enum": ["O_RDONLY", "O_WRONLY"] }
+            }
+          }
+        },
+        "closeFromInclusive": { "const": 6 },
+        "workloadCompletionAccess": { "const": "none" },
+        "childManifest": { "type": "null" },
+        "state": {
+          "const": "inactive-refuse-until-trusted-launcher-child-protocol-and-artifact-identity-exist"
+        }
+      }
+    },
+    "machineProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "architecture",
+        "backend",
+        "vcpus",
+        "guestRamMiB",
+        "wallTimeMs",
+        "cpuTimeLimitMs",
+        "cpuTimePolicy",
+        "hostVmmMemoryLimitBytes",
+        "hostVmmMemoryPolicy",
+        "concurrency",
+        "scratch",
+        "unknownOrDifferentValue"
+      ],
+      "properties": {
+        "identity": { "const": "capsule.c2a.libkrun-hvf-controlled-development/v1" },
+        "architecture": { "const": "aarch64" },
+        "backend": { "const": "libkrun-hvf-candidate" },
+        "vcpus": { "const": 1 },
+        "guestRamMiB": { "const": 256 },
+        "wallTimeMs": { "const": 1000 },
+        "cpuTimeLimitMs": { "type": "null" },
+        "cpuTimePolicy": { "const": "unsupported-refuse" },
+        "hostVmmMemoryLimitBytes": { "type": "null" },
+        "hostVmmMemoryPolicy": { "const": "unsupported-refuse" },
+        "concurrency": { "const": 1 },
+        "scratch": {
+          "const": {
+            "mode": "memory-tmpfs-only",
+            "maximumBytes": null,
+            "state": "inactive-refuse-missing-exact-enforcement-evidence"
+          }
+        },
+        "unknownOrDifferentValue": { "const": "refuse-no-default-no-clamp" }
+      }
+    },
+    "transportProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "headerVersion",
+        "source",
+        "canonicalInput",
+        "completion",
+        "runnerDiagnostics",
+        "limitBinding",
+        "oversizeDisposition"
+      ],
+      "properties": {
+        "identity": { "const": "capsule.c2a.c1-narrowed-p0-3/v1" },
+        "headerVersion": { "const": 1 },
+        "source": {
+          "const": {
+            "payloadMaximumBytes": 262144,
+            "headerBytes": 152,
+            "physicalMaximumBytes": 262296,
+            "hostRunnerFd": 5,
+            "guestLauncherFd": 3
+          }
+        },
+        "canonicalInput": {
+          "const": {
+            "payloadMaximumBytes": 262144,
+            "headerBytes": 152,
+            "physicalMaximumBytes": 262296,
+            "hostRunnerFd": 6,
+            "guestLauncherFd": 4
+          }
+        },
+        "completion": {
+          "const": {
+            "jsonMaximumBytes": 262144,
+            "headerBytes": 160,
+            "trailerBytes": 64,
+            "physicalMaximumBytes": 262368,
+            "retainMaximumBytes": 262369,
+            "hostRunnerFd": 7,
+            "guestLauncherFd": 5,
+            "eofIsCommit": false
+          }
+        },
+        "runnerDiagnostics": {
+          "const": {
+            "stdoutRetainedPrefixBytes": 4096,
+            "stderrRetainedPrefixBytes": 4096,
+            "readBufferBytes": 32768,
+            "maximumCaptureFileBytesPerStream": 4194,
+            "continuousDrain": true
+          }
+        },
+        "limitBinding": { "type": "string", "minLength": 1 },
+        "oversizeDisposition": { "const": "drain-all-retain-cap-plus-one-refuse" }
+      }
+    },
+    "teardownProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wallActionAtMs",
+        "cancellationAction",
+        "bestEffortGraceMs",
+        "bestEffortGraceClaim",
+        "forcedSignal",
+        "forcedAbsenceDeadlineMs",
+        "maximumActionToAbsenceMs",
+        "identityBeforeSignal",
+        "identityMismatch",
+        "childTree",
+        "runnerExit",
+        "ordinarySuccessRequires"
+      ],
+      "properties": {
+        "wallActionAtMs": { "const": 1000 },
+        "cancellationAction": { "const": "immediate-independent-of-guest-and-drains" },
+        "bestEffortGraceMs": { "const": 200 },
+        "bestEffortGraceClaim": { "const": "unsupported-for-success" },
+        "forcedSignal": { "const": "SIGKILL" },
+        "forcedAbsenceDeadlineMs": { "const": 1000 },
+        "maximumActionToAbsenceMs": { "const": 1200 },
+        "identityBeforeSignal": { "$ref": "#/$defs/nonemptyUniqueStrings" },
+        "identityMismatch": { "const": "unresolved-no-signal-no-success" },
+        "childTree": { "const": "trusted-launcher-waits-and-proves-no-descendant-before-commit" },
+        "runnerExit": { "const": "lifecycle-only-never-workload-success" },
+        "ordinarySuccessRequires": { "$ref": "#/$defs/nonemptyUniqueStrings" }
+      }
+    }
+  }
+}

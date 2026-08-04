@@ -1,0 +1,698 @@
+{
+  "contract": "capsule.governed-deno-core.execution-profile-preparation/c2a",
+  "version": 1,
+  "status": "passive-preparation-refusing",
+  "scope": {
+    "workItem": "C2A passive execution-profile preparation",
+    "defensiveIntent": "Freeze the exact inactive runner, descriptor, machine, transport, teardown, and C2B evidence contract before any owned disposable guest may run.",
+    "authorizedEnvironment": "repository-local passive schema and validation only",
+    "guestAuthorization": "not-granted",
+    "credentialsAuthorization": "not-granted"
+  },
+  "c1Binding": {
+    "contract": "capsule.governed-deno-core.controlled-development-composition/c1",
+    "fixture": "schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+    "bytes": 9289,
+    "sha256": "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+    "consumption": "exact-byte-read-only",
+    "mutation": "forbidden"
+  },
+  "c1PlanAndProfileBindings": {
+    "executionPlan": {
+      "objectType": "capsule.execution-plan",
+      "objectVersion": 0,
+      "mediaType": "application/capsule.execution-plan+cbor;v=0",
+      "sourceProfile": "capsule.mjs-source/v0",
+      "sourceBinding": "sourceManifestDigest+sourceByteLength+sourceEntrypoint",
+      "inputEncoding": "capsule.canonical-inline-json/v0",
+      "inputBinding": "inlineInputDigest+inlineInputByteLength",
+      "outputLimitBinding": "outputMaxJsonBytes",
+      "requiredReferenceRoles": [
+        "runtimeBundleDigest",
+        "profileRegistryDigest",
+        "backendValidationDigest",
+        "backendConfigurationDigest"
+      ]
+    },
+    "runtimeProfile": {
+      "selectedIdentity": null,
+      "selectedDigest": null,
+      "machineProfileIdentity": "capsule.c2a.libkrun-hvf-controlled-development/v1",
+      "transportProfileIdentity": "capsule.c2a.c1-narrowed-p0-3/v1",
+      "state": "missing-composed-runtime-profile-identity-refuse"
+    }
+  },
+  "evidencePins": {
+    "archive": {
+      "repository": "Shrimpworks/capsule-experiments",
+      "commit": "0d8233b55f153b27a901a9ec45a3834208e3aa86"
+    },
+    "p0_1": "experiments/gate-c-libkrun-root-custody/RESULTS.md",
+    "p0_2": "experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md",
+    "p0_3": "experiments/gate-c-p0-3-protocol-conformance/RESULTS.md",
+    "consoleLifecycle": "experiments/gate-c-libkrun-console-lifecycle/RESULTS.md",
+    "consoleCorrectness": "experiments/gate-c-libkrun-console-correctness/RESULTS.md",
+    "supplyChain": "experiments/gate-c-libkrun-supply-chain/RESULTS.md"
+  },
+  "governedSource": {
+    "denoHead": "9adb0b68b55bca81644827f1e7749a3acb091bed",
+    "rustyV8Head": "80e863ddb942a4aa2b384e794fc23e35b9d2bb15",
+    "runtimeBinarySha256": "56d3acefd2cc2f5136a0b8143c47131e49a58fbf66382dfd3e84f715ce8e2898",
+    "startupSnapshotSha256": "4e8965217d5a6675a880326eee6f690bbeec7e7cb243decf2f3e9f453a871a2c",
+    "twoFileRuntimeBundleSha256": "0cc08f93e82fcfe68b033e8807975a3bd67068a817da811a87a73aedc3f23937",
+    "runtimeRootManifestSha256": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8",
+    "runtimeRootTarSha256": "9c46b45c4d220aedcc47c9ee53e875bc71d31d0b881b51740aaa9b882b5741e6",
+    "runtimeRootGzipSha256": "e847651b35cd425dd8f6fe3bd45d693aff0af244e3a7bd30c629fa125cac62e8",
+    "libkrun": {
+      "upstreamCommit": "728df8125077d0db44265f6e997c72b81b65c015",
+      "governedBase": "4ea8d1de861ed1c0636fc800b6da8fb71a086aa5",
+      "followUpHead": "8a2c91943793668f31a1cf7af431933be935bb58",
+      "mergeCommit": "cf0333cdba478cc34a8570a65b38412da7fd3ecc",
+      "fivePatchAggregateSha256": "d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5",
+      "rootFdPatchSha256": "48cdbc307b3fa1209fa0ec68fc3f817634af312983d68f0de259db86c0b43333",
+      "consolePatchSha256": "584ce48548fe969684fe3c55e57fbf56e7dae40af28c241c24c47b138faf1283",
+      "state": "governed-source-candidate-not-release"
+    },
+    "libkrunfw": {
+      "version": "5.5.0",
+      "releaseArchiveSha256": "5bfae6efee63dbdf04a8fac2a69d772d9f900af2f54c4429b4acdfd6d86b9979"
+    },
+    "kernel": {
+      "version": "Linux 6.12.91",
+      "kernelCInputSha256": "96561a4e5dccec0364a28ac32c5668e13e31180d083f412c9f8be7599380c70d"
+    },
+    "imago": {
+      "version": "0.2.3",
+      "io": "positional-preadv-pwritev"
+    }
+  },
+  "artifactClosure": {
+    "activation": "refuse-until-every-required-sha256-is-non-null-and-revalidated",
+    "required": [
+      {
+        "role": "host-runner",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-final-artifact-identity",
+        "admitted": false
+      },
+      {
+        "role": "governed-libkrun-dylib",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-final-artifact-identity",
+        "admitted": false
+      },
+      {
+        "role": "libkrunfw-dylib",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-final-artifact-identity",
+        "admitted": false
+      },
+      {
+        "role": "firmware",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-separate-runnable-byte-identity",
+        "admitted": false
+      },
+      {
+        "role": "guest-kernel",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-runnable-image-identity",
+        "admitted": false
+      },
+      {
+        "role": "trusted-init",
+        "selectedPath": "/usr/local/libexec/capsule-init.krun",
+        "sha256": null,
+        "state": "missing-final-artifact-identity",
+        "admitted": false
+      },
+      {
+        "role": "trusted-launcher",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-implementation-and-final-artifact-identity",
+        "admitted": false
+      },
+      {
+        "role": "raw-runtime-root",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-final-no-journal-raw-image-identity",
+        "admitted": false
+      },
+      {
+        "role": "governed-runtime-bundle-manifest",
+        "selectedPath": null,
+        "sha256": null,
+        "state": "missing-composed-manifest-identity",
+        "admitted": false
+      }
+    ],
+    "historicalEvidenceNotReusable": [
+      "runner:f494cf736def7199921f2d7e3311774b70c807904225d50d987af808b0b74162",
+      "libkrun:4cb543327c1cee64c2e4ee799d8e18843b1d69f7a9b570c7aba2904ddfffa533",
+      "libkrunfw:4b79c24bd1f8f022d105782102fb77b43ccc0fa83e0923a595296d7744dcd443",
+      "root:b77998ecd6f9c732f7ca487d47fece7f060b4bd319cda3ac80b7a922077470db",
+      "launcher-source:b44e02ebd6d6f94c948ca514780caa3e7928a6507b7bacfd255bc8316efa6f34"
+    ]
+  },
+  "knownAnswer": {
+    "source": {
+      "path": "main.mjs",
+      "utf8": "globalThis.capsuleMain = function (input) { return {doubled: input.value * 2, echo: input.message}; };\n",
+      "bytes": 103,
+      "sha256": "c8e940feb89b342de2d5e6bd13c413226676de9a539fce34c4107516e635b475",
+      "sourceManifestBytes": 89,
+      "sourceManifestSha256": "712b1bd9739e4f6b0b027600207cbb08fb21b159a57bd34a15cf0ff8f32661b0"
+    },
+    "canonicalInput": {
+      "utf8": "{\"message\":\"capsule-c2a\",\"value\":21}",
+      "bytes": 36,
+      "sha256": "9de0c909cfb111bd99c3b0b5f7a10972894270c2867022a71b6b6f3c0cd1af6e"
+    },
+    "expectedCompletion": {
+      "terminalStatus": "succeeded",
+      "jsonUtf8": "{\"doubled\":42,\"echo\":\"capsule-c2a\"}",
+      "jsonBytes": 35,
+      "jsonSha256": "bb7234ee486b0fbccc2091859ec93499e6a14ea7d6e091cdef60a0e2a6e8371c",
+      "commit": "required-last",
+      "runnerExitAlone": "never-success"
+    }
+  },
+  "runnerDescriptorProfile": {
+    "identity": "capsule.c2a.host-runner-fd-manifest/v1",
+    "numericRange": {
+      "minimum": 0,
+      "maximum": 7,
+      "closeFromInclusive": 8
+    },
+    "entries": [
+      {
+        "fd": 0,
+        "role": "runner-stdin-null",
+        "accessMode": "O_RDONLY",
+        "producer": "supervisor-opened-dev-null",
+        "consumer": "host-runner-only",
+        "direction": "none",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process"
+      },
+      {
+        "fd": 1,
+        "role": "runner-stdout",
+        "accessMode": "O_WRONLY",
+        "producer": "host-runner",
+        "consumer": "supervisor-continuous-drain",
+        "direction": "runner-to-supervisor",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process"
+      },
+      {
+        "fd": 2,
+        "role": "runner-stderr",
+        "accessMode": "O_WRONLY",
+        "producer": "host-runner",
+        "consumer": "supervisor-continuous-drain",
+        "direction": "runner-to-supervisor",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process"
+      },
+      {
+        "fd": 3,
+        "role": "record-before-start-control",
+        "accessMode": "O_RDONLY",
+        "producer": "supervisor-one-byte-G-writer",
+        "consumer": "host-runner",
+        "direction": "supervisor-to-runner",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "close-after-one-byte-authorization-before-vm-start"
+      },
+      {
+        "fd": 4,
+        "role": "runtime-root",
+        "accessMode": "O_RDONLY",
+        "producer": "supervisor-finalized-unlinked-mode-0400-regular-file",
+        "consumer": "governed-libkrun-root-fd-api",
+        "direction": "host-read-only-custody",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action-then-owned-F_DUPFD_CLOEXEC",
+        "lifetime": "close-caller-copy-after-governed-api-takes-ownership"
+      },
+      {
+        "fd": 5,
+        "role": "registered-source-port-input",
+        "accessMode": "O_RDONLY",
+        "producer": "supervisor-attempt-bound-source-writer",
+        "consumer": "governed-libkrun-console-input",
+        "direction": "host-writer-to-guest-reader",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process-or-governed-owned-duplicate"
+      },
+      {
+        "fd": 6,
+        "role": "approved-inline-input-port-input",
+        "accessMode": "O_RDONLY",
+        "producer": "supervisor-attempt-bound-input-writer",
+        "consumer": "governed-libkrun-console-input",
+        "direction": "host-writer-to-guest-reader",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process-or-governed-owned-duplicate"
+      },
+      {
+        "fd": 7,
+        "role": "completion-result-port-output",
+        "accessMode": "O_WRONLY",
+        "producer": "trusted-guest-launcher",
+        "consumer": "supervisor-cap-plus-one-drain",
+        "direction": "guest-writer-to-host-reader",
+        "inheritance": "exact-dup2-at-exec",
+        "cloexec": "cleared-only-by-exec-file-action",
+        "lifetime": "runner-process-or-governed-owned-duplicate"
+      }
+    ],
+    "portCalls": [
+      {
+        "portId": 0,
+        "name": "capsule.source",
+        "inputFd": 5,
+        "outputFd": -1,
+        "guestNode": "/dev/hvc0"
+      },
+      {
+        "portId": 1,
+        "name": "capsule.input",
+        "inputFd": 6,
+        "outputFd": -1,
+        "guestNode": "/dev/vport0p1"
+      },
+      {
+        "portId": 2,
+        "name": "capsule.completion",
+        "inputFd": -1,
+        "outputFd": 7,
+        "guestNode": "/dev/vport0p2"
+      }
+    ],
+    "inheritanceSequence": [
+      "Create every parent endpoint with O_CLOEXEC.",
+      "Validate role, access mode, status flags, identity, and dedicated open-file-description ownership before spawn.",
+      "Use fixed spawn file actions to duplicate only the eight child endpoints onto descriptors 0 through 7.",
+      "Close every inherited descriptor numbered 8 or greater before runner main.",
+      "Runner preflight enumerates exactly 0 through 7 before any libkrun call.",
+      "Missing, extra, aliased, reused, wrong-mode, wrong-role, or flag-mutated descriptors refuse before VM start."
+    ],
+    "forbiddenExtras": [
+      "approval-key",
+      "supervisor-evidence-key",
+      "installation-root-key",
+      "supervisor-store",
+      "broker-content-store",
+      "xpc-or-mach-service",
+      "network-socket",
+      "database",
+      "log-file",
+      "temporary-file",
+      "writable-runtime-root-alias",
+      "live-host-path"
+    ],
+    "runtimeCreatedDescriptors": "libkrun-internal-only-after-preflight; enumerate-by-trace-in-c2b; no execute-time caller authority"
+  },
+  "guestDescriptorProfile": {
+    "identity": "capsule.c2a.guest-launcher-fd-manifest/v1",
+    "preChild": [
+      {
+        "fd": 0,
+        "role": "launcher-stdin-null",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 1,
+        "role": "launcher-stdout-null",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 2,
+        "role": "launcher-stderr-null",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 3,
+        "role": "registered-source",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 4,
+        "role": "approved-inline-input",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 5,
+        "role": "completion-result",
+        "accessMode": "O_WRONLY"
+      }
+    ],
+    "closeFromInclusive": 6,
+    "workloadCompletionAccess": "none",
+    "childManifest": null,
+    "state": "inactive-refuse-until-trusted-launcher-child-protocol-and-artifact-identity-exist"
+  },
+  "machineProfile": {
+    "identity": "capsule.c2a.libkrun-hvf-controlled-development/v1",
+    "architecture": "aarch64",
+    "backend": "libkrun-hvf-candidate",
+    "vcpus": 1,
+    "guestRamMiB": 256,
+    "wallTimeMs": 1000,
+    "cpuTimeLimitMs": null,
+    "cpuTimePolicy": "unsupported-refuse",
+    "hostVmmMemoryLimitBytes": null,
+    "hostVmmMemoryPolicy": "unsupported-refuse",
+    "concurrency": 1,
+    "scratch": {
+      "mode": "memory-tmpfs-only",
+      "maximumBytes": null,
+      "state": "inactive-refuse-missing-exact-enforcement-evidence"
+    },
+    "unknownOrDifferentValue": "refuse-no-default-no-clamp"
+  },
+  "transportProfile": {
+    "identity": "capsule.c2a.c1-narrowed-p0-3/v1",
+    "headerVersion": 1,
+    "source": {
+      "payloadMaximumBytes": 262144,
+      "headerBytes": 152,
+      "physicalMaximumBytes": 262296,
+      "hostRunnerFd": 5,
+      "guestLauncherFd": 3
+    },
+    "canonicalInput": {
+      "payloadMaximumBytes": 262144,
+      "headerBytes": 152,
+      "physicalMaximumBytes": 262296,
+      "hostRunnerFd": 6,
+      "guestLauncherFd": 4
+    },
+    "completion": {
+      "jsonMaximumBytes": 262144,
+      "headerBytes": 160,
+      "trailerBytes": 64,
+      "physicalMaximumBytes": 262368,
+      "retainMaximumBytes": 262369,
+      "hostRunnerFd": 7,
+      "guestLauncherFd": 5,
+      "eofIsCommit": false
+    },
+    "runnerDiagnostics": {
+      "stdoutRetainedPrefixBytes": 4096,
+      "stderrRetainedPrefixBytes": 4096,
+      "readBufferBytes": 32768,
+      "maximumCaptureFileBytesPerStream": 4194,
+      "continuousDrain": true
+    },
+    "limitBinding": "ExecutionPlan values must be lower than or equal to these maxima and are enforced exactly without clamping.",
+    "oversizeDisposition": "drain-all-retain-cap-plus-one-refuse"
+  },
+  "teardownProfile": {
+    "wallActionAtMs": 1000,
+    "cancellationAction": "immediate-independent-of-guest-and-drains",
+    "bestEffortGraceMs": 200,
+    "bestEffortGraceClaim": "unsupported-for-success",
+    "forcedSignal": "SIGKILL",
+    "forcedAbsenceDeadlineMs": 1000,
+    "maximumActionToAbsenceMs": 1200,
+    "identityBeforeSignal": [
+      "pid",
+      "process-start-time",
+      "uid-gid",
+      "executable-path",
+      "code-identifier",
+      "team-id",
+      "cdhash",
+      "code-requirement"
+    ],
+    "identityMismatch": "unresolved-no-signal-no-success",
+    "childTree": "trusted-launcher-waits-and-proves-no-descendant-before-commit",
+    "runnerExit": "lifecycle-only-never-workload-success",
+    "ordinarySuccessRequires": [
+      "source-integrity",
+      "input-integrity",
+      "runtime-integrity",
+      "valid-last-committed-completion",
+      "bounded-result",
+      "runner-lifecycle-terminal",
+      "child-tree-absent",
+      "authoritative-runner-absence",
+      "cleanup-not-required"
+    ]
+  },
+  "c2bMatrix": [
+    {
+      "group": "preflight-and-identities",
+      "cases": [
+        "C2B-PRE-001-exact-c1-bytes",
+        "C2B-PRE-002-all-final-artifact-identities",
+        "C2B-PRE-003-governed-ancestry-and-patch-aggregate",
+        "C2B-PRE-004-profile-inactive-and-unadmitted",
+        "C2B-PRE-005-concurrency-one-refusal"
+      ]
+    },
+    {
+      "group": "runner-descriptors",
+      "cases": [
+        "C2B-FD-001-clean-0-through-7-manifest",
+        "C2B-FD-002-missing-each-required-fd",
+        "C2B-FD-003-extra-fd-8-and-above",
+        "C2B-FD-004-wrong-access-mode",
+        "C2B-FD-005-swapped-source-input-completion",
+        "C2B-FD-006-closed-and-reused-number",
+        "C2B-FD-007-cloexec-timing",
+        "C2B-FD-008-shared-status-and-offset-canary",
+        "C2B-FD-009-forbidden-ambient-authority",
+        "C2B-FD-010-control-before-record-refusal"
+      ]
+    },
+    {
+      "group": "root-custody-and-device",
+      "cases": [
+        "C2B-ROOT-001-finalized-unlinked-ordonly-mode0400",
+        "C2B-ROOT-002-device-inode-length-digest-binding",
+        "C2B-ROOT-003-both-governed-consumers-same-object",
+        "C2B-ROOT-004-guest-vda-digest-equality",
+        "C2B-ROOT-005-writable-alias-and-mapping-refusal",
+        "C2B-ROOT-006-path-link-replacement-refusal",
+        "C2B-ROOT-007-no-journal-replay-divergence",
+        "C2B-ROOT-008-crash-no-path-reacquisition"
+      ]
+    },
+    {
+      "group": "runtime-surface",
+      "cases": [
+        "C2B-RT-001-exact-global-set",
+        "C2B-RT-002-exact-three-op-set",
+        "C2B-RT-003-zero-extension-set",
+        "C2B-RT-004-one-capsule-main-module",
+        "C2B-RT-005-v8-flags-and-string-codegen",
+        "C2B-RT-006-runtime-global-restoration-negatives",
+        "C2B-RT-007-fixed-known-answer"
+      ]
+    },
+    {
+      "group": "no-loader-v6",
+      "cases": [
+        "C2B-V6-001-static-import",
+        "C2B-V6-002-export-from",
+        "C2B-V6-003-dynamic-import-literal",
+        "C2B-V6-004-dynamic-import-constructed",
+        "C2B-V6-005-import-meta",
+        "C2B-V6-006-relative-absolute-bare-node-npm-url-data-blob-file",
+        "C2B-V6-007-loader-hook-restoration",
+        "C2B-V6-008-no-filesystem-network-package-fallback"
+      ]
+    },
+    {
+      "group": "file-open-and-syscall-traces",
+      "cases": [
+        "C2B-TRACE-001-runner-open-allowlist",
+        "C2B-TRACE-002-launcher-open-allowlist",
+        "C2B-TRACE-003-runtime-open-allowlist",
+        "C2B-TRACE-004-no-execve-after-runtime-start",
+        "C2B-TRACE-005-no-clone-fork-worker",
+        "C2B-TRACE-006-no-socket-vsock-network",
+        "C2B-TRACE-007-no-native-dynamic-loader",
+        "C2B-TRACE-008-no-unexpected-proc-sys-dev-access"
+      ]
+    },
+    {
+      "group": "real-p0-3-transport",
+      "cases": [
+        "C2B-P03-001-all-43-vectors-real-ports",
+        "C2B-P03-002-c1-source-exact-and-cap-plus-one",
+        "C2B-P03-003-input-exact-and-cap-plus-one",
+        "C2B-P03-004-completion-exact-and-cap-plus-one",
+        "C2B-P03-005-four-times-cap-continuous-drain",
+        "C2B-P03-006-one-seven-4096-65536-chunks",
+        "C2B-P03-007-partial-zero-error-sigpipe",
+        "C2B-P03-008-reader-stall-and-death",
+        "C2B-P03-009-port-id-control-queue-descriptor-faults",
+        "C2B-P03-010-open-close-reset-cancellation",
+        "C2B-P03-011-commit-last-no-eof-success",
+        "C2B-P03-012-workload-cannot-own-completion"
+      ]
+    },
+    {
+      "group": "launcher-and-child-tree",
+      "cases": [
+        "C2B-LAUNCH-001-receive-verify-both-before-child",
+        "C2B-LAUNCH-002-fixed-child-fd-argv-env-cwd",
+        "C2B-LAUNCH-003-completion-withheld-from-child",
+        "C2B-LAUNCH-004-source-input-swap-truncate-refuse",
+        "C2B-LAUNCH-005-child-result-bounded",
+        "C2B-LAUNCH-006-child-tree-absent-before-commit",
+        "C2B-LAUNCH-007-launcher-death-before-and-after-commit",
+        "C2B-LAUNCH-008-workload-proc-fd-and-port-open-refusal"
+      ]
+    },
+    {
+      "group": "death-cancel-and-teardown",
+      "cases": [
+        "C2B-LIFE-001-runner-death-before-start",
+        "C2B-LIFE-002-guest-death-and-panic",
+        "C2B-LIFE-003-runner-death-before-commit",
+        "C2B-LIFE-004-runner-death-after-commit",
+        "C2B-LIFE-005-wall-timeout",
+        "C2B-LIFE-006-cancellation",
+        "C2B-LIFE-007-output-blocked-forced-teardown",
+        "C2B-LIFE-008-exact-sigkill-and-absence-deadline",
+        "C2B-LIFE-009-supervisor-death-recovery",
+        "C2B-LIFE-010-child-tree-cleanup",
+        "C2B-LIFE-011-identity-mismatch-unresolved",
+        "C2B-LIFE-012-runner-zero-without-completion-refusal"
+      ]
+    },
+    {
+      "group": "device-network-and-restoration",
+      "cases": [
+        "C2B-ISO-001-exact-balloon-rng-console-block-inventory",
+        "C2B-ISO-002-no-virtiofs-nullfs",
+        "C2B-ISO-003-no-network-implicit-vsock-tsi",
+        "C2B-ISO-004-root-ro-nosuid-nodev-before-workload",
+        "C2B-ISO-005-cross-attempt-state-absence",
+        "C2B-ISO-006-every-restoration-mutation-caught"
+      ]
+    },
+    {
+      "group": "evidence-and-classification",
+      "cases": [
+        "C2B-EVID-001-complete-retained-manifest",
+        "C2B-EVID-002-separate-input-result-runtime-runner-teardown-dispositions",
+        "C2B-EVID-003-byte-and-trace-digests",
+        "C2B-EVID-004-limit-and-drain-accounting",
+        "C2B-EVID-005-restoration-mutation-results",
+        "C2B-EVID-006-guest-reported-not-attested-limitation",
+        "C2B-EVID-007-no-runtime-profile-admission-claim"
+      ]
+    }
+  ],
+  "restorationMutations": [
+    "MUT-001-add-builtin-op",
+    "MUT-002-add-extension-or-loader",
+    "MUT-003-restore-forbidden-global-or-string-code-generation",
+    "MUT-004-restore-pathname-or-format-selecting-root-api",
+    "MUT-005-accept-writable-linked-wrong-identity-root-fd",
+    "MUT-006-restore-nullfs-or-any-virtiofs-route",
+    "MUT-007-restore-network-or-implicit-vsock-tsi",
+    "MUT-008-restore-external-kernel-firmware-path",
+    "MUT-009-remove-console-port-id-bounds",
+    "MUT-010-restore-stop-blind-or-zero-progress-console-loop",
+    "MUT-011-accept-extra-missing-swapped-reused-descriptor",
+    "MUT-012-inherit-completion-endpoint-into-workload",
+    "MUT-013-write-commit-before-child-tree-termination",
+    "MUT-014-treat-eof-or-runner-zero-as-success",
+    "MUT-015-clamp-or-substitute-resource-value",
+    "MUT-016-remove-forced-sigkill-or-absence-deadline",
+    "MUT-017-raise-concurrency-above-one",
+    "MUT-018-accept-artifact-null-or-historical-substitute"
+  ],
+  "evidenceRetention": [
+    "exact-c1-and-c2a-fixture-bytes-and-digests",
+    "final-source-commit-patch-order-build-manifest-and-every-artifact-sha256",
+    "final-code-requirements-cdhash-entitlements-and-installed-byte-readback",
+    "runner-pre-spawn-post-exec-pre-libkrun-and-post-config-fd-manifests",
+    "guest-launcher-pre-child-and-runtime-child-fd-manifests",
+    "fcntl-access-status-cloexec-device-inode-link-length-and-offset-observations",
+    "runner-launcher-runtime-file-open-and-syscall-traces",
+    "guest-device-port-mount-network-vsock-and-process-tree-inventories",
+    "source-input-root-and-completion-bytes-lengths-digests-and-frame-accounting",
+    "all-43-p0-3-results-plus-c1-narrowed-boundary-cap-plus-one-and-live-fault-results",
+    "runtime-global-op-extension-module-loader-and-v6-results",
+    "wall-cancel-signal-identity-exit-reap-absence-and-recovery-timeline",
+    "every-restoration-mutation-command-result-and-caught-control",
+    "known-answer-source-manifest-input-completion-and-separate-terminal-dispositions",
+    "environment-toolchain-host-os-hardware-limitations-and-guest-reported-completion-limitation"
+  ],
+  "blockers": [
+    "Every artifactClosure.required SHA-256 is unresolved.",
+    "The composed runtime-profile identity and digest are unresolved.",
+    "The trusted launcher child protocol and numeric child descriptor manifest do not exist.",
+    "The exact bounded writable scratch/tmpfs mechanism and byte ceiling are unsupported.",
+    "The governed libkrun baseline/ref/verifier invariant and independent review remain open.",
+    "P0-1C, P0-2 final route closure, P0-3 real transport, and P0-4B installed composition remain open.",
+    "A separate explicit authorization is required before C2B may create an owned disposable guest.",
+    "Runtime/profile admission remains absent and is not part of C2A or C2B."
+  ],
+  "refusalCodes": [
+    "C2A_C1_MISMATCH",
+    "C2A_ARTIFACT_IDENTITY_MISSING",
+    "C2A_ARTIFACT_IDENTITY_MISMATCH",
+    "C2A_DESCRIPTOR_MANIFEST_MISMATCH",
+    "C2A_UNEXPECTED_DESCRIPTOR",
+    "C2A_RESOURCE_UNSUPPORTED",
+    "C2A_RESOURCE_MISMATCH",
+    "C2A_TRANSPORT_MISMATCH",
+    "C2A_TEARDOWN_UNSUPPORTED",
+    "C2A_RESTORATION_MUTATION_SURVIVED",
+    "C2A_GUEST_NOT_AUTHORIZED",
+    "C2A_RUNTIME_NOT_ADMITTED"
+  ],
+  "stopConditions": [
+    "Any C1 byte, length, digest, or semantic field changes.",
+    "A prohibited op, module, loader, global, path, network, subprocess, FFI, inspector, Worker, WebAssembly, or native-loading route is required.",
+    "An execute-time caller path, image, backend flag, mount, descriptor replacement, or plan replacement is required.",
+    "A required artifact identity would have to be guessed, fetched as a replacement, or substituted from incompatible historical evidence.",
+    "A resource value would be clamped, approximated, silently defaulted, or claimed despite unsupported exact enforcement.",
+    "Runner exit, EOF, guest prose, or a completion frame without authoritative teardown would become ordinary success.",
+    "A guest, credential, signature, release, runtime adapter, backend consumer, or arbitrary workload would be created without separate authorization.",
+    "RUNTIME-001 or VMM-001 would be advanced beyond unsupported by passive evidence."
+  ],
+  "workStatus": {
+    "c2a": "PASSED-passive-preparation-only",
+    "parentGovernedRuntime": "IN_PROGRESS-TRENDING_GOOD",
+    "c2b": "BLOCKED",
+    "runtimeProfileAdmission": "BLOCKED",
+    "runtime001": "unsupported",
+    "vmm001": "unsupported"
+  },
+  "effects": {
+    "process": false,
+    "runtime": false,
+    "adapter": false,
+    "backend": false,
+    "guest": false,
+    "credential": false,
+    "signing": false,
+    "release": false,
+    "admission": false,
+    "consumer": false
+  }
+}

@@ -49,8 +49,11 @@ handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDEN
 The governed runtime's first composed-profile slice is the passive
 [C1 controlled-development composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md).
 It fixes the intended `.mjs` JSON-in/JSON-out surface and exact governed construction identities
-without creating a guest or admitting a runtime; C2 owns the first separately authorized composed
-execution evidence.
+without creating a guest or admitting a runtime. The follow-on passive
+[C2A execution-profile contract](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md) freezes the
+refusing descriptor, candidate machine, transport, teardown, artifact-blocker, known-answer, and
+C2B evidence profile without executing it. C2B owns the first separately authorized composed
+execution evidence and remains blocked.
 
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/

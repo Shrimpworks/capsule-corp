@@ -112,8 +112,8 @@ func TestSliceAConformanceManifest(t *testing.T) {
 			assertDecision(t, testCase.Expected.Decision, testCase.Expected.Classification, err)
 		})
 	}
-	if caseCount != 44 || acceptCount != 10 || rejectCount != 34 {
-		t.Fatalf("Slice A matrix = %d cases (%d accept, %d reject), want 44 (10, 34)", caseCount, acceptCount, rejectCount)
+	if caseCount != 50 || acceptCount != 10 || rejectCount != 40 {
+		t.Fatalf("Slice A matrix = %d cases (%d accept, %d reject), want 50 (10, 40)", caseCount, acceptCount, rejectCount)
 	}
 }
 

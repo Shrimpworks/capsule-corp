@@ -398,10 +398,13 @@ export function addApprovalAttemptRulesAndCases({
     addRule(
       id,
       "ADR-0024#exact-signed-and-resolved-bindings",
-      `The ${label} is bounded at ${maximumBytes} raw bytes before ordinary fixture verification.`,
+      `The ${label} is bounded at ${maximumBytes} raw bytes before ordinary fixture verification, ` +
+        "and separately at the calculated closed-candidate maximum below that raw cap.",
       [
         { decision: "accept", variant: "exact-maximum" },
         { decision: "reject", variant: "cap-plus-one" },
+        { decision: "reject", variant: "calculated-maximum-plus-one" },
+        { decision: "reject", variant: "raw-maximum" },
       ],
     );
   }
@@ -438,6 +441,128 @@ export function addApprovalAttemptRulesAndCases({
     variant: "cap-plus-one",
     decision: "reject",
     classification: "MALFORMED",
+  });
+
+  // The calculated closed-candidate maxima (431/242/116, see `maximum` above) are
+  // strictly smaller than the raw predecoder gates (512/256/128): no fixture above
+  // exercised the raw gate's own true boundary. These six vectors are synthetic
+  // filler bytes, not realistic COSE/CBOR structures -- FixtureVerifier is a
+  // byte-equality fixture lookup, not a parser, so envelope/payload/protected
+  // content is irrelevant to it and only byte length matters here. Each vector
+  // isolates one dimension at its true boundary while holding the other two well
+  // under their own calculated maxima, so the SCHEMA rejection it produces is
+  // attributable to exactly that dimension.
+  const envelopeCalculatedMaximumPlusOne = vectorFixtures({
+    name: "envelope-calculated-maximum-plus-one",
+    envelope: repeatedBytes(0, 432),
+    payload: repeatedBytes(0, 1),
+    protectedHeader: repeatedBytes(0, 1),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  const envelopeRawMaximum = vectorFixtures({
+    name: "envelope-raw-maximum",
+    envelope: repeatedBytes(0, 512),
+    payload: repeatedBytes(0, 1),
+    protectedHeader: repeatedBytes(0, 1),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  const payloadCalculatedMaximumPlusOne = vectorFixtures({
+    name: "payload-calculated-maximum-plus-one",
+    envelope: repeatedBytes(0, 8),
+    payload: repeatedBytes(0, 243),
+    protectedHeader: repeatedBytes(0, 1),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  const payloadRawMaximum = vectorFixtures({
+    name: "payload-raw-maximum",
+    envelope: repeatedBytes(0, 8),
+    payload: repeatedBytes(0, 256),
+    protectedHeader: repeatedBytes(0, 1),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  const protectedCalculatedMaximumPlusOne = vectorFixtures({
+    name: "protected-calculated-maximum-plus-one",
+    envelope: repeatedBytes(0, 8),
+    payload: repeatedBytes(0, 1),
+    protectedHeader: repeatedBytes(0, 117),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  const protectedRawMaximum = vectorFixtures({
+    name: "protected-raw-maximum",
+    envelope: repeatedBytes(0, 8),
+    payload: repeatedBytes(0, 1),
+    protectedHeader: repeatedBytes(0, 128),
+    keyId: Buffer.from("approval-test-key"),
+    view: grantView(),
+  });
+  for (const profile of [
+    envelopeCalculatedMaximumPlusOne,
+    envelopeRawMaximum,
+    payloadCalculatedMaximumPlusOne,
+    payloadRawMaximum,
+    protectedCalculatedMaximumPlusOne,
+    protectedRawMaximum,
+  ]) {
+    retainVectorFixtures(profile, retainFixture);
+  }
+  addVerifierCase(addStateCase, envelopeCalculatedMaximumPlusOne, {
+    id: "approval-grant.fixture-verifier.envelope-calculated-maximum-plus-one",
+    description:
+      "Reject a 432-byte envelope: within the raw 512-byte gate but one over the calculated 431-byte candidate maximum.",
+    ruleIds: [budgetRules[0][0]],
+    variant: "calculated-maximum-plus-one",
+    decision: "reject",
+    classification: "SCHEMA",
+  });
+  addVerifierCase(addStateCase, envelopeRawMaximum, {
+    id: "approval-grant.fixture-verifier.envelope-raw-maximum",
+    description:
+      "Reject an exactly-512-byte envelope: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+    ruleIds: [budgetRules[0][0]],
+    variant: "raw-maximum",
+    decision: "reject",
+    classification: "SCHEMA",
+  });
+  addVerifierCase(addStateCase, payloadCalculatedMaximumPlusOne, {
+    id: "approval-grant.fixture-verifier.payload-calculated-maximum-plus-one",
+    description:
+      "Reject a 243-byte embedded payload: within the raw 256-byte gate but one over the calculated 242-byte candidate maximum.",
+    ruleIds: [budgetRules[1][0]],
+    variant: "calculated-maximum-plus-one",
+    decision: "reject",
+    classification: "SCHEMA",
+  });
+  addVerifierCase(addStateCase, payloadRawMaximum, {
+    id: "approval-grant.fixture-verifier.payload-raw-maximum",
+    description:
+      "Reject an exactly-256-byte embedded payload: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+    ruleIds: [budgetRules[1][0]],
+    variant: "raw-maximum",
+    decision: "reject",
+    classification: "SCHEMA",
+  });
+  addVerifierCase(addStateCase, protectedCalculatedMaximumPlusOne, {
+    id: "approval-grant.fixture-verifier.protected-calculated-maximum-plus-one",
+    description:
+      "Reject a 117-byte protected map: within the raw 128-byte gate but one over the calculated 116-byte candidate maximum.",
+    ruleIds: [budgetRules[2][0]],
+    variant: "calculated-maximum-plus-one",
+    decision: "reject",
+    classification: "SCHEMA",
+  });
+  addVerifierCase(addStateCase, protectedRawMaximum, {
+    id: "approval-grant.fixture-verifier.protected-raw-maximum",
+    description:
+      "Reject an exactly-128-byte protected map: passes the raw byte gate and reaches the calculated-candidate-maximum rejection.",
+    ruleIds: [budgetRules[2][0]],
+    variant: "raw-maximum",
+    decision: "reject",
+    classification: "SCHEMA",
   });
 
   addDurableStoreCases({

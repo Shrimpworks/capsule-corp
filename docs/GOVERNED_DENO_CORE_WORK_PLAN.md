@@ -40,7 +40,7 @@ runtime or release.
 
 ### 1A. Capsule durable lifecycle Slice E4
 
-Repository: `dills122/capsule-corp`.
+Repository: `Shrimpworks/capsule-corp`.
 
 - Replace the registered lifecycle `MemoryStore` path with the E3 fixed-store transaction port.
 - Give every fake operation a stable `EffectID` and exact fake instance identity.

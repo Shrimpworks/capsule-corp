@@ -191,6 +191,54 @@ referenced-descriptor counts equal archived. A visible-v1 effect attached to a h
 therefore counted in hot and total effects while archive descriptors and archived effects remain
 zero. It never inflates an archive cohort or descriptor count.
 
+### Effect-tombstone source of truth is independent of the lifecycle record
+
+The `effect` retained-global index (above) is populated from one durable hot-state collection —
+the **effect-tombstone set** — that is distinct from, and never derived from, the lifecycle
+record's current `EffectID` field. The lifecycle record's current `EffectID` names only the
+attempt's in-flight or most recently reconciled logical effect; it is replaced in place by later
+operations exactly as this ADR already specifies. The effect-tombstone set instead accumulates:
+the same transaction that commits a new v2 effect intent both replaces the lifecycle record's
+current `EffectID` and appends one immutable entry to the effect-tombstone set, before any fake
+backend call. No later operation, migration, archive activation, or repair may remove, replace, or
+renumber an existing effect-tombstone entry.
+
+Full reconstruction of the retained-global effect index — at startup, at archive-segment
+verification, and at every reopen — must read the effect-tombstone set directly. It must never
+derive the effect index solely from the current snapshot of lifecycle records, because that
+snapshot retains only each attempt's current effect, not its full issuance history. A
+reconstruction that used only lifecycle records was correct only at migration genesis, before any
+attempt had a second v2 operation, and is not a general algorithm; the retained
+[F4B blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) proves the exact point where that
+shortcut diverges from this requirement.
+
+`ResolveEffect` distinguishes two outcomes for a verified tombstone:
+
+- if the tombstone's `EffectID` equals the attempt's current lifecycle `EffectID`, resolution also
+  returns the live lifecycle record as the issuing record, exactly as today; and
+- if the tombstone's `EffectID` was superseded by a later operation on the same attempt,
+  resolution returns the tombstone's own bound facts (`AttemptID`, operation sequence, operation,
+  issuance snapshot generation, attempt-record location) and an explicit `superseded-by-current`
+  classification. It never falsely returns the current lifecycle record as that historical
+  effect's issuing record, and it never fabricates a synthetic lifecycle record for it.
+
+The active v2 snapshot's `HotSetDigests` binds the effect-tombstone set as a fifth digested hot
+collection, alongside the existing registration, approval, attempt, and lifecycle set digests.
+This is a passive format correction, not a new capability: the effect-tombstone set was already
+implied by the retained-global effect index and by the same-transaction requirement above; this
+subsection makes its independent storage and reconstruction source explicit so F4B's full-
+verification and lookup semantics can be implemented without contradicting either requirement. It
+adds no new capacity dimension — the effect-tombstone set remains bound by the existing
+262,144-entry cap on any complete archive tombstone index — and requires no change to the v1-to-v2
+migration's seeding rule, the registration/approval/attempt/lifecycle record digest encodings, or
+any pinned F2/F3 known-answer bytes.
+
+This correction does not change who may cause a tombstone to exist. `EffectID` values remain
+Supervisor-internal and are never caller-supplied; only the Execution Supervisor's own committed
+effect-intent transaction may append to the effect-tombstone set, exactly as archive selection,
+creation, and activation already remain Supervisor-only under this ADR. No daemon, Broker,
+updater, public API, IPC body, or backend adapter gains any new authority from this correction.
+
 ### Closed archive formats and bounded checkpoint oracle
 
 The conformance oracle introduces an explicit v2 active snapshot and immutable archive-segment v0.
@@ -650,10 +698,15 @@ retained lookup, v2 authority mutation, a second segment, backup/orphan cleanup,
 engine, or a product consumer. The follow-on read-only
 [F4A retained lookup result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) is `PASSED` in its exact
 local scope. The executable
-[F4B mutation blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) now retains why its current
+[F4B mutation blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) retains why its current
 effect lookup/reconstruction semantics cannot also retain historical v2 effect tombstones after
-the lifecycle field changes. F4B is `BLOCKED` pending the passive contract correction; F4C second-
-segment growth and every other listed blocker remain open.
+the lifecycle field changes. "Effect-tombstone source of truth is independent of the lifecycle
+record" above now records the passive contract correction: an independent, Supervisor-only,
+same-transaction append-only effect-tombstone set that the retained-global effect index and
+`ResolveEffect` must read from directly instead of reconstructing from lifecycle records. F4B
+remains `BLOCKED` until that correction is implemented — new hot-state collection, corrected
+reconstruction and lookup, and the added `HotSetDigests` member — and its fault/replay/collision
+corpus passes; F4C second-segment growth and every other listed blocker remain open.
 
 ## Acceptance blockers
 

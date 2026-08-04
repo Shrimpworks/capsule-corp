@@ -1,6 +1,8 @@
 # Supervisor archive F4B effect-tombstone mutation blocker
 
-Status: `BLOCKED` for Slice F4B atomic fixed-store v2 authority/lifecycle mutation.
+Status: `BLOCKED` for Slice F4B atomic fixed-store v2 authority/lifecycle mutation
+*implementation*. The required contract decision below is now recorded in ADR-0031; F4B remains
+blocked only on building and verifying it.
 
 Date: 2026-08-04
 
@@ -89,9 +91,43 @@ and F3 byte answers unless the selected versioned correction explicitly replaces
 retain a compatibility/refusal rule rather than interpreting an omitted effect-history structure
 as empty.
 
+## Contract decision recorded
+
+ADR-0031's ["Effect-tombstone source of truth is independent of the lifecycle
+record"](adr/0031-checkpoint-closed-supervisor-cohorts.md#effect-tombstone-source-of-truth-is-independent-of-the-lifecycle-record)
+now answers each requirement above:
+
+- every v2 issuance gains an entry in an independent, separately digestible effect-tombstone set —
+  not an index derived by re-reading lifecycle records, and not a tombstone embedded inside the
+  lifecycle record itself;
+- full hot/archive reconstruction reads that effect-tombstone set directly, never the current
+  snapshot of lifecycle records, so historical issuance metadata survives every later operation on
+  the same attempt;
+- `ResolveEffect` returns a `superseded-by-current` classification plus the tombstone's own bound
+  facts for a historical effect, and only attaches the live lifecycle record as issuing record when
+  the tombstone's `EffectID` still matches the attempt's current effect;
+- effect-tombstone entries keep the existing `EffectIndexEntry` shape (`archivestate.go`) and its
+  existing typed hot/archive `RecordLocation`/count accounting, unchanged;
+- the `VisibleV1Seed` discriminant already on each entry continues to distinguish migration-seeded
+  v1 effects from every v2-issued effect;
+- cohort/segment carriage of the effect index is unchanged, since the correction only changes the
+  index's *source*, not its shape or its participation in cohort/segment digests; and
+- the only new checkpoint field is one additional `HotSetDigests` member for the effect-tombstone
+  set; every other pinned F2/F3 checkpoint field, digest encoding, and known-answer byte is
+  unaffected, so no downgrade/version-refusal or corruption/cap-plus-one behavior changes shape —
+  the new field is exercised by the same existing tests, extended to cover it.
+
+This decision changes no authority: `EffectID` values remain Supervisor-internal, never
+caller-supplied, and only the Supervisor's own committed effect-intent transaction may append to
+the effect-tombstone set.
+
 ## Resume condition and deferred work
 
-F4B resumes only after that passive contract correction is reviewed and merged. The resumed slice
+F4B implementation resumes now that this passive contract correction is recorded in ADR-0031. The
+implementing slice must add the effect-tombstone hot-state collection, correct
+`reconstructV2Indexes`/`reconstructV2IndexesForWorld`/archive-segment verification/`ResolveEffect`
+to read from it, add the `HotSetDigests` member, and regenerate the affected F4A/F4B known-answer
+fixtures — while still preserving all passed F2 and F3 byte answers untouched. The resumed slice
 must still perform same-transaction retained-global checks for registration, approval, attempt,
 nonce, effect, instance, approval-replay, and attempt-replay identities; preserve missing lifecycle
 as absence; preserve `AttemptID`-only recovery, owner/session fencing, exact capacities,

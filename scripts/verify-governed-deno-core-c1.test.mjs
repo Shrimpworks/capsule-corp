@@ -21,12 +21,54 @@ const artifacts = Object.freeze({
   rootGzip: "e847651b35cd425dd8f6fe3bd45d693aff0af244e3a7bd30c629fa125cac62e8",
 });
 
-test("independently verifies the passive C1 known answer", () => {
-  assert.equal(exact.length, 9_289);
+// The checks below are factored into named functions, rather than left as inline asserts, so the
+// mutation test at the bottom of this file can independently prove each one actually rejects a
+// tampered contract instead of only ever running against the untouched golden fixture.
+
+function assertKnownAnswerBytes(bytes) {
+  assert.equal(bytes.length, 9_289);
   assert.equal(
-    createHash("sha256").update(exact).digest("hex"),
+    createHash("sha256").update(bytes).digest("hex"),
     "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
   );
+}
+
+function assertArtifactDigests(value) {
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(value.artifacts).map(([name, entry]) => [name, entry.sha256]),
+    ),
+    artifacts,
+  );
+  assert.ok(Object.values(value.artifacts).every((artifact) => artifact.admitted === false));
+}
+
+function assertNoGlobalOverlap(value) {
+  const overlap = value.runtimeSurface.permittedGlobals.filter((name) =>
+    value.runtimeSurface.forbiddenGlobals.includes(name),
+  );
+  assert.deepEqual(overlap, []);
+}
+
+function assertZeroEffects(value) {
+  assert.deepEqual(value.effects, {
+    process: false,
+    runtime: false,
+    backend: false,
+    guest: false,
+    admission: false,
+    signing: false,
+    release: false,
+  });
+}
+
+function assertRefusalBoundary(value) {
+  assert.ok(value.refusalCodes.includes("C1_RUNTIME_NOT_ADMITTED"));
+  assert.equal(value.stopConditions.length, 10);
+}
+
+test("independently verifies the passive C1 known answer", () => {
+  assertKnownAnswerBytes(exact);
   assert.equal(
     contract.contract,
     "capsule.governed-deno-core.controlled-development-composition/c1",
@@ -35,13 +77,7 @@ test("independently verifies the passive C1 known answer", () => {
   assert.equal(contract.evidence.mergeCommit, "fa03d7043b4f0653081d6c5733d597f49f6efd1c");
   assert.equal(contract.forks.deno.head, "9adb0b68b55bca81644827f1e7749a3acb091bed");
   assert.equal(contract.forks.rustyV8.head, "80e863ddb942a4aa2b384e794fc23e35b9d2bb15");
-  assert.deepEqual(
-    Object.fromEntries(
-      Object.entries(contract.artifacts).map(([name, value]) => [name, value.sha256]),
-    ),
-    artifacts,
-  );
-  assert.ok(Object.values(contract.artifacts).every((artifact) => artifact.admitted === false));
+  assertArtifactDigests(contract);
 });
 
 test("closes the C1 app and runtime surfaces", () => {
@@ -91,10 +127,7 @@ test("closes the C1 app and runtime surfaces", () => {
   assert.deepEqual(contract.runtimeSurface.workloadFiles.readable, []);
   assert.deepEqual(contract.runtimeSurface.workloadFiles.writable, []);
 
-  const overlap = contract.runtimeSurface.permittedGlobals.filter((name) =>
-    contract.runtimeSurface.forbiddenGlobals.includes(name),
-  );
-  assert.deepEqual(overlap, []);
+  assertNoGlobalOverlap(contract);
   for (const forbidden of [
     "Deno",
     "Function",
@@ -119,15 +152,40 @@ test("keeps descriptors, resources, and all authority effects inactive", () => {
   assert.equal(contract.resources.transportProfileRef, "capsule.gate-c.p0-3.measured-limits/v0");
   assert.equal(contract.resources.machineProfileRef, null);
   assert.equal(contract.resources.activation, "refuse-until-c2-and-admission");
-  assert.deepEqual(contract.effects, {
-    process: false,
-    runtime: false,
-    backend: false,
-    guest: false,
-    admission: false,
-    signing: false,
-    release: false,
-  });
-  assert.ok(contract.refusalCodes.includes("C1_RUNTIME_NOT_ADMITTED"));
-  assert.equal(contract.stopConditions.length, 10);
+  assertZeroEffects(contract);
+  assertRefusalBoundary(contract);
+});
+
+test("independent checks actually reject a mutated contract", () => {
+  const tamperedBytes = Buffer.concat([exact, Buffer.from("\n")]);
+  assert.throws(() => assertKnownAnswerBytes(tamperedBytes), assert.AssertionError);
+
+  const mutatedArtifact = structuredClone(contract);
+  mutatedArtifact.artifacts.snapshot.sha256 = "0".repeat(64);
+  assert.throws(() => assertArtifactDigests(mutatedArtifact), assert.AssertionError);
+
+  const mutatedAdmitted = structuredClone(contract);
+  mutatedAdmitted.artifacts.snapshot.admitted = true;
+  assert.throws(() => assertArtifactDigests(mutatedAdmitted), assert.AssertionError);
+
+  const mutatedGlobals = structuredClone(contract);
+  mutatedGlobals.runtimeSurface.permittedGlobals = [
+    ...mutatedGlobals.runtimeSurface.permittedGlobals,
+    "eval",
+  ];
+  assert.throws(() => assertNoGlobalOverlap(mutatedGlobals), assert.AssertionError);
+
+  const mutatedEffects = structuredClone(contract);
+  mutatedEffects.effects.runtime = true;
+  assert.throws(() => assertZeroEffects(mutatedEffects), assert.AssertionError);
+
+  const mutatedRefusalCodes = structuredClone(contract);
+  mutatedRefusalCodes.refusalCodes = mutatedRefusalCodes.refusalCodes.filter(
+    (code) => code !== "C1_RUNTIME_NOT_ADMITTED",
+  );
+  assert.throws(() => assertRefusalBoundary(mutatedRefusalCodes), assert.AssertionError);
+
+  const mutatedStopConditions = structuredClone(contract);
+  mutatedStopConditions.stopConditions = mutatedStopConditions.stopConditions.slice(0, -1);
+  assert.throws(() => assertRefusalBoundary(mutatedStopConditions), assert.AssertionError);
 });

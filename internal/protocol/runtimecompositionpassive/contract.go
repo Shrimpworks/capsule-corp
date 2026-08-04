@@ -275,6 +275,16 @@ type Effects struct {
 	Release   bool `json:"release"`
 }
 
+// Decode rejects unknown JSON keys (DisallowUnknownFields) and trailing bytes (requireEOF), but
+// encoding/json has no equivalent guard for *omitted* keys: a missing field silently decodes to
+// its Go zero value. That is safe only because every field's zero value already coincides with
+// its expected/safe constant here (empty slices, false Effects, zero byte counts) — Validate then
+// rejects the zero value the same way it would reject any other wrong value. This is an
+// invariant of the current field set, not a structural guarantee. A future field whose
+// safe/expected value is non-zero (for example a boolean that must be true to prove a property)
+// must not rely on this coincidence; it needs its own explicit presence check, or Decode should
+// gain a general required-key check mirroring governed-deno-core-c1-composition.schema.json's
+// `required` lists.
 func Decode(exact []byte) (*Contract, error) {
 	if len(exact) != ContractBytes {
 		return nil, fmt.Errorf("C1_CONTRACT_MISMATCH: byte length %d", len(exact))

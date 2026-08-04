@@ -64,12 +64,13 @@ resolves PR #78's three contradictions with scope-separated retained-global/segm
 indexes, kinded hot/archive record locations, exact hot/archive/total count equations, and a
 domain-separated generation-one migration-genesis checkpoint. Generated exact answers and the
 before/after contract are retained in the
-[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). A subsequent stateful
-review found that a valid v1 committed-attempt-before-lifecycle world has no exact corrected-v2
-projection: every v2 attempt entry requires a lifecycle disposition and the index counts equate
-lifecycles with attempts. F2 stopped before choosing bytes and retained the executable
-[v1 mapping blocker](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). Migration and full
-verification remain unimplemented. The passive work performs no file I/O, migration,
+[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). The follow-on valid-v1
+mapping contradiction is also passively resolved: each attempt index entry now carries an explicit
+`absent | present(state, lifecycle location, lifecycle record digest)` union, and lifecycle counts
+derive only from present arms. The executable
+[v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the original
+committed-attempt-before-lifecycle witness and exact `attempts = 1, lifecycles = 0` genesis answer.
+Migration and full verification remain unimplemented. The passive work performs no file I/O, migration,
 archive activation, lookup, or authority mutation. The later stateful slices preserve the current
 full-snapshot validation and exact rename fault
 boundaries while proving the archive protocol. It is not selected as the production engine.
@@ -153,7 +154,7 @@ The retained-global indexes are sorted and duplicate-free:
 | --- | --- |
 | registration | `RegistrationID`, sequence, plan digest, expiry, registration-record location, full-record digest |
 | approval | `ApprovalID`, registration, payload digest, authorization identity, nonce, state, consumed `AttemptID`, expiry, approval-record location, full-record digest |
-| attempt | `AttemptID`, approval, registration, created time, lifecycle disposition, attempt-record location, full-record digest |
+| attempt | `AttemptID`, approval, registration, created time, explicit absent/present lifecycle union, attempt-record location, full-record digest; the present arm also binds lifecycle disposition, lifecycle-record location, and full-record digest |
 | nonce | `AttemptNonce` to approval payload digest, `ApprovalID`, and approval-record location |
 | effect | every v2-issued nonzero `EffectID` to `AttemptID`, operation sequence, operation, issuance snapshot generation, attempt-record location, and explicitly labeled visible-v1 seed membership |
 | instance | instance identity digest to `AttemptID` and lifecycle-record location |
@@ -217,8 +218,11 @@ The migration-genesis checkpoint is a distinct generation-one representation dom
 snapshot and archive generations 1/1, the empty descriptor-set digest, every complete all-hot
 retained-global index digest, all hot set digests, exact visible-v1 seed count/digest, hot counts,
 installation/Supervisor/epoch identity, and durable time high water. It has no previous checkpoint,
-new segment, or archive location. Its retained generated known answer is
-`3a71b2da5a03570a746cdd535f73dbb159c108469ed9cc727e538a0c53f74704`.
+new segment, or archive location. Its retained all-present generated known answer is
+`657c86aff68354e535369bdecf9e8c23bbfb1457e8ada57576bc1a52666a5fc9`. The valid
+missing-lifecycle fixture separately retains genesis
+`0af76dca782bdf198d5ef80b6b2856fb35ae01539e7d8866198c4f2af643f621` with exact counts
+`attempts = 1, lifecycles = 0`.
 
 An activation checkpoint is separately domain separated as
 `capsule.supervisor.archive-checkpoint.v0` and binds the kinded previous checkpoint reference, new segment
@@ -375,7 +379,9 @@ The fixed oracle uses one explicit offline, lock-held `v1 -> v2` migration:
 2. require no recovery/repair/quarantine/transition fence;
 3. construct v2 with an empty descriptor set, zero archived counts, generation one, one complete
    all-hot `retained-global` projection reconstructed from every v1 registration/approval/attempt/
-   lifecycle record, and one dedicated migration-genesis checkpoint; seed registration/approval/
+   lifecycle record, and one dedicated migration-genesis checkpoint; represent lifecycle as absent
+   or present strictly from the decoded v1 lifecycle collection and derive lifecycle counts
+   independently of attempt counts; seed registration/approval/
    attempt/nonce/replay identities from all v1 hot records and seed the effect tombstone set from
    only the nonzero effect IDs still visible in v1 lifecycle records;
 4. prove authority and lifecycle sets are byte-for-byte and digest-identical to v1 and record the
@@ -558,6 +564,28 @@ archive oracle.
 
 ## Alternatives considered
 
+### Put lifecycle disposition directly on every attempt without an absence arm
+
+Rejected. V1 deliberately commits an immutable attempt before lifecycle establishment. Requiring a
+lifecycle state would either omit retained attempt identity or invent `prepare-pending` and cleanup
+state. The selected closed absent/present union preserves the attempt and counts only decoded
+lifecycle records.
+
+### Add a separate retained-global lifecycle index
+
+Not selected. It can be safe with a ninth index/digest, exact AttemptID join, typed locations,
+independent counts, caps, checkpoint bindings, and regenerated fixtures. The selected union binds
+the same one-to-zero-or-one relationship and lifecycle record anchor within the existing attempt
+index, so it is the narrower passive correction.
+
+### Restrict migration to attempts with lifecycle after a recovery ceremony
+
+Rejected as the F2 mapping. A real v1 lifecycle-establishment transaction could make a particular
+store satisfy that precondition, but requiring it adds backend-binding, capacity, authorization,
+and confirmed/indeterminate ceremony boundaries and makes a supported crash state only
+conditionally migratable. Migration instead maps absence exactly and invokes no adapter or
+lifecycle mutation.
+
 ### Delete terminal records and keep only set digests
 
 Rejected. A digest cannot answer exact payload replay, return the original approval/attempt
@@ -600,9 +628,11 @@ byte caps and returns `CAPACITY` without authority change when retained history 
 The exact passive types, migration, archive activation, replay, fault, backup, and offline-
 verification slices are defined in
 [the Supervisor archive/compaction conformance plan](../SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md).
-The stateful F2 step is blocked by the retained
-[valid-v1 mapping contradiction](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md); this ADR remains
-Proposed and does not implicitly choose a missing-lifecycle representation or narrower migration.
+The retained
+[valid-v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) selects the passive
+missing-lifecycle representation and rejects a narrower state-changing migration ceremony. The
+stateful F2 migration/full verifier is still unimplemented; this ADR remains Proposed and does not
+authorize v2 bytes beyond that separately verified slice.
 
 ## Acceptance blockers
 

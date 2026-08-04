@@ -215,11 +215,13 @@ copies, and complete-cohort eligibility now exist, but they write no file, migra
 cohort, and activate no archive. The passive
 [F2 format blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) now defines scope-separated
 global/segment indexes, typed hot/archive record locations and exact counts, and a distinct
-migration-genesis checkpoint with generated known answers. The subsequent stateful review stopped
-because a valid v1 committed attempt may have no lifecycle record, a world the corrected v2
-attempt index/count model cannot represent without invention. The exact
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) is retained. No v2 store,
-migration, or verifier was implemented; another passive format decision is required. The
+migration-genesis checkpoint with generated known answers. The follow-on valid-v1 mapping
+contradiction is also passively resolved: an attempt index now carries a closed lifecycle
+absent/present union, present lifecycle records bind their own typed location/digest, and lifecycle
+counts are independent of attempt counts. The exact
+[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) retains the real crash
+witness and rejects a state-changing pre-migration ceremony. No v2 store, migration, or verifier
+was implemented. The
 selected fixed checkpoint is a finite conformance oracle, not a production engine or continuous-
 service mechanism, and referenced archive history is not deletable under that proposal.
 

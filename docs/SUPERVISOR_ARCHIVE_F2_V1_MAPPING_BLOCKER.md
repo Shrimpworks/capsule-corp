@@ -1,22 +1,21 @@
-# Supervisor archive F2 v1 mapping blocker
+# Supervisor archive F2 v1 mapping resolution
 
-Status: F2 stopped before v2 bytes; passive format correction is insufficient for every valid v1 state.
+Status: passive mapping contradiction resolved; stateful F2 remains unimplemented and no v2 bytes exist.
 
 Date opened: 2026-08-04
 
-Scope: defensive, repository-local review using only the current fixed v1 store,
-passive `archivestate` constructors, retained approval/attempt fixtures, and local
-tests. No v2 file was written, no store migration was added, no cohort moved, no
-archive segment existed, and no lifecycle adapter, runtime, backend, process,
-service, guest, identity, credential, user data, or deployment was accessed.
+Date resolved: 2026-08-04
 
-## Stop decision
+Scope: defensive, repository-local review using only the current fixed v1 store, passive
+`archivestate` constructors, retained approval/attempt fixtures, and local tests. No v2 file was
+written, no store migration or opener was added, no cohort moved, and no lifecycle adapter,
+runtime, backend, process, service, guest, identity, credential, user data, or deployment was
+accessed.
 
-ADR-0031 Slice F2 cannot implement a total explicit v1-to-v2 migration from the
-merged contracts without inventing security-relevant state.
+## Original stop decision
 
-The current v1 contract deliberately permits this complete, valid, durable
-startup-recovery world:
+The original F2 review correctly stopped before v2 bytes. Current v1 deliberately permits this
+complete durable startup-recovery world:
 
 ```text
 registrations = 1
@@ -25,92 +24,153 @@ attempts      = 1 created
 lifecycles    = 0
 ```
 
-Approval consumption and attempt creation commit before lifecycle establishment.
-`validateV1State` accepts the state, `OpenFixedFileStoreV1` reopens it, and
-`RecoveryAttemptIDs` returns the attempt so startup can call
-`EnsureLifecycle(AttemptID, ...)`. This is required crash behavior rather than
-corruption.
+Approval consumption and immutable attempt creation commit before lifecycle establishment.
+`validateV1State` accepts this state, `OpenFixedFileStoreV1` reopens it, and
+`RecoveryAttemptIDs` returns the `AttemptID` so ordinary startup can establish lifecycle later.
+The earlier passive v2 attempt index instead required one lifecycle state per attempt and derived
+the lifecycle count from the attempt count. Omitting the attempt lost retained authority identity;
+supplying `prepare-pending` invented a lifecycle record; and retaining exact counts `attempts = 1,
+lifecycles = 0` failed migration genesis.
 
-The corrected passive v2 projection cannot represent that world:
+## Decision
 
-- every `AttemptIndexEntry` requires a valid, nonempty `LifecycleState`;
-- there is no `missing`, `not-established`, or equivalent lifecycle disposition;
-- `ArchiveIndexes.counts()` sets `Lifecycles` to the number of attempt-index
-  entries rather than the number of decoded lifecycle records; and
-- migration genesis requires the retained-global index counts to equal exact
-  hot counts.
+Use one explicit, digest-bound lifecycle-presence union inside each retained-global attempt index
+entry:
 
-For the valid v1 witness, omitting the attempt loses a retained identity and
-violates the required complete all-hot index. Including it requires choosing a
-lifecycle state absent from v1. Choosing `prepare-pending` would synthesize a
-lifecycle record and cleanup state that were not durably committed. Including
-one attempt while retaining the exact zero lifecycle count then fails the
-checkpoint count equation. None is a permissible migration.
-
-The executable witness is
-`TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection`. It constructs the
-state through the real approval/attempt transaction, explicitly migrates v0 to
-v1, reopens and validates v1, proves the attempt index rejects the absent
-lifecycle disposition, and proves that an invented disposition still cannot
-produce migration genesis with exact `attempts = 1`, `lifecycles = 0` counts.
-
-Focused repetition:
-
-```sh
-go test ./internal/execution/registrationstate \
-  -run TestFixedStoreV1AttemptWithoutLifecycleBlocksV2Projection -count=20
+```text
+attempt lifecycle =
+  absent
+| present(lifecycle state, typed lifecycle-record location, full lifecycle-record digest)
 ```
 
-Result on the retained branch: PASS. This is evidence of the contradiction,
-not v2 implementation evidence.
+The `absent` arm has no lifecycle state, location, or record digest. It is permitted only for a hot
+attempt because a cohort cannot archive until every attempt has a destroyed lifecycle record with
+cleanup false after authoritative absence. It retains the immutable attempt and its attempt-record
+location/digest, remains active startup work, and grants no lifecycle or cleanup state.
 
-## Why refusal is not an implicit fix
+The `present` arm requires a valid closed lifecycle state, a `RecordLifecycle` location, and a
+nonzero full-record digest. Its lifecycle location must use the same hot/archive arm as the attempt;
+for archive locations it must also use the same segment and cohort. The attempt and lifecycle keep
+separate typed locations and full-record digests. A location is never authority without the fully
+verified referenced record and cross-links.
 
-The F2 contract says the explicit migrator accepts a complete valid v1 source,
-reconstructs every v1 registration/approval/attempt/lifecycle identity, and
-preserves the authority/lifecycle sets byte-for-byte and digest-for-digest. The
-witness is a complete valid v1 source and is exactly the crash boundary the v1
-startup oracle was designed to retain.
+Counts are now derived independently:
 
-Adding an undocumented precondition that every attempt already has a lifecycle
-would make migration unavailable for a supported valid v1 state and would not
-be the specified total v1-to-v2 migration. Running recovery inside migration is
-also forbidden: it would mutate the authority world, require a backend binding
-and lifecycle driver, and violate F2's zero-adapter/no-lifecycle-entry boundary.
+```text
+attempt count   = number of retained attempt entries
+lifecycle count = number of attempt entries on the present arm
+```
 
-## Required contract decision
+Hot/archive lifecycle location counts come from the present lifecycle-record location, not the
+attempt location. All existing equations remain exact:
 
-F2 remains blocked until a reviewed passive correction chooses one exact
-representation and regenerates its known answers. Plausible design directions
-are inputs to that review, not decisions made here:
+```text
+hotCounts + archivedCounts = totalCounts
+retainedGlobalIndexes.counts = totalCounts
+retainedGlobalIndexes.hotLocationCounts = hotCounts
+retainedGlobalIndexes.archiveLocationCounts = archivedCounts
+sum(referencedDescriptor.counts) = archivedCounts
+```
 
-1. add an explicit attempt lifecycle-presence/disposition union and make exact
-   lifecycle counts independent of attempt counts;
-2. add a separate retained-global lifecycle index, with attempt entries binding
-   an optional lifecycle location under closed cross-link rules; or
-3. version the migration contract to document and justify a narrower accepted
-   v1 state set plus an independently authorized pre-migration recovery
-   ceremony.
+Full F2 reconstruction must additionally prove a total one-to-zero-or-one join: every retained
+attempt has one attempt entry; every decoded lifecycle record has exactly one matching present arm;
+an attempt with no decoded lifecycle uses the absent arm; and no effect or instance entry can bind
+an absent lifecycle. Existing v1 authority/lifecycle cross-link validation remains authoritative.
 
-Any correction must preserve the v1 crash oracle, exact hot/archive/total count
-equations, typed locations, complete reconstruction, generated digests, replay
-and non-reuse state, and the rule that migration invokes no adapter. It must
-also specify how attempts with and without lifecycle records affect active and
-hot-retained capacity.
+## Alternatives compared
 
-## Unchanged conclusions
+| Alternative | Safety and cost | Decision |
+| --- | --- | --- |
+| Explicit lifecycle-presence union | Directly represents the v1 crash state; binds a present lifecycle to its own typed location and digest; changes one existing index family and makes counts independent | **Selected as the narrowest coherent representation** |
+| Separate retained-global lifecycle index | Also safe if it adds a complete ninth index/digest, exact AttemptID join, independent counts, locations, caps, fixtures, and checkpoint bindings | Not selected because it duplicates the same one-to-zero-or-one relationship and widens every index/checkpoint projection without adding authority or lookup semantics |
+| Narrow migration plus authorized pre-migration recovery ceremony | Can make lifecycle present only by committing a real v1 lifecycle-establishment transaction first | Rejected as an F2 prerequisite because it adds a state-changing ceremony, backend-binding decision, capacity/fence handling, and new confirmed/indeterminate boundaries; it would make a supported valid v1 crash state conditionally migratable instead of mapping it exactly |
 
-The earlier passive correction remains valid for the contradictions it solved:
-retained-global versus segment-derived index domains, typed hot/archive record
-locations, visible-v1 effect seeding, and a distinct migration-genesis
-checkpoint. Overwritten pre-v2 `EffectID` values remain unreconstructable.
+An operator recovery or repair ceremony may be designed later for its own purpose. It is not part of
+migration and cannot be used to conceal a missing representation.
 
-The owner capability can structurally guard the required pre-open,
-immediately-pre-commit, and pre-return checks. The atomic predecessor/successor
-formats can be distinguished by their closed top-level versions after an
-indeterminate rename. Those checks do not resolve the missing-lifecycle mapping.
+## Preserved invariants
 
-No `FixedFileStoreV2`, v1-to-v2 writer, v2 opener, migration fault path,
-segment preparation/activation, retained lookup, deletion, backup, production
-engine, runtime/backend/guest wiring, or consumer was added. ADR-0031 remains
-Proposed; archive status remains passive, unwired, and local-mechanic only.
+- The committed attempt remains immutable and is never omitted from replay/non-reuse indexes.
+- Lifecycle absence is represented, not interpreted as `prepare-pending`, destroyed, cleanup false,
+  or any other invented state.
+- `Drive`, `Recover`, migration recovery enumeration, and lifecycle establishment remain
+  `AttemptID`-only.
+- Attempts with missing lifecycle remain active and hot-retained. Only a present, fully verified
+  `destroyed` record with cleanup false after authoritative absence can release active capacity or
+  make a complete cohort archive-eligible.
+- V1 authority and lifecycle records remain byte-for-byte and digest-for-digest unchanged by the
+  mapping. Failure evidence is neither normalized nor rewritten.
+- Migration invokes no adapter and does not establish lifecycle. Overwritten pre-v2 effect IDs
+  remain unknowable.
+
+## Passive contract and known answers
+
+`internal/execution/archivestate` now contains only passive constructors and tests for the closed
+union. `TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts` proves absent `1/0` and
+present `1/1` attempt/lifecycle counts, digest separation, typed lifecycle anchors, hot/archive arm
+agreement, and refusal of an archived absent arm.
+
+`TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection` retains the original real v1 witness,
+reopens and validates it, maps its attempt to the absent arm, and constructs migration genesis with
+exact counts `attempts = 1, lifecycles = 0`. It also proves that lifecycle presence cannot be
+asserted using an attempt-record anchor.
+
+The generated fixture
+`internal/execution/archivestate/testdata/format-correction-known-answers.json` now retains these
+additional exact answers:
+
+| Projection | SHA-256 known answer |
+| --- | --- |
+| Missing-lifecycle retained-global combined index | `5f77dd10f8cbe8db00c47eed0ee27b8ec81dd2ccee188be9a2069f5641ab7232` |
+| Missing-lifecycle migration genesis | `0af76dca782bdf198d5ef80b6b2856fb35ae01539e7d8866198c4f2af643f621` |
+
+Because no v2 writer or stored v2 object ever existed, the corrected attempt-index projection
+replaces the earlier passive known answers rather than migrating any bytes.
+
+## Next stateful F2 implementation and conformance plan
+
+The next slice may implement only the explicit fixed-store v1-to-v2 migration and empty-archive
+full verifier:
+
+1. Acquire and recheck the installation owner before source open. Bound-read, closed-decode, and
+   fully validate v1 without mutation.
+2. Reconstruct every all-hot registration, approval, attempt, lifecycle, nonce, visible effect,
+   instance, and replay projection from exact v1 records. Join lifecycle by `AttemptID`: absent when
+   no lifecycle exists, present only from the decoded lifecycle record and its canonical hot
+   ordinal/full-record digest.
+3. Independently recompute hot counts from the four decoded record collections and require them to
+   equal index counts/location counts. Require absent attempts to be in `RecoveryAttemptIDs`; reject
+   lifecycle or effect/instance cross-link omission, duplication, or invention.
+4. Construct and fully validate the empty-descriptor active v2 candidate and dedicated migration
+   genesis in memory. Prove all v1 authority/lifecycle record bytes and set digests are unchanged.
+5. Recheck the owner immediately before the sole temp-file sync/rename/directory-sync commit. No
+   adapter, lifecycle establishment, archive segment, or cohort movement is permitted.
+6. Recheck ownership, reopen only by top-level version, and run the complete v2 verifier before
+   returning success.
+
+Required focused cases include zero attempts, only missing lifecycle, mixed missing/present
+lifecycles, all lifecycle states, exact 256 active and 4,096 retained limits, missing lifecycle at
+attempt-capacity, wrong/duplicate lifecycle joins, effect/instance on an absent arm, location-arm or
+archive-cohort mismatch, count/digest mutation, and defensive-copy/ordering cases. All existing
+v0/v1 approval, attempt, lifecycle, recovery, capacity, collision, and corruption tests remain
+unchanged.
+
+The fault and downgrade matrix is exact:
+
+- confirmed failure before rename preserves byte-identical valid v1;
+- an indeterminate rename/directory sync fences and reopens as exactly valid v1 or exactly valid v2;
+- the valid v1 old world may still contain the committed attempt with no lifecycle;
+- the valid v2 new world must contain the same attempt on the absent arm with zero lifecycle count;
+- v0/v1 openers refuse v2, the v2 opener refuses v0/v1, and neither path rewrites, falls back,
+  creates a missing store, or interprets a missing archive collection as empty; and
+- ordinary startup recovery may establish lifecycle only after a successful version-specific
+  reopen. Migration itself never does so.
+
+## Remaining boundary
+
+The logical missing-lifecycle mapping is closed. `FixedFileStoreV2`, v1-to-v2 file migration, the
+v2 opener/full verifier, migration fault implementation, archive segment publication/activation,
+retained lookup, deletion, backup, production storage, adapter calls, runtime/backend/guest wiring,
+and every consumer remain absent. ADR-0031 remains Proposed. This passive correction advances no
+production, archive activation, continuous-service, rollback-resistance, runtime, backend, or guest
+claim.

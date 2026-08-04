@@ -489,6 +489,40 @@ func TestDarwinOwnerDescriptorReuseIsDetectedWithoutClosingForeignFD(t *testing.
 	}
 }
 
+func TestDarwinStateRootDescriptorReuseIsDetectedWithoutClosingForeignFD(t *testing.T) {
+	fixture := newOwnerFixture(t)
+	root := fixture.root
+	reusedFD := root.fd
+	if err := unix.Close(reusedFD); err != nil {
+		t.Fatal(err)
+	}
+	foreignPath := filepath.Join(fixture.stateRootPath, "foreign")
+	if err := os.WriteFile(foreignPath, []byte("foreign"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	foreignFD, err := unix.Open(foreignPath, unix.O_RDONLY|unix.O_CLOEXEC, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if foreignFD != reusedFD {
+		_ = unix.Close(foreignFD)
+		t.Skipf("descriptor allocator returned %d after %d; reuse oracle unavailable", foreignFD, reusedFD)
+	}
+	if err := root.Close(); !errors.Is(err, ErrOwnerInvariant) {
+		t.Fatalf("reused descriptor close = %v", err)
+	}
+	if root.fd >= 0 {
+		t.Fatal("state root retained a usable descriptor after an identity-mismatch close")
+	}
+	buffer := make([]byte, 7)
+	if _, err := unix.Read(foreignFD, buffer); err != nil || string(buffer) != "foreign" {
+		t.Fatalf("state root closed or changed reused foreign descriptor: %q, %v", buffer, err)
+	}
+	if err := unix.Close(foreignFD); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDarwinOwnerFaultsRefuseWithoutSession(t *testing.T) {
 	tests := []struct {
 		name      string

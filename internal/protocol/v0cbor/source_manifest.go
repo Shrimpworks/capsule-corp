@@ -204,10 +204,14 @@ func (c *SourceManifestCodec) Encode(sourceBytes []byte) ([]byte, error) {
 	return encoded, nil
 }
 
-// Decode applies media, raw-byte, depth/item/collection, and deterministic
-// predecode checks before copying.  fxamacker then performs typed field decode;
-// Capsule re-encodes and compares the exact input, validates the closed shape,
-// binds the separately supplied source, and only then returns owned bytes.
+// Decode clones the received bytes first, then applies media, raw-byte,
+// depth/item/collection, and deterministic predecode checks to that owned
+// copy — never to the caller-supplied slice directly, so a caller mutating
+// its own buffer after this call returns cannot invalidate a certification
+// already performed against different bytes. fxamacker then performs typed
+// field decode on the same clone; Capsule re-encodes and compares the exact
+// input, validates the closed shape, binds the separately supplied source,
+// and only then returns owned bytes.
 func (c *SourceManifestCodec) Decode(received []byte, mediaType string, sourceBytes []byte) (*DecodedSourceManifest, error) {
 	if c == nil {
 		return nil, errors.New("SourceManifest codec is required")
@@ -215,7 +219,8 @@ func (c *SourceManifestCodec) Decode(received []byte, mediaType string, sourceBy
 	if err := v0candidate.ValidateSourceManifestMediaType(mediaType); err != nil {
 		return nil, err
 	}
-	if err := v0candidate.PredecodeSourceManifestCBOR(received); err != nil {
+	exact := bytes.Clone(received)
+	if err := v0candidate.PredecodeSourceManifestCBOR(exact); err != nil {
 		return nil, err
 	}
 	source, err := v0candidate.NewMJSMainSource(sourceBytes)
@@ -223,7 +228,6 @@ func (c *SourceManifestCodec) Decode(received []byte, mediaType string, sourceBy
 		return nil, domain("source bytes do not satisfy the frozen main.mjs contract")
 	}
 
-	exact := bytes.Clone(received)
 	var wire sourceManifestWire
 	if err := c.decode.Unmarshal(exact, &wire); err != nil {
 		var unknownField *cbor.UnknownFieldError

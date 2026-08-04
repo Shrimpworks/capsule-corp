@@ -115,7 +115,11 @@ func openDarwinTrustedStateRoot(
 }
 
 // Close releases only the bootstrap directory descriptor. It has no effect on
-// an acquired owner-lock descriptor, which is separately lifetime-scoped.
+// an acquired owner-lock descriptor, which is separately lifetime-scoped. If
+// the descriptor's identity no longer matches enrollment, Close reports an
+// invariant error and deliberately leaves the descriptor open rather than
+// close it — see the rationale at the identity check below. Callers must
+// treat that error as fail-stop, not as a leak to retry past.
 func (root *TrustedStateRoot) Close() error {
 	if root == nil {
 		return ErrOwnerClosed
@@ -126,6 +130,15 @@ func (root *TrustedStateRoot) Close() error {
 		return ErrOwnerClosed
 	}
 	if err := validateStateRootIdentity(root.fd, root.enrollment, root.operations); err != nil {
+		// Deliberately do not call operations.Close(root.fd) here: an identity
+		// mismatch means this process can no longer prove the descriptor still
+		// refers to the enrolled directory, so fd's number may already have
+		// been reused in-process for an unrelated ("foreign") resource. Closing
+		// it in that state would close whatever now holds that number instead
+		// of what this type opened. Per ADR-0033, an invariant violation is a
+		// fail-stop condition (the process is expected to exit), not a leak to
+		// recover from — see TestDarwinStateRootDescriptorReuseIsDetectedWithoutClosingForeignFD
+		// and its owner-side counterpart, TestDarwinOwnerDescriptorReuseIsDetectedWithoutClosingForeignFD.
 		root.fd = -1
 		return invariant("state-root-close-identity")
 	}
@@ -406,6 +419,9 @@ func (owner *darwinInstallationOwner) CloseAfterShutdown(ctx context.Context) er
 		return ErrOwnerClosed
 	}
 	if err := validateOwnerIdentity(owner.fd, owner.enrollment, owner.operations); err != nil {
+		// Deliberately do not call operations.Close(owner.fd) here: see the
+		// identical rationale on (*TrustedStateRoot).Close, proven by
+		// TestDarwinOwnerDescriptorReuseIsDetectedWithoutClosingForeignFD.
 		owner.fd = -1
 		owner.ownerSessionID = lifecyclestate.OwnerSessionID{}
 		return invariant("owner-close-identity")

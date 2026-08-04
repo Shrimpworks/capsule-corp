@@ -216,6 +216,14 @@ Final entitlements, inherited descriptor checks, protected construction, and cle
 remain open. App Sandbox does not revoke file descriptors inherited at launch and does not replace
 hostile-guest isolation.
 
+The Source Validator replacement review adds a narrower negative result. A directly launched
+embedded helper inherits its daemon or Broker parent's static sandbox rights, so that composition
+is rejected for hostile parser memory. A separately sandboxed XPC launcher with one fresh parser
+child is the only plausible supported design found, but it remains blocked: its topology is
+unselected, App Sandbox supplies a writable private container, and the observed host has no usable
+public unprivileged hard memory cap. Hardened Runtime, launch/library constraints, descriptor
+closure, rlimits, and reactive footprint monitoring narrow risk but do not erase those gaps.
+
 ### Keychain, LocalAuthentication, and user presence
 
 The macOS **Keychain** stores keys and secrets under access-control and signed-entitlement rules.

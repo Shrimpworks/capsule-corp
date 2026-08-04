@@ -27,6 +27,14 @@ Parent status: Product Source Validator V1-V5 and downstream M2/S1 are BLOCKED. 
   Proposed; the artifact profile remains not enrolled and no product consumer exists.
 ```
 
+Follow-on: the
+[supported macOS replacement review](../../docs/MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
+is `PASSED` in its research/design scope and does not change this checkpoint's `BLOCKED` status.
+It rejects direct parent-sandbox inheritance, identifies only a separately sandboxed XPC-launcher/
+fresh-parser-child candidate, and retains a public-SDK footprint-limit denial. R0 remains blocked on
+launcher topology, App Sandbox writable-container policy, and a hard-memory or explicitly revised
+reactive-resource decision. V1/V2 bytes remain unchanged.
+
 ## Defensive scope and claim boundary
 
 The harness parses but never executes the retained fixture JavaScript. It touches only the Capsule

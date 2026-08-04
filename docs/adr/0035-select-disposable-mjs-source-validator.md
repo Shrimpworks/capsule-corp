@@ -2,6 +2,7 @@
 
 - Status: Proposed
 - Date: 2026-08-04
+- Supported macOS profile replacement reviewed: 2026-08-04
 - Refines: ADR-0010, ADR-0018, ADR-0029, and ADR-0034
 
 ## Context
@@ -126,12 +127,61 @@ source, caller path, arbitrary diagnostic text,
 specifier, package, loader choice, or authority-bearing identifier.
 
 The production child must be launched from one enrolled, assessed, immutable
-artifact by a fixed parent-controlled descriptor. It has no durable store, keys,
-network, inherited ambient file descriptors, caller-selected paths, environment,
-package cache, import map, runtime, backend, guest, or execution authority. Its OS
-profile must enforce copied input/output, memory/CPU/wall ceilings, and kill-on-
-deadline. The exact artifact, launch descriptor, protocol bytes, and sandbox
-profile require retained evidence before acceptance.
+artifact by a fixed descriptor owned by the selected low-authority launcher. It has
+no Capsule store, keys, network, inherited ambient file descriptors,
+caller-selected paths, environment, package cache, import map, runtime, backend,
+guest, or execution authority. Its OS profile must enforce copied input/output,
+the accepted memory/resource policy, and kill-on-deadline. The exact artifact,
+launcher topology, launch descriptor, protocol bytes, and sandbox profile require
+retained evidence before acceptance.
+
+### Supported macOS profile correction
+
+The [supported-profile replacement review](../MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
+closes the design question without unblocking product implementation.
+
+Apple's supported App Sandbox composition does not allow a daemon or Broker to
+spawn a directly inherited command-line helper with fewer static sandbox rights
+than the parent. A directly launched embedded tool receives the launching
+component's sandbox capabilities and is therefore `NO_GO` for this exact parser
+boundary. It could expose daemon state or Broker/key-adjacent authority to parser
+memory corruption.
+
+The only plausible supported composition is a separately App-Sandboxed,
+method-specific XPC launcher with no Capsule key/store/backend authority, which
+spawns and owns one fresh parser child per request. The parser child would be
+signed with the supported App Sandbox inheritance shape and would inherit the
+launcher's minimal sandbox, not the daemon's or Broker's. The launcher would own
+fixed pipes, rlimits, physical-footprint observation, process-group kill, drain,
+and `waitpid`; an XPC interruption or launcher death would be a refusal rather
+than a retry. The public parent-facing message would remain one closed fixed-data
+operation, never a generic XPC/JSON/Codable bus.
+
+That topology is not selected or authorized yet. Private XPC services are
+`launchd`-managed and private to their containing app, so independently serving
+the daemon and Broker requires an exact installed topology decision. App Sandbox
+also grants the launcher and inherited parser child unrestricted read/write
+access to the launcher's private container; no supported zero-container or
+zero-durable-write mode was found. A new launcher role, an app group, a shared
+Keychain group, or a temporary global Mach lookup exception may not be inferred.
+
+The resource result remains independently blocking. `RLIMIT_AS`/`RLIMIT_RSS`
+cannot be lowered on the observed host; `RLIMIT_DATA`, stack, and memlock limits
+are narrower resources. A bounded unprivileged probe of the public-SDK
+`task_set_phys_footprint_limit` interface returned `KERN_NO_ACCESS` for its own
+task. `proc_pid_rusage` can support a reactive observed-footprint watermark, but
+sampling and kill do not impose an exact peak ceiling. Bounded input/output,
+one-child concurrency, CPU/wall limits, kill/reap, and system memory pressure are
+therefore insufficient under the current exact-memory acceptance rule.
+
+Any resumed artifact must use new closed identities—provisionally protocol/method
+v1, `capsule.source-validator.macos-xpc-parser-child/v1`, and artifact profile
+v1—and bind the complete signed launcher/parser bundle, entitlements, Hardened
+Runtime exceptions, launch/library constraints, code identities, installed
+placement, resource policy, and supported-host matrix. V1/V2 bytes and identities
+remain historical and unchanged. A separately authorized signing task is required
+before installed evidence; this ADR does not authorize use of any developer's
+signing identity.
 
 Both of these checks are mandatory and independent:
 
@@ -233,6 +283,15 @@ deprecated custom sandboxing is not accepted as a substitute. The retained V1 ob
 remain unchanged and not enrolled. V2 resumes only after a newly reviewed/enrolled artifact and a
 supported exact memory/confinement design exist; this checkpoint does not change the ADR's
 Proposed status or activate V3/V4.
+
+The subsequent supported-profile design slice is `PASSED` in its research scope
+and leaves the parent `BLOCKED`. It rejects direct sandbox inheritance, identifies
+the separately sandboxed XPC-launcher/fresh-parser-child candidate, fixes the new
+identity and conformance requirements, and retains the negative public-footprint-
+limit observation. It does not select the launcher topology, accept the writable
+container, change the exact-memory rule, sign/build/enroll an artifact, or activate
+a consumer. Resume only after the architecture and resource-policy decisions in
+the replacement review are accepted.
 
 Acceptance requires the gates in
 [`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md)

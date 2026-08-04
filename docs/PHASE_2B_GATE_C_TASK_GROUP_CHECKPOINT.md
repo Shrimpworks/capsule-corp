@@ -2,8 +2,8 @@
 
 Date: 2026-08-04
 
-Status: repository checkpoint through current main plus the passive V0 contract and bounded V1
-artifact evidence retained in the current Source Validator task. This is a status and dependency
+Status: repository checkpoint through current main plus the passive V0 contract, bounded V1
+artifact, and blocked V2 process-profile evidence retained in the current Source Validator task. This is a status and dependency
 index. It does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 
@@ -32,7 +32,7 @@ targets plus 40 independently verified MJS byte/manifest targets in each languag
 standalone test-only Rust oracle additionally verify 128 exact passive Source Validator frames.
 Twenty-eight exact M1 HOLD result oracles are retained and the unwired V1 artifact reproduces them,
 and both are `PASSED` in their exact passive or unwired scopes. Product Source Validator work is
-`IN_PROGRESS — TRENDING_GOOD`. The passive field-authority foundation covers 228 fields across 20
+`BLOCKED` on the retained V2 macOS resource/confinement stop. The passive field-authority foundation covers 228 fields across 20
 selected pre-freeze targets, including SourceManifest and the four passive Source Validator
 objects; it does not classify future Source Preparer or plan-v1 objects.
 
@@ -73,7 +73,10 @@ exact scopes. The removed handwritten scanner is
 Proposed ADR-0035 now has an
 exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). The V1 artifact
 profile remains unsigned/not enrolled and lacks independent reproduction, V2 confinement, an
-endpoint, and a consumer. Those V1-V5 gates are `IN_PROGRESS — TRENDING_GOOD`; JobProposal
+endpoint, and a consumer. V2 now retains exact fixed-I/O/fault mechanics plus the stop: `RLIMIT_AS`
+returns `EINVAL`, the explicit unbounded diagnostic mutation retains file/socket/write authority,
+and supported App Sandbox child entitlements change the fixed V1 bytes. Those V1-V5 gates are
+`BLOCKED`; JobProposal
 narrowing and all S1/M2 registration/fetch work remain `BLOCKED` on them. The proposed
 `RegisterPlanV0` would atomically submit exact plan bytes, the
 complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
@@ -133,7 +136,7 @@ governance reconciliation before Capsule reuses it.
 | --- | --- | --- |
 | `PASSED` local conformance slice / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2 / F3+ | F2's explicit v1-to-v2 migration/full verifier passes with the exact absent/present join and zero adapter calls. Continue next with F3's one-segment prepare/verify/activate transaction; production archive/store admission remains later. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
-| `PASSED` prerequisites / `IN_PROGRESS — TRENDING_GOOD` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc parser/process selection, passive frames, and unwired V1 artifact passed their bounded scopes. Build the remaining V1-V5 gates without an ad hoc scanner or runtime substitution; keep S1/M2 blocked until their required validator gates pass. |
+| `PASSED` prerequisites / V2 and parent `BLOCKED` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc parser/process selection, passive frames, and unwired V1 artifact passed their bounded scopes. V2 cannot confine the unchanged artifact with the tested supported primitives: resume only with a newly reviewed/enrolled artifact and supported exact memory/confinement design. Do not use deprecated custom sandboxing, the explicit unbounded diagnostic mutation, an ad hoc scanner, or runtime substitution; keep S1/M2 blocked. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |

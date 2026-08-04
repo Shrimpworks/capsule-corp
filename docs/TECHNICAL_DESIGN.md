@@ -81,7 +81,7 @@ The first complete workflow is intentionally narrow:
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
    loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
    parser/process selection are `PASSED`; product Source Validator V1-V5 is
-   `IN_PROGRESS — TRENDING_GOOD`, and plan construction remains `BLOCKED` until its required gates
+   `BLOCKED`, and plan construction remains `BLOCKED` until its required gates
    pass.
 2. The Go daemon strictly decodes the proposal and, under Proposed ADR-0035, sends an exact copied
    source to a fresh disposable Source Validator before planning. The validator parses but never
@@ -210,6 +210,14 @@ independent provenance, installation enrollment, sandbox/resource, consumer, bro
 and fault evidence pass the
 [`implementation plan`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md). Runtime no-loader admission
 remains a separate mandatory control.
+
+The exact V2 local macOS checkpoint does not advance that boundary. Its strict bootstrap refuses
+before `exec` because `RLIMIT_AS` cannot be lowered; its explicitly unbounded diagnostic mutation
+proves deterministic process/fault mechanics while also proving ambient file, socket, metadata-
+write, and memory authority remains. Supported App Sandbox child entitlements change the fixed V1
+bytes, and deprecated custom profiles are not substituted. V2 and the product Source Validator
+parent are `BLOCKED` pending a new reviewed/enrolled artifact and supported resource/confinement
+design.
 
 ### Trusted Host Broker
 

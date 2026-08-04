@@ -22,6 +22,11 @@ Source Validator work, governed `deno_core`, and governed libkrun are `IN_PROGRE
 TRENDING_GOOD`. Installed owner-lock G3 and runtime/profile admission are `BLOCKED` on the named
 dependencies below. They are not `NO_GO`. Product admission and control-evidence maturity remain
 separate from those work statuses.
+and G2 local owner composition are `PASSED` in their exact scopes. Governed `deno_core` and
+governed libkrun are `IN_PROGRESS — TRENDING_GOOD`. Product Source Validator work, Archive F2,
+installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the named dependencies below. They
+are not `NO_GO`. Product admission and control-evidence maturity remain separate from those work
+statuses.
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
@@ -53,6 +58,16 @@ two-directory byte reproduction. Its identity-free linker ad-hoc signature is re
 not installation-signed or enrolled: independent-builder, vulnerability-owner, V2 sandbox/resource,
 V3/V4 consumer, and V6 runtime evidence remain blockers. No product endpoint, runtime no-loader
 boundary, runtime, backend, or guest is implemented or admitted.
+
+The retained V2 macOS checkpoint now makes that process-profile blocker exact. A strict test-only
+bootstrap fixes copied I/O, argv, empty environment, cwd, descriptor closure, CPU/file/FD/child/
+wall limits, kill/reap, and fault refusal, but `RLIMIT_AS` returns `EINVAL` before the artifact
+executes. An explicitly unbounded diagnostic mutation proves file reads, IPv4/Unix socket creation,
+cwd metadata writes, and a 512 MiB mapping remain possible. Apple's supported embedded-tool App
+Sandbox entitlement shape changes the fixed V1 bytes, while deprecated custom sandbox profiles are
+not acceptable evidence. V2 and the parent V1-V5 work are therefore `BLOCKED`, not `NO_GO`, pending
+a newly reviewed/enrolled artifact and supported memory/confinement design. V0/V1 bytes and status
+remain unchanged.
 
 Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,

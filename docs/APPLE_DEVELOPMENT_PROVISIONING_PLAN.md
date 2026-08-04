@@ -16,6 +16,12 @@ TeamIdentifier are `3DDR84M4JS`. No cached profile belongs to W4. Treat the bund
 below as future W4 requirements only; do not use that certificate or the historical profiles as
 W4 evidence. See the retained [G3 NO-GO](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
+The 2026-08-04 exact-selector follow-up also proved that the `codesign` default designated
+requirement repeats the misleading W4 common name without binding the certificate Team OU. That
+requirement is not W4 admission evidence. The future W4 run must require the explicit Team OU,
+emitted TeamIdentifier, role signing identifier, enrolled exact CDHashes, and effective entitlement
+digest. Both standard local profile caches were checked; only the same three 3DDR profiles exist.
+
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
 

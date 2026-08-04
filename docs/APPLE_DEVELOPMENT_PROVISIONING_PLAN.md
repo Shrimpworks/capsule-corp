@@ -8,13 +8,22 @@ service name, and test step below is a proposal for the user/orchestrator to exe
 [S5: Apple Development installed matrix](AUTHENTICATED_LOCAL_IPC_PLAN.md#s5-apple-development-installed-matrix),
 not a decision this repository has already made unless the exact doc/ADR making it is cited.
 
+Correction after exact G3 discovery: the earlier inference that the displayed certificate was a
+W4 Team identity is false. Certificate SHA-1
+`1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as
+`Apple Development: Dylan Steele (W4QUR9FUL4)`, but its X.509 subject OU and an exact signed-byte
+TeamIdentifier are `3DDR84M4JS`. No cached profile belongs to W4. Treat the bundle/profile tables
+below as future W4 requirements only; do not use that certificate or the historical profiles as
+W4 evidence. See the retained [G3 NO-GO](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
+
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
 
 ## Scope and method
 
-This plan used only the free/Individual Apple Development identity already discovered for Team
-`W4QUR9FUL4` (not a paid Developer ID/notarization identity). It read `AGENTS.md`,
+This plan originally relied on the display-name inference for an Apple Development identity
+expected to belong to Team `W4QUR9FUL4` (not a paid Developer ID/notarization identity). Exact G3
+readback later disproved that Team inference. It read `AGENTS.md`,
 [`ARCHITECTURE.md`](ARCHITECTURE.md), [`AUTHENTICATED_LOCAL_IPC_PLAN.md`](AUTHENTICATED_LOCAL_IPC_PLAN.md)
 and its [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md),
 [`SUPERVISOR_OWNER_LOCK_PLAN.md`](SUPERVISOR_OWNER_LOCK_PLAN.md),
@@ -37,19 +46,20 @@ target-of-signing binaries.
 
 Per S5 and `WORKSTREAM_EVIDENCE_LEDGER.md`:
 
-- Current Apple Developer membership: Individual, Team ID `W4QUR9FUL4`.
-- `security find-identity -v -p codesigning` reports a valid Apple Development identity for that
-  team on this host.
+- The user confirms Individual membership under development Team `W4QUR9FUL4`; the locally
+  available certificate does not belong to that Team at the code-signing boundary.
+- `security find-identity -v -p codesigning` reports a certificate whose display name ends in W4,
+  but its subject OU and signed-byte TeamIdentifier are `3DDR84M4JS`; it is not W4 evidence.
 - Xcode 26.6 has three cached provisioning profiles, all belonging to the historical Team
   `3DDR84M4JS` (Gate B Broker, Gate B Supervisor, wildcard). None are reusable for W4.
 - A separate Developer ID Application identity exists only for historical Team `3DDR84M4JS`. It is
   not W4 evidence and does not make Developer ID/notarization current for W4.
-- No W4 role App IDs, entitlements, or profiles have been deliberately created yet.
+- No matching W4 signing certificate or W4 role profile is locally available.
 - No paid owned clean-host / minimum-OS validation hardware is currently planned.
 
-Whether Team `W4QUR9FUL4` is a paid Apple Developer Program (Individual) enrollment or Xcode's free
-automatic "Personal Team" is **not confirmed by anything in this repository** and changes App
-ID/profile capacity. This is the first action item below (§7, item 1).
+The task confirms Individual membership. Actual App ID/profile capacity and portal availability
+must still be observed under the selected W4 team during certificate/profile creation; repository
+text cannot establish Apple account state.
 
 ## Component inventory and bundle-identifier proposal
 
@@ -95,8 +105,9 @@ for product App IDs. None of the IDs above exist as registered App IDs yet.
 
 ## Required App IDs and provisioning profiles (development-only)
 
-Team `W4QUR9FUL4` currently has only an Apple Development identity, so every profile below is a
-macOS Development profile, not Developer ID/Distribution:
+The future W4 lane requires an Apple Development identity whose certificate subject OU and signed
+TeamIdentifier both equal `W4QUR9FUL4`; every profile below is then a macOS Development profile,
+not Developer ID/Distribution:
 
 | Explicit App ID | Capabilities | Profile type | Notes |
 | --- | --- | --- | --- |
@@ -106,7 +117,7 @@ macOS Development profile, not Developer ID/Distribution:
 | `com.capsulecorp.capsule.broker` | App Sandbox, Keychain Sharing | macOS App Development | |
 
 For each App ID: one macOS App Development provisioning profile scoped to the exact App ID, the one
-Apple Development certificate already available for W4QUR9FUL4, and this Mac's device UDID.
+matching W4 Apple Development certificate after reissue/verification, and this Mac's device UDID.
 Development profiles are inherently single-Team, non-notarizable, and Gatekeeper-rejecting by
 design — P0-4A's `spctl --assess` already returned status 3 against ad-hoc-signed bytes, and this
 plan should not chase a Gatekeeper-pass result with a Development profile.
@@ -272,27 +283,30 @@ Per this plan's explicit scope (no paid Developer ID/notarization identity):
 
 Nothing below has been executed:
 
-1. Confirm Team `W4QUR9FUL4`'s actual enrollment tier (paid Individual vs. free Personal Team) —
-   not confirmable from repo text alone.
-2. Decide Option A vs. Option B (§3) before reserving App IDs — it changes whether 3 or 4 distinct
+1. Select the user-confirmed Individual Team `W4QUR9FUL4` explicitly in the Apple portal/Xcode and
+   verify the portal's current App ID/profile capacity.
+2. Reissue/create an Apple Development certificate under that selected Team whose public subject OU and harmless
+   signed-byte TeamIdentifier both read back exactly `W4QUR9FUL4`; revoke/retire the misleading
+   certificate according to Apple account policy rather than relabeling it locally.
+3. Decide Option A vs. Option B (§3) before reserving App IDs — it changes whether 3 or 4 distinct
    App IDs are needed.
-3. In the Apple Developer portal, register the exact explicit App IDs from §4, enabling App Sandbox
+4. In the Apple Developer portal, register the exact explicit App IDs from §4, enabling App Sandbox
    and Keychain Sharing where listed.
-4. Register this Mac's device UDID as a development test device under the team.
-5. Create one macOS App Development provisioning profile per App ID.
-6. Download/install the profiles via Xcode — not by copying Gate B's cached `3DDR84M4JS` profiles,
+5. Register this Mac's device UDID as a development test device under the team.
+6. Create one macOS App Development provisioning profile per App ID.
+7. Download/install the profiles via Xcode — not by copying Gate B's cached `3DDR84M4JS` profiles,
    which are unusable here.
-7. Author the four `.entitlements` files (§5/§6) using `experiments/macos-authority-separation/
+8. Author the four `.entitlements` files (§5/§6) using `experiments/macos-authority-separation/
    Provisioned/Entitlements/*.entitlements` as a structural template but with W4-scoped,
    epoch-suffixed group names.
-8. Once real Xcode targets exist (they don't yet — only `cmd/capsuled/main.go` is real product
+9. Once real Xcode targets exist (they don't yet — only `cmd/capsuled/main.go` is real product
    source), wire `CODE_SIGN_ENTITLEMENTS` and `PRODUCT_BUNDLE_IDENTIFIER` per target, matching the
    `GateBProvisioned.xcodeproj` build-setting pattern already in the repo.
-9. Build and locally run the §8 test matrix, rows 1–13/16/17/20 first, recording exact
+10. Build and locally run the §8 test matrix, rows 1–13/16/17/20 first, recording exact
    CDHash/entitlement-digest/Team-ID readbacks at every step per §7.
-10. Only after S5 evidence is retained and reviewed should anyone consider requesting Developer
+11. Only after S5 evidence is retained and reviewed should anyone consider requesting Developer
     ID/notarization for this team — a distinct, separately-authorized future task.
-11. Whatever S5 evidence is produced must be written back into the repo's own evidence trail (a
+12. Whatever S5 evidence is produced must be written back into the repo's own evidence trail (a
     `RESULTS.md` under a new `experiments/` directory, plus updates to this plan's S5 status and
     `WORKSTREAM_EVIDENCE_LEDGER.md`) — chat history alone is not retained evidence.
 

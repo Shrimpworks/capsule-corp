@@ -514,11 +514,12 @@ the hardened App Sandbox runner, protected-container custody test, and Team-enro
 Developer ID signing/notarization credentials for complete-bundle notarization, stapling, and
 Gatekeeper assessment; and installed-byte, clean-host, session/recovery, and support-floor
 validation on those exact signed bytes. P0-4B and final P0-1/P0-2/P0-3 installed reruns cannot pass
-without that evidence. Those identities/profiles must be deliberately authorized. Current
-Individual membership is Team `W4QUR9FUL4`, and read-only local discovery now reports a valid Apple
-Development identity for that Team. Local signed/provisioned experiments can proceed once exact W4
-role identifiers, entitlements, and profiles are deliberately created. The three Xcode 26.6-cached
-profiles all belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. A separate
+without that evidence. Those identities/profiles must be deliberately authorized. Exact G3
+discovery found that certificate SHA-1 `1638...61E3` is displayed with a W4 suffix, but its X.509
+subject OU and emitted code-signing TeamIdentifier are `3DDR84M4JS`; it is not W4 evidence. The
+three Xcode 26.6-cached profiles all belong to historical Team `3DDR84M4JS` and are likewise not
+reusable for W4 tests. Local W4 work requires a matching/reissued certificate and exact profiles,
+not only role identifiers and entitlements. A separate
 Developer ID Application identity for historical Team `3DDR84M4JS` remains later distribution
 authority requiring explicit authorization and matching-Team package design; it is not W4
 development evidence and does not make Developer ID or notarization work current. Paid owned clean-host/

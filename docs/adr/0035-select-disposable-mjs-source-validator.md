@@ -223,6 +223,17 @@ the provenance and assessment are unsigned, reproduction is not independent, and
 owner/SLA or installation-authority signature exists. V2 confinement and every consumer remain
 unimplemented. This evidence therefore narrows V1 but does not change this ADR's Proposed status.
 
+The next retained V2 checkpoint is `BLOCKED`. A strict macOS test bootstrap fixes copied I/O,
+argv, empty environment, cwd, descriptor closure, enforceable rlimits, wall deadline, kill/reap,
+and fault refusal, but `RLIMIT_AS` returns `EINVAL` before the V1 artifact executes. An explicitly
+unbounded diagnostic mutation proves the remaining mechanics and later clean invocation while also
+proving ambient file reads, socket creation, cwd metadata writes, and a 512 MiB mapping remain.
+Apple's supported embedded-tool App Sandbox child entitlements change the exact V1 Mach-O bytes;
+deprecated custom sandboxing is not accepted as a substitute. The retained V1 object and profile
+remain unchanged and not enrolled. V2 resumes only after a newly reviewed/enrolled artifact and a
+supported exact memory/confinement design exist; this checkpoint does not change the ADR's
+Proposed status or activate V3/V4.
+
 Acceptance requires the gates in
 [`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md)
 and additive consumption of M1's authoritative passive fixtures. The retained mapping and V0

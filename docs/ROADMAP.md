@@ -12,8 +12,8 @@ All labels below follow the [canonical work status language](STATUS_LANGUAGE.md)
 local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a selected
 protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
 ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in their exact
-scopes. V1 enrollment and V2-V5 process/consumer work are `IN_PROGRESS — TRENDING_GOOD`; downstream
-S1/M2 remains `BLOCKED` on those gates.
+scopes. V1 enrollment and V2-V5 process/consumer work are `BLOCKED` on the retained V1 enrollment
+and V2 resource/confinement stops; downstream S1/M2 remains `BLOCKED` on those gates.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -184,7 +184,11 @@ fallback. Its passive source-byte/SourceManifest foundation is retained, and an 
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
 passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
 but the M1 product validator and downstream S1/M2 registration/fetch slices remain on hold pending
-V1 enrollment closure and V2-V5.
+V1 enrollment closure and V2-V5. The exact V2 macOS checkpoint is now `BLOCKED`: its strict
+bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation retains ambient
+file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
+fixed V1 bytes. Resume only with a newly reviewed/enrolled artifact and supported exact memory/
+confinement design; deprecated custom sandboxing is not a fallback.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
 one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed

@@ -43,6 +43,11 @@ manifest fixtures precede S1/M2 registration/fetch fixtures. The retained
 conditional later TypeScript cutover may not reinterpret the 562-byte v0 binding record or treat
 the 626-byte arithmetic as a layout.
 
+The follow-on grammar/process decision is [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
+and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
+It selects a one-shot disposable Source Validator and exact Oxc candidate from retained parse-only
+evidence; no product validator or runtime no-loader boundary is implemented.
+
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-
 implemented [Source Preparer implementation, conformance, and fault plan](TYPESCRIPT_SOURCE_PREPARER_PLAN.md).

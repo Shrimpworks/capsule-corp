@@ -25,6 +25,8 @@ is implemented or validated.
 │  ├── proposal handling and plan construction                        │
 │  ├── policy resolution and immutable planning                       │
 │  └── no approval key, backend launch, or user-only content          │
+│             ├── proposed disposable `.mjs` Source Validator         │
+│             │   └── one-shot parse only; no keys/store/network       │
 │             ├── exact first-release `main.mjs` pass-through source   │
 │             │   └── atomic plan/source registration and readback     │
 │             ├── future conditional TypeScript Source Preparer       │
@@ -66,6 +68,7 @@ or execution authority:
 | Component | May do | Must not do |
 | --- | --- | --- |
 | Agent-facing daemon | Authenticate agents, validate proposals, resolve policy, construct plans, register plans, request attempts, expose fixed status | Use approval/evidence keys, launch a backend, replace registered plan bytes, retrieve user-only content, clear quarantine or grant state |
+| Proposed `.mjs` Source Validator | Parse one copied bounded `main.mjs` and return fixed typed digest/length/grammar-node facts to a parent | Execute source, keep a durable store, use keys or network, accept paths/packages/loaders, approve/register plans, launch a backend |
 | Proposed TypeScript Source Preparer | Transform copied untrusted source before planning, own exact original/emitted/profile/options/record bytes, return fixed plan projections and registered executable copies | Approve or register plans, access user-only Broker content, expose a generic parser/path API, launch a backend, transform after registration |
 | Trusted Host Broker | Render registered plans, require user presence, sign one-use approvals, select files, own user content, release fixed summaries | Expose agent endpoints, launch a guest, accept daemon display prose as authoritative, make enforcement claims |
 | Execution Supervisor | Independently validate registered plans, enforce hard safety, consume approvals, create attempts, manage backend lifecycle, sign enforcement transcripts | Parse the public agent protocol, author general policy, select files, perform rich parsing, fetch network trust data |
@@ -95,6 +98,22 @@ is on the retained grammar-counterexample hold, so JobProposal narrowing, plan c
 custody, authenticated transport, consumer, runtime, backend, and guest remain unimplemented.
 Proposed ADR-0032's separately enrolled
 Source Preparer is now only a conditional later TypeScript topology and remains on P1 HOLD.
+
+### Proposed `.mjs` Source Validator
+
+Proposed ADR-0035 places the first-release grammar check in a new one-shot stateless process, not
+inside the daemon, Approval Broker, or Execution Supervisor. The daemon supplies an exact copied
+source before planning; the Broker later supplies a fresh exact copy fetched from Supervisor
+registration state before rendering or any Approval-key operation. Each invocation binds a fixed
+typed result to recomputed digest and length. Crash, timeout, diagnostics, malformed output,
+artifact mismatch, or any forbidden AST node refuses.
+
+The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
+does not parse rich source. The validator has no authority to approve, retain state, or launch a
+guest. This is a proposed approval-correctness/usability gate; an admitted runtime must still
+independently refuse every static or dynamically constructed module request. The experiment and
+unimplemented gates are documented in
+[`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
 
 ### Proposed TypeScript Source Preparer
 

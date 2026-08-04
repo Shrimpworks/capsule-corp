@@ -64,5 +64,7 @@ its core conclusion.
 - [ADR-0033: Select an enrolled BSD `flock` object for Supervisor ownership](0033-select-enrolled-flock-supervisor-owner.md)
   — Proposed
 - [ADR-0034: Freeze a single-file `.mjs` first-release contract](0034-freeze-mjs-first-release-contract.md)
+- [ADR-0035: Select a disposable `.mjs` Source Validator](0035-select-disposable-mjs-source-validator.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

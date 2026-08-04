@@ -97,5 +97,13 @@ internal-object candidates are verified separately and are not activated target 
 blocking evidence and contract decisions determine honest semantics before a coordinated
 schema/type/example/API replacement. See [Schema status](../schemas/README.md).
 
+## Go engineering references
+
+- [Go engineering standards](GO_ENGINEERING_STANDARDS.md) — naming, structure, error handling,
+  testing, and lint hygiene for Go code in this repository; a companion to `AGENTS.md`, not a
+  replacement.
+- [Capsule domain primer](CAPSULE_DOMAIN_PRIMER.md) — fast-orientation vocabulary and Go package
+  map for a contributor about to write or review Go code here.
+
 Development setup is documented in [Development](DEVELOPMENT.md). GitHub configuration and public
 release checks are documented in [Repository setup](REPOSITORY_SETUP.md).

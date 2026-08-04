@@ -21,8 +21,11 @@ v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F
 retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
-TRENDING_GOOD`; the next local archive work starts at F4B. None of those blocked or incomplete parent
-items is `NO_GO`. Product admission and control-evidence maturity remain separate from work status.
+TRENDING_GOOD`. Archive F4B is now `BLOCKED` on a passive effect-history contract correction:
+F4A binds retained effect lookup to the lifecycle record's single current effect, while ADR-0031
+requires every earlier v2 effect tombstone to survive replacement of that field. None of those
+blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
+remain separate from work status.
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
@@ -181,7 +184,11 @@ nonce, effect, instance, and replay identities through typed hot/archive retaine
 plus passive collision queries and hot-only `AttemptID` recovery. See the
 [F4A retained lookup result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). It adds no v2 write,
 authority/lifecycle mutation, new effect tombstone, second segment, adapter, consumer, runtime,
-backend, or guest. F4B mutation and F4C bounded growth remain open.
+backend, or guest. F4B mutation and F4C bounded growth remain outside F4A's passed scope.
+[The retained F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) now proves that mutation
+cannot safely begin until a passive versioned effect-history/lookup/segment correction reconciles
+F4A's current-effect reconstruction with ADR-0031's append-only v2 tombstones. F4B is `BLOCKED`,
+not abandoned; F4C and F5-F6 remain deferred.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

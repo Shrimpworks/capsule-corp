@@ -78,8 +78,13 @@ valid-orphan reporting without deletion, and complete predecessor-or-successor r
 fault/corruption/substitution/concurrency/owner-loss/process-death limitations. Retained lookup,
 replay, and passive uniqueness routing are now implemented by the read-only
 [F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). F4B v2 authority/lifecycle mutation and
-new effect tombstones, F4C multi-segment bounded growth, backup, cleanup policy, and later slices
-remain unimplemented. The fixed oracle is not selected as the production engine.
+new effect tombstones are now
+[`BLOCKED` on an exact retained effect-history contradiction](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md):
+F4A full reconstruction and `ResolveEffect` bind one effect to the lifecycle record's single
+current effect field, but this ADR requires every earlier v2 effect tombstone to remain after that
+field is replaced. A passive versioned format/lookup correction must precede mutation. F4C multi-
+segment bounded growth, backup, cleanup policy, and later slices remain unimplemented. The fixed
+oracle is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
 evidence-backed selection. Convenience, familiarity, or avoiding a migration is not a selection
@@ -644,8 +649,11 @@ in its exact local fixed-store scope. The
 retained lookup, v2 authority mutation, a second segment, backup/orphan cleanup, a production
 engine, or a product consumer. The follow-on read-only
 [F4A retained lookup result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) is `PASSED` in its exact
-local scope; it does not implement F4B mutation/tombstone commits, F4C second-segment growth, or any
-other listed blocker.
+local scope. The executable
+[F4B mutation blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) now retains why its current
+effect lookup/reconstruction semantics cannot also retain historical v2 effect tombstones after
+the lifecycle field changes. F4B is `BLOCKED` pending the passive contract correction; F4C second-
+segment growth and every other listed blocker remain open.
 
 ## Acceptance blockers
 

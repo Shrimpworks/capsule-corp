@@ -96,9 +96,13 @@ or product-admitted archive. Its collision API is passive and cannot authorize a
 itself.
 
 F4B must add atomic v2 authority/lifecycle mutation, repeat retained-global uniqueness checks in
-the same transaction, and commit each new v2 effect tombstone with its `BeginEffect` intent. F4C
-must separately add second-segment activation and the exact 64-segment/index/byte bounded-growth
-oracles. F4A implements neither slice. Backup, cleanup/deletion, production-engine selection,
+the same transaction, and commit each new v2 effect tombstone with its `BeginEffect` intent. Its
+first implementation review is now
+[`BLOCKED`](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md): this F4A scope reconstructs and resolves an
+effect only when it equals the lifecycle record's single current effect, so it cannot retain an
+older v2 effect after a later operation replaces that field without a passive format/lookup
+correction. F4C must separately add second-segment activation and the exact 64-segment/index/byte
+bounded-growth oracles. F4A implements neither slice. Backup, cleanup/deletion, production-engine selection,
 installed owner/protected-root evidence, APFS/real-power-loss evidence, restore/anti-rollback,
 consumer/IPC integration, runtime/backend/guest security, and production admission remain open.
 ADR-0031 remains Proposed.

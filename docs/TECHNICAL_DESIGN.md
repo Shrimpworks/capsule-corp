@@ -89,7 +89,13 @@ production engine, consumer, adapter, runtime, backend, or guest.
 The [read-only F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) now adds fresh full-verification
 retained-global lookup/replay/passive-collision routing across typed hot/archive locations and
 hot-only `AttemptID` recovery. It adds no v2 mutation, new effect tombstone, second segment,
-consumer, adapter, runtime, backend, or guest; F4B mutation and F4C growth remain open.
+consumer, adapter, runtime, backend, or guest; F4B mutation and F4C growth remain outside F4A's
+passed scope.
+The first F4B implementation review is now
+[`BLOCKED`](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md): F4A reconstructs and resolves only the
+lifecycle record's current effect, which cannot retain every earlier v2 effect tombstone required
+by ADR-0031 after that field changes. A passive versioned format/lookup correction must land before
+mutation; F4C remains deferred.
 
 ## Reference workflow
 
@@ -808,7 +814,10 @@ one closed cohort segment and atomic generation-two activation with full reopen 
 still adds no retained lookup, v2 authority mutation, second segment, consumer, or deletion. F4A
 now adds only read-only retained-global lookup/replay/passive-collision routing and hot-only
 `AttemptID` recovery. F4B authority/lifecycle mutation and F4C second-segment/bounded growth remain
-open. A production engine plus real power-loss proof remain deferred.
+open in the design. F4B implementation is currently
+[`BLOCKED`](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) on the current-effect versus append-only-
+tombstone representation contradiction; F4C remains deferred. A production engine plus real
+power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -849,8 +858,9 @@ implemented.
 2. Continue from the completed ADR-0031/F1, stateful
    [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md), and
    [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md), and
-   [F4A retained lookup](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) into F4B atomic v2 mutation/new
-   effect-tombstone enforcement and F4C bounded growth, then F5 backup/orphan/offline reporting before the bounded SQLite
+   [F4A retained lookup](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) through the passive correction
+   required by the [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md), then resume F4B atomic
+   v2 mutation/new effect-tombstone enforcement and F4C bounded growth, then F5 backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
 3. Continue the Source Validator replacement after accepted R0/ADR-0036 in this strict order:

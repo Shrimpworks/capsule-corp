@@ -620,6 +620,10 @@ segment, backup, orphan cleanup, or adapter call. The follow-on
 replays, passive collision checks, and hot-only recovery through freshly full-verified retained-
 global typed locations. It refuses corrupt/substituted/stale/wrong-domain storage without fallback
 or rewrite and performs no v2 mutation, new tombstone commit, second segment, or adapter call. The
+[F4B implementation review](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) is `BLOCKED`: F4A can
+reconstruct and resolve only the lifecycle record's current effect, while ADR-0031 requires every
+earlier v2 effect tombstone to remain after later operations replace that field. Mutation must not
+begin until a passive versioned effect-history/lookup/segment correction closes that gap. The
 finite fixed-store checkpoint still provides no
 production engine, multi-process lock, power-loss result,
 restore/anti-rollback mechanism, referenced-history deletion, continuous service, consumer, or

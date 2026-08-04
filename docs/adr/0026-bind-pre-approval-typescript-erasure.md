@@ -14,7 +14,7 @@ approval. That would violate ADR-0011's exact registered-byte authority.
 
 The retained Deno-family evidence identified `deno_ast` 0.53.3 with `transpiling` as the compatible
 Deno path. Its exact locked marker resolves 180 packages including itself. The bounded
-[TypeScript approved-byte experiment](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
+[TypeScript approved-byte experiment](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md)
 compared that path with official TypeScript 6.0.3 and exact Node 22.22.1's built-in
 `node:module.stripTypeScriptTypes` backed by Amaro 1.1.5.
 

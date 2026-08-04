@@ -1,2 +1,0 @@
-import "./evil.mjs";
-

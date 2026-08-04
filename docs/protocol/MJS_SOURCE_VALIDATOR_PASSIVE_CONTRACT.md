@@ -199,7 +199,7 @@ artifact, digest, length, status, count, reserved/trailing, and cap check.
 
 [`sourcevalidatorpassive`](../../internal/protocol/sourcevalidatorpassive/contract.go) is the
 unwired Go parent-language model. The standalone
-[`mjs-source-validator-passive-contract`](../../experiments/mjs-source-validator-passive-contract/README.md)
+[`mjs-source-validator-passive-contract`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/mjs-source-validator-passive-contract/README.md)
 crate is an independent Rust child-language **test-only** oracle; product packages do not import it.
 It uses exact `sha2` 0.10.9 and test-only `serde_json` 1.0.151 under a 22-package lock with SHA-256
 `a45ad0e2b2311d33b16e46e0bf1f66c1563dd240a35f1f9fe431c7bea5894c98`. This applies the reuse

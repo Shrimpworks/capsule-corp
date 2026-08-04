@@ -35,7 +35,7 @@ no-subprocess/no-FFI profile. Bun therefore remains the intended first runtime o
 must use a governed patch/alternate runtime or explicitly revise this decision and the product
 contract.
 
-The subsequent [exact stock-runtime investigation](../../experiments/gate-c-bun-runtime-authority/RESULTS.md)
+The subsequent [exact stock-runtime investigation](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/RESULTS.md)
 rejected stock Bun 1.3.14 for this profile: relevant flags did not remove direct or aliased process,
 `execve`, FFI/native-loader, inspector, Worker, or inherited-descriptor authority. Bun-first now
 means only a governed construction-level patch plus exact external enforcement that later passes
@@ -49,7 +49,7 @@ files and 10 generated outputs across build identity, registries, loaders, nativ
 configuration, resolution, and restoration backstops. A narrow process/exec self-seal cannot close
 Worker or native loading while preserving required lazy runtime/JIT threads. The experiment stopped
 before authoring or building a partial patch, as required by its fail-fast rule. See the
-[governed-construction review](../../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
+[governed-construction review](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
 
 Therefore the runtime-neutral protocol portion of this ADR remains accepted, but **Bun is no longer
 the selected first implementation candidate**. `RUNTIME-001` remains unsupported. The next runtime
@@ -58,7 +58,7 @@ supersede this ADR's Bun-first implementation choice. Until that decision is acc
 runtime profile is selected for the first executable slice. ADR-0028 later fulfills the
 implementation-order decision without admitting a runtime profile.
 
-The subsequent [Deno-family experiment](../../experiments/gate-c-deno-runtime-authority/RESULTS.md)
+The subsequent [Deno-family experiment](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-runtime-authority/RESULTS.md)
 did not produce that superseding decision. Full Deno v2.9.4 retained initial-static-graph, Worker,
 SIGUSR1-inspector, Node-compatibility, and runtime-managed storage routes under the exact deny
 profile. The minimal `deno_core` 0.409.0 construction removed ambient extensions and its module
@@ -67,7 +67,7 @@ did not include a TypeScript pipeline. The result is `DENO-FAMILY-NO-GO`: no can
 selected, this ADR is not superseded, its runtime-neutral portion remains accepted, and
 `RUNTIME-001` still refuses.
 
-The bounded [governed `deno_core` follow-up](../../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+The bounded [governed `deno_core` follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md)
 passed one narrower question left by that disposition. A one-file pre-registration allowlist
 reduced the exact built-in registry from 99 ops to three bootstrap-required ops; two
 ASLR-controlled clean builds produced identical snapshots and binaries, and the final binary
@@ -79,7 +79,7 @@ package, complete runtime-profile admission, or external-isolation composition. 
 full-Deno and unpatched-`deno_core` NO-GO remains historical fact. At that checkpoint no runtime was
 selected and this ADR was not superseded; `RUNTIME-001` remained unsupported.
 
-The subsequent [reproducible-package follow-up](../../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
+The subsequent [reproducible-package follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 closed the prior local builder-image ambiguity for that bounded candidate. A digest-pinned official
 Rust base with no added apt state and a complete 191-crate source bundle reproduced the same
 snapshot and binary in two clean same-host containers, and a normalized two-file candidate archive
@@ -90,7 +90,7 @@ external-isolation/profile admission remain open. The experiment therefore retur
 runtime-selection evidence. At that checkpoint no runtime was selected and this ADR was not
 superseded; `RUNTIME-001` remained unsupported.
 
-The exact [V8 source/license follow-up](../../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
+The exact [V8 source/license follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
 then bound the official Linux/arm64 asset to its release job, exact `rusty_v8`/V8 source revisions,
 Chromium V8 base, and four-patch Deno V8 stack. It returned `SOURCE-LICENSE-CLOSURE-NO-GO` because
 mutable publisher inputs, missing exact GN/Ninja link metadata, and absent generated notices block
@@ -100,7 +100,7 @@ portability/contingency proof. ADR-0028 now accepts that implementation ordering
 this ADR's Bun-first ordering only. It does not select or admit a runtime profile or change
 `RUNTIME-001`.
 
-The bounded [self-contained runtime-root follow-up](../../experiments/gate-c-deno-core-runtime-root/RESULTS.md)
+The bounded [self-contained runtime-root follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-runtime-root/RESULTS.md)
 closed the candidate archive's ambient Bookworm dynamic-root dependency. The exact governed
 binary executes its fixed fixture through a packaged, snapshot-pinned loader and library closure
 inside a 22-entry immutable root; read-only syscall evidence found no host library, cache, NSS,
@@ -118,7 +118,7 @@ forks rather than a maintained copied registry tree or experiment-only patch sta
 of the remaining V8 source/notices, production transformation and protocol ownership,
 installed-root custody, external isolation, and full-profile evidence.
 
-The bounded [TypeScript approved-byte follow-up](../../experiments/typescript-approved-byte-boundary/RESULTS.md)
+The bounded [TypeScript approved-byte follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md)
 passed another narrow question. Exact Node 22.22.1/Amaro 1.1.5 strip-only emission was
 deterministic for fixed fixtures and supports [Proposed ADR-0026](0026-bind-pre-approval-typescript-erasure.md),
 which binds original and executable bytes before registration and forbids post-approval

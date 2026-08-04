@@ -114,7 +114,7 @@ The 2026-08-02 exact-stock investigation failed this hypothesis. Bun 1.3.14 comm
 SQLite native loading, workload-started inspector, Worker, and inherited-descriptor authority under
 all relevant stock deny flags. Addon, macro, and environment/config mutations showed that those
 individual flags were active, but no stock `--no-spawn` or `--no-ffi` closure exists. See the
-[retained P0-0 result](../experiments/gate-c-bun-runtime-authority/RESULTS.md). `RUNTIME-001`
+[retained P0-0 result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/RESULTS.md). `RUNTIME-001`
 therefore remains unsupported and execution requiring it must refuse. That result left P0-0 open
 only for a governed construction-level patch plus an exact external enforcement mechanism; failure
 of that branch required an alternate runtime and an ADR-0003 update. This finding did not admit
@@ -128,7 +128,7 @@ or governed binary existed. A narrow post-initialization process/exec self-seal 
 isolation, but cannot close Worker or native loading while preserving Bun/JSC lazy threads and JIT.
 P0-0 is closed as a Bun NO-GO; alternate-runtime investigation and an ADR-0003 superseding decision
 are now required. See the
-[construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
+[construction review](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
 
 Deno-family decision (2026-08-02): **DENO-FAMILY-NO-GO**. Under the exact full-Deno v2.9.4
 profile, the initial static graph bypassed read/import denial, blob Workers executed, SIGUSR1
@@ -150,10 +150,10 @@ exact archive-corresponding V8 source/notices, a fork-native Linux/arm64 builder
 remaining admission corpus. The governed fork branches now exist, but the first fork-native
 integration check stopped before building because the `rusty_v8` fork supports only Linux/amd64.
 See
-the [retained Deno-family result](../experiments/gate-c-deno-runtime-authority/RESULTS.md),
-[physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
-[package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
-[self-contained-root result](../experiments/gate-c-deno-core-runtime-root/RESULTS.md).
+the [retained Deno-family result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-runtime-authority/RESULTS.md),
+[physical-omission result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md), and
+[package result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
+[self-contained-root result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-runtime-root/RESULTS.md).
 
 Exact V8 closure follow-up (2026-08-02): **SOURCE-LICENSE-CLOSURE-NO-GO**. The official
 Linux/arm64 asset is now bound to its successful release job, exact `rusty_v8` commit, 20 recursive
@@ -164,7 +164,7 @@ corresponding-source bundle, so an exact rebuild was not possible and PR #50's C
 composition remains incomplete. Accepted ADR-0028 selects governed `deno_core` as the first
 engineering candidate and supersedes ADR-0003's Bun-first ordering only; it does not admit a
 profile or change `RUNTIME-001`. See
-the [retained closure result](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
+the [retained closure result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
 
 Fork-native integration follow-up (2026-08-03): **LINUX/ARM64 CONSTRUCTION BLOCKED; NO BUILD OR
 RUNTIME ADMISSION**. Exact public refs, merge parents, upstream ancestry, Deno three-op/fixture
@@ -175,7 +175,7 @@ inspection at governed Deno head `9adb0b68...91bed` and governed `rusty_v8` foll
 collection, and provenance paths. The experiment therefore performed no prefetch or build and did
 not substitute amd64. The smallest next fork change is a digest-pinned Linux/arm64 sibling profile
 with network-disabled compilation/test/evidence collection. `RUNTIME-001` remains unsupported.
-See the [retained blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
+See the [retained blocker](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
 
 Current external-work note (2026-08-03): governed `rusty_v8` PR #4 now carries that follow-up at
 exact unmerged head `aa921fa48901bf28774d61248b0187c8b91c55a4`. Its contract jobs pass while clean
@@ -192,7 +192,7 @@ binary. This closes only the pre-registration/final-link question. TypeScript ap
 semantics, independently reconstructible packaging/provenance, complete restoration/backstop
 review, external isolation composition, and runtime-profile admission remain open. The later
 ADR-0028 ordering decision does not promote this narrow result or `RUNTIME-001`. See the
-[retained physical-omission result](../experiments/gate-c-deno-core-physical-omission/RESULTS.md).
+[retained physical-omission result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md).
 
 Approved-byte follow-up (2026-08-03): **BOUNDARY-PASS; NO RUNTIME ADMISSION**. Exact Node
 22.22.1/Amaro 1.1.5 `stripTypeScriptTypes` in strip-only mode emitted byte-identical fixed outputs
@@ -203,7 +203,7 @@ plan construction and binds original, emitted, options, transformer, diagnostics
 source-map absence into the future plan. Current schemas/types remain unchanged, production
 ownership/topology and cross-platform provenance remain open, no `deno_core` module loader or
 runtime was wired, and `RUNTIME-001` still refuses. See the
-[retained result](../experiments/typescript-approved-byte-boundary/RESULTS.md).
+[retained result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md).
 
 ### P0-1: immutable runtime-root custody
 
@@ -276,7 +276,7 @@ guest runs matched finalized host, guest `/dev/vda`, and post-stop digests with 
 opens. The host has no valid signing identity, so the ad-hoc App Sandbox bundle aborted before
 `main`; protected construction, exact installed descriptor manifest, task-port/grant denial, and
 final signed/notarized bytes remain mandatory. See the
-[retained result](../experiments/gate-c-libkrun-root-custody/RESULTS.md).
+[retained result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-root-custody/RESULTS.md).
 
 ### P0-2: `NullFs` disposition
 
@@ -299,7 +299,7 @@ dummy virtiofs root supplies the bootstrap file and mount points. This falsifies
 removal, not all alternate-bootstrap designs. The existing 47-device-test/one-libkrun-test suites
 and Go profile fuzzing do not cover the complete FUSE/queue/worker/overlay path, and the pinned tree
 has no relevant fuzz target or retained sanitizer/coverage corpus. See the
-[P0-2 investigation](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md).
+[P0-2 investigation](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md).
 
 Later disposition checkpoint (2026-08-02): **`GOVERNED-PATCH`; removal credible but not admitted**.
 A direct-block-root prototype placed the trusted init inside the immutable root, booted
@@ -309,7 +309,7 @@ and reran 36 adversarial plus four identity cases without the original `NullFs` 
 failures were expected ad-hoc-signing identity limitations. This does not close P0-2: the patch
 needs independent source/API review, route-closure mutations, final P0-1 custody, P0-3 transport,
 and the complete signed/notarized P0-4 corpus. The current unpatched profile remains unsupported.
-See the [retained disposition](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md).
+See the [retained disposition](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md).
 
 ### P0-3: typed port transport and completion
 
@@ -379,7 +379,7 @@ runner death before/after commit, three-way role confusion, and EOF/clean-exit r
 262,368-byte physical completion frame; exact boundaries passed and cap-plus-one was fully drained
 and refused. No virtio-console, launcher, runtime, guest, VMM, App Sandbox, Supervisor, approval,
 or product teardown mechanism participated. See the
-[retained protocol result](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md).
+[retained protocol result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-p0-3-protocol-conformance/RESULTS.md).
 
 The sibling console review found that stock libkrun cannot proceed as-is. Governed patch SHA-256
 `584ce48548fe969684fe3c55e57fbf56e7dae40af28c241c24c47b138faf1283` passed 51 local library
@@ -387,7 +387,7 @@ tests, all 51 under AddressSanitizer, warning-denying Clippy with the known depr
 allowance, 25 shutdown repetitions, and four caught restoration mutations. Exact coverage was only
 90/728 lines (12.362637%) across the four patched files, with `port.rs` and `process_tx.rs` at zero.
 That retained local result is the before measurement, not the current governed-fork coverage state.
-See the [retained console result](../experiments/gate-c-libkrun-console-correctness/RESULTS.md).
+See the [retained console result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-console-correctness/RESULTS.md).
 
 Governed-fork reconciliation (public state read 2026-08-03T22:57:43Z):
 
@@ -471,7 +471,7 @@ not load libkrun. With zero valid signing identities, the App-Sandboxed runner f
 `main`, Gatekeeper rejected the app, pure on-demand activation remained open, and the exact assembled
 candidate inherited a macOS 26.0 floor from libkrunfw. No notarized, stapled, clean-host, supported-
 floor, session, or P0-0-through-P0-3-composed evidence exists. See the
-[retained P0-4A result](../experiments/gate-c-installed-development-topology/RESULTS.md).
+[retained P0-4A result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md).
 
 After P0-0 through P0-3 select exact mechanisms and patches, P0-4B rebuilds the complete final app
 with source/license material and reruns every affected P0 gate on the final signed/notarized bytes.

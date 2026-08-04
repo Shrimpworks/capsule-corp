@@ -22,8 +22,9 @@ an ADR. A governed V8 runtime is not yet admitted, and compile-only V8 exposes
 static module requests but not a complete observation of dynamic import and
 `import.meta`.
 
-The retained parse-only experiment in
-`experiments/mjs-parser-boundary/` compared exact locked Oxc, deno_ast/SWC,
+The retained parse-only
+[`mjs-parser-boundary` experiment](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/mjs-parser-boundary)
+compared exact locked Oxc, deno_ast/SWC,
 rusty_v8/V8, and tree-sitter candidates. It did not execute JavaScript. Oxc 0.140.0
 was the only tested candidate to match all 33 local expected outcomes after both
 parser diagnostics and semantic early-error checking. After merged PR #87 became
@@ -57,8 +58,9 @@ guest authority. The dependency-policy disposition as of 2026-08-04 is:
 - graph/footprint: six direct Oxc crates, 65 locked transitive packages,
   24,449,903 cached source bytes, and a 1,854,528-byte macOS arm64 release probe;
 - licenses/provenance: every registry checksum and declared license expression is
-  retained in
-  `experiments/mjs-parser-boundary/evidence/supply-chain.json`; a complete
+  retained in the commit-pinned
+  [`supply-chain.json`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/mjs-parser-boundary/evidence/supply-chain.json);
+  a complete
   notice/source-offer review,
   independently signed artifact provenance, and production SBOM are unknown and
   block adoption;

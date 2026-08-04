@@ -388,10 +388,10 @@ gates are in [the authenticated local IPC implementation and conformance plan](.
 
 ## Evidence
 
-- [Gate B macOS authority-separation results](../../experiments/macos-authority-separation/RESULTS.md)
-- [Gate B installed per-user services](../../experiments/gate-b-installed-services/RESULTS.md)
-- [Gate E Supervisor topology](../../experiments/gate-e-supervisor-topology/README.md)
-- [P0-4A installed development topology](../../experiments/gate-c-installed-development-topology/RESULTS.md)
+- [Gate B macOS authority-separation results](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/RESULTS.md)
+- [Gate B installed per-user services](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-b-installed-services/RESULTS.md)
+- [Gate E Supervisor topology](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-e-supervisor-topology/README.md)
+- [P0-4A installed development topology](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md)
 - [Execution Supervisor current boundary](../EXECUTION_SUPERVISOR.md)
 - [Installation trust](../security/INSTALLATION_TRUST.md)
 - [Update and recovery](../UPDATE_AND_RECOVERY.md)

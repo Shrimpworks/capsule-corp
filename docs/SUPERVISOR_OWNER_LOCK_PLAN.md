@@ -201,7 +201,7 @@ authenticate the proposed IPC calls, prove cross-user protection generally, or c
 readiness.
 
 Retained checkpoint:
-[`../experiments/supervisor-owner-lock-installed-g3/RESULTS.md`](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
+[`../experiments/supervisor-owner-lock-installed-g3/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
 ## Required focused tests
 

@@ -14,7 +14,7 @@ W4 Team identity is false. Certificate SHA-1
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its X.509 subject OU and an exact signed-byte
 TeamIdentifier are `3DDR84M4JS`. No cached profile belongs to W4. Treat the bundle/profile tables
 below as future W4 requirements only; do not use that certificate or the historical profiles as
-W4 evidence. See the retained [G3 NO-GO](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
+W4 evidence. See the retained [G3 NO-GO](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
 The 2026-08-04 exact-selector follow-up also proved that the `codesign` default designated
 requirement repeats the misleading W4 common name without binding the certificate Team OU. That
@@ -36,8 +36,11 @@ and its [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md),
 [`security/THREAT_MODEL.md`](security/THREAT_MODEL.md), the Gate C P0-4A checkpoint documents
 (`GATE_C_P0_RECONCILIATION.md`, `GATE_C_READINESS_CHECKPOINT.md`, `WORKSTREAM_EVIDENCE_LEDGER.md`,
 `FEASIBILITY_SPIKES.md`), ADR-0012, ADR-0013, ADR-0018, ADR-0021, and the currently **Proposed**
-ADR-0029, plus the retained real spikes at `experiments/gate-c-installed-development-topology/`
-(P0-4A) and `experiments/macos-authority-separation/` (Gate B, historical Team `3DDR84M4JS`).
+ADR-0029, plus the retained real spikes in the commit-pinned
+[`gate-c-installed-development-topology`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology)
+(P0-4A) and
+[`macos-authority-separation`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation)
+(Gate B, historical Team `3DDR84M4JS`).
 
 It did not access the Apple Developer portal, create any identifier, download any provisioning
 profile, sign any component, or modify the repository beyond adding this document.
@@ -130,14 +133,16 @@ plan should not chase a Gatekeeper-pass result with a Development profile.
 
 Given no Xcode project exists yet for these components, default to manual/explicit App ID + profile
 creation in the portal first (reserving the bundle IDs above), then let Xcode's automatic signing
-pick them up once real targets exist, mirroring `experiments/macos-authority-separation/Provisioned/
-GateBProvisioned.xcodeproj`'s `CODE_SIGN_STYLE = Automatic` with an explicit
+pick them up once real targets exist, mirroring the archived
+[`GateBProvisioned.xcodeproj`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/GateBProvisioned.xcodeproj)
+`CODE_SIGN_STYLE = Automatic` with an explicit
 `PRODUCT_BUNDLE_IDENTIFIER` per target.
 
 ## Minimum entitlements per role
 
-Grounded in the real per-role split already in
-`experiments/macos-authority-separation/Provisioned/Entitlements/` and in
+Grounded in the real per-role split already in the archived
+[`Provisioned/Entitlements`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/Entitlements)
+and in
 `security/THREAT_MODEL.md`'s local process/storage boundary and mandatory security properties.
 
 | Role | Required entitlement keys | Why |
@@ -219,8 +224,8 @@ production IPC." Any Team-W4-enrolled test of the table above is new work, not a
   implies (old/new component pairing, stale-peer refusal, partial-update fail-closed), not the
   ceremony itself.
 - Every W4 test rebuild changes the CDHash and must rebuild-and-repin at every step that changes any
-  signed byte, per the explicit warning in `experiments/gate-c-installed-development-topology/
-  RESULTS.md`.
+  signed byte, per the explicit warning in the archived
+  [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md).
 
 ## Installation and rollback test matrix
 
@@ -302,8 +307,9 @@ Nothing below has been executed:
 6. Create one macOS App Development provisioning profile per App ID.
 7. Download/install the profiles via Xcode — not by copying Gate B's cached `3DDR84M4JS` profiles,
    which are unusable here.
-8. Author the four `.entitlements` files (§5/§6) using `experiments/macos-authority-separation/
-   Provisioned/Entitlements/*.entitlements` as a structural template but with W4-scoped,
+8. Author the four `.entitlements` files (§5/§6) using the archived
+   [`Provisioned/Entitlements`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/Entitlements)
+   files as a structural template but with W4-scoped,
    epoch-suffixed group names.
 9. Once real Xcode targets exist (they don't yet — only `cmd/capsuled/main.go` is real product
    source), wire `CODE_SIGN_ENTITLEMENTS` and `PRODUCT_BUNDLE_IDENTIFIER` per target, matching the
@@ -312,9 +318,10 @@ Nothing below has been executed:
    CDHash/entitlement-digest/Team-ID readbacks at every step per §7.
 11. Only after S5 evidence is retained and reviewed should anyone consider requesting Developer
     ID/notarization for this team — a distinct, separately-authorized future task.
-12. Whatever S5 evidence is produced must be written back into the repo's own evidence trail (a
-    `RESULTS.md` under a new `experiments/` directory, plus updates to this plan's S5 status and
-    `WORKSTREAM_EVIDENCE_LEDGER.md`) — chat history alone is not retained evidence.
+12. Whatever S5 evidence is produced must be retained in `capsule-experiments`, while this
+    repository receives the resulting decision, an exact commit-pinned evidence link, this plan's
+    S5 status update, and the `WORKSTREAM_EVIDENCE_LEDGER.md` update. Chat history alone is not
+    retained evidence.
 
 ## Explicit non-goals
 

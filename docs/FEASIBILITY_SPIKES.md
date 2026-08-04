@@ -37,7 +37,7 @@ strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-
 unsupported. OCI/gVisor remains an independent comparison and contingency. See the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md) and
 [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md) and
-[fork-native runtime-bundle blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md) and
+[fork-native runtime-bundle blocker](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md) and
 [License-free feasibility spike results](LICENSE_FREE_SPIKE_RESULTS.md) for the consolidated gate
 decisions, credential-gated work, and next slice.
 
@@ -66,8 +66,12 @@ Each spike records:
 - whether prototype code, fixtures, or both are retained.
 
 Spike code must be isolated from production packages, labeled `development-only`, and excluded from
-authoritative receipts or posture. Product code may not import it. If retained under `experiments/`,
-the experiment README names an owner and removal/replacement condition.
+authoritative receipts or posture. Product code may not import it. Completed one-time harnesses and
+evidence belong in the separate
+[`Shrimpworks/capsule-experiments`](https://github.com/Shrimpworks/capsule-experiments)
+archive, whose experiment README names an owner and removal/replacement condition. This repository
+retains the canonical decision, claim limitations, product conformance fixtures, and an exact
+commit-pinned archive link.
 
 ## Gate A: signing and canonicalization interoperability
 
@@ -169,30 +173,30 @@ library corpora, and materially raised measured coverage without exercising a gu
 P0-4A conditionally passed an 18-role no-host-root topology while exposing App Sandbox, signing,
 notarization, Gatekeeper, clean-host, and macOS-floor gaps. None of those results admits a backend
 or permits user bytes. The later
-[Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md) also reached
+[Deno-family disposition](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-runtime-authority/RESULTS.md) also reached
 NO-GO: full Deno retained initial-graph, Worker, inspector, compatibility, and persistence routes,
 while `deno_core` physically registered 99 built-in ops and did not supply the TypeScript pipeline.
-The bounded [physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+The bounded [physical-omission follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md)
 then passed that one construction question: the exact governed patched construction registers and links only three
 bootstrap ops with a reviewable one-file patch and reproducible ASLR-controlled snapshot. It did
 not address TypeScript, independent builder provenance, runtime-profile admission, or external
 isolation composition, so it does not reverse the family NO-GO or support `RUNTIME-001`.
-The subsequent [reproducible-package follow-up](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
+The subsequent [reproducible-package follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
 closed the local builder-image ambiguity for a bounded two-file candidate: two clean same-host
 containers using a digest-pinned no-apt builder and complete offline Cargo source bundle reproduced
 the prior binary and snapshot identities. It still returned NO-GO for runtime-selection evidence
 because no independent builder/host, complete archive-corresponding V8 source/notices, standalone
 dynamic runtime root, or production TypeScript ownership/wiring was available.
-The later [self-contained-root follow-up](../experiments/gate-c-deno-core-runtime-root/RESULTS.md)
+The later [self-contained-root follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-runtime-root/RESULTS.md)
 closed that standalone dynamic-root item only: exact Debian snapshot packages yielded a
 manifest-complete root whose fixed fixture and file-open/mutation corpus used no ambient Bookworm
 library/config data. It did not close the other blockers or admit a runtime.
-The bounded [approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+The bounded [approved-byte follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md)
 subsequently passed the exact pre-approval byte-binding question for a strip-only ESM TypeScript
 subset. It selected no runtime, wired no component, and left production ownership, protocol
 migration, packaging, module loading, and runtime admission open.
 See
-[`../experiments/gate-c-libkrun-hvf/RESULTS.md`](../experiments/gate-c-libkrun-hvf/RESULTS.md).
+[`../experiments/gate-c-libkrun-hvf/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-hvf/RESULTS.md).
 
 ### Gate C implementation-readiness follow-ups
 
@@ -205,20 +209,20 @@ without turning spike code into product code:
 
 | Track | Decision | Evidence |
 | --- | --- | --- |
-| Block storage and egress | Conditional pass for raw-block mechanics; live same-user mutation means immutable input custody failed | [`RESULTS.md`](../experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
-| Console, timeout, and resources | Conditional pass for 4 KiB prefixes, wall/cancel scheduling, exact forced kill, and closed vCPU/RAM profiles; graceful shutdown and host CPU/memory quotas unsupported | [`RESULTS.md`](../experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
-| Installed lifecycle and recovery | Conditional same-host mechanics pass; full distribution, authority separation, session/reboot cases, and corrupt-root terminal integrity remain open | [`RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
-| Adversarial VMM validation | Conditional fail for the exact profile because block-root adds a guest-visible `NullFs` virtiofs device | [`RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md) |
-| Runtime supply chain | Conditional feasibility pass; current bytes fail the development admission checklist | [`RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
+| Block storage and egress | Conditional pass for raw-block mechanics; live same-user mutation means immutable input custody failed | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
+| Console, timeout, and resources | Conditional pass for 4 KiB prefixes, wall/cancel scheduling, exact forced kill, and closed vCPU/RAM profiles; graceful shutdown and host CPU/memory quotas unsupported | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
+| Installed lifecycle and recovery | Conditional same-host mechanics pass; full distribution, authority separation, session/reboot cases, and corrupt-root terminal integrity remain open | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
+| Adversarial VMM validation | Conditional fail for the exact profile because block-root adds a guest-visible `NullFs` virtiofs device | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/RESULTS.md) |
+| Runtime supply chain | Conditional feasibility pass; current bytes fail the development admission checklist | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
 
-Later P0 checkpoints are retained separately: [FD-native root custody](../experiments/gate-c-libkrun-root-custody/RESULTS.md),
-[direct-block-root `NullFs` disposition](../experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md),
-[backend-independent P0-3 framing](../experiments/gate-c-p0-3-protocol-conformance/RESULTS.md),
-[console correctness](../experiments/gate-c-libkrun-console-correctness/RESULTS.md), and
-[P0-4A installed topology](../experiments/gate-c-installed-development-topology/RESULTS.md).
+Later P0 checkpoints are retained separately: [FD-native root custody](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-root-custody/RESULTS.md),
+[direct-block-root `NullFs` disposition](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md),
+[backend-independent P0-3 framing](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-p0-3-protocol-conformance/RESULTS.md),
+[console correctness](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-console-correctness/RESULTS.md), and
+[P0-4A installed topology](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md).
 
-Each track owns a separate directory under `experiments/` and records observed evidence separately
-from inference. Their integration permits backend-independent contract and fake-backend work, not
+Each archived track owns a separate directory in `capsule-experiments` and records observed
+evidence separately from inference. Their integration permits backend-independent contract and fake-backend work, not
 implementation of the real adapter against user bytes. The reconciled pre-user-byte gates are
 runtime-authority closure, immutable runtime-root custody, independent `NullFs` disposition, typed
 port transport/completion with bounded inline JSON, and an admissible complete installed bundle.

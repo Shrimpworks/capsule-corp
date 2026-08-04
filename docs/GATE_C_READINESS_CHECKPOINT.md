@@ -42,11 +42,11 @@ are actionable findings, not a failure of the overall architecture.
 
 | Track | Task ID | Decision | Retained evidence |
 | --- | --- | --- | --- |
-| Storage, scratch/output, and egress | `019fb9e7-25ec-78b2-8bf2-6558a2a9f250` | Conditional pass for development-only raw-block staging; immutable same-user host custody remains failed | [`gate-c-libkrun-storage-egress/RESULTS.md`](../experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
-| Console, timeout, cancellation, CPU, and memory | `019fb9e7-25ec-78b2-8bf2-659ad6ccdef1` | Conditional pass for bounded console, wall/cancel scheduling, exact forced teardown, and closed resource profiles | [`gate-c-libkrun-console-lifecycle/RESULTS.md`](../experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
-| Installed lifecycle and crash recovery | `019fb9e7-25ec-78b2-8bf2-65688a86f41f` | Conditional pass for same-machine installed runner-read and recovery mechanics; distribution and authority closure remain open | [`gate-c-libkrun-installed-recovery/RESULTS.md`](../experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
-| Adversarial VMM and cross-job isolation | replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | Conditional fail for the exact profile because of the unexpected `NullFs` virtiofs device | [`gate-c-libkrun-adversarial/RESULTS.md`](../experiments/gate-c-libkrun-adversarial/RESULTS.md) |
-| Packaging, provenance, patches, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional feasibility pass; current runtime bytes are no-go for admission | [`gate-c-libkrun-supply-chain/RESULTS.md`](../experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
+| Storage, scratch/output, and egress | `019fb9e7-25ec-78b2-8bf2-6558a2a9f250` | Conditional pass for development-only raw-block staging; immutable same-user host custody remains failed | [`gate-c-libkrun-storage-egress/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-storage-egress/RESULTS.md) |
+| Console, timeout, cancellation, CPU, and memory | `019fb9e7-25ec-78b2-8bf2-659ad6ccdef1` | Conditional pass for bounded console, wall/cancel scheduling, exact forced teardown, and closed resource profiles | [`gate-c-libkrun-console-lifecycle/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-console-lifecycle/RESULTS.md) |
+| Installed lifecycle and crash recovery | `019fb9e7-25ec-78b2-8bf2-65688a86f41f` | Conditional pass for same-machine installed runner-read and recovery mechanics; distribution and authority closure remain open | [`gate-c-libkrun-installed-recovery/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-installed-recovery/RESULTS.md) |
+| Adversarial VMM and cross-job isolation | replacement `019fba17-9659-74f1-ab6f-82bfb72bc991` | Conditional fail for the exact profile because of the unexpected `NullFs` virtiofs device | [`gate-c-libkrun-adversarial/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/RESULTS.md) |
+| Packaging, provenance, patches, and supply chain | `019fb9e7-27b1-7c42-9903-8be99f620602` | Conditional feasibility pass; current runtime bytes are no-go for admission | [`gate-c-libkrun-supply-chain/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-supply-chain/RESULTS.md) |
 
 ## Cross-track findings
 
@@ -211,11 +211,11 @@ claim.
 ### P0 — before a libkrun development adapter handles user bytes
 
 1. **Runtime-authority closure:** both the
-   [exact stock Bun 1.3.14 investigation](../experiments/gate-c-bun-runtime-authority/RESULTS.md) and
-   [governed-construction branch](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
-   failed. The bounded [governed `deno_core` physical-omission follow-up](../experiments/gate-c-deno-core-physical-omission/RESULTS.md)
+   [exact stock Bun 1.3.14 investigation](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/RESULTS.md) and
+   [governed-construction branch](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
+   failed. The bounded [governed `deno_core` physical-omission follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md)
    passed the one-file pre-registration and final-link question but did not select a runtime.
-   The later [TypeScript approved-byte follow-up](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+   The later [TypeScript approved-byte follow-up](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md)
    passed only the deterministic strip-only pre-approval binding question and supports Proposed
    ADR-0026; it did not select a production owner or runtime.
    Continue the alternate-runtime decision under the same prohibited-power criteria, exact

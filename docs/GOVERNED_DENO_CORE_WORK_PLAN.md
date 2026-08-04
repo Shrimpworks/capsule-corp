@@ -140,7 +140,8 @@ not a blocker for current local mechanics.
 
 - No general Deno runtime, Node-first reopening, package manager, network, FFI, subprocess, Worker,
   inspector, native addon, ambient filesystem, or post-approval transformation authority.
-- No product import from `experiments/` and no shipping dependency on a local source copy.
+- No product import from `capsule-experiments` and no shipping dependency on an archived or local
+  source copy.
 - No claim that a fork, successful build, or fixed benign fixture makes the runtime secure.
 - No weakening of `RUNTIME-001`, `VMM-001`, `SUPPLY-001`, `PATCH-001`, or the external-isolation
   requirement to make sequencing easier.

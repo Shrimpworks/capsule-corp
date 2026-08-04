@@ -190,9 +190,12 @@ authoritative absence may move into an immutable Supervisor-owned archive segmen
 replay/non-reuse tombstones, cross-record indexes, and checkpoint digests remain retained; active
 or unresolved work never archives. Passive F1 projections, exact limits/known answers, defensive
 copies, and complete-cohort eligibility now exist, but they write no file, migrate no store, move no
-cohort, and activate no archive. F2 is next. The selected fixed checkpoint is a finite conformance
-oracle, not a production engine or continuous-service mechanism, and referenced archive history is
-not deletable under that proposal.
+cohort, and activate no archive. F2 is format-blocked because the merged passive model cannot
+represent a required nonzero visible-v1 effect seed with zero archive descriptors or construct the
+specified generation-one migration checkpoint; the retained
+[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) proposes a narrow correction. The
+selected fixed checkpoint is a finite conformance oracle, not a production engine or continuous-
+service mechanism, and referenced archive history is not deletable under that proposal.
 
 ### Trust verifier and repository
 

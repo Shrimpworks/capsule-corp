@@ -216,10 +216,21 @@ deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
-The closed conformance manifest remains 82 rules, 262 cases, and 368 fixtures after Slice C. Its Go
-manifest-backed coverage remains 177 targets: 81 internal-CBOR/wrapper cases, 40 registration-state
-cases, 44 passive approval/attempt cases, and 12 Slice B state transitions. Slice C adds focused Go
-tests rather than manifest cases.
+The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
+Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
+targets plus 40 independently verified MJS byte/manifest targets in each language. Twenty-eight
+exact source-language adjudication cases remain `pending`. Slice C adds focused Go tests rather
+than manifest cases.
+
+## Production CBOR/COSE dependency comparison
+
+The [standalone comparison](../experiments/production-cbor-cose-profile/RESULTS.md) is defensive,
+local-only selection evidence. It pins and records `fxamacker/cbor` v2.9.2,
+`veraison/go-cose` v1.3.0, and `x448/float16` v0.8.4, replays the retained object and
+cross-language known answers, exercises restoration mutations and trusted-key/binding refusal, and
+retains bounded fuzz/resource/footprint results. It selects only future object-specific fxamacker
+typed encode/decode and records a production NO-GO for go-cose. No root dependency, production
+wrapper, signing key, consumer, IPC, runtime, backend, guest, or security-control status is added.
 
 ## Integrated pull-request checkpoints
 
@@ -281,14 +292,15 @@ tests rather than manifest cases.
 | PR #73, governed libkrun reconciliation | `f6fcf172af752a425afb29ce62680d0b115f6998` | Source head `5e17ac8cec21320c3693049c53e7575bb9dbc15a`; reconciled external fork PR #2 head `8a2c91943793668f31a1cf7af431933be935bb58` and merge `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, two lifecycle fixes, and 37/88-function plus 298/733-line four-file coverage without guest/backend/profile admission. |
 | PR #74, Supervisor owner-lock boundary | `e930f9dbd877bea0cbd55870060f48c9c7fdd72f` | Final reviewed source head `afd148c92f4b9f6f35f2a7d9161502cd1175a107`; proposed ADR-0033 selects enrolled pre-created inode plus lifetime nonblocking BSD `flock` for cooperating Supervisor ownership only. It supplies neither same-UID containment nor Source Preparer storage protection; G1 was the next slice at that merge. |
 | PR #75, passive archive F1 | `6fc31a049c476acf5085071c48d3d5e36f27240f` | Source head `20c8d7df1d9ed3eb009e8ce9a0afbd41e03807ef`; implemented passive archive types, limits, known answers, defensive copies, and eligibility only. No file write, migration, activation, lookup consumer, or adapter call exists; F2 is next. |
+| PR #86, ecosystem reuse map | `5e202b2` | Recorded primary-source-backed reuse/adoption lanes, including the bounded production CBOR/COSE comparison, without admitting a dependency or implementation. |
+| PR #87, passive `.mjs` source manifest | `599d091` | Added the accepted single-member source profile's Go/TypeScript passive bytes, manifest, fixtures, and verification without a parser worker, store, consumer, runtime, or guest. |
 
 The ecosystem reuse audit is retained in
-[`ECOSYSTEM_REUSE_AND_ADOPTION.md`](ECOSYSTEM_REUSE_AND_ADOPTION.md) on its delivery branch until
-its draft PR merges; its final merge commit must be added to this table during integration. It is
-a primary-source-backed planning map, not implementation or security evidence. It records three
-bounded decision lanes: production CBOR/COSE profiling, SQLite comparison after F2/G2, and the
-already-active `.mjs` parser boundary. It explicitly does not preempt M1, G2, F2, or the separate
-ARM64 `rusty_v8` work.
+[`ECOSYSTEM_REUSE_AND_ADOPTION.md`](ECOSYSTEM_REUSE_AND_ADOPTION.md) at PR #86's integrated
+checkpoint. It is a primary-source-backed planning map, not implementation or security evidence.
+It records three bounded decision lanes: production CBOR/COSE profiling, SQLite comparison after
+F2/G2, and the already-active `.mjs` parser boundary. It explicitly does not preempt M1, G2, F2,
+or the separate ARM64 `rusty_v8` work.
 
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
 PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->

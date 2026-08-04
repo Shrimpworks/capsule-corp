@@ -208,10 +208,11 @@ scaffold was removed in PR #49 under ADR-0027. See the
   F2's explicit migration/full verifier, retaining full closed cohorts and exact tombstone indexes
   without deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
-- Run the bounded production CBOR/COSE dependency comparison from the reuse map before replacing
-  the handwritten conformance oracle: exact graph/license/provenance, object-specific caps and
-  canonical-on-wire wrappers, cross-language fixtures, sustained fuzz/resource bounds, and
-  restoration mutations must pass.
+- Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned
+  `fxamacker/cbor` only for future object-specific typed encode/decode while keeping Capsule
+  predecode/caps/canonical/binding/replay controls, and rejects `go-cose` as a product envelope
+  dependency. Before root-module admission, freeze the applicable object set, complete independent
+  review, and demonstrate the production-shaped Swift and Supervisor/Broker same-byte path.
 - After F2 and G2 close their active logical/ownership work, run the single bounded SQLite
   production-engine comparison from the reuse map. Do not turn the fixed snapshot into an
   unbounded product store or select a driver before the complete graph and C/native boundary are

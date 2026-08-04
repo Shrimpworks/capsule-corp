@@ -123,12 +123,20 @@ func inventoryFixtureCases(profile Profile) []InventoryFixtureCase {
 	))
 	mixed := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
 	mixed.Roles[3].ServiceIdentifier = BrokerValidatorServiceIdentity
+	duplicate := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
+	duplicate.Roles[4].RoleID = duplicate.Roles[3].RoleID
+	emptyRoleID := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
+	emptyRoleID.Roles[5].RoleID = ""
+	profileMismatch := InventoryObservation{ProfileID: profile.ProfileID + "-mismatch", Roles: append([]RoleProjection(nil), profile.Roles...)}
 
 	return []InventoryFixtureCase{
 		{ID: "inventory-exact-activation-refuses-inactive-signing", Input: exact, Expected: EvaluateActivation(profile, exact)},
 		{ID: "inventory-missing-refuses", Input: missing, Expected: EvaluateActivation(profile, missing)},
 		{ID: "inventory-extra-refuses", Input: extra, Expected: EvaluateActivation(profile, extra)},
 		{ID: "inventory-mixed-refuses", Input: mixed, Expected: EvaluateActivation(profile, mixed)},
+		{ID: "inventory-duplicate-role-id-refuses", Input: duplicate, Expected: EvaluateActivation(profile, duplicate)},
+		{ID: "inventory-empty-role-id-refuses", Input: emptyRoleID, Expected: EvaluateActivation(profile, emptyRoleID)},
+		{ID: "inventory-profile-id-mismatch-refuses", Input: profileMismatch, Expected: EvaluateActivation(profile, profileMismatch)},
 	}
 }
 

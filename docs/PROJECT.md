@@ -49,6 +49,14 @@ signing gates, bootstrap/update/repair/uninstall classifiers, generated fixtures
 authority. Missing, mixed, extra, inactive-signing, and unsafe transition states refuse. No app,
 profile, state, service, process, update, deletion, runtime, backend, or guest was created.
 
+The follow-on [I1A unsigned construction](MACOS_INSTALLATION_I1A_UNSIGNED_CONSTRUCTION.md) is also
+`PASSED` in its narrower bytes-and-layout scope. It retains one visible typed Swift/AppKit status
+shell, the exact seven-role I0 tree, inert non-executable daemon/Supervisor placeholders, unchanged
+R2 launcher/parser identities, deterministic two-directory construction, closed metadata, and
+missing/mixed/extra/substitution refusal evidence. It does not sign, install, register, bootstrap,
+launch, or enable execution. Developer-signed installed I1 remains `BLOCKED` pending a separately
+authorized I1B/R3 task with exact Team-`3DDR84M4JS` profiles and supported placement evidence.
+
 The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
 the repository's current API surface, but they intentionally do not define the target v0 protocol.
 Blocking feasibility spikes must determine what the platform can actually enforce before those

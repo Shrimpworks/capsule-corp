@@ -19,6 +19,13 @@ seven-role tree, service/entitlement projections, lifecycle classifiers, and ina
 slice is `PASSED` only as deterministic local contract evidence; it does not build, sign, install,
 register, launch, update, repair, uninstall, or admit any component.
 
+The bounded I1A follow-up now constructs that exact tree as unsigned bytes. Its visible AppKit app
+renders only typed inactive status; daemon and Supervisor entries are non-executable test-only
+placeholders; the four R2 launcher/parser identities are unchanged; and independent readback
+refuses missing, mixed, extra, mode-changed, manifest-changed, or substituted files. I1A invokes no
+Apple signing identity and activates no entitlement, service, bootstrap, IPC, runtime, backend, or
+guest. See the [I1A construction result](MACOS_INSTALLATION_I1A_UNSIGNED_CONSTRUCTION.md).
+
 ## Current versus intended state
 
 The repository currently contains buildable Go and TypeScript scaffolding. It does not yet launch a

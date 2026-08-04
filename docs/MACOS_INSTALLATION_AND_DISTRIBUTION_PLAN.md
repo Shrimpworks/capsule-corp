@@ -245,7 +245,8 @@ service-registration evidence exists.
 | Slice | Scope | Status and exit |
 | --- | --- | --- |
 | I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `PASSED`; exact inactive profile, generated cases/digests, field authority, and pure missing/mixed/extra/transition/retention validators retained; no installed behavior |
-| I1 | Developer-signed app shell, Swift setup/status UI, embedded daemon/Supervisor registration, execution always disabled | `BLOCKED` on matching Team/profile material and proof of the exact supported signed bundle/service composition |
+| I1A | Unsigned app shell and exact seven-role byte/layout construction, execution permanently disabled | `PASSED`; deterministic Swift/AppKit status shell, inert daemon/Supervisor placeholders, exact R2 identities, closed readback and refusal evidence; no signed or installed behavior |
+| I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `BLOCKED` on separate credentialed authorization, matching Team-`3DDR84M4JS` profiles, and proof of the exact supported signed bundle/service composition |
 | I2 | Protected Supervisor container, one-time bootstrap, ADR-0033 owner-lock/store open, same-user mutation and restart corpus | `BLOCKED` on I1, the bootstrap-owner decision, product-store selection, and matching signed identities/profiles |
 | I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R1-R4 contract/construction/signed evidence; the Source Validator architecture/resource decision itself is `PASSED` |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |

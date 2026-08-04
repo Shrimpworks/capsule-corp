@@ -110,6 +110,10 @@ Maintenance and security: upstream states that the latest release receives fixes
 private reports at its documented security address. The Capsule protocol maintainers own monthly
 release/advisory review, immediate review on an upstream security notice, and the decision to
 upgrade, retain, or remove the pin. No automatic version range or unattended upgrade is allowed.
+The 2026-08-04 verbose `govulncheck` review reports no symbol or imported-package vulnerability in
+fxamacker or float16. It separately reports GO-2026-5024 in the pre-existing `x/sys v0.28.0`
+Windows package, fixed in v0.44.0, but finds no imported package or called symbol; that baseline
+module update remains outside this wrapper's dependency change.
 
 License and notices: fxamacker is MIT; license SHA-256
 `78cad457d5ea7318230f3d969d4cdf29cef45524a1fc8ca3a97646da1ad7a841`.

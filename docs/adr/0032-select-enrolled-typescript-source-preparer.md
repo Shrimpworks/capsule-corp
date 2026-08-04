@@ -201,7 +201,10 @@ container whose single enrolled member is the Source Preparer and proves negativ
 daemon, Broker, Supervisor, updater, a stale Source Preparer, and an unrelated same-user process.
 Mode bits, pathname secrecy, PID checks, code signing without a protected container, and same-Team
 identity do not meet this requirement. If the probe cannot establish the boundary, TypeScript
-preparation is NO-GO under this ADR; the bounded fallback is JavaScript-only admission.
+preparation is NO-GO under this ADR. User planning direction accepts a bounded modern ESM
+`.mjs`-only JavaScript first-release fallback, with no CommonJS, package resolution, legacy Node
+module surface, or widening of the governed runtime contract. This ADR does not freeze that media/
+profile decision; the exact contract and applicable ADRs must be updated before implementation.
 
 The store accepts at most 32 prepared-but-unregistered sets, 256 registered nonterminal sets,
 4,096 lifecycle/tombstone records, and 536,870,912 exact blob bytes. It never evicts a prepared or
@@ -420,7 +423,9 @@ canonical Source Preparer objects and recursive field-authority verification, ex
 object/XPC/resource maxima, settled cancellation/death/cleanup semantics, and a selected retention
 rule before positive release is frozen. Any failed platform boundary, required daemon/Broker/
 Supervisor/runtime transformation, generic helper, live-path requirement, or unbounded/native-
-loading worker design is a stop condition and requires JavaScript-only admission or a new ADR.
+loading worker design is a stop condition and requires JavaScript-only admission or a new ADR. The
+JavaScript-only path is the separately reviewed modern ESM `.mjs`-only fallback above, not
+permission to add CommonJS, package resolution, legacy Node module APIs, or wider runtime authority.
 
 After those gates, acceptance remains blocked on a fault-injected fixed-store implementation,
 governed Source Preparer/Node packaging, ad-hoc then Apple-signed installed identity and sandbox

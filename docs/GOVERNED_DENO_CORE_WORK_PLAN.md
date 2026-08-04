@@ -8,7 +8,11 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
 
 - Capsule `main` includes durable lifecycle Slice E5, the V8 source/license closure result, and the
   self-contained dynamic-root result.
-- [`dills122/deno`](https://github.com/dills122/deno) is a real fork of `denoland/deno`.
+- [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) is the current governed Deno
+  integration repository and remains a fork of `denoland/deno`. It transferred from
+  `dills122/deno` with its default branch, `capsule/upstream-v2.9.4`, merged PR #1, and Actions
+  history intact while idle. The transfer is repository governance only, not runtime, artifact,
+  review, release, or security evidence.
 - [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8) is a real fork of
   `denoland/rusty_v8`.
 - Deno governed PR #1 is merged at head `9adb0b68b55bca81644827f1e7749a3acb091bed`
@@ -20,6 +24,11 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
 - The first fork-native integration check stopped before prefetch or build because `rusty_v8`
   provides only Linux/amd64 and no Linux/arm64 builder/publication profile. No release or new
   runtime artifact exists.
+- Governed `rusty_v8` PR #4 is now unmerged external work in progress at exact head
+  `aa921fa48901bf28774d61248b0187c8b91c55a4`. Its contract checks pass while two clean Linux/arm64
+  `arm64-full-build` jobs remain in progress at the current checkpoint. No workflow output is
+  reusable until an exact successful
+  handoff is reviewed and the source/governance state is reconciled.
 - Governed `deno_core` is the first runtime engineering candidate. `RUNTIME-001` remains
   unsupported and no product execution path may use these bytes.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
@@ -45,7 +54,8 @@ Exit: completed through E5; the fake-only lifecycle remains unwired and creates 
 
 ### 1B. Bootstrap the governed Deno fork
 
-Repository: `dills122/deno`.
+Repository: `Shrimpworks/deno` (transferred from the historical `dills122/deno` location without
+changing the retained source or merge identities below).
 
 - Create the governed line from exact upstream commit
   `14eea3160ae5834476aa3b9d317b8d41d991b982`.
@@ -79,17 +89,22 @@ Linux/arm64 exit remains blocked, and no release candidate was built or publishe
 
 ## Priority 2: Linux/arm64 construction and evidence closure
 
-Start only after the smallest required `rusty_v8` fork change lands:
+Start only after the smallest required `rusty_v8` fork change lands with an accepted successful
+handoff. PR #4 is the current external attempt, not a completed dependency:
 
 1. Add a fully digest-pinned Linux/arm64 sibling builder/publication profile to `rusty_v8` at or
    after `a43ee748...33cf`, covering the builder image, host tools, aarch64 sysroot/target, offline
    build/test, generated GN/Ninja closure, output verification, source/notices, SBOM, and unsigned
    provenance. Do not substitute the existing amd64 profile.
 2. Reconstruct the governed Deno, `rusty_v8`, binary, snapshot, and 22-entry root first in clean
-   same-host Linux/arm64 builders, then on an independently controlled Linux/arm64 builder; retain
-   the distinct provenance claims and compare every declared output byte.
-3. Decide the production owner and process topology for the ADR-0026 strip-only transformation,
-   then implement the coordinated versioned original-TypeScript/emitted-JavaScript plan migration.
+   same-host Linux/arm64 builders. A genuinely independent Linux/arm64 builder is viable but not
+   currently planned; same-host and GitHub-CI equality must remain explicitly limited, and
+   independent-builder equality is deferred.
+3. Keep Proposed ADR-0032 at its PR #72 P1 HOLD until its protected-store, worker, bootstrap/update,
+   retention/release, recursive field-authority, and lifecycle gates close. If they do not, prepare
+   a separate exact contract/ADR update for a modern ESM `.mjs`-only JavaScript first-release
+   fallback. Do not add CommonJS, package resolution, legacy Node module surface, or wider runtime
+   authority, and do not treat this direction as a frozen media/profile decision.
 4. Assemble one immutable runtime bundle manifest from governed fork releases and the exact dynamic
    root; rerun physical-op, final-link, file-open, syscall-seal, descriptor, and restoration tests.
 5. Run an independent review of the combined libkrun FD-native, direct-block-root, and console
@@ -104,6 +119,19 @@ Start only after the smallest required `rusty_v8` fork change lands:
   Gatekeeper, clean-host, session/recovery, and supported-OS-floor evidence.
 - Make a separate admission ADR only after every required control row has exact retained evidence.
 
+The composed guest step requires explicit authorization for an owned disposable development guest.
+Apple Development identities and provisioning profiles must likewise be deliberately authorized
+before the existing installed matrices run. Current Individual membership is Team `W4QUR9FUL4`,
+and read-only discovery reports a valid Apple Development identity for that Team. Local
+signed/provisioned experiments can proceed once exact W4 role identifiers, entitlements, and
+profiles are deliberately created. All three Xcode 26.6-cached profiles belong to historical Team
+`3DDR84M4JS` and are not reusable for W4 tests. A separate Developer ID Application identity for
+historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
+matching-Team package design; it is not W4 development evidence or evidence that Developer ID/
+notarization work is currently planned. Paid owned clean-host/
+minimum-OS coverage is not currently planned; it remains deferred activation/distribution evidence,
+not a blocker for current local mechanics.
+
 ## Explicit non-goals for this checkpoint
 
 - No general Deno runtime, Node-first reopening, package manager, network, FFI, subprocess, Worker,
@@ -112,3 +140,6 @@ Start only after the smallest required `rusty_v8` fork change lands:
 - No claim that a fork, successful build, or fixed benign fixture makes the runtime secure.
 - No weakening of `RUNTIME-001`, `VMM-001`, `SUPPLY-001`, `PATCH-001`, or the external-isolation
   requirement to make sequencing easier.
+- No claim that an eventual transfer of related forks to the Shrimpworks organization changes
+  source review, build provenance, release, or admission evidence; that transfer is later repository
+  governance work.

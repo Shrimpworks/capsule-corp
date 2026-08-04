@@ -37,9 +37,12 @@ open. The official prebuilt `rusty_v8` archive cannot satisfy the required publi
 so continuing with experiment-only patches or copied registry sources would not produce a
 governed product dependency.
 
-The repository owner created two real GitHub forks on 2026-08-03:
+The repository owner created two real GitHub forks on 2026-08-03. The governed Deno fork was later
+transferred while idle; the current integration repositories are:
 
-- [`dills122/deno`](https://github.com/dills122/deno), forked from `denoland/deno`; and
+- [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno), forked from `denoland/deno` and
+  transferred from the historical `dills122/deno` location with its branches, merged PR #1, and
+  Actions history intact; and
 - [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8), forked from
   `denoland/rusty_v8`.
 
@@ -74,7 +77,7 @@ The governed source line starts from these retained upstream anchors:
 - Deno v2.9.4 commit `14eea3160ae5834476aa3b9d317b8d41d991b982`; and
 - `rusty_v8` v150.2.0 commit `d305e6afa7736f6e298c30ae6646f7709ee9382b`.
 
-`dills122/deno` will carry the ordered `deno_core` physical-omission and deterministic-ordering
+`Shrimpworks/deno` will carry the ordered `deno_core` physical-omission and deterministic-ordering
 changes as reviewable commits on a Capsule-governed branch. `dills122/rusty_v8` will own the
 reconstructible Linux/arm64 builder, exact source and generated-build closure, licenses/notices,
 SBOM, provenance, restoration tests, advisory ownership, and update/rebase policy. Capsule will not

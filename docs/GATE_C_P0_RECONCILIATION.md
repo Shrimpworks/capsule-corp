@@ -177,6 +177,12 @@ not substitute amd64. The smallest next fork change is a digest-pinned Linux/arm
 with network-disabled compilation/test/evidence collection. `RUNTIME-001` remains unsupported.
 See the [retained blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
 
+Current external-work note (2026-08-03): governed `rusty_v8` PR #4 now carries that follow-up at
+exact unmerged head `aa921fa48901bf28774d61248b0187c8b91c55a4`. Its contract jobs pass while clean
+Linux/arm64 full-build work remains in progress. This is not a durable Capsule integration, accepted
+handoff, reusable artifact, release, or admission result. The retained blocked experiment above is
+unchanged until exact successful evidence is reviewed and merged.
+
 Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
 The exact governed patched construction reduced the built-in registry from 99 ops to the three
 bootstrap-required ops with a one-file physical-omission patch; runtime/symbol inspection observed
@@ -482,8 +488,8 @@ The next non-credential work is:
 2. carry the independently reproduced 43 P0-3 vectors into the selected host/launcher languages,
    complete hostile control/queue/descriptor coverage, and implement the distinct launcher, child
    manifest, and exact runner FD manifest before any real-guest composition;
-3. extend the merged `dills122/rusty_v8` governed follow-up with a fully pinned Linux/arm64
-   builder/publication sibling profile, then reconstruct the merged governed Deno candidate,
+3. wait for an exact successful and reviewed handoff from unmerged governed `rusty_v8` PR #4; only
+   then reconstruct the merged governed Deno candidate,
    deterministic V8 publication/link/notice evidence, and runtime-root packaging,
    complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
    candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;
@@ -499,7 +505,18 @@ the hardened App Sandbox runner, protected-container custody test, and Team-enro
 Developer ID signing/notarization credentials for complete-bundle notarization, stapling, and
 Gatekeeper assessment; and installed-byte, clean-host, session/recovery, and support-floor
 validation on those exact signed bytes. P0-4B and final P0-1/P0-2/P0-3 installed reruns cannot pass
-without that evidence.
+without that evidence. Those identities/profiles must be deliberately authorized. Current
+Individual membership is Team `W4QUR9FUL4`, and read-only local discovery now reports a valid Apple
+Development identity for that Team. Local signed/provisioned experiments can proceed once exact W4
+role identifiers, entitlements, and profiles are deliberately created. The three Xcode 26.6-cached
+profiles all belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. A separate
+Developer ID Application identity for historical Team `3DDR84M4JS` remains later distribution
+authority requiring explicit authorization and matching-Team package design; it is not W4
+development evidence and does not make Developer ID or notarization work current. Paid owned clean-host/
+minimum-OS validation is not currently planned and remains deferred activation/distribution
+evidence rather than a blocker for local mechanics. A
+genuinely independent Linux/arm64 builder is viable but not currently planned; same-host and
+GitHub-CI equality therefore remain limited and independent-builder equality is deferred.
 
 ## Work that starts before P0 closes
 

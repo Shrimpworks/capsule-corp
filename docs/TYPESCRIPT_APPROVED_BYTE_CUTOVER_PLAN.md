@@ -17,8 +17,11 @@ The retained
 Source Preparer P1 work on hold. The topology is conditionally retained as the least-dangerous
 TypeScript option, but its role-namespaced store is not a same-user security boundary by itself and
 Node/Amaro remains full planning/store TCB until proven confined. P1 cannot freeze APIs or bytes
-until every checkpoint entry criterion is satisfied; failure of a stop condition leaves
-JavaScript-only admission as the bounded fallback or requires a new ADR.
+until every checkpoint entry criterion is satisfied. User planning direction accepts a bounded
+modern ESM `.mjs`-only JavaScript first-release fallback if a stop condition fires, with no
+CommonJS, package resolution, legacy Node module surface, or governed-runtime widening. That exact
+media/profile contract is not frozen here and requires an applicable ADR/contract update before
+implementation.
 
 ## Dependency graph
 

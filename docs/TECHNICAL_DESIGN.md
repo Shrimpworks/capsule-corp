@@ -45,13 +45,15 @@ opaque `CLOEXEC` descriptor for the Supervisor lifetime. Its bounded local harne
 process/descriptor semantics and refusal-before-store ordering only. No Go/Darwin port or installed
 protected-state-root evidence is connected.
 
-Proposed ADR-0031 defines, but does not implement, the next archive boundary. A complete expired
+Proposed ADR-0031 defines the next archive boundary. A complete expired
 registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
 with cleanup false and authoritative absence. Immutable segments retain full records and exact
 registration/approval/attempt/nonce/effect/instance/replay tombstones. The finite fixed-store v2
-checkpoint is selected only as a fault-injectable conformance oracle; production-engine selection,
-referenced-history deletion, continuous service, coherent restore activation, and rollback-
-resistant non-reuse remain blocked.
+checkpoint is selected only as a fault-injectable conformance oracle. Slice F1 now implements
+passive archive types, exact limits/known-answer digests, defensive copies, and a pure complete-
+cohort selector. It performs no file I/O, v2 migration, archive activation, lookup, or authority
+mutation. F2 is next; production-engine selection, referenced-history deletion, continuous service,
+coherent restore activation, and rollback-resistant non-reuse remain blocked.
 
 ## Reference workflow
 
@@ -63,7 +65,11 @@ The first complete workflow is intentionally narrow:
    assigns copied pre-registration TypeScript source to a separately enrolled Source Preparer,
    which owns exact Node/Amaro emission and the immutable original/executable/object source store.
    The daemon then uses only its fixed prepared-source projection to construct canonical
-   `ExecutionPlan` bytes. This topology is not implemented or accepted. Proposed ADR-0026 still
+   `ExecutionPlan` bytes. PR #72 retained this topology at a P1 HOLD/NO-GO pending its exact
+   protected-store, worker, bootstrap/update, retention, field-authority, and lifecycle evidence;
+   no P1 contracts exist. A modern-ESM `.mjs`-only JavaScript fallback is acceptable planning
+   direction if those gates fail, but it requires a later exact contract/ADR update before
+   implementation. Proposed ADR-0026 still
    requires transformation to finish before plan construction and no post-approval transformation
    is permitted.
 3. The daemon sends those exact bytes to the Execution Supervisor. The Supervisor independently
@@ -80,7 +86,9 @@ The first complete workflow is intentionally narrow:
    governed-construction branch, hardened full Deno v2.9.4, and the tested minimal `deno_core`
    0.409.0 construction failed P0-0. Accepted ADR-0028 selects the later governed three-op
    `deno_core` construction as the first engineering candidate, and its real Deno and `rusty_v8`
-   governed branches are merged. It is still unadmitted: Linux/arm64 fork-native construction,
+   governed branches are merged. Governed `rusty_v8` PR #4 is unmerged at
+   `aa921fa48901bf28774d61248b0187c8b91c55a4`; its clean Linux/arm64 build is still in progress and
+   supplies no reusable artifact. The runtime remains unadmitted: Linux/arm64 fork-native construction,
    TypeScript contract migration, complete profile composition, and runtime-admission evidence
    remain open.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
@@ -664,13 +672,15 @@ type, link count, device, and inode relative to a retained protected state-root 
 store access. Implementation and installed same-UID pathname protection remain unproven, so E5
 still uses its injected owner.
 
-[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the next local
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) selects the local
 conformance shape for archive and replay retention. Under the sole owner lock, the Supervisor
 publishes a fully verified immutable closed-cohort segment before atomically activating a v2 hot
 snapshot that references it, installs exact tombstone indexes, and removes the same records from
 hot sets. Indeterminate publication or activation fences until reopen. Full cohort records remain
-retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. The
-proposal implements nothing and deliberately defers a production engine and real power-loss proof.
+retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. Passive
+F1 types, known answers, defensive copies, and eligibility selection now exist. No store migration,
+file/segment write, activation, retained lookup, or consumer exists; F2 is next, and a production
+engine plus real power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -704,9 +714,10 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 2. Freeze backend-independent contracts using the measured results.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Implement the passive/fault-injectable ADR-0031 fixed-store archive oracle, then run the same
-   logical corpus plus real locking, backup, corruption, APFS, and power-loss tests against a named
-   production-engine candidate before selecting it.
+4. Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1 into
+   F2's explicit v1-to-v2 migration/full verifier, then run the same logical corpus plus real
+   locking, backup, corruption, APFS, and power-loss tests against a named production-engine
+   candidate before selecting it.
 5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 6. In parallel, close runtime authority, immutable root custody, `NullFs`, typed port transport,
    and complete installed-bundle admission; do not connect user bytes to libkrun before all pass.

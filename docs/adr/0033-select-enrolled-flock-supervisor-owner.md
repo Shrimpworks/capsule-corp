@@ -48,7 +48,8 @@ The advisory lock serializes cooperating enrolled Supervisor processes. It is no
 authentication, storage protection, a key, a lease, a rollback anchor, or permission to mutate
 state.
 
-It is also distinct from the Source Preparer P0 boundary retained in draft PR #72 at `a12041c`.
+It is also distinct from the Source Preparer P0 boundary merged in PR #72 from head `a12041c` as
+`2e268b0`.
 Single-Supervisor exclusion does not provide source-store confidentiality or integrity, prove a
 single-member protected container, confine a preparation worker, or close source-store
 genesis/update authority. A future Source Preparer may compose an independently enrolled owner

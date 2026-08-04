@@ -240,9 +240,17 @@ no `RegistrationID`-keyed lifecycle path or `SupervisorCore` symbol exists.
 
 ## S5: Apple Development installed matrix
 
-This slice is blocked until valid Apple Development identities and provisioning profiles for the
-exact daemon, Broker, and Supervisor fixtures are deliberately made available. Do not inspect or
-use unrelated identities.
+This slice requires deliberately authorized Apple Development identities and provisioning profiles
+for the exact daemon, Broker, and Supervisor fixtures. Do not inspect or use unrelated identities.
+
+Current non-secret resource discovery: the Individual membership Team ID is `W4QUR9FUL4`, and
+`security find-identity -v -p codesigning` reports a valid Apple Development identity for that
+Team. Local signed/provisioned experiments can proceed once exact W4 role identifiers, entitlements,
+and profiles are deliberately created. Xcode 26.6 cached three profiles, all for historical Team
+`3DDR84M4JS` (Gate B Broker, Gate B Supervisor, and wildcard); they are not reusable for W4 tests. A
+separate Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution
+authority requiring explicit authorization and matching-Team package design. It must not be used
+as W4 development evidence and does not make Developer ID or notarization work current.
 
 Package the same single Supervisor executable as an embedded per-user `SMAppService.agent` and
 rerun S3/S4 with:

@@ -91,7 +91,12 @@ registration identifier.
 Proposed ADR-0032 removes production TypeScript emission and immutable approved-byte custody from
 the daemon. The daemon may submit copied untrusted source to a separately enrolled Source Preparer
 and use only its fixed source-set projection during plan construction. This topology is design
-only; no service, store, transformer consumer, or authenticated endpoint exists.
+only and PR #72 retains P1 at a bounded HOLD/NO-GO pending protected-store, exact worker,
+genesis/update, retention/release, recursive field-authority, and lifecycle evidence. No P1
+contract, service, store, transformer consumer, or authenticated endpoint exists. If those gates
+fail, a modern-ESM `.mjs`-only JavaScript fallback is acceptable planning direction, but it requires
+an exact later contract/ADR update and may not add CommonJS, package resolution, legacy Node module
+surface, or runtime authority.
 
 ### Proposed TypeScript Source Preparer
 
@@ -179,13 +184,15 @@ release, `CLOEXEC`, enrolled file checks, and replacement limitations on one hos
 mechanism but did not wire this fixed snapshot to it; installed protected-directory custody is a
 separate required boundary because advisory locks and mode bits do not contain a same-UID process.
 
-Proposed ADR-0031 defines the unimplemented next retention boundary. Only a complete expired
+Proposed ADR-0031 defines the retention boundary. Only a complete expired
 registration cohort whose attempts are all durably destroyed with cleanup false after
 authoritative absence may move into an immutable Supervisor-owned archive segment. Exact records,
 replay/non-reuse tombstones, cross-record indexes, and checkpoint digests remain retained; active
-or unresolved work never archives. The selected fixed checkpoint is a finite conformance oracle,
-not a production engine or continuous-service mechanism, and referenced archive history is not
-deletable under that proposal.
+or unresolved work never archives. Passive F1 projections, exact limits/known answers, defensive
+copies, and complete-cohort eligibility now exist, but they write no file, migrate no store, move no
+cohort, and activate no archive. F2 is next. The selected fixed checkpoint is a finite conformance
+oracle, not a production engine or continuous-service mechanism, and referenced archive history is
+not deletable under that proposal.
 
 ### Trust verifier and repository
 

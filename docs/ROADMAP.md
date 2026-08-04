@@ -4,6 +4,14 @@ The roadmap is ordered by uncertainty and risk reduction rather than feature cou
 spikes may be built outside the final product shape. Their retained evidence—not prototype code
 quality—is the deliverable.
 
+The concise current ordering and resource decisions are in the
+[Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+Archive F2, owner-lock G1, bounded Source Preparer blocker work, and documentation/field-authority
+maintenance can proceed independently now. The fork-native runtime bundle waits on an accepted
+Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
+explicit owned-guest authorization. Installed signing/distribution and independent-builder
+matrices remain separate evidence lanes.
+
 ## Phase 0: architecture and claim baseline
 
 - Align project, architecture, technical design, threat model, security policy, and ADRs on the
@@ -33,9 +41,12 @@ Accepted ADR-0028 now selects governed `deno_core` as the first runtime engineer
 passed physical omission, same-host byte reproduction, and the exact standalone dynamic-root
 question; the TypeScript follow-up passed a strip-only pre-approval byte-binding question. These
 results establish bounded construction evidence but do not admit that runtime. The real
-`dills122/deno` and `dills122/rusty_v8` forks now contain merged governed branches, but no governed
+`Shrimpworks/deno` and `dills122/rusty_v8` forks contain merged governed branches, but no governed
 release exists. The first fork-native Linux/arm64 construction stopped before building because the
-merged `rusty_v8` publication contract supports only Linux/amd64. P0-1 is a `PATCH-CANDIDATE`, P0-2
+merged `rusty_v8` publication contract supported only Linux/amd64. Governed `rusty_v8` PR #4 is
+unmerged external work in progress at `aa921fa48901bf28774d61248b0187c8b91c55a4`; contract checks
+pass while clean Linux/arm64 full-build work remains in progress. No output is reusable without an
+exact successful handoff, review, and governance reconciliation. P0-1 is a `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
 added bounded console/raw-FD library tests, and materially improved measured coverage, but retained
@@ -116,9 +127,10 @@ capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evid
 adapter used is the closed no-guest fake, and the owner/coordinator remains injected in-process. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next backend-independent boundaries are reviewed
-Supervisor archive/compaction and an implemented real platform owner lock; neither is supplied by
-E5. Proposed ADR-0033 now selects a pre-created enrolled sibling object plus lifetime nonblocking
+product-language/IPC seam or public consumer. The next backend-independent boundaries are archive
+F2 and owner-lock G1; E5 supplies neither. Archive F1 now supplies passive types, known-answer
+digests, defensive copies, and eligibility selection only. Proposed ADR-0033 selects a pre-created
+enrolled sibling object plus lifetime nonblocking
 BSD `flock` after one owned local descriptor/process corpus. Its Go/Darwin port and installed
 protected-state-root/session/update matrix remain unimplemented.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
@@ -127,18 +139,26 @@ and platform evidence remain unimplemented. Production approval signing/verifica
 implementation and production-engine selection, evidence composition, consumers, and atomic public
 migration remain separate decisions.
 
-Proposed ADR-0031 now defines the reviewed archive/compaction semantics and an exact unimplemented
-conformance plan. Complete expired registration cohorts may move to immutable retained segments
+Proposed ADR-0031 defines the reviewed archive/compaction semantics and conformance plan. Complete
+expired registration cohorts may move to immutable retained segments
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
-fixed-store v2 checkpoint is selected only as the next local oracle. Production-engine selection,
+fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 is implemented passively
+and performs no file writing, migration, activation, retained lookup, or consumer behavior; F2's
+explicit v1-to-v2 migration and full verifier is next. Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
 
 Proposed ADR-0032 separately selects the pre-registration TypeScript Source Preparer and immutable
-source-store topology. Its passive field/method fixtures, fault-injected store, governed Node
-package, installed identity/sandbox evidence, and plan-v1 atomic cutover remain unimplemented.
+source-store topology. PR #72 retained a bounded P1 HOLD/NO-GO: protected-store, exact worker
+confinement, sealed genesis/update, retention/release, recursive nested field-authority, and
+lifecycle/cancellation evidence must close before passive P1 contracts begin. Its passive method/
+store fixtures, fault-injected store, governed Node package, installed identity/sandbox evidence,
+and plan-v1 atomic cutover remain unimplemented. If those gates fail, the accepted planning
+fallback is a later-reviewed modern ESM `.mjs`-only JavaScript contract with no CommonJS, package
+resolution, legacy Node module surface, or runtime-contract widening; that fallback is not yet a
+frozen media/profile decision.
 The dormant `SupervisorCore`
 scaffold was removed in PR #49 under ADR-0027. See the
 [Phase 2A parallel-review synthesis](PHASE_2A_PARALLEL_REVIEW_SYNTHESIS.md) and proposed
@@ -156,9 +176,10 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Implement the passive/fault-injectable ADR-0031 fixed-store archive oracle, retaining full closed
-  cohorts and exact tombstone indexes without deletion, then compare a pinned production-engine
-  candidate against the same logical, corruption, locking, backup, APFS, and power-loss corpus.
+- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1 into
+  F2's explicit migration/full verifier, retaining full closed cohorts and exact tombstone indexes
+  without deletion, then compare a pinned production-engine candidate against the same logical,
+  corruption, locking, backup, APFS, and power-loss corpus.
 
 Exit evidence:
 
@@ -218,7 +239,7 @@ Exit evidence:
 ## Phase 5: dependency-free runtime development execution
 
 - Close the five reconciled P0 Gate C campaigns. Follow accepted ADR-0028 and bootstrap the real
-  `dills122/deno` and `dills122/rusty_v8` governed branches from their exact retained upstream
+  `Shrimpworks/deno` and `dills122/rusty_v8` governed branches from their exact retained upstream
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, coordinated approved-byte TypeScript migration under Proposed ADR-0026,
@@ -261,7 +282,21 @@ credential-dependent rerun requires a valid Apple Development or
 Developer ID signing identity for the hardened App Sandbox runner, protected-container
 construction, and Team-enrolled process identity; Developer ID signing/notarization credentials
 for complete-bundle notarization, stapling, and Gatekeeper assessment; and installed-byte,
-clean-host, session, and support-floor validation of those exact signed bytes.
+clean-host, session, and support-floor validation of those exact signed bytes. Those identities and
+profiles must be deliberately authorized. Current Individual membership is Team `W4QUR9FUL4`, and
+read-only discovery reports a valid Apple Development identity for that Team. Local
+signed/provisioned experiments can proceed once exact W4 role identifiers, entitlements, and
+profiles are deliberately created. All three Xcode 26.6-cached profiles belong to historical Team
+`3DDR84M4JS` and are not reusable for W4 tests. A separate Developer ID Application identity for
+historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
+matching-Team package design; it is not W4 development evidence and does not make Developer ID/
+notarization work current. Paid owned clean-host/minimum-OS
+coverage is not currently planned and remains deferred activation/distribution evidence, not a
+blocker for local F2/G1 mechanics. A genuinely independent
+Linux/arm64 builder is viable but not currently planned, so same-host and GitHub-CI equality remain
+limited and independent-builder equality is deferred. A real governed runtime/libkrun composition
+also remains later work requiring explicit authorization for an owned disposable development
+guest.
 
 Exit evidence:
 

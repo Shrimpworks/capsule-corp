@@ -14,6 +14,11 @@ The task—not the container, VM, shell, or development environment—is the pub
 Capsule is an architecture and buildable scaffold. It does not yet implement the intended security
 boundary and must not be used to execute hostile code without another trusted sandbox.
 
+The concise current dependency and claim checkpoint is
+[Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+This section summarizes durable repository state; the linked checkpoint separates selected design,
+implemented local mechanics, experiment evidence, governed external source, and product admission.
+
 The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
 the repository's current API surface, but they intentionally do not define the target v0 protocol.
 Blocking feasibility spikes must determine what the platform can actually enforce before those
@@ -50,22 +55,24 @@ explicit fixed-store v0-to-v1 migration and validation, durable ensure/read/inte
 indeterminate/reconciliation/recovery-set transactions, the FakeBackend-only driver, and the
 capacity/repeated-startup evidence checkpoint. ADR-0025 remains Proposed and the implementation
 status remains unwired `local-mechanic` only.
-[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) now defines the next exact
+[Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) defines the exact
 archive/compaction boundary: complete expired registration cohorts move from the mutable snapshot
 to immutable retained segments only after every bound attempt is durably destroyed with
 authoritative absence, while full records and replay/non-reuse tombstones remain retained. It
-selects a finite fixed-store checkpoint only as the next local conformance oracle, not a production
-engine, and authorizes no referenced-history deletion. No archive behavior is implemented.
+selects a finite fixed-store checkpoint only as a local conformance oracle, not a production
+engine, and authorizes no referenced-history deletion. Slice F1 now implements passive archive
+types, known-answer digests, defensive copies, and the pure complete-cohort eligibility selector.
+It writes no file, migrates no store, moves no cohort, activates no archive, and routes no consumer;
+the fixed-store v2 migration/full verifier in F2 is next.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
 calls, but no bridge fixture, installed authenticated endpoint, product consumer, or production
 identity evidence is implemented.
-A focused unwired
-TypeScript Task 3C slice now constructs and deterministically encodes the minimum
+A focused unwired TypeScript Task 3C slice constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
-bindings. The next
-focused slice now prepares a defensive exact-byte/complete-role handoff and exercises those values
+bindings. A later completed focused slice prepares a defensive exact-byte/complete-role handoff and
+exercises those values
 against the real Go `registrationstate` component through a local-only conformance command. Go
 independently predecodes, role-binds, hashes, and retains the 530-byte known answer. This is not a
 product IPC implementation: the native-to-Go bridge, authenticated cross-process transport,
@@ -84,11 +91,14 @@ publisher job, source gitlinks, V8 base, and patch stack, but returned
 generated notices prevent an independent rebuild and complete notice closure. Independent-builder
 provenance, governed release construction, and admission remain open. Accepted
 [ADR-0028](adr/0028-select-governed-deno-core-first.md) selects governed `deno_core` as the first
-runtime engineering candidate after the hard Bun pivot and records the real `dills122/deno` and
-`dills122/rusty_v8` forks. Their first governed branches are now merged at exact commits, but the
-first fork-native integration check stopped before construction because the `rusty_v8` fork has
-only a Linux/amd64 builder and no intended Linux/arm64 profile. No fork release or new runtime
-artifact exists. The decision supersedes ADR-0003's Bun-first ordering only; it does not admit a
+runtime engineering candidate after the hard Bun pivot and records the real `Shrimpworks/deno` and
+`dills122/rusty_v8` forks. Their first governed branches are merged at exact commits. The first
+fork-native integration check stopped before construction because the merged `rusty_v8` fork had
+only a Linux/amd64 builder. Governed `rusty_v8` PR #4 is now unmerged external work in progress at
+head `aa921fa48901bf28774d61248b0187c8b91c55a4`; its contract checks pass while clean Linux/arm64
+full-build work remains in progress. It supplies no reusable artifact or accepted handoff. No fork
+release or new admitted runtime artifact exists. The decision supersedes ADR-0003's Bun-first
+ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The
 libkrun direct-block-root prototype made `NullFs` removal credible and selected `GOVERNED-PATCH`,
 but the current and prototype profiles remain unsupported until final governed installed bytes
@@ -104,14 +114,20 @@ the post-merge governed-branch/verifier pin mismatch, independent human/CODEOWNE
 transport, launcher, guest/VMM, installed composition, signing/notarization,
 distribution/source/SBOM obligations, and final profile reruns remain open.
 P0-4A conditionally passed the no-host-root topology only; Gatekeeper, clean-host, and minimum-OS
-admission also remain open.
+admission also remain open as deferred activation/distribution evidence. They do not block current
+local F2, G1, or documentation mechanics.
 The bounded TypeScript approved-byte follow-up passed only the pre-approval byte-ownership
 question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,
-change current contracts, or admit a runtime. Proposed ADR-0032 now selects a separate enrolled
-Source Preparer with a one-shot exact Node worker and a role-namespaced immutable source store, but
-no component, store, endpoint, consumer, installed identity, or cutover exists.
+change current contracts, or admit a runtime. Proposed ADR-0032 selects a separate enrolled Source
+Preparer with a one-shot exact Node worker and a role-namespaced immutable source store, but PR #72
+retained P1 at a bounded HOLD/NO-GO pending protected-store, worker-confinement, genesis/update,
+retention/release, recursive field-authority, and lifecycle evidence. P1 passive contracts have not
+begun. No component, store, endpoint, consumer, installed identity, or cutover exists. If those
+blockers cannot close, the accepted planning fallback is a later-reviewed modern ESM `.mjs`-only
+JavaScript contract—without CommonJS, package resolution, legacy Node module surface, or runtime-
+authority widening—not an already frozen media/profile decision.
 See the
 [P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
 and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)

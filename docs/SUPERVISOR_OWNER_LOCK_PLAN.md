@@ -17,7 +17,8 @@ No store read/mutation, migration, recovery enumeration, `Recover`, archive, bac
 dispatch, or adapter call may occur before one exact enrolled object is exclusively held. The lock
 does not grant any of those operations; existing typed state and authority checks remain required.
 
-This plan does not close the Source Preparer P0 HOLD recorded by draft PR #72 (`a12041c`). Process
+This plan does not close the Source Preparer P0 HOLD merged in PR #72 (head `a12041c`, merge
+`2e268b0`). Process
 exclusion is not source-store confidentiality or integrity, protected-container membership,
 worker confinement, or store-genesis/update authority. Any later composition uses a separate
 Source Preparer root, component identity, enrolled lock, and session only after those boundaries
@@ -130,6 +131,15 @@ Acceptance: disposable process harness only, `FakeBackend.CreatesGuest() == fals
 refuses before store mutation or fake work, and ownerless product constructors are impossible.
 
 ### G3: installed identity/session/update evidence
+
+Resource status: current Individual membership is Team `W4QUR9FUL4`, and local read-only discovery
+reports a valid Apple Development identity for that Team. G3 can proceed after exact W4 role
+identifiers, entitlements, and profiles are deliberately created. The three Xcode 26.6-cached
+profiles are historical Team `3DDR84M4JS` fixtures and are not reusable for W4 tests. A separate
+Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution authority
+requiring explicit authorization and matching-Team package design; it is not W4 development
+evidence and does not make Developer ID/notarization work current. Paid owned clean-host/minimum-OS
+coverage remains deferred activation evidence.
 
 - Package the exact Supervisor fixture under the selected protected private state root.
 - Exercise Apple Development then Developer ID/notarized builds, wrong/stale identity, wrong

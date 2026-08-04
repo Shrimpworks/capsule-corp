@@ -110,8 +110,9 @@ containers produced the same normalized root bytes. This is bounded construction
 independent-builder provenance, external-isolation validation, or profile admission.
 
 After the hard Bun pivot, governed `deno_core` is the intended first runtime engineering direction.
-ADR-0028 accepts that direction and records the real `dills122/deno` and `dills122/rusty_v8`
-forks. That decision does not select or admit a runtime profile and does not promote
+ADR-0028 accepts that direction and records the real governed Deno and `dills122/rusty_v8` forks;
+the Deno fork has since transferred from `dills122/deno` to `Shrimpworks/deno` as repository-
+governance work. That transfer does not select or admit a runtime profile and does not promote
 `RUNTIME-001`. Continuation requires governed branches and a release/provenance workflow in those
 forks rather than a maintained copied registry tree or experiment-only patch stack, plus closure
 of the remaining V8 source/notices, production transformation and protocol ownership,

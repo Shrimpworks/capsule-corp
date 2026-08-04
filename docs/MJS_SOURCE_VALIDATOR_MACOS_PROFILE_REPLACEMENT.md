@@ -14,10 +14,10 @@ Evidence or reason: Accepted ADR-0036 selects two role-specific private App-Sand
   services, accepts each private container as residual scratch authority under a narrowed no-store
   rule, and replaces the unavailable hard ceiling with an evidence-derived reactive footprint
   watermark and explicit availability limitations.
-Remaining work: R1 passive contracts/fixtures; R2 unsigned role-specific construction; separately
+Remaining work: R1 passive contracts/fixtures are `PASSED`; continue with R2 unsigned role-specific construction; separately
   authorized R3 signing/install; R4 confinement/resource/residue evidence; R5 daemon then Broker
   consumers; and the later M2/S1 checkpoint.
-Next action: implement only R1's passive v1 role/version/ownership and field-authority fixtures.
+Next action: implement only R2's unsigned, role-specific launcher/parser construction.
 Parent status: Product Source Validator and downstream M2/S1 remain BLOCKED. ADR-0035 and ADR-0036
   are Accepted architecture decisions, but no product artifact, endpoint, consumer, runtime,
   backend, or guest is admitted.

@@ -3,6 +3,7 @@ import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { addApprovalAttemptRulesAndCases } from "./generate-approval-attempt-conformance-fixtures.mjs";
 import { addMjsSourceFoundationRulesAndCases } from "./generate-mjs-source-foundation-conformance-fixtures.mjs";
 import { addMjsSourceValidatorPassiveRulesAndCases } from "./generate-mjs-source-validator-passive-conformance-fixtures.mjs";
+import { addMjsSourceValidatorV1RulesAndCases } from "./generate-mjs-source-validator-v1-conformance-fixtures.mjs";
 import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
@@ -38,6 +39,12 @@ const fixtures = new Map();
 addMediaTypeRulesAndCases();
 addMjsSourceFoundationRulesAndCases({ addCase, addRule, cborEncode, retainFixture });
 addMjsSourceValidatorPassiveRulesAndCases({
+  addCase,
+  addRule,
+  fixtureBytes,
+  retainFixture,
+});
+addMjsSourceValidatorV1RulesAndCases({
   addCase,
   addRule,
   fixtureBytes,

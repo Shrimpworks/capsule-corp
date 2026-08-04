@@ -10,7 +10,10 @@
       "resolver": "none",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -21,7 +24,10 @@
       "resolver": "job-proposal-semantic-resolver",
       "authorityEffect": "requests-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "may-contain",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -32,7 +38,10 @@
       "resolver": "job-proposal-semantic-resolver",
       "authorityEffect": "requests-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -43,7 +52,10 @@
       "resolver": "job-proposal-semantic-resolver",
       "authorityEffect": "requests-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "may-contain",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -54,7 +66,10 @@
       "resolver": "job-proposal-semantic-resolver",
       "authorityEffect": "requests-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "none", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -65,7 +80,10 @@
       "resolver": "none",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "contentStatus": {
+        "userContent": "may-contain",
+        "guestControl": "untrusted-value"
+      },
       "binding": "unbound-untrusted-proposal",
       "unknownBehavior": "reject-proposal"
     },
@@ -86,7 +104,10 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "narrows-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
@@ -97,8 +118,14 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "changes-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
     },
@@ -108,7 +135,10 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "changes-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
@@ -119,8 +149,14 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "none",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
-      "contentStatus": { "userContent": "none", "guestControl": "derived-from-untrusted" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
     },
@@ -130,7 +166,10 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "changes-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
@@ -141,7 +180,10 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "narrows-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
@@ -152,8 +194,14 @@
       "validator": "execution-plan-cbor-decoder",
       "resolver": "execution-plan-role-resolver",
       "authorityEffect": "narrows-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "registered-execution-plan-v0" },
-      "contentStatus": { "userContent": "none", "guestControl": "derived-from-untrusted" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "registered-execution-plan-v0"
+      },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "execution-plan-v0-exact-bytes-and-digest",
       "unknownBehavior": "reject-plan"
     },
@@ -174,7 +222,10 @@
       "validator": "plan-registration-cbor-decoder",
       "resolver": "registration-state-resolver",
       "authorityEffect": "changes-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "supervisor-registration-record"
+      },
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "supervisor-registration-record",
       "unknownBehavior": "reject-registration"
@@ -185,8 +236,14 @@
       "validator": "plan-registration-cbor-decoder",
       "resolver": "registration-state-resolver",
       "authorityEffect": "narrows-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "supervisor-registration-record"
+      },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "none"
+      },
       "binding": "supervisor-registration-record",
       "unknownBehavior": "reject-registration"
     },
@@ -207,8 +264,14 @@
       "validator": "approval-grant-cose-cbor-verifier",
       "resolver": "approval-ledger-binding-resolver",
       "authorityEffect": "narrows-authority",
-      "approvalVisibility": { "mode": "must-render", "source": "signed-approval-grant-v0" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "approvalVisibility": {
+        "mode": "must-render",
+        "source": "signed-approval-grant-v0"
+      },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "none"
+      },
       "binding": "approval-grant-v0-signature-and-registration",
       "unknownBehavior": "reject-approval"
     },
@@ -230,7 +293,10 @@
       "resolver": "approval-ledger-binding-resolver",
       "authorityEffect": "changes-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "none"
+      },
       "binding": "durable-approval-record",
       "unknownBehavior": "reject-durable-record"
     },
@@ -241,7 +307,10 @@
       "resolver": "approval-ledger-binding-resolver",
       "authorityEffect": "narrows-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "none"
+      },
       "binding": "durable-approval-record",
       "unknownBehavior": "reject-durable-record"
     },
@@ -274,7 +343,10 @@
       "resolver": "attempt-cross-link-resolver",
       "authorityEffect": "changes-authority",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "none" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "none"
+      },
       "binding": "atomic-execution-attempt-record",
       "unknownBehavior": "reject-attempt"
     },
@@ -310,7 +382,10 @@
         "mode": "must-render-after-versioned-cutover",
         "source": "future-registered-execution-plan-v1"
       },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "passive-approved-byte-v0-exact-cbor-digest",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -324,7 +399,10 @@
         "mode": "must-render-after-versioned-cutover",
         "source": "future-registered-execution-plan-v1"
       },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "passive-approved-byte-v0-exact-cbor-digest",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -360,7 +438,10 @@
       "resolver": "source-manifest-byte-resolver",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "passive-mjs-source-manifest-v0-exact-cbor-digest",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -382,7 +463,10 @@
       "resolver": "source-validator-request-binding-resolver",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "passive-source-validator-request-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -393,7 +477,10 @@
       "resolver": "source-validator-request-binding-resolver",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "may-contain", "guestControl": "derived-from-untrusted" },
+      "contentStatus": {
+        "userContent": "may-contain",
+        "guestControl": "derived-from-untrusted"
+      },
       "binding": "passive-source-validator-request-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -404,7 +491,10 @@
       "resolver": "none",
       "authorityEffect": "none",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "none", "guestControl": "guest-observation" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "guest-observation"
+      },
       "binding": "passive-source-validator-result-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -415,7 +505,10 @@
       "resolver": "source-validator-result-binding-resolver",
       "authorityEffect": "records-evidence",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "identity-only", "guestControl": "guest-observation" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "guest-observation"
+      },
       "binding": "passive-source-validator-result-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -426,7 +519,10 @@
       "resolver": "source-validator-result-binding-resolver",
       "authorityEffect": "records-evidence",
       "approvalVisibility": { "mode": "not-rendered", "source": "none" },
-      "contentStatus": { "userContent": "none", "guestControl": "guest-observation" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "guest-observation"
+      },
       "binding": "passive-source-validator-result-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
     },
@@ -451,6 +547,131 @@
       "contentStatus": { "userContent": "none", "guestControl": "none" },
       "binding": "passive-source-validator-artifact-profile-v0-exact-frame",
       "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-request-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-role-binding-resolver",
+      "authorityEffect": "selects-predeclared-alternative",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-request-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-request-binding": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-role-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "derived-from-untrusted"
+      },
+      "binding": "passive-source-validator-request-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-request-content": {
+      "authorityClass": "untrusted-proposal-data",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-role-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": {
+        "userContent": "may-contain",
+        "guestControl": "derived-from-untrusted"
+      },
+      "binding": "passive-source-validator-request-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-result-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-role-binding-resolver",
+      "authorityEffect": "selects-predeclared-alternative",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "guest-observation"
+      },
+      "binding": "passive-source-validator-result-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-result-binding": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-result-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": {
+        "userContent": "identity-only",
+        "guestControl": "guest-observation"
+      },
+      "binding": "passive-source-validator-result-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-result-observation": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-result-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "guest-observation"
+      },
+      "binding": "passive-source-validator-result-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-policy-shape": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-profile-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-resource-policy-v1-inactive-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-process-profile": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "installation-enrollment",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-profile-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-process-profile-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-artifact-profile": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "installation-enrollment",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-profile-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-artifact-profile-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-v1-consumer-projection": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "installation-enrollment",
+      "validator": "source-validator-passive-v1-verifier",
+      "resolver": "source-validator-v1-profile-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-consumer-projection-v1-exact-role-frame",
+      "unknownBehavior": "reject-passive-fixture"
     }
   },
   "targets": [
@@ -467,14 +688,26 @@
           "sourceField": "/apiVersion",
           "profile": "proposal-discriminator"
         },
-        { "path": "/kind", "sourceField": "/kind", "profile": "proposal-discriminator" },
-        { "path": "/source", "sourceField": "/source", "profile": "proposal-source" },
+        {
+          "path": "/kind",
+          "sourceField": "/kind",
+          "profile": "proposal-discriminator"
+        },
+        {
+          "path": "/source",
+          "sourceField": "/source",
+          "profile": "proposal-source"
+        },
         {
           "path": "/source/entrypoint",
           "sourceField": "/source/entrypoint",
           "profile": "proposal-selector"
         },
-        { "path": "/source/files", "sourceField": "/source/files", "profile": "proposal-source" },
+        {
+          "path": "/source/files",
+          "sourceField": "/source/files",
+          "profile": "proposal-source"
+        },
         {
           "path": "/source/files/*",
           "sourceField": "/source/files/*",
@@ -485,10 +718,26 @@
           "sourceField": "/runtimeProfile",
           "profile": "proposal-runtime"
         },
-        { "path": "/input", "sourceField": "/input", "profile": "proposal-content" },
-        { "path": "/input/slot", "sourceField": "/input/slot", "profile": "proposal-selector" },
-        { "path": "/input/kind", "sourceField": "/input/kind", "profile": "proposal-selector" },
-        { "path": "/input/value", "sourceField": "/input/value", "profile": "proposal-content" },
+        {
+          "path": "/input",
+          "sourceField": "/input",
+          "profile": "proposal-content"
+        },
+        {
+          "path": "/input/slot",
+          "sourceField": "/input/slot",
+          "profile": "proposal-selector"
+        },
+        {
+          "path": "/input/kind",
+          "sourceField": "/input/kind",
+          "profile": "proposal-selector"
+        },
+        {
+          "path": "/input/value",
+          "sourceField": "/input/value",
+          "profile": "proposal-content"
+        },
         {
           "path": "/requestedLimits",
           "sourceField": "/requestedLimits",
@@ -499,7 +748,11 @@
           "sourceField": "/requestedLimits/wallTimeMs",
           "profile": "proposal-selector"
         },
-        { "path": "/outputs", "sourceField": "/outputs", "profile": "proposal-selector" },
+        {
+          "path": "/outputs",
+          "sourceField": "/outputs",
+          "profile": "proposal-selector"
+        },
         {
           "path": "/outputs/*/slot",
           "sourceField": "/outputs/*/slot",
@@ -515,8 +768,16 @@
           "sourceField": "/outputs/*/maxBytes",
           "profile": "proposal-selector"
         },
-        { "path": "/labels", "sourceField": "/labels", "profile": "proposal-metadata" },
-        { "path": "/labels/*", "sourceField": "/labels/*", "profile": "proposal-metadata" }
+        {
+          "path": "/labels",
+          "sourceField": "/labels",
+          "profile": "proposal-metadata"
+        },
+        {
+          "path": "/labels/*",
+          "sourceField": "/labels/*",
+          "profile": "proposal-metadata"
+        }
       ]
     },
     {
@@ -528,34 +789,122 @@
         "rule": "capsule-execution-plan-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "plan-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "plan-discriminator" },
-        { "path": "/installationId", "sourceField": 3, "profile": "plan-trust-state" },
-        { "path": "/epochSequence", "sourceField": 4, "profile": "plan-trust-state" },
-        { "path": "/epochDigest", "sourceField": 5, "profile": "plan-trust-state" },
-        { "path": "/sourceManifestDigest", "sourceField": 6, "profile": "plan-content" },
-        { "path": "/sourceEntrypoint", "sourceField": 7, "profile": "plan-content" },
-        { "path": "/sourceByteLength", "sourceField": 8, "profile": "plan-content" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "plan-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "plan-discriminator"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": 3,
+          "profile": "plan-trust-state"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": 4,
+          "profile": "plan-trust-state"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": 5,
+          "profile": "plan-trust-state"
+        },
+        {
+          "path": "/sourceManifestDigest",
+          "sourceField": 6,
+          "profile": "plan-content"
+        },
+        {
+          "path": "/sourceEntrypoint",
+          "sourceField": 7,
+          "profile": "plan-content"
+        },
+        {
+          "path": "/sourceByteLength",
+          "sourceField": 8,
+          "profile": "plan-content"
+        },
         { "path": "/inputSlot", "sourceField": 9, "profile": "plan-content" },
-        { "path": "/inlineInputDigest", "sourceField": 10, "profile": "plan-content" },
-        { "path": "/inlineInputByteLength", "sourceField": 11, "profile": "plan-content" },
-        { "path": "/runtimeProfileAlias", "sourceField": 12, "profile": "plan-runtime-label" },
-        { "path": "/runtimeBundleManifestDigest", "sourceField": 13, "profile": "plan-runtime" },
+        {
+          "path": "/inlineInputDigest",
+          "sourceField": 10,
+          "profile": "plan-content"
+        },
+        {
+          "path": "/inlineInputByteLength",
+          "sourceField": 11,
+          "profile": "plan-content"
+        },
+        {
+          "path": "/runtimeProfileAlias",
+          "sourceField": 12,
+          "profile": "plan-runtime-label"
+        },
+        {
+          "path": "/runtimeBundleManifestDigest",
+          "sourceField": 13,
+          "profile": "plan-runtime"
+        },
         {
           "path": "/profileReviewAttestationDigests",
           "sourceField": 14,
           "profile": "plan-runtime"
         },
-        { "path": "/profileRegistryEntryDigest", "sourceField": 15, "profile": "plan-runtime" },
-        { "path": "/backendValidationRecordDigest", "sourceField": 16, "profile": "plan-backend" },
-        { "path": "/backendConfigurationDigest", "sourceField": 17, "profile": "plan-backend" },
-        { "path": "/trustSnapshotDigest", "sourceField": 18, "profile": "plan-policy" },
-        { "path": "/policyDecisionDigest", "sourceField": 19, "profile": "plan-policy" },
-        { "path": "/wallTimeMs", "sourceField": 20, "profile": "plan-limit-output" },
-        { "path": "/wallTimeOrigin", "sourceField": 21, "profile": "plan-limit-output" },
-        { "path": "/outputSlot", "sourceField": 22, "profile": "plan-limit-output" },
-        { "path": "/outputMaxJsonBytes", "sourceField": 23, "profile": "plan-limit-output" },
-        { "path": "/expiresAt", "sourceField": 24, "profile": "plan-trust-state" }
+        {
+          "path": "/profileRegistryEntryDigest",
+          "sourceField": 15,
+          "profile": "plan-runtime"
+        },
+        {
+          "path": "/backendValidationRecordDigest",
+          "sourceField": 16,
+          "profile": "plan-backend"
+        },
+        {
+          "path": "/backendConfigurationDigest",
+          "sourceField": 17,
+          "profile": "plan-backend"
+        },
+        {
+          "path": "/trustSnapshotDigest",
+          "sourceField": 18,
+          "profile": "plan-policy"
+        },
+        {
+          "path": "/policyDecisionDigest",
+          "sourceField": 19,
+          "profile": "plan-policy"
+        },
+        {
+          "path": "/wallTimeMs",
+          "sourceField": 20,
+          "profile": "plan-limit-output"
+        },
+        {
+          "path": "/wallTimeOrigin",
+          "sourceField": 21,
+          "profile": "plan-limit-output"
+        },
+        {
+          "path": "/outputSlot",
+          "sourceField": 22,
+          "profile": "plan-limit-output"
+        },
+        {
+          "path": "/outputMaxJsonBytes",
+          "sourceField": 23,
+          "profile": "plan-limit-output"
+        },
+        {
+          "path": "/expiresAt",
+          "sourceField": 24,
+          "profile": "plan-trust-state"
+        }
       ]
     },
     {
@@ -567,16 +916,56 @@
         "rule": "capsule-plan-registration-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "registration-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "registration-discriminator" },
-        { "path": "/registrationId", "sourceField": 3, "profile": "registration-state" },
-        { "path": "/registrationSequence", "sourceField": 4, "profile": "registration-state" },
-        { "path": "/planDigest", "sourceField": 5, "profile": "registration-plan" },
-        { "path": "/installationId", "sourceField": 6, "profile": "registration-state" },
-        { "path": "/epochSequence", "sourceField": 7, "profile": "registration-state" },
-        { "path": "/epochDigest", "sourceField": 8, "profile": "registration-state" },
-        { "path": "/supervisorId", "sourceField": 9, "profile": "registration-state" },
-        { "path": "/expiresAt", "sourceField": 10, "profile": "registration-state" }
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "registration-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "registration-discriminator"
+        },
+        {
+          "path": "/registrationId",
+          "sourceField": 3,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/registrationSequence",
+          "sourceField": 4,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/planDigest",
+          "sourceField": 5,
+          "profile": "registration-plan"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": 6,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": 7,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": 8,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": 9,
+          "profile": "registration-state"
+        },
+        {
+          "path": "/expiresAt",
+          "sourceField": 10,
+          "profile": "registration-state"
+        }
       ]
     },
     {
@@ -588,18 +977,62 @@
         "rule": "capsule-approval-grant-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "approval-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "approval-discriminator" },
-        { "path": "/installationId", "sourceField": 3, "profile": "approval-binding" },
-        { "path": "/epochDigest", "sourceField": 4, "profile": "approval-binding" },
-        { "path": "/registrationId", "sourceField": 5, "profile": "approval-binding" },
-        { "path": "/planDigest", "sourceField": 6, "profile": "approval-binding" },
-        { "path": "/supervisorId", "sourceField": 7, "profile": "approval-binding" },
-        { "path": "/attemptNonce", "sourceField": 8, "profile": "approval-binding" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "approval-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "approval-discriminator"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": 3,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": 4,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/registrationId",
+          "sourceField": 5,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/planDigest",
+          "sourceField": 6,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": 7,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/attemptNonce",
+          "sourceField": 8,
+          "profile": "approval-binding"
+        },
         { "path": "/purpose", "sourceField": 9, "profile": "approval-binding" },
-        { "path": "/audience", "sourceField": 10, "profile": "approval-binding" },
-        { "path": "/issuedAt", "sourceField": 11, "profile": "approval-binding" },
-        { "path": "/expiresAt", "sourceField": 12, "profile": "approval-binding" }
+        {
+          "path": "/audience",
+          "sourceField": 10,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/issuedAt",
+          "sourceField": 11,
+          "profile": "approval-binding"
+        },
+        {
+          "path": "/expiresAt",
+          "sourceField": 12,
+          "profile": "approval-binding"
+        }
       ]
     },
     {
@@ -611,7 +1044,11 @@
         "type": "ApprovalReference"
       },
       "fields": [
-        { "path": "/approvalId", "sourceField": "approvalID", "profile": "supervisor-reference" }
+        {
+          "path": "/approvalId",
+          "sourceField": "approvalID",
+          "profile": "supervisor-reference"
+        }
       ]
     },
     {
@@ -623,7 +1060,11 @@
         "type": "AttemptReference"
       },
       "fields": [
-        { "path": "/attemptId", "sourceField": "attemptID", "profile": "supervisor-reference" }
+        {
+          "path": "/attemptId",
+          "sourceField": "attemptID",
+          "profile": "supervisor-reference"
+        }
       ]
     },
     {
@@ -680,9 +1121,21 @@
           "sourceField": "SupervisorID",
           "profile": "approval-record-authority"
         },
-        { "path": "/purpose", "sourceField": "Purpose", "profile": "approval-record-authority" },
-        { "path": "/audience", "sourceField": "Audience", "profile": "approval-record-authority" },
-        { "path": "/issuedAt", "sourceField": "IssuedAt", "profile": "approval-record-authority" },
+        {
+          "path": "/purpose",
+          "sourceField": "Purpose",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "approval-record-authority"
+        },
+        {
+          "path": "/issuedAt",
+          "sourceField": "IssuedAt",
+          "profile": "approval-record-authority"
+        },
         {
           "path": "/expiresAt",
           "sourceField": "ExpiresAt",
@@ -723,7 +1176,11 @@
           "sourceField": "AuthorizationIdentity",
           "profile": "approval-record-authority"
         },
-        { "path": "/state", "sourceField": "State", "profile": "approval-record-authority" },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "approval-record-authority"
+        },
         {
           "path": "/consumedAttemptId",
           "sourceField": "ConsumedAttemptID",
@@ -745,9 +1202,21 @@
         "type": "ExecutionAttempt"
       },
       "fields": [
-        { "path": "/attemptId", "sourceField": "AttemptID", "profile": "attempt-authority" },
-        { "path": "/approvalId", "sourceField": "ApprovalID", "profile": "attempt-authority" },
-        { "path": "/attemptNonce", "sourceField": "AttemptNonce", "profile": "attempt-authority" },
+        {
+          "path": "/attemptId",
+          "sourceField": "AttemptID",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/approvalId",
+          "sourceField": "ApprovalID",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/attemptNonce",
+          "sourceField": "AttemptNonce",
+          "profile": "attempt-authority"
+        },
         {
           "path": "/registrationId",
           "sourceField": "RegistrationID",
@@ -758,7 +1227,11 @@
           "sourceField": "RegistrationSequence",
           "profile": "attempt-authority"
         },
-        { "path": "/planDigest", "sourceField": "PlanDigest", "profile": "attempt-authority" },
+        {
+          "path": "/planDigest",
+          "sourceField": "PlanDigest",
+          "profile": "attempt-authority"
+        },
         {
           "path": "/installationId",
           "sourceField": "InstallationID",
@@ -769,10 +1242,26 @@
           "sourceField": "EpochSequence",
           "profile": "attempt-authority"
         },
-        { "path": "/epochDigest", "sourceField": "EpochDigest", "profile": "attempt-authority" },
-        { "path": "/supervisorId", "sourceField": "SupervisorID", "profile": "attempt-authority" },
-        { "path": "/purpose", "sourceField": "Purpose", "profile": "attempt-authority" },
-        { "path": "/audience", "sourceField": "Audience", "profile": "attempt-authority" },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": "SupervisorID",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/purpose",
+          "sourceField": "Purpose",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "attempt-authority"
+        },
         {
           "path": "/approvalPayloadDigest",
           "sourceField": "ApprovalPayloadDigest",
@@ -783,8 +1272,16 @@
           "sourceField": "AuthorizationIdentity",
           "profile": "attempt-authority"
         },
-        { "path": "/createdAt", "sourceField": "CreatedAt", "profile": "attempt-authority" },
-        { "path": "/state", "sourceField": "State", "profile": "attempt-authority" },
+        {
+          "path": "/createdAt",
+          "sourceField": "CreatedAt",
+          "profile": "attempt-authority"
+        },
+        {
+          "path": "/state",
+          "sourceField": "State",
+          "profile": "attempt-authority"
+        },
         {
           "path": "/storageFormatVersion",
           "sourceField": "StorageFormatVersion",
@@ -801,10 +1298,26 @@
         "rule": "capsule-original-authoring-source-manifest-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
-        { "path": "/entrypoint", "sourceField": 3, "profile": "typescript-original-content" },
-        { "path": "/entries", "sourceField": 4, "profile": "typescript-original-content" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/entrypoint",
+          "sourceField": 3,
+          "profile": "typescript-original-content"
+        },
+        {
+          "path": "/entries",
+          "sourceField": 4,
+          "profile": "typescript-original-content"
+        },
         {
           "path": "/aggregateByteLength",
           "sourceField": 5,
@@ -821,10 +1334,26 @@
         "rule": "capsule-executable-javascript-source-manifest-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
-        { "path": "/entrypoint", "sourceField": 3, "profile": "typescript-executable-content" },
-        { "path": "/entries", "sourceField": 4, "profile": "typescript-executable-content" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/entrypoint",
+          "sourceField": 3,
+          "profile": "typescript-executable-content"
+        },
+        {
+          "path": "/entries",
+          "sourceField": 4,
+          "profile": "typescript-executable-content"
+        },
         {
           "path": "/aggregateByteLength",
           "sourceField": 5,
@@ -841,16 +1370,56 @@
         "rule": "capsule-typescript-transformer-profile-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
-        { "path": "/transformerApi", "sourceField": 3, "profile": "typescript-runtime" },
-        { "path": "/nodeVersion", "sourceField": 4, "profile": "typescript-runtime" },
-        { "path": "/amaroVersion", "sourceField": 5, "profile": "typescript-runtime" },
-        { "path": "/nodeSourceArchiveDigest", "sourceField": 6, "profile": "typescript-runtime" },
-        { "path": "/platform", "sourceField": 7, "profile": "typescript-runtime" },
-        { "path": "/architecture", "sourceField": 8, "profile": "typescript-runtime" },
-        { "path": "/distributionArchiveDigest", "sourceField": 9, "profile": "typescript-runtime" },
-        { "path": "/installedExecutableDigest", "sourceField": 10, "profile": "typescript-runtime" }
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/transformerApi",
+          "sourceField": 3,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/nodeVersion",
+          "sourceField": 4,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/amaroVersion",
+          "sourceField": 5,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/nodeSourceArchiveDigest",
+          "sourceField": 6,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/platform",
+          "sourceField": 7,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/architecture",
+          "sourceField": 8,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/distributionArchiveDigest",
+          "sourceField": 9,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/installedExecutableDigest",
+          "sourceField": 10,
+          "profile": "typescript-runtime"
+        }
       ]
     },
     {
@@ -862,14 +1431,42 @@
         "rule": "capsule-typescript-normalized-options-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
         { "path": "/mode", "sourceField": 3, "profile": "typescript-runtime" },
-        { "path": "/diagnosticPolicy", "sourceField": 4, "profile": "typescript-runtime" },
-        { "path": "/sourceMap", "sourceField": 5, "profile": "typescript-runtime" },
-        { "path": "/sourceUrl", "sourceField": 6, "profile": "typescript-runtime" },
-        { "path": "/inputMediaType", "sourceField": 7, "profile": "typescript-runtime" },
-        { "path": "/outputMediaType", "sourceField": 8, "profile": "typescript-runtime" }
+        {
+          "path": "/diagnosticPolicy",
+          "sourceField": 4,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/sourceMap",
+          "sourceField": 5,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/sourceUrl",
+          "sourceField": 6,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/inputMediaType",
+          "sourceField": 7,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/outputMediaType",
+          "sourceField": 8,
+          "profile": "typescript-runtime"
+        }
       ]
     },
     {
@@ -881,9 +1478,21 @@
         "rule": "capsule-typescript-transformation-record-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
-        { "path": "/logicalPath", "sourceField": 3, "profile": "typescript-original-content" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/logicalPath",
+          "sourceField": 3,
+          "profile": "typescript-original-content"
+        },
         {
           "path": "/originalMediaType",
           "sourceField": 4,
@@ -894,7 +1503,11 @@
           "sourceField": 5,
           "profile": "typescript-original-content"
         },
-        { "path": "/originalDigest", "sourceField": 6, "profile": "typescript-original-content" },
+        {
+          "path": "/originalDigest",
+          "sourceField": 6,
+          "profile": "typescript-original-content"
+        },
         {
           "path": "/emittedMediaType",
           "sourceField": 7,
@@ -905,11 +1518,31 @@
           "sourceField": 8,
           "profile": "typescript-executable-content"
         },
-        { "path": "/emittedDigest", "sourceField": 9, "profile": "typescript-executable-content" },
-        { "path": "/transformerProfileDigest", "sourceField": 10, "profile": "typescript-runtime" },
-        { "path": "/nodeVersion", "sourceField": 11, "profile": "typescript-runtime" },
-        { "path": "/amaroVersion", "sourceField": 12, "profile": "typescript-runtime" },
-        { "path": "/nodeSourceArchiveDigest", "sourceField": 13, "profile": "typescript-runtime" },
+        {
+          "path": "/emittedDigest",
+          "sourceField": 9,
+          "profile": "typescript-executable-content"
+        },
+        {
+          "path": "/transformerProfileDigest",
+          "sourceField": 10,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/nodeVersion",
+          "sourceField": 11,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/amaroVersion",
+          "sourceField": 12,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/nodeSourceArchiveDigest",
+          "sourceField": 13,
+          "profile": "typescript-runtime"
+        },
         {
           "path": "/distributionArchiveDigest",
           "sourceField": 14,
@@ -920,12 +1553,36 @@
           "sourceField": 15,
           "profile": "typescript-runtime"
         },
-        { "path": "/normalizedOptionsBytes", "sourceField": 16, "profile": "typescript-runtime" },
-        { "path": "/normalizedOptionsDigest", "sourceField": 17, "profile": "typescript-runtime" },
-        { "path": "/sourceMap", "sourceField": 18, "profile": "typescript-runtime" },
-        { "path": "/sourceUrl", "sourceField": 19, "profile": "typescript-runtime" },
-        { "path": "/diagnosticPolicy", "sourceField": 20, "profile": "typescript-runtime" },
-        { "path": "/diagnosticCount", "sourceField": 21, "profile": "typescript-runtime" }
+        {
+          "path": "/normalizedOptionsBytes",
+          "sourceField": 16,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/normalizedOptionsDigest",
+          "sourceField": 17,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/sourceMap",
+          "sourceField": 18,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/sourceUrl",
+          "sourceField": 19,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/diagnosticPolicy",
+          "sourceField": 20,
+          "profile": "typescript-runtime"
+        },
+        {
+          "path": "/diagnosticCount",
+          "sourceField": 21,
+          "profile": "typescript-runtime"
+        }
       ]
     },
     {
@@ -937,9 +1594,21 @@
         "rule": "capsule-typescript-transformation-record-set-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
-        { "path": "/records", "sourceField": 3, "profile": "typescript-runtime" }
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/records",
+          "sourceField": 3,
+          "profile": "typescript-runtime"
+        }
       ]
     },
     {
@@ -951,8 +1620,16 @@
         "rule": "capsule-typescript-plan-source-bindings-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "typescript-discriminator" },
-        { "path": "/objectVersion", "sourceField": 2, "profile": "typescript-discriminator" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "typescript-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": 2,
+          "profile": "typescript-discriminator"
+        },
         {
           "path": "/originalAuthoringManifestDigest",
           "sourceField": 3,
@@ -979,14 +1656,26 @@
         "rule": "capsule-source-manifest-v0"
       },
       "fields": [
-        { "path": "/objectType", "sourceField": 1, "profile": "mjs-source-manifest-discriminator" },
+        {
+          "path": "/objectType",
+          "sourceField": 1,
+          "profile": "mjs-source-manifest-discriminator"
+        },
         {
           "path": "/objectVersion",
           "sourceField": 2,
           "profile": "mjs-source-manifest-discriminator"
         },
-        { "path": "/entrypoint", "sourceField": 3, "profile": "mjs-source-manifest-content" },
-        { "path": "/members", "sourceField": 4, "profile": "mjs-source-manifest-content" },
+        {
+          "path": "/entrypoint",
+          "sourceField": 3,
+          "profile": "mjs-source-manifest-content"
+        },
+        {
+          "path": "/members",
+          "sourceField": 4,
+          "profile": "mjs-source-manifest-content"
+        },
         {
           "path": "/members/*/logicalPath",
           "sourceField": "4/*/1",
@@ -1330,6 +2019,607 @@
           "path": "/assessmentDigest",
           "sourceField": "AssessmentDigest",
           "profile": "source-validator-artifact-identity"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-request",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ValidationRequest"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/requestIdentity",
+          "sourceField": "RequestIdentity",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/sourceProfile",
+          "sourceField": "SourceProfile",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/sourceMediaType",
+          "sourceField": "SourceMediaType",
+          "profile": "source-validator-v1-request-discriminator"
+        },
+        {
+          "path": "/correlationId",
+          "sourceField": "CorrelationID",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/sourceByteLength",
+          "sourceField": "SourceByteLength",
+          "profile": "source-validator-v1-request-content"
+        },
+        {
+          "path": "/sourceDigest",
+          "sourceField": "SourceDigest",
+          "profile": "source-validator-v1-request-content"
+        },
+        {
+          "path": "/artifactProfileDigest",
+          "sourceField": "ArtifactProfileDigest",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/resourcePolicyDigest",
+          "sourceField": "ResourcePolicyDigest",
+          "profile": "source-validator-v1-request-binding"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "sourceBytes",
+          "profile": "source-validator-v1-request-content"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-result",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ValidationResult"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "source-validator-v1-result-discriminator"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-result-discriminator"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-v1-result-discriminator"
+        },
+        {
+          "path": "/resultIdentity",
+          "sourceField": "ResultIdentity",
+          "profile": "source-validator-v1-result-discriminator"
+        },
+        {
+          "path": "/correlationId",
+          "sourceField": "CorrelationID",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/sourceByteLength",
+          "sourceField": "SourceByteLength",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/sourceDigest",
+          "sourceField": "SourceDigest",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/artifactProfileDigest",
+          "sourceField": "ArtifactProfileDigest",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/resourcePolicyDigest",
+          "sourceField": "ResourcePolicyDigest",
+          "profile": "source-validator-v1-result-binding"
+        },
+        {
+          "path": "/parseDisposition",
+          "sourceField": "ParseDisposition",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/policyDisposition",
+          "sourceField": "PolicyDisposition",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/classification",
+          "sourceField": "Classification",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/cleanupDisposition",
+          "sourceField": "CleanupDisposition",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/refusalDisposition",
+          "sourceField": "RefusalDisposition",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/staticImportCount",
+          "sourceField": "StaticImportCount",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/exportFromCount",
+          "sourceField": "ExportFromCount",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/importExpressionCount",
+          "sourceField": "ImportExpressionCount",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/importMetaCount",
+          "sourceField": "ImportMetaCount",
+          "profile": "source-validator-v1-result-observation"
+        },
+        {
+          "path": "/freeCommonJsReferenceCount",
+          "sourceField": "FreeCommonJSReferenceCount",
+          "profile": "source-validator-v1-result-observation"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-reactive-footprint-policy",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ResourcePolicy"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/activation",
+          "sourceField": "Activation",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/processProfileDigest",
+          "sourceField": "ProcessProfileDigest",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/artifactProfileDigest",
+          "sourceField": "ArtifactProfileDigest",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/supportedHostBuildDigest",
+          "sourceField": "SupportedHostBuildDigest",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/directChildMaximum",
+          "sourceField": "DirectChildMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/descendantMaximum",
+          "sourceField": "DescendantMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/activeRequestMaximum",
+          "sourceField": "ActiveRequestMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/combinedRoleChildMaximum",
+          "sourceField": "CombinedRoleChildMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/requestByteMaximum",
+          "sourceField": "RequestByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/resultByteMaximum",
+          "sourceField": "ResultByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/diagnosticByteMaximum",
+          "sourceField": "DiagnosticByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/connectionMaximum",
+          "sourceField": "ConnectionMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/queueMaximum",
+          "sourceField": "QueueMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/inFlightByteMaximum",
+          "sourceField": "InFlightByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/cpuMillisecondMaximum",
+          "sourceField": "CPUMillisecondMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/wallMillisecondMaximum",
+          "sourceField": "WallMillisecondMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/descriptorMaximum",
+          "sourceField": "DescriptorMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/fileMaximum",
+          "sourceField": "FileMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/processMaximum",
+          "sourceField": "ProcessMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/coreByteMaximum",
+          "sourceField": "CoreByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/stackByteMaximum",
+          "sourceField": "StackByteMaximum",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/observedFootprintThreshold",
+          "sourceField": "ObservedFootprintThreshold",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/samplingIntervalNanoseconds",
+          "sourceField": "SamplingIntervalNanoseconds",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/measuredCleanBaseline",
+          "sourceField": "MeasuredCleanBaseline",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/maximumObservedOvershoot",
+          "sourceField": "MaximumObservedOvershoot",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/maximumObservedKillLatencyNanos",
+          "sourceField": "MaximumObservedKillLatencyNanos",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/systemPressureDisposition",
+          "sourceField": "SystemPressureDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/killDisposition",
+          "sourceField": "KillDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/drainDisposition",
+          "sourceField": "DrainDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/reapDisposition",
+          "sourceField": "ReapDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/restartDisposition",
+          "sourceField": "RestartDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/updateDisposition",
+          "sourceField": "UpdateDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/startupDisposition",
+          "sourceField": "StartupDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        },
+        {
+          "path": "/residueCleanupDisposition",
+          "sourceField": "ResidueCleanupDisposition",
+          "profile": "source-validator-v1-policy-shape"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-process-profile",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ProcessProfile"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/processProfile",
+          "sourceField": "ProcessProfile",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/containingBundle",
+          "sourceField": "ContainingBundle",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/privateService",
+          "sourceField": "PrivateService",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/parserSigningIdentity",
+          "sourceField": "ParserSigningIdentity",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/resourcePolicyDigest",
+          "sourceField": "ResourcePolicyDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/executableDigest",
+          "sourceField": "ExecutableDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/buildManifestDigest",
+          "sourceField": "BuildManifestDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/signatureDigest",
+          "sourceField": "SignatureDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/entitlementsDigest",
+          "sourceField": "EntitlementsDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/constraintsDigest",
+          "sourceField": "ConstraintsDigest",
+          "profile": "source-validator-v1-process-profile"
+        },
+        {
+          "path": "/assessmentDigest",
+          "sourceField": "AssessmentDigest",
+          "profile": "source-validator-v1-process-profile"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-artifact-profile",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ArtifactProfile"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/artifactProfile",
+          "sourceField": "ArtifactProfile",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/processProfileDigest",
+          "sourceField": "ProcessProfileDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/resourcePolicyDigest",
+          "sourceField": "ResourcePolicyDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/executableDigest",
+          "sourceField": "ExecutableDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/buildManifestDigest",
+          "sourceField": "BuildManifestDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/signatureDigest",
+          "sourceField": "SignatureDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/entitlementsDigest",
+          "sourceField": "EntitlementsDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        },
+        {
+          "path": "/constraintsDigest",
+          "sourceField": "ConstraintsDigest",
+          "profile": "source-validator-v1-artifact-profile"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-consumer-projection",
+      "version": 1,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract_v1.go",
+        "type": "V1ConsumerProjection"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/role",
+          "sourceField": "Role",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/containingBundle",
+          "sourceField": "ContainingBundle",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/artifactProfileDigest",
+          "sourceField": "ArtifactProfileDigest",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/resourcePolicyDigest",
+          "sourceField": "ResourcePolicyDigest",
+          "profile": "source-validator-v1-consumer-projection"
+        },
+        {
+          "path": "/processProfileDigest",
+          "sourceField": "ProcessProfileDigest",
+          "profile": "source-validator-v1-consumer-projection"
         }
       ]
     }

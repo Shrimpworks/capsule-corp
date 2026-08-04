@@ -8,9 +8,9 @@ slice. No byte maximum in this document is calculated or invented; every number 
 verbatim from ADR-0029/ADR-0034 prose (marked as unverified until fixture-generated) or explicitly
 marked "blocked on M1."
 
-Current dependency reconciliation (2026-08-04): M1 has passed, but this slice remains `BLOCKED`.
-Accepted ADR-0036 requires the sequential Source Validator path first: R1 passive role-specific v1
-contracts/field authority, R2 unsigned launcher/parser construction, separately authorized R3
+Current dependency reconciliation (2026-08-04): M1 and Source Validator R1 have passed, but this
+slice remains `BLOCKED`. Accepted ADR-0036 requires the remaining sequential Source Validator path
+first: R2 unsigned launcher/parser construction, separately authorized R3
 signing/install, R4 confinement/reactive-resource/residue corpus, R5D daemon consumer, and R5B
 Approval Broker consumer. Only then does the M2/S1 checkpoint update the historical M1-blocked
 items below and decide whether to run this plan. V0/V1/V2 evidence remains unchanged; no Source

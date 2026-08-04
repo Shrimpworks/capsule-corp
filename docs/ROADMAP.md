@@ -13,9 +13,10 @@ the next archive slice. Owner-lock G2 is `PASSED` for its
 retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a
 selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes,
 Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
-their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision. The
-product Source Validator and downstream S1/M2 remain `BLOCKED` on passive v1 contracts, unsigned
-construction, separately authorized signing/install, confinement/resource/residue evidence, and
+their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
+R1 passive v1 contracts/fixtures are `PASSED`. The product Source Validator and downstream S1/M2
+remain `BLOCKED` on unsigned construction, separately authorized signing/install,
+confinement/resource/residue evidence, and
 sequential daemon then Broker consumers.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker is now
@@ -207,7 +208,7 @@ fallback. Its passive source-byte/SourceManifest foundation is retained, and an 
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
 passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
 but the product validator and downstream S1/M2 registration/fetch slices remain on hold pending
-R1-R5B. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
+R2-R5B. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
 bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation retains ambient
 file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
 fixed V1 bytes. Resume only with a newly reviewed/enrolled artifact and supported exact memory/
@@ -220,7 +221,8 @@ scratch authority only, with mandatory cleanup/residue testing that is not a con
 proof. The public footprint setter returned `KERN_NO_ACCESS`, so the accepted contract is a later
 evidence-derived reactive footprint watermark with one direct child per launcher request, bounded
 combined two-role concurrency, fixed sampling, and kill/drain/reap—not a hard peak/exact cap or
-host-availability guarantee. R1 must not invent threshold/cadence/overshoot values.
+host-availability guarantee. R1 now passes with those measurements explicitly inactive and zero;
+R4 alone may derive threshold/cadence/baseline/overshoot/kill-latency values.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Accepted ADR-0035 selects exact Oxc 0.140.0 as the engineering candidate for a separate
 one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed
@@ -228,8 +230,9 @@ protocol and cross-language passive conformance. V1 observes exact build bytes, 
 SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without enrollment. Later
 slices must prove independent reproduction and signed enrollment, disposable OS profile,
 independent role-private daemon/Broker invocation, grammar/mutation corpus, resource/residue
-evidence, and fault recovery. Work proceeds strictly as R1 passive contracts/fixtures, R2 unsigned
-construction, R3 separately authorized signing/install, R4 confinement/resource/residue corpus,
+evidence, and fault recovery. R1 passive contracts/fixtures are now retained. Work proceeds
+strictly as R2 unsigned construction, R3 separately authorized signing/install, R4
+confinement/resource/residue corpus,
 R5D daemon consumer, R5B Broker consumer, then M2/S1 checkpoint. Unsupported private-XPC
 reachability, widened authority/native loading/network/filesystem escape, orphan/cleanup failure,
 mixed-version acceptance, or unacceptable measured host risk stops the exact candidate. No product

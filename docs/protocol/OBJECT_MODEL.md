@@ -119,12 +119,13 @@ verification. The manifest should begin with the passive candidate objects and e
 the coordinated versioned migrations that add new target fields; it must not extend the deprecated
 mixed `Job` model.
 
-The first passive implementation now retains a closed 228-field manifest across 20 selected
+The passive implementation now retains a closed 335-field manifest across 26 selected
 targets: the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` candidates;
 the passive approval reference, attempt reference, durable approval record, and immutable attempt;
 the TypeScript approved-byte object family plus its future-plan source-binding projection; the
-single-member MJS `SourceManifest` including its nested path/digest/length fields; and the passive
-Source Validator request, result, engineering-candidate, and artifact-profile records.
+single-member MJS `SourceManifest` including its nested path/digest/length fields; the passive
+Source Validator v0 request, result, engineering-candidate, and artifact-profile records; and the
+v1 request, result, resource-policy, process-profile, artifact-profile, and consumer projection.
 Repository verification compares those classifications directly with the current JSON Schema,
 numbered CDDL maps, and version-marked Go passive structs. Focused mutations prove rejection of a
 missing field (including a nested member field), unknown classification, duplicate path, stale object version, and classification
@@ -142,11 +143,10 @@ the same reviewed change.
 Accepted ADR-0036 now defines the
 [passive Source Validator v1 implementation boundary](MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md)
 with separate daemon and Approval-Broker request/result/process/artifact-profile families plus an
-evidence-derived reactive-resource-policy family. Those are planned R1 targets, not part of the
-current 228-field/20-target manifest. R1 must add every top-level and nested classification in the
-same change as its canonical layouts and known answers, preserve all V0 targets unchanged, reject
-cross-role/cross-version reuse, and leave active threshold/cadence/overshoot values unset until the
-signed R4 corpus.
+evidence-derived reactive-resource-policy family. R1 now retains those canonical layouts, known
+answers, and classifications while preserving all V0 targets unchanged and rejecting cross-role/
+cross-version reuse. Active threshold/cadence/baseline/overshoot/kill-latency values remain unset
+until the signed R4 corpus.
 
 ## Semantics
 

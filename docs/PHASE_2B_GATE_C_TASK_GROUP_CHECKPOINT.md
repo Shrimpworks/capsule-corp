@@ -27,15 +27,17 @@ Keep these evidence classes separate:
 
 ## Durable repository state
 
-The current closed conformance corpus has 94 rules, 458 cases, and 561 fixtures. The unwired
+The current closed conformance corpus has 100 rules, 510 cases, and 631 fixtures. The unwired
 Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
 targets plus 40 independently verified MJS byte/manifest targets in each language. Go and a
-standalone test-only Rust oracle additionally verify 128 exact passive Source Validator frames.
+standalone test-only Rust oracle additionally verify 128 exact passive v0 Source Validator frames;
+Go and Node independently verify 46 role-separated passive v1 frames.
 Twenty-eight exact M1 HOLD result oracles are retained and the unwired V1 artifact reproduces them,
 and both are `PASSED` in their exact passive or unwired scopes. Product Source Validator work is
-`BLOCKED` on the retained V2 macOS resource/confinement stop. The passive field-authority foundation covers 228 fields across 20
-selected pre-freeze targets, including SourceManifest and the four passive Source Validator
-objects; it does not classify future Source Preparer or plan-v1 objects.
+`BLOCKED` on the retained V2 macOS resource/confinement stop and R2-R5B. The passive
+field-authority foundation covers 335 fields across 26 selected pre-freeze targets, including
+SourceManifest and v0/v1 passive Source Validator objects; it does not classify future Source
+Preparer or plan-v1 objects.
 
 The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
 approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
@@ -88,10 +90,10 @@ App-Sandboxed XPC launchers and matching fresh parser/profile families with no s
 result, cache, container, group, or key. Each writable private container is residual scratch
 authority only with mandatory cleanup/residue evidence that is not a confidentiality proof. The
 public footprint setter returned `KERN_NO_ACCESS`, so the accepted policy is a later evidence-
-derived reactive watermark with no hard-peak/exact-cap or host-availability claim. R1-R5B now own
-new passive identities, unsigned construction, separately authorized signing/install, installed
+derived reactive watermark with no hard-peak/exact-cap or host-availability claim. R1 now retains
+the passive identities; R2-R5B own unsigned construction, separately authorized signing/install, installed
 confinement/resource/residue evidence, sequential consumers, and updates. No numeric resource value,
-signing identity, service, or consumer exists.
+active policy measurement, signing identity, service, or consumer exists.
 
 The proposed
 `RegisterPlanV0` would atomically submit exact plan bytes, the
@@ -155,7 +157,7 @@ builder equality, or runtime/profile admission follows from that fork result.
 | `PASSED` local conformance slices / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2/F3/F4A / F4B+ | F2 migration/full verification, F3 first immutable-segment activation, and F4A read-only retained lookup/replay/passive-collision routing pass with exact missing-history preservation, visible tombstones, publish-before-reference ordering, complete old-or-new reopen, hot/archive semantic equality, and zero adapter calls. Continue next with F4B atomic mutation/new tombstones and F4C bounded growth; production archive/store admission remains later. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
 | `PASSED` prerequisites, replacement research, and R0 decision / product and downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc selection, passive frames, unwired V1 artifact, negative V2 checkpoint, and ADR-0036 R0 decision passed their bounded scopes. Direct inherited helpers are rejected; two role-specific private launchers, residual scratch/cleanup, and reactive-resource claim boundaries are selected. Keep product and S1/M2 blocked. |
-| `BLOCKED` sequential implementation/evidence | Source Validator R1-R5B | Run passive v1 contracts/field authority; unsigned construction; separately authorized signing/install; confinement/resource/residue corpus; daemon consumer; Broker consumer; then M2/S1. Stop on unsupported private reachability, authority/native-loading/network/filesystem escape, orphan/cleanup, mixed update, or unacceptable measured host risk. |
+| R1 `PASSED`; product `BLOCKED` | Source Validator R1-R5B | Passive v1 contracts/field authority now retain role-distinct known answers, inactive policy, exact caps, and independent Go/Node decoding. Continue with unsigned R2 construction; separately authorized signing/install; confinement/resource/residue corpus; daemon consumer; Broker consumer; then M2/S1. Stop on unsupported private reachability, authority/native-loading/network/filesystem escape, orphan/cleanup, mixed update, or unacceptable measured host risk. |
 | `PASSED` bounded unwired conformance / signed parent `BLOCKED` | Production CBOR wrapper preparation | The [v0 object-set/wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only `SourceManifest` v0 as eligible and adds one unwired fxamacker v2.9.2 codec behind Capsule predecode, caps, canonical-byte comparison, binding, and exact-byte ownership. Plan, registration, approval, Swift, same-byte consumers, and production COSE remain blocked; `go-cose` stays test-only. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |

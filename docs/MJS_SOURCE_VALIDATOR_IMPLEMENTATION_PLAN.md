@@ -60,9 +60,10 @@ predecode tables, and no disagreement with ADR-0034 or M1.
 Observed passive slice: the exact
 [`capsule.source-validator.protocol/v0`](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md)
 fixed-frame projection is retained with independent unwired Go and test-only Rust codecs. The
-generator consumes M1's canonical bytes in place and adds 5 rules, 128 cases, and 128 fixtures;
-228 fields across 20 passive targets are now classified. This closes only V0's byte/ownership
-question. It does not enroll Oxc or an executable, create a process or endpoint, or begin V1-V6.
+generator consumes M1's canonical bytes in place and adds 5 rules, 128 cases, and 128 fixtures.
+Before R1, the full authority manifest covered 228 fields across 20 passive targets. This closes
+only V0's byte/ownership question. It does not enroll Oxc or an executable, create a process or
+endpoint, or begin the later product slices.
 
 ### V1 — hermetic parser artifact
 
@@ -145,6 +146,12 @@ overshoot, or kill latency is chosen before the signed R4 corpus.
 ## Accepted replacement sequence
 
 ### R1 — passive v1 contracts and fixtures
+
+Status: `PASSED` for the unwired passive-contract scope. The generated corpus retains 46 v1 cases
+with independent Go/Node decoding, separate daemon/Broker known answers, exact/cap-plus-one
+boundaries, strict cross-role/cross-version refusal, and an inactive resource-policy record that
+rejects invented measurements. No launcher, parser child, signing, service, consumer, or active
+policy exists.
 
 Freeze the two role-specific request/result/process/artifact-profile families, the reactive-policy
 record shape, copied ownership, exact caps, cleanup/refusal dispositions, and cross-role/cross-
@@ -286,7 +293,7 @@ This gate belongs to runtime admission. Parser passage alone never satisfies it.
 ## Acceptance rule
 
 ADR-0035 and ADR-0036 are Accepted architecture decisions. Product Source Validator remains
-`BLOCKED` until R1-R5B retain reviewed evidence on every supported host and the canonical docs,
+`BLOCKED` until R2-R5B retain reviewed evidence on every supported host and the canonical docs,
 field-authority material, and M2/S1 checkpoint agree. Runtime/profile admission additionally
 requires V6. A parser binary, endpoint, signed package, cleanup pass, or happy-path result alone is
 insufficient and does not make the product control passed or admitted.

@@ -411,7 +411,8 @@
         "channel-authentication",
         "approval-attempt-contract",
         "approval-attempt-fixed-store",
-        "source-validator-passive-contract"
+        "source-validator-passive-contract",
+        "source-validator-passive-v1-contract"
       ]
     },
     "expectedAccept": {
@@ -558,7 +559,13 @@
             "SourceValidatorRequest",
             "SourceValidatorResult",
             "SourceValidatorArtifactProfile",
-            "SourceValidatorEngineeringCandidate"
+            "SourceValidatorEngineeringCandidate",
+            "SourceValidatorV1Request",
+            "SourceValidatorV1Result",
+            "SourceValidatorV1ResourcePolicy",
+            "SourceValidatorV1ProcessProfile",
+            "SourceValidatorV1ArtifactProfile",
+            "SourceValidatorV1ConsumerProjection"
           ]
         },
         "wireFormat": {

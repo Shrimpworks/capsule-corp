@@ -98,8 +98,8 @@ The first complete workflow is intentionally narrow:
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
    loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
-   parser/process selection are `PASSED`; product Source Validator R1-R5B is
-   `BLOCKED`, and plan construction remains `BLOCKED` until its required gates
+   parser/process selection and passive R1 contracts are `PASSED`; product Source Validator R2-R5B
+   is `BLOCKED`, and plan construction remains `BLOCKED` until its required gates
    pass.
 2. The Go daemon strictly decodes the proposal and, under Accepted ADR-0035/0036, sends an exact
    copied source through its private role-specific Source Validator launcher before planning. The
@@ -228,9 +228,9 @@ owns at that stage. The parser is not linked into either parent and is never pla
 Supervisor. V0 fixed the protocol; V1 now retains an unwired exact Oxc artifact, complete locked
 inventory, V0/M1 result agreement, and same-host deterministic reproduction. The artifact remains
 identity-free linker-ad-hoc-signed rather than installation-signed, not enrolled, and not invoked
-by any parent. This boundary is only Proposed until
-independent provenance, installation enrollment, sandbox/resource, consumer, broader conformance,
-and fault evidence pass the
+by any parent. ADR-0035's design is Accepted and R1's passive role contracts are retained, but the
+product boundary remains `BLOCKED` until independent provenance, installation enrollment,
+sandbox/resource, consumer, broader conformance, and fault evidence pass the
 [`implementation plan`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md). Runtime no-loader admission
 remains a separate mandatory control.
 
@@ -260,8 +260,10 @@ kill/drain/reap. It is not a hard peak/exact cap or host-availability guarantee.
 cadence, baseline, overshoot, and kill latency remain unset until the separately authorized signed
 corpus.
 
-Product implementation remains `BLOCKED` on the sequential passive v1 contract, unsigned
-construction, signed installed reachability/confinement, measured resource/residue corpus, daemon
+The passive v1 contract is now `PASSED`: fixed role-distinct frames and an explicitly inactive
+resource-policy shape have independent Go/Node decoders and no process or authority effect.
+Product implementation remains `BLOCKED` on sequential unsigned construction, signed installed
+reachability/confinement, measured resource/residue corpus, daemon
 consumer, and Broker consumer. Unsupported private-XPC reachability, authority/native-loading/
 filesystem/network escape, orphan cleanup, mixed update, or unacceptable measured host risk stops
 the candidate rather than widening the bus.

@@ -2,9 +2,12 @@
 
 Status: proposed and local-only. Slice F1 now implements passive archive projections, exact
 limits/domain-separated known answers, defensive copies, and the pure closed-cohort eligibility
-selector. It performs no file I/O or authority mutation. Proposed ADR-0031 still defines the
-unimplemented immutable retained archive and selects a minimal fixed-store checkpoint only as the
-conformance oracle. No migration, full v2 verifier, archive write/activation, retained lookup,
+selector. It performs no file I/O or authority mutation. F2 review found an exact-format blocker
+between the required nonzero visible-v1 effect seed, archive-only counts/locations, and the
+generation-one checkpoint; the retained evidence and narrow proposed correction are in
+[the F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Proposed ADR-0031 still defines
+the unimplemented immutable retained archive and selects a minimal fixed-store checkpoint only as
+the conformance oracle. No migration, full v2 verifier, archive write/activation, retained lookup,
 consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
 deployment, or guest is implemented by this plan.
 
@@ -47,7 +50,7 @@ closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections, t
 candidate limits and literal known answers, defensive-copy behavior, and deterministic complete-
 cohort selection with `RecoveryAttemptIDs` exclusion. It does not open or write a store or segment,
 migrate v1, reconstruct a v2 archive set, release hot capacity, route lookup, or invoke the fake.
-F2 is the next retained slice.
+F2 is format-blocked pending the retained passive-format correction linked above.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
 Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
@@ -472,7 +475,13 @@ Retained result: merged in PR #75 from exact head
 `6fc31a049c476acf5085071c48d3d5e36f27240f`. The focused race run reported 86.0% statement
 coverage for the passive package. This is a local-mechanic checkpoint, not archive activation.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier — next
+### Slice F2: explicit fixed-store v2 migration and full verifier — format-blocked
+
+The first implementation review stopped before choosing bytes because merged F1 cannot represent
+a required nonzero visible-v1 effect seed with zero archive descriptors, and its activation-shaped
+checkpoint cannot produce the required generation-one migration genesis. Resolve the retained
+[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) in ADR-0031, this plan, and F1 before
+implementing the following work.
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.

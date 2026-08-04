@@ -52,8 +52,11 @@ registration/approval/attempt/nonce/effect/instance/replay tombstones. The finit
 checkpoint is selected only as a fault-injectable conformance oracle. Slice F1 now implements
 passive archive types, exact limits/known-answer digests, defensive copies, and a pure complete-
 cohort selector. It performs no file I/O, v2 migration, archive activation, lookup, or authority
-mutation. F2 is next; production-engine selection, referenced-history deletion, continuous service,
-coherent restore activation, and rollback-resistant non-reuse remain blocked.
+mutation. F2 review is format-blocked on the nonzero visible-v1 effect seed/empty-descriptor count
+model and the generation-one migration checkpoint; see the retained
+[F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Production-engine selection,
+referenced-history deletion, continuous service, coherent restore activation, and rollback-
+resistant non-reuse remain blocked.
 
 ## Reference workflow
 
@@ -679,8 +682,10 @@ snapshot that references it, installs exact tombstone indexes, and removes the s
 hot sets. Indeterminate publication or activation fences until reopen. Full cohort records remain
 retained and referenced-history deletion is forbidden; fixed total caps eventually refuse. Passive
 F1 types, known answers, defensive copies, and eligibility selection now exist. No store migration,
-file/segment write, activation, retained lookup, or consumer exists; F2 is next, and a production
-engine plus real power-loss proof remain deferred.
+file/segment write, activation, retained lookup, or consumer exists. F2 is format-blocked pending
+the narrow passive-format correction retained in
+[the F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), and a production engine plus real
+power-loss proof remain deferred.
 
 ## Error and violation taxonomy
 
@@ -714,8 +719,10 @@ passes a happy path. See [Control Evidence Matrix](security/CONTROL_EVIDENCE_MAT
 2. Freeze backend-independent contracts using the measured results.
 3. Implement registered-plan, approval-ledger, fake-backend, crash-recovery, and composed-evidence
    lifecycle using a locally seeded development trust snapshot.
-4. Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1 into
-   F2's explicit v1-to-v2 migration/full verifier, then run the same logical corpus plus real
+4. Resolve the retained ADR-0031/F1
+   [F2 format blocker](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md), then continue the passive/fault-
+   injectable fixed-store archive oracle into F2's explicit v1-to-v2 migration/full verifier and
+   run the same logical corpus plus real
    locking, backup, corruption, APFS, and power-loss tests against a named production-engine
    candidate before selecting it.
 5. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.

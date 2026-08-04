@@ -60,8 +60,12 @@ tombstone, or claim that capacity was released.
 The implementation series uses a minimal fixed-store archive checkpoint only as an unwired
 conformance oracle. Slice F1 now retains passive projections, exact limits/known answers, defensive
 copies, and deterministic eligibility selection. It performs no file I/O, migration, archive
-activation, lookup, or authority mutation; F2 is next. The later stateful slices preserve the
-current full-snapshot validation and exact rename fault
+activation, lookup, or authority mutation. The first F2 review stopped before choosing bytes: the
+merged passive model cannot represent a required nonzero visible-v1 effect seed with zero archive
+descriptors or construct the specified generation-one migration checkpoint. The retained
+[F2 format blocker](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) proposes the narrow ADR/plan/F1
+correction required before F2. The later stateful slices preserve the current full-snapshot
+validation and exact rename fault
 boundaries while proving the archive protocol. It is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate

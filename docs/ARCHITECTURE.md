@@ -126,6 +126,19 @@ Sandbox child entitlements change the immutable V1 Mach-O bytes. No deprecated c
 used. This is crash and local process-mechanic evidence only; V2 is `BLOCKED` pending a newly
 reviewed/enrolled artifact plus a supported exact memory and confinement mechanism.
 
+The follow-on [supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
+passes its research/design scope without unblocking the product. A directly spawned App Sandbox
+helper inherits the daemon's or Broker's static sandbox rights and is `NO_GO` for this exact
+boundary. Apple's supported lower-authority composition requires a separately sandboxed XPC/
+helper boundary; the plausible Capsule shape is a method-specific unprivileged XPC launcher that
+owns one fresh parser child and all pipe/resource/kill/reap mechanics. That topology is not selected
+or implemented. It would require new protocol/process/artifact-profile identities, and App Sandbox
+still grants its private container read/write authority. The public-SDK physical-footprint setter
+returned `KERN_NO_ACCESS`, while parent footprint sampling is reactive rather than a hard peak
+limit. Under the current no-store and exact-memory acceptance rule, V2 and V3/V4 remain `BLOCKED`.
+No launcher role, app group, shared Keychain group, global Mach exception, signing action, or
+product consumer is authorized by the review.
+
 The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
 does not parse rich source. The validator has no authority to approve, retain state, or launch a
 guest. This is a proposed approval-correctness/usability gate; an admitted runtime must still

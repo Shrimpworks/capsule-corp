@@ -207,6 +207,18 @@ custom sandbox interfaces were not used. CPU/file/FD/child/wall ceilings, output
 kill/reap, and a clean later invocation are local-mechanic evidence only. V2 remains `BLOCKED` and
 no Keychain, Supervisor-state, installed-identity, sandbox, or product-containment claim follows.
 
+The later [supported-profile review](../MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) rejects
+direct App Sandbox inheritance for this exact boundary because the child receives its daemon or
+Broker parent's static sandbox rights. A separately sandboxed, method-specific XPC launcher that
+owns a fresh parser child is the only plausible supported composition found, but it is not selected
+or implemented. Its installed reachability/topology is unresolved, App Sandbox gives it and the
+inherited parser child read/write access to a private container, and the observed host exposes no
+usable public unprivileged hard memory cap. A public-SDK physical-footprint setter returned
+`KERN_NO_ACCESS`; `proc_pid_rusage` sampling plus kill is reactive and can overshoot between
+samples. Therefore bounded source/result bytes, one-child concurrency, CPU/wall ceilings, and
+kill/reap do not bound peak host-memory impact. Under the current exact-memory/no-store acceptance
+rule this remains a release blocker, not an admitted residual-risk claim.
+
 Separate authorities require proven macOS enforcement: XPC peer code requirements, effective user/
 session and exact build/epoch checks, Keychain access-group separation, protected storage
 containers, relevant entitlements, and Supervisor-only backend control.

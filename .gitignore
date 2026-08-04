@@ -14,6 +14,8 @@ artifacts/*
 !artifacts/mjs-source-validator-v1/**
 !artifacts/mjs-source-validator-v2/
 !artifacts/mjs-source-validator-v2/**
+!artifacts/mjs-source-validator-v2-replacement/
+!artifacts/mjs-source-validator-v2-replacement/**
 tmp/
 *.log
 

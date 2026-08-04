@@ -35,10 +35,15 @@ exact Oxc 0.140.0 parser/AST/semantic checking is the engineering candidate insi
 one-shot disposable Source Validator, invoked independently before planning and before approval.
 The experiment is retained in the commit-pinned
 [`mjs-parser-boundary` archive](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/mjs-parser-boundary).
-The first passive V0 slice
-freezes fixed request/result/candidate/artifact-profile frames and independent Go/Rust test
-oracles without launching or invoking a parser. No product validator,
-sandbox profile, runtime no-loader boundary, runtime, backend, or guest is implemented or admitted.
+The passive V0 slice freezes fixed request/result/candidate/artifact-profile frames and independent
+Go/Rust test oracles without launching or invoking a parser. The
+bounded V1 follow-up now retains one unwired macOS arm64 artifact at exact digest
+`ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600`, its Rust 1.95.0 locked
+offline graph, source/license/notice/SBOM/provenance manifests, V0 result agreement, and same-host
+two-directory byte reproduction. Its identity-free linker ad-hoc signature is recorded, but it is
+not installation-signed or enrolled: independent-builder, vulnerability-owner, V2 sandbox/resource,
+V3/V4 consumer, and V6 runtime evidence remain blockers. No product endpoint, runtime no-loader
+boundary, runtime, backend, or guest is implemented or admitted.
 
 Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,

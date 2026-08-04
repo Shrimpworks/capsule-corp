@@ -15,8 +15,14 @@ decision, and fault plan are retained in the
 [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now implements the owner-asserted
 v1-to-v2 migration, downgrade refusal, and read-only empty-archive full verifier with exact known
 answers and local fault/corruption/capacity/concurrency/process-death evidence. It implements no
-archive write/activation, cohort movement, retained lookup, consumer, IPC, runtime, backend,
-service, identity, credential, user data, deployment, or guest.
+retained lookup, consumer, IPC, runtime, backend, service, identity, credential, user data,
+deployment, or guest. The follow-on
+[stateful F3 result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) now implements exactly one sealed
+immutable-segment prepare/verify/publish/activate transaction. It retains the complete cohort and
+all visible identities/tombstones, publishes before reference, atomically installs the generation-
+two checkpoint, reports valid orphans without deleting them, and fully reopens either the complete
+predecessor or successor under the owner assertion. F4+ behavior and production admission remain
+outside that passed scope.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -587,7 +593,7 @@ See the [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md),
 `TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection`. Stateful work must follow the exact
 join, no-adapter, downgrade, and confirmed/indeterminate matrix retained there.
 
-### Slice F3: one immutable segment prepare/verify/activate transaction
+### Slice F3: one immutable segment prepare/verify/activate transaction — complete
 
 - Implement sealed plan/prepared/verified values and one deterministic cohort batch.
 - Publish the segment before active reference; add every pre/post-rename fault and reopen oracle.
@@ -595,6 +601,13 @@ join, no-adapter, downgrade, and confirmed/indeterminate matrix retained there.
 
 Acceptance: one compact generated cohort archives and reopens; all fault cases preserve old or new
 complete worlds; zero fake calls.
+
+Observed result: `PASSED` in this exact scope. The implementation, transaction identities, known
+answers, owner checks, corruption/substitution/orphan/concurrency/fault/response-loss/process-death
+oracles, and limitations are recorded in the
+[F3 stateful activation result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md). No retained lookup,
+v2 authority mutation, second segment, orphan deletion, backup, production engine, consumer, IPC,
+adapter, runtime, backend, or guest was added.
 
 ### Slice F4: retained lookup, replay, uniqueness, and bounded growth
 

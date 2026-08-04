@@ -575,9 +575,9 @@ reopen, post-open ownership fencing, and store-before-owner shutdown. It remains
 mechanic and supplies no protected-storage, same-UID-containment, signed-bootstrap,
 installed-identity, rollback, archive, runtime, real-backend, or guest claim.
 
-Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
-replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies,
-and complete-cohort eligibility now exist. The passive
+Proposed ADR-0031 and its conformance plan define the full-record archive and exact replay/non-reuse
+tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies, and complete-
+cohort eligibility now exist. The passive
 [F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) adds scope-separated
 global/segment indexes, record-kind-bound hot/archive locations and count equations, and a distinct
 generation-one migration-genesis checkpoint with generated answers. The follow-on valid-v1
@@ -587,9 +587,14 @@ executable [F2 v1 mapping resolution](../SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKE
 real crash witness and no-invention rule. The
 [stateful F2 result](../SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now implements only the owner-
 asserted v1-to-v2 file migration and empty-archive full verifier, with strict reconstruction,
-downgrade refusal, and local fault/corruption/capacity/process-death evidence. It performs no
-archive activation, cohort movement, retained lookup, v2 authority mutation, or adapter call. The
-finite fixed-store checkpoint provides no production engine, multi-process lock, power-loss result,
+downgrade refusal, and local fault/corruption/capacity/process-death evidence. The follow-on
+[stateful F3 result](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) implements one owner-asserted
+sealed immutable-segment prepare/verify/publish/activate transaction. It retains every selected
+record and visible tombstone, publishes before reference, atomically installs the generation-two
+checkpoint, reports valid orphans without deletion, and refuses missing/corrupt/substituted
+referenced bytes without fallback. It performs no retained lookup, v2 authority mutation, second
+segment, backup, orphan cleanup, or adapter call. The finite fixed-store checkpoint provides no
+production engine, multi-process lock, power-loss result,
 restore/anti-rollback mechanism, referenced-history deletion, continuous service, consumer, or
 guest evidence.
 

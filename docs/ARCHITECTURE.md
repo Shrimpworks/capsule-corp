@@ -257,8 +257,14 @@ it on reopen. Its closed absent/present join preserves the exact one-attempt/zer
 the retained fault corpus proves byte-identical v1 before rename and an old-or-new complete world
 after an indeterminate rename/directory sync. The exact scope and known answers are in the
 [F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md). The selected fixed
-checkpoint remains a finite conformance oracle, not a production engine or continuous-service
-mechanism, and referenced archive history is not deletable under that proposal.
+checkpoint now also implements F3's one sealed immutable-segment prepare/verify/publish/activate
+transaction. It fully reopens the published segment before reference, atomically installs the
+generation-two active checkpoint, preserves every selected full record and visible tombstone, and
+retains old-or-new fault/death oracles; see the
+[F3 stateful activation result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md). Retained lookup, v2
+authority mutation, multi-segment growth, backup/orphan-cleanup policy, and production-engine work
+remain F4+. The fixed checkpoint remains a finite conformance oracle, not a production engine or
+continuous-service mechanism, and referenced archive history is not deletable under that proposal.
 
 ### Trust verifier and repository
 

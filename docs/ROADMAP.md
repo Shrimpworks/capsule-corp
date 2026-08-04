@@ -8,7 +8,8 @@ The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 All labels below follow the [canonical work status language](STATUS_LANGUAGE.md). Archive F2 is
 `PASSED` for both the passive missing-lifecycle representation and the exact stateful local
-migration/full-verifier scope; F3 is the next archive slice. Owner-lock G2 is `PASSED` for its
+migration/full-verifier scope; F3's first immutable-segment activation is also `PASSED`, and F4 is
+the next archive slice. Owner-lock G2 is `PASSED` for its
 retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a
 selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes, Proposed
 ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in their exact
@@ -178,9 +179,11 @@ expired registration cohorts may move to immutable retained segments
 only after all bound attempts are durably destroyed with authoritative absence. Full records and
 exact replay/non-reuse tombstones remain retained; referenced deletion is forbidden. A finite
 fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and both passive F2
-corrections remain the contract foundation. Stateful F2 now writes only the all-hot, empty-archive
-v2 migration successor and fully verifies it; it performs no segment activation, cohort movement,
-retained lookup, v2 authority mutation, or consumer behavior. F3's one-segment transaction is next.
+corrections remain the contract foundation. Stateful F2 writes the all-hot, empty-archive v2
+migration successor and fully verifies it. Stateful F3 publishes and activates exactly one
+immutable complete-cohort segment under the owner assertion and fully verifies the generation-two
+successor. It performs no retained lookup, v2 authority mutation, second activation, deletion, or
+consumer behavior. F4's retained lookup/mutation/growth boundary is next.
 Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
@@ -232,9 +235,9 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1/F2 into
-  F3's one-segment prepare/verify/activate transaction, retaining full closed cohorts and exact tombstone indexes
-  without deletion, then compare a pinned production-engine candidate against the same logical,
+- Continue the passive/fault-injectable ADR-0031 fixed-store archive oracle from completed F1-F3 into
+  F4 retained lookup/mutation/growth and F5 backup/orphan/reporting, retaining full closed cohorts
+  and exact tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned
   `fxamacker/cbor` only for future object-specific typed encode/decode while keeping Capsule

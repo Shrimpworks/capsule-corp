@@ -240,8 +240,13 @@ union and counts derived only from present records. The
 witness are retained. The [stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now
 implements the owner-asserted v1-to-v2 migration, downgrade refusal, and read-only empty-archive
 full verifier with exact known answers and local fault/corruption/capacity/concurrency/process-
-death evidence. It preserves the absent-lifecycle witness without recovery or invention. The design
-deliberately leaves
+death evidence. It preserves the absent-lifecycle witness without recovery or invention. The
+[stateful F3 result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) now implements the first sealed
+immutable-segment prepare/verify/publish/activate transaction with exact known answers, complete
+visible identity/tombstone retention, publish-before-reference ordering, atomic generation-two
+activation, passive valid-orphan reporting, and fault/response-loss/corruption/substitution/
+concurrency/owner-loss/process-death oracles. It adds no retained lookup, v2 mutation, second
+segment, orphan deletion, backup, engine, adapter, or consumer. The design deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
 
@@ -351,8 +356,8 @@ The ecosystem reuse audit is retained in
 [`ECOSYSTEM_REUSE_AND_ADOPTION.md`](ECOSYSTEM_REUSE_AND_ADOPTION.md) at PR #86's integrated
 checkpoint. It is a primary-source-backed planning map, not implementation or security evidence.
 It records three bounded decision lanes: the completed production CBOR/COSE profile comparison,
-SQLite comparison only after the F3-F5 logical archive oracle, and the now-blocked Source Validator
-V2 replacement-profile boundary. It does not preempt F3, owner-lock G3, or the separate ARM64
+SQLite comparison only after the F4-F5 remainder of the logical archive oracle, and the now-blocked Source Validator
+V2 replacement-profile boundary. It does not preempt F4, owner-lock G3, or the separate ARM64
 `rusty_v8` work.
 
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
@@ -402,10 +407,11 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Next archive slice:** F2's valid v1 committed-attempt-without-lifecycle mapping and explicit
-   migration/full verifier are `PASSED` in their exact local scopes. Implement no more than F3's
-   one immutable segment prepare/verify/activate transaction under the retained no-adapter,
-   publish-before-activate, and indeterminate-outcome plan.
+1. **Next archive slice:** F2's valid v1 committed-attempt-without-lifecycle mapping/migration/full
+   verifier and F3's first immutable-segment prepare/verify/activate transaction are `PASSED` in
+   their exact local scopes. Continue no further than F4's retained lookup, replay, uniqueness,
+   v2 tombstone mutation, and bounded-growth boundary; keep F5 backup/orphan cleanup/reporting and
+   F6 production-engine work separate.
 2. **Source Validator blocked decision:** the supported-profile replacement design is `PASSED` and
    R0 is `BLOCKED` on the distinct launcher/private-container topology and a hard-memory or
    explicitly revised quantified reactive-resource policy. New profile construction, signing,
@@ -431,7 +437,7 @@ Current dependency and priority view:
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
-   and remains deferred activation/distribution evidence, not a blocker for F3 local archive work;
+   and remains deferred activation/distribution evidence, not a blocker for F4 local archive work;
    owner-lock installed G3 remains `BLOCKED` until the named credential and design
    blockers close.
    A genuinely independent
@@ -470,7 +476,7 @@ continues.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. This checkpoint also does not decide
-archive segment activation or production-engine archive/compaction beyond the F1/F2 local oracle,
+retained archive lookup/mutation/growth or production-engine archive/compaction beyond the F1-F3 local oracle,
 production COSE/Keychain/user-presence signing, consumer
 ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot

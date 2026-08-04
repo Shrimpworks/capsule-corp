@@ -162,8 +162,8 @@ activating a consumer:
 | E5 | Joined v1 capacity and repeated-startup checkpoint | `TestFixedStoreV1ExactActiveCapacityReleasesOnlyAfterDurableDestroy` proves 256 active and destroyed-only release; `TestFixedStoreV1ExactRetainedLifecycleCapacityNeverEvicts` proves 4,096 retained and cap-plus-one no rewrite/eviction with a 30,321,818-byte population; repeated/concurrent startup tests prove terminal omission, unresolved/exhausted retention, no fourth observation, and owner/coordinator mismatch refusal |
 
 This is an unwired `local-mechanic` result. Passive archive F1 types and selection now exist, but
-archive file/store behavior, a real platform/multi-process lock, backup/rollback, production
-reconciliation, consumers, content, evidence, runtime, backend, and guest remain absent.
+archive file/store behavior, installed protected-root/bootstrap evidence, backup/rollback,
+production reconciliation, consumers, content, evidence, runtime, backend, and guest remain absent.
 
 ## Supervisor owner-lock design checkpoint
 
@@ -179,11 +179,12 @@ enrollment and entry-name validation, retained-root `openat`, exact descriptor f
 nonblocking independent-process contention, opaque owner/session/close behavior, fault injection,
 inheritance, process-death, replacement, descriptor-reuse, and refusal-before-downstream markers
 are covered under owned temporary roots. The existing migration assertion is also exercised with
-an actual held owner without changing the store API. The E5 store still injects its owner and
-coordinator. No owner-required store/startup composition, Apple-signed protected state root,
-wrong-user/session/update/reboot result, production engine, archive behavior, consumer, runtime,
-backend, or guest exists. The advisory lock does not contain a same-UID process that can mutate its
-parent directory.
+an actual held owner. Bounded G2 now adds the owner-required current-v1 opener, same-session
+store/coordinator, exact ownership-before-store-before-sorted-recovery composition, permanent
+post-open fence, ordered close, response-loss recovery, and child-process death/reopen. No signed
+bootstrap, Apple-signed protected state root, wrong-user/session/update/reboot result, production
+engine, archive behavior, consumer, runtime, real backend, or guest exists. The advisory lock does
+not contain a same-UID process that can mutate its parent directory.
 
 Source Preparer P0 remains a separate bounded NO-GO/HOLD merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -301,9 +302,9 @@ Completed and retained:
   targets, without claiming recursive coverage for future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
   eligibility selection. No file/store/archive behavior or consumer exists; and
-- Proposed ADR-0033's local owner-lock mechanism selection plus passive G1 Go/Darwin acquisition,
-  while owner-required store/startup composition and installed protected-root evidence remain
-  unimplemented; and
+- Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
+  bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
+  protected-root evidence remain unimplemented; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
@@ -317,9 +318,9 @@ Completed and retained:
 Current dependency and priority view:
 
 1. **Independently actionable now:** implement archive F2 migration/full verification from the
-   corrected passive contract; review and plan owner-lock G2 without silently changing the existing
-   conformance constructors; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
-   maintain exact documentation plus recursive field-authority design.
+   corrected passive contract; retain bounded owner-lock G2 current-v1/no-guest composition while
+   planning its separate installed G3 matrix; follow accepted ADR-0034 for `.mjs` M1/S1 passive
+   contract work; and maintain exact documentation plus recursive field-authority design.
 2. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
    `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
@@ -337,8 +338,8 @@ Current dependency and priority view:
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
-   and remains deferred activation/distribution evidence, not a blocker for F2 format correction
-   or owner-lock G2 planning.
+   and remains deferred activation/distribution evidence, not a blocker for F2 migration/full
+   verification or owner-lock G3 planning.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.

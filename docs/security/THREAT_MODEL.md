@@ -514,15 +514,18 @@ P1 stop conditions are retained in the
 The current repository implements schema/tooling plus named unwired local mechanics for exact
 registration, atomic approval consumption/attempt creation, and a durable no-guest fake lifecycle.
 The E5 fixed-store corpus proves exact lifecycle ceilings, no eviction, destroyed-only active
-capacity release, and bounded repeated startup under an injected in-process owner. It implements no
-runtime security control, production lock, consumer, real backend, or guest. The authoritative
+capacity release, and bounded repeated startup. G2 now composes that no-guest path with the local
+Darwin owner-required v1 opener and same-session coordinator. It implements no runtime security
+control, installed protected-root boundary, consumer, real backend, or guest. The authoritative
 claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows advance only for the
 exact retained mechanism and evidence they name.
 
-Passive owner-lock G1 separately implements the internal Darwin enrolled-object acquisition,
-opaque lifetime capability, and temporary-root/process fault corpus. It is an unwired local
-mechanic: E5 and product startup do not consume it, and it supplies no protected-storage,
-same-UID-containment, installed-identity, rollback, runtime, backend, or guest claim.
+Passive owner-lock G1 implements the internal Darwin enrolled-object acquisition and opaque
+lifetime capability. G2 composes it with only the current v1/no-guest startup under owned temporary
+roots, including duplicate-before-store refusal, sorted recovery, response-loss/process-death
+reopen, post-open ownership fencing, and store-before-owner shutdown. It remains an unwired local
+mechanic and supplies no protected-storage, same-UID-containment, signed-bootstrap,
+installed-identity, rollback, archive, runtime, real-backend, or guest claim.
 
 Proposed ADR-0031 and its conformance plan define an unimplemented full-record archive and exact
 replay/non-reuse tombstone boundary. Passive F1 types, exact limits/known answers, defensive copies,

@@ -314,9 +314,11 @@ later owner primitive: validate one installer-enrolled pre-created sibling objec
 retained protected state-root descriptor, acquire nonblocking BSD `flock`, and retain the opaque
 `CLOEXEC` descriptor for the full process lifetime. Its owned local harness observed duplicate
 refusal before store work, process-death release, fork/exec behavior, and rename/replacement risk.
-Passive G1 now implements the internal Go/Darwin acquisition and owned-temporary-root process/fault
-oracles. No owner-required store/startup composition, installed protected-state-root matrix,
-session/update/reboot evidence, or product wiring exists, so the current E5 owner remains injected.
+Passive G1 implements the internal Go/Darwin acquisition. G2 now composes it with the current v1
+store and no-guest startup/recovery path under owned temporary roots: one owner session binds store
+and coordinator, duplicate ownership refuses before store work, post-open owner failure fences, and
+store shutdown precedes descriptor release. The signed bootstrap, installed protected-state-root
+matrix, session/update/reboot evidence, archive/v2 port, and product wiring remain absent.
 
 ## Target acceptance tests
 

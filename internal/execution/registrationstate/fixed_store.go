@@ -48,6 +48,20 @@ var ErrCommitOutcomeIndeterminate = errors.New("fixed supervisor-state commit ou
 // cross-linked snapshot without rewriting or deleting the retained evidence.
 var ErrStoreRepairRequired = errors.New("fixed supervisor state requires repair")
 
+var (
+	// ErrStoreOwnerRequired reports use of the G2 opener without a live opaque
+	// installation owner.
+	ErrStoreOwnerRequired = errors.New("fixed supervisor v1 store requires installation owner")
+	// ErrStoreOwnerSessionMismatch reports an attempted second in-process owner
+	// identity for the same held installation owner.
+	ErrStoreOwnerSessionMismatch = errors.New("fixed supervisor v1 store owner session mismatch")
+	// ErrStoreOwnerFenced permanently fences an open G2 store after ownership
+	// cannot be revalidated. Reopen under a newly acquired owner is required.
+	ErrStoreOwnerFenced = errors.New("fixed supervisor v1 store owner is fenced")
+	// ErrStoreClosed reports lifecycle/store use after ordered shutdown.
+	ErrStoreClosed = errors.New("fixed supervisor v1 store is closed")
+)
+
 var errNoStoreMutation = errors.New("fixed store transaction has no mutation")
 
 // FixedFileStore is the deliberately bounded, no-eviction first Supervisor store. It

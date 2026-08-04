@@ -137,11 +137,12 @@ Proposed ADR-0029 selects one unprivileged per-user Supervisor process: a small 
 C/Objective-C XPC/Security front end linked in-process with the existing Go authority/lifecycle
 core. It adds no Swift Supervisor service, root LaunchDaemon, or privileged helper. The exact
 installed identity/session evidence remains open. Proposed ADR-0033 selects a pre-created enrolled
-sibling object held by nonblocking BSD `flock` for the process lifetime. Passive G1 now implements
-the internal opaque Go/Darwin acquisition capability and local temporary-root/process oracles only;
-the owner-required
-store/startup composition and installed matrix remain open, so this topology is not a product
-authority boundary.
+sibling object held by nonblocking BSD `flock` for the process lifetime. Passive G1 implements
+the internal opaque Go/Darwin acquisition capability. G2 now requires it before the current v1
+store opener and sorted no-guest recovery, binds the store and coordinator to its one session,
+fences on post-open ownership failure, and closes the store before releasing the descriptor. The
+signed bootstrap record and installed protected-root/session/update matrix remain open, so this is
+still an unwired local mechanic rather than a product authority boundary.
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 
@@ -171,17 +172,18 @@ retained validation evidence.
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
 
-The current unwired E5 checkpoint exercises this fake through a fixed colocated Supervisor
+The current unwired E5/G2 checkpoint exercises this fake through a fixed colocated Supervisor
 snapshot. It retains durable intents, stable effect IDs, cleanup/reconciliation state, exact
-256-active and 4,096-retained ceilings, and idempotent repeated startup under an injected
-in-process owner/coordinator. This is repository-local mechanic evidence only: it is not the
-macOS installation lock, a production database, a real adapter, guest lifecycle evidence, or
+256-active and 4,096-retained ceilings, and idempotent repeated startup under the local Darwin
+owner-required composition. This is repository-local mechanic evidence only: it is not installed
+protected-root evidence, a production database, a real adapter, guest lifecycle evidence, or
 evidence composition.
 
 The development-only ADR-0033 experiment observed duplicate-process refusal, last-descriptor
 release, `CLOEXEC`, enrolled file checks, and replacement limitations on one host. It selected the
-mechanism but did not wire this fixed snapshot to it; installed protected-directory custody is a
-separate required boundary because advisory locks and mode bits do not contain a same-UID process.
+mechanism. G2 now wires only the current fixed snapshot/no-guest recovery mechanic to it. Installed
+protected-directory custody is a separate required boundary because advisory locks and mode bits
+do not contain a same-UID process.
 
 Proposed ADR-0031 defines the retention boundary. Only a complete expired
 registration cohort whose attempts are all durably destroyed with cleanup false after

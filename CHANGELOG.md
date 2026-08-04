@@ -7,6 +7,12 @@ but it has not selected a public versioning or release policy yet.
 
 ## [Unreleased]
 
+- Compose the passive Darwin installation owner with an owner-required current-v1/no-guest
+  Supervisor startup: one session binds store and coordinator, sorted `AttemptID` recovery occurs
+  only after store validation, post-open ownership loss fences until reopen, and shutdown closes the
+  store before the owner descriptor. This remains an unwired local mechanic under owned temporary
+  roots and does not add v2/archive, IPC, runtime, real-backend, guest, or installed-storage claims.
+
 ### Added
 
 - Initial repository scaffold.

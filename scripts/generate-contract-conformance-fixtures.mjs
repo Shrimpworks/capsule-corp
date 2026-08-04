@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { addApprovalAttemptRulesAndCases } from "./generate-approval-attempt-conformance-fixtures.mjs";
 import { addMjsSourceFoundationRulesAndCases } from "./generate-mjs-source-foundation-conformance-fixtures.mjs";
+import { addMjsSourceValidatorPassiveRulesAndCases } from "./generate-mjs-source-validator-passive-conformance-fixtures.mjs";
 import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
@@ -36,6 +37,12 @@ const fixtures = new Map();
 
 addMediaTypeRulesAndCases();
 addMjsSourceFoundationRulesAndCases({ addCase, addRule, cborEncode, retainFixture });
+addMjsSourceValidatorPassiveRulesAndCases({
+  addCase,
+  addRule,
+  fixtureBytes,
+  retainFixture,
+});
 addJsonRulesAndCases();
 addScalarRulesAndCases();
 addCborRulesAndCases();
@@ -1599,6 +1606,7 @@ function addCase({
   timeHighWaterChanged,
   trustStateTightened,
   fakeBackendEffectPermitted,
+  effects,
   stateDelta,
 }) {
   const fixture = retainFixture(path, bytes);
@@ -1611,6 +1619,9 @@ function addCase({
   }
   if (fakeBackendEffectPermitted !== undefined) {
     expected.fakeBackendEffectPermitted = fakeBackendEffectPermitted;
+  }
+  if (effects !== undefined) {
+    expected.effects = effects;
   }
   if (stateDelta !== undefined) {
     expected.stateDelta = stateDelta;
@@ -1642,6 +1653,14 @@ function retainFixture(path, bytes) {
     sha256: createHash("sha256").update(retainedBytes).digest("hex"),
     byteLength: retainedBytes.length,
   };
+}
+
+function fixtureBytes(path) {
+  const value = fixtures.get(path);
+  if (!value) {
+    throw new Error(`fixture path ${path} is not yet retained`);
+  }
+  return Buffer.from(value);
 }
 
 function implementationStatus(go, typescript, swift) {

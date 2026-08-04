@@ -363,6 +363,94 @@
       "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
       "binding": "passive-mjs-source-manifest-v0-exact-cbor-digest",
       "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-request-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-request-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-request-binding": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "source-validator-request-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "passive-source-validator-request-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-request-content": {
+      "authorityClass": "untrusted-proposal-data",
+      "originRole": "source-validator-parent",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "source-validator-request-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "derived-from-untrusted" },
+      "binding": "passive-source-validator-request-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-result-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "guest-observation" },
+      "binding": "passive-source-validator-result-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-result-binding": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "source-validator-result-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "guest-observation" },
+      "binding": "passive-source-validator-result-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-observation": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "source-validator-child",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "source-validator-result-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "guest-observation" },
+      "binding": "passive-source-validator-result-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-candidate-evidence": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "fixture-known-answer-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-candidate-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "source-validator-artifact-identity": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "installation-enrollment",
+      "validator": "source-validator-passive-verifier",
+      "resolver": "source-validator-artifact-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-source-validator-artifact-profile-v0-exact-frame",
+      "unknownBehavior": "reject-passive-fixture"
     }
   },
   "targets": [
@@ -918,6 +1006,330 @@
           "path": "/aggregateByteLength",
           "sourceField": 5,
           "profile": "mjs-source-manifest-content"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract.go",
+        "type": "ValidationRequest"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "source-validator-request-discriminator"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-request-discriminator"
+        },
+        {
+          "path": "/validatorProfile",
+          "sourceField": "ValidatorProfile",
+          "profile": "source-validator-request-discriminator"
+        },
+        {
+          "path": "/sourceProfile",
+          "sourceField": "SourceProfile",
+          "profile": "source-validator-request-discriminator"
+        },
+        {
+          "path": "/sourceMediaType",
+          "sourceField": "SourceMediaType",
+          "profile": "source-validator-request-discriminator"
+        },
+        {
+          "path": "/correlationId",
+          "sourceField": "CorrelationID",
+          "profile": "source-validator-request-binding"
+        },
+        {
+          "path": "/sourceDigest",
+          "sourceField": "SourceDigest",
+          "profile": "source-validator-request-content"
+        },
+        {
+          "path": "/sourceByteLength",
+          "sourceField": "SourceByteLength",
+          "profile": "source-validator-request-content"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "sourceBytes",
+          "profile": "source-validator-request-content"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-result",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract.go",
+        "type": "ValidationResult"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "source-validator-result-discriminator"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-result-discriminator"
+        },
+        {
+          "path": "/validatorProfile",
+          "sourceField": "ValidatorProfile",
+          "profile": "source-validator-result-discriminator"
+        },
+        {
+          "path": "/sourceProfile",
+          "sourceField": "SourceProfile",
+          "profile": "source-validator-result-discriminator"
+        },
+        {
+          "path": "/sourceMediaType",
+          "sourceField": "SourceMediaType",
+          "profile": "source-validator-result-discriminator"
+        },
+        {
+          "path": "/correlationId",
+          "sourceField": "CorrelationID",
+          "profile": "source-validator-result-binding"
+        },
+        {
+          "path": "/sourceDigest",
+          "sourceField": "SourceDigest",
+          "profile": "source-validator-result-binding"
+        },
+        {
+          "path": "/sourceByteLength",
+          "sourceField": "SourceByteLength",
+          "profile": "source-validator-result-binding"
+        },
+        {
+          "path": "/artifactProfileDigest",
+          "sourceField": "ArtifactProfileDigest",
+          "profile": "source-validator-result-binding"
+        },
+        {
+          "path": "/parseDisposition",
+          "sourceField": "ParseDisposition",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/policyDisposition",
+          "sourceField": "PolicyDisposition",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/classification",
+          "sourceField": "Classification",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/staticImportCount",
+          "sourceField": "StaticImportCount",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/exportFromCount",
+          "sourceField": "ExportFromCount",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/importExpressionCount",
+          "sourceField": "ImportExpressionCount",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/importMetaCount",
+          "sourceField": "ImportMetaCount",
+          "profile": "source-validator-observation"
+        },
+        {
+          "path": "/freeCommonJsReferenceCount",
+          "sourceField": "FreeCommonJSReferenceCount",
+          "profile": "source-validator-observation"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-engineering-candidate",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract.go",
+        "type": "EngineeringCandidate"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/implementation",
+          "sourceField": "Implementation",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcVersionMajor",
+          "sourceField": "OxcVersionMajor",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcVersionMinor",
+          "sourceField": "OxcVersionMinor",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcVersionPatch",
+          "sourceField": "OxcVersionPatch",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/rustToolchainMajor",
+          "sourceField": "RustToolchainMajor",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/rustToolchainMinor",
+          "sourceField": "RustToolchainMinor",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/rustToolchainPatch",
+          "sourceField": "RustToolchainPatch",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/semanticMode",
+          "sourceField": "SemanticMode",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/directCrateCount",
+          "sourceField": "DirectCrateCount",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/lockedPackageCount",
+          "sourceField": "LockedPackageCount",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/cachedSourceBytes",
+          "sourceField": "CachedSourceBytes",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/releaseProbeBytes",
+          "sourceField": "ReleaseProbeBytes",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/cargoLockDigest",
+          "sourceField": "CargoLockDigest",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcAllocatorChecksum",
+          "sourceField": "OxcAllocatorChecksum",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcAstChecksum",
+          "sourceField": "OxcASTChecksum",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcAstVisitChecksum",
+          "sourceField": "OxcASTVisitChecksum",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcParserChecksum",
+          "sourceField": "OxcParserChecksum",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcSemanticChecksum",
+          "sourceField": "OxcSemanticChecksum",
+          "profile": "source-validator-candidate-evidence"
+        },
+        {
+          "path": "/oxcSpanChecksum",
+          "sourceField": "OxcSpanChecksum",
+          "profile": "source-validator-candidate-evidence"
+        }
+      ]
+    },
+    {
+      "object": "capsule.source-validator-artifact-profile",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/sourcevalidatorpassive/contract.go",
+        "type": "EnrolledArtifactProfile"
+      },
+      "fields": [
+        {
+          "path": "/recordVersion",
+          "sourceField": "RecordVersion",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/validatorProfile",
+          "sourceField": "ValidatorProfile",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/sourceProfile",
+          "sourceField": "SourceProfile",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/sourceMediaType",
+          "sourceField": "SourceMediaType",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/engineeringCandidateDigest",
+          "sourceField": "EngineeringCandidateDigest",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/executableDigest",
+          "sourceField": "ExecutableDigest",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/buildManifestDigest",
+          "sourceField": "BuildManifestDigest",
+          "profile": "source-validator-artifact-identity"
+        },
+        {
+          "path": "/assessmentDigest",
+          "sourceField": "AssessmentDigest",
+          "profile": "source-validator-artifact-identity"
         }
       ]
     }

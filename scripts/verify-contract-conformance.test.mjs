@@ -14,7 +14,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 330, fixtureCount: 433, ruleCount: 89 });
+  assert.deepEqual(result, { caseCount: 458, fixtureCount: 561, ruleCount: 94 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {

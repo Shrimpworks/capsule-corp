@@ -26,13 +26,14 @@ remain pre-freeze while ADR-0019 is Proposed.
 for the proposed Phase 2B boundary rules. The corpus records pending language targets and grants no
 runtime authority. Its fixed proposal resolver contexts and known-answer source/canonical-input
 bytes are conformance inputs, not an activated planner or accepted ADR. Regenerate it with
-`pnpm generate:conformance` and verify it with `pnpm verify:schemas`.
+`pnpm generate:conformance` and verify it with `pnpm verify:schemas`. The passive Source Validator
+subcorpus freezes fixed frames and test oracles only; it launches no parser or process.
 
 [`conformance/typescript-approved-byte-v0/`](conformance/typescript-approved-byte-v0/) is a
 separate nine-fixture, fourteen-mutation passive corpus for Proposed ADR-0030. It has no consumer
 and does not change the active scaffold or the existing v0 conformance manifest.
 
 [`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
-and exact coverage notes. Repository verification compares its 172 field entries with 16 selected
+and exact coverage notes. Repository verification compares its 228 field entries with 20 selected
 current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or
 nonexistent classifications. This is a pre-freeze development invariant, not schema admission.

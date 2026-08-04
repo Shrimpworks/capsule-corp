@@ -56,7 +56,12 @@ async function pathExists(target) {
     await fs.lstat(target);
     return true;
   } catch (error) {
-    if (["ENOENT", "EACCES", "EPERM"].includes(error.code)) {
+    if (error.code === "ENOENT") {
+      return false;
+    }
+
+    if (["EACCES", "EPERM"].includes(error.code)) {
+      process.stderr.write(`warning: permission denied reading ${target}, treating as missing\n`);
       return false;
     }
 
@@ -70,7 +75,12 @@ async function* walkDirectories(root) {
   try {
     entries = await fs.readdir(root, { withFileTypes: true });
   } catch (error) {
-    if (["ENOENT", "EACCES", "EPERM"].includes(error.code)) {
+    if (error.code === "ENOENT") {
+      return;
+    }
+
+    if (["EACCES", "EPERM"].includes(error.code)) {
+      process.stderr.write(`warning: permission denied reading ${root}, skipping\n`);
       return;
     }
 

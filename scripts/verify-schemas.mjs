@@ -4,7 +4,7 @@ import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 const schemaDirectory = new URL("../schemas/", import.meta.url);
-const entries = await readdir(schemaDirectory);
+const entries = (await readdir(schemaDirectory)).sort();
 const schemaFiles = [
   ...entries.filter((entry) => entry.endsWith(".schema.json")),
   "candidates/job-proposal-v0.schema.json",

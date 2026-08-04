@@ -329,6 +329,11 @@ class StrictJsonParser {
     const first = this.document[this.index];
     if (first === "0") {
       this.index += 1;
+      // Deliberately stricter than JSON proper: `-0` is refused, not just a
+      // leading zero followed by a digit. Codified as
+      // job-proposal.raw.integer-grammar.negative-zero in
+      // schemas/conformance/v0/manifest.json; do not relax this without
+      // updating that canonical cross-implementation fixture.
       if (negative || isAsciiDigit(this.document[this.index])) {
         this.fail("INTEGER_GRAMMAR");
       }

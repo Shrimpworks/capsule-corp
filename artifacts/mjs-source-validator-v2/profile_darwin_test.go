@@ -196,6 +196,14 @@ func TestV2FixedArtifactAndMechanicalProcessProfile(t *testing.T) {
 			t.Fatalf("expected SIGXFSZ from RLIMIT_FSIZE=0, status=%v err=%v", file.status, file.waitErr)
 		}
 
+		descriptors := runProbe(t, paths.bootstrapSource, probe, "descriptor-limit", buildRoot,
+			freshWorkingDirectory(t), runOptions{outputCap: 2, wallDeadline: mechanicalWallDeadline})
+		assertSuccessfulExit(t, descriptors, 2)
+		if !bytes.Equal(descriptors.stdout, []byte{13, 1}) {
+			t.Fatalf("expected RLIMIT_NOFILE=16 to permit exactly 13 opens (3 already open) then fail with EMFILE: %v",
+				descriptors.stdout)
+		}
+
 		cpu := runProbe(t, paths.bootstrapSource, probe, "cpu-limit", buildRoot,
 			freshWorkingDirectory(t), runOptions{outputCap: 0, wallDeadline: 3 * time.Second})
 		if !cpu.status.Signaled() || cpu.killedFor == "wall" {
@@ -208,7 +216,7 @@ func TestV2FixedArtifactAndMechanicalProcessProfile(t *testing.T) {
 		if hang.killedFor != "wall" || !hang.status.Signaled() || hang.status.Signal() != syscall.SIGKILL {
 			t.Fatalf("wall deadline did not force kill/reap: status=%v reason=%s", hang.status, hang.killedFor)
 		}
-		t.Logf("memory=unbounded-counterevidence file=SIGXFSZ cpu=%s wall=SIGKILL-and-reap",
+		t.Logf("memory=unbounded-counterevidence file=SIGXFSZ descriptors=13-then-EMFILE cpu=%s wall=SIGKILL-and-reap",
 			cpu.status.Signal())
 	})
 

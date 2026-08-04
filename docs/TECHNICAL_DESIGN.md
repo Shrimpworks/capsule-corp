@@ -261,8 +261,11 @@ C/Objective-C XPC/Security front end and the existing Go authority/lifecycle cor
 through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
 process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains
 open at the product-evidence level: ADR-0033 selects the mechanism and G2 composes the local current
-v1/no-guest port, while the signed bootstrap and installed protected-root matrix remain
-unimplemented. Any later separate or privileged
+v1/no-guest port. Bounded G3 discovery stopped before installed build because the authorized
+certificate emits historical Team `3DDR84M4JS`, not expected Team `W4QUR9FUL4`, and no W4 profile
+is cached. It also retained the unresolved protected-root bootstrap authority, signed
+per-installation record, and descriptor-relative closed-store opening blockers. The installed
+protected-root/session/update matrix remains unrun. Any later separate or privileged
 component still requires a new ADR. Adding Rust or
 another language requires a narrow interface and a demonstrated reduction in privileged risk, not
 an assumption that language choice alone creates the security boundary.

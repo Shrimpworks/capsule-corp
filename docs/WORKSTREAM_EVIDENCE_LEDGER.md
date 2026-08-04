@@ -189,6 +189,18 @@ bootstrap, Apple-signed protected state root, wrong-user/session/update/reboot r
 engine, archive behavior, consumer, runtime, real backend, or guest exists. The advisory lock does
 not contain a same-UID process that can mutate its parent directory.
 
+The first bounded
+[G3 installed identity/session/update checkpoint](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md)
+returned **NO-GO before installed build**. Certificate SHA-1
+`1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as an Apple Development W4 identity, but
+its public subject OU and the TeamIdentifier on an exact harmless signed probe are
+`3DDR84M4JS`; every cached provisioning profile is also 3DDR. The separate Developer ID identity
+was not used, and there was no ad-hoc fallback. The checkpoint retains exact test-only role,
+service, entitlement/profile, state/lock/store, and complete bootstrap-field fixtures plus a pure
+v1/v2 exact-tuple refusal model. Its noncredential run passes the real G1/G2 Darwin corpus. It
+creates no signed bootstrap or installed/protected result and additionally records the unresolved
+trusted-installer-to-private-container bootstrap and descriptor-relative store-open blockers.
+
 Source Preparer P0 remains a separate bounded NO-GO/HOLD merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
 `2e268b01d4174fe90397c00abc5973a3dd785606`: no single-member source-store container, exact worker
@@ -332,7 +344,8 @@ Completed and retained:
   eligibility selection. No file/store/archive behavior or consumer exists; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
   bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
-  protected-root evidence remain unimplemented; and
+  protected-root evidence remain unimplemented; the first G3 discovery is a retained NO-GO on
+  mismatched Team/profile plus unresolved protected-bootstrap/store-open composition; and
 - governed `deno_core` physical omission, same-host package reproduction, exact V8 closure NO-GO,
   standalone dynamic-root evidence, and the fork-native Linux/arm64 blocker. Accepted ADR-0028
   selects its engineering order without admitting a profile; the real Deno and `rusty_v8`
@@ -349,8 +362,8 @@ Current dependency and priority view:
    valid v1 committed-attempt-without-lifecycle world; do not choose v2 bytes or silently restrict
    migration before that passive decision.
 2. **Independently actionable now:** retain bounded owner-lock G2 current-v1/no-guest composition
-   while planning its separate installed G3 matrix; follow accepted ADR-0034 for `.mjs` M1/S1
-   passive contract work; and maintain exact documentation plus recursive field-authority design.
+   while G3 is blocked; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
+   maintain exact documentation plus recursive field-authority design.
 3. **Waiting:** the fork-native runtime bundle waits for an accepted successful Linux/arm64
    `rusty_v8` source/artifact handoff. External PR #4 is open at exact head
    `aa921fa48901bf28774d61248b0187c8b91c55a4`; passing contract jobs and in-progress full builds are
@@ -359,17 +372,19 @@ Current dependency and priority view:
    transport/launcher/root/device/teardown work, and explicit authorization for an owned disposable
    development guest. No current task authorizes a guest.
 5. **Credential/environment dependent:** Apple Development identities and provisioning profiles
-   must be deliberately authorized before the existing installed matrices run. Current Individual
-   membership is Team `W4QUR9FUL4`, and read-only discovery reports a valid Apple Development
-   identity for that Team. Local signed/provisioned experiments can proceed once exact W4 role
-   identifiers, entitlements, and profiles are deliberately created. All three Xcode 26.6-cached
-   profiles belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. A separate
+   must be deliberately authorized before the existing installed matrices run. Exact G3 discovery
+   disproved the display-name inference: SHA-1 `1638...61E3` says W4 in its common name, but its
+   subject OU and emitted TeamIdentifier are `3DDR84M4JS`. All three Xcode 26.6-cached profiles
+   also belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. Local W4
+   signed/provisioned experiments require a matching/reissued certificate plus exact W4 profiles,
+   as well as the selected protected-root bootstrap/signed-record/store-open composition. A separate
    Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution
    authority requiring explicit authorization and matching-Team package design; it is not W4
    development evidence and does not make Developer ID/notarization work current. Paid owned
    clean-host/minimum-OS coverage is not currently planned
    and remains deferred activation/distribution evidence, not a blocker for F2 migration/full
-   verification or owner-lock G3 planning.
+   verification; owner-lock installed G3 remains NO-GO until the named credential and design
+   blockers close.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.
@@ -378,6 +393,10 @@ Current dependency and priority view:
    still own process confinement, independent daemon/Broker consumers, and grammar evidence.
    S1/M2 remain blocked until those gates can support the revised `RegisterPlanV0`/fetch projections
    and exact caps. No S1 fixture or product endpoint is authorized.
+6. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
+   first-release critical path. M1 narrows the proposal/source/manifest to one byte-exact
+   `main.mjs`; S1/M2 then generates the revised `RegisterPlanV0`/fetch projections and exact caps
+   from complete field authority. No S1 fixtures exist and no product endpoint is authorized.
 
 TypeScript remains conditional. If later selected, Source Preparer P0A and ADR-0030's atomic
 plan-v1/RegisterPlanV1 cutover still apply with no dual active v0/v1 acceptance. CommonJS, package

@@ -1,7 +1,8 @@
 # Supervisor owner-lock implementation and fault plan
 
-Status: G1 and bounded G2 current-v1/no-guest composition are implemented local mechanics; G3 and
-the product boundary remain unimplemented.
+Status: G1 and bounded G2 current-v1/no-guest composition are implemented local mechanics. The
+first bounded G3 discovery/fixture slice is retained as **NO-GO**; installed G3 and the product
+boundary remain unimplemented.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
 backend, runtime, or guest is wired by this plan.
@@ -161,14 +162,26 @@ test-only and no product command or service consumes them.
 
 ### G3: installed identity/session/update evidence
 
-Resource status: current Individual membership is Team `W4QUR9FUL4`, and local read-only discovery
-reports a valid Apple Development identity for that Team. G3 can proceed after exact W4 role
-identifiers, entitlements, and profiles are deliberately created. The three Xcode 26.6-cached
-profiles are historical Team `3DDR84M4JS` fixtures and are not reusable for W4 tests. A separate
+Observed 2026-08-03 result: **NO-GO before installed build**. Exact certificate SHA-1
+`1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is displayed as
+`Apple Development: Dylan Steele (W4QUR9FUL4)`, but its public X.509 subject OU and the
+TeamIdentifier emitted by a harmless exact-selector signing probe are both `3DDR84M4JS`. The
+display name is not Team enrollment evidence. The three Xcode 26.6-cached profiles are likewise
+historical Team `3DDR84M4JS` fixtures and are not reusable for W4 tests. No W4 app was built,
+signed, installed, registered, or launched, and no ad-hoc/3DDR fallback was used. A separate
 Developer ID Application identity for historical Team `3DDR84M4JS` is later distribution authority
 requiring explicit authorization and matching-Team package design; it is not W4 development
 evidence and does not make Developer ID/notarization work current. Paid owned clean-host/minimum-OS
 coverage remains deferred activation evidence.
+
+The retained G3 experiment fixes only test identifiers, closed entitlement/profile requirements,
+state/lock/store names, the complete bootstrap field projection, and a pure v1/v2 exact-tuple
+update/refusal model. Its noncredential run reuses the real G1/G2 Darwin corpus. This adds no
+authenticated bootstrap: the installation-root signing envelope/parser is absent. It also exposes
+two composition blockers that credentials alone do not solve: the trusted installer must create
+the Supervisor-private protected root without a broad shared app group or normal-start creation
+fallback, and the final store must open the closed sibling name descriptor-relative to the retained
+root rather than through G2's trusted absolute test path.
 
 - Package the exact Supervisor fixture under the selected protected private state root.
 - Exercise Apple Development then Developer ID/notarized builds, wrong/stale identity, wrong
@@ -179,6 +192,9 @@ coverage remains deferred activation evidence.
 Acceptance: exact tested distribution matrix only. This does not accept the production store,
 authenticate the proposed IPC calls, prove cross-user protection generally, or claim production
 readiness.
+
+Retained checkpoint:
+[`../experiments/supervisor-owner-lock-installed-g3/RESULTS.md`](../experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
 ## Required focused tests
 
@@ -197,7 +213,8 @@ readiness.
 
 ## Remaining blockers
 
-The retained local semantics do not close protected installed storage, signing/entitlements,
+The retained local semantics and G3 NO-GO do not close protected installed storage,
+matching W4 signing/profiles, authenticated bootstrap creation/signing,
 session/reboot/update behavior, support floor, real power loss, production engine, coherent
 restore/rollback, authenticated IPC, production approvals, content/evidence, runtime/backend, or
 guest gates. `flock` remains advisory and supplies no same-UID containment without the installed

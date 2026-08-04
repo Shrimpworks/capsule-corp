@@ -7,10 +7,13 @@ quality—is the deliverable.
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 Archive F2's stateful migration/full verifier is blocked by the retained valid-v1
-missing-lifecycle mapping contradiction; owner-lock G2 planning/composition and documentation/
-field-authority maintenance can proceed independently. ADR-0034's M1 bytes and Proposed ADR-0035's
-passive V0 fixed frames are retained; the parser artifact/process/consumer gates V1-V5 and
-downstream S1/M2 work remain blocked.
+
+missing-lifecycle mapping contradiction. Retained owner-lock G2 mechanics and documentation/
+field-authority maintenance can proceed independently. Owner-lock G3 is NO-GO pending a matching W4
+certificate/profile set plus a selected protected-root bootstrap/signed-record/store-open
+composition. ADR-0034's M1 bytes and Proposed ADR-0035's passive V0 fixed frames are retained; the
+parser artifact/process/consumer gates V1-V5 and downstream S1/M2 work remain blocked.
+
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -152,7 +155,11 @@ descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin
 now supplies the owner-required current v1/no-guest startup composition, same-session
 store/coordinator, sorted recovery, post-open fencing, and ordered close under owned temporary
 roots. The signed bootstrap and installed protected-state-root/session/update matrix remain
-unimplemented.
+unimplemented. The first bounded G3 discovery stopped before installed build: certificate SHA-1
+`1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` has display suffix `W4QUR9FUL4` but X.509 subject OU
+and signed-byte TeamIdentifier `3DDR84M4JS`, and every cached profile is also 3DDR. The exact
+test-only identifiers/bootstrap fields and noncredential mismatch/update model are retained, but
+they do not advance installed or protected-root evidence.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive
@@ -323,11 +330,13 @@ Developer ID signing identity for the hardened App Sandbox runner, protected-con
 construction, and Team-enrolled process identity; Developer ID signing/notarization credentials
 for complete-bundle notarization, stapling, and Gatekeeper assessment; and installed-byte,
 clean-host, session, and support-floor validation of those exact signed bytes. Those identities and
-profiles must be deliberately authorized. Current Individual membership is Team `W4QUR9FUL4`, and
-read-only discovery reports a valid Apple Development identity for that Team. Local
-signed/provisioned experiments can proceed once exact W4 role identifiers, entitlements, and
-profiles are deliberately created. All three Xcode 26.6-cached profiles belong to historical Team
-`3DDR84M4JS` and are not reusable for W4 tests. A separate Developer ID Application identity for
+profiles must be deliberately authorized. The first exact G3 discovery contradicted the earlier
+display-name inference: certificate SHA-1 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is labeled
+`Apple Development: Dylan Steele (W4QUR9FUL4)`, but its subject OU and emitted code-signing
+TeamIdentifier are `3DDR84M4JS`. It is therefore not W4 evidence. All three Xcode 26.6-cached
+profiles also belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. Local W4
+signed/provisioned experiments require a reissued/matching certificate and exact W4 profiles, not
+only role identifiers and entitlements. A separate Developer ID Application identity for
 historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
 matching-Team package design; it is not W4 development evidence and does not make Developer ID/
 notarization work current. Paid owned clean-host/minimum-OS

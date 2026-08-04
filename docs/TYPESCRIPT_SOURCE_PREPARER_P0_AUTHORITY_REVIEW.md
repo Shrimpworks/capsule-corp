@@ -2,7 +2,7 @@
 
 Date: 2026-08-03
 
-Status: retained adversarial design review; **P1 HOLD / conditional topology decision**. No Source
+Status: retained adversarial design review; **P1 `BLOCKED` / conditional topology decision**. No Source
 Preparer service, store, worker contract, endpoint, key, runtime, backend, guest, or deployment is
 implemented or admitted by this review. Accepted ADR-0034 subsequently selected the review's
 JavaScript-only alternative for the first release; this evidence now applies only if TypeScript is
@@ -38,8 +38,8 @@ Capsule ships TypeScript preparation**. It keeps Node/Amaro and the source store
 Broker, Supervisor, updater, runtime, and backend; adds no operational key or guest route; and
 preserves pre-registration transformation and execute-by-registration-ID.
 
-The topology is not ready for P1 contract or byte freeze as written. P1 is a bounded **NO-GO now**
-and may become a conditional GO only after the pre-entry criteria in this review are retained in
+The topology is not ready for P1 contract or byte freeze as written. P1 is **BLOCKED** and may
+resume only after the pre-entry criteria in this review are retained in
 the ADR, plan, field-authority model, and canonical security documents.
 
 Two propositions must not be conflated:
@@ -99,9 +99,10 @@ Independent deterministic reproduction is not required for the limited claim tha
 approved exact emitted bytes produced by an enrolled Source Preparer. Repeating the same tool does
 not prove semantics or correct signer logic. Offline reproduction is useful release, audit, and
 retention evidence only. If Capsule instead requires faithful TypeScript erasure despite preparer
-compromise, or removes the preparer from approval-understanding TCB, this topology is NO-GO until
-an independent pre-approval implementation reproduces or verifies the transformation under a new
-ADR.
+compromise, or removes the preparer from approval-understanding TCB, this topology remains
+`BLOCKED` until an independent pre-approval implementation reproduces or verifies the
+transformation under a new ADR. If Capsule decides not to pursue that implementation, the exact
+TypeScript topology becomes `NO_GO` and `.mjs` remains the fallback.
 
 ## Compromise and exposure matrix
 

@@ -130,7 +130,8 @@ P0-0 is closed as a Bun NO-GO; alternate-runtime investigation and an ADR-0003 s
 are now required. See the
 [construction review](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md).
 
-Deno-family decision (2026-08-02): **DENO-FAMILY-NO-GO**. Under the exact full-Deno v2.9.4
+Deno-family historical decision (2026-08-02): full Deno v2.9.4 and the unpatched/middleware
+`deno_core` construction are **`NO_GO`**. Under the exact full-Deno v2.9.4
 profile, the initial static graph bypassed read/import denial, blob Workers executed, SIGUSR1
 activated a loopback inspector, Node compatibility remained constructed, and runtime-managed web
 storage APIs remained available outside ordinary read/write permissions (with state confined to
@@ -138,9 +139,11 @@ disposable tmpfs). A smaller Capsule-owned `deno_core` 0.409.0 prototype had no 
 loader or ambient extensions and used V8 `--jitless`, but `JsRuntime` still physically registered
 99 built-in core ops before middleware disabled 96. `deno_core` also has no TypeScript pipeline;
 preserving exact approved-byte semantics requires a separately pinned pre-approval transformation
-and coordinated plan/schema/ADR binding. Neither construction is selected, no Proposed ADR
-supersedes ADR-0003, and `RUNTIME-001` continues to refuse. The governed physical-omission follow-up
-then reduced the registry to three bootstrap ops and reproduced its snapshot/binary. A later
+and coordinated plan/schema/ADR binding. Those exact constructions were abandoned. The later
+governed physical-omission slice `PASSED`, and the governed `deno_core` parent workstream is now
+`IN_PROGRESS — TRENDING_GOOD`; `RUNTIME-001` remains unsupported and product admission is
+`BLOCKED`. The governed follow-up reduced the registry to three bootstrap ops and reproduced its
+snapshot/binary. A later
 packaging experiment replaced the local-only builder with a digest-pinned no-apt recipe and complete
 offline Cargo source bundle, reproducing the same bytes in two clean same-host containers. The
 later self-contained-root experiment closed the standalone dynamic-root item with an exact
@@ -155,7 +158,8 @@ the [retained Deno-family result](https://github.com/Shrimpworks/capsule-experim
 [package result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-reproducible-package/RESULTS.md), and
 [self-contained-root result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-runtime-root/RESULTS.md).
 
-Exact V8 closure follow-up (2026-08-02): **SOURCE-LICENSE-CLOSURE-NO-GO**. The official
+Exact V8 closure follow-up (2026-08-02): the official prebuilt-asset publication route is
+**`NO_GO`**; the replacement governed-fork workstream remains `IN_PROGRESS — TRENDING_GOOD`. The official
 Linux/arm64 asset is now bound to its successful release job, exact `rusty_v8` commit, 20 recursive
 gitlinks, exact Deno V8 commit, Chromium V8 base, and four-patch stack. The 1,875 archive members and
 726 source-tree license/notice candidates were inventoried. The release still omits immutable
@@ -166,8 +170,9 @@ engineering candidate and supersedes ADR-0003's Bun-first ordering only; it does
 profile or change `RUNTIME-001`. See
 the [retained closure result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-v8-source-license-closure/RESULTS.md).
 
-Fork-native integration follow-up (2026-08-03): **LINUX/ARM64 CONSTRUCTION BLOCKED; NO BUILD OR
-RUNTIME ADMISSION**. Exact public refs, merge parents, upstream ancestry, Deno three-op/fixture
+Fork-native integration follow-up (2026-08-03): **`BLOCKED`** on a Linux/arm64 build profile at
+that checkpoint. Product runtime admission was separately blocked. Exact public refs, merge
+parents, upstream ancestry, Deno three-op/fixture
 oracles, the `rusty_v8` 20-gitlink source lock, and existing tool locks passed independent
 inspection at governed Deno head `9adb0b68...91bed` and governed `rusty_v8` follow-up head
 `a43ee748...33cf`. The latter's only profile is Linux/amd64:
@@ -183,7 +188,8 @@ Linux/arm64 full-build work remains in progress. This is not a durable Capsule i
 handoff, reusable artifact, release, or admission result. The retained blocked experiment above is
 unchanged until exact successful evidence is reviewed and merged.
 
-Governed `deno_core` follow-up (2026-08-02): **PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION**.
+Governed `deno_core` follow-up (2026-08-02): physical-omission slice **`PASSED`**; parent runtime
+workstream `IN_PROGRESS — TRENDING_GOOD`; product admission `BLOCKED`.
 The exact governed patched construction reduced the built-in registry from 99 ops to the three
 bootstrap-required ops with a one-file physical-omission patch; runtime/symbol inspection observed
 only those three, fixed
@@ -194,7 +200,8 @@ review, external isolation composition, and runtime-profile admission remain ope
 ADR-0028 ordering decision does not promote this narrow result or `RUNTIME-001`. See the
 [retained physical-omission result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-physical-omission/RESULTS.md).
 
-Approved-byte follow-up (2026-08-03): **BOUNDARY-PASS; NO RUNTIME ADMISSION**. Exact Node
+Approved-byte follow-up (2026-08-03): exact approved-byte boundary **`PASSED`**; the conditional
+TypeScript product path is now `BLOCKED` outside the first-release critical path. Exact Node
 22.22.1/Amaro 1.1.5 `stripTypeScriptTypes` in strip-only mode emitted byte-identical fixed outputs
 across repeated processes, refused transform-requiring syntax and unknown options, preserved
 Unicode/line endings without normalization, and detected source/output/toolchain/options

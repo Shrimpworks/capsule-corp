@@ -14,6 +14,14 @@ The task—not the container, VM, shell, or development environment—is the pub
 Capsule is an architecture and buildable scaffold. It does not yet implement the intended security
 boundary and must not be used to execute hostile code without another trusted sandbox.
 
+Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short: the passive
+single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
+and G2 local owner composition are `PASSED` in their exact scopes. Product Source Validator work,
+governed `deno_core`, and governed libkrun are `IN_PROGRESS — TRENDING_GOOD`. Archive F2, installed
+owner-lock G3, and runtime/profile admission are `BLOCKED` on the named dependencies below. They
+are not `NO_GO`. Product admission and control-evidence maturity remain separate from those work
+statuses.
+
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 This section summarizes durable repository state; the linked checkpoint separates selected design,
@@ -72,7 +80,8 @@ v1 opener, the same owner-session ID in the store and per-attempt coordinator, s
 recovery, permanent post-open ownership fencing, and store-before-owner shutdown ordering. The
 retained race/fault/process tests use owned temporary roots and the no-guest fake only. This is not
 product startup, a signed bootstrap record, protected installed storage, v2/archive composition,
-or production evidence. The first bounded G3 discovery returned **NO-GO** before installed build:
+or production evidence. The first bounded G3 discovery found a certificate/profile identity
+mismatch before installed build. Installed G3 is **BLOCKED**, not abandoned:
 the authorized Apple Development certificate's display name ends in `W4QUR9FUL4`, but its public
 subject OU and an exact signed-byte `TeamIdentifier` are `3DDR84M4JS`; all three cached profiles
 are also 3DDR. The retained G3 fixture fixes test-only role/state/bootstrap fields and reruns the
@@ -128,10 +137,11 @@ digest-pinned no-apt
 builder and complete locked Cargo source bundle. The later self-contained-root follow-up closed its
 standalone dynamic Bookworm-root blocker with a 22-entry package-derived root and no ambient
 library/config fallback. The subsequent exact V8 closure trace proved the official asset,
-publisher job, source gitlinks, V8 base, and patch stack, but returned
-`SOURCE-LICENSE-CLOSURE-NO-GO`: mutable publisher inputs, missing GN/Ninja link metadata, and absent
-generated notices prevent an independent rebuild and complete notice closure. Independent-builder
-provenance, governed release construction, and admission remain open. Accepted
+publisher job, source gitlinks, V8 base, and patch stack. It rejected that exact official-asset
+publication route as `NO_GO`: mutable publisher inputs, missing GN/Ninja link metadata, and absent
+generated notices prevent an independent rebuild and complete notice closure. The replacement
+governed-fork path is `IN_PROGRESS — TRENDING_GOOD`; independent-builder provenance, governed
+release construction, and admission remain open. Accepted
 [ADR-0028](adr/0028-select-governed-deno-core-first.md) selects governed `deno_core` as the first
 runtime engineering candidate after the hard Bun pivot and records the real `Shrimpworks/deno` and
 `dills122/rusty_v8` forks. Their first governed branches are merged at exact commits. The first
@@ -170,10 +180,11 @@ byte-ownership question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was 
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,
 change current contracts, or admit a runtime. Proposed ADR-0032 selects a separate enrolled Source
-Preparer with a one-shot exact Node worker and a role-namespaced immutable source store, but PR #72
-retained P1 at a bounded HOLD/NO-GO pending protected-store, worker-confinement, genesis/update,
-retention/release, recursive field-authority, and lifecycle evidence. P1 passive contracts have not
-begun. No component, store, endpoint, consumer, installed identity, or cutover exists. ADR-0034
+Preparer with a one-shot exact Node worker and a role-namespaced immutable source store. That
+conditional later feature is **BLOCKED** pending protected-store, worker-confinement,
+genesis/update, retention/release, recursive field-authority, and lifecycle evidence. P1 passive
+contracts have not begun. No component, store, endpoint, consumer, installed identity, or cutover
+exists. ADR-0034
 removes that conditional TypeScript path from the first-release critical path; ADR-0030/0032
 remain future-conditional and still require an atomic plan-v1 cutover if resumed.
 See the

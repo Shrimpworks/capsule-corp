@@ -1,0 +1,112 @@
+# Work status language
+
+Capsule reports work progress with four statuses. These labels answer one question only: **what is
+the state of this exact work item?** They do not describe an ADR's lifecycle, a control's evidence
+level, or the readiness of a larger parent system.
+
+## The four statuses
+
+| Status | Use it when | Required detail |
+| --- | --- | --- |
+| `PASSED` | The exact scoped item met every declared acceptance condition. | Name the scope that passed and any larger parent item that remains incomplete. |
+| `IN_PROGRESS — TRENDING_GOOD` | Work is active and the latest evidence is closing risk or blockers. | Name the evidence gained, remaining work, and next action. |
+| `IN_PROGRESS — TRENDING_BAD` | Work is active, but the latest evidence found new difficulty, expanded the required surface, or produced repeated failures. The path is still being pursued. | Name the adverse evidence, why the path remains open, and the next decision point. |
+| `BLOCKED` | The path is still intended, but work cannot proceed until a named dependency, decision, artifact, credential, or contract is available. | Name the blocker, the owner or source of the unblock, and the action that resumes work. |
+| `NO_GO` | The exact candidate or path has been abandoned. No further work is planned unless a new explicit decision reopens it. | Name the rejected candidate, why it was abandoned, and the selected replacement or fallback. |
+
+`IN_PROGRESS` without a trend is incomplete reporting. `NO_GO` is never shorthand for “not done,”
+“not admitted,” “more testing is required,” “the next slice is missing,” or “currently blocked.”
+
+## Keep status, evidence, and decisions separate
+
+Capsule uses other vocabularies for different questions. Do not combine them into a compound work
+status.
+
+| Dimension | Example | Meaning |
+| --- | --- | --- |
+| Work status | `IN_PROGRESS — TRENDING_GOOD` | Whether the exact work item is complete, active, blocked, or abandoned. |
+| ADR lifecycle | `Proposed`, `Accepted`, `Superseded` | Whether an architecture decision is under review, selected, or replaced. |
+| Control/evidence state | `unsupported`, `local-mechanic`, `spike-observed`, `proposed` | What the retained evidence supports for one security control. |
+| Product admission | admitted or not admitted | Whether exact composed product bytes/profile may handle the stated workload. |
+
+For example, the governed `deno_core` physical-omission slice is `PASSED`. The larger governed
+runtime workstream is `IN_PROGRESS — TRENDING_GOOD`. Product runtime admission is still blocked,
+and `RUNTIME-001` remains `unsupported`. None of those facts contradicts another.
+
+## Parent and child work
+
+Always report the smallest item being judged and its parent separately when their status differs.
+
+```text
+Slice: deno_core physical built-in omission
+Status: PASSED
+Evidence: the governed build registered and linked only the three required bootstrap ops.
+
+Parent: governed runtime construction and admission
+Status: IN_PROGRESS — TRENDING_GOOD
+Remaining work: accepted Linux/arm64 artifact, source/notice closure, external-isolation
+composition, and the installed profile corpus.
+Control evidence: RUNTIME-001 unsupported
+```
+
+A completed research spike can therefore be `PASSED` even when the product work it informs is
+`BLOCKED` or `IN_PROGRESS`. Conversely, a spike may pass because it produced a decisive rejection:
+the spike itself is `PASSED`, while the exact rejected candidate is `NO_GO`.
+
+## Required reporting format
+
+Every task plan, handoff, roadmap checkpoint, and current-status summary must include:
+
+```text
+Work item:
+Status: PASSED | IN_PROGRESS — TRENDING_GOOD | IN_PROGRESS — TRENDING_BAD | BLOCKED | NO_GO
+Scope:
+Evidence or reason:
+Remaining work:
+Blocker and owner:     # required for BLOCKED
+Replacement/fallback: # required for NO_GO
+Next action:
+Parent status:        # required when the parent differs
+```
+
+For `PASSED`, “remaining work” means work outside the passed scope, not an undisclosed failure of
+that scope. For `BLOCKED`, the next action must say what makes the item runnable again. For
+`NO_GO`, the replacement may be “none” only when the capability itself has been deliberately
+removed from scope.
+
+## Current workstream dashboard
+
+This is the concise interpretation of the current planning documents. Detailed evidence and exact
+limitations remain in the linked plans, ledger, ADRs, and control matrix.
+
+| Work item | Status | What that means now |
+| --- | --- | --- |
+| Single-file `.mjs` byte and `SourceManifest` foundation | `PASSED` | Exact passive bytes, caps, canonical manifests, and Go/TypeScript fixtures meet the M1 scope. |
+| `.mjs` parser/process selection | `PASSED` | The bounded parse-only comparison selected exact Oxc 0.140.0 and the disposable-process topology for further implementation. |
+| Product Source Validator V1-V5 and downstream M2/S1 consumers | `IN_PROGRESS — TRENDING_GOOD` | Passive frames and parser selection are retained; enrolled artifact, sandbox/resource evidence, independent daemon/Broker invocation, and runtime no-loader enforcement remain. |
+| No-guest Supervisor lifecycle E1-E5 and owner-lock G2 local mechanic | `PASSED` | The exact unwired fixed-store/FakeBackend/local-owner scope passes; it creates no guest and is not installed-product evidence. |
+| Installed owner-lock G3 | `BLOCKED` | Resume when a certificate/profile set with matching Team identity and a selected protected-root bootstrap, signed record, and descriptor-relative store-open composition are available. |
+| Archive F2 fixed-store v2 migration | `BLOCKED` | Resume after the passive contract represents attempts that validly exist before lifecycle establishment without inventing lifecycle state. |
+| Governed `deno_core` runtime engineering | `IN_PROGRESS — TRENDING_GOOD` | Physical omission, same-host reproduction, and standalone-root slices passed; the selected fork path continues toward an accepted Linux/arm64 artifact and composed profile. |
+| Runtime/profile admission | `BLOCKED` | It needs an accepted fork-native Linux/arm64 handoff, complete reviewed source/notices, external-isolation composition, and final installed/profile evidence. |
+| Governed libkrun source and local library hardening | `IN_PROGRESS — TRENDING_GOOD` | The governed fork and several bounded library/custody/transport slices passed; independent review, real guest transport, launcher, installed composition, and final profile reruns remain. |
+| TypeScript Source Preparer | `BLOCKED` | It is a conditional later feature, not a first-release dependency. Resume only if TypeScript returns to scope and its protected-store/worker/update/retention authority blockers are closed. |
+
+Current `NO_GO` examples are deliberately narrow: stock Bun 1.3.14, the abandoned broad governed
+Bun construction, hardened full Deno as the product runtime, the removed handwritten ECMAScript
+scanner, and `go-cose` v1.3.0 as a product dependency. Those exact paths are not being pursued;
+their replacements are governed `deno_core`, Oxc in a disposable validator, and a narrow
+Capsule-owned COSE_Sign1 wrapper using standard crypto.
+
+## Historical records
+
+Do not rewrite an experiment's quoted historical title or erase the decision it recorded. When an
+old title used ambiguous language such as `PHYSICAL-OMISSION-PASS; NO RUNTIME ADMISSION`, preserve
+it as historical provenance only and add the current translation:
+
+- scoped slice: `PASSED`;
+- parent workstream: `IN_PROGRESS — TRENDING_GOOD` or `BLOCKED`;
+- product admission/control evidence: stated separately.
+
+This preserves auditability without making maintainers decode old compound labels to understand
+today's plan.

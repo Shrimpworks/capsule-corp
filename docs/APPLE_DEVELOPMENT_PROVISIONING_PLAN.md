@@ -14,7 +14,8 @@ W4 Team identity is false. Certificate SHA-1
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its X.509 subject OU and an exact signed-byte
 TeamIdentifier are `3DDR84M4JS`. No cached profile belongs to W4. Treat the bundle/profile tables
 below as future W4 requirements only; do not use that certificate or the historical profiles as
-W4 evidence. See the retained [G3 NO-GO](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
+W4 evidence. Installed G3 is currently `BLOCKED`; see the retained
+[historical G3 result](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
 The 2026-08-04 exact-selector follow-up also proved that the `codesign` default designated
 requirement repeats the misleading W4 common name without binding the certificate Team OU. That
@@ -84,7 +85,7 @@ decided non-authority:
 ADR-0029 is explicit that the Supervisor's native front end is not a separate process, binary, or
 bundle — it shares the Supervisor's code identity, and the ADR explicitly rejects a "separate Swift
 XPC front end plus Go Supervisor service" topology. The TypeScript Source Preparer's native front
-(ADR-0032) remains P1 HOLD, not selected for the first release. **There is no fourth signable
+(ADR-0032) remains `BLOCKED`, not selected for the first release. **There is no fourth signable
 component today**; adding one requires its own ADR.
 
 No ADR or architecture doc names a distinct product-facing container app separate from the daemon,

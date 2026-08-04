@@ -9,6 +9,11 @@ backend, authorize user bytes, or authorize a guest.
 
 ## How to read the status
 
+Work progress in this checkpoint follows the
+[canonical status language](STATUS_LANGUAGE.md). A scoped implementation or experiment may be
+`PASSED` while its parent product work remains `IN_PROGRESS` or `BLOCKED`. The evidence classes
+below are a separate dimension and must not be read as work-status synonyms.
+
 Keep these evidence classes separate:
 
 | Class | Meaning at this checkpoint |
@@ -26,9 +31,10 @@ Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeSc
 targets plus 40 independently verified MJS byte/manifest targets in each language. Go and a
 standalone test-only Rust oracle additionally verify 128 exact passive Source Validator frames.
 Twenty-eight exact M1 HOLD result oracles are retained and the unwired V1 artifact reproduces them,
-but product source-language validation remains pending. The passive field-authority foundation covers 228 fields across 20 selected
-pre-freeze targets, including SourceManifest and the four passive Source Validator objects; it
-does not classify future Source Preparer or plan-v1 objects.
+and both are `PASSED` in their exact passive or unwired scopes. Product Source Validator work is
+`IN_PROGRESS — TRENDING_GOOD`. The passive field-authority foundation covers 228 fields across 20
+selected pre-freeze targets, including SourceManifest and the four passive Source Validator
+objects; it does not classify future Source Preparer or plan-v1 objects.
 
 The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
 approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
@@ -56,14 +62,15 @@ store composition and installed protected-root matrix remain later slices.
 
 Accepted ADR-0034 now freezes the first-release source contract as one byte-exact pass-through
 `main.mjs` member, one plan-v0 source-manifest role, and no static/dynamic dependency request or
-module-loader fallback. The passive source-byte and SourceManifest foundation is retained, while
-the M1 module-request/source-language validator remains on the exact
-[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). Proposed ADR-0035 now has an
-exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). The bounded V1
-follow-up retains one exact unwired parser artifact and supply-chain evidence, but its profile is
-unsigned/not enrolled and lacks independent reproduction, V2 confinement, an endpoint, or a
-consumer. JobProposal narrowing and all S1/M2 registration/fetch work therefore remain blocked on
-V1 enrollment closure and the later validator gates. The proposed
+module-loader fallback. The passive source-byte and SourceManifest foundation and bounded Oxc
+parser/process selection, passive V0 byte contract, and unwired V1 artifact are `PASSED` in their
+exact scopes. The removed handwritten scanner is
+`NO_GO` because of the exact [grammar counterexample](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md).
+Proposed ADR-0035 now has an
+exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). The V1 artifact
+profile remains unsigned/not enrolled and lacks independent reproduction, V2 confinement, an
+endpoint, and a consumer. Those V1-V5 gates are `IN_PROGRESS — TRENDING_GOOD`; JobProposal
+narrowing and all S1/M2 registration/fetch work remain `BLOCKED` on them. The proposed
 `RegisterPlanV0` would atomically submit exact plan bytes, the
 complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
 source bytes; `GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Candidate
@@ -71,8 +78,8 @@ application-data maxima are 328,337 request bytes and 332,433 fetch-reply bytes,
 fixture verification from the complete field-authority projection. No S1 fixture, facade, bridge,
 endpoint, consumer, or source-custody store extension exists yet.
 
-PR #72 retained Source Preparer P0 as a bounded **P1 HOLD / NO-GO today**. A separately enrolled
-unprivileged Source Preparer remains only a conditional later TypeScript design. P1 passive
+PR #72 retained the Source Preparer as **BLOCKED**. A separately enrolled unprivileged Source
+Preparer remains only a conditional later TypeScript design. P1 passive
 contracts have not begun. Its entry blockers remain:
 
 - an exact single-member protected store with baseline same-user negative-access evidence;
@@ -120,9 +127,9 @@ governance reconciliation before Capsule reuses it.
 
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
-| Next passive/stateful boundary | Archive F2 | Implement only the explicit v1-to-v2 migration/full verifier from the resolved lifecycle-presence union; preserve exact absent/present joins, choose no invented lifecycle state, and invoke no recovery adapter inside migration. |
-| Retained local mechanic / blocked installed lane | Owner-lock G2/G3 | Keep the merged current-v1/no-guest composition. G3 is NO-GO: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
-| Blocked | `.mjs` M1 validator and S1/M2 | Select a separately reviewed exact, pinned/governed bounded ECMAScript parser/validation boundary. Do not ship an ad hoc scanner or substitute runtime no-loader behavior. The byte/SourceManifest foundation is retained; add no product endpoint. |
+| `IN_PROGRESS — TRENDING_GOOD` | Archive F2 | Implement only the explicit v1-to-v2 migration/full verifier from the `PASSED` lifecycle-presence union; preserve exact absent/present joins, choose no invented lifecycle state, and invoke no recovery adapter inside migration. |
+| `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
+| `PASSED` prerequisites / `IN_PROGRESS — TRENDING_GOOD` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc parser/process selection, passive frames, and unwired V1 artifact passed their bounded scopes. Build the remaining V1-V5 gates without an ad hoc scanner or runtime substitution; keep S1/M2 blocked until their required validator gates pass. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | Waiting | Fork-native runtime bundle | Wait for an accepted successful Linux/arm64 `rusty_v8` source/artifact handoff. Do not reuse an in-progress workflow artifact. |

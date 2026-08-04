@@ -394,7 +394,7 @@ isolation composition, and runtime admission remain open.
 JavaScript for a narrow syntax subset. Proposed ADR-0026 requires both the original TypeScript and
 emitted JavaScript, plus the exact transformer identity, to be bound before plan registration and
 approval. No production component owns or performs that transformation today. PR #72 kept the
-proposed Source Preparer's P1 contracts on HOLD until protected-store, worker-confinement,
+proposed Source Preparer's P1 contracts `BLOCKED` until protected-store, worker-confinement,
 genesis/update, retention/release, recursive field-authority, and lifecycle evidence closes.
 Accepted ADR-0034 now freezes the first release as one byte-exact pass-through `main.mjs`, without
 CommonJS, static/dynamic dependencies, package resolution, legacy Node module authority, or a

@@ -181,7 +181,7 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 - The local harness supports the primitive and ordering only. Protected-container, Apple-signed
   installed identity, wrong-user/session, update/restore, logout/login, reboot, abrupt shutdown,
   minimum-OS, and product Go/native integration remain acceptance blockers.
-- The first bounded G3 checkpoint returned NO-GO before installed build. The authorized Apple
+- The first bounded G3 checkpoint left installed G3 `BLOCKED` before installed build. The authorized Apple
   Development certificate's common-name suffix says `W4QUR9FUL4`, but its subject OU and an exact
   signed-byte TeamIdentifier are `3DDR84M4JS`; no W4 profile is cached. Its noncredential fixture
   retains exact experimental role/state/bootstrap/update fields only. Protected-root creation by a
@@ -196,7 +196,7 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 - [Local owner-lock results](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/supervisor-owner-lock-boundary/RESULTS.md)
 - [Passive G1 Go/Darwin owner package](../../internal/execution/installationowner/)
 - [Bounded G2 owned v1/no-guest startup](../../internal/execution/registeredlifecycle/owned_startup.go)
-- [G3 installed identity/session/update NO-GO](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md)
+- [Historical G3 installed identity/session/update result](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md)
 - [Owner-lock implementation and fault plan](../SUPERVISOR_OWNER_LOCK_PLAN.md)
 - [ADR-0025 durable lifecycle](0025-colocate-durable-attempt-lifecycle-state.md)
 - [ADR-0029 Supervisor topology](0029-select-authenticated-local-ipc-topology.md)

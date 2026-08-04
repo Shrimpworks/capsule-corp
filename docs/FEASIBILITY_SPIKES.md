@@ -22,16 +22,17 @@ relationships but returned `SOURCE-LICENSE-CLOSURE-NO-GO` because immutable publ
 complete linked-component metadata, and generated notices are unavailable. Independent-builder
 and V8 source/license publication closure still fail the stronger admission-evidence question.
 Accepted ADR-0028 selects governed `deno_core` as the first engineering candidate, not an admitted
-profile. The real `Shrimpworks/deno` and `dills122/rusty_v8` forks now have first governed branches
+profile. The real `Shrimpworks/deno` and `Shrimpworks/rusty_v8` forks now have first governed branches
 merged at Deno head `9adb0b68...91bed` and `rusty_v8` follow-up head
 `a43ee748...33cf`. A fork-native integration experiment then stopped before prefetch or build:
 the merged `rusty_v8` contract is fully pinned only for Linux/amd64 and has no Linux/arm64 builder,
 so it cannot construct the intended profile and no amd64 substitution is permitted. No release or
-new runtime artifact was produced. Governed `rusty_v8` PR #4 is now unmerged external work at
-`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`; its clean Linux/arm64 build and fixed test
-pass, and the corrected GN evidence-query diagnostic passes. One clean full-ARM64 bundle run,
-exact evidence review, and merge remain. It does not yet supply a reusable artifact, accepted
-handoff, release, or admission. The later
+new runtime artifact was produced. Governed `rusty_v8` PR #4 is now merged at head
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`; its clean Linux/arm64 build, fixed test, corrected
+GN evidence query, network-disabled full build, and unsigned bundle upload pass. The fork has
+transferred to `Shrimpworks/rusty_v8` with its retained history. Independent-builder equality,
+evidence review, governed release publication, and admission remain. The later
 TypeScript approved-byte experiment separately passed a
 narrower pre-approval transformation/binding question with exact Node 22.22.1/Amaro 1.1.5
 strip-only emission; it did not select a transformer owner or runtime. `RUNTIME-001` remains

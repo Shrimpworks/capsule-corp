@@ -43,8 +43,9 @@ transferred while idle; the current integration repositories are:
 - [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno), forked from `denoland/deno` and
   transferred from the historical `dills122/deno` location with its branches, merged PR #1, and
   Actions history intact; and
-- [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8), forked from
-  `denoland/rusty_v8`.
+- [`Shrimpworks/rusty_v8`](https://github.com/Shrimpworks/rusty_v8), forked from
+  `denoland/rusty_v8` and transferred from the historical `dills122/rusty_v8` location with its
+  governed branches, merged PRs, and Actions history intact.
 
 Both forks now contain merged Capsule-governed branches. The governed Deno line was merged from
 head `9adb0b68b55bca81644827f1e7749a3acb091bed` at merge
@@ -78,7 +79,7 @@ The governed source line starts from these retained upstream anchors:
 - `rusty_v8` v150.2.0 commit `d305e6afa7736f6e298c30ae6646f7709ee9382b`.
 
 `Shrimpworks/deno` will carry the ordered `deno_core` physical-omission and deterministic-ordering
-changes as reviewable commits on a Capsule-governed branch. `dills122/rusty_v8` will own the
+changes as reviewable commits on a Capsule-governed branch. `Shrimpworks/rusty_v8` will own the
 reconstructible Linux/arm64 builder, exact source and generated-build closure, licenses/notices,
 SBOM, provenance, restoration tests, advisory ownership, and update/rebase policy. Capsule will not
 fork `denoland/v8` unless Capsule must change that source line directly.

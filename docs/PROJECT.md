@@ -29,6 +29,16 @@ The concise current dependency and claim checkpoint is
 This section summarizes durable repository state; the linked checkpoint separates selected design,
 implemented local mechanics, experiment evidence, governed external source, and product admission.
 
+The reviewed [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
+now records the intended user-facing shape as one Swift `Capsule.app` distributed in a DMG with
+embedded, narrowly enrolled per-user components. That direction is `IN_PROGRESS — TRENDING_GOOD`,
+not installed-product evidence. A developer-signed MVP deliberately starts with manual whole-app
+replacement; automatic TUF updates, a custom Bundle Replacer, Developer ID/notarized distribution,
+minimum-OS support, and complete uninstall semantics remain later work. The protected Supervisor-
+container bootstrap, App Group/private-XPC residual authority, two role-specific Source Validator
+launchers, and any Trust Coordinator or Bundle Replacer authority require separate decisions and
+signed installed evidence.
+
 The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
 the repository's current API surface, but they intentionally do not define the target v0 protocol.
 Blocking feasibility spikes must determine what the platform can actually enforce before those

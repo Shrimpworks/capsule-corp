@@ -3,6 +3,11 @@
 Status: intended design; Gate B/F mechanism and process-fault evidence is observed, while product
 store, installer, distribution, and power-loss validation remain pending.
 
+The staged product packaging and bootstrap questions are tracked in the
+[macOS installation and distribution plan](../MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). One
+visible app/DMG is the current direction, but it does not select an installation authority,
+minimum OS, updater, replacer, or protected-container bootstrap mechanism.
+
 ## Installation identity
 
 Each installation has:
@@ -79,13 +84,25 @@ Receipts must state which mechanism, if any, was active.
 A general shared app group is not used merely for convenience. Cross-component data moves through
 authenticated typed IPC or narrow handles.
 
-The trusted containing application/installer creates the Supervisor's owner-lock object exactly
-once with the private state root, syncs and reopens it, and enrolls its identity. Ordinary updates
-preserve the same object. Normal Supervisor startup, the daemon, and store openers never create or
-replace it. Loss, relocation, or restore to a different inode is repair-required and needs an
-authorized forward epoch/new-installation decision. The BSD advisory lock serializes cooperating
-Supervisors; installed protected-directory enforcement is what must deny baseline same-UID path
-replacement. Mode `0600` is not that containment boundary.
+Proposed ADR-0033 currently assigns one-time private state-root and owner-lock creation to the
+trusted containing application/installer. The installation review identifies a competing
+component-private-container composition: the authenticated setup ceremony authorizes creation,
+the Supervisor creates the exact objects inside its own container, and a separately authorized
+bootstrap role enrolls the returned closed identity projection. That alternative is not selected
+by documentation alone. The signed protected-container spike must determine the supported owner
+and amend ADR-0033 before product code.
+
+Whichever bootstrap composition is selected, ordinary updates preserve the same root and lock
+object. Normal Supervisor startup, the daemon, and store openers never create or replace it. Loss,
+relocation, or restore to a different inode is repair-required and needs an authorized forward
+epoch/new-installation decision. The BSD advisory lock serializes cooperating Supervisors;
+installed protected-directory enforcement is what must deny baseline same-UID path replacement.
+Mode `0600` is not that containment boundary.
+
+Pairwise App Groups, if selected for sandboxed Mach/XPC naming, remain real shared-container and
+Keychain namespace capabilities. Capsule places no authority, key, file, defaults, source,
+content, or migration state in those groups and must retain installed negative evidence. An empty
+group by policy is not structural absence of the capability and is not peer authentication.
 
 A stable data-protection Keychain access group is a Team/profile/entitlement boundary, not an
 exact-build or trust-epoch boundary. Gate B demonstrated that a stale same-team Broker rejected by

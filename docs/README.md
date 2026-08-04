@@ -14,6 +14,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 8. [Architecture decisions](adr/README.md) — accepted decisions and historical supersession
 9. [Related systems and design influences](RELATED_SYSTEMS.md) — public precedents, reusable
    lessons, rejected patterns, and the boundary between comparison and Capsule evidence
+10. [Ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) — roadmap-specific
+    build-vs-adopt decisions, dependency authority/TCB classification, bounded spikes, and the
+    mandatory dependency-policy checklist
 
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and

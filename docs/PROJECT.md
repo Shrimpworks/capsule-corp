@@ -303,4 +303,8 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md), [Technical Design](TECHNICAL_DE
 [Roadmap](ROADMAP.md). The exact branch point is recorded in the
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md). Public precedents and the boundary between
 reusable lessons and Capsule evidence are recorded in
-[Related systems and design influences](RELATED_SYSTEMS.md).
+[Related systems and design influences](RELATED_SYSTEMS.md). The canonical
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) ties platform, library,
+standard, tool, and governed-fork choices to exact roadmap slices. Future work consults that map
+and completes its dependency-policy checklist before adding a dependency or inventing a primitive;
+the map does not admit a product component or advance a security claim.

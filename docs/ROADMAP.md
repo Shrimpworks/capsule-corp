@@ -15,6 +15,12 @@ Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is la
 explicit owned-guest authorization. Installed signing/distribution and independent-builder
 matrices remain separate evidence lanes.
 
+Every phase must consult the
+[ecosystem reuse and adoption map](ECOSYSTEM_REUSE_AND_ADOPTION.md) before adding a dependency or
+custom primitive. The task records the matching row and closed recommendation and completes the
+dependency-policy checklist. `ADOPT-PLATFORM`, `ADOPT-PINNED`, or `GOVERN/FORK` is a planning
+direction, not product admission or evidence closure.
+
 ## Phase 0: architecture and claim baseline
 
 - Align project, architecture, technical design, threat model, security policy, and ADRs on the
@@ -186,6 +192,14 @@ scaffold was removed in PR #49 under ADR-0027. See the
   F2's explicit migration/full verifier, retaining full closed cohorts and exact tombstone indexes
   without deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
+- Run the bounded production CBOR/COSE dependency comparison from the reuse map before replacing
+  the handwritten conformance oracle: exact graph/license/provenance, object-specific caps and
+  canonical-on-wire wrappers, cross-language fixtures, sustained fuzz/resource bounds, and
+  restoration mutations must pass.
+- After F2 and G2 close their active logical/ownership work, run the single bounded SQLite
+  production-engine comparison from the reuse map. Do not turn the fixed snapshot into an
+  unbounded product store or select a driver before the complete graph and C/native boundary are
+  measured.
 
 Exit evidence:
 

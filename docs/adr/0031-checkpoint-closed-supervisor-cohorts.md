@@ -58,14 +58,16 @@ backend adapter can select archive records, supply archive paths, request deleti
 tombstone, or claim that capacity was released.
 
 The implementation series uses a minimal fixed-store archive checkpoint only as an unwired
-conformance oracle. Slice F1 now retains passive projections, exact limits/known answers, defensive
-copies, and deterministic eligibility selection. It performs no file I/O, migration, archive
-activation, lookup, or authority mutation. The first F2 review stopped before choosing bytes: the
-merged passive model cannot represent a required nonzero visible-v1 effect seed with zero archive
-descriptors or construct the specified generation-one migration checkpoint. The retained
-[F2 format blocker](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md) proposes the narrow ADR/plan/F1
-correction required before F2. The later stateful slices preserve the current full-snapshot
-validation and exact rename fault
+conformance oracle. Slice F1 retains passive projections, exact limits/known answers, defensive
+copies, and deterministic eligibility selection. The passive F2 format-correction slice now
+resolves PR #78's three contradictions with scope-separated retained-global/segment-derived
+indexes, kinded hot/archive record locations, exact hot/archive/total count equations, and a
+domain-separated generation-one migration-genesis checkpoint. Generated exact answers and the
+before/after contract are retained in the
+[F2 format blocker resolution](../SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). F2 migration and full
+verification are next and remain unimplemented. The passive work performs no file I/O, migration,
+archive activation, lookup, or authority mutation. The later stateful slices preserve the current
+full-snapshot validation and exact rename fault
 boundaries while proving the archive protocol. It is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
@@ -135,19 +137,24 @@ The v2 conformance snapshot divides capacity, not authority:
 - **archive-retained capacity** contains complete immutable closed cohorts plus exact tombstone
   indexes. Archived records remain authoritative retained state, not evicted state.
 
-The active v2 snapshot retains a closed archive descriptor set and these sorted, duplicate-free
-tombstone indexes:
+The active v2 snapshot retains two non-interchangeable index domains. The `retained-global`
+projection contains every hot and archived entry below. Each entry has a typed `RecordLocation`:
+`hot` plus one positive canonical hot-record ordinal, or `archive` plus positive segment/cohort/
+record ordinals. The location also binds its `RecordKind`; unused arms must be zero. A segment's
+`segment-derived` projection is archive-only and cannot substitute for the global projection.
+
+The retained-global indexes are sorted and duplicate-free:
 
 | Index | Exact retained projection |
 | --- | --- |
-| registration | `RegistrationID`, sequence, plan digest, expiry, archive segment/unit location, full-record digest |
-| approval | `ApprovalID`, registration, payload digest, authorization identity, nonce, state, consumed `AttemptID`, expiry, location, full-record digest |
-| attempt | `AttemptID`, approval, registration, created time, lifecycle disposition, location, full-record digest |
-| nonce | `AttemptNonce` to approval payload digest and `ApprovalID` |
-| effect | every v2-issued nonzero `EffectID` to `AttemptID`, operation sequence, operation, and issuance snapshot generation; plus the explicitly labeled visible-v1 seed set |
-| instance | instance identity digest to `AttemptID` and archive location |
-| approval replay | canonical payload digest plus exact-payload digest/location and authorization identity to `ApprovalID` and state |
-| attempt replay | `(RegistrationID, ApprovalID)` to the one committed `AttemptID` and state |
+| registration | `RegistrationID`, sequence, plan digest, expiry, registration-record location, full-record digest |
+| approval | `ApprovalID`, registration, payload digest, authorization identity, nonce, state, consumed `AttemptID`, expiry, approval-record location, full-record digest |
+| attempt | `AttemptID`, approval, registration, created time, lifecycle disposition, attempt-record location, full-record digest |
+| nonce | `AttemptNonce` to approval payload digest, `ApprovalID`, and approval-record location |
+| effect | every v2-issued nonzero `EffectID` to `AttemptID`, operation sequence, operation, issuance snapshot generation, attempt-record location, and explicitly labeled visible-v1 seed membership |
+| instance | instance identity digest to `AttemptID` and lifecycle-record location |
+| approval replay | canonical payload digest plus exact-payload digest, authorization identity, `ApprovalID`, state, and approval-record location |
+| attempt replay | `(RegistrationID, ApprovalID)` to the one committed `AttemptID`, state, and attempt-record location |
 
 The exact payload bytes remain in the immutable segment. Approval replay follows the existing
 oracle: a verified canonical payload and the same retained authorization identity return the same
@@ -162,6 +169,12 @@ tombstone in that transaction and refuses if the ID exists anywhere in the visib
 Archive location is never
 authority by itself; the referenced full record and every digest/cross-link must verify.
 
+For every count family, `hot + archived = total`; retained-global index counts equal total; entries
+on the hot location arm equal hot; entries on the archive arm equal archived; and summed
+referenced-descriptor counts equal archived. A visible-v1 effect attached to a hot lifecycle is
+therefore counted in hot and total effects while archive descriptors and archived effects remain
+zero. It never inflates an archive cohort or descriptor count.
+
 ### Closed archive formats and bounded checkpoint oracle
 
 The conformance oracle introduces an explicit v2 active snapshot and immutable archive-segment v0.
@@ -175,11 +188,11 @@ The active v2 snapshot adds:
 - durable time high water, installation, Supervisor, and epoch identity;
 - the complete hot registration/approval/attempt/lifecycle sets and their existing set digests;
 - a sorted archive-segment descriptor set and descriptor-set digest;
-- all tombstone indexes above and one digest per index;
+- the scope-tagged retained-global indexes above and one digest per index;
 - effect-tombstone coverage `visible-v1-seed-plus-all-v2-issued`, including the migration seed
   count and digest;
 - a combined archive-index digest;
-- the prior and current archive-checkpoint digests; and
+- kinded prior and current checkpoint references; and
 - exact hot, archived, and total counts per record and tombstone family.
 
 Each immutable archive segment contains:
@@ -195,11 +208,21 @@ Each immutable archive segment contains:
 - a domain-separated digest over every preceding field and the canonical segment bytes with the
   digest field omitted.
 
-The archive checkpoint is domain separated as
-`capsule.supervisor.archive-checkpoint.v0` and binds the previous checkpoint digest, new segment
+The migration-genesis checkpoint is a distinct generation-one representation domain separated as
+`capsule.supervisor.archive-migration-genesis.v0`. It requires store/source versions 2/1, result
+snapshot and archive generations 1/1, the empty descriptor-set digest, every complete all-hot
+retained-global index digest, all hot set digests, exact visible-v1 seed count/digest, hot counts,
+installation/Supervisor/epoch identity, and durable time high water. It has no previous checkpoint,
+new segment, or archive location. Its retained generated known answer is
+`3a71b2da5a03570a746cdd535f73dbb159c108469ed9cc727e538a0c53f74704`.
+
+An activation checkpoint is separately domain separated as
+`capsule.supervisor.archive-checkpoint.v0` and binds the kinded previous checkpoint reference, new segment
 digest, complete descriptor-set digest, complete archive-index digest, all hot set digests, source
 and resulting snapshot generations, archive generation, installation/Supervisor/epoch identity,
-and durable time high water. It detects accidental omission or mix-and-match inside the visible
+and durable time high water. It requires a new segment and a strictly increasing snapshot
+generation. Checkpoint references bind `migration-genesis` or `activation` kind so one
+representation cannot be interpreted as the other. A checkpoint detects accidental omission or mix-and-match inside the visible
 archive set; it is not an anti-rollback anchor or signature.
 
 The exact unwired fixed-store caps are:
@@ -346,14 +369,16 @@ The fixed oracle uses one explicit offline, lock-held `v1 -> v2` migration:
 
 1. fully validate v1 under its current 64 MiB bound;
 2. require no recovery/repair/quarantine/transition fence;
-3. construct v2 with an empty descriptor set, empty archive-location indexes, generation one, and
-   the domain-separated empty archive/checkpoint digests; seed registration/approval/attempt/nonce/
-   replay identities from all v1 hot records and seed the effect tombstone set from only the
-   nonzero effect IDs still visible in v1 lifecycle records;
+3. construct v2 with an empty descriptor set, zero archived counts, generation one, one complete
+   all-hot `retained-global` projection reconstructed from every v1 registration/approval/attempt/
+   lifecycle record, and one dedicated migration-genesis checkpoint; seed registration/approval/
+   attempt/nonce/replay identities from all v1 hot records and seed the effect tombstone set from
+   only the nonzero effect IDs still visible in v1 lifecycle records;
 4. prove authority and lifecycle sets are byte-for-byte and digest-identical to v1 and record the
    exact visible-v1 effect seed count/digest and limited coverage label;
-5. sync/rename/sync once; and
-6. reopen and fully validate v2.
+5. require retained-global counts and location arms to equal hot/total counts while every segment-
+   derived/descriptor/archived count remains zero, then sync/rename/sync once; and
+6. reopen and fully validate v2, including recomputation of the migration-genesis checkpoint.
 
 Failure before rename preserves v1. An indeterminate rename requires reopen. Old binaries refuse
 v2; the v2 opener refuses v0/v1 and never interprets a missing archive collection as empty. Unknown

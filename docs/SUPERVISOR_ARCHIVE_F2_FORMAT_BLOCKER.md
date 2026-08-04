@@ -1,111 +1,181 @@
-# Supervisor archive F2 format blocker
+# Supervisor archive F2 format blocker resolution
 
-Status: retained local design evidence; no F2 store bytes were implemented.
+Status: resolved passive format contradiction; F2 store implementation is next and remains absent.
 
-Date: 2026-08-04
+Date opened: 2026-08-04
 
-Scope: defensive, repository-local review of the merged F1 passive archive projections against
-the v1-to-v2 migration and empty-archive verifier required by Proposed ADR-0031 and
-`SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md`. This review opened no runtime, backend, process, service,
-guest, identity, credential, user data, or deployment.
+Date resolved: 2026-08-04
 
-## Stop decision
+Scope: defensive, repository-local correction of the merged F1 passive archive projections using
+only `internal/execution/archivestate`, generated fixtures, and local tests. This work opened no
+store, archive file, runtime, backend, adapter, process, service, guest, identity, credential, user
+data, or deployment and moved no cohort.
 
-F2 cannot choose one exact closed v2 encoding from the current proposal and merged F1 types
-without inventing security-relevant bytes. The conflict is reachable for a valid v1 snapshot with
-at least one nonzero currently visible lifecycle `EffectID`, which F2 is explicitly required to
-preserve as a limited-coverage seed tombstone.
+## Original stop decision
 
-Implementation stopped before adding a v2 writer, opener, or migration path. Existing v1 bytes
-and behavior remain unchanged.
+PR #78 correctly stopped F2 before any v2 writer, opener, or migration path was added. The merged
+F1 model could not represent a valid v1 snapshot with a nonzero currently visible lifecycle
+`EffectID`, zero archive descriptors, and a generation-one migration checkpoint without inventing
+security-relevant bytes. Existing v1 bytes and selector behavior remained unchanged.
 
-## Retained contradictions
+This correction resolves only those three contradictions. It does not implement F2.
 
-### 1. The only serialized effect index is counted as archived state
+## Frozen correction
 
-The migration must create an empty descriptor set and empty archive-location indexes while
-retaining every nonzero effect ID visible in v1. The merged `ActiveStateV2` derives the visible-v1
-seed only from `Indexes.Effects`, then requires all index counts to equal `ArchivedCounts`, and
-requires `ArchivedCounts` to equal the sum of referenced descriptor counts.
+### 1. Retained-global and segment-derived indexes are different domains
 
-For an empty archive, descriptor counts are all zero. Therefore:
+Every `ArchiveIndexesView` now carries one closed digest-bound scope:
 
-- leaving `Indexes.Effects` empty satisfies descriptor/count validation but loses a required
-  visible-v1 seed; and
-- inserting a visible-v1 seed preserves the ID but makes `indexes.counts().Effects > 0` while
-  descriptor counts remain zero, so `NewActiveStateV2` rejects the candidate.
+- `retained-global` is the complete active-snapshot identity projection reconstructed from every
+  decoded hot record and every decoded referenced archive record; and
+- `segment-derived` is one segment's archive-only derived projection and is rejected where the
+  active snapshot requires `retained-global`.
 
-The retained F1 active-state test exercises only an empty visible-v1 seed. It does not resolve the
-nonzero migration case.
+The scope is included in every per-index digest. Therefore an empty segment-derived index cannot be
+substituted for an empty retained-global index even though both contain zero entries.
 
-### 2. The global reconstruction rule has no hot-record location representation
+The active-state count equations are exact for every registration, approval, attempt, lifecycle,
+nonce, effect, instance, approval-replay, and attempt-replay family:
 
-The plan requires full verification to reconstruct serialized indexes from all decoded hot and
-archived records. F1 registration, approval, and attempt index entries each require a positive
-three-part `ArchiveLocation`. F2 intentionally has no segment and leaves every authority record
-hot, so those global hot projections cannot be serialized with the existing entry types.
+```text
+hotCounts + archivedCounts = totalCounts
+retainedGlobalIndexes.counts = totalCounts
+retainedGlobalIndexes.hotLocationCounts = hotCounts
+retainedGlobalIndexes.archiveLocationCounts = archivedCounts
+sum(referencedDescriptor.counts) = archivedCounts
+```
 
-Treating those three indexes as archive-only avoids the invalid location, but conflicts with the
-plan's all-hot-and-archived reconstruction language and its migration requirement to seed retained
-registration/approval/attempt identities. The exact partition between hot-derived uniqueness,
-global tombstones, and archive-location indexes is not specified.
+Consequently, migration may serialize a nonzero visible-v1 effect seed in the retained-global
+effect index while the descriptor set and every archived count remain zero. The seed is a hot
+effect tombstone at migration; it is not counted as an archived cohort or segment entry.
 
-### 3. The required generation-one migration has no constructible checkpoint
+The coverage label remains exactly `visible-v1-seed-plus-all-v2-issued`. Only nonzero effect IDs
+still present in v1 lifecycle records are marked `VisibleV1Seed`. Overwritten pre-v2 EffectIDs are
+not reconstructed, synthesized, counted, or claimed. The marker, current operation sequence and
+operation, issuance generation, attempt binding, and complete effect-index order are digest-bound.
 
-ADR-0031 requires migration to create v2 at generation one with an empty domain-separated
-checkpoint. F1's only `ArchiveCheckpoint` constructor requires both source and result generations
-to be positive and requires `result > source`. It therefore cannot construct a checkpoint whose
-result snapshot generation is one.
+### 2. Every global entry has a discriminated record anchor
 
-The retained value described by the F1 test as the empty checkpoint uses source generation one and
-result generation two. It is an activation-shaped value, not a generation-one migration genesis
-checkpoint. Using zero digests in the v2 envelope or silently starting the v2 snapshot at
-generation two would choose bytes and semantics not selected by the proposal.
+`RecordLocation` contains a digest-bound `hot` or `archive` discriminant and the expected
+`RecordKind`:
 
-## Existing known answers that remain valid
+- `hot` requires one positive canonical hot-record ordinal and requires all archive ordinals to be
+  zero; and
+- `archive` requires positive segment, cohort, and record ordinals and requires the hot ordinal to
+  be zero.
 
-The contradiction does not invalidate these merged F1 component known answers:
+No general constructor accepts both arms, a zero arm, an unknown location kind, or an unknown
+record kind. Each index validates the exact record anchor below:
+
+| Retained-global entry | Required record anchor |
+| --- | --- |
+| registration | registration record |
+| approval | approval record |
+| attempt | attempt record |
+| nonce | approval record |
+| effect | attempt record |
+| instance | lifecycle record |
+| approval replay | approval record |
+| attempt replay | attempt record |
+
+The entry's identity and full typed bindings still decide record identity; a location never grants
+authority by itself. Hot ordinals refer to positions in the same canonical sorted hot collections
+whose set digests are retained by the active snapshot. Archive ordinals refer only to a referenced,
+fully verified descriptor/segment/cohort/record world. Record kind, location kind, and the selected
+ordinal arm are all included in the applicable index digest.
+
+This is the exact projection F2 must reconstruct and compare. It cannot reinterpret a hot ordinal
+as a segment ordinal, use an approval location for a registration, or omit hot identities merely
+because no archive segment exists.
+
+The field-authority closure is unchanged and explicit: index scope, location kind, record kind,
+ordinals, checkpoint kind, counts, and digests are all Supervisor-derived from a fully validated
+local snapshot; no caller, daemon, Broker, IPC body, backend, guest, path, or display string supplies
+them. The passive constructors validate them and the applicable index/checkpoint digest binds them.
+They have no approval-display, user-content, or guest-control role. No existing target in
+`schemas/authority/field-authority-manifest.json` changes because these remain internal unwired
+archive projections rather than protocol objects; F2 must not expose them as a new public target.
+
+### 3. Migration genesis and archive activation are distinct checkpoints
+
+`MigrationGenesisCheckpoint` is a dedicated generation-one value with digest domain
+`capsule.supervisor.archive-migration-genesis.v0`. Its constructor requires and binds:
+
+- store format 2 and migration source format 1;
+- result snapshot generation 1 and archive generation 1;
+- the exact empty descriptor-set digest;
+- every digest and the combined digest of the complete all-hot `retained-global` indexes;
+- all four nonzero hot registration/approval/attempt/lifecycle set digests;
+- the sorted visible-v1 effect seed, its count, and its digest, exactly matching effect entries
+  marked `VisibleV1Seed`;
+- exact hot counts, which must equal retained-global index counts;
+- installation, Supervisor, epoch sequence/digest, and durable time high water; and
+- no archive location, previous checkpoint, or new segment.
+
+`ArchiveCheckpoint` remains activation-shaped under
+`capsule.supervisor.archive-checkpoint.v0`. It requires a nonzero, explicitly kinded previous
+checkpoint reference, a new segment digest, descriptor/index/hot-set digests, positive generations,
+and `resultSnapshotGeneration > sourceSnapshotGeneration`.
+
+Checkpoint references are themselves kinded as `migration-genesis` or `activation`. The active v2
+projection permits a genesis head only with no previous checkpoint, no descriptors, zero archived
+counts, and archive generation one. An activation head requires a nonempty referenced archive world
+and a nonempty genesis-or-activation predecessor. Wrong-kind substitution fails before F2 storage
+interpretation.
+
+## Generated exact known answers
+
+The canonical source is
+`internal/execution/archivestate/testdata/format-correction-known-answers.json`. It is regenerated,
+not hand-edited, with:
+
+```sh
+go test ./internal/execution/archivestate \
+  -run TestArchiveFormatCorrectionKnownAnswers \
+  -update-archive-format-known-answers
+```
+
+The retained answers are:
 
 | Projection | SHA-256 known answer |
 | --- | --- |
+| Empty retained-global registration index | `5e08ca56a013091d27547c6ee6430b94aabb54f6c113bcf616206275a46aed47` |
+| Empty retained-global combined index | `78e817b6a07989095010743601a017e43e3b660ea78ad0231e01d900227e207c` |
+| Empty segment-derived registration index | `5d965cfe716f2e877f214ac6d384d86ac41a4a24ec5061edd1b2b27bc68382db` |
+| Empty segment-derived combined index | `a2ebab040a1fcc665092285392179b7733b7ac327476dafe6e95ee5b6ba95ffb` |
 | Empty descriptor set | `a84af9da7e16fadb5aa76f4385558d4bc622ed1ea32ef435899ff02c20e863b3` |
-| Empty combined archive index | `2dd78bdddb4e186229d709bdda5b666e4e2d668e5c1216c751be2f4abb46648e` |
 | Empty visible-v1 effect seed | `17de5f44f523dab94ca4b215ce7779358146fb094fa6d208e0190cb0ba69e0a1` |
-| Activation-shaped empty checkpoint fixture | `69dced13926ca3bfdf7324f7862035480af3b6d26c8b942a36a1ec0db5ee7d54` |
+| One-entry visible-v1 effect seed | `56fba94c52b81ecf559b143e8771e8ff0e36759567fcec071faf8d9d153f0ffa` |
+| One-entry all-archive retained-global combined index | `a7a1c329949fb2895e33680a77bc8871dea1e0e2370d676674d2c9f139e88c9d` |
+| Migration-shaped all-hot retained-global combined index | `6335a7bed7fab57e286286aee0cf42b04cdaa666ed8a299fe5a7b8fbbae9aaf7` |
+| Generation-one migration genesis checkpoint | `3a71b2da5a03570a746cdd535f73dbb159c108469ed9cc727e538a0c53f74704` |
+| Activation checkpoint fixture | `b260cffd0b10aaf791f9c1db4a86d901c24ba05a01af7fe2486dec0048d82dea` |
 
-The last value must not be relabeled as the migration genesis answer because its source/result
-generations are one/two and its other fixture bindings are specific test values.
+The migration-shaped fixture has one hot and total entry in every count family, including one
+visible-v1 effect, and zero archived entries in every family. Its descriptor count is zero. The
+generated file also retains the corrected one- and multi-cohort segment answers because index-scope
+domain separation changes their segment digests.
 
-## Narrow proposed correction before F2
+## Falsification coverage
 
-Revise ADR-0031, the conformance plan, and F1 together in one reviewed format-correction slice:
+Focused passive tests now cover wrong location kind, wrong record kind, mixed hot/archive arms,
+wrong index scope, wrong checkpoint kind, order, count and location-count mismatch, cap plus one,
+identifier collision, seed/index/checkpoint mutation, and caller/accessor defensive-copy behavior.
+They also prove that location-arm mutation changes the applicable retained index digests and that
+genesis and activation checkpoint domains and kinds differ.
 
-1. Define separate closed projections for archive body locations and complete visible identity
-   tombstones, or define one explicit discriminated hot/archive location type. State exactly which
-   registration, approval, attempt, nonce, effect, instance, and replay entries are archive-only,
-   hot-derived, or global.
-2. Define how hot, archived, and total counts relate to each serialized projection. In particular,
-   a visible-v1 effect seed attached to a hot lifecycle must be representable while descriptor and
-   archived record counts remain zero.
-3. Define a dedicated generation-one migration-genesis checkpoint constructor and digest domain,
-   or explicitly authorize a distinct source-generation rule for genesis. Retain a literal known
-   answer that binds the real hot set digests, installation/Supervisor/epoch, durable high water,
-   empty descriptor/index digests, and visible-v1 seed digest.
-4. Add passive tests for a migration-shaped state containing nonempty hot authority sets and a
-   nonzero visible-v1 effect seed. Require exact reconstruction, defensive copies, count equality,
-   and rejection of seed/index/checkpoint mutation.
-5. Freeze the complete closed v2 disk envelope and a byte-exact migration fixture only after those
-   projections are selected.
+All existing F1 selector cases remain unchanged, including deterministic cohort ordering,
+multi-attempt indivisibility, `RecoveryAttemptIDs` agreement, and every no-resurrection/replay/
+`AttemptID`-only lifecycle invariant outside this passive package.
 
-This correction need not authorize segment writing, archive activation, cohort movement, retained
-lookup, deletion, a platform owner lock, a production engine, an adapter call, a runtime/backend,
-or a guest. Once merged, F2 can implement the explicit three-check owner-lock-asserted migration
-and empty-archive opener without guessing.
+## Remaining boundary
 
-## Reproduction references
+The original contradiction is resolved. F2 may now implement the explicit owner-lock-asserted
+fixed-store v1-to-v2 migration, downgrade refusal, closed v2 opener, and empty-archive full verifier
+against this oracle.
 
-- `docs/adr/0031-checkpoint-closed-supervisor-cohorts.md`, migration steps 3-4 and active-v2 fields
-- `docs/SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md`, v2 format, reconstruction, and migration matrix
-- `internal/execution/archivestate/projections.go`, `ArchiveCheckpoint` and `ActiveStateV2`
-- `internal/execution/archivestate/indexes.go`, archive locations, counts, and visible-v1 seed
-- `internal/execution/archivestate/archivestate_test.go`, empty-only active-state fixture
+This correction does not implement `FixedFileStoreV2`, v1-to-v2 file migration, archive segment
+writing or activation, cohort movement, retained lookup, deletion, production storage, owner-lock
+G2, adapter calls, a runtime/backend/process/service/guest, or any consumer. Overwritten pre-v2
+EffectIDs remain unknowable. If F2 finds another format contradiction, it must stop and retain the
+exact blocker rather than choosing new bytes implicitly.

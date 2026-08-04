@@ -9,7 +9,8 @@ import (
 )
 
 // ArchiveLocation identifies a record inside a referenced immutable segment.
-// It is never authority without the corresponding verified record and digest.
+// It is only the archive arm of a RecordLocation and is never authority without
+// the corresponding verified record and digest.
 type ArchiveLocation struct {
 	SegmentOrdinal ArchiveOrdinal
 	CohortOrdinal  ArchiveOrdinal
@@ -22,12 +23,73 @@ func (location ArchiveLocation) valid() bool {
 		validPositive(uint64(location.RecordOrdinal))
 }
 
+func (location ArchiveLocation) isZero() bool { return location == (ArchiveLocation{}) }
+
+// RecordLocationKind is the closed hot/archive discriminant for a retained
+// record projection. Hot ordinals index the canonical sorted hot collection;
+// archive ordinals index a referenced immutable segment.
+type RecordLocationKind string
+
+const (
+	RecordLocationHot     RecordLocationKind = "hot"
+	RecordLocationArchive RecordLocationKind = "archive"
+)
+
+// RecordLocationView keeps the discriminant, record domain, and only the
+// coordinates valid for that discriminant. RecordKind prevents a registration
+// location from being reused for an approval, attempt, or lifecycle projection.
+type RecordLocationView struct {
+	Kind             RecordLocationKind
+	RecordKind       RecordKind
+	HotRecordOrdinal v0candidate.PositiveUInt53
+	Archive          ArchiveLocation
+}
+
+// RecordLocation is an immutable validated hot/archive location projection.
+type RecordLocation struct{ view RecordLocationView }
+
+// NewHotRecordLocation constructs a location in one canonical hot record set.
+func NewHotRecordLocation(kind RecordKind, ordinal v0candidate.PositiveUInt53) (RecordLocation, error) {
+	return newRecordLocation(RecordLocationView{Kind: RecordLocationHot, RecordKind: kind, HotRecordOrdinal: ordinal})
+}
+
+// NewArchiveRecordLocation constructs a location in one referenced segment.
+func NewArchiveRecordLocation(kind RecordKind, location ArchiveLocation) (RecordLocation, error) {
+	return newRecordLocation(RecordLocationView{Kind: RecordLocationArchive, RecordKind: kind, Archive: location})
+}
+
+func newRecordLocation(view RecordLocationView) (RecordLocation, error) {
+	if !validRecordKind(view.RecordKind) {
+		return RecordLocation{}, classified(ClassificationDomain, "record-location-record-kind")
+	}
+	switch view.Kind {
+	case RecordLocationHot:
+		if !validPositive(uint64(view.HotRecordOrdinal)) || !view.Archive.isZero() {
+			return RecordLocation{}, classified(ClassificationBinding, "record-location-hot")
+		}
+	case RecordLocationArchive:
+		if view.HotRecordOrdinal != 0 || !view.Archive.valid() {
+			return RecordLocation{}, classified(ClassificationBinding, "record-location-archive")
+		}
+	default:
+		return RecordLocation{}, classified(ClassificationDomain, "record-location-kind")
+	}
+	return RecordLocation{view: view}, nil
+}
+
+func (location RecordLocation) View() RecordLocationView { return location.view }
+
+func (location RecordLocation) valid(kind RecordKind) bool {
+	validated, err := newRecordLocation(location.view)
+	return err == nil && validated.view.RecordKind == kind
+}
+
 type RegistrationIndexEntry struct {
 	RegistrationID       v0candidate.RegistrationID
 	RegistrationSequence v0candidate.PositiveUInt53
 	PlanDigest           v0candidate.ExecutionPlanDigest
 	ExpiresAt            v0candidate.UInt53
-	Location             ArchiveLocation
+	Location             RecordLocation
 	FullRecordDigest     ArchiveRecordDigest
 }
 
@@ -40,7 +102,7 @@ type ApprovalIndexEntry struct {
 	State                 approvalattempt.ApprovalState
 	ConsumedAttemptID     approvalattempt.AttemptID
 	ExpiresAt             v0candidate.UInt53
-	Location              ArchiveLocation
+	Location              RecordLocation
 	FullRecordDigest      ArchiveRecordDigest
 }
 
@@ -50,7 +112,7 @@ type AttemptIndexEntry struct {
 	RegistrationID   v0candidate.RegistrationID
 	CreatedAt        v0candidate.UInt53
 	LifecycleState   lifecyclestate.LifecycleState
-	Location         ArchiveLocation
+	Location         RecordLocation
 	FullRecordDigest ArchiveRecordDigest
 }
 
@@ -58,6 +120,7 @@ type NonceIndexEntry struct {
 	AttemptNonce  approvalattempt.AttemptNonce
 	PayloadDigest approvalattempt.ApprovalPayloadDigest
 	ApprovalID    approvalattempt.ApprovalID
+	Location      RecordLocation
 }
 
 type EffectIndexEntry struct {
@@ -67,12 +130,13 @@ type EffectIndexEntry struct {
 	Operation                  lifecyclestate.Operation
 	IssuanceSnapshotGeneration v0candidate.PositiveUInt53
 	VisibleV1Seed              bool
+	AttemptLocation            RecordLocation
 }
 
 type InstanceIndexEntry struct {
 	InstanceDigest lifecyclestate.BackendInstanceDigest
 	AttemptID      approvalattempt.AttemptID
-	Location       ArchiveLocation
+	Location       RecordLocation
 }
 
 type ApprovalReplayIndexEntry struct {
@@ -81,7 +145,7 @@ type ApprovalReplayIndexEntry struct {
 	AuthorizationIdentity approvalattempt.ApprovalKeyAuthorizationIdentity
 	ApprovalID            approvalattempt.ApprovalID
 	State                 approvalattempt.ApprovalState
-	Location              ArchiveLocation
+	Location              RecordLocation
 }
 
 type AttemptReplayIndexEntry struct {
@@ -89,11 +153,23 @@ type AttemptReplayIndexEntry struct {
 	ApprovalID     approvalattempt.ApprovalID
 	AttemptID      approvalattempt.AttemptID
 	State          approvalattempt.AttemptState
+	Location       RecordLocation
 }
 
-// ArchiveIndexesView is the complete closed sorted archive index projection.
-// Every slice is required to be non-nil, including in the empty projection.
+// ArchiveIndexScope separates the complete retained global projection in the
+// active snapshot from one segment's derived archive-only projection.
+type ArchiveIndexScope string
+
+const (
+	ArchiveIndexScopeRetainedGlobal ArchiveIndexScope = "retained-global"
+	ArchiveIndexScopeSegmentDerived ArchiveIndexScope = "segment-derived"
+)
+
+// ArchiveIndexesView is a closed sorted index projection. Retained-global
+// contains every hot and archived identity; segment-derived contains only one
+// segment's archive-derived entries. Every slice is non-nil, even when empty.
 type ArchiveIndexesView struct {
+	Scope          ArchiveIndexScope
 	Registrations  []RegistrationIndexEntry
 	Approvals      []ApprovalIndexEntry
 	Attempts       []AttemptIndexEntry
@@ -116,7 +192,7 @@ type ArchiveIndexDigests struct {
 	AttemptReplay  ArchiveIndexDigest
 }
 
-// ArchiveIndexes is an immutable validated collection projection.
+// ArchiveIndexes is an immutable validated, scope-separated projection.
 type ArchiveIndexes struct {
 	view     ArchiveIndexesView
 	digests  ArchiveIndexDigests
@@ -134,8 +210,9 @@ func NewArchiveIndexes(view ArchiveIndexesView) (ArchiveIndexes, error) {
 	}, nil
 }
 
-func EmptyArchiveIndexes() ArchiveIndexes {
+func emptyArchiveIndexes(scope ArchiveIndexScope) ArchiveIndexes {
 	view := ArchiveIndexesView{
+		Scope:          scope,
 		Registrations:  make([]RegistrationIndexEntry, 0),
 		Approvals:      make([]ApprovalIndexEntry, 0),
 		Attempts:       make([]AttemptIndexEntry, 0),
@@ -147,6 +224,16 @@ func EmptyArchiveIndexes() ArchiveIndexes {
 	}
 	digests := digestArchiveIndexes(view)
 	return ArchiveIndexes{view: view, digests: digests, combined: digestCombinedIndexes(digests)}
+}
+
+// EmptyRetainedIndexes returns the empty complete hot-plus-archive projection.
+func EmptyRetainedIndexes() ArchiveIndexes {
+	return emptyArchiveIndexes(ArchiveIndexScopeRetainedGlobal)
+}
+
+// EmptySegmentDerivedIndexes returns the empty archive-only segment projection.
+func EmptySegmentDerivedIndexes() ArchiveIndexes {
+	return emptyArchiveIndexes(ArchiveIndexScopeSegmentDerived)
 }
 
 func (indexes ArchiveIndexes) View() ArchiveIndexesView {
@@ -170,6 +257,100 @@ func (indexes ArchiveIndexes) counts() ArchiveCounts {
 	}
 }
 
+func (indexes ArchiveIndexes) scope() ArchiveIndexScope { return indexes.view.Scope }
+
+func (indexes ArchiveIndexes) allLocationsAre(kind RecordLocationKind) bool {
+	view := indexes.view
+	for _, entry := range view.Registrations {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.Approvals {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.Attempts {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.Nonces {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.Effects {
+		if entry.AttemptLocation.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.Instances {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.ApprovalReplay {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	for _, entry := range view.AttemptReplay {
+		if entry.Location.View().Kind != kind {
+			return false
+		}
+	}
+	return true
+}
+
+func (indexes ArchiveIndexes) countsAt(kind RecordLocationKind) ArchiveCounts {
+	view := indexes.view
+	counts := ArchiveCounts{}
+	for _, entry := range view.Registrations {
+		if entry.Location.View().Kind == kind {
+			counts.Registrations++
+		}
+	}
+	for _, entry := range view.Approvals {
+		if entry.Location.View().Kind == kind {
+			counts.Approvals++
+		}
+	}
+	for _, entry := range view.Attempts {
+		if entry.Location.View().Kind == kind {
+			counts.Attempts++
+			counts.Lifecycles++
+		}
+	}
+	for _, entry := range view.Nonces {
+		if entry.Location.View().Kind == kind {
+			counts.Nonces++
+		}
+	}
+	for _, entry := range view.Effects {
+		if entry.AttemptLocation.View().Kind == kind {
+			counts.Effects++
+		}
+	}
+	for _, entry := range view.Instances {
+		if entry.Location.View().Kind == kind {
+			counts.Instances++
+		}
+	}
+	for _, entry := range view.ApprovalReplay {
+		if entry.Location.View().Kind == kind {
+			counts.ApprovalReplay++
+		}
+	}
+	for _, entry := range view.AttemptReplay {
+		if entry.Location.View().Kind == kind {
+			counts.AttemptReplay++
+		}
+	}
+	return counts
+}
+
 func cloneArchiveIndexesView(view ArchiveIndexesView) ArchiveIndexesView {
 	view.Registrations = cloneSlice(view.Registrations)
 	view.Approvals = cloneSlice(view.Approvals)
@@ -183,6 +364,9 @@ func cloneArchiveIndexesView(view ArchiveIndexesView) ArchiveIndexesView {
 }
 
 func validateArchiveIndexesView(view ArchiveIndexesView) error {
+	if view.Scope != ArchiveIndexScopeRetainedGlobal && view.Scope != ArchiveIndexScopeSegmentDerived {
+		return classified(ClassificationDomain, "archive-index-scope")
+	}
 	if view.Registrations == nil || view.Approvals == nil || view.Attempts == nil ||
 		view.Nonces == nil || view.Effects == nil || view.Instances == nil ||
 		view.ApprovalReplay == nil || view.AttemptReplay == nil {
@@ -230,7 +414,7 @@ func validateRegistrationIndex(entries []RegistrationIndexEntry) error {
 	return validateStrictEntries(entries, func(entry RegistrationIndexEntry) ([]byte, error) {
 		if entry.RegistrationID == (v0candidate.RegistrationID{}) ||
 			!validPositive(uint64(entry.RegistrationSequence)) ||
-			uint64(entry.ExpiresAt) > v0candidate.MaxSafeInteger || !entry.Location.valid() ||
+			uint64(entry.ExpiresAt) > v0candidate.MaxSafeInteger || !entry.Location.valid(RecordRegistration) ||
 			zeroDigest(entry.FullRecordDigest) {
 			return nil, classified(ClassificationBinding, "registration-index-entry")
 		}
@@ -245,7 +429,7 @@ func validateApprovalIndex(entries []ApprovalIndexEntry) error {
 			entry.AttemptNonce == (approvalattempt.AttemptNonce{}) ||
 			zeroDigest(entry.PayloadDigest) || zeroDigest(entry.AuthorizationIdentity) ||
 			!validApprovalState(entry.State) || uint64(entry.ExpiresAt) > v0candidate.MaxSafeInteger ||
-			!entry.Location.valid() || zeroDigest(entry.FullRecordDigest) {
+			!entry.Location.valid(RecordApproval) || zeroDigest(entry.FullRecordDigest) {
 			return nil, classified(ClassificationBinding, "approval-index-entry")
 		}
 		if (entry.State == approvalattempt.ApprovalConsumed) !=
@@ -262,7 +446,7 @@ func validateAttemptIndex(entries []AttemptIndexEntry) error {
 			entry.ApprovalID == (approvalattempt.ApprovalID{}) ||
 			entry.RegistrationID == (v0candidate.RegistrationID{}) ||
 			uint64(entry.CreatedAt) > v0candidate.MaxSafeInteger ||
-			!validLifecycleState(entry.LifecycleState) || !entry.Location.valid() ||
+			!validLifecycleState(entry.LifecycleState) || !entry.Location.valid(RecordAttempt) ||
 			zeroDigest(entry.FullRecordDigest) {
 			return nil, classified(ClassificationBinding, "attempt-index-entry")
 		}
@@ -273,7 +457,8 @@ func validateAttemptIndex(entries []AttemptIndexEntry) error {
 func validateNonceIndex(entries []NonceIndexEntry) error {
 	return validateStrictEntries(entries, func(entry NonceIndexEntry) ([]byte, error) {
 		if entry.AttemptNonce == (approvalattempt.AttemptNonce{}) ||
-			zeroDigest(entry.PayloadDigest) || entry.ApprovalID == (approvalattempt.ApprovalID{}) {
+			zeroDigest(entry.PayloadDigest) || entry.ApprovalID == (approvalattempt.ApprovalID{}) ||
+			!entry.Location.valid(RecordApproval) {
 			return nil, classified(ClassificationBinding, "nonce-index-entry")
 		}
 		return append([]byte(nil), entry.AttemptNonce[:]...), nil
@@ -284,7 +469,8 @@ func validateEffectIndex(entries []EffectIndexEntry) error {
 	return validateStrictEntries(entries, func(entry EffectIndexEntry) ([]byte, error) {
 		if entry.EffectID.IsZero() || entry.AttemptID == (approvalattempt.AttemptID{}) ||
 			!validPositive(uint64(entry.OperationSequence)) || !validLifecycleOperation(entry.Operation) ||
-			!validPositive(uint64(entry.IssuanceSnapshotGeneration)) {
+			!validPositive(uint64(entry.IssuanceSnapshotGeneration)) ||
+			!entry.AttemptLocation.valid(RecordAttempt) {
 			return nil, classified(ClassificationBinding, "effect-index-entry")
 		}
 		return append([]byte(nil), entry.EffectID[:]...), nil
@@ -294,7 +480,7 @@ func validateEffectIndex(entries []EffectIndexEntry) error {
 func validateInstanceIndex(entries []InstanceIndexEntry) error {
 	return validateStrictEntries(entries, func(entry InstanceIndexEntry) ([]byte, error) {
 		if zeroDigest(entry.InstanceDigest) || entry.AttemptID == (approvalattempt.AttemptID{}) ||
-			!entry.Location.valid() {
+			!entry.Location.valid(RecordLifecycle) {
 			return nil, classified(ClassificationBinding, "instance-index-entry")
 		}
 		return append([]byte(nil), entry.InstanceDigest[:]...), nil
@@ -305,7 +491,7 @@ func validateApprovalReplayIndex(entries []ApprovalReplayIndexEntry) error {
 	return validateStrictEntries(entries, func(entry ApprovalReplayIndexEntry) ([]byte, error) {
 		if zeroDigest(entry.PayloadDigest) || zeroDigest(entry.ExactPayloadDigest) || zeroDigest(entry.AuthorizationIdentity) ||
 			entry.ApprovalID == (approvalattempt.ApprovalID{}) || !validApprovalState(entry.State) ||
-			!entry.Location.valid() {
+			!entry.Location.valid(RecordApproval) {
 			return nil, classified(ClassificationBinding, "approval-replay-index-entry")
 		}
 		key := append([]byte(nil), entry.PayloadDigest[:]...)
@@ -327,7 +513,8 @@ func validateAttemptReplayIndex(entries []AttemptReplayIndexEntry) error {
 	return validateStrictEntries(entries, func(entry AttemptReplayIndexEntry) ([]byte, error) {
 		if entry.RegistrationID == (v0candidate.RegistrationID{}) ||
 			entry.ApprovalID == (approvalattempt.ApprovalID{}) ||
-			entry.AttemptID == (approvalattempt.AttemptID{}) || entry.State != approvalattempt.AttemptCreated {
+			entry.AttemptID == (approvalattempt.AttemptID{}) || entry.State != approvalattempt.AttemptCreated ||
+			!entry.Location.valid(RecordAttempt) {
 			return nil, classified(ClassificationBinding, "attempt-replay-index-entry")
 		}
 		key := append([]byte(nil), entry.RegistrationID[:]...)
@@ -353,19 +540,20 @@ func validateStrictEntries[T any](entries []T, key func(T) ([]byte, error), code
 
 func digestArchiveIndexes(view ArchiveIndexesView) ArchiveIndexDigests {
 	return ArchiveIndexDigests{
-		Registrations:  digestIndex("registration", view.Registrations, encodeRegistrationIndex),
-		Approvals:      digestIndex("approval", view.Approvals, encodeApprovalIndex),
-		Attempts:       digestIndex("attempt", view.Attempts, encodeAttemptIndex),
-		Nonces:         digestIndex("nonce", view.Nonces, encodeNonceIndex),
-		Effects:        digestIndex("effect", view.Effects, encodeEffectIndex),
-		Instances:      digestIndex("instance", view.Instances, encodeInstanceIndex),
-		ApprovalReplay: digestIndex("approval-replay", view.ApprovalReplay, encodeApprovalReplayIndex),
-		AttemptReplay:  digestIndex("attempt-replay", view.AttemptReplay, encodeAttemptReplayIndex),
+		Registrations:  digestIndex(view.Scope, "registration", view.Registrations, encodeRegistrationIndex),
+		Approvals:      digestIndex(view.Scope, "approval", view.Approvals, encodeApprovalIndex),
+		Attempts:       digestIndex(view.Scope, "attempt", view.Attempts, encodeAttemptIndex),
+		Nonces:         digestIndex(view.Scope, "nonce", view.Nonces, encodeNonceIndex),
+		Effects:        digestIndex(view.Scope, "effect", view.Effects, encodeEffectIndex),
+		Instances:      digestIndex(view.Scope, "instance", view.Instances, encodeInstanceIndex),
+		ApprovalReplay: digestIndex(view.Scope, "approval-replay", view.ApprovalReplay, encodeApprovalReplayIndex),
+		AttemptReplay:  digestIndex(view.Scope, "attempt-replay", view.AttemptReplay, encodeAttemptReplayIndex),
 	}
 }
 
-func digestIndex[T any](name string, entries []T, encode func(*digestEncoder, T)) ArchiveIndexDigest {
+func digestIndex[T any](scope ArchiveIndexScope, name string, entries []T, encode func(*digestEncoder, T)) ArchiveIndexDigest {
 	encoder := newDigestEncoder("capsule.supervisor.archive-index.v0")
+	encoder.text(string(scope))
 	encoder.text(name)
 	encoder.uint64(uint64(len(entries)))
 	for _, entry := range entries {
@@ -406,20 +594,36 @@ func DigestVisibleV1EffectSeed(ids []lifecyclestate.EffectID) (ArchiveEffectSeed
 }
 
 func effectSeedForIndexes(indexes ArchiveIndexes) (uint64, ArchiveEffectSeedDigest, error) {
+	ids := indexes.visibleV1EffectSeed()
+	digest, err := DigestVisibleV1EffectSeed(ids)
+	return uint64(len(ids)), digest, err
+}
+
+func (indexes ArchiveIndexes) visibleV1EffectSeed() []lifecyclestate.EffectID {
 	ids := make([]lifecyclestate.EffectID, 0)
 	for _, entry := range indexes.view.Effects {
 		if entry.VisibleV1Seed {
 			ids = append(ids, entry.EffectID)
 		}
 	}
-	digest, err := DigestVisibleV1EffectSeed(ids)
-	return uint64(len(ids)), digest, err
+	return ids
 }
 
-func encodeLocation(encoder *digestEncoder, location ArchiveLocation) {
+func encodeArchiveLocation(encoder *digestEncoder, location ArchiveLocation) {
 	encoder.uint64(uint64(location.SegmentOrdinal))
 	encoder.uint64(uint64(location.CohortOrdinal))
 	encoder.uint64(uint64(location.RecordOrdinal))
+}
+
+func encodeRecordLocation(encoder *digestEncoder, location RecordLocation) {
+	view := location.View()
+	encoder.text(string(view.Kind))
+	encoder.text(string(view.RecordKind))
+	if view.Kind == RecordLocationHot {
+		encoder.uint64(uint64(view.HotRecordOrdinal))
+		return
+	}
+	encodeArchiveLocation(encoder, view.Archive)
 }
 
 func encodeRegistrationIndex(encoder *digestEncoder, entry RegistrationIndexEntry) {
@@ -427,7 +631,7 @@ func encodeRegistrationIndex(encoder *digestEncoder, entry RegistrationIndexEntr
 	encoder.uint64(uint64(entry.RegistrationSequence))
 	encoder.bytes(entry.PlanDigest[:])
 	encoder.uint64(uint64(entry.ExpiresAt))
-	encodeLocation(encoder, entry.Location)
+	encodeRecordLocation(encoder, entry.Location)
 	encoder.bytes(entry.FullRecordDigest[:])
 }
 
@@ -440,7 +644,7 @@ func encodeApprovalIndex(encoder *digestEncoder, entry ApprovalIndexEntry) {
 	encoder.text(string(entry.State))
 	encoder.bytes(entry.ConsumedAttemptID[:])
 	encoder.uint64(uint64(entry.ExpiresAt))
-	encodeLocation(encoder, entry.Location)
+	encodeRecordLocation(encoder, entry.Location)
 	encoder.bytes(entry.FullRecordDigest[:])
 }
 
@@ -450,7 +654,7 @@ func encodeAttemptIndex(encoder *digestEncoder, entry AttemptIndexEntry) {
 	encoder.bytes(entry.RegistrationID[:])
 	encoder.uint64(uint64(entry.CreatedAt))
 	encoder.text(string(entry.LifecycleState))
-	encodeLocation(encoder, entry.Location)
+	encodeRecordLocation(encoder, entry.Location)
 	encoder.bytes(entry.FullRecordDigest[:])
 }
 
@@ -458,6 +662,7 @@ func encodeNonceIndex(encoder *digestEncoder, entry NonceIndexEntry) {
 	encoder.bytes(entry.AttemptNonce[:])
 	encoder.bytes(entry.PayloadDigest[:])
 	encoder.bytes(entry.ApprovalID[:])
+	encodeRecordLocation(encoder, entry.Location)
 }
 
 func encodeEffectIndex(encoder *digestEncoder, entry EffectIndexEntry) {
@@ -467,12 +672,13 @@ func encodeEffectIndex(encoder *digestEncoder, entry EffectIndexEntry) {
 	encoder.text(string(entry.Operation))
 	encoder.uint64(uint64(entry.IssuanceSnapshotGeneration))
 	encoder.boolean(entry.VisibleV1Seed)
+	encodeRecordLocation(encoder, entry.AttemptLocation)
 }
 
 func encodeInstanceIndex(encoder *digestEncoder, entry InstanceIndexEntry) {
 	encoder.bytes(entry.InstanceDigest[:])
 	encoder.bytes(entry.AttemptID[:])
-	encodeLocation(encoder, entry.Location)
+	encodeRecordLocation(encoder, entry.Location)
 }
 
 func encodeApprovalReplayIndex(encoder *digestEncoder, entry ApprovalReplayIndexEntry) {
@@ -481,7 +687,7 @@ func encodeApprovalReplayIndex(encoder *digestEncoder, entry ApprovalReplayIndex
 	encoder.bytes(entry.AuthorizationIdentity[:])
 	encoder.bytes(entry.ApprovalID[:])
 	encoder.text(string(entry.State))
-	encodeLocation(encoder, entry.Location)
+	encodeRecordLocation(encoder, entry.Location)
 }
 
 func encodeAttemptReplayIndex(encoder *digestEncoder, entry AttemptReplayIndexEntry) {
@@ -489,4 +695,5 @@ func encodeAttemptReplayIndex(encoder *digestEncoder, entry AttemptReplayIndexEn
 	encoder.bytes(entry.ApprovalID[:])
 	encoder.bytes(entry.AttemptID[:])
 	encoder.text(string(entry.State))
+	encodeRecordLocation(encoder, entry.Location)
 }

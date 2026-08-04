@@ -3,6 +3,7 @@ package archivestate
 import (
 	"bytes"
 
+	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
@@ -113,7 +114,9 @@ func encodeRecordReference(encoder *digestEncoder, reference ArchiveRecordRefere
 	encoder.bytes(reference.Digest[:])
 }
 
-// ArchiveCounts records exact collection and index counts. It does not imply
+// ArchiveCounts records exact collection and index counts. In active v2,
+// hot plus archived equals total, retained-global indexes equal total, and
+// record-location arms independently equal hot and archived. It does not imply
 // deletion or a continuous-service budget.
 type ArchiveCounts struct {
 	Registrations  uint64
@@ -225,6 +228,10 @@ func validateArchiveSegmentView(view ArchiveSegmentView) error {
 	derivedIndexes, err := NewArchiveIndexes(view.DerivedIndexes.View())
 	if err != nil {
 		return err
+	}
+	if derivedIndexes.scope() != ArchiveIndexScopeSegmentDerived ||
+		!derivedIndexes.allLocationsAre(RecordLocationArchive) {
+		return classified(ClassificationDomain, "archive-segment-derived-index-scope")
 	}
 	derivedView := derivedIndexes.View()
 	if len(derivedView.Registrations) != 0 || len(derivedView.Approvals) != 0 || len(derivedView.Attempts) != 0 {
@@ -465,8 +472,168 @@ type HotSetDigests struct {
 	Lifecycles    [32]byte
 }
 
+func validHotSetDigests(digests HotSetDigests) bool {
+	return digests.Registrations != ([32]byte{}) && digests.Approvals != ([32]byte{}) &&
+		digests.Attempts != ([32]byte{}) && digests.Lifecycles != ([32]byte{})
+}
+
+// ArchiveCheckpointKind prevents a migration genesis from being interpreted
+// as an activation checkpoint (or the reverse).
+type ArchiveCheckpointKind string
+
+const (
+	ArchiveCheckpointNone             ArchiveCheckpointKind = "none"
+	ArchiveCheckpointMigrationGenesis ArchiveCheckpointKind = "migration-genesis"
+	ArchiveCheckpointActivation       ArchiveCheckpointKind = "activation"
+)
+
+type ArchiveCheckpointReference struct {
+	Kind   ArchiveCheckpointKind
+	Digest ArchiveCheckpointDigest
+}
+
+func NoArchiveCheckpointReference() ArchiveCheckpointReference {
+	return ArchiveCheckpointReference{Kind: ArchiveCheckpointNone}
+}
+
+func (reference ArchiveCheckpointReference) valid(allowNone bool) bool {
+	switch reference.Kind {
+	case ArchiveCheckpointNone:
+		return allowNone && zeroDigest(reference.Digest)
+	case ArchiveCheckpointMigrationGenesis, ArchiveCheckpointActivation:
+		return !zeroDigest(reference.Digest)
+	default:
+		return false
+	}
+}
+
+// MigrationGenesisCheckpointView is the generation-one v1-to-v2 checkpoint.
+// Unlike an activation checkpoint it binds no previous checkpoint or segment;
+// it binds the complete all-hot retained indexes and the exact visible-v1 seed.
+type MigrationGenesisCheckpointView struct {
+	StoreFormatVersion       uint64
+	MigrationSourceVersion   uint64
+	ResultSnapshotGeneration v0candidate.PositiveUInt53
+	ArchiveGeneration        ArchiveGeneration
+	DescriptorSetDigest      ArchiveDescriptorSetDigest
+	Indexes                  ArchiveIndexes
+	HotSetDigests            HotSetDigests
+	VisibleV1EffectSeed      []lifecyclestate.EffectID
+	HotCounts                ArchiveCounts
+	InstallationID           v0candidate.InstallationID
+	SupervisorID             v0candidate.SupervisorID
+	EpochSequence            v0candidate.UInt53
+	EpochDigest              v0candidate.TrustEpochDigest
+	DurableTimeHighWater     v0candidate.UInt53
+}
+
+type MigrationGenesisCheckpoint struct {
+	view       MigrationGenesisCheckpointView
+	seedDigest ArchiveEffectSeedDigest
+	digest     ArchiveCheckpointDigest
+}
+
+func NewMigrationGenesisCheckpoint(view MigrationGenesisCheckpointView) (MigrationGenesisCheckpoint, error) {
+	if view.StoreFormatVersion != SupervisorStoreFormatV2 ||
+		view.MigrationSourceVersion != MigrationSourceFormatV1 {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationUnsupported, "migration-genesis-version")
+	}
+	if view.ResultSnapshotGeneration != 1 || view.ArchiveGeneration != 1 ||
+		view.InstallationID == (v0candidate.InstallationID{}) ||
+		view.SupervisorID == (v0candidate.SupervisorID{}) ||
+		uint64(view.EpochSequence) > v0candidate.MaxSafeInteger ||
+		uint64(view.DurableTimeHighWater) > v0candidate.MaxSafeInteger ||
+		!validHotSetDigests(view.HotSetDigests) || view.VisibleV1EffectSeed == nil {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationBinding, "migration-genesis-metadata")
+	}
+	emptyDescriptorDigest, err := DigestArchiveDescriptorSet([]ArchiveDescriptor{})
+	if err != nil || view.DescriptorSetDigest != emptyDescriptorDigest {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationBinding, "migration-genesis-descriptors")
+	}
+	indexes, err := NewArchiveIndexes(view.Indexes.View())
+	if err != nil {
+		return MigrationGenesisCheckpoint{}, err
+	}
+	if indexes.scope() != ArchiveIndexScopeRetainedGlobal ||
+		!indexes.allLocationsAre(RecordLocationHot) {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationDomain, "migration-genesis-index-scope")
+	}
+	if indexes.counts() != view.HotCounts {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationBinding, "migration-genesis-counts")
+	}
+	seed := cloneSlice(view.VisibleV1EffectSeed)
+	seedDigest, err := DigestVisibleV1EffectSeed(seed)
+	if err != nil {
+		return MigrationGenesisCheckpoint{}, err
+	}
+	indexedSeed := indexes.visibleV1EffectSeed()
+	if len(seed) != len(indexedSeed) {
+		return MigrationGenesisCheckpoint{}, classified(ClassificationBinding, "migration-genesis-effect-seed")
+	}
+	for index := range seed {
+		if seed[index] != indexedSeed[index] {
+			return MigrationGenesisCheckpoint{}, classified(ClassificationBinding, "migration-genesis-effect-seed")
+		}
+	}
+	cloned := view
+	cloned.Indexes = indexes
+	cloned.VisibleV1EffectSeed = seed
+	encoder := newDigestEncoder("capsule.supervisor.archive-migration-genesis.v0")
+	encodeMigrationGenesisView(encoder, cloned, seedDigest)
+	return MigrationGenesisCheckpoint{view: cloned, seedDigest: seedDigest, digest: digestSum[ArchiveCheckpointDigest](encoder)}, nil
+}
+
+func (checkpoint MigrationGenesisCheckpoint) View() MigrationGenesisCheckpointView {
+	view := checkpoint.view
+	view.Indexes = checkpoint.view.Indexes
+	view.VisibleV1EffectSeed = cloneSlice(checkpoint.view.VisibleV1EffectSeed)
+	return view
+}
+
+func (checkpoint MigrationGenesisCheckpoint) Digest() ArchiveCheckpointDigest {
+	return checkpoint.digest
+}
+
+func (checkpoint MigrationGenesisCheckpoint) SeedDigest() ArchiveEffectSeedDigest {
+	return checkpoint.seedDigest
+}
+
+func (checkpoint MigrationGenesisCheckpoint) Reference() ArchiveCheckpointReference {
+	return ArchiveCheckpointReference{Kind: ArchiveCheckpointMigrationGenesis, Digest: checkpoint.digest}
+}
+
+func encodeMigrationGenesisView(encoder *digestEncoder, view MigrationGenesisCheckpointView, seedDigest ArchiveEffectSeedDigest) {
+	encoder.uint64(view.StoreFormatVersion)
+	encoder.uint64(view.MigrationSourceVersion)
+	encoder.uint64(uint64(view.ResultSnapshotGeneration))
+	encoder.uint64(uint64(view.ArchiveGeneration))
+	encoder.bytes(view.DescriptorSetDigest[:])
+	indexDigests := view.Indexes.Digests()
+	for _, digest := range [...][32]byte{
+		[32]byte(indexDigests.Registrations), [32]byte(indexDigests.Approvals), [32]byte(indexDigests.Attempts),
+		[32]byte(indexDigests.Nonces), [32]byte(indexDigests.Effects), [32]byte(indexDigests.Instances),
+		[32]byte(indexDigests.ApprovalReplay), [32]byte(indexDigests.AttemptReplay),
+	} {
+		encoder.bytes(digest[:])
+	}
+	combined := view.Indexes.CombinedDigest()
+	encoder.bytes(combined[:])
+	encoder.bytes(view.HotSetDigests.Registrations[:])
+	encoder.bytes(view.HotSetDigests.Approvals[:])
+	encoder.bytes(view.HotSetDigests.Attempts[:])
+	encoder.bytes(view.HotSetDigests.Lifecycles[:])
+	encoder.uint64(uint64(len(view.VisibleV1EffectSeed)))
+	encoder.bytes(seedDigest[:])
+	encodeCounts(encoder, view.HotCounts)
+	encoder.bytes(view.InstallationID[:])
+	encoder.bytes(view.SupervisorID[:])
+	encoder.uint64(uint64(view.EpochSequence))
+	encoder.bytes(view.EpochDigest[:])
+	encoder.uint64(uint64(view.DurableTimeHighWater))
+}
+
 type ArchiveCheckpointView struct {
-	PreviousCheckpointDigest ArchiveCheckpointDigest
+	PreviousCheckpoint       ArchiveCheckpointReference
 	NewSegmentDigest         ArchiveSegmentDigest
 	DescriptorSetDigest      ArchiveDescriptorSetDigest
 	ArchiveIndexDigest       ArchiveCombinedIndexDigest
@@ -494,7 +661,10 @@ func NewArchiveCheckpoint(view ArchiveCheckpointView) (ArchiveCheckpoint, error)
 		view.InstallationID == (v0candidate.InstallationID{}) ||
 		view.SupervisorID == (v0candidate.SupervisorID{}) ||
 		uint64(view.EpochSequence) > v0candidate.MaxSafeInteger ||
-		uint64(view.DurableTimeHighWater) > v0candidate.MaxSafeInteger {
+		uint64(view.DurableTimeHighWater) > v0candidate.MaxSafeInteger ||
+		!view.PreviousCheckpoint.valid(false) || zeroDigest(view.NewSegmentDigest) ||
+		zeroDigest(view.DescriptorSetDigest) || zeroDigest(view.ArchiveIndexDigest) ||
+		!validHotSetDigests(view.HotSetDigests) {
 		return ArchiveCheckpoint{}, classified(ClassificationBinding, "archive-checkpoint")
 	}
 	encoder := newDigestEncoder("capsule.supervisor.archive-checkpoint.v0")
@@ -506,8 +676,13 @@ func (checkpoint ArchiveCheckpoint) View() ArchiveCheckpointView { return checkp
 
 func (checkpoint ArchiveCheckpoint) Digest() ArchiveCheckpointDigest { return checkpoint.digest }
 
+func (checkpoint ArchiveCheckpoint) Reference() ArchiveCheckpointReference {
+	return ArchiveCheckpointReference{Kind: ArchiveCheckpointActivation, Digest: checkpoint.digest}
+}
+
 func encodeCheckpointView(encoder *digestEncoder, view ArchiveCheckpointView) {
-	encoder.bytes(view.PreviousCheckpointDigest[:])
+	encoder.text(string(view.PreviousCheckpoint.Kind))
+	encoder.bytes(view.PreviousCheckpoint.Digest[:])
 	encoder.bytes(view.NewSegmentDigest[:])
 	encoder.bytes(view.DescriptorSetDigest[:])
 	encoder.bytes(view.ArchiveIndexDigest[:])
@@ -545,8 +720,8 @@ type ActiveStateV2View struct {
 	EffectTombstoneCoverage   string
 	VisibleV1EffectSeedCount  uint64
 	VisibleV1EffectSeedDigest ArchiveEffectSeedDigest
-	PreviousCheckpointDigest  ArchiveCheckpointDigest
-	CurrentCheckpointDigest   ArchiveCheckpointDigest
+	PreviousCheckpoint        ArchiveCheckpointReference
+	CurrentCheckpoint         ArchiveCheckpointReference
 	HotCounts                 ArchiveCounts
 	ArchivedCounts            ArchiveCounts
 	TotalCounts               ArchiveCounts
@@ -578,13 +753,13 @@ func NewActiveStateV2(view ActiveStateV2View) (ActiveStateV2, error) {
 		indexes.CombinedDigest() != view.CombinedIndexDigest {
 		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-index-digest")
 	}
+	if indexes.scope() != ArchiveIndexScopeRetainedGlobal {
+		return ActiveStateV2{}, classified(ClassificationDomain, "active-v2-index-scope")
+	}
 	seedCount, seedDigest, seedErr := effectSeedForIndexes(indexes)
 	if seedErr != nil || seedCount != view.VisibleV1EffectSeedCount ||
 		seedDigest != view.VisibleV1EffectSeedDigest {
 		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-effect-seed")
-	}
-	if indexes.counts() != view.ArchivedCounts {
-		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-archived-counts")
 	}
 	descriptorCounts := ArchiveCounts{}
 	for _, descriptor := range view.Descriptors {
@@ -599,6 +774,29 @@ func NewActiveStateV2(view ActiveStateV2View) (ActiveStateV2, error) {
 	total, err := view.HotCounts.add(view.ArchivedCounts)
 	if err != nil || total != view.TotalCounts {
 		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-counts")
+	}
+	if indexes.counts() != view.TotalCounts {
+		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-global-index-counts")
+	}
+	if indexes.countsAt(RecordLocationHot) != view.HotCounts ||
+		indexes.countsAt(RecordLocationArchive) != view.ArchivedCounts {
+		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-location-counts")
+	}
+	if !view.CurrentCheckpoint.valid(false) || !view.PreviousCheckpoint.valid(true) {
+		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-checkpoint-reference")
+	}
+	switch view.CurrentCheckpoint.Kind {
+	case ArchiveCheckpointMigrationGenesis:
+		if view.PreviousCheckpoint.Kind != ArchiveCheckpointNone || len(view.Descriptors) != 0 ||
+			view.ArchivedCounts != (ArchiveCounts{}) || view.ArchiveGeneration != 1 {
+			return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-genesis-world")
+		}
+	case ArchiveCheckpointActivation:
+		if view.PreviousCheckpoint.Kind == ArchiveCheckpointNone || len(view.Descriptors) == 0 {
+			return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-activation-world")
+		}
+	default:
+		return ActiveStateV2{}, classified(ClassificationDomain, "active-v2-checkpoint-kind")
 	}
 	cloned := view
 	cloned.Descriptors = cloneSlice(view.Descriptors)

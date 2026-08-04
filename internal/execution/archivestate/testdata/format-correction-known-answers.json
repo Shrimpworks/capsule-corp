@@ -1,0 +1,49 @@
+{
+  "emptyRetainedRegistrationIndex": "5e08ca56a013091d27547c6ee6430b94aabb54f6c113bcf616206275a46aed47",
+  "emptyRetainedCombinedIndex": "78e817b6a07989095010743601a017e43e3b660ea78ad0231e01d900227e207c",
+  "emptySegmentRegistrationIndex": "5d965cfe716f2e877f214ac6d384d86ac41a4a24ec5061edd1b2b27bc68382db",
+  "emptySegmentCombinedIndex": "a2ebab040a1fcc665092285392179b7733b7ac327476dafe6e95ee5b6ba95ffb",
+  "emptyDescriptorSet": "a84af9da7e16fadb5aa76f4385558d4bc622ed1ea32ef435899ff02c20e863b3",
+  "emptyVisibleV1EffectSeed": "17de5f44f523dab94ca4b215ce7779358146fb094fa6d208e0190cb0ba69e0a1",
+  "nonemptyVisibleV1EffectSeed": "56fba94c52b81ecf559b143e8771e8ff0e36759567fcec071faf8d9d153f0ffa",
+  "archivedRetainedCombinedIndex": "a7a1c329949fb2895e33680a77bc8871dea1e0e2370d676674d2c9f139e88c9d",
+  "migrationHotCombinedIndex": "6335a7bed7fab57e286286aee0cf42b04cdaa666ed8a299fe5a7b8fbbae9aaf7",
+  "migrationGenesisCheckpoint": "3a71b2da5a03570a746cdd535f73dbb159c108469ed9cc727e538a0c53f74704",
+  "activationCheckpoint": "b260cffd0b10aaf791f9c1db4a86d901c24ba05a01af7fe2486dec0048d82dea",
+  "oneCohortSegment": "cd94a96ea3f509da3ca1a1ecb97fdcf567435b78840fce2895b4c6cb4336abe0",
+  "multiCohortSegment": "340c5dc2e334ee7fb3245864e0ade0d2e6336092387a3f8589d11c46d6f9ffeb",
+  "migrationVisibleV1SeedCount": 1,
+  "migrationHotCounts": {
+    "Registrations": 1,
+    "Approvals": 1,
+    "Attempts": 1,
+    "Lifecycles": 1,
+    "Nonces": 1,
+    "Effects": 1,
+    "Instances": 1,
+    "ApprovalReplay": 1,
+    "AttemptReplay": 1
+  },
+  "migrationArchivedCounts": {
+    "Registrations": 0,
+    "Approvals": 0,
+    "Attempts": 0,
+    "Lifecycles": 0,
+    "Nonces": 0,
+    "Effects": 0,
+    "Instances": 0,
+    "ApprovalReplay": 0,
+    "AttemptReplay": 0
+  },
+  "migrationTotalCounts": {
+    "Registrations": 1,
+    "Approvals": 1,
+    "Attempts": 1,
+    "Lifecycles": 1,
+    "Nonces": 1,
+    "Effects": 1,
+    "Instances": 1,
+    "ApprovalReplay": 1,
+    "AttemptReplay": 1
+  }
+}

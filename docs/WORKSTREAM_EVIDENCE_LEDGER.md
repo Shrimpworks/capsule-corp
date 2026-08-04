@@ -225,11 +225,11 @@ read-only offline verification. Slice F1 now implements passive archive projecti
 limits/known answers, defensive copies, and deterministic complete-cohort eligibility only. It
 writes no file, migrates no store, activates no archive, and routes no retained lookup. The passive
 F2 format correction now freezes scope-separated global/segment indexes, typed hot/archive
-locations/counts, a distinct migration-genesis checkpoint, and generated answers. The stateful F2
-review stopped before v2 bytes because the corrected projection cannot represent a valid v1
-committed attempt with no lifecycle record without inventing state or violating exact counts. The
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and its executable witness are
-retained; migration/full verification now waits for another passive contract decision. The design
+locations/counts, a distinct migration-genesis checkpoint, and generated answers. The follow-on
+valid-v1 mapping contradiction is now passively resolved with a closed absent/present lifecycle
+union and counts derived only from present records. The
+[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) and its real-v1 executable
+witness are retained; migration/full verification remains unimplemented. The design
 deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
@@ -363,9 +363,9 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Blocked:** archive F2 migration/full verification waits for a reviewed representation of the
-   valid v1 committed-attempt-without-lifecycle world; do not choose v2 bytes or silently restrict
-   migration before that passive decision.
+1. **Next archive slice:** the valid v1 committed-attempt-without-lifecycle world now has a reviewed
+   passive absent/present representation. Implement no more than the explicit F2 migration/full
+   verifier under its exact join, no-adapter, downgrade, and indeterminate-outcome plan.
 2. **Independently actionable now:** retain bounded owner-lock G2 current-v1/no-guest composition
    while G3 is blocked; follow accepted ADR-0034 for `.mjs` M1/S1 passive contract work; and
    maintain exact documentation plus recursive field-authority design.

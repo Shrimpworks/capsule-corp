@@ -1,6 +1,7 @@
 # Supervisor archive F2 format blocker resolution
 
-Status: original passive format contradiction resolved; stateful F2 remains absent and is stopped on a follow-on v1 mapping contradiction.
+Status: original passive format contradiction resolved; follow-on v1 mapping contradiction also
+resolved passively; stateful F2 remains absent.
 
 Date opened: 2026-08-04
 
@@ -146,10 +147,12 @@ The retained answers are:
 | Empty descriptor set | `a84af9da7e16fadb5aa76f4385558d4bc622ed1ea32ef435899ff02c20e863b3` |
 | Empty visible-v1 effect seed | `17de5f44f523dab94ca4b215ce7779358146fb094fa6d208e0190cb0ba69e0a1` |
 | One-entry visible-v1 effect seed | `56fba94c52b81ecf559b143e8771e8ff0e36759567fcec071faf8d9d153f0ffa` |
-| One-entry all-archive retained-global combined index | `a7a1c329949fb2895e33680a77bc8871dea1e0e2370d676674d2c9f139e88c9d` |
-| Migration-shaped all-hot retained-global combined index | `6335a7bed7fab57e286286aee0cf42b04cdaa666ed8a299fe5a7b8fbbae9aaf7` |
-| Generation-one migration genesis checkpoint | `3a71b2da5a03570a746cdd535f73dbb159c108469ed9cc727e538a0c53f74704` |
-| Activation checkpoint fixture | `b260cffd0b10aaf791f9c1db4a86d901c24ba05a01af7fe2486dec0048d82dea` |
+| One-entry all-archive retained-global combined index | `0dcb51ad18810d42148164b30df3fe9b5867e1b33d6890b549b09d9ceb5db7f6` |
+| Migration-shaped all-hot retained-global combined index | `e31f70203da7f7909b0df43bb10e5219b4427c723a5236d10ec3de1ed0ac97ff` |
+| Generation-one all-present migration genesis checkpoint | `657c86aff68354e535369bdecf9e8c23bbfb1457e8ada57576bc1a52666a5fc9` |
+| Missing-lifecycle retained-global combined index | `5f77dd10f8cbe8db00c47eed0ee27b8ec81dd2ccee188be9a2069f5641ab7232` |
+| Missing-lifecycle migration genesis checkpoint | `0af76dca782bdf198d5ef80b6b2856fb35ae01539e7d8866198c4f2af643f621` |
+| Activation checkpoint fixture | `32d8dd2b25d32ee2e23d5c134f37fbd421291052ad90c97c4829fcdd9f94d56d` |
 
 The migration-shaped fixture has one hot and total entry in every count family, including one
 visible-v1 effect, and zero archived entries in every family. Its descriptor count is zero. The
@@ -170,16 +173,15 @@ multi-attempt indivisibility, `RecoveryAttemptIDs` agreement, and every no-resur
 
 ## Remaining boundary
 
-The original three contradictions are resolved. A later implementation review found a separate
-contradiction: v1 validly retains a committed attempt before lifecycle establishment, while the
-corrected v2 attempt index requires a lifecycle disposition and derives lifecycle count from
-attempt count. The exact executable witness and stop decision are retained in the
-[F2 v1 mapping blocker](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). F2 therefore may not yet add
-the explicit owner-lock-asserted fixed-store v1-to-v2 migration, downgrade refusal, closed v2
-opener, or empty-archive full verifier.
+The original three contradictions and the later valid-v1 missing-lifecycle contradiction are
+resolved at the passive contract layer. The
+[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) selects an explicit
+attempt-lifecycle absence/presence union with independently derived lifecycle counts and retains
+the exact real-v1 witness. F2 may next add only the explicit owner-lock-asserted fixed-store
+v1-to-v2 migration, downgrade refusal, closed v2 opener, and empty-archive full verifier under the
+recorded conformance/fault plan.
 
 This correction does not implement `FixedFileStoreV2`, v1-to-v2 file migration, archive segment
 writing or activation, cohort movement, retained lookup, deletion, production storage, owner-lock
 G2, adapter calls, a runtime/backend/process/service/guest, or any consumer. Overwritten pre-v2
-EffectIDs remain unknowable. F2 found another format contradiction and stopped without choosing
-new bytes, as this document required.
+EffectIDs remain unknowable. No v2 bytes were chosen or written by either passive correction.

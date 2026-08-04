@@ -29,6 +29,8 @@ type archiveFormatKnownAnswers struct {
 	ArchivedRetainedCombinedIndex  string        `json:"archivedRetainedCombinedIndex"`
 	MigrationHotCombinedIndex      string        `json:"migrationHotCombinedIndex"`
 	MigrationGenesisCheckpoint     string        `json:"migrationGenesisCheckpoint"`
+	MissingLifecycleCombinedIndex  string        `json:"missingLifecycleCombinedIndex"`
+	MissingLifecycleGenesis        string        `json:"missingLifecycleGenesis"`
 	ActivationCheckpoint           string        `json:"activationCheckpoint"`
 	OneCohortSegment               string        `json:"oneCohortSegment"`
 	MultiCohortSegment             string        `json:"multiCohortSegment"`
@@ -36,6 +38,7 @@ type archiveFormatKnownAnswers struct {
 	MigrationHotCounts             ArchiveCounts `json:"migrationHotCounts"`
 	MigrationArchivedCounts        ArchiveCounts `json:"migrationArchivedCounts"`
 	MigrationTotalCounts           ArchiveCounts `json:"migrationTotalCounts"`
+	MissingLifecycleHotCounts      ArchiveCounts `json:"missingLifecycleHotCounts"`
 }
 
 func TestArchiveFormatCorrectionKnownAnswers(t *testing.T) {
@@ -88,6 +91,24 @@ func calculateArchiveFormatKnownAnswers(t *testing.T) archiveFormatKnownAnswers 
 	if err != nil {
 		t.Fatal(err)
 	}
+	missingLifecycleIndexes := completeHotRetainedIndexes(t, false).View()
+	missingLifecycleIndexes.Attempts[0].Lifecycle = NoAttemptLifecycle()
+	missingLifecycleIndexes.Effects = []EffectIndexEntry{}
+	missingLifecycleIndexes.Instances = []InstanceIndexEntry{}
+	missingLifecycle, err := NewArchiveIndexes(missingLifecycleIndexes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	missingLifecycleGenesis, err := NewMigrationGenesisCheckpoint(MigrationGenesisCheckpointView{
+		StoreFormatVersion: SupervisorStoreFormatV2, MigrationSourceVersion: MigrationSourceFormatV1,
+		ResultSnapshotGeneration: 1, ArchiveGeneration: 1, DescriptorSetDigest: descriptorDigest,
+		Indexes: missingLifecycle, HotSetDigests: hotSetDigests(1), VisibleV1EffectSeed: []lifecyclestate.EffectID{},
+		HotCounts: missingLifecycle.counts(), InstallationID: installationID(1), SupervisorID: supervisorID(2),
+		EpochSequence: 3, EpochDigest: epochDigest(4), DurableTimeHighWater: 100,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
 	activation, err := NewArchiveCheckpoint(ArchiveCheckpointView{
 		PreviousCheckpoint: genesis.Reference(), NewSegmentDigest: segmentDigest(1),
 		DescriptorSetDigest: descriptorSetDigest(1), ArchiveIndexDigest: combinedIndexDigest(1),
@@ -115,6 +136,8 @@ func calculateArchiveFormatKnownAnswers(t *testing.T) archiveFormatKnownAnswers 
 		ArchivedRetainedCombinedIndex:  hex32(completeArchiveIndexes(t).CombinedDigest()),
 		MigrationHotCombinedIndex:      hex32(hotIndexes.CombinedDigest()),
 		MigrationGenesisCheckpoint:     hex32(genesis.Digest()),
+		MissingLifecycleCombinedIndex:  hex32(missingLifecycle.CombinedDigest()),
+		MissingLifecycleGenesis:        hex32(missingLifecycleGenesis.Digest()),
 		ActivationCheckpoint:           hex32(activation.Digest()),
 		OneCohortSegment:               hex32(mustSegment(t, []CohortProjection{one}, 1_024).Digest()),
 		MultiCohortSegment:             hex32(mustSegment(t, []CohortProjection{one, multi}, 2_048).Digest()),
@@ -122,6 +145,7 @@ func calculateArchiveFormatKnownAnswers(t *testing.T) archiveFormatKnownAnswers 
 		MigrationHotCounts:             hotIndexes.counts(),
 		MigrationArchivedCounts:        zeroCounts,
 		MigrationTotalCounts:           hotIndexes.counts(),
+		MissingLifecycleHotCounts:      missingLifecycle.counts(),
 	}
 }
 

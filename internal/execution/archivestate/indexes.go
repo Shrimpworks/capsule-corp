@@ -106,12 +106,78 @@ type ApprovalIndexEntry struct {
 	FullRecordDigest      ArchiveRecordDigest
 }
 
+// AttemptLifecyclePresence is the closed discriminant for whether one retained
+// immutable attempt has a colocated lifecycle record. Absence is an ordinary
+// recoverable hot-state fact: approval consumption and attempt creation commit
+// before lifecycle establishment.
+type AttemptLifecyclePresence string
+
+const (
+	AttemptLifecycleAbsent  AttemptLifecyclePresence = "absent"
+	AttemptLifecyclePresent AttemptLifecyclePresence = "present"
+)
+
+// AttemptLifecycleView is the lifecycle arm of one retained attempt entry.
+// The absent arm carries no invented state, location, or digest. The present
+// arm binds the exact lifecycle disposition and its independently typed record
+// anchor. Attempt and lifecycle records remain separate full records.
+type AttemptLifecycleView struct {
+	Presence         AttemptLifecyclePresence
+	State            lifecyclestate.LifecycleState
+	Location         RecordLocation
+	FullRecordDigest ArchiveRecordDigest
+}
+
+// AttemptLifecycle is an immutable validated lifecycle-presence union.
+type AttemptLifecycle struct{ view AttemptLifecycleView }
+
+// NoAttemptLifecycle represents a committed attempt before lifecycle
+// establishment. It is not a lifecycle state and grants no cleanup authority.
+func NoAttemptLifecycle() AttemptLifecycle {
+	return AttemptLifecycle{view: AttemptLifecycleView{Presence: AttemptLifecycleAbsent}}
+}
+
+// NewPresentAttemptLifecycle binds an existing lifecycle record to its exact
+// state, typed record location, and full-record digest.
+func NewPresentAttemptLifecycle(
+	state lifecyclestate.LifecycleState,
+	location RecordLocation,
+	digest ArchiveRecordDigest,
+) (AttemptLifecycle, error) {
+	view := AttemptLifecycleView{
+		Presence: AttemptLifecyclePresent, State: state, Location: location, FullRecordDigest: digest,
+	}
+	if !validLifecycleState(state) || !location.valid(RecordLifecycle) || zeroDigest(digest) {
+		return AttemptLifecycle{}, classified(ClassificationBinding, "attempt-lifecycle-present")
+	}
+	return AttemptLifecycle{view: view}, nil
+}
+
+func (lifecycle AttemptLifecycle) View() AttemptLifecycleView { return lifecycle.view }
+
+func (lifecycle AttemptLifecycle) valid() bool {
+	switch lifecycle.view.Presence {
+	case AttemptLifecycleAbsent:
+		return lifecycle.view.State == "" && lifecycle.view.Location == (RecordLocation{}) &&
+			zeroDigest(lifecycle.view.FullRecordDigest)
+	case AttemptLifecyclePresent:
+		return validLifecycleState(lifecycle.view.State) &&
+			lifecycle.view.Location.valid(RecordLifecycle) && !zeroDigest(lifecycle.view.FullRecordDigest)
+	default:
+		return false
+	}
+}
+
+func (lifecycle AttemptLifecycle) present() bool {
+	return lifecycle.view.Presence == AttemptLifecyclePresent
+}
+
 type AttemptIndexEntry struct {
 	AttemptID        approvalattempt.AttemptID
 	ApprovalID       approvalattempt.ApprovalID
 	RegistrationID   v0candidate.RegistrationID
 	CreatedAt        v0candidate.UInt53
-	LifecycleState   lifecyclestate.LifecycleState
+	Lifecycle        AttemptLifecycle
 	Location         RecordLocation
 	FullRecordDigest ArchiveRecordDigest
 }
@@ -248,13 +314,19 @@ func (indexes ArchiveIndexes) CombinedDigest() ArchiveCombinedIndexDigest {
 
 func (indexes ArchiveIndexes) counts() ArchiveCounts {
 	view := indexes.view
-	return ArchiveCounts{
+	counts := ArchiveCounts{
 		Registrations: uint64(len(view.Registrations)), Approvals: uint64(len(view.Approvals)),
-		Attempts: uint64(len(view.Attempts)), Lifecycles: uint64(len(view.Attempts)),
-		Nonces: uint64(len(view.Nonces)), Effects: uint64(len(view.Effects)),
+		Attempts: uint64(len(view.Attempts)),
+		Nonces:   uint64(len(view.Nonces)), Effects: uint64(len(view.Effects)),
 		Instances: uint64(len(view.Instances)), ApprovalReplay: uint64(len(view.ApprovalReplay)),
 		AttemptReplay: uint64(len(view.AttemptReplay)),
 	}
+	for _, entry := range view.Attempts {
+		if entry.Lifecycle.present() {
+			counts.Lifecycles++
+		}
+	}
+	return counts
 }
 
 func (indexes ArchiveIndexes) scope() ArchiveIndexScope { return indexes.view.Scope }
@@ -273,6 +345,9 @@ func (indexes ArchiveIndexes) allLocationsAre(kind RecordLocationKind) bool {
 	}
 	for _, entry := range view.Attempts {
 		if entry.Location.View().Kind != kind {
+			return false
+		}
+		if entry.Lifecycle.present() && entry.Lifecycle.View().Location.View().Kind != kind {
 			return false
 		}
 	}
@@ -320,6 +395,8 @@ func (indexes ArchiveIndexes) countsAt(kind RecordLocationKind) ArchiveCounts {
 	for _, entry := range view.Attempts {
 		if entry.Location.View().Kind == kind {
 			counts.Attempts++
+		}
+		if entry.Lifecycle.present() && entry.Lifecycle.View().Location.View().Kind == kind {
 			counts.Lifecycles++
 		}
 	}
@@ -446,9 +523,23 @@ func validateAttemptIndex(entries []AttemptIndexEntry) error {
 			entry.ApprovalID == (approvalattempt.ApprovalID{}) ||
 			entry.RegistrationID == (v0candidate.RegistrationID{}) ||
 			uint64(entry.CreatedAt) > v0candidate.MaxSafeInteger ||
-			!validLifecycleState(entry.LifecycleState) || !entry.Location.valid(RecordAttempt) ||
+			!entry.Lifecycle.valid() || !entry.Location.valid(RecordAttempt) ||
 			zeroDigest(entry.FullRecordDigest) {
 			return nil, classified(ClassificationBinding, "attempt-index-entry")
+		}
+		attemptLocation := entry.Location.View()
+		if !entry.Lifecycle.present() {
+			if attemptLocation.Kind != RecordLocationHot {
+				return nil, classified(ClassificationBinding, "attempt-index-absent-lifecycle-location")
+			}
+			return append([]byte(nil), entry.AttemptID[:]...), nil
+		}
+		lifecycleLocation := entry.Lifecycle.View().Location.View()
+		if lifecycleLocation.Kind != attemptLocation.Kind ||
+			(lifecycleLocation.Kind == RecordLocationArchive &&
+				(lifecycleLocation.Archive.SegmentOrdinal != attemptLocation.Archive.SegmentOrdinal ||
+					lifecycleLocation.Archive.CohortOrdinal != attemptLocation.Archive.CohortOrdinal)) {
+			return nil, classified(ClassificationBinding, "attempt-index-lifecycle-location")
 		}
 		return append([]byte(nil), entry.AttemptID[:]...), nil
 	}, "attempt-index-order")
@@ -653,7 +744,13 @@ func encodeAttemptIndex(encoder *digestEncoder, entry AttemptIndexEntry) {
 	encoder.bytes(entry.ApprovalID[:])
 	encoder.bytes(entry.RegistrationID[:])
 	encoder.uint64(uint64(entry.CreatedAt))
-	encoder.text(string(entry.LifecycleState))
+	lifecycle := entry.Lifecycle.View()
+	encoder.text(string(lifecycle.Presence))
+	if lifecycle.Presence == AttemptLifecyclePresent {
+		encoder.text(string(lifecycle.State))
+		encodeRecordLocation(encoder, lifecycle.Location)
+		encoder.bytes(lifecycle.FullRecordDigest[:])
+	}
 	encodeRecordLocation(encoder, entry.Location)
 	encoder.bytes(entry.FullRecordDigest[:])
 }

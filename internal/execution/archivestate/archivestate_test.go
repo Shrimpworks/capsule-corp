@@ -630,6 +630,99 @@ func TestArchiveRecordLocationsAreKindedDiscriminatedAndBoundIntoIndexes(t *test
 	}
 }
 
+func TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts(t *testing.T) {
+	hotAttempt := hotRecordLocation(t, RecordAttempt, 1)
+	base := AttemptIndexEntry{
+		AttemptID: attemptID(1), ApprovalID: approvalID(1), RegistrationID: registrationID(1), CreatedAt: 80,
+		Lifecycle: NoAttemptLifecycle(), Location: hotAttempt,
+		FullRecordDigest: mustRecordDigest(t, RecordAttempt, []byte("attempt")),
+	}
+	view := EmptyRetainedIndexes().View()
+	view.Attempts = []AttemptIndexEntry{base}
+	absent, err := NewArchiveIndexes(view)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := absent.counts(); got.Attempts != 1 || got.Lifecycles != 0 {
+		t.Fatalf("absent lifecycle counts = attempts %d, lifecycles %d, want 1/0", got.Attempts, got.Lifecycles)
+	}
+	if got := absent.countsAt(RecordLocationHot); got.Attempts != 1 || got.Lifecycles != 0 {
+		t.Fatalf("absent lifecycle hot counts = attempts %d, lifecycles %d, want 1/0", got.Attempts, got.Lifecycles)
+	}
+
+	present := base
+	present.Lifecycle = presentAttemptLifecycle(
+		t, lifecyclestate.StatePreparePending, hotRecordLocation(t, RecordLifecycle, 1), []byte("lifecycle"),
+	)
+	view.Attempts[0] = present
+	presentIndexes, err := NewArchiveIndexes(view)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := presentIndexes.counts(); got.Attempts != 1 || got.Lifecycles != 1 {
+		t.Fatalf("present lifecycle counts = attempts %d, lifecycles %d, want 1/1", got.Attempts, got.Lifecycles)
+	}
+	if absent.Digests().Attempts == presentIndexes.Digests().Attempts {
+		t.Fatal("lifecycle absence and presence have the same attempt-index digest")
+	}
+
+	archivedAbsent := base
+	archivedAbsent.Location = archiveRecordLocation(t, RecordAttempt, 1)
+	view.Attempts[0] = archivedAbsent
+	if _, err := NewArchiveIndexes(view); classification(t, err) != ClassificationBinding {
+		t.Fatalf("archived attempt without lifecycle = %v", err)
+	}
+
+	wrongArm := present
+	wrongArm.Location = archiveRecordLocation(t, RecordAttempt, 1)
+	view.Attempts[0] = wrongArm
+	if _, err := NewArchiveIndexes(view); classification(t, err) != ClassificationBinding {
+		t.Fatalf("split attempt/lifecycle location arms = %v", err)
+	}
+
+	archivedPresent := base
+	archivedPresent.Location = archiveRecordLocation(t, RecordAttempt, 1)
+	archivedPresent.Lifecycle = presentAttemptLifecycle(
+		t, lifecyclestate.StateDestroyed, archiveRecordLocation(t, RecordLifecycle, 2), []byte("lifecycle"),
+	)
+	view.Attempts[0] = archivedPresent
+	archivedIndexes, err := NewArchiveIndexes(view)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := archivedIndexes.countsAt(RecordLocationArchive); got.Attempts != 1 || got.Lifecycles != 1 {
+		t.Fatalf("archived present counts = attempts %d, lifecycles %d, want 1/1", got.Attempts, got.Lifecycles)
+	}
+	differentCohort, err := NewArchiveRecordLocation(RecordLifecycle, ArchiveLocation{
+		SegmentOrdinal: 1, CohortOrdinal: 2, RecordOrdinal: 1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	archivedPresent.Lifecycle = presentAttemptLifecycle(
+		t, lifecyclestate.StateDestroyed, differentCohort, []byte("lifecycle"),
+	)
+	view.Attempts[0] = archivedPresent
+	if _, err := NewArchiveIndexes(view); classification(t, err) != ClassificationBinding {
+		t.Fatalf("split archive cohort = %v", err)
+	}
+
+	if _, err := NewPresentAttemptLifecycle(
+		lifecyclestate.StatePreparePending,
+		hotRecordLocation(t, RecordAttempt, 1),
+		mustRecordDigest(t, RecordLifecycle, []byte("lifecycle")),
+	); classification(t, err) != ClassificationBinding {
+		t.Fatalf("present lifecycle with attempt record location = %v", err)
+	}
+	if _, err := NewPresentAttemptLifecycle(
+		lifecyclestate.StatePreparePending,
+		hotRecordLocation(t, RecordLifecycle, 1),
+		ArchiveRecordDigest{},
+	); classification(t, err) != ClassificationBinding {
+		t.Fatalf("present lifecycle without full-record digest = %v", err)
+	}
+}
+
 func TestArchiveSelectorDeterministicKnownAnswerAndNoSideEffects(t *testing.T) {
 	cohorts := []RegistrationCohortCandidate{closedCohort(t, 1, 90, 0), closedCohort(t, 2, 90, 2)}
 	state, err := NewValidatedV1OrV2State(validStateView(t, cohorts))
@@ -820,7 +913,7 @@ func completeArchiveIndexes(t *testing.T) ArchiveIndexes {
 		}},
 		Attempts: []AttemptIndexEntry{{
 			AttemptID: attemptID(1), ApprovalID: approvalID(1), RegistrationID: registrationID(1), CreatedAt: 80,
-			LifecycleState: lifecyclestate.StateDestroyed, Location: attemptLocation,
+			Lifecycle: presentAttemptLifecycle(t, lifecyclestate.StateDestroyed, lifecycleLocation, []byte("lifecycle")), Location: attemptLocation,
 			FullRecordDigest: mustRecordDigest(t, RecordAttempt, []byte("attempt")),
 		}},
 		Nonces: []NonceIndexEntry{{AttemptNonce: nonce(1), PayloadDigest: payloadDigest(1), ApprovalID: approvalID(1), Location: approvalLocation}},
@@ -844,6 +937,7 @@ func completeHotRetainedIndexes(t *testing.T, visibleSeed bool) ArchiveIndexes {
 	view.Registrations[0].Location = hotRecordLocation(t, RecordRegistration, 1)
 	view.Approvals[0].Location = hotRecordLocation(t, RecordApproval, 1)
 	view.Attempts[0].Location = hotRecordLocation(t, RecordAttempt, 1)
+	view.Attempts[0].Lifecycle = presentAttemptLifecycle(t, lifecyclestate.StateDestroyed, hotRecordLocation(t, RecordLifecycle, 1), []byte("lifecycle"))
 	view.Nonces[0].Location = hotRecordLocation(t, RecordApproval, 1)
 	view.Effects[0].AttemptLocation = hotRecordLocation(t, RecordAttempt, 1)
 	view.Effects[0].VisibleV1Seed = visibleSeed
@@ -855,6 +949,20 @@ func completeHotRetainedIndexes(t *testing.T, visibleSeed bool) ArchiveIndexes {
 		t.Fatal(err)
 	}
 	return indexes
+}
+
+func presentAttemptLifecycle(
+	t *testing.T,
+	state lifecyclestate.LifecycleState,
+	location RecordLocation,
+	exact []byte,
+) AttemptLifecycle {
+	t.Helper()
+	lifecycle, err := NewPresentAttemptLifecycle(state, location, mustRecordDigest(t, RecordLifecycle, exact))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return lifecycle
 }
 
 func hotRecordLocation(t *testing.T, kind RecordKind, ordinal int) RecordLocation {

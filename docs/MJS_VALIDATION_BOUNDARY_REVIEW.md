@@ -369,7 +369,7 @@ conclusions (a synthesis of this repo's own stated principles, not external opin
   scaffold does not implement or satisfy these properties"); some details (the governed `deno_core`
   fork's actual patch set / exact runtime global-object surface) are asserted intent, not
   independently verified fact in this review.
-- `experiments/` and any git-ignored AI-Central history were not exhaustively searched for prior art
-  on this exact question.
+- The now-separate `capsule-experiments` archive and any git-ignored AI-Central history were not
+  exhaustively searched for prior art on this exact question.
 - ASI (automatic semicolon insertion) interaction with the regex/division ambiguity was not
   exhaustively enumerated; only a citation-grade example is included.

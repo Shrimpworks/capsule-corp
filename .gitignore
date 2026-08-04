@@ -4,6 +4,7 @@ dist/
 .site-dist/
 bin/
 coverage/
+experiments/
 *.test
 
 # Runtime state

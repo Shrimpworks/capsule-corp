@@ -42,6 +42,9 @@ but it has not selected a public versioning or release policy yet.
 
 ### Removed
 
+- Moved 38 completed non-production experiment trees (744 tracked files) to the public,
+  commit-pinned `Shrimpworks/capsule-experiments` archive. Capsule retains canonical decisions,
+  production conformance fixtures, and immutable evidence links.
 - The legacy `internal/execution.SupervisorCore` in-memory scaffold (`SupervisorCore`,
   `MemoryStateStore`, `DevelopmentLifecycle`, and the deprecated `Backend`/`RuntimeAdapter`
   interfaces). It had no product wiring and was already superseded as the authoritative unwired

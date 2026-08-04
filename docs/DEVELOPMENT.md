@@ -67,13 +67,16 @@ and [Schema status](../schemas/README.md).
 Blocking macOS, backend, cryptographic, content-handle, privilege, and update prototypes may be
 one-off and are not required to resemble final product structure.
 
-If spike code is retained in the repository:
+If spike code or one-time evidence is retained:
 
-- place it under `experiments/` with a development-only README;
+- place it in the separate
+  [`Shrimpworks/capsule-experiments`](https://github.com/Shrimpworks/capsule-experiments)
+  archive with a development-only README;
 - state its hypothesis, exact environment, privileges/entitlements, and pass/fail criteria;
 - include reproducible positive, negative, misuse, and failure-injection commands;
-- prevent production packages from importing it;
-- retain fixtures/evidence and record the ADR consequence;
+- prevent Capsule product packages from importing it;
+- retain the canonical decision and exact commit-pinned evidence link in this repository;
+- keep production conformance fixtures in `schemas/` or the owning product package;
 - name the condition under which the prototype is removed or replaced.
 
 A successful spike can conclude that a backend/control is unsuitable. See

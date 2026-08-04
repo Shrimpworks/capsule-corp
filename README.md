@@ -92,10 +92,14 @@ packages/sdk/          TypeScript client SDK
 packages/mcp-server/   MCP adapter scaffold
 profiles/              Draft runtime profile declarations
 schemas/               Current scaffold plus passive JSON/CDDL candidates and fixtures
-experiments/           Disposable non-production feasibility spikes
 docs/                  Project, design, security, ADRs, spikes, and roadmap
 site/                  Minimal project overview site
 ```
+
+Completed disposable spikes and one-time harnesses are retained in the separate
+[`Shrimpworks/capsule-experiments`](https://github.com/Shrimpworks/capsule-experiments)
+archive. This repository keeps canonical decisions and product conformance fixtures, not archived
+prototype implementations.
 
 ## Technology direction
 

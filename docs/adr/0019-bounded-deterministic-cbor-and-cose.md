@@ -91,10 +91,10 @@ This ADR stays Proposed until all of the following hold:
 
 ## Evidence
 
-- [Gate A failure](../../experiments/gate-a-signing-canonicalization/README.md)
-- [Gate A2 deterministic CBOR/COSE result](../../experiments/gate-a2-cbor-cose/README.md)
-- [Gate A2 retained vectors](../../experiments/gate-a2-cbor-cose/fixtures/go-vectors.json)
-- [Pinned production-library comparison](../../experiments/production-cbor-cose-profile/RESULTS.md),
+- [Gate A failure](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-a-signing-canonicalization/README.md)
+- [Gate A2 deterministic CBOR/COSE result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-a2-cbor-cose/README.md)
+- [Gate A2 retained vectors](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-a2-cbor-cose/fixtures/go-vectors.json)
+- [Pinned production-library comparison](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/production-cbor-cose-profile/RESULTS.md),
   which conditionally passes `fxamacker/cbor` v2.9.2 for typed object encode/decode behind retained
   Capsule predecode and policy controls, and rejects `go-cose` v1.3.0 as a production envelope
   dependency. This is dependency-selection evidence only and does not close the acceptance

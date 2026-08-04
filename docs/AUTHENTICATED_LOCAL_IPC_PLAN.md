@@ -340,8 +340,13 @@ go vet ./...
 go build ./...
 golangci-lint run ./...
 go run golang.org/x/vuln/cmd/govulncheck@latest ./...
-./experiments/gate-e-supervisor-topology/run-smoke.sh
 ```
+
+The historical passive native smoke harness is archived at commit
+`0d8233b55f153b27a901a9ec45a3834208e3aa86` under
+[`experiments/gate-e-supervisor-topology/run-smoke.sh`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-e-supervisor-topology/run-smoke.sh).
+Replay it only from an explicitly checked-out archive worktree; it is not part of Capsule's normal
+verification suite.
 
 Also validate every relative Markdown link in the ADR, this plan, and any evidence report. S3-S6
 must retain their own exact local harness commands; no credentialed or installed test is implied by

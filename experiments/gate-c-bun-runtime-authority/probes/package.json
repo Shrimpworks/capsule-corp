@@ -1,7 +1,0 @@
-{
-  "name": "capsule-gate-c-p0-0-probe",
-  "private": true,
-  "dependencies": {
-    "left-pad": "1.3.0"
-  }
-}

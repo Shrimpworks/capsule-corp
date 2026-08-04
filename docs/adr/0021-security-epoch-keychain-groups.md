@@ -49,5 +49,5 @@ Developer ID packaging cannot sustain security-epoch group transitions safely.
 
 ## Evidence
 
-- [`experiments/macos-authority-separation/RESULTS.md`](../../experiments/macos-authority-separation/RESULTS.md)
-- [`experiments/gate-b-key-rotation/RESULTS.md`](../../experiments/gate-b-key-rotation/RESULTS.md)
+- [`experiments/macos-authority-separation/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/RESULTS.md)
+- [`experiments/gate-b-key-rotation/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-b-key-rotation/RESULTS.md)

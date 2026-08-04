@@ -59,7 +59,7 @@ control-harness evidence only and makes no gVisor isolation claim.
 
 ## Evidence
 
-- [`experiments/apple-container-gate-c/RESULTS.md`](../../experiments/apple-container-gate-c/RESULTS.md)
-- [`experiments/apple-containerization-direct/RESULTS.md`](../../experiments/apple-containerization-direct/RESULTS.md)
-- [`experiments/gate-c-identity-recovery/RESULTS.md`](../../experiments/gate-c-identity-recovery/RESULTS.md)
-- [`experiments/gate-c-gvisor-contingency/RESULTS.md`](../../experiments/gate-c-gvisor-contingency/RESULTS.md)
+- [`experiments/apple-container-gate-c/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/apple-container-gate-c/RESULTS.md)
+- [`experiments/apple-containerization-direct/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/apple-containerization-direct/RESULTS.md)
+- [`experiments/gate-c-identity-recovery/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-identity-recovery/RESULTS.md)
+- [`experiments/gate-c-gvisor-contingency/RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-gvisor-contingency/RESULTS.md)

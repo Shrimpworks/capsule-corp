@@ -170,8 +170,11 @@ gh pr view --json url,isDraft --jq '{url, isDraft}'
 - Keep rich document, archive, spreadsheet, PDF, image, media, and preview parsing
   out of the daemon and Execution Supervisor. Use bounded Broker validators or a
   future disposable parser sandbox.
-- Treat spike code as non-production. Product packages must not import it; retain
-  reproducible fixtures/evidence and record the resulting decision before reuse.
+- Treat spike code as non-production. Product packages must not import it. Retain
+  completed one-time harnesses and evidence in
+  `Shrimpworks/capsule-experiments`, while this repository keeps the resulting
+  canonical decision, security-claim boundary, and any production conformance
+  fixtures. Pin cross-repository evidence links to an exact archive commit.
 - Before adding a dependency or implementing a new primitive, consult
   `docs/ECOSYSTEM_REUSE_AND_ADOPTION.md`, identify the applicable roadmap row and
   recommendation, and complete its dependency-policy checklist. An adoption

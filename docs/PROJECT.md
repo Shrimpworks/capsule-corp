@@ -33,7 +33,9 @@ Accepted ADR-0034 freezes the first-release source contract to one dependency-fr
 comparison now supports [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md):
 exact Oxc 0.140.0 parser/AST/semantic checking is the engineering candidate inside a future
 one-shot disposable Source Validator, invoked independently before planning and before approval.
-The experiment is retained under `experiments/mjs-parser-boundary/`. The first passive V0 slice
+The experiment is retained in the commit-pinned
+[`mjs-parser-boundary` archive](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/mjs-parser-boundary).
+The first passive V0 slice
 freezes fixed request/result/candidate/artifact-profile frames and independent Go/Rust test
 oracles without launching or invoking a parser. No product validator,
 sandbox profile, runtime no-loader boundary, runtime, backend, or guest is implemented or admitted.
@@ -170,12 +172,12 @@ begun. No component, store, endpoint, consumer, installed identity, or cutover e
 removes that conditional TypeScript path from the first-release critical path; ADR-0030/0032
 remain future-conditional and still require an atomic plan-v1 cutover if resumed.
 See the
-[P0-0 construction review](../experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
-and [Deno-family disposition](../experiments/gate-c-deno-runtime-authority/RESULTS.md)
-and [governed package result](../experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
-and [V8 source/license closure](../experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
-and [fork-native Linux/arm64 blocker](../experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md)
-and [TypeScript approved-byte result](../experiments/typescript-approved-byte-boundary/RESULTS.md)
+[P0-0 construction review](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-bun-runtime-authority/governed-closure/CONSTRUCTION_REVIEW.md)
+and [Deno-family disposition](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-runtime-authority/RESULTS.md)
+and [governed package result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-core-reproducible-package/RESULTS.md)
+and [V8 source/license closure](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-deno-v8-source-license-closure/RESULTS.md)
+and [fork-native Linux/arm64 blocker](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md)
+and [TypeScript approved-byte result](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/typescript-approved-byte-boundary/RESULTS.md)
 and [governed runtime work plan](GOVERNED_DENO_CORE_WORK_PLAN.md)
 and [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 

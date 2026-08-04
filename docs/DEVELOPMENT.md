@@ -3,6 +3,7 @@
 ## Prerequisites
 
 - Go 1.23 or newer, as declared by `go.mod`
+- `golangci-lint` v2.12.2, matching the pin in `.github/workflows/ci.yml`, for `make check`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`
 - Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile

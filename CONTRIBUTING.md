@@ -9,6 +9,8 @@ between requested authority and granted authority.
 2. Read the [architecture](docs/ARCHITECTURE.md).
 3. Read the [threat model](docs/security/THREAT_MODEL.md).
 4. Check the existing [architecture decisions](docs/adr/README.md).
+5. For Go changes, read the [Go engineering standards](docs/GO_ENGINEERING_STANDARDS.md) and the
+   [Capsule domain primer](docs/CAPSULE_DOMAIN_PRIMER.md).
 
 ## Development workflow
 

@@ -58,13 +58,14 @@ Accepted ADR-0028 now selects governed `deno_core` as the first runtime engineer
 passed physical omission, same-host byte reproduction, and the exact standalone dynamic-root
 question; the TypeScript follow-up passed a strip-only pre-approval byte-binding question. These
 results establish bounded construction evidence but do not admit that runtime. The real
-`Shrimpworks/deno` and `dills122/rusty_v8` forks contain merged governed branches, but no governed
+`Shrimpworks/deno` and `Shrimpworks/rusty_v8` forks contain merged governed branches, but no governed
 release exists. The first fork-native Linux/arm64 construction stopped before building because the
 merged `rusty_v8` publication contract supported only Linux/amd64. Governed `rusty_v8` PR #4 now
-retains a passing clean ARM64 build and fixed test plus a corrected, passing GN evidence-query
-diagnostic at exact head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. It remains open and
-draft; one clean full-ARM64 bundle run, exact evidence review, and merge are still required. No
-output is reusable without that accepted handoff and governance reconciliation. P0-1 is a
+is merged at exact head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its clean ARM64 build, fixed test, corrected GN
+evidence query, network-disabled full build, and unsigned bundle upload passed. The fork has
+transferred to `Shrimpworks/rusty_v8` with its branch, PR, and Actions history intact. Independent-
+builder equality, evidence review, governed release publication, and admission remain open. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
@@ -309,7 +310,7 @@ Exit evidence:
 ## Phase 5: dependency-free runtime development execution
 
 - Close the five reconciled P0 Gate C campaigns. Follow accepted ADR-0028 and bootstrap the real
-  `Shrimpworks/deno` and `dills122/rusty_v8` governed branches from their exact retained upstream
+  `Shrimpworks/deno` and `Shrimpworks/rusty_v8` governed branches from their exact retained upstream
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, ADR-0034's byte-exact `.mjs` source custody and no-loader evidence,

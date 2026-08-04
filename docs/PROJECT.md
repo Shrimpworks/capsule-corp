@@ -181,14 +181,16 @@ governed-fork path is `IN_PROGRESS — TRENDING_GOOD`; independent-builder prove
 release construction, and admission remain open. Accepted
 [ADR-0028](adr/0028-select-governed-deno-core-first.md) selects governed `deno_core` as the first
 runtime engineering candidate after the hard Bun pivot and records the real `Shrimpworks/deno` and
-`dills122/rusty_v8` forks. Their first governed branches are merged at exact commits. The first
+`Shrimpworks/rusty_v8` forks. Their first governed branches are merged at exact commits. The first
 fork-native integration check stopped before construction because the merged `rusty_v8` fork had
-only a Linux/amd64 builder. Governed `rusty_v8` PR #4 is still unmerged external work at head
-`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. A clean Linux/arm64 build and fixed `get_version`
-test have now passed, and a bounded diagnostic proved and fixed the remaining GN evidence-query
-interpreter mismatch. The corrected-head diagnostic passes; one clean full-ARM64 bundle run and
-its evidence review remain. Until that produces an accepted merged handoff, it supplies no reusable
-artifact, release, or admission effect. No fork release or new admitted runtime artifact exists.
+only a Linux/amd64 builder. Governed `rusty_v8` PR #4 is now merged at head
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its clean Linux/arm64 build, fixed `get_version`
+test, corrected GN evidence query, complete network-disabled build, and unsigned bundle upload all
+passed at the merged head. The fork and its retained branch, PR, and Actions history have transferred
+from `dills122/rusty_v8` to `Shrimpworks/rusty_v8`. This closes the fork's bounded ARM64 construction
+blocker; independent-builder equality, evidence review, governed release publication, and runtime
+admission remain open. No fork release or new admitted runtime artifact exists.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

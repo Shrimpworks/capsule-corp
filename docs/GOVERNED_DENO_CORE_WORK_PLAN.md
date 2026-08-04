@@ -13,8 +13,9 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   `dills122/deno` with its default branch, `capsule/upstream-v2.9.4`, merged PR #1, and Actions
   history intact while idle. The transfer is repository governance only, not runtime, artifact,
   review, release, or security evidence.
-- [`dills122/rusty_v8`](https://github.com/dills122/rusty_v8) is a real fork of
-  `denoland/rusty_v8`.
+- [`Shrimpworks/rusty_v8`](https://github.com/Shrimpworks/rusty_v8) is a real fork of
+  `denoland/rusty_v8`. It transferred from `dills122/rusty_v8` with its governed branches, four
+  merged PRs, and Actions history intact.
 - Deno governed PR #1 is merged at head `9adb0b68b55bca81644827f1e7749a3acb091bed`
   and merge `ea18b9dc21ff8ebd19347be7095f47937ee14ec2`.
 - `rusty_v8` governed follow-up PR #2 is merged at head
@@ -24,11 +25,11 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
 - The first fork-native integration check stopped before prefetch or build because `rusty_v8`
   provides only Linux/amd64 and no Linux/arm64 builder/publication profile. No release or new
   runtime artifact exists.
-- Governed `rusty_v8` PR #4 is now unmerged external work in progress at exact head
-  `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed test
-  pass, and the corrected GN evidence-query diagnostic passes. One clean full-ARM64 bundle run,
-  exact evidence review, and merge remain. No workflow output is reusable until that accepted
-  handoff is reviewed and the source/governance state is reconciled.
+- Governed `rusty_v8` PR #4 is merged at exact head
+  `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+  `cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its clean Linux/arm64 build, fixed test, corrected
+  GN evidence query, network-disabled full build, and unsigned bundle upload pass. Independent-
+  builder equality, exact evidence review, governed release publication, and admission remain.
 - Governed `deno_core` is the first runtime engineering candidate. `RUNTIME-001` remains
   unsupported and no product execution path may use these bytes.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
@@ -72,7 +73,7 @@ snapshot bytes.
 
 ### 1C. Bootstrap the governed rusty_v8 fork
 
-Repository: `dills122/rusty_v8`.
+Repository: `Shrimpworks/rusty_v8`.
 
 - Create the governed line from exact upstream commit
   `d305e6afa7736f6e298c30ae6646f7709ee9382b`.

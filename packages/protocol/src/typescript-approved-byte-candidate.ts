@@ -1,5 +1,14 @@
 import { createHash } from "node:crypto";
 
+import {
+  concatenateBytes,
+  encodeCborArrayHeader,
+  encodeCborByteString,
+  encodeCborMapHeader,
+  encodeCborText,
+  encodeCborUnsigned,
+} from "./internal-cbor-primitives.js";
+
 /**
  * Passive, unwired Slice A views for ADR-0026. Nothing in the product calls
  * these helpers and they do not transform, register, approve, or execute code.
@@ -387,41 +396,23 @@ function encodeSourceManifest(
 type CborValue = number | string | Uint8Array | readonly CborValue[];
 
 function cborMap(entries: readonly (readonly [number, CborValue])[]): Uint8Array {
-  return concatenate([
-    cborArgument(5, entries.length),
-    ...entries.flatMap(([key, value]) => [cborArgument(0, key), cbor(value)]),
+  return concatenateBytes([
+    encodeCborMapHeader(entries.length),
+    ...entries.flatMap(([key, value]) => [encodeCborUnsigned(key), cbor(value)]),
   ]);
 }
 
 function cbor(value: CborValue): Uint8Array {
   if (value instanceof Uint8Array) {
-    return concatenate([cborArgument(2, value.length), value]);
+    return encodeCborByteString(value);
   }
   if (typeof value === "number") {
-    return cborArgument(0, value);
+    return encodeCborUnsigned(value);
   }
   if (typeof value === "string") {
-    const bytes = new TextEncoder().encode(value);
-    return concatenate([cborArgument(3, bytes.length), bytes]);
+    return encodeCborText(value);
   }
-  return concatenate([cborArgument(4, value.length), ...value.map(cbor)]);
-}
-
-function cborArgument(major: number, value: number): Uint8Array {
-  if (!Number.isSafeInteger(value) || value < 0) throw new TypeError("invalid CBOR argument");
-  if (value < 24) return Uint8Array.of((major << 5) | value);
-  if (value <= 0xff) return Uint8Array.of((major << 5) | 24, value);
-  if (value <= 0xffff) return Uint8Array.of((major << 5) | 25, value >> 8, value & 0xff);
-  if (value <= 0xffffffff) {
-    return Uint8Array.of(
-      (major << 5) | 26,
-      Math.floor(value / 0x1000000) & 0xff,
-      Math.floor(value / 0x10000) & 0xff,
-      Math.floor(value / 0x100) & 0xff,
-      value & 0xff,
-    );
-  }
-  throw new TypeError("fixture CBOR argument is too large");
+  return concatenateBytes([encodeCborArrayHeader(value.length), ...value.map(cbor)]);
 }
 
 function digest<Role extends ApprovedByteDigestRole>(
@@ -453,10 +444,6 @@ function toolchainDigestBytes(value: string): Uint8Array {
 
 function retain(value: Uint8Array): readonly number[] {
   return Object.freeze(Array.from(value));
-}
-
-function concatenate(values: readonly Uint8Array[]): Uint8Array {
-  return Uint8Array.from(Buffer.concat(values));
 }
 
 function compareAscii(left: string, right: string): number {

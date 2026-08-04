@@ -73,6 +73,22 @@ question. It does not enroll Oxc or an executable, create a process or endpoint,
 Exit evidence: reproducible-build comparison, SBOM/notice review, artifact
 signature and assessment, tamper/rollback/missing-artifact refusals.
 
+Observed bounded V1 checkpoint: [`artifacts/mjs-source-validator-v1/`](../artifacts/mjs-source-validator-v1/)
+packages only the selected Oxc mode plus pinned `sha2` for the V0 digest, emits exact V0 results for
+all 28 M1 HOLD cases, retains a 74-dependency lock, complete checksum/source/license/notice and
+CycloneDX inventories, and reproduces the 1,146,656-byte macOS arm64 executable byte-for-byte in
+two clean source/target directories on one host. The executable SHA-256 is
+`ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600`; its not-enrolled V0
+artifact-profile identity is `6a6056a2f43a3c33c84879724821f511d076d156200fb5c4fbe0858ea1e10ac1`.
+
+This checkpoint does not satisfy V1 enrollment: the Mach-O has only an identity-free linker ad-hoc
+signature, provenance and assessment are unsigned, both
+builds share one host/toolchain/cache/administrator, no installation authority has enrolled the
+profile, and no vulnerability-monitoring owner or response SLA exists. Missing, tampered, unknown,
+unsigned, or rolled-back profiles therefore remain refusals rather than accepted artifacts. V2
+still owns the fixed launch descriptor, sandbox, descriptors, resources, deadline kill/reap, and
+restart evidence; the retained partial-input kill observation is not V2 confinement proof.
+
 ### V2 — disposable process profile
 
 - Define the platform-specific fixed launch descriptor and sandbox in its own

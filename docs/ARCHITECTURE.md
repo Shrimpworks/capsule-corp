@@ -108,11 +108,18 @@ registration state before rendering or any Approval-key operation. Each invocati
 typed result to recomputed digest and length. Crash, timeout, diagnostics, malformed output,
 artifact mismatch, or any forbidden AST node refuses.
 
+The retained V1 artifact packages that exact parse/visitor/semantic mode behind the V0 frames and
+has no product consumer. Its actual executable, build manifest, and assessment are bound by a V0
+artifact profile, but the profile is not enrolled: only an identity-free linker ad-hoc signature
+exists, the same-host provenance and assessment are unsigned, and no
+fixed launch descriptor or OS confinement evidence exists. V2 must seal the profile identity and
+prove sandbox/resource/deadline behavior before this process placement is a security boundary.
+
 The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
 does not parse rich source. The validator has no authority to approve, retain state, or launch a
 guest. This is a proposed approval-correctness/usability gate; an admitted runtime must still
 independently refuse every static or dynamically constructed module request. The experiment and
-unimplemented gates are documented in
+remaining gates are documented in
 [`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
 
 ### Proposed TypeScript Source Preparer

@@ -1,0 +1,11 @@
+{
+  "schema": "capsule.source-validator.artifact-profile-evidence/v1",
+  "bytes": 160,
+  "sha256": "352bab3e45a84309f0e2fd8d6727cccbaf7e994b33e3df4425edaf75f0f461dd",
+  "identitySha256": "6a6056a2f43a3c33c84879724821f511d076d156200fb5c4fbe0858ea1e10ac1",
+  "engineeringCandidateIdentitySha256": "11a08cace3ddc4dde925bd93ea3de8ea313f7f5766839deca802078df038d0c6",
+  "executableSha256": "ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600",
+  "buildManifestSha256": "642e0dd13feda0f49e67bbf9de12318069e520a2a72bf3f68614568265e30156",
+  "assessmentSha256": "24e7d18414e72d338347bd62082608ec2763c80b3ee9f77b8d75476aef25dd20",
+  "enrollment": "not-enrolled"
+}

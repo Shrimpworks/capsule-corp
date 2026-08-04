@@ -11,8 +11,10 @@ Archive F2's stateful migration/full verifier is blocked by the retained valid-v
 missing-lifecycle mapping contradiction. Retained owner-lock G2 mechanics and documentation/
 field-authority maintenance can proceed independently. Owner-lock G3 is NO-GO pending a matching W4
 certificate/profile set plus a selected protected-root bootstrap/signed-record/store-open
-composition. ADR-0034's M1 bytes and Proposed ADR-0035's passive V0 fixed frames are retained; the
-parser artifact/process/consumer gates V1-V5 and downstream S1/M2 work remain blocked.
+composition. ADR-0034's M1 bytes, Proposed ADR-0035's passive V0 fixed frames, and the bounded
+unwired V1 artifact/evidence checkpoint are retained. V1 does not pass enrollment because
+independent reproduction and installation-authority signatures are absent; V2-V5 process,
+consumer, and broader conformance gates and downstream S1/M2 work remain blocked.
 
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
@@ -182,13 +184,15 @@ Accepted ADR-0034 freezes the first release as one byte-exact pass-through `main
 the existing plan-v0 source role, with no static/dynamic dependency request or module-loader
 fallback. Its passive source-byte/SourceManifest foundation is retained, and an exact
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
-passive V0 frames are now exact, but the M1 product validator and downstream S1/M2
-registration/fetch slices remain on hold pending V1-V5.
+passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
+but the M1 product validator and downstream S1/M2 registration/fetch slices remain on hold pending
+V1 enrollment closure and V2-V5.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Proposed ADR-0035 now selects exact Oxc 0.140.0 only as the engineering candidate for a separate
-one-shot Source Validator after a bounded parse-only comparison. V0 now observes only the fixed
-typed protocol and cross-language passive conformance. Later slices must prove enrolled artifact
-and supply closure, disposable OS profile,
+one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed
+protocol and cross-language passive conformance. V1 observes exact build bytes, graph, licenses,
+SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without enrollment. Later
+slices must prove independent reproduction and signed enrollment, disposable OS profile,
 independent daemon/Broker invocation, grammar/mutation corpus, and fault recovery. No product
 validator or runtime enforcement exists.
 Proposed ADR-0032's TypeScript Source Preparer and immutable source-store topology remains on the

@@ -49,8 +49,10 @@ The follow-on grammar/process decision is [Proposed ADR-0035](adr/0035-select-di
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
 It selects a one-shot disposable Source Validator and exact Oxc candidate from retained parse-only
 evidence. Its first [passive v0 contract slice](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md)
-fixes bytes and cross-language test oracles; no product validator or runtime no-loader boundary is
-implemented.
+fixes bytes and cross-language test oracles. The [bounded V1 artifact](../artifacts/mjs-source-validator-v1/README.md)
+retains exact Oxc bytes and supply-chain evidence but has only an identity-free linker ad-hoc
+signature; it is not installation-signed, enrolled, wired, or confined. No product validator or
+runtime no-loader boundary is implemented.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-

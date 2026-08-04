@@ -195,10 +195,14 @@ status, and four bounded node counts. It has no store, keys, network, paths, pac
 runtime, backend, guest, or authority effect. Crash, hang, parser/semantic diagnostic, malformed
 result, artifact mismatch, or sandbox failure refuses.
 
-The daemon and Approval Broker invoke independent instances over the bytes each owns at that
-stage. The parser is not linked into either parent and is never placed in the Supervisor. This
-boundary is only Proposed until artifact enrollment, protocol, sandbox/resource, supply-chain,
-conformance, and fault evidence pass the
+The daemon and Approval Broker are intended to invoke independent instances over the bytes each
+owns at that stage. The parser is not linked into either parent and is never placed in the
+Supervisor. V0 fixed the protocol; V1 now retains an unwired exact Oxc artifact, complete locked
+inventory, V0/M1 result agreement, and same-host deterministic reproduction. The artifact remains
+identity-free linker-ad-hoc-signed rather than installation-signed, not enrolled, and not invoked
+by any parent. This boundary is only Proposed until
+independent provenance, installation enrollment, sandbox/resource, consumer, broader conformance,
+and fault evidence pass the
 [`implementation plan`](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md). Runtime no-loader admission
 remains a separate mandatory control.
 

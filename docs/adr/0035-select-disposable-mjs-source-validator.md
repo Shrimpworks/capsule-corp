@@ -214,6 +214,15 @@ a product validator, admit the parser graph, enroll an executable or artifact pr
 sandbox or endpoint, replace or modify M1's merged bytes, admit a runtime/backend/guest, or prove
 the runtime no-loader boundary.
 
+The bounded V1 follow-up retains an unwired 1,146,656-byte macOS arm64 executable at SHA-256
+`ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600`, built with Rust 1.95.0
+from a 74-dependency lock. Its source/checksum/license/notice/SBOM/provenance manifests, exact V0
+and M1 results, restoration mutations, and two-clean-directory same-host reproduction are retained
+under `artifacts/mjs-source-validator-v1/`. Its V0 artifact profile is explicitly not enrolled:
+the provenance and assessment are unsigned, reproduction is not independent, and no vulnerability
+owner/SLA or installation-authority signature exists. V2 confinement and every consumer remain
+unimplemented. This evidence therefore narrows V1 but does not change this ADR's Proposed status.
+
 Acceptance requires the gates in
 [`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md)
 and additive consumption of M1's authoritative passive fixtures. The retained mapping and V0

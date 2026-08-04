@@ -17,11 +17,12 @@ boundary and must not be used to execute hostile code without another trusted sa
 Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short: the passive
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
 and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's fixed-store
-v1-to-v2 migration/full verifier and F3's first immutable-segment activation are also `PASSED` in
-their narrow local-conformance scopes. Product
+v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F4A's read-only
+retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
+scopes. Product
 Source Validator work, installed owner-lock G3, and runtime/profile admission are `BLOCKED` on the
 named dependencies below. Governed `deno_core` and governed libkrun remain `IN_PROGRESS —
-TRENDING_GOOD`; the next local archive work starts at F4. None of those blocked or incomplete parent
+TRENDING_GOOD`; the next local archive work starts at F4B. None of those blocked or incomplete parent
 items is `NO_GO`. Product admission and control-evidence maturity remain separate from work status.
 
 The concise current dependency and claim checkpoint is
@@ -152,6 +153,12 @@ owner-loss, and subprocess-death oracles. See the
 [F3 stateful activation result](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md). It adds no retained
 lookup or v2 authority mutation, second segment, orphan deletion, backup, adapter, IPC, runtime,
 backend, guest, production engine, or real power-loss claim.
+Read-only F4A now adds fresh full-verification lookup of retained registration, approval, attempt,
+nonce, effect, instance, and replay identities through typed hot/archive retained-global locations,
+plus passive collision queries and hot-only `AttemptID` recovery. See the
+[F4A retained lookup result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). It adds no v2 write,
+authority/lifecycle mutation, new effect tombstone, second segment, adapter, consumer, runtime,
+backend, or guest. F4B mutation and F4C bounded growth remain open.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

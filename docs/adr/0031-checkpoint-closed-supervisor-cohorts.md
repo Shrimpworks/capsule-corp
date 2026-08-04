@@ -76,8 +76,10 @@ activate transaction with publish-before-reference ordering, atomic generation-t
 valid-orphan reporting without deletion, and complete predecessor-or-successor reopen. The
 [F3 result](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) retains its exact known answers and
 fault/corruption/substitution/concurrency/owner-loss/process-death limitations. Retained lookup,
-v2 authority mutation, multi-segment growth, backup, cleanup policy, and later slices remain
-unimplemented. The fixed oracle is not selected as the production engine.
+replay, and passive uniqueness routing are now implemented by the read-only
+[F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). F4B v2 authority/lifecycle mutation and
+new effect tombstones, F4C multi-segment bounded growth, backup, cleanup policy, and later slices
+remain unimplemented. The fixed oracle is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
 evidence-backed selection. Convenience, familiarity, or avoiding a migration is not a selection
@@ -640,7 +642,10 @@ in its exact local fixed-store scope. The
 [stateful F3 first-segment activation](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) is also
 `PASSED` in its exact local fixed-store scope. This ADR remains Proposed: F3 does not implement
 retained lookup, v2 authority mutation, a second segment, backup/orphan cleanup, a production
-engine, or a product consumer.
+engine, or a product consumer. The follow-on read-only
+[F4A retained lookup result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) is `PASSED` in its exact
+local scope; it does not implement F4B mutation/tombstone commits, F4C second-segment growth, or any
+other listed blocker.
 
 ## Acceptance blockers
 

@@ -203,10 +203,15 @@ function encode(value) {
 }
 
 function map(entries) {
-  return Buffer.concat([
-    argument(5, entries.length),
-    ...entries.flatMap(([key, value]) => [argument(0, key), encode(value)]),
-  ]);
+  const encodedEntries = entries
+    .map(([key, value]) => [argument(0, key), encode(value)])
+    .sort(([left], [right]) => {
+      if (left.length !== right.length) {
+        return left.length - right.length;
+      }
+      return Buffer.compare(left, right);
+    });
+  return Buffer.concat([argument(5, encodedEntries.length), ...encodedEntries.flat()]);
 }
 
 function argument(major, value) {

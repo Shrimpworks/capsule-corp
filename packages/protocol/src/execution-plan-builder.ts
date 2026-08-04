@@ -73,6 +73,7 @@ export interface TrustedExecutionPlanBindingsInput {
   readonly epochSequence: number;
   readonly epochDigest: TrustedExecutionPlanDigest<"trust-epoch">;
   readonly runtimeBundleManifestDigest: TrustedExecutionPlanDigest<"runtime-bundle-manifest">;
+  /** An unordered set of independent per-reviewer verdicts; supply in any order (see profileReviewAttestationDigestsMatch). */
   readonly profileReviewAttestationDigests: readonly TrustedExecutionPlanDigest<"profile-review-attestation">[];
   readonly profileRegistryEntryDigest: TrustedExecutionPlanDigest<"profile-registry-entry">;
   readonly backendValidationRecordDigest: TrustedExecutionPlanDigest<"backend-validation-record">;
@@ -114,6 +115,7 @@ export interface TrustedExecutionPlanRegistrationRoleBindingsInput {
   readonly sourceManifestDigest: TrustedExecutionPlanDigest<"source-manifest">;
   readonly inlineInputDigest: TrustedExecutionPlanDigest<"inline-input">;
   readonly runtimeBundleManifestDigest: TrustedExecutionPlanDigest<"runtime-bundle-manifest">;
+  /** An unordered set of independent per-reviewer verdicts; supply in any order (see profileReviewAttestationDigestsMatch). */
   readonly profileReviewAttestationDigests: readonly TrustedExecutionPlanDigest<"profile-review-attestation">[];
   readonly profileRegistryEntryDigest: TrustedExecutionPlanDigest<"profile-registry-entry">;
   readonly backendValidationRecordDigest: TrustedExecutionPlanDigest<"backend-validation-record">;
@@ -675,10 +677,10 @@ function registrationRoleBindingsMatchPlan(
     ) &&
     bindings.profileReviewAttestationDigests.length ===
       candidate.profileReviewAttestationDigests.length &&
-    bindings.profileReviewAttestationDigests.every((digest, index) => {
-      const candidateDigest = candidate.profileReviewAttestationDigests[index];
-      return candidateDigest !== undefined && equalRetainedBytes(digest, candidateDigest);
-    }) &&
+    profileReviewAttestationDigestsMatch(
+      bindings.profileReviewAttestationDigests,
+      candidate.profileReviewAttestationDigests,
+    ) &&
     equalRetainedBytes(bindings.profileRegistryEntryDigest, candidate.profileRegistryEntryDigest) &&
     equalRetainedBytes(
       bindings.backendValidationRecordDigest,
@@ -688,6 +690,45 @@ function registrationRoleBindingsMatchPlan(
     equalRetainedBytes(bindings.trustSnapshotDigest, candidate.trustSnapshotDigest) &&
     equalRetainedBytes(bindings.policyDecisionDigest, candidate.policyDecisionDigest)
   );
+}
+
+/**
+ * profileReviewAttestationDigests holds independent per-reviewer verdicts
+ * about the same bundle (docs/TECHNICAL_DESIGN.md: "ProfileReviewAttestation:
+ * signed reviewer claim..."; docs/protocol/OBJECT_MODEL.md: "Independent
+ * verdict for exact bundle"), not a priority- or sequence-ordered list --
+ * nothing in ADR-0019, ADR-0023, or the object model gives review order any
+ * meaning. `bindings` and `candidate` are also built independently (trusted
+ * Supervisor-side role bindings vs. the submitted plan's own candidate
+ * view), so their array order has no guaranteed relationship to begin with.
+ * Compare as sets, sorted by digest bytes, instead of by position, so two
+ * callers supplying the same attestation set in a different order do not
+ * spuriously refuse registration.
+ */
+function profileReviewAttestationDigestsMatch(
+  left: readonly RetainedExecutionPlanBytes<"profile-review-attestation">[],
+  right: readonly RetainedExecutionPlanBytes<"profile-review-attestation">[],
+): boolean {
+  const sortedLeft = [...left].sort(compareRetainedBytes);
+  const sortedRight = [...right].sort(compareRetainedBytes);
+  return sortedLeft.every((digest, index) => {
+    const other = sortedRight[index];
+    return other !== undefined && equalRetainedBytes(digest, other);
+  });
+}
+
+function compareRetainedBytes(
+  left: RetainedExecutionPlanBytes<ExecutionPlanRetainedByteRole>,
+  right: RetainedExecutionPlanBytes<ExecutionPlanRetainedByteRole>,
+): number {
+  const length = Math.min(left.bytes.length, right.bytes.length);
+  for (let index = 0; index < length; index += 1) {
+    const difference = (left.bytes[index] ?? 0) - (right.bytes[index] ?? 0);
+    if (difference !== 0) {
+      return difference;
+    }
+  }
+  return left.bytes.length - right.bytes.length;
 }
 
 function equalRetainedBytes(

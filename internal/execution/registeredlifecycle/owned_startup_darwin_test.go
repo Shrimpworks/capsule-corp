@@ -153,6 +153,113 @@ func TestOwnerRequiredStartupOrdersOwnershipStoreRecoveryAndClose(t *testing.T) 
 	}
 }
 
+// TestCloseAfterShutdownSurfacesStoreCloseFailureAndLeavesOwnerAndRootOpen
+// forces the real ErrStoreClosed fault (a genuine double-close, not a mock)
+// mid-teardown and checks the fail-closed ordering invariant that was
+// previously proven only by code-reading inference: closeOwnedResources
+// must surface the error, must not release the owner or root descriptors it
+// has not yet reached, and must not mark the startup closed.
+func TestCloseAfterShutdownSurfacesStoreCloseFailureAndLeavesOwnerAndRootOpen(t *testing.T) {
+	harness := newHarness(t, nil)
+	fixture := newOwnedStartupFixture(t, filepath.Dir(harness.path))
+	var trace []startupTraceEntry
+	startup, err := openOwnedStartup(context.Background(), OwnedStartupOptions{
+		StateRootPath: fixture.rootPath, Enrollment: fixture.enrollment, StorePath: harness.path,
+		Attempts: harness.attempts, Backend: harness.backend, Clock: harness.clock, EffectIDs: harness.effectIDs,
+	}, ownedStartupTestHooks{startup: func(_ context.Context, checkpoint ownedStartupCheckpoint, attemptID approvalattempt.AttemptID) error {
+		trace = append(trace, startupTraceEntry{checkpoint: checkpoint, attemptID: attemptID})
+		return nil
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := startup.store.CloseAfterLifecycleShutdown(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	traceBeforeShutdown := len(trace)
+
+	if err := startup.CloseAfterShutdown(context.Background()); !errors.Is(err, registrationstate.ErrStoreClosed) {
+		t.Fatalf("CloseAfterShutdown error = %v, want ErrStoreClosed", err)
+	}
+	if startup.closed {
+		t.Fatal("startup marked closed despite a mid-teardown store close failure")
+	}
+	if startup.owner == nil || startup.root == nil {
+		t.Fatal("owner or root descriptor was released despite the store close failing first")
+	}
+	closeTrace := trace[traceBeforeShutdown:]
+	if len(closeTrace) != 1 || closeTrace[0].checkpoint != ownedStartupLifecycleStopped {
+		t.Fatalf("close trace after store fault = %+v, want only lifecycle-stopped", closeTrace)
+	}
+
+	// The owner lock is genuinely still held, not just a non-nil pointer: a
+	// concurrent open must still see it as a live duplicate owner.
+	if reopened, reopenErr := OpenOwnedStartup(context.Background(), OwnedStartupOptions{
+		StateRootPath: fixture.rootPath, Enrollment: fixture.enrollment, StorePath: harness.path,
+		Attempts: harness.attempts, Backend: harness.backend, Clock: harness.clock, EffectIDs: harness.effectIDs,
+	}); reopened != nil || !errors.Is(reopenErr, installationowner.ErrDuplicateOwner) {
+		t.Fatalf("reopen after store fault = %T, %v", reopened, reopenErr)
+	}
+
+	if err := startup.owner.CloseAfterShutdown(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if err := startup.root.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// TestCloseAfterShutdownSurfacesOwnerCloseFailureAndLeavesRootOpen exercises
+// the same fail-closed invariant one step later: the store already closed
+// cleanly, then the owner close fails, and the root descriptor beyond it
+// must remain untouched.
+func TestCloseAfterShutdownSurfacesOwnerCloseFailureAndLeavesRootOpen(t *testing.T) {
+	harness := newHarness(t, nil)
+	fixture := newOwnedStartupFixture(t, filepath.Dir(harness.path))
+	var trace []startupTraceEntry
+	startup, err := openOwnedStartup(context.Background(), OwnedStartupOptions{
+		StateRootPath: fixture.rootPath, Enrollment: fixture.enrollment, StorePath: harness.path,
+		Attempts: harness.attempts, Backend: harness.backend, Clock: harness.clock, EffectIDs: harness.effectIDs,
+	}, ownedStartupTestHooks{startup: func(_ context.Context, checkpoint ownedStartupCheckpoint, attemptID approvalattempt.AttemptID) error {
+		trace = append(trace, startupTraceEntry{checkpoint: checkpoint, attemptID: attemptID})
+		return nil
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := startup.owner.CloseAfterShutdown(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	traceBeforeShutdown := len(trace)
+
+	if err := startup.CloseAfterShutdown(context.Background()); !errors.Is(err, installationowner.ErrOwnerClosed) {
+		t.Fatalf("CloseAfterShutdown error = %v, want ErrOwnerClosed", err)
+	}
+	if startup.closed {
+		t.Fatal("startup marked closed despite a mid-teardown owner close failure")
+	}
+	if startup.store != nil {
+		t.Fatal("store was not released even though it closed before the owner fault")
+	}
+	if startup.root == nil {
+		t.Fatal("root descriptor was released despite the owner close failing first")
+	}
+	closeTrace := trace[traceBeforeShutdown:]
+	wantClose := []ownedStartupCheckpoint{ownedStartupLifecycleStopped, ownedStartupStoreClosed}
+	if len(closeTrace) != len(wantClose) {
+		t.Fatalf("close trace after owner fault = %+v, want %+v", closeTrace, wantClose)
+	}
+	for index, checkpoint := range wantClose {
+		if closeTrace[index].checkpoint != checkpoint {
+			t.Fatalf("close trace after owner fault %d = %s, want %s", index, closeTrace[index].checkpoint, checkpoint)
+		}
+	}
+
+	if err := startup.root.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestDuplicateOwnerAndWrongEnrollmentRefuseBeforeStoreAndFakeWork(t *testing.T) {
 	t.Run("duplicate beats corrupt store", func(t *testing.T) {
 		harness := newHarness(t, nil)

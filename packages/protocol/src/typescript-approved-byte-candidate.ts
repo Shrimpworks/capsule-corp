@@ -317,11 +317,11 @@ function encodeTransformerProfile(): Uint8Array {
     [3, APPROVED_BYTE_TOOLCHAIN.transformer],
     [4, APPROVED_BYTE_TOOLCHAIN.nodeVersion],
     [5, APPROVED_BYTE_TOOLCHAIN.amaroVersion],
-    [6, fromHex(APPROVED_BYTE_TOOLCHAIN.sourceArchiveSha256)],
+    [6, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.sourceArchiveSha256)],
     [7, APPROVED_BYTE_TOOLCHAIN.platform],
     [8, APPROVED_BYTE_TOOLCHAIN.architecture],
-    [9, fromHex(APPROVED_BYTE_TOOLCHAIN.distributionArchiveSha256)],
-    [10, fromHex(APPROVED_BYTE_TOOLCHAIN.executableSha256)],
+    [9, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.distributionArchiveSha256)],
+    [10, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.executableSha256)],
   ]);
 }
 
@@ -357,9 +357,9 @@ function encodeTransformationRecord(
     [10, Uint8Array.from(transformerDigest)],
     [11, APPROVED_BYTE_TOOLCHAIN.nodeVersion],
     [12, APPROVED_BYTE_TOOLCHAIN.amaroVersion],
-    [13, fromHex(APPROVED_BYTE_TOOLCHAIN.sourceArchiveSha256)],
-    [14, fromHex(APPROVED_BYTE_TOOLCHAIN.distributionArchiveSha256)],
-    [15, fromHex(APPROVED_BYTE_TOOLCHAIN.executableSha256)],
+    [13, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.sourceArchiveSha256)],
+    [14, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.distributionArchiveSha256)],
+    [15, toolchainDigestBytes(APPROVED_BYTE_TOOLCHAIN.executableSha256)],
     [16, normalizedOptions],
     [17, Uint8Array.from(optionsDigest)],
     [18, "absent"],
@@ -441,6 +441,14 @@ function hashHex(value: ArrayLike<number>): string {
 
 function fromHex(value: string): Uint8Array {
   return Uint8Array.from(Buffer.from(value, "hex"));
+}
+
+function toolchainDigestBytes(value: string): Uint8Array {
+  const bytes = fromHex(value);
+  if (bytes.length !== 32) {
+    throw new TypeError("approved-byte toolchain SHA-256 digest must contain exactly 32 bytes");
+  }
+  return bytes;
 }
 
 function retain(value: Uint8Array): readonly number[] {

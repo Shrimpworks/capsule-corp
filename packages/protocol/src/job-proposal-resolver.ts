@@ -575,6 +575,12 @@ function compareEntries(
   return compareAscii(left[0], right[0]);
 }
 
+/**
+ * Compares UTF-16 code units. Callers must guarantee ASCII-only input: for
+ * ASCII strings, UTF-16-code-unit order matches canonical UTF-8-byte order,
+ * but the equivalence does not hold for non-ASCII input. Do not widen a
+ * caller's key/path pattern to allow non-ASCII without revisiting this sort.
+ */
 function compareAscii(left: string, right: string): number {
   const length = Math.min(left.length, right.length);
   for (let index = 0; index < length; index += 1) {

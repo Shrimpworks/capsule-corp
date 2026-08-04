@@ -6,9 +6,10 @@ quality—is the deliverable.
 
 The concise current ordering and resource decisions are in the
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-Archive F2 migration/full verification after the completed passive format correction, owner-lock G2
-planning/composition, ADR-0034 `.mjs` M1/S1 passive contract work, and documentation/field-authority
-maintenance can proceed independently now.
+Archive F2 migration/full verification after the completed passive format correction, ADR-0034
+`.mjs` M1/S1 passive contract work, and documentation/field-authority maintenance can proceed
+independently now. Bounded owner-lock G2 current-v1/no-guest composition is implemented as a local
+mechanic; its installed G3 matrix remains later work.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The fork-native runtime bundle waits on an accepted
 Linux/arm64 `rusty_v8` handoff; governed runtime/libkrun guest composition is later and requires
@@ -127,18 +128,20 @@ records and effect checkpoints in that same versioned Supervisor transaction dom
 through E5 now retain passive contracts, explicit fixed-store v1 migration/open validation,
 durable lifecycle transactions, the FakeBackend-only driver, exact 256-active/4,096-retained
 capacity behavior, and concurrent/repeated startup plus recovery-exhaustion evidence. The only
-adapter used is the closed no-guest fake, and the owner/coordinator remains injected in-process. A
+adapter used is the closed no-guest fake. A
 focused local-only conformance handoff also carries copied TypeScript `ConstructedExecutionPlan`
 bytes and complete role bindings into the real Go `registrationstate` component. Neither path is a
-product-language/IPC seam or public consumer. The next backend-independent boundaries are the
-archive F2 migration/full verifier and owner-lock G2; E5 supplies neither. Archive F1 plus its
-passive format correction now supply scope-separated global/segment indexes, typed hot/archive
-locations/counts, a distinct migration-genesis checkpoint, generated answers, defensive copies,
-and eligibility selection only. Proposed ADR-0033 selects a pre-created
+product-language/IPC seam or public consumer. The next archive boundary is the F2 migration/full
+verifier; E5 supplies no archive mechanic. Archive F1 plus its passive format correction now supply
+scope-separated global/segment indexes, typed hot/archive locations/counts, a distinct
+migration-genesis checkpoint, generated answers, defensive copies, and eligibility selection only.
+Proposed ADR-0033 selects a pre-created
 enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned local
-descriptor/process corpus. Passive owner-lock G1 now supplies the internal Go/Darwin acquisition
-and owned-temporary-root process/fault oracles only. Owner-required store/startup composition and
-the installed protected-state-root/session/update matrix remain unimplemented.
+descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin acquisition. G2
+now supplies the owner-required current v1/no-guest startup composition, same-session
+store/coordinator, sorted recovery, post-open fencing, and ordered close under owned temporary
+roots. The signed bootstrap and installed protected-state-root/session/update matrix remain
+unimplemented.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive

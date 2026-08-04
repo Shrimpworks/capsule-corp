@@ -198,8 +198,9 @@ Startup occurs in this order:
    the snapshot inode—is locked. A second Supervisor process refuses with a fixed busy result
    before store read-modify-write, recovery, archive, or adapter work. Process death closes the last
    inherited description and releases the lock. The local semantics and passive G1 Go/Darwin
-   acquisition now pass under owned temporary roots; owner-required store/startup composition and
-   the installed protected-root matrix remain unimplemented.
+   acquisition pass under owned temporary roots. Bounded G2 now composes the current v1/no-guest
+   startup in that harness; the signed bootstrap and installed protected-root matrix remain
+   unimplemented.
 2. Open without automatic creation, enforce file type/ownership/permission policy, bound the read,
    decode the exact supported version, and validate snapshot, set digests, capacities, immutable
    bindings, cross-links, state transitions, and time rules.

@@ -97,9 +97,11 @@ The process order is exact:
    bootstrap projection;
 2. open and validate the enrolled lock object without creation;
 3. acquire the nonblocking exclusive `flock`;
-4. revalidate the held object, directory entry, and `CLOEXEC` state;
-5. open the authoritative store without creation and fully validate it;
-6. generate a fresh nonzero owner-session ID and bind every store/archive permit to the held owner;
+4. revalidate the held object, directory entry, and `CLOEXEC` state, then issue one fresh nonzero
+   owner-session ID from that live opaque capability;
+5. open the authoritative store without creation, fully validate it, and bind it to that exact
+   owner-session ID;
+6. create the per-attempt coordinator with the same owner-session ID;
 7. advance trusted time where allowed, enumerate the sorted recovery `AttemptID` set, and call only
    `Recover(AttemptID)`;
 8. keep attempts and all four proposed IPC calls disabled until recovery is clean; and
@@ -113,9 +115,9 @@ objects are repair-required and are not rewritten. Unexpected descriptor loss or
 violation terminates the process; it is not converted to ordinary readiness.
 
 The owner-session ID remains a random in-process anti-confusion value. It is created only after the
-OS lock and store validation, changes on every reopen, and binds sealed effect/archive values to
-one live owner. It neither acquires nor proves the OS lock and never substitutes for the retained
-descriptor.
+OS lock plus its complete pre-store revalidation, changes on every reacquisition/reopen, and binds
+the subsequently opened store, coordinator, and sealed effect/archive values to one live owner. It
+neither acquires nor proves the OS lock and never substitutes for the retained descriptor.
 
 ### Same-UID and pathname limitation
 
@@ -171,7 +173,11 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
   adding a process, helper, daemon route, backend authority, or new public method.
 - The existing per-attempt coordinator remains useful inside the sole owner; it is not the
   installation lock.
-- All ordinary store and future archive mutation paths must require an opaque held-owner guard.
+- Bounded G2 now composes the opaque held-owner guard with the current v1/no-guest startup: the
+  owner-required opener precedes sorted recovery, store and coordinator share one session,
+  post-open held-owner failure permanently fences, and store shutdown precedes descriptor release.
+- Future migration, archive, backup, repair, and product mutation paths must require the same opaque
+  guard; G2 intentionally exposes none of those ports.
 - The local harness supports the primitive and ordering only. Protected-container, Apple-signed
   installed identity, wrong-user/session, update/restore, logout/login, reboot, abrupt shutdown,
   minimum-OS, and product Go/native integration remain acceptance blockers.
@@ -183,6 +189,7 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 
 - [Local owner-lock results](../../experiments/supervisor-owner-lock-boundary/RESULTS.md)
 - [Passive G1 Go/Darwin owner package](../../internal/execution/installationowner/)
+- [Bounded G2 owned v1/no-guest startup](../../internal/execution/registeredlifecycle/owned_startup.go)
 - [Owner-lock implementation and fault plan](../SUPERVISOR_OWNER_LOCK_PLAN.md)
 - [ADR-0025 durable lifecycle](0025-colocate-durable-attempt-lifecycle-state.md)
 - [ADR-0029 Supervisor topology](0029-select-authenticated-local-ipc-topology.md)

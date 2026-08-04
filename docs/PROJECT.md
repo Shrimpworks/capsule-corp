@@ -42,13 +42,16 @@ prepare, and retains the original 12 top-level focused lifecycle tests for bindi
 concurrency, fault, and startup-recovery behavior. The E4/E5 local checkpoint adds focused durable
 tests and now drives that no-guest fake through
 the colocated v1 fixed snapshot and retains exact effect identities, restart reconciliation,
-256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. The owner
-and coordinator remain injected in-process mechanics. Proposed ADR-0033 now selects an enrolled
+256-active/4,096-retained lifecycle ceilings, and repeated-startup/exhaustion evidence. Proposed
+ADR-0033 now selects an enrolled
 pre-created sibling object plus lifetime nonblocking BSD `flock` as the later macOS owner
-mechanism after a bounded local process/file experiment. Passive G1 now adds an internal, unwired
-Go/Darwin acquisition capability and owned-temporary-root fault/process tests. It does not compose
-product startup or an
-owner-required store opener, and no installed protected-storage evidence exists. There is no
+mechanism after a bounded local process/file experiment. Passive G1 adds the internal opaque
+Go/Darwin acquisition capability. G2 now composes that capability with an owner-required current
+v1 opener, the same owner-session ID in the store and per-attempt coordinator, sorted `AttemptID`
+recovery, permanent post-open ownership fencing, and store-before-owner shutdown ordering. The
+retained race/fault/process tests use owned temporary roots and the no-guest fake only. This is not
+product startup, a signed bootstrap record, protected installed storage, v2/archive composition,
+or production evidence. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate

@@ -120,7 +120,7 @@ func (store *FixedFileStoreV1) InjectLifecycleFailure(point LifecycleStoreFault,
 func (store *FixedFileStoreV1) LifecycleRecoveryFenced() bool {
 	store.mu.Lock()
 	defer store.mu.Unlock()
-	return store.recoveryRequired || store.repairRequired
+	return store.recoveryRequired || store.repairRequired || store.ownerFenced || store.closed
 }
 
 // OwnerSessionID identifies the sealed permit owner for this open store
@@ -130,6 +130,26 @@ func (store *FixedFileStoreV1) OwnerSessionID() lifecyclestate.OwnerSessionID {
 	store.mu.Lock()
 	defer store.mu.Unlock()
 	return store.ownerSessionID
+}
+
+// CloseAfterLifecycleShutdown permanently disables this open store handle.
+// The owned-startup composition calls it only after disabling lifecycle work
+// and before releasing the installation-owner descriptor.
+func (store *FixedFileStoreV1) CloseAfterLifecycleShutdown(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if store == nil {
+		return ErrStoreClosed
+	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
+	if store.closed {
+		return ErrStoreClosed
+	}
+	store.closed = true
+	store.issuedPermits = nil
+	return nil
 }
 
 // AdvanceLifecycleTime durably advances the installation high-water used by
@@ -257,8 +277,8 @@ func (store *FixedFileStoreV1) ReadLifecycle(
 	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
-	if store.repairRequired {
-		return lifecyclestate.Record{}, ErrStoreRepairRequired
+	if err := store.requireReadableLocked(); err != nil {
+		return lifecyclestate.Record{}, err
 	}
 	index := findLifecycle(store.lifecycles, attemptID)
 	if index < 0 {
@@ -654,8 +674,8 @@ func (store *FixedFileStoreV1) RecoveryAttemptIDs(ctx context.Context) ([]approv
 	}
 	store.mu.Lock()
 	defer store.mu.Unlock()
-	if store.repairRequired {
-		return nil, ErrStoreRepairRequired
+	if err := store.requireReadableLocked(); err != nil {
+		return nil, err
 	}
 	result := make([]approvalattempt.AttemptID, 0, len(store.state.Attempts))
 	for _, attempt := range store.state.Attempts {
@@ -782,11 +802,41 @@ func persistLifecycleEnvelopeV1(path string, envelope diskEnvelopeV1, beforeRena
 }
 
 func (store *FixedFileStoreV1) requireMutableLocked() error {
-	if store.repairRequired {
-		return ErrStoreRepairRequired
+	if err := store.requireReadableLocked(); err != nil {
+		return err
 	}
 	if store.recoveryRequired {
 		return ErrCommitOutcomeIndeterminate
+	}
+	return nil
+}
+
+func (store *FixedFileStoreV1) requireReadableLocked() error {
+	if store.closed {
+		return ErrStoreClosed
+	}
+	if store.ownerFenced {
+		return ErrStoreOwnerFenced
+	}
+	if store.ownerRequired {
+		if store.owner == nil {
+			store.ownerFenced = true
+			store.recoveryRequired = true
+			return ErrStoreOwnerFenced
+		}
+		if err := store.owner.CheckHeld(context.Background()); err != nil {
+			store.ownerFenced = true
+			store.recoveryRequired = true
+			return fmt.Errorf("%w: %v", ErrStoreOwnerFenced, err)
+		}
+		if store.owner.OwnerSessionID() != store.ownerSessionID {
+			store.ownerFenced = true
+			store.recoveryRequired = true
+			return ErrStoreOwnerSessionMismatch
+		}
+	}
+	if store.repairRequired {
+		return ErrStoreRepairRequired
 	}
 	return nil
 }

@@ -136,6 +136,28 @@ static int file_limit(void) {
     return result < 0 ? 0 : 72;
 }
 
+/*
+ * Proves RLIMIT_NOFILE is enforced by the kernel, not merely accepted by
+ * setrlimit: opens /dev/null until it fails, then reports how many opens
+ * succeeded and whether the failure was exactly EMFILE. The bootstrap
+ * closes every inherited descriptor above stderr before execve, so the
+ * probe starts with exactly 3 open descriptors (0, 1, 2); RLIMIT_NOFILE=16
+ * permits fds 0-15, so exactly 13 opens should succeed before the 14th
+ * fails with EMFILE.
+ */
+static int descriptor_limit(void) {
+    uint8_t opened = 0;
+    while (opened < UINT8_MAX) {
+        int descriptor = open("/dev/null", O_RDONLY);
+        if (descriptor < 0) {
+            break;
+        }
+        opened += 1;
+    }
+    uint8_t report[2] = {opened, errno == EMFILE};
+    return write_all(STDOUT_FILENO, report, sizeof(report)) == 0 ? 0 : 74;
+}
+
 static int stream_fault(const char *mode) {
     uint8_t input[138];
     size_t received = read_input(input, sizeof(input));
@@ -172,6 +194,9 @@ int main(int argc, char **argv) {
     }
     if (strcmp(mode, "file-limit") == 0) {
         return file_limit();
+    }
+    if (strcmp(mode, "descriptor-limit") == 0) {
+        return descriptor_limit();
     }
     if (strcmp(mode, "cpu-limit") == 0) {
         volatile uint64_t value = 0;

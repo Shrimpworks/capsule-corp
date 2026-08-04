@@ -87,7 +87,7 @@ is no evidence of OS denial.
 | CPU | `RLIMIT_CPU=1s` soft and hard | Busy loop terminated with `SIGXCPU`. |
 | Memory/address space | proposed `RLIMIT_AS=256 MiB` soft and hard | **BLOCKER:** `setrlimit` returned `EINVAL`; strict launch exited 75 before V1 `exec`. The diagnostic-only unbounded mutation successfully reserved 512 MiB. |
 | File size | `RLIMIT_FSIZE=0` | One-byte owned-temp write terminated with `SIGXFSZ`; empty-file and metadata mutation still remained possible. |
-| Descriptor count | `RLIMIT_NOFILE=16`; inherited inventory exactly 3 | Enforced as a ceiling, but a compromised child can close/reuse an allowed descriptor. It does not replace filesystem or socket denial. |
+| Descriptor count | `RLIMIT_NOFILE=16`; inherited inventory exactly 3 | Enforced as a ceiling: with 3 descriptors already open, exactly 13 further `open` calls succeed and the 14th fails with `EMFILE` (`descriptor-limit` probe mode, kernel-verified, not merely `setrlimit`'s own success). A compromised child can still close/reuse an allowed descriptor; the ceiling does not replace filesystem or socket denial. |
 | Process/child count | `RLIMIT_NPROC=0` | Controlled `fork` refused with `EAGAIN`. |
 | Core files | `RLIMIT_CORE=0` | No core-file authority. |
 | Result/stderr | 138 bytes / 0 bytes | Parent detects cap plus one, kills, drains, and reaps. |

@@ -393,13 +393,14 @@ The resulting binary and snapshot were reproduced in clean same-host containers.
 These are narrow construction results, not a complete runtime.
 
 **Selected design.** Accepted ADR-0028 chooses governed `deno_core` as the first runtime engineering
-candidate. The real Deno and `rusty_v8` forks have governed commits. Governed `rusty_v8` PR #4 is
-unmerged external work in progress at head
-`80e863ddb942a4aa2b384e794fc23e35b9d2bb15`; its clean Linux/arm64 build and fixed test
-pass, and the corrected GN evidence-query diagnostic passes. One complete clean bundle run,
-evidence review, and merge remain. It has no accepted artifact or admission effect. Exact V8
-build/source/notice closure, independent builders, closed `.mjs` module loading, external
-isolation composition, and runtime admission remain open.
+candidate. The real Deno and `rusty_v8` forks have governed commits. Governed `rusty_v8` PR #4
+merged at head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its exact-head workflow-dispatch run passed the clean
+Linux/arm64 network-disabled build, fixed test, corrected GN evidence query, evidence collection,
+and unsigned bundle upload. That is bounded fork construction evidence, not a governed release,
+accepted Capsule bundle, or admission effect. Exact fork-native bundle reconstruction, V8
+build/source/notice review, independent builders, closed `.mjs` module loading, external isolation
+composition, and runtime admission remain open.
 
 **Experiment evidence.** A fixed Node/Amaro strip-only TypeScript experiment produced deterministic
 JavaScript for a narrow syntax subset. Proposed ADR-0026 requires both the original TypeScript and

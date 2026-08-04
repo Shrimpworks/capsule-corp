@@ -128,12 +128,14 @@ The first complete workflow is intentionally narrow:
    governed-construction branch, hardened full Deno v2.9.4, and the tested minimal `deno_core`
    0.409.0 construction failed P0-0. Accepted ADR-0028 selects the later governed three-op
    `deno_core` construction as the first engineering candidate, and its real Deno and `rusty_v8`
-   governed branches are merged. Governed `rusty_v8` PR #4 is unmerged at
-   `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. Its clean Linux/arm64 build and fixed test
-   pass, and the corrected GN evidence-query diagnostic passes, but a complete clean bundle run,
-   evidence review, and merge remain. It supplies no reusable artifact yet. The runtime remains
-   unadmitted: accepted Linux/arm64 fork-native construction, `.mjs` source-custody/no-loader
-   evidence, complete profile composition, and runtime-admission evidence remain open.
+   governed branches are merged. Governed `rusty_v8` PR #4 merged at head
+   `80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+   `cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Its exact-head workflow-dispatch run passed the
+   clean Linux/arm64 network-disabled build, fixed test, corrected GN evidence query, evidence
+   collection, and unsigned bundle upload. This closes the fork's bounded ARM64 construction
+   blocker, but it does not admit or publish a runtime artifact. Fork-native Capsule bundle
+   reconstruction, evidence review, `.mjs` source-custody/no-loader evidence, complete profile
+   composition, and runtime-admission evidence remain open.
 7. The Supervisor applies filesystem-safety collection and the Broker performs bounded content
    validation and user delivery.
 8. The Supervisor destroys or explicitly classifies unresolved backend state and signs an

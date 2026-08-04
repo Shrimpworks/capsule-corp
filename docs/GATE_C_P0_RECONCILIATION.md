@@ -182,13 +182,15 @@ not substitute amd64. The smallest next fork change is a digest-pinned Linux/arm
 with network-disabled compilation/test/evidence collection. `RUNTIME-001` remains unsupported.
 See the [retained blocker](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-fork-native-deno-runtime-bundle/RESULTS.md).
 
-Current external-work note (2026-08-04): governed `rusty_v8` PR #4 now carries that follow-up at
-exact unmerged head `80e863ddb942a4aa2b384e794fc23e35b9d2bb15`. A clean Linux/arm64
-build and fixed `get_version` test passed. A bounded diagnostic then identified the GN evidence-
-query interpreter mismatch, the exact collector correction was applied, and the corrected-head
-diagnostic passed. This is `IN_PROGRESS — TRENDING_GOOD`, not a durable Capsule integration,
-accepted handoff, reusable artifact, release, or admission result. One clean full-ARM64 bundle run,
-exact evidence review, and merge remain.
+Governed-fork update (2026-08-04): `rusty_v8` PR #4 merged at exact head
+`80e863ddb942a4aa2b384e794fc23e35b9d2bb15` and merge
+`cbf56de2e1156b1cf1561fdbaea7172a0aa056f4`. Exact-head workflow-dispatch run
+[`30925045754`](https://github.com/Shrimpworks/rusty_v8/actions/runs/30925045754) passed the clean
+Linux/arm64 network-disabled build, fixed `get_version` test, corrected GN evidence query,
+evidence collection, and unsigned bundle upload. The scoped fork-construction result is `PASSED`;
+the parent governed-runtime work remains `IN_PROGRESS — TRENDING_GOOD`. No governed release,
+accepted Capsule runtime bundle, independent-builder equality, or runtime/profile admission
+follows from that result.
 
 Governed `deno_core` follow-up (2026-08-02): physical-omission slice **`PASSED`**; parent runtime
 workstream `IN_PROGRESS — TRENDING_GOOD`; product admission `BLOCKED`.
@@ -506,8 +508,7 @@ The next non-credential work is:
 2. carry the independently reproduced 43 P0-3 vectors into the selected host/launcher languages,
    complete hostile control/queue/descriptor coverage, and implement the distinct launcher, child
    manifest, and exact runner FD manifest before any real-guest composition;
-3. wait for an exact successful and reviewed handoff from unmerged governed `rusty_v8` PR #4; only
-   then reconstruct the merged governed Deno candidate,
+3. reconstruct the merged governed Deno candidate from exact Deno and `rusty_v8` fork heads,
    deterministic V8 publication/link/notice evidence, and runtime-root packaging,
    complete restoration/backstop review, assign and wire the retained approved-byte TypeScript
    candidate, and finish external-isolation/profile composition without weakening `RUNTIME-001`;

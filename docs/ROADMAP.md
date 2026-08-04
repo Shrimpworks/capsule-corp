@@ -11,11 +11,15 @@ All labels below follow the [canonical work status language](STATUS_LANGUAGE.md)
 migration/full-verifier scope; F3's first immutable-segment activation and F4A's read-only retained
 lookup are also `PASSED`. F4B is `BLOCKED` on the retained
 [effect-history representation](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md). Owner-lock G2 is `PASSED` for its
-retained local mechanic, while G3 is `BLOCKED` pending a matching W4 certificate/profile set plus a
+retained local mechanic, while G3 is `BLOCKED` pending exact Team-3DDR role profiles plus a
 selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes,
 Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
 their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
 R1 passive v1 contracts/fixtures and R2 unsigned role-specific construction are `PASSED`. The
+exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) is retained with Team
+`3DDR84M4JS`, R2 byte identities, installation placement, refusal/cleanup matrices, and credential
+mutation boundaries; R3 is `BLOCKED` on containing fixtures, exact role profiles, finalized signed
+constraints, and separate authorization. The
 product Source Validator and downstream S1/M2 remain `BLOCKED` on separately authorized
 signing/install, confinement/resource/residue evidence, and sequential daemon then Broker
 consumers.
@@ -181,9 +185,11 @@ store/coordinator, sorted recovery, post-open fencing, and ordered close under o
 roots. The signed bootstrap and installed protected-state-root/session/update matrix remain
 unimplemented. The first bounded G3 discovery stopped before installed build: certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` has display suffix `W4QUR9FUL4` but X.509 subject OU
-and signed-byte TeamIdentifier `3DDR84M4JS`, and every cached profile is also 3DDR. The exact
-test-only identifiers/bootstrap fields and noncredential mismatch/update model are retained, but
-they do not advance installed or protected-root evidence.
+and signed-byte TeamIdentifier `3DDR84M4JS`, and every cached profile is also 3DDR. Apple Membership
+Details later confirmed 3DDR is the account Team and W4 is a member/display suffix. The cached
+profiles still have the wrong App IDs. The exact test-only identifiers/bootstrap fields and
+noncredential mismatch/update model are retained, but they do not advance installed or
+protected-root evidence.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
 and platform evidence remain unimplemented. Production approval signing/verification, archive
@@ -390,12 +396,13 @@ clean-host, session, and support-floor validation of those exact signed bytes. T
 profiles must be deliberately authorized. The first exact G3 discovery contradicted the earlier
 display-name inference: certificate SHA-1 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` is labeled
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its subject OU and emitted code-signing
-TeamIdentifier are `3DDR84M4JS`. It is therefore not W4 evidence. All three Xcode 26.6-cached
-profiles also belong to historical Team `3DDR84M4JS` and are not reusable for W4 tests. Local W4
-signed/provisioned experiments require a reissued/matching certificate and exact W4 profiles, not
-only role identifiers and entitlements. A separate Developer ID Application identity for
-historical Team `3DDR84M4JS` is later distribution authority requiring explicit authorization and
-matching-Team package design; it is not W4 development evidence and does not make Developer ID/
+TeamIdentifier are `3DDR84M4JS`. Apple Membership Details now confirms 3DDR is the account Team;
+W4 is the common-name/member display suffix. A new Apple Development identity SHA-1
+`80A4...D3793` is locally present but not authorized for use. All three Xcode 26.6-cached profiles
+share Team 3DDR but have the wrong Gate B/wildcard App IDs and are not reusable. Local
+signed/provisioned experiments require exact 3DDR role profiles, identifiers, and entitlements. A
+separate Developer ID Application identity for Team `3DDR84M4JS` is later distribution authority
+requiring explicit authorization and matching-Team package design; it does not make Developer ID/
 notarization work current. Paid owned clean-host/minimum-OS
 coverage is not currently planned and remains deferred activation/distribution evidence, not a
 blocker for local F2/G1 mechanics. A genuinely independent

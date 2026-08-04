@@ -242,6 +242,9 @@ remains R4 after R3 installation evidence. No product consumer or Apple credenti
   hosts.
 - Verify each XPC service's actual distinct sandbox/container, responsible process, role-local
   private reach, no cross-role reach, and `JoinExistingSession=false` behavior.
+- Follow the exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md). Team identity is
+  reconciled to `3DDR84M4JS`, but R3 remains `BLOCKED` on its containing fixtures, exact role
+  profiles, finalized signed constraints, and separate mutation authorization.
 
 ### R4 — confinement, reactive-resource, and residue corpus
 

@@ -252,6 +252,12 @@ unsigned provenance records are retained. The bundled R1 resource policies are i
 launchers perform exact fixed-key/frame/policy predecode and refuse without spawning. This is
 construction evidence, not an installed service or active process-boundary result.
 
+The [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) fixes Team `3DDR84M4JS`, exact
+R2 byte identities and placements, entitlement/profile requirements, the reachability/mixed-update
+matrix, cleanup, and credentialed mutation boundaries. R3 remains `BLOCKED` until its containing
+fixtures, exact role profiles, and finalized signed constraint bytes exist and those mutations are
+separately authorized.
+
 The exact V2 local macOS checkpoint does not advance that boundary. Its strict bootstrap refuses
 before `exec` because `RLIMIT_AS` cannot be lowered; its explicitly unbounded diagnostic mutation
 proves deterministic process/fault mechanics while also proving ambient file, socket, metadata-
@@ -346,9 +352,10 @@ C/Objective-C XPC/Security front end and the existing Go authority/lifecycle cor
 through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
 process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains
 open at the product-evidence level: ADR-0033 selects the mechanism and G2 composes the local current
-v1/no-guest port. Bounded G3 discovery stopped before installed build because the authorized
-certificate emits historical Team `3DDR84M4JS`, not expected Team `W4QUR9FUL4`, and no W4 profile
-is cached. It also retained the unresolved protected-root bootstrap authority, signed
+v1/no-guest port. Bounded G3 discovery stopped before installed build because the certificate's
+common-name suffix was mistaken for a Team ID. Apple Membership Details now confirms the emitted
+Team `3DDR84M4JS` is the account Team; no exact Capsule role profile is cached. G3 also retained the
+unresolved protected-root bootstrap authority, signed
 per-installation record, and descriptor-relative closed-store opening blockers. The installed
 protected-root/session/update matrix remains unrun. Any later separate or privileged
 component still requires a new ADR. Adding Rust or

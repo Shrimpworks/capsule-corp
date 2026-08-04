@@ -23,4 +23,6 @@ Reproduce and verify locally:
 
 This result is not signing, enrollment, installation, confinement, resource enforcement,
 independent-builder provenance, or product admission. R3 remains a separately authorized signing
-and installation task; R4 remains the signed confinement/resource/residue campaign.
+and installation task governed by the
+[R3 execution packet](../../docs/SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md); R4 remains the signed
+confinement/resource/residue campaign.

@@ -183,7 +183,8 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
   minimum-OS, and product Go/native integration remain acceptance blockers.
 - The first bounded G3 checkpoint left installed G3 `BLOCKED` before installed build. The authorized Apple
   Development certificate's common-name suffix says `W4QUR9FUL4`, but its subject OU and an exact
-  signed-byte TeamIdentifier are `3DDR84M4JS`; no W4 profile is cached. Its noncredential fixture
+  signed-byte TeamIdentifier are `3DDR84M4JS`. Apple Membership Details later confirmed 3DDR is the
+  account Team and W4 is a member/display suffix; no exact Capsule role profile is cached. Its noncredential fixture
   retains exact experimental role/state/bootstrap/update fields only. Protected-root creation by a
   trusted installer, the signed per-installation bootstrap envelope/parser, and descriptor-relative
   closed-store opening remain separate blockers even after matching credentials exist.

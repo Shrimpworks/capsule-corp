@@ -73,7 +73,7 @@ module-loader fallback. The passive source-byte and SourceManifest foundation an
 parser/process selection, passive V0 byte contract, and unwired V1 artifact are `PASSED` in their
 exact scopes. The removed handwritten scanner is
 `NO_GO` because of the exact [grammar counterexample](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md).
-Proposed ADR-0035 now has an
+Accepted ADR-0035 has an
 exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). The V1 artifact
 profile remains unsigned/not enrolled and lacks independent reproduction, V2 confinement, an
 endpoint, and a consumer. V2 now retains exact fixed-I/O/fault mechanics plus the stop: `RLIMIT_AS`
@@ -82,13 +82,16 @@ and supported App Sandbox child entitlements change the fixed V1 bytes. Those V1
 `BLOCKED`; JobProposal
 narrowing and all S1/M2 registration/fetch work remain `BLOCKED` on them.
 
-The supported replacement design passes only its research scope. It rejects direct App Sandbox
-inheritance because it preserves daemon/Broker static rights and identifies a separately sandboxed
-method-specific XPC launcher owning one fresh parser child as the only plausible supported shape.
-That topology remains unselected; App Sandbox grants a writable private container, the public
-footprint setter returned `KERN_NO_ACCESS`, and reactive sampling is not a hard peak cap. R0-R5 now
-owns the architecture/resource decision, new identities, separately authorized signing, installed
-confinement, consumers, and updates. No user signing identity was used.
+The supported replacement research and R0 architecture slices pass only their exact scopes.
+Direct App Sandbox inheritance is `NO_GO`. Accepted ADR-0036 selects two role-specific private
+App-Sandboxed XPC launchers and matching fresh parser/profile families with no shared service,
+result, cache, container, group, or key. Each writable private container is residual scratch
+authority only with mandatory cleanup/residue evidence that is not a confidentiality proof. The
+public footprint setter returned `KERN_NO_ACCESS`, so the accepted policy is a later evidence-
+derived reactive watermark with no hard-peak/exact-cap or host-availability claim. R1-R5B now own
+new passive identities, unsigned construction, separately authorized signing/install, installed
+confinement/resource/residue evidence, sequential consumers, and updates. No numeric resource value,
+signing identity, service, or consumer exists.
 
 The proposed
 `RegisterPlanV0` would atomically submit exact plan bytes, the
@@ -149,8 +152,8 @@ handoff, reusable artifact, release, or admission effect until those steps compl
 | --- | --- | --- |
 | `PASSED` local conformance slices / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2/F3/F4A / F4B+ | F2 migration/full verification, F3 first immutable-segment activation, and F4A read-only retained lookup/replay/passive-collision routing pass with exact missing-history preservation, visible tombstones, publish-before-reference ordering, complete old-or-new reopen, hot/archive semantic equality, and zero adapter calls. Continue next with F4B atomic mutation/new tombstones and F4C bounded growth; production archive/store admission remains later. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. G3 is blocked: the displayed W4 certificate actually emits Team `3DDR84M4JS`, no W4 profile is cached locally, and protected-root bootstrap/signed-record/descriptor-relative store composition remains open. |
-| `PASSED` prerequisites and replacement design / V2 and parent `BLOCKED` / downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc selection, passive frames, unwired V1 artifact, and supported-profile design passed their bounded scopes. Direct inherited App Sandbox helpers are rejected; the XPC-launcher/fresh-child candidate remains blocked on topology, writable-container policy, and hard memory. Keep S1/M2 blocked. |
-| `BLOCKED` architecture/resource decision | Source Validator V2 replacement R0 | Decide the distinct unprivileged launcher topology and private-container residual, then select a supported hard memory control or explicitly revise the contract to a quantified reactive watermark with no peak/host-availability claim. Only then may new profile bytes and separately authorized signing begin. |
+| `PASSED` prerequisites, replacement research, and R0 decision / product and downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc selection, passive frames, unwired V1 artifact, negative V2 checkpoint, and ADR-0036 R0 decision passed their bounded scopes. Direct inherited helpers are rejected; two role-specific private launchers, residual scratch/cleanup, and reactive-resource claim boundaries are selected. Keep product and S1/M2 blocked. |
+| `BLOCKED` sequential implementation/evidence | Source Validator R1-R5B | Run passive v1 contracts/field authority; unsigned construction; separately authorized signing/install; confinement/resource/residue corpus; daemon consumer; Broker consumer; then M2/S1. Stop on unsupported private reachability, authority/native-loading/network/filesystem escape, orphan/cleanup, mixed update, or unacceptable measured host risk. |
 | `PASSED` bounded unwired conformance / signed parent `BLOCKED` | Production CBOR wrapper preparation | The [v0 object-set/wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only `SourceManifest` v0 as eligible and adds one unwired fxamacker v2.9.2 codec behind Capsule predecode, caps, canonical-byte comparison, binding, and exact-byte ownership. Plan, registration, approval, Swift, same-byte consumers, and production COSE remain blocked; `go-cose` stays test-only. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |

@@ -1,8 +1,9 @@
 # ADR-0035: Select a disposable `.mjs` Source Validator
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-04
 - Supported macOS profile replacement reviewed: 2026-08-04
+- R0 launcher/resource refinement accepted: ADR-0036 on 2026-08-04
 - Refines: ADR-0010, ADR-0018, ADR-0029, and ADR-0034
 
 ## Context
@@ -128,14 +129,14 @@ specifier, package, loader choice, or authority-bearing identifier.
 
 The production child must be launched from one enrolled, assessed, immutable
 artifact by a fixed descriptor owned by the selected low-authority launcher. It has
-no Capsule store, keys, network, inherited ambient file descriptors,
+no persistent Capsule product store, keys, network, inherited ambient file descriptors,
 caller-selected paths, environment, package cache, import map, runtime, backend,
 guest, or execution authority. Its OS profile must enforce copied input/output,
 the accepted memory/resource policy, and kill-on-deadline. The exact artifact,
 launcher topology, launch descriptor, protocol bytes, and sandbox profile require
 retained evidence before acceptance.
 
-### Supported macOS profile correction
+### Supported macOS profile correction and accepted R0 refinement
 
 The [supported-profile replacement review](../MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
 closes the design question without unblocking product implementation.
@@ -147,41 +148,45 @@ component's sandbox capabilities and is therefore `NO_GO` for this exact parser
 boundary. It could expose daemon state or Broker/key-adjacent authority to parser
 memory corruption.
 
-The only plausible supported composition is a separately App-Sandboxed,
-method-specific XPC launcher with no Capsule key/store/backend authority, which
-spawns and owns one fresh parser child per request. The parser child would be
-signed with the supported App Sandbox inheritance shape and would inherit the
-launcher's minimal sandbox, not the daemon's or Broker's. The launcher would own
-fixed pipes, rlimits, physical-footprint observation, process-group kill, drain,
-and `waitpid`; an XPC interruption or launcher death would be a refusal rather
-than a retry. The public parent-facing message would remain one closed fixed-data
-operation, never a generic XPC/JSON/Codable bus.
+Accepted ADR-0036 selects two separately App-Sandboxed, role-specific private XPC
+launchers: one embedded for the daemon and one embedded for the Approval Broker.
+Each owns only its matching fresh parser child, fixed pipes, resource observation,
+process-group kill, drain, reap, and cleanup. The two services, parser signing
+identities, method identities, and artifact profiles are distinct. There is no
+shared/generic service, cross-role accepted result/cache/state, app group,
+Keychain group, global Mach lookup exception, Supervisor route, or generic
+XPC/JSON/Codable bus. Exact private-XPC packaging and reachability remain a signed
+installed evidence gate; unsupported reachability stops rather than widening the
+bus.
 
-That topology is not selected or authorized yet. Private XPC services are
-`launchd`-managed and private to their containing app, so independently serving
-the daemon and Broker requires an exact installed topology decision. App Sandbox
-also grants the launcher and inherited parser child unrestricted read/write
-access to the launcher's private container; no supported zero-container or
-zero-durable-write mode was found. A new launcher role, an app group, a shared
-Keychain group, or a temporary global Mach lookup exception may not be inferred.
+App Sandbox grants each launcher and inherited parser child read/write access to
+its private container. ADR-0036 accepts that container as residual scratch
+authority and narrows "no store" to no persistent Capsule product state, cache,
+source/diagnostic log, or reusable result. Mandatory cleanup and residue evidence
+apply after every request, crash, launcher restart, update, and startup. Cleanup is
+defense/evidence, not confidentiality or secure-erasure proof.
 
-The resource result remains independently blocking. `RLIMIT_AS`/`RLIMIT_RSS`
+The resource result remains independently blocking at the product-evidence level.
+`RLIMIT_AS`/`RLIMIT_RSS`
 cannot be lowered on the observed host; `RLIMIT_DATA`, stack, and memlock limits
 are narrower resources. A bounded unprivileged probe of the public-SDK
 `task_set_phys_footprint_limit` interface returned `KERN_NO_ACCESS` for its own
-task. `proc_pid_rusage` can support a reactive observed-footprint watermark, but
-sampling and kill do not impose an exact peak ceiling. Bounded input/output,
-one-child concurrency, CPU/wall limits, kill/reap, and system memory pressure are
-therefore insufficient under the current exact-memory acceptance rule.
+task. ADR-0036 therefore replaces the unavailable hard ceiling with a quantified
+reactive physical-footprint watermark: one direct child per launcher request,
+bounded per-role and combined concurrency/input/output, one fixed sampling
+interval, and fail-closed process-group kill/drain/reap. It explicitly makes no
+hard-peak, exact-memory-cap, or host-availability claim. Threshold, cadence,
+baseline, overshoot, and kill-latency values must come from the later signed
+corpus; this ADR does not choose them.
 
-Any resumed artifact must use new closed identities—provisionally protocol/method
-v1, `capsule.source-validator.macos-xpc-parser-child/v1`, and artifact profile
-v1—and bind the complete signed launcher/parser bundle, entitlements, Hardened
-Runtime exceptions, launch/library constraints, code identities, installed
-placement, resource policy, and supported-host matrix. V1/V2 bytes and identities
-remain historical and unchanged. A separately authorized signing task is required
-before installed evidence; this ADR does not authorize use of any developer's
-signing identity.
+Any resumed artifact uses the exact role-specific v1 identities in ADR-0036 and
+the [passive v1 boundary](../protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md).
+Each profile binds its complete signed launcher/parser bundle, entitlements,
+Hardened Runtime and launch/library constraints, code identities, installed
+placement, resource policy, supported-host matrix, and consumer role. V0/V1/V2
+bytes and identities remain historical and unchanged. A separately authorized
+signing task is required before installed evidence; neither ADR authorizes use of
+any developer's signing identity.
 
 Both of these checks are mandatory and independent:
 
@@ -250,13 +255,14 @@ Costs and risks:
 - parser/sandbox compromise can still falsify approval facts or deny service;
 - Oxc updates require explicit version, corpus, mutation, supply, performance,
   and artifact-evidence review; and
-- product code cannot be claimed until the Proposed implementation plan and
+- product code cannot be claimed until the implementation plan and
   conformance/fault gates are complete.
 
 ## Status and evidence limits
 
-This ADR is Proposed. The retained experiment establishes a GO decision for
-implementation planning only. The first V0 passive conformance slice now fixes the exact
+This ADR's parser/process architecture is Accepted. Acceptance records the architecture owner's
+choice; it does not admit a product validator or advance control evidence. The retained experiment
+establishes bounded engineering evidence only. The first V0 passive conformance slice fixes the exact
 request/result/candidate/artifact-profile bytes, consumes M1's merged fixtures additively, and
 classifies the new passive fields; see the
 [`v0` passive contract](../protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md). It does not implement
@@ -271,7 +277,7 @@ and M1 results, restoration mutations, and two-clean-directory same-host reprodu
 under `artifacts/mjs-source-validator-v1/`. Its V0 artifact profile is explicitly not enrolled:
 the provenance and assessment are unsigned, reproduction is not independent, and no vulnerability
 owner/SLA or installation-authority signature exists. V2 confinement and every consumer remain
-unimplemented. This evidence therefore narrows V1 but does not change this ADR's Proposed status.
+unimplemented. This evidence therefore narrows V1 without admitting a product profile.
 
 The next retained V2 checkpoint is `BLOCKED`. A strict macOS test bootstrap fixes copied I/O,
 argv, empty environment, cwd, descriptor closure, enforceable rlimits, wall deadline, kill/reap,
@@ -280,21 +286,19 @@ unbounded diagnostic mutation proves the remaining mechanics and later clean inv
 proving ambient file reads, socket creation, cwd metadata writes, and a 512 MiB mapping remain.
 Apple's supported embedded-tool App Sandbox child entitlements change the exact V1 Mach-O bytes;
 deprecated custom sandboxing is not accepted as a substitute. The retained V1 object and profile
-remain unchanged and not enrolled. V2 resumes only after a newly reviewed/enrolled artifact and a
-supported exact memory/confinement design exist; this checkpoint does not change the ADR's
-Proposed status or activate V3/V4.
+remain unchanged and not enrolled. The direct-child V2 path stays blocked historical evidence and
+does not activate a consumer.
 
 The subsequent supported-profile design slice is `PASSED` in its research scope
-and leaves the parent `BLOCKED`. It rejects direct sandbox inheritance, identifies
-the separately sandboxed XPC-launcher/fresh-parser-child candidate, fixes the new
-identity and conformance requirements, and retains the negative public-footprint-
-limit observation. It does not select the launcher topology, accept the writable
-container, change the exact-memory rule, sign/build/enroll an artifact, or activate
-a consumer. Resume only after the architecture and resource-policy decisions in
-the replacement review are accepted.
+and leaves the product parent `BLOCKED`. ADR-0036 completes R0 by selecting two role-specific
+private launchers, accepting each private container as residual scratch authority, and replacing
+the unavailable hard ceiling with an evidence-derived reactive footprint policy. It also fixes the
+new v1 role/version/ownership boundary and stop conditions. It does not sign/build/install/enroll
+an artifact, prove private-XPC reachability, select numeric resource values, or activate a consumer.
 
-Acceptance requires the gates in
-[`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md)
-and additive consumption of M1's authoritative passive fixtures. The retained mapping and V0
-result frames are passive oracles only; product language validation remains pending until the
-later gates pass.
+Product Source Validator admission requires the sequential gates in
+[`MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md`](../MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md):
+passive v1 contracts/fixtures, unsigned construction, separately authorized signing/install,
+confinement/resource/residue evidence, then independent daemon and Broker consumers. The retained
+mapping and V0 result frames remain passive historical oracles; product language validation stays
+`BLOCKED` until those gates pass. Runtime no-loader admission remains independently mandatory.

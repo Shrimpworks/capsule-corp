@@ -50,7 +50,7 @@ manifest fixtures precede S1/M2 registration/fetch fixtures. The retained
 conditional later TypeScript cutover may not reinterpret the 562-byte v0 binding record or treat
 the 626-byte arithmetic as a layout.
 
-The follow-on grammar/process decision is [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
+The follow-on grammar/process decision is [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).
 It selects a one-shot disposable Source Validator and exact Oxc candidate from retained parse-only
 evidence. Its first [passive v0 contract slice](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.md)
@@ -61,10 +61,15 @@ signature; it is not installation-signed, enrolled, wired, or confined. The
 launch/fault mechanics and the exact macOS stop: unsupported `RLIMIT_AS`, ambient authority without
 a sandbox, and supported App Sandbox child entitlements changing the fixed V1 bytes. V2 and the
 parent product work are `BLOCKED`; no product validator or runtime no-loader boundary is implemented.
-The [supported macOS replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) passes
-its design scope, rejects direct parent-sandbox inheritance, and retains the unprivileged public-
-footprint-limit denial. Its separately sandboxed XPC-launcher/fresh-child candidate remains blocked
-on topology, writable-container, hard-memory, signing, and installed-conformance decisions.
+The [supported macOS replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) and
+[Accepted ADR-0036](adr/0036-select-role-separated-source-validator-launchers.md) pass R0's
+architecture scope. Direct inherited helpers are rejected. The selected replacement uses two
+role-specific private App-Sandboxed launchers, accepts each private container only as residual
+scratch with mandatory cleanup, and uses a later evidence-derived reactive footprint watermark
+without a hard-peak or host-availability claim. The next work is the
+[passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), followed by unsigned
+construction, separately authorized signing/install, confinement/resource/residue evidence,
+daemon consumer, Broker consumer, then M2/S1 checkpoint. No service or product consumer exists.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-

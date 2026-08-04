@@ -65,6 +65,6 @@ its core conclusion.
   — Proposed
 - [ADR-0034: Freeze a single-file `.mjs` first-release contract](0034-freeze-mjs-first-release-contract.md)
 - [ADR-0035: Select a disposable `.mjs` Source Validator](0035-select-disposable-mjs-source-validator.md)
-  — Proposed
+- [ADR-0036: Select role-separated Source Validator launchers and reactive footprint policy](0036-select-role-separated-source-validator-launchers.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

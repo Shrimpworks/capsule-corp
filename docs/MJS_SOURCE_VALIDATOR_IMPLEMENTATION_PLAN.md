@@ -2,7 +2,7 @@
 
 ## Purpose and non-goals
 
-This plan converts Proposed ADR-0035's parser/process choice into independently
+This plan converts Accepted ADR-0035 and ADR-0036's parser/process choice into independently
 reviewable gates. It does not implement the validator or replace M1's passive
 source/manifest contract, a product endpoint, runtime, loader, backend, or guest.
 M1 owns authoritative proposal bytes, manifest fixtures, and scanner-stop evidence;
@@ -12,7 +12,7 @@ The end state is a parser-based pre-approval policy/usability check plus separat
 unconditional runtime no-loader enforcement. Neither layer substitutes for the
 other.
 
-## Proposed typed operation
+## Historical V0 typed operation
 
 `ValidateMjsSourceV0` accepts only:
 
@@ -36,6 +36,11 @@ No unbounded strings or diagnostics cross the production channel. Internally
 useful diagnostics stay in bounded test-only evidence and must not echo source or
 specifier text into authority logs. Unknown fields, extra frames, partial frames,
 wrong versions, counter overflow, trailing bytes, or multiple requests refuse.
+
+These V0 bytes remain passive historical evidence. The supported macOS implementation consumes
+the new role-specific v1 families in the
+[passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md); it never relabels or
+accepts V0/V1/V2 bytes as v1.
 
 ## Dependency-ordered gates
 
@@ -89,7 +94,7 @@ unsigned, or rolled-back profiles therefore remain refusals rather than accepted
 still owns the fixed launch descriptor, sandbox, descriptors, resources, deadline kill/reap, and
 restart evidence; the retained partial-input kill observation is not V2 confinement proof.
 
-### V2 — disposable process profile
+### V2 — historical direct-child disposable process profile
 
 - Define the platform-specific fixed launch descriptor and sandbox in its own
   reviewable implementation slice.
@@ -98,8 +103,9 @@ restart evidence; the retained partial-input kill observation is not V2 confinem
 - Deny network, durable writes, caller-selected paths, environment authority,
   package caches, key access, Supervisor state, runtime/backend control sockets,
   and guest lifecycle operations.
-- Enforce exact memory, CPU, output, process-count, and wall ceilings; kill and
-  reap the entire child on deadline or parent cancellation.
+- The historical acceptance rule required exact memory, CPU, output, process-count, and wall
+  ceilings plus kill/reap. ADR-0036 replaces only that path's unavailable memory rule for the new
+  role-specific v1 profile; it does not reinterpret V2.
 
 Exit evidence: positive descriptor inventory and adversarial attempts for each
 denial, fork/child escape, inherited-FD audit, memory/CPU/output exhaustion,
@@ -117,26 +123,80 @@ That mutation also permits a 512 MiB mapping, an owned out-of-cwd file read, IPv
 creation without connect, cwd metadata change, and empty-file creation. Apple's supported embedded
 App Sandbox child entitlement shape changes the fixed V1 Mach-O bytes; deprecated custom sandbox
 interfaces are not used. No Keychain or Supervisor state was probed. Therefore V2 is `BLOCKED`,
-not passed or `NO_GO`, pending a newly reviewed/enrolled artifact and a supported exact memory/
-confinement design. The diagnostic mutation is test-only counterevidence and may not be wired.
+not passed or `NO_GO`. The diagnostic mutation is test-only counterevidence and may not be wired;
+the supported replacement starts at R1 with new role-specific identities.
 
 Supported replacement review: the exact design slice in
 [`MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md`](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
-is `PASSED`, while V2 and its parent remain `BLOCKED`. Apple's supported direct-helper App Sandbox
+is `PASSED`, while the historical V2 path and product parent remain `BLOCKED`. Apple's supported direct-helper App Sandbox
 inheritance gives the parser its daemon or Broker parent's static rights and is `NO_GO` for this
-exact boundary. The only plausible supported composition is a separately sandboxed, method-
-specific XPC launcher that owns one fresh parser child, fixed pipes, rlimits, monitoring, and
-kill/drain/reap. That composition is not selected: it requires an explicit launcher topology, App
-Sandbox gives it and its inherited child a writable private container, and no usable unprivileged
-hard memory cap exists on the observed host. A public-SDK `task_set_phys_footprint_limit` self-call
-returned `KERN_NO_ACCESS`; `proc_pid_rusage` monitoring is reactive rather than a peak ceiling.
+exact boundary. ADR-0036 completes R0 by selecting two separately sandboxed role-specific private
+XPC launchers, each owning one fresh matching parser child and no shared service/result/cache. It
+accepts the role-private writable container only as residual scratch authority with mandatory
+cleanup, and replaces the unavailable hard ceiling with an evidence-derived reactive footprint
+watermark. The watermark is not a hard peak/exact cap or host-availability guarantee.
 
-Resume V2 only through replacement slices R0-R5 in that review. Any build must use new protocol,
+The replacement proceeds only through R1-R5B below. Any build uses new role-specific protocol,
 process-profile, artifact-profile, signed-bundle, entitlement, Hardened Runtime, launch/library-
-constraint, resource-policy, and supported-host identities. V1/V2 bytes are never relabeled. No
-signing operation is authorized by this plan.
+constraint, resource-policy, and supported-host identities. V0/V1/V2 bytes are never relabeled. No
+signing operation is authorized by this plan, and no threshold, sample interval, baseline,
+overshoot, or kill latency is chosen before the signed R4 corpus.
 
-### V3 — daemon pre-plan integration
+## Accepted replacement sequence
+
+### R1 — passive v1 contracts and fixtures
+
+Freeze the two role-specific request/result/process/artifact-profile families, the reactive-policy
+record shape, copied ownership, exact caps, cleanup/refusal dispositions, and cross-role/cross-
+version/mixed-update refusals. Update the canonical field-authority manifest in the same change.
+Preserve every V0/V1/V2 byte and fixture unchanged. R1 may define field widths and missing/inactive
+policy refusals but must not invent active reactive-resource measurements.
+
+### R2 — unsigned role-specific construction
+
+Construct the two smallest private XPC launcher bundles and their matching parser children from the
+reviewed lock, offline and without a product consumer. Retain exact source/SBOM/notice/provenance,
+two-builder, static linked-closure, descriptor, and no-generic-bus evidence. Do not sign, install,
+use an Apple credential, or run arbitrary/user source.
+
+### R3 — separately authorized signing and installation
+
+Only a separately authorized task may use exact matching Apple identities/profiles to sign and
+install the new role-specific bytes. Prove each containing role privately reaches only its own
+service, the two sandboxes/containers and code requirements are distinct, launch/library
+constraints and entitlements match, and old/mixed packages refuse. Unsupported private-XPC
+reachability stops; it never widens to a shared/global service or app group.
+
+### R4 — confinement, reactive-resource, and residue corpus
+
+Use only fixed benign parse-only evidence to run the complete authority-denial, descriptor,
+network/filesystem/native-loading, child/death/orphan, output/deadline, restart/update/startup, and
+container-residue matrix. Measure per-role and simultaneous two-role baseline, threshold,
+sampling cadence, maximum observed overshoot, kill latency, and host-pressure behavior. A profile
+review may select values only from this signed corpus and must state host-availability limitations.
+Every request, crash, launcher restart, update, and startup requires cleanup/empty-inventory
+evidence; cleanup is not confidentiality or secure-erasure proof.
+
+### R5D — daemon consumer
+
+After R1-R4 pass, implement only the daemon-facing v1 client over copied decoded bytes before plan
+construction. It uses one fresh daemon-role child, accepts no Broker service/result, has no fallback
+parser, and maps every failure to a fixed refusal.
+
+### R5B — Approval Broker consumer
+
+After R5D passes, independently implement only the Broker-facing v1 client over exact bytes fetched
+from Supervisor registration state. It uses one fresh Broker-role child, accepts no daemon
+service/result/cache, renders only fixed facts, and performs zero Approval-key operations on every
+refusal.
+
+### M2/S1 checkpoint
+
+Only after R5B passes may the project reconcile JobProposal narrowing and the plan-v0
+registration/fetch field-authority/fixture slice. This checkpoint does not waive V6 runtime
+no-loader evidence or any independent Supervisor IPC/product-admission gate.
+
+### V3 / R5D — daemon pre-plan integration
 
 - Decode M1's exact copied source bytes, validate cap/UTF-8/BOM according to its
   canonical contract, then invoke a fresh validator before plan construction.
@@ -145,14 +205,14 @@ signing operation is authorized by this plan.
 - Map every child/protocol/local failure to a fixed refusal without retrying a
   different parser or falling back to lexical scanning.
 
-V3 consumes the accepted replacement protocol/profile version, not the passive V0 or unchanged V1
-test artifact. It may begin only after V2 replacement R0-R4 pass.
+V3 consumes the accepted role-specific replacement protocol/profile version, not the passive V0 or
+unchanged V1 test artifact. It may begin only as R5D after R1-R4 pass.
 
 Exit evidence: byte mutation between decode/validation/plan, wrong-child artifact,
 timeout/crash/malformed result, duplicate reply, process exhaustion, and daemon
 restart cases. No path may accept caller-supplied validation facts.
 
-### V4 — independent Broker integration
+### V4 / R5B — independent Broker integration
 
 - Fetch only Supervisor-retained plan, registration, source manifest, and exact
   source bytes.
@@ -163,9 +223,9 @@ restart cases. No path may accept caller-supplied validation facts.
 - Refuse if the daemon's historical result is present, substituted, or treated as
   trusted.
 
-V4 invokes its own fresh parser child through the selected independently reachable launcher
-instance. It may not share a cached child, result, service state, app group, Keychain group, or
-daemon-owned container.
+V4 invokes its own fresh parser child through the Broker-private launcher only after R5D passes. It
+may not share a cached child, result, service state, app group, Keychain group, or daemon-owned
+container.
 
 Exit evidence: compromised-daemon simulations, source/result replay, digest and
 length mismatch, child failure, view mutation, and proof that zero Approval-key
@@ -214,7 +274,7 @@ This gate belongs to runtime admission. Parser passage alone never satisfies it.
 | --- | --- | --- |
 | invalid UTF-8 / cap+1 | refuse before parse | no child retry |
 | parser or semantic diagnostic | typed refuse | no recovered AST use |
-| hang / CPU or memory exhaustion | kill entire child, fixed refusal | new clean child for a later explicit request |
+| hang / CPU or reactive-footprint watermark | kill/drain/reap entire child group, fixed refusal | cleanup; new clean child for a later explicit request only |
 | crash / signal / unexpected exit | fixed refusal | reap; never reuse partial output |
 | partial, oversized, duplicate, trailing, or unknown result | fixed refusal | close channel and child |
 | digest, length, version, or artifact mismatch | fixed refusal and bounded security event | quarantine artifact/installation when the enrolled policy requires it |
@@ -225,12 +285,13 @@ This gate belongs to runtime admission. Parser passage alone never satisfies it.
 
 ## Acceptance rule
 
-ADR-0035 may move from Proposed only when V0–V5 have retained, reviewed evidence
-on every supported host and the canonical docs reflect the final protocol and
-authority ownership. Runtime/profile admission additionally requires V6. A parser
-binary, IPC endpoint, or passing happy-path test alone is insufficient and leaves the parent work
-`IN_PROGRESS` or `BLOCKED`; it is not a pass or a `NO_GO` by itself.
+ADR-0035 and ADR-0036 are Accepted architecture decisions. Product Source Validator remains
+`BLOCKED` until R1-R5B retain reviewed evidence on every supported host and the canonical docs,
+field-authority material, and M2/S1 checkpoint agree. Runtime/profile admission additionally
+requires V6. A parser binary, endpoint, signed package, cleanup pass, or happy-path result alone is
+insufficient and does not make the product control passed or admitted.
 
-For macOS, V2 additionally requires an accepted R0 launcher/container/resource-policy decision and
-signed installed R1-R4 evidence from the supported-profile replacement review. Parent-side caps and
-reactive memory sampling alone do not meet the current exact-memory acceptance rule.
+For macOS, the active profile must bind evidence-derived reactive watermark values and measured
+overshoot/kill/pressure limitations from R4. Parent-side caps and sampling alone do not establish a
+hard peak or host-availability guarantee. Any ADR-0036 stop condition halts the exact candidate
+without abandoning the Source Validator capability.

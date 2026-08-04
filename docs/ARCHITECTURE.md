@@ -25,8 +25,8 @@ is implemented or validated.
 │  ├── proposal handling and plan construction                        │
 │  ├── policy resolution and immutable planning                       │
 │  └── no approval key, backend launch, or user-only content          │
-│             ├── proposed disposable `.mjs` Source Validator         │
-│             │   └── one-shot parse only; no keys/store/network       │
+│             ├── accepted role-separated `.mjs` validator design     │
+│             │   └── two private launchers; fresh parse-only child    │
 │             ├── exact first-release `main.mjs` pass-through source   │
 │             │   └── atomic plan/source registration and readback     │
 │             ├── future conditional TypeScript Source Preparer       │
@@ -68,7 +68,7 @@ or execution authority:
 | Component | May do | Must not do |
 | --- | --- | --- |
 | Agent-facing daemon | Authenticate agents, validate proposals, resolve policy, construct plans, register plans, request attempts, expose fixed status | Use approval/evidence keys, launch a backend, replace registered plan bytes, retrieve user-only content, clear quarantine or grant state |
-| Proposed `.mjs` Source Validator | Parse one copied bounded `main.mjs` and return fixed typed digest/length/grammar-node facts to a parent | Execute source, keep a durable store, use keys or network, accept paths/packages/loaders, approve/register plans, launch a backend |
+| Accepted `.mjs` Source Validator design | Through one role-private launcher, parse one copied bounded `main.mjs` in a fresh child and return fixed typed digest/length/grammar-node facts to the matching parent | Execute source, keep persistent Capsule product state/cache/log/result, cross roles, use keys or network, escape its private container, accept paths/packages/loaders, approve/register plans, launch a backend |
 | Proposed TypeScript Source Preparer | Transform copied untrusted source before planning, own exact original/emitted/profile/options/record bytes, return fixed plan projections and registered executable copies | Approve or register plans, access user-only Broker content, expose a generic parser/path API, launch a backend, transform after registration |
 | Trusted Host Broker | Render registered plans, require user presence, sign one-use approvals, select files, own user content, release fixed summaries | Expose agent endpoints, launch a guest, accept daemon display prose as authoritative, make enforcement claims |
 | Execution Supervisor | Independently validate registered plans, enforce hard safety, consume approvals, create attempts, manage backend lifecycle, sign enforcement transcripts | Parse the public agent protocol, author general policy, select files, perform rich parsing, fetch network trust data |
@@ -94,16 +94,16 @@ Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mj
 existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
 canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
 copies. The passive source-byte/SourceManifest foundation and bounded Oxc parser/process selection
-are `PASSED`. Product Source Validator V1-V5 is `BLOCKED`; JobProposal
+are `PASSED`. Product Source Validator R1-R5B is `BLOCKED`; JobProposal
 narrowing, plan construction, source custody, authenticated transport, consumer, runtime, backend,
 and guest remain unimplemented.
 Proposed ADR-0032's separately enrolled
 Source Preparer is now only a conditional later TypeScript topology and is `BLOCKED` outside the
 first-release critical path.
 
-### Proposed `.mjs` Source Validator
+### Accepted `.mjs` Source Validator architecture; blocked product control
 
-Proposed ADR-0035 places the first-release grammar check in a new one-shot stateless process, not
+Accepted ADR-0035 places the first-release grammar check in a new one-shot process, not
 inside the daemon, Approval Broker, or Execution Supervisor. The daemon supplies an exact copied
 source before planning; the Broker later supplies a fresh exact copy fetched from Supervisor
 registration state before rendering or any Approval-key operation. Each invocation binds a fixed
@@ -127,17 +127,28 @@ used. This is crash and local process-mechanic evidence only; V2 is `BLOCKED` pe
 reviewed/enrolled artifact plus a supported exact memory and confinement mechanism.
 
 The follow-on [supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md)
-passes its research/design scope without unblocking the product. A directly spawned App Sandbox
-helper inherits the daemon's or Broker's static sandbox rights and is `NO_GO` for this exact
-boundary. Apple's supported lower-authority composition requires a separately sandboxed XPC/
-helper boundary; the plausible Capsule shape is a method-specific unprivileged XPC launcher that
-owns one fresh parser child and all pipe/resource/kill/reap mechanics. That topology is not selected
-or implemented. It would require new protocol/process/artifact-profile identities, and App Sandbox
-still grants its private container read/write authority. The public-SDK physical-footprint setter
-returned `KERN_NO_ACCESS`, while parent footprint sampling is reactive rather than a hard peak
-limit. Under the current no-store and exact-memory acceptance rule, V2 and V3/V4 remain `BLOCKED`.
-No launcher role, app group, shared Keychain group, global Mach exception, signing action, or
-product consumer is authorized by the review.
+and Accepted ADR-0036 pass their architecture scopes without unblocking the product. A directly
+spawned App Sandbox helper inherits daemon/Broker static rights and is `NO_GO`. The selected
+supported composition uses two separately App-Sandboxed private XPC launchers: one daemon-facing
+and one Approval-Broker-facing, each owning only its role-specific fresh parser child and closed
+v1 method/profile. No service, result, cache, container, app/Keychain group, or accepted profile
+crosses roles, and neither launcher reaches the Supervisor or backend.
+
+Each launcher's private writable App Sandbox container is accepted as residual scratch authority.
+"No store" forbids persistent Capsule product state, cache, source/diagnostic log, or reusable
+result; mandatory cleanup and residue testing follows every request, crash, restart, update, and
+startup. Cleanup is not confidentiality or secure-erasure evidence. The public-SDK footprint setter
+returned `KERN_NO_ACCESS`, so ADR-0036 accepts a later evidence-derived reactive physical-footprint
+watermark with one direct child per launcher request, fixed cadence, bounded combined two-role
+concurrency, and process-group kill/drain/reap. It makes no hard peak/exact memory cap or host-
+availability claim, and chooses no threshold/cadence/overshoot before the signed corpus.
+
+The next slice is the
+[passive v1 role/version/ownership boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md),
+followed sequentially by unsigned construction, separately authorized signing/install,
+confinement/resource/residue evidence, daemon consumer, Broker consumer, and M2/S1 checkpoint.
+Private-XPC reachability, ambient authority, native loading, orphan cleanup, mixed update, and
+measured availability failures trigger ADR-0036's exact stops rather than a wider bus.
 
 The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
 does not parse rich source. The validator has no authority to approve, retain state, or launch a

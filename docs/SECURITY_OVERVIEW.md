@@ -216,13 +216,15 @@ Final entitlements, inherited descriptor checks, protected construction, and cle
 remain open. App Sandbox does not revoke file descriptors inherited at launch and does not replace
 hostile-guest isolation.
 
-The Source Validator replacement review adds a narrower negative result. A directly launched
-embedded helper inherits its daemon or Broker parent's static sandbox rights, so that composition
-is rejected for hostile parser memory. A separately sandboxed XPC launcher with one fresh parser
-child is the only plausible supported design found, but it remains blocked: its topology is
-unselected, App Sandbox supplies a writable private container, and the observed host has no usable
-public unprivileged hard memory cap. Hardened Runtime, launch/library constraints, descriptor
-closure, rlimits, and reactive footprint monitoring narrow risk but do not erase those gaps.
+The Source Validator replacement review rejects a directly launched embedded helper because it
+inherits daemon/Broker static sandbox rights. Accepted ADR-0036 selects two role-specific private
+App-Sandboxed XPC launchers, each owning one matching fresh parser child and no shared service,
+result, cache, container, group, key, or accepted profile. Each writable private container is
+residual scratch authority only; cleanup/residue testing after requests, crashes, restarts,
+updates, and startup is mandatory but is not a confidentiality proof. The observed host has no
+usable public unprivileged hard memory cap, so the selected policy is a later evidence-derived
+reactive footprint watermark with process-group kill/drain/reap and explicit overshoot/host-
+availability limitations. No numeric policy or installed control exists yet.
 
 ### Keychain, LocalAuthentication, and user presence
 

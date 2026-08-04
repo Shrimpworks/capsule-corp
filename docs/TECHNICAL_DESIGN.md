@@ -98,11 +98,12 @@ The first complete workflow is intentionally narrow:
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
    loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
-   parser/process selection are `PASSED`; product Source Validator V1-V5 is
+   parser/process selection are `PASSED`; product Source Validator R1-R5B is
    `BLOCKED`, and plan construction remains `BLOCKED` until its required gates
    pass.
-2. The Go daemon strictly decodes the proposal and, under Proposed ADR-0035, sends an exact copied
-   source to a fresh disposable Source Validator before planning. The validator parses but never
+2. The Go daemon strictly decodes the proposal and, under Accepted ADR-0035/0036, sends an exact
+   copied source through its private role-specific Source Validator launcher before planning. The
+   launcher owns a fresh parser child; the validator parses but never
    executes source and returns only digest/length and fixed grammar-node facts. The daemon then
    resolves trusted policy and constructs canonical `ExecutionPlan` v0 bytes plus
    the canonical single-member source manifest. Registration atomically validates and retains the
@@ -114,7 +115,8 @@ The first complete workflow is intentionally narrow:
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
 4. The Trusted Host Broker fetches the registered bytes directly from the Supervisor, independently
-   validates them, invokes a separate fresh Source Validator over its exact copied source, binds
+   validates them, invokes its separate Broker-private launcher/fresh child over the exact copied
+   source, binds
    the fixed result to digest and length, renders a bounded human-readable view, requires fresh
    user presence, and signs one attempt-bound `ApprovalGrant`. Any validator failure refuses before
    an Approval-key operation.
@@ -210,9 +212,9 @@ It may not:
 - receive user-only input or artifact content by default;
 - forge Supervisor terminal evidence or declare success without it.
 
-### Proposed disposable Source Validator
+### Accepted disposable Source Validator architecture; blocked implementation
 
-Proposed ADR-0035 adds one method-specific, one-shot parse-only child process for the first-release
+Accepted ADR-0035 adds one method-specific, one-shot parse-only child process for each invocation of the first-release
 `.mjs` grammar policy. Exact Oxc 0.140.0 is the engineering candidate. The child receives only a
 copied source frame and returns a closed typed result with recomputed digest, length, parse/policy
 status, and four bounded node counts. It has no store, keys, network, paths, package/loader API,
@@ -238,17 +240,29 @@ bytes, and deprecated custom profiles are not substituted. V2 and the product So
 parent are `BLOCKED` pending a new reviewed/enrolled artifact and supported resource/confinement
 design.
 
-The [supported replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) now makes the
-architecture correction exact. Direct App Sandbox inheritance is `NO_GO` for this parser because
-it preserves the launching daemon's or Broker's static rights. A supported lower-authority design
-would put a method-specific, separately App-Sandboxed XPC launcher in front of one fresh parser
-child; the launcher, not either authority parent, would own fixed pipes, rlimits, footprint
-observation, kill, drain, and reap. This remains a candidate rather than an added role. XPC service
-placement/reachability for both independent consumers is unresolved, App Sandbox grants a writable
-private container, and no public unprivileged hard memory control is usable on the observed host.
-`proc_pid_rusage` monitoring can only impose a reactive observed watermark. The current exact-
-memory/no-store rule therefore keeps V2, V3, and V4 `BLOCKED`; bounded input/output, CPU/wall,
-concurrency, monitoring, and system memory pressure are not represented as a hard peak cap.
+The [supported replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) and Accepted
+ADR-0036 make the architecture correction exact. Direct App Sandbox inheritance is `NO_GO` because
+it preserves daemon/Broker static rights. The selected lower-authority design uses two distinct
+private App-Sandboxed XPC launchers, one per consumer. Each owns only its matching fresh parser
+child, fixed copied pipes, resource observation, process-group kill/drain/reap, and cleanup. The
+role-specific services, parser identities, methods, artifact profiles, containers, and accepted
+results never cross roles; neither launcher has a Supervisor/backend/key/store route.
+
+App Sandbox grants each role-private container writable scratch authority. The product persists no
+Capsule state, cache, source/diagnostic log, or reusable result there; every request, crash,
+launcher restart, update, and startup requires cleanup/residue evidence. Cleanup does not prove
+confidentiality or secure erasure. No public unprivileged hard memory control is usable on the
+observed host, so the accepted policy is a later evidence-derived reactive footprint watermark with
+one child per launcher request, bounded per-role/combined concurrency, fixed sampling cadence, and
+kill/drain/reap. It is not a hard peak/exact cap or host-availability guarantee. Numeric threshold,
+cadence, baseline, overshoot, and kill latency remain unset until the separately authorized signed
+corpus.
+
+Product implementation remains `BLOCKED` on the sequential passive v1 contract, unsigned
+construction, signed installed reachability/confinement, measured resource/residue corpus, daemon
+consumer, and Broker consumer. Unsupported private-XPC reachability, authority/native-loading/
+filesystem/network escape, orphan cleanup, mixed update, or unacceptable measured host risk stops
+the candidate rather than widening the bus.
 
 ### Trusted Host Broker
 
@@ -631,6 +645,13 @@ percentage/time, arbitrary RAM, and exact total host/VMM memory are unsupported.
 vocabulary can freeze before the remaining P0 gates; exact libkrun values freeze only after their
 mechanisms pass.
 
+ADR-0036's Source Validator footprint watermark is not a user-owned guest/job memory limit and does
+not weaken ADR-0009. It is an evidence-bound trusted-component availability policy: the launcher
+reacts after observing a threshold and therefore cannot claim an exact peak. The signed profile
+must enforce its selected threshold and sampling cadence exactly as configured, record measured
+overshoot and kill latency, and refuse unsupported hosts, while explicitly leaving host
+availability unguaranteed.
+
 ## Runtime bundles and profile evidence
 
 Profile trust uses separate objects:
@@ -820,22 +841,21 @@ implemented.
    effect-tombstone enforcement and F4C bounded growth, then F5 backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
-3. Resolve the Source Validator V2 block through R0-R5 in the
-   [supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md).
-   First decide the separately sandboxed launcher/container topology and either select a supported
-   hard memory control or explicitly revise the contract through a quantified reactive-resource
-   ADR. Only then define and construct newly versioned protocol/process/artifact identities and run
-   the separately authorized signed installed corpus. V0 and V1 remain passed in their bounded
-   scopes; V2 implementation and V3/V4 consumers do not resume before R0-R4 pass. Do not use direct
-   parent sandbox inheritance, deprecated custom profiles, private jetsam/spawn APIs, or the
-   unbounded diagnostic mutation.
+3. Continue the Source Validator replacement after accepted R0/ADR-0036 in this strict order:
+   passive role-specific v1 contracts/fixtures and field authority; unsigned two-launcher/parser
+   construction; separately authorized signing/install and private reachability; confinement,
+   reactive-resource, and residue corpus; daemon consumer; Broker consumer; then the M2/S1
+   checkpoint. V0/V1/V2 bytes remain historical and unchanged. No threshold, sample cadence, or
+   overshoot is chosen before the signed corpus, and no direct parent inheritance, shared service,
+   deprecated custom profile, private API, or unbounded diagnostic mutation is a fallback.
 4. Freeze the applicable signed-object set and independently review the narrow production CBOR
    wrapper. Use pinned `fxamacker/cbor` only for object-specific deterministic encoding and typed
    field decoding; retain Capsule predecode, caps, canonical-on-wire comparison, bindings, and
    replay checks. Keep `go-cose` test-only.
-5. After Source Validator V2-V5 pass, narrow JobProposal and generate S1/M2 plan-v0 registration/
-   fetch fixtures from complete field authority. Then implement the authenticated native-to-Go IPC
-   bridge and independent daemon/Broker validator consumers without widening the four-call surface.
+5. After both role-specific Source Validator consumers pass, hold the M2/S1 checkpoint: narrow
+   JobProposal and generate plan-v0 registration/fetch fixtures from complete field authority.
+   Only then decide whether to implement the authenticated native-to-Go Supervisor IPC bridge;
+   ADR-0036 adds no Supervisor call and does not widen ADR-0029's four-call surface.
 6. Connect that product path to the already-passed no-guest registration, approval/attempt, durable
    lifecycle, owner-lock G2, and archive oracle. Add composed evidence only from retained Supervisor
    state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.

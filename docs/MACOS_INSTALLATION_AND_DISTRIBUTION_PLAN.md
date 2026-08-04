@@ -40,7 +40,8 @@ The current engineering direction is:
   background components;
 - embed governed runtime, libkrun, firmware, kernel, and runtime-root bytes in the application
   release rather than downloading ambient executable dependencies;
-- keep the Source Validator behind two role-specific, private, App-Sandboxed launcher boundaries,
+- keep the Source Validator behind the two role-specific, private, App-Sandboxed launcher
+  boundaries selected by [Accepted ADR-0036](adr/0036-select-role-separated-source-validator-launchers.md),
   each of which owns one fresh Oxc child per validation;
 - create one Runner process per execution attempt only after the Supervisor has durably consumed
   approval and created the attempt;
@@ -59,8 +60,8 @@ roles, not separate products the user configures manually.
 | Swift Broker application | setup/status UI, registered-plan rendering, user-presence approval, user-facing repair and uninstall choices | Supervisor state, backend lifecycle, daemon credentials, automatic trust-state repair | `IN_PROGRESS — TRENDING_GOOD`; product target absent |
 | Agent-facing daemon | agent protocol, proposal intake, untrusted source submission, registered identifiers returned by the Supervisor | approval keys, installation root, Supervisor evidence key, content custody, updater/replacer or backend authority | architecture selected; product IPC absent |
 | Execution Supervisor | authoritative installation/epoch view, registration/approval/attempt/lifecycle state, owner lock, recovery, backend lifecycle | network update resolution, rich UI, arbitrary parsers, daemon-controlled replacement bytes | local mechanics `PASSED`; installed composition `BLOCKED` |
-| Daemon Source Validator launcher | one copied validation request, one fresh child, bounded drain/kill/reap, private disposable scratch residual | Broker requests, Capsule keys/stores, network, package loading, runtime/backend paths | candidate for a new signed profile; product work `BLOCKED` |
-| Broker Source Validator launcher | same narrow parser operation for Broker-retained source | daemon requests, approval key use, Capsule stores, runtime/backend paths | candidate for a new signed profile; product work `BLOCKED` |
+| Daemon Source Validator launcher | one copied validation request, one fresh child, bounded drain/kill/reap, private disposable scratch residual | Broker requests, Capsule keys/stores, network, package loading, runtime/backend paths | ADR-0036 architecture `PASSED`; product work `BLOCKED` on R1-R5D |
+| Broker Source Validator launcher | same narrow parser operation for Broker-retained source | daemon requests, approval key use, Capsule stores, runtime/backend paths | ADR-0036 architecture `PASSED`; product work `BLOCKED` on R1-R5B |
 | Runner | one sealed Supervisor-issued attempt descriptor and the closed runtime/backend descriptor set | registration, approval, update, repair, installation-root, or arbitrary host-path authority | `IN_PROGRESS — TRENDING_GOOD`; not admitted |
 | Update verifier/agent | pinned release metadata retrieval and verification; bounded prepared-update output | installation-root key, Supervisor mutation, replacement authority, execution authority | later beta/production design; not selected |
 | Trust/bootstrap coordinator | if selected, one user-authorized installation/epoch ceremony over closed inputs | routine background operation, network fetching, Supervisor store mutation, execution | new authority role; ADR and signed evidence required |
@@ -234,7 +235,7 @@ service-registration evidence exists.
 | I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `IN_PROGRESS — TRENDING_GOOD`; generated closed profile and authority review required |
 | I1 | Developer-signed app shell, Swift setup/status UI, embedded daemon/Supervisor registration, execution always disabled | `BLOCKED` on I0 and exact signed bundle composition |
 | I2 | Protected Supervisor container, one-time bootstrap, ADR-0033 owner-lock/store open, same-user mutation and restart corpus | `BLOCKED` on bootstrap decision and matching signed identities/profiles |
-| I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, App Group/private-service decision, and Source Validator profile/resource ADR |
+| I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R1-R4 contract/construction/signed evidence; the Source Validator architecture/resource decision itself is `PASSED` |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |
 | I6 | Developer ID/notarized beta, support-floor matrix, backup/restore/uninstall and distribution admission | deferred; paid clean-host coverage is not currently planned |
@@ -249,7 +250,8 @@ Before implementation crosses the named authority boundaries, retain separate de
 1. the one-app/DMG and embedded per-user service topology, including supported install location;
 2. the exact protected-container bootstrap owner and ADR-0033 amendment;
 3. App Group/private-service residual authority and final Mach/XPC naming;
-4. the two Source Validator launchers and quantified reactive-resource contract;
+4. the two Source Validator launchers and quantified reactive-resource contract, now selected by
+   Accepted ADR-0036 while passive contracts and installed evidence remain blocked;
 5. Trust Coordinator authority, if that role remains necessary;
 6. update verifier/TUF profile and `TrustSnapshot` contract;
 7. Bundle Replacer authority and complete-bundle replacement transaction; and

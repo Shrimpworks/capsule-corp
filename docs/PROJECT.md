@@ -51,7 +51,7 @@ decoded views. They do not replace the scaffold, activate an endpoint, or author
 
 Accepted ADR-0034 freezes the first-release source contract to one dependency-free, byte-exact
 `main.mjs`. The merged M1 passive byte/manifest foundation is canonical. A bounded parse-only
-comparison now supports [Proposed ADR-0035](adr/0035-select-disposable-mjs-source-validator.md):
+comparison now supports [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md):
 exact Oxc 0.140.0 parser/AST/semantic checking is the engineering candidate inside a future
 one-shot disposable Source Validator, invoked independently before planning and before approval.
 The experiment is retained in the commit-pinned
@@ -72,20 +72,24 @@ wall limits, kill/reap, and fault refusal, but `RLIMIT_AS` returns `EINVAL` befo
 executes. An explicitly unbounded diagnostic mutation proves file reads, IPv4/Unix socket creation,
 cwd metadata writes, and a 512 MiB mapping remain possible. Apple's supported embedded-tool App
 Sandbox entitlement shape changes the fixed V1 bytes, while deprecated custom sandbox profiles are
-not acceptable evidence. V2 and the parent V1-V5 work are therefore `BLOCKED`, not `NO_GO`, pending
-a newly reviewed/enrolled artifact and supported memory/confinement design. V0/V1 bytes and status
-remain unchanged.
+not acceptable evidence. V2 and the product work are therefore `BLOCKED`, not `NO_GO`. V0/V1/V2
+bytes and status remain unchanged; the supported replacement proceeds only through R1-R5B under
+ADR-0036.
 
-The supported-profile replacement research slice is now `PASSED` in its exact design scope and
-keeps that parent block. Direct App Sandbox helper inheritance is `NO_GO` for this parser because it
-preserves the launching daemon's or Broker's static sandbox rights. A separately sandboxed,
-method-specific XPC launcher owning one fresh parser child is the only plausible supported
-composition found, but its topology is unselected, its writable App Sandbox container conflicts
-with the current no-store rule, and macOS exposes no usable unprivileged hard memory cap on the
-observed host. Reactive physical-footprint monitoring plus kill is not an exact peak ceiling.
-Resume only through the architecture/resource-policy and signed installed R0-R5 plan in the
-[supported macOS profile replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md).
-No user signing identity was used or authorized.
+The supported-profile replacement research and R0 architecture-decision slices are `PASSED` in
+their exact scopes and keep the product parent blocked. Direct App Sandbox helper inheritance is
+`NO_GO` because it preserves daemon/Broker static rights. [Accepted ADR-0036](adr/0036-select-role-separated-source-validator-launchers.md)
+selects two role-specific private App-Sandboxed XPC launchers, one per consumer, with distinct
+services/parser identities/profiles and no shared bus, result, cache, container, group, or key.
+Each private container is accepted only as residual scratch authority: no persistent Capsule
+product state, source/diagnostic log, cache, or reusable result is permitted, and cleanup/residue
+testing is mandatory after every request, crash, restart, update, and startup without becoming a
+confidentiality proof. The unavailable hard ceiling is replaced with a later evidence-derived
+reactive physical-footprint watermark, one direct child per launcher request, bounded combined
+two-role concurrency, and kill/drain/reap; it is not a hard peak/exact cap or host-availability
+guarantee. Threshold, cadence, baseline, and overshoot remain unset until the separately authorized
+signed corpus. Resume with the [new passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md)
+and sequential R1-R5B plan. No user signing identity was used or authorized.
 
 Phase 2B now retains a closed 94-rule, 458-case, 561-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,

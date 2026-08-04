@@ -104,6 +104,9 @@ func TestInventoryRefusesMissingMixedExtraBeforeInactiveSigning(t *testing.T) {
 		"component-missing",
 		"component-extra",
 		"component-mixed",
+		"component-mixed-or-duplicate",
+		"component-mixed-or-duplicate",
+		"inventory-profile-mismatch",
 	}
 	for index, test := range tests {
 		result := EvaluateActivation(profile, test.Input)

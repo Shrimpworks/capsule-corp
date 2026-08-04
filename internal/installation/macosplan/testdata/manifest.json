@@ -10,8 +10,8 @@
     },
     {
       "path": "internal/installation/macosplan/testdata/inventory-cases.json",
-      "bytes": 26068,
-      "sha256": "c8e124666c4511b5f0e1f6a5b1707de9f0a2593b73b9ba96f384942df850b3cd"
+      "bytes": 45723,
+      "sha256": "47be3cde8d45c4b691d583d6bd20eb392cd18d56b6d5fcec9d467a4bf1a84e05"
     },
     {
       "path": "internal/installation/macosplan/testdata/profile.json",

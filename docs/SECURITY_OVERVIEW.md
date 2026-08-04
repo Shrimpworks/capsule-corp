@@ -485,8 +485,9 @@ unknown results stop automatic retry rather than creating a restart storm. A con
 remains consumed throughout; safe retry of the job requires a new human approval.
 
 **Implemented local mechanics.** Archive Slice F1 adds passive archive projections, exact limits
-and known answers, defensive copies, and a pure complete-cohort eligibility selector. It does not
-write a file, migrate the v1 store, move a cohort, activate an archive, or route retained lookup.
+and known answers, defensive copies, and a pure complete-cohort eligibility selector. F2 adds only
+an owner-asserted v1-to-v2 all-hot migration and read-only empty-archive full verifier. Neither
+moves a cohort, writes a segment, activates an archive, routes retained lookup, or calls an adapter.
 
 **Owner G2 local mechanics.** Proposed ADR-0033 selects a pre-created enrolled sibling object
 plus lifetime nonblocking BSD `flock`. G1 implements the internal Go/Darwin acquisition, and G2
@@ -494,10 +495,9 @@ composes it with the current owner-required v1/no-guest startup, same-session co
 recovery, post-open fence, and ordered close under owned temporary roots.
 
 **Open production work.** The authenticated bootstrap and Apple-signed protected-state-root/
-session/update/reboot matrix remain unimplemented. Archive F2's
-fixed-store v2 migration/full verifier, production archive/compaction, backup and rollback
-handling, power-loss tests, real-backend reconciliation, signed evidence, and installed recovery
-are unresolved.
+session/update/reboot matrix remain unimplemented. Archive F3+ segment/activation/retained-lookup
+work, production archive/compaction, backup and rollback handling, real power-loss tests,
+real-backend reconciliation, signed evidence, and installed recovery are unresolved.
 
 ## What exists today
 

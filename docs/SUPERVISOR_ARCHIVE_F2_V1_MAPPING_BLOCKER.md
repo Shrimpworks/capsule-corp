@@ -1,6 +1,7 @@
 # Supervisor archive F2 v1 mapping resolution
 
-Status: passive mapping contradiction resolved; stateful F2 remains unimplemented and no v2 bytes exist.
+Status: passive mapping contradiction resolved; the follow-on stateful F2 slice is `PASSED` in its
+exact local fixed-store scope.
 
 Date opened: 2026-08-04
 
@@ -166,11 +167,17 @@ The fault and downgrade matrix is exact:
 - ordinary startup recovery may establish lifecycle only after a successful version-specific
   reopen. Migration itself never does so.
 
-## Remaining boundary
+## Subsequent stateful result
 
-The logical missing-lifecycle mapping is closed. `FixedFileStoreV2`, v1-to-v2 file migration, the
-v2 opener/full verifier, migration fault implementation, archive segment publication/activation,
-retained lookup, deletion, backup, production storage, adapter calls, runtime/backend/guest wiring,
-and every consumer remain absent. ADR-0031 remains Proposed. This passive correction advances no
-production, archive activation, continuous-service, rollback-resistance, runtime, backend, or guest
+The logical missing-lifecycle mapping remains closed. The follow-on
+[F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) implements
+`FixedFileStoreV2`, the owner-asserted v1-to-v2 file migration, the closed v2 opener/full verifier,
+and its bounded local fault/corruption/capacity/concurrency/process-death corpus. It preserves the
+exact valid v1 crash witness as one absent lifecycle arm with independent zero lifecycle count and
+runs no recovery adapter.
+
+Archive segment publication/activation, cohort movement, retained lookup, deletion, backup,
+production storage, v2 authority mutation, adapter calls, runtime/backend/guest wiring, and every
+consumer remain absent. ADR-0031 remains Proposed. This result advances no production, archive
+activation, continuous-service, rollback-resistance, runtime, backend, guest, or product-admission
 claim.

@@ -16,11 +16,12 @@ boundary and must not be used to execute hostile code without another trusted sa
 
 Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short: the passive
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
-and G2 local owner composition are `PASSED` in their exact scopes. Product Source Validator work,
-governed `deno_core`, and governed libkrun are `IN_PROGRESS — TRENDING_GOOD`. Archive F2, installed
-owner-lock G3, and runtime/profile admission are `BLOCKED` on the named dependencies below. They
-are not `NO_GO`. Product admission and control-evidence maturity remain separate from those work
-statuses.
+and G2 local owner composition are `PASSED` in their exact scopes. The archive F2 fixed-store
+v1-to-v2 migration/full verifier is also `PASSED` in its narrow local-conformance scope. Product
+Source Validator work, governed `deno_core`, and governed libkrun are `IN_PROGRESS —
+TRENDING_GOOD`. Installed owner-lock G3 and runtime/profile admission are `BLOCKED` on the named
+dependencies below. They are not `NO_GO`. Product admission and control-evidence maturity remain
+separate from those work statuses.
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
@@ -114,7 +115,13 @@ follow-on valid-v1 missing-lifecycle contradiction is now also passively resolve
 absent/present lifecycle union on each attempt entry and lifecycle counts derived only from present
 records. The executable [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md)
 retains the real committed-attempt-before-lifecycle witness and exact `attempts = 1, lifecycles =
-0` genesis answer. The fixed-store v2 migration/full verifier remains unimplemented.
+0` genesis answer. Stateful F2 now implements the owner-asserted closed v1-to-v2 migration and
+read-only full verifier as a finite local oracle. It preserves that witness without recovery or
+invention, reconstructs all-hot retained-global indexes and migration genesis, and retains exact
+known answers plus pre/post-rename, corruption, capacity, concurrency, and subprocess-death tests.
+See the [F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md). It moves no
+cohort, creates no segment, routes no retained lookup, calls no adapter, and is not a production
+store or durability claim.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

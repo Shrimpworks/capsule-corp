@@ -2,19 +2,21 @@
 
 Status: proposed and local-only. Slice F1 implements passive archive projections, exact
 limits/domain-separated known answers, defensive copies, and the pure closed-cohort eligibility
-selector. The passive F2 format-correction slice has resolved PR #78's three contradictions with
+selector. The passive F2 format-correction slice resolved PR #78's three contradictions with
 scope-separated global/segment indexes, typed hot/archive locations and count equations, and a
 distinct migration-genesis checkpoint. Generated answers and before/after semantics are retained in
-[the F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). It performs no file I/O or
-authority mutation. Proposed ADR-0031 still defines the unimplemented immutable retained archive
+[the F2 blocker resolution](SUPERVISOR_ARCHIVE_F2_FORMAT_BLOCKER.md). Proposed ADR-0031 still
+defines the unimplemented immutable retained archive
 and selects a minimal fixed-store checkpoint only as the conformance oracle. The follow-on valid-v1
 mapping contradiction is now passively resolved with an explicit absent/present lifecycle union on
 attempt entries and independent lifecycle counts. The exact real-v1 witness, alternative analysis,
 decision, and fault plan are retained in the
-[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No migration,
-full v2 verifier, archive write/activation, retained lookup,
-consumer, IPC, evidence, runtime, backend, process, service, identity, credential, user data,
-deployment, or guest is implemented by this plan.
+[F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). The
+[stateful F2 result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) now implements the owner-asserted
+v1-to-v2 migration, downgrade refusal, and read-only empty-archive full verifier with exact known
+answers and local fault/corruption/capacity/concurrency/process-death evidence. It implements no
+archive write/activation, cohort movement, retained lookup, consumer, IPC, runtime, backend,
+service, identity, credential, user data, deployment, or guest.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -50,17 +52,17 @@ The stateful implementation oracle is current Slice B/E5:
 - indeterminate rename/directory-sync outcomes fence the open store until reopen; and
 - the only lifecycle adapter is the no-guest fake.
 
-Slice F1 plus its passive format correction add `internal/execution/archivestate` values and tests
-only. They implement closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections,
+Slice F1 plus its passive format correction add `internal/execution/archivestate` values and tests.
+They implement closed generation/ordinal/digest/index/descriptor/checkpoint/plan projections,
 scope- and kind-separated record locations, exact candidate limits and generated known answers,
 defensive-copy behavior, and deterministic complete-cohort selection with `RecoveryAttemptIDs`
-exclusion. They do not open or write a store or segment, migrate v1, reconstruct a v2 archive set,
-release hot capacity, route lookup, or invoke the fake. The passive mapping decision is closed;
-stateful F2 remains unimplemented.
+exclusion. Stateful F2 uses those projections to migrate a fully validated v1 file into one all-hot
+v2 file and fully verify it on reopen. It does not write a segment, release hot capacity, route
+lookup, mutate v2 authority, or invoke the fake.
 
 E5 retains only the current lifecycle record's `EffectID`; later operations replace that field.
-Slice F2 must record this as a migration limitation, seed tombstones from every nonzero ID still
-visible in v1, and add a v2 never-delete effect-tombstone set. From v2 onward, `BeginEffect` commits
+Slice F2 records this as a migration limitation and seeds tombstones from every nonzero ID still
+visible in v1. F4 must add v2 mutation behavior so `BeginEffect` commits
 the new effect tombstone in the same transaction as the intent. Tests must not imply that
 overwritten pre-v2 fake IDs were reconstructed or that a transcript exists.
 
@@ -563,7 +565,7 @@ behavior changed.
 Acceptance: passive types, digests, fixtures, and tests only. No v2 store bytes or lifecycle
 behavior changed.
 
-### Slice F2: explicit fixed-store v2 migration and full verifier — next
+### Slice F2: explicit fixed-store v2 migration and full verifier — complete
 
 - Add v2 closed open/validation with empty archive known answers.
 - Add explicit offline lock-asserted v1-to-v2 migration and downgrade refusal.
@@ -572,7 +574,14 @@ behavior changed.
 Acceptance: no cohort leaves hot state and no archive segment exists. V1 behavior and E5 tests stay
 unchanged.
 
-Entry condition: the passive contract now represents the valid v1 crash state without invention.
+Observed result: `PASSED` in this exact scope. The implementation and retained known answers are
+recorded in the [F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md). Owner
+checks occur at entry, immediately before commit, and before reopen; confirmed pre-rename failures
+preserve byte-identical v1, while post-rename/directory-sync uncertainty returns indeterminate and
+fresh reopen observes one complete version. Full reconstruction, downgrade, corruption,
+exact/cap+1, concurrency, process-death, and defensive-copy oracles pass with zero adapter calls.
+
+Entry condition was satisfied: the passive contract represents the valid v1 crash state without invention.
 See the [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md),
 `TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts`, and
 `TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection`. Stateful work must follow the exact

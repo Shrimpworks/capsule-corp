@@ -1,7 +1,7 @@
 # Supervisor archive F2 format blocker resolution
 
-Status: original passive format contradiction resolved; follow-on v1 mapping contradiction also
-resolved passively; stateful F2 remains absent.
+Status: original passive format contradiction and follow-on v1 mapping contradiction resolved;
+the subsequent stateful F2 slice is `PASSED` in its exact local fixed-store scope.
 
 Date opened: 2026-08-04
 
@@ -177,11 +177,12 @@ The original three contradictions and the later valid-v1 missing-lifecycle contr
 resolved at the passive contract layer. The
 [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md) selects an explicit
 attempt-lifecycle absence/presence union with independently derived lifecycle counts and retains
-the exact real-v1 witness. F2 may next add only the explicit owner-lock-asserted fixed-store
-v1-to-v2 migration, downgrade refusal, closed v2 opener, and empty-archive full verifier under the
-recorded conformance/fault plan.
+the exact real-v1 witness. The subsequent
+[F2 stateful migration result](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) implements only the
+explicit owner-asserted fixed-store v1-to-v2 migration, downgrade refusal, closed v2 opener, and
+empty-archive full verifier under the recorded conformance/fault plan.
 
-This correction does not implement `FixedFileStoreV2`, v1-to-v2 file migration, archive segment
-writing or activation, cohort movement, retained lookup, deletion, production storage, owner-lock
-G2, adapter calls, a runtime/backend/process/service/guest, or any consumer. Overwritten pre-v2
-EffectIDs remain unknowable. No v2 bytes were chosen or written by either passive correction.
+The passive correction itself did not choose v2 bytes. The subsequent stateful slice still does not
+implement archive segment writing or activation, cohort movement, retained lookup, deletion,
+production storage, owner-lock G2, adapter calls, a runtime/backend/service/guest, or any consumer.
+Overwritten pre-v2 EffectIDs remain unknowable.

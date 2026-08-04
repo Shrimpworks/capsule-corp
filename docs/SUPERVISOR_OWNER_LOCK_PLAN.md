@@ -157,9 +157,10 @@ refuses before store mutation or fake work, and ownerless product constructors a
 
 The composition intentionally exposes no migration, archive, backup, repair, IPC, adapter-selection,
 runtime, real-backend, or guest port. The existing owner-asserted v0-to-v1 migration test remains a
-separate offline conformance oracle. F2's passive format correction is complete, while its v1-to-v2
-migration/full verifier remains unimplemented and outside G2. Existing path-based v1 openers remain
-test-only and no product command or service consumes them.
+separate offline conformance oracle. F2's passive format correction and subsequent stateful
+v1-to-v2 migration/full verifier are `PASSED` in their separate local conformance scopes and remain
+outside G2. Existing path-based openers remain test-only and no product command or service consumes
+them; F2 accepts an asserted owner but does not implement the installed ADR-0033 owner.
 
 ### G3: installed identity/session/update evidence
 

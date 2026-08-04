@@ -478,7 +478,7 @@ func rejectDuplicateJSONNames(data []byte) error {
 }
 
 func validateExistingStoreFile(path string) error {
-	info, err := os.Lstat(path)
+	info, err := os.Lstat(path) //nolint:gosec // G703: path is the installation-configured store file validated here before any open or mutation.
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return errors.New("fixed supervisor store is missing")

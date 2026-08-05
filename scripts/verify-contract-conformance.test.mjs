@@ -3,9 +3,9 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
+import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 import { verifyConformanceCorpus } from "./verify-contract-conformance.mjs";
 
 const schemaPath = new URL("../schemas/conformance/v0/manifest.schema.json", import.meta.url);

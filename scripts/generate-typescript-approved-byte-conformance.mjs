@@ -229,4 +229,3 @@ function argument(major, value) {
   }
   throw new Error("fixture integer exceeds uint32");
 }
-

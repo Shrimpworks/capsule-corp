@@ -1,8 +1,8 @@
 import { lstat, readdir, readFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
-import { sha256Hex } from "./lib/fixture-bytes.mjs";
 import { pathToFileURL } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const defaultRootDirectory = new URL("../schemas/conformance/v0/", import.meta.url);
 const metadataFiles = new Set(["manifest.json", "manifest.schema.json"]);

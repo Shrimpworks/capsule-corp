@@ -17,9 +17,15 @@ const contract = JSON.parse(exact);
 
 test("independently verifies exact passive C2A and unchanged C1 bytes", () => {
   assert.equal(exact.length, 26_850);
-  assert.equal(sha256Hex(exact), "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f");
+  assert.equal(
+    sha256Hex(exact),
+    "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f",
+  );
   assert.equal(c1Exact.length, 9_289);
-  assert.equal(sha256Hex(c1Exact), "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e");
+  assert.equal(
+    sha256Hex(c1Exact),
+    "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+  );
   assert.equal(contract.c1Binding.bytes, c1Exact.length);
   assert.equal(contract.c1Binding.sha256, sha256Hex(c1Exact));
   assert.equal(contract.c1Binding.consumption, "exact-byte-read-only");

@@ -1,10 +1,10 @@
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
-import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 import { addApprovalAttemptRulesAndCases } from "./generate-approval-attempt-conformance-fixtures.mjs";
 import { addMjsSourceFoundationRulesAndCases } from "./generate-mjs-source-foundation-conformance-fixtures.mjs";
 import { addMjsSourceValidatorPassiveRulesAndCases } from "./generate-mjs-source-validator-passive-conformance-fixtures.mjs";
 import { addMjsSourceValidatorV1RulesAndCases } from "./generate-mjs-source-validator-v1-conformance-fixtures.mjs";
 import { addPlanRegistrationRulesAndCases } from "./generate-plan-registration-conformance-fixtures.mjs";
+import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
 const sharedDirectory = new URL("shared/", corpusRoot);

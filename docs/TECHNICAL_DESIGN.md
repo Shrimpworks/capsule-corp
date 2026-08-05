@@ -165,10 +165,11 @@ The first complete workflow is intentionally narrow:
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
 4. The Trusted Host Broker fetches the registered bytes directly from the Supervisor, independently
-   validates their exact custody bindings, renders a bounded human-readable view of the source,
-   digest, length, limits, input, and runtime/profile, requires fresh user presence, and signs one
-   attempt-bound `ApprovalGrant`. A later Source Validator may add typed grammar facts but is not
-   approval authority for the internal alpha.
+   validates their exact custody bindings, renders the ADR-0043 bounded view of source, digest,
+   length, supported limits, input binding, and runtime/profile, requires fresh user presence, and
+   signs one attempt-bound `ApprovalGrant`. The current passive projection shows inline-input digest
+   and length but explicitly cannot show content bytes absent from Supervisor readback. A later
+   Source Validator may add typed grammar facts but is not approval authority for the internal alpha.
 5. The Supervisor performs runtime-integrity preflight, atomically consumes the grant, and creates
    one `ExecutionAttempt` before any hostile side effect.
 6. The selected runtime executes in a disposable development backend with no network, ambient
@@ -453,18 +454,25 @@ Attempt requests contain only the registration ID. Replacement bytes are never a
 
 ### 4. Approval
 
-The Broker connects directly to the Supervisor and fetches the registered bytes. Its approval view
-shows source identity, complete input-read authority, runtime/profile posture, network/process/
-environment state, exact limits, declared output, user and agent observation channels, and the
-warning that generated code can encode inputs through permitted outputs or metadata.
+The Broker connects directly to the Supervisor and fetches the registered bytes. `RegistrationID`
+is only an untrusted locator. Accepted ADR-0043 requires plan, resolved bindings, registration,
+manifest, exact source, installation, epoch, Supervisor, digest, length, and expiry agreement before
+rendering. Its v0 view uses a reversible ASCII-only byte escape for exact source, shows the current
+input digest/length binding while disclosing that input content bytes are absent, identifies the
+runtime/profile and supported limits, and warns that generated code can encode inputs through
+permitted outputs, metadata, state, or timing.
 
 Untrusted labels are length-bounded, escaped, Unicode-bidi-safe, and visually separated from
 trusted UI. The UI does not claim that the user understands the source. A plan that cannot be
 rendered completely and safely cannot be approved.
 
-After fresh user presence, the Broker signs an `ApprovalGrant` binding the plan digest,
+After fresh user presence through one fresh nonreused `LAContext`, the Broker signs an
+`ApprovalGrant` binding the plan digest,
 registration, installation, epoch, expected Supervisor, attempt nonce, purpose, audience, issue
-time, expiry, and boot/session context where reliable.
+time, and expiry. The exact key contract is Team `3DDR84M4JS`, Broker role, epoch-scoped access
+group, nonexportable Secure Enclave P-256 when supported, explicit `userPresence` plus
+`privateKeyUsage`, invalidation after every outcome, and no software fallback. The passive
+implementation performs no Keychain or LocalAuthentication operation.
 
 ### 5. Runtime-integrity preflight
 
@@ -594,9 +602,13 @@ Mandatory rules include:
 - retain exact registered payload bytes as authoritative instead of replacing them with
   decode-and-re-encode output.
 
-Capsule will not implement ECDSA primitives. The narrow CBOR/COSE wrappers and their dependencies
-must be reviewed and fuzzed before ADR-0019 can become Accepted. The public agent API remains strict
-JSON with a separate decoder and schema boundary.
+Capsule will not implement ECDSA primitives. Accepted ADR-0043 adds an unwired Capsule-owned
+ApprovalGrant wrapper around standard-library P-256 verification and the already-reviewed
+deterministic-CBOR dependency boundary. Public-key known answers cover exact Sign1 framing,
+canonical closed headers/payload, raw `R || S`, complementary `S`, key/role/time bindings, and
+restoration refusals. This does not accept Proposed ADR-0019 for the remaining signed objects or
+provide an installed consumer. The public agent API remains strict JSON with a separate decoder and
+schema boundary.
 
 Not every content-addressed object is signed. Source, plan, policy, and artifact manifests can use
 hash identity because signed/registered parent objects bind them. Distributed runtime bundles,

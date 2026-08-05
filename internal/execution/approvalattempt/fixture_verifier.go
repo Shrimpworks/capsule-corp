@@ -16,15 +16,15 @@ const (
 	ApprovalProtectedCalculatedMaxBytes = 116
 )
 
-// Verifier is the bounded port the later store will inject. Slice A supplies
-// only FixtureVerifier; no production COSE implementation exists here.
+// Verifier is the bounded role-bound verification port. FixtureVerifier and
+// the unwired public-key-only ProductionShapedVerifier both satisfy it.
 type Verifier interface {
 	Verify(context.Context, []byte, ApprovalGrantRoleBindings) (*VerifiedApproval, error)
 }
 
-// CandidateVerifier is the Slice B injection seam. It verifies one exact
-// candidate envelope and resolves its fixture-only signer authorization before
-// the store independently applies registration and active-state bindings.
+// CandidateVerifier is the existing Slice B fixture injection seam. It
+// resolves retained test metadata before the store applies registration and
+// active-state bindings; ProductionShapedVerifier is intentionally not wired here.
 type CandidateVerifier interface {
 	VerifyCandidate(context.Context, []byte) (*VerifiedApproval, error)
 }

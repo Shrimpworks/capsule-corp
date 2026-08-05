@@ -68,7 +68,10 @@ Supervisor-issued `AttemptID` and revalidates the committed attempt and plan bef
   approvals, and attempts, including the v1→v2 migration and archive slices (F1–F4 in
   `docs/PROJECT.md`/`docs/SUPERVISOR_ARCHIVE_*`).
 - `internal/execution/approvalattempt` — passive typed domains, a closed classification
-  vocabulary, and a bounded fixture-only verifier.
+  vocabulary, the bounded fixture verifier, and an unwired public-key-only strict ApprovalGrant
+  verifier.
+- `internal/execution/brokerapproval` — ADR-0043 read-only, ASCII-safe projection over bound
+  Supervisor-retained plan/registration/source bytes; it has no UI or key operation.
 - `internal/execution/registeredlifecycle` — the **fake**, no-guest lifecycle: it never launches a
   real guest. It exists to exercise registration/approval/attempt plumbing before a real backend is
   admitted. Don't mistake "lifecycle passes" here for "execution works."

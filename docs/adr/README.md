@@ -77,5 +77,7 @@ its core conclusion.
   — Accepted; C2B v3 passive binding `PASSED`, current-source runnable artifacts and guest admission remain `BLOCKED`
 - [ADR-0042: Freeze the passive durable completion-last transaction](0042-freeze-passive-durable-completion-transaction.md)
   — Proposed; fixed-file/FakeBackend oracle `PASSED`, product completion/store integration remains `BLOCKED`
+- [ADR-0043: Freeze Broker rendering and approval verification](0043-freeze-broker-rendering-and-approval-verification.md)
+  — Accepted; passive projection and public-key-only COSE verification `PASSED`, installed UI, key use, IPC, and product activation remain `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

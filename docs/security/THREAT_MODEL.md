@@ -180,9 +180,12 @@ an attempt-bound approval after user presence. It transfers only attempt-scoped 
 Trusted UI must safely render untrusted labels, sizes, and source/content metadata. It never claims
 that the user understood generated source merely because presence was proven.
 
-Before rendering or key use, the Broker invokes an independent fresh Source Validator over the
-exact source bytes fetched from Supervisor registration state. It does not trust a daemon result
-or child-supplied prose. The Supervisor retains and rehashes source but never performs rich parsing.
+For the owner-only internal alpha, Accepted ADR-0040 does not require the blocked Source Validator.
+The Broker trusts neither daemon prose nor child-supplied prose: it renders only strictly bound
+Supervisor-retained plan, role-binding, registration, manifest, and exact-source bytes. Accepted
+ADR-0043 freezes the bounded ASCII-only source projection and explicitly discloses that the current
+readback contains inline-input digest and length but not content. A later fresh Source Validator may
+add typed grammar facts as defense in depth; it is not approval authority.
 
 UI activation, focus, or a synthetic click is not user presence. Approval requires the configured
 LocalAuthentication/Keychain-gated private-key operation over the exact registered-plan binding.
@@ -190,6 +193,11 @@ Baseline synthetic-event attempts must fail to produce a grant without that oper
 overlay/window automation, and similar broad user-granted capabilities remain an explicit elevated
 posture with separately recorded limitations and tests; Capsule does not imply they are defeated by
 ordinary anti-spoofing UI.
+
+The retained ADR-0043 implementation is passive evidence only: no installed UI, `LAContext`,
+Keychain item, private key, prompt, signing operation, IPC endpoint, or activation path exists. Its
+public-key-only verifier proves strict Sign1/key/time/role binding for checked-in vectors, not human
+presence, comprehension, correct UI logic, or synthetic-input containment.
 
 ### Local process and storage boundary
 
@@ -496,6 +504,10 @@ automation, overlay/window spoofing, and focus substitution. The Broker renders 
 registered typed data with bounded safe UI and a LocalAuthentication/Keychain-gated signing
 operation; the Supervisor consumes the grant once. A click or focused window alone is never
 approval evidence.
+
+Passive ADR-0043 conformance neutralizes raw bidi/control bytes, rejects mixed or stale Supervisor
+readback, freezes context invalidation requirements, and verifies public-key ApprovalGrant vectors.
+It deliberately remains approval-ineligible and does not advance the installed UI control.
 
 The Broker can produce a signature whose local key operation was gated by configured user-presence
 controls. A remote verifier can check key attribution, but cannot independently verify user

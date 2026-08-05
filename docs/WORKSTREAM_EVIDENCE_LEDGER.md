@@ -20,6 +20,7 @@ next dependency boundary for the latest group are recorded in the
 | Slice | Scoped result | Parent boundary |
 | --- | --- | --- |
 | Passive authority-plane atomic cutover | `PASSED`: exact-one-`main.mjs` plan, bindings, manifest, source, registration, and defensive fetch publish atomically in the fixed-store oracle. | Authenticated product facades, Broker/approval, attempt, runtime, backend, and guest remain `BLOCKED`. |
+| Broker rendering and approval conformance v0 | `PASSED`: Accepted ADR-0043 freezes a read-only ASCII-safe projection over bound Supervisor bytes, the exact Secure Enclave/user-presence/no-fallback key contract, and a Capsule-owned public-key-only ApprovalGrant Sign1 verifier with canonical/header/payload/signature/key/role/time/refusal tests. | Inline-input content is not present or shown. Installed UI, Keychain/LocalAuthentication, private key/signing, authenticated IPC, verifier/store wiring, activation, runtime, backend, guest, and product admission remain `BLOCKED`. |
 | C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | Current-source libkrun dylib, final runner, fixed-owned-guest eligibility, and admission remain `BLOCKED`. |
 | Production-shaped I2B1 CBOR/COSE wrapper review | `PASSED`: 95 Go/Swift checked-in-vector cases close pairing, repeated-field binding, payload-owned replay, caps, mutations, and fuzz targets. | Live signing, caller/key authorization, durable replay, installed consumers, and product admission remain `BLOCKED`. |
 | Compiled-artifact archive migration | `PASSED`: 210 completed payload/evidence files are pinned to capsule-experiments commit `0944ffd8cfd01ec23e4ae99138b0931d56804077`; Capsule retains compact conformance metadata and six deterministic I2B2 source inputs. | No product, signing, installation, runtime, or admission status changes. |
@@ -28,7 +29,7 @@ next dependency boundary for the latest group are recorded in the
 | Archive F5 | `PASSED`: owner-held coherent backup, complete-copy verification, read-only exact-anchor restore admission, known-orphan cleanup, and offline reporting. | F6, restore activation, production-engine, power-loss/rollback, and external-alpha continuity remain `BLOCKED`. |
 
 The current generated conformance totals are 95 rules, 502 cases, and 624 fixtures. The current
-field-authority manifest has 1,111 fields across 81 profiles and 50 targets. These whole-repository
+field-authority manifest has 1,159 fields across 91 profiles and 57 targets. These whole-repository
 totals supersede older checkpoint counts without rewriting their historical evidence.
 
 ## 2026-08-05 internal-alpha architecture audit synthesis

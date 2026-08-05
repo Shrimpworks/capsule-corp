@@ -151,8 +151,13 @@ proposal/source/input semantics, exact plan and registration bytes, registration
 the passive authority-plane cutover, and the unwired ADR-0024 approval/attempt boundary. The
 generated verifier is canonical for the current per-language distribution. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact
-candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
-colocated fixed registration/approval/attempt store. The no-guest fake lifecycle now resolves and
+candidate approval known answer, a bounded fixture verifier, a separate unwired Capsule-owned
+public-key-only COSE verifier, and one unwired transactionally colocated fixed
+registration/approval/attempt store. Accepted ADR-0043 also freezes an ASCII-safe read-only Broker
+projection over Supervisor-retained plan/bindings/registration/manifest/source bytes and the exact
+Secure Enclave/user-presence key policy without performing a key operation. The current readback
+contains inline-input digest and length but not inline-input content, so the projection says that
+content is not shown and remains approval-ineligible. The no-guest fake lifecycle now resolves and
 recovers only committed `AttemptID` records, revalidates exact plan and copied bindings before fake
 prepare, and retains the original 12 top-level focused lifecycle tests for binding, replay,
 concurrency, fault, and startup-recovery behavior. The E4/E5 local checkpoint adds focused durable

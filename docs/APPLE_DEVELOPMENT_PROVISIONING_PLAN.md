@@ -1,18 +1,22 @@
 # Apple Development provisioning and installed-test plan (Team `3DDR84M4JS`)
 
-Date: 2026-08-04
+Date: 2026-08-04; reconciled 2026-08-05 after I1B/R3
 
-Status: retained provisioning and installed-test plan, updated from user-provided non-secret
-identity discovery. This documentation task did not mutate the Apple Developer portal, any
-Keychain, profile, signed byte, or installed service. Every bundle ID, entitlement, service name,
-and test step below is a proposal for the user/orchestrator to execute later against
-[S5: Apple Development installed matrix](AUTHENTICATED_LOCAL_IPC_PLAN.md#s5-apple-development-installed-matrix),
-not a decision this repository has already made unless the exact doc/ADR making it is cited.
+Status: retained historical provisioning proposal plus current reconciliation. The original
+documentation slice did not mutate the Apple Developer portal, Keychain, profiles, signed bytes,
+or installed services. Accepted ADR-0037 later selected the containing topology, and the exact
+Apple Development I1B/Source Validator R3 installed experiment is `PASSED` using three explicit
+Team-`3DDR84M4JS` profiles. Sections that describe the earlier Option A/Option B choice or the S5
+matrix are retained planning history, not current instructions. Installed I2B remains `BLOCKED` on
+separately authorized I2B3 Coordinator/bootstrap provisioning and its named evidence gates.
+The completed experiment's public evidence is retained in the
+[pinned R3 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1b-r3-signed-development-composition).
 
 The canonical practical inventory, Team-ID reconciliation, replacement-input checklist, environment and
 component matrices, credential/key custody rules, and safe setup/verification commands now live in
 [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
-This retained plan remains the detailed installed-test proposal and historical W4/3DDR discovery.
+This retained plan remains the detailed historical installed-test proposal, W4/3DDR discovery,
+and current provisioning reconciliation.
 
 Identity reconciliation: the earlier inference that the parenthesized value in an Apple
 Development certificate display name was the signing Team ID is false. Certificate SHA-1
@@ -21,7 +25,8 @@ Development certificate display name was the signing Team ID is false. Certifica
 TeamIdentifier are `3DDR84M4JS`. On 2026-08-04 the account's Apple Membership Details independently
 identified `3DDR84M4JS` as the Apple Developer Program Team ID for the Individual membership.
 `W4QUR9FUL4` is therefore a certificate common-name/member display suffix, not Capsule's Team ID.
-Installed G3 remains `BLOCKED` on its protected-root/bootstrap composition and exact role profiles;
+Installed G3/I2B remains `BLOCKED` on its protected-root/bootstrap composition and exact
+Coordinator/bootstrap profiles;
 see the retained
 [historical G3 result](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md).
 
@@ -34,11 +39,10 @@ IDs and must not be reused as generic Team profiles.
 
 A user-run `security find-identity -v -p codesigning` on 2026-08-04 reported a new valid Apple
 Development identity, SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793`, and Keychain Access showed
-it under My Certificates. This discovery records local private-key pairing but does not authorize
-use. The older Apple Development identity `1638...61E3` and Developer ID Application identity
-`AD70...F750` remain distinct and are neither revoked nor selected by this plan. The first
-separately authorized harmless signing readback must still prove that the exact selected identity
-emits TeamIdentifier `3DDR84M4JS` before any installed matrix continues.
+it under My Certificates. The later separately authorized I1B/R3 experiment selected that identity
+and retained exact subject/profile/signed-byte readback for TeamIdentifier `3DDR84M4JS`. This does
+not authorize later use. The older Apple Development identity `1638...61E3` and Developer ID
+Application identity `AD70...F750` remain distinct and were not selected for I1B/R3.
 
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
@@ -60,8 +64,9 @@ ADR-0029, plus the retained real spikes in the commit-pinned
 [`macos-authority-separation`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation)
 (Gate B, the same Team but different experimental bundle identifiers and profiles).
 
-It did not access the Apple Developer portal, create any identifier, download any provisioning
-profile, sign any component, or modify the repository beyond adding this document.
+The original planning task did not access the Apple Developer portal, create any identifier,
+download any provisioning profile, or sign any component. The later separately authorized I1B/R3
+experiment did those exact scoped operations and retained its public evidence independently.
 
 The only real product binary in the repository today is `cmd/capsuled/main.go`. There is no Swift
 Broker source, no Supervisor native front-end source, and no Xcode project for any product
@@ -75,26 +80,27 @@ Per S5 and `WORKSTREAM_EVIDENCE_LEDGER.md`:
 
 - Apple Membership Details confirms Individual Apple Developer Program membership under Team
   `3DDR84M4JS`.
-- `security find-identity -v -p codesigning` reports two valid Apple Development identities whose
-  common names end in `W4QUR9FUL4`: SHA-1 `1638...61E3` and new SHA-1 `80A4...D3793`. That suffix is
-  not the Team ID; exact signed-byte Team readback remains mandatory for whichever identity is
-  separately authorized.
-- Xcode 26.6 has three cached profiles under Team `3DDR84M4JS` (Gate B Broker, Gate B Supervisor,
-  wildcard). Their bundle identifiers and entitlements do not match the Capsule roles, so none is
-  reusable for this plan.
+- `security find-identity -v -p codesigning` reported two valid Apple Development identities whose
+  common names end in `W4QUR9FUL4`: SHA-1 `1638...61E3` and `80A4...D3793`. That suffix is not the
+  Team ID. Exact I1B/R3 readback later selected `80A4...D3793` and emitted TeamIdentifier
+  `3DDR84M4JS` for that experiment only.
+- The earlier Xcode cache contained three nonmatching Gate B/wildcard profiles. I1B/R3 later
+  created and selected three exact explicit-App-ID profiles for Broker, daemon, and Supervisor;
+  their public metadata and hashes are retained in the pinned R3 archive.
 - A separate Developer ID Application identity SHA-1 `AD70...F750` also belongs to Team
   `3DDR84M4JS`. It is later distribution authority and does not authorize Developer ID signing or
   make notarization current.
-- No exact Capsule role provisioning profile is locally confirmed.
+- No exact I2B3 Trust Coordinator/bootstrap provisioning profile is confirmed.
 - No paid owned clean-host / minimum-OS validation hardware is currently planned.
 
-Actual App ID/profile capacity and portal availability must still be observed under Team
-`3DDR84M4JS` during identifier/profile creation; repository text cannot establish portal state.
+Any later App ID/profile capacity and portal availability must be observed under Team
+`3DDR84M4JS` during the separately authorized task; I1B/R3 evidence does not establish future
+portal state.
 
-## Component inventory and bundle-identifier proposal
+## Component inventory and selected bundle topology
 
-Per `ARCHITECTURE.md` and ADR-0029, there are exactly three local authorities plus one already-
-decided non-authority:
+The original plan, following `ARCHITECTURE.md` and ADR-0029, described three ordinary local
+authorities plus one already-decided non-authority:
 
 | Authority | Language/packaging (as decided) | Source |
 | --- | --- | --- |
@@ -105,44 +111,40 @@ decided non-authority:
 ADR-0029 is explicit that the Supervisor's native front end is not a separate process, binary, or
 bundle — it shares the Supervisor's code identity, and the ADR explicitly rejects a "separate Swift
 XPC front end plus Go Supervisor service" topology. The TypeScript Source Preparer's native front
-(ADR-0032) remains `BLOCKED`, not selected for the first release. **There is no fourth signable
-component today**; adding one requires its own ADR.
+(ADR-0032) remains `BLOCKED`, not selected for the first release. Proposed ADR-0038 later adds one
+installation-only Trust Coordinator as the eighth I2 role. Any other signable authority still
+requires its own ADR.
 
-No ADR or architecture doc names a distinct product-facing container app separate from the daemon,
-Broker, and Supervisor. This plan proposes bundle IDs for both plausible options rather than picking
-one:
+The original plan considered Option A (daemon as main app) and Option B (a separate installer
+app). Accepted ADR-0037 supersedes that choice: one visible Broker `Capsule.app` contains the
+separately enrolled daemon and Supervisor roles. Neither historical option authorizes registering
+`com.capsulecorp.capsule` or `com.capsulecorp.capsule.installer`.
 
-- **Option A** — the daemon is the main app (`cmd/capsuled` ships as the primary user-visible
-  product and registers the Supervisor's `SMAppService.agent`).
-- **Option B** — a separate installer/container app exists only to hold the Supervisor's embedded
-  `LaunchAgent.plist` and perform first-install/update ceremonies (`UPDATE_AND_RECOVERY.md`'s
-  "trusted installer" language is never equated with the daemon).
-
-| Component | Proposed bundle ID | Notes |
+| Component | Selected bundle/signing ID | Current status |
 | --- | --- | --- |
-| Main app — Option A | `com.capsulecorp.capsule` | `cmd/capsuled`'s eventual signed form |
-| Main app — Option B | `com.capsulecorp.capsule.installer` | Only if Option B is chosen |
-| Agent-facing daemon (if packaged separately) | `com.capsulecorp.capsule.daemon` | Needs its own code identity regardless of A/B — ADR-0029 authenticates it as a distinct Supervisor peer |
-| Execution Supervisor | `com.capsulecorp.capsule.supervisor` | Embeds the in-process native front end; no separate ID for that front end |
-| Approval Broker | `com.capsulecorp.capsule.broker` | Swift/native per ADR-0018 |
-| Daemon-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.daemon.v1` | Future ADR-0036 R3 only; embedded in `com.capsulecorp.capsule.daemon`, never shared with Broker |
-| Broker-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Future ADR-0036 R3 only; embedded in `com.capsulecorp.capsule.broker`, never shared with daemon |
-| Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Future nested signed code for only the daemon-private launcher profile |
-| Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Future nested signed code for only the Broker-private launcher profile |
+| Visible Approval Broker app | `com.capsulecorp.capsule.broker` | Selected by ADR-0037; exact development profile passed I1B/R3 |
+| Agent-facing daemon | `com.capsulecorp.capsule.daemon` | Selected by ADR-0037; exact development profile passed I1B/R3 |
+| Execution Supervisor | `com.capsulecorp.capsule.supervisor` | Selected by ADR-0037; exact development profile passed I1B/R3; embeds the in-process native front end |
+| Daemon-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.daemon.v1` | Nested signed identity passed inactive-policy R3 without an independent portal profile |
+| Broker-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Nested signed identity passed inactive-policy R3 without an independent portal profile |
+| Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
+| Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
+| Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Proposed ADR-0038/I2B2 candidate; exact App ID/profile remains an I2B3 blocker |
 | Native front-end (Supervisor's C/Obj-C shim) | N/A — not a separate bundle | Shares `com.capsulecorp.capsule.supervisor`'s code identity |
 | Guest launcher/runner (flagged for completeness, outside this provisioning plan) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
 
 The `com.capsulecorp.capsule.*` namespace is not invented — it is lifted directly from ADR-0029's
 own Mach service names (below). The spike namespace `com.capsulecorp.spike.*` and the Gate B
 historical namespace are disposable/experiment-only and tied to the wrong team; neither is reused
-for product App IDs. None of the IDs above exist as registered App IDs yet.
+for product App IDs. I1B/R3 created the three containing-role App IDs listed above; this repository
+retains public metadata, not portal authority or raw profiles.
 
 ADR-0036 narrows daemon packaging for the Source Validator path: the daemon execution role has the
 enrolled containing-bundle identity `com.capsulecorp.capsule.daemon` even if a user-visible main app
 also exists. Its private validator service is not embedded in or reachable from the installer/main
-app as an alternate peer. These are passive R0 identifiers only; R1-R2 use no signing identity, and
-R3 remains a separately authorized credentialed task after official private-XPC reachability is
-confirmed. This plan does not request, reserve, create, or use any App ID/profile for them now.
+app as an alternate peer. R1-R2 used no signing identity; the later exact R3 signed installed
+inactive-policy composition is `PASSED`. Active parser/product work remains blocked and the passed
+R3 evidence authorizes no later portal or signing action.
 
 ## Required App IDs and provisioning profiles (development-only)
 
@@ -151,33 +153,37 @@ certificate subject OU and emitted TeamIdentifier both equal `3DDR84M4JS`; every
 then a macOS Development profile,
 not Developer ID/Distribution:
 
-| Explicit App ID | Capabilities | Profile type | Notes |
+| Explicit App ID | Capabilities in exact evidence/candidate | Profile type | Current status |
 | --- | --- | --- | --- |
-| Main app (per Option A/B choice) | App Sandbox | macOS App Development | Must be an explicit App ID, not wildcard — wildcard App IDs cannot carry Keychain Sharing or most entitlement-backed capabilities |
-| `com.capsulecorp.capsule.daemon` | App Sandbox | macOS App Development | |
-| `com.capsulecorp.capsule.supervisor` | App Sandbox, Keychain Sharing | macOS App Development | `SMAppService`/embedded-login-item capability is Xcode-managed, not an App ID toggle |
-| `com.capsulecorp.capsule.broker` | App Sandbox, Keychain Sharing | macOS App Development | |
+| `com.capsulecorp.capsule.broker` | App Sandbox | macOS App Development | Exact profile passed I1B/R3 |
+| `com.capsulecorp.capsule.daemon` | App Sandbox | macOS App Development | Exact profile passed I1B/R3 |
+| `com.capsulecorp.capsule.supervisor` | App Sandbox | macOS App Development | Exact profile passed I1B/R3; I2B3 requires a new exact bootstrap entitlement/profile set |
+| `com.capsulecorp.capsule.trust-bootstrap.v1` | App Sandbox plus candidate bootstrap App Group and Coordinator-only Keychain group | macOS App Development | Not created or authorized; exact I2B3 blocker |
 
-For each App ID: one macOS App Development provisioning profile scoped to the exact App ID, the one
-matching authorized Apple Development certificate after exact verification, and this Mac's device
-UDID.
+For each newly authorized App ID: use one macOS App Development provisioning profile scoped to the
+exact App ID, matching authorized Apple Development certificate after exact verification, and the
+owned test Mac's device UDID. Do not reuse I1B profiles for a changed I2B3 entitlement set.
 Development profiles are inherently single-Team, non-notarizable, and Gatekeeper-rejecting by
 design — P0-4A's `spctl --assess` already returned status 3 against ad-hoc-signed bytes, and this
 plan should not chase a Gatekeeper-pass result with a Development profile.
 
-Given no Xcode project exists yet for these components, default to manual/explicit App ID + profile
-creation in the portal first (reserving the bundle IDs above), then let Xcode's automatic signing
-pick them up once real targets exist, mirroring the archived
+No product Xcode project exists yet. I1B/R3 used a deliberately inert provisioning probe and exact
+manual gates; future product targets must bind the selected identifiers and exact profiles rather
+than rely on a wildcard or reserve speculative IDs. The archived
 [`GateBProvisioned.xcodeproj`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/GateBProvisioned.xcodeproj)
-`CODE_SIGN_STYLE = Automatic` with an explicit
-`PRODUCT_BUNDLE_IDENTIFIER` per target.
+shows the historical `CODE_SIGN_STYLE = Automatic` and explicit `PRODUCT_BUNDLE_IDENTIFIER`
+pattern only; it is not a current product target.
 
-## Minimum entitlements per role
+## Historical minimum-entitlement proposal
 
 Grounded in the real per-role split already in the archived
 [`Provisioned/Entitlements`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/Entitlements)
 and in
 `security/THREAT_MODEL.md`'s local process/storage boundary and mandatory security properties.
+This table predates I1B/R3 and is not its effective entitlement inventory. I1B/R3 retained the
+exact development-only effective entitlements in the pinned R3 archive. Later I2B3 must consume
+the narrower candidate groups and identities frozen by I2B2 rather than activate this historical
+table wholesale.
 
 | Role | Required entitlement keys | Why |
 | --- | --- | --- |
@@ -191,8 +197,8 @@ and in
 | | `com.apple.security.files.user-selected.read-only` | Broker "safely snapshots user-selected regular-file data-fork bytes" (`ARCHITECTURE.md`) |
 | | LocalAuthentication use (implicit via the Keychain-group entitlement + `SecAccessControl`) | Approval requires "fresh user presence for every v0 plan" (Threat Model) |
 
-All four roles should also set, as build settings: `ENABLE_HARDENED_RUNTIME = YES` and no
-`get-task-allow` in shipping-posture builds.
+All roles in this historical proposal should also set, as build settings:
+`ENABLE_HARDENED_RUNTIME = YES` and no `get-task-allow` in shipping-posture builds.
 
 ## Prohibited entitlements per role
 
@@ -261,10 +267,13 @@ production IPC." Any Team-3DDR-enrolled test of the table above is new work, not
   signed byte, per the explicit warning in the archived
   [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-installed-development-topology/RESULTS.md).
 
-## Installation and rollback test matrix
+## Historical S5 installation and rollback test matrix
 
 Narrowed to what's reachable with only a free/Individual Apple Development identity and a single
 owned Mac unless noted.
+I1B/R3 passed its own exact signed-install/refusal/reachability/cleanup matrix; it did not claim
+every row below. Later installed slices must select and authorize their exact rows from current
+I2B/I3 plans rather than rerun this pre-I1B matrix by implication.
 
 | # | Scenario | Oracle / expected result | Source |
 | --- | --- | --- | --- |
@@ -291,13 +300,12 @@ owned Mac unless noted.
 
 ## What's testable on the current single Mac vs. what needs another machine
 
-**Testable on this one Mac** once App IDs/profiles/entitlements exist: rows 1–13, 16, 17, 20 above
-(all already demonstrated feasible on one host by P0-4A or Gate B, against different experimental
-App IDs/profiles but a host-local mechanism); the full XPC peer-validation matrix (§6) with real 3DDR-signed binaries instead
-of ad-hoc signing; real Keychain access-group separation and epoch-key rotation for Team-owned App
-IDs; real `SMAppService.agent` lifecycle with a genuine Development-signed, sandboxed bundle (P0-4A's
-sandboxed runner failed before `main` under ad-hoc signing with AMFI error `-423`; a real Development
-profile should get past that specific failure).
+**Historically assessed as testable on this one Mac:** rows 1–13, 16, 17, and 20 above once their
+exact current-slice profiles and entitlements exist. I1B/R3 later proved its narrower
+development-signed install, private-XPC reachability, refusal, `SMAppService` registration, and
+cleanup scope; it did not complete this whole S5 matrix. Ordinary Supervisor IPC, operational
+Keychain groups, epoch rotation, protected state, and later fault rows require their current
+I2B/I3 authorization and evidence.
 
 **Needs a second machine** (not necessarily clean): multi-machine trust-epoch behavior; genuine
 fast-user-switch/session concurrency under real load.
@@ -308,61 +316,49 @@ machine's first-launch path); supported macOS floor validation (P0-4A's effectiv
 measured at macOS 26.0, driven by a dependency, not `LSMinimumSystemVersion`); install/update races
 across genuinely independent boot/session state.
 
-## Claims that stay impossible without clean-host testing or a paid Developer ID
+## Claims that stay impossible without clean-host testing or authorized Developer ID evidence
 
-Per this plan's explicit scope (no paid Developer ID/notarization identity):
+Per this plan's explicit scope (no authorized Developer ID/notarization use):
 
 - Notarization and stapling.
 - Gatekeeper assessment as an end user would experience it — a Development-signed, unnotarized app
   is supposed to fail Gatekeeper; P0-4A already confirmed that (`spctl` status 3).
 - "Validated"/"production-ready" language of any kind for any of this — `AGENTS.md` and the Threat
-  Model both forbid that without exact mechanism plus retained adversarial evidence, which this plan
-  does not produce; it only sets up the ability to start collecting S5 evidence.
+  Model both forbid that without exact mechanism plus retained adversarial evidence. I1B/R3 passed
+  only its exact development experiment; the parent product and later installed slices remain
+  blocked.
 - Coherent-rollback resistance (needs a non-rollbackable anchor or external witness; neither exists
   in this repo's design yet).
 - Minimum supported macOS floor, and cross-machine/clean-host install-race/update evidence (§9).
 - Anything about the actual guest/backend (libkrun/HVF, Apple Containerization, gVisor) —
   orthogonal to this plan; P0-4A "cannot admit the backend" per `GATE_C_P0_RECONCILIATION.md`.
 
-## Explicit action list for the user/orchestrator
+## Current action list for the user/orchestrator
 
-Items marked confirmed are discovery only, not signing/install authorization:
-
-1. **Confirmed:** Apple Membership Details identifies Individual Team `3DDR84M4JS`; Xcode and the
-   portal must continue with that exact Team.
-2. **Confirmed only as locally present:** Apple Development identity SHA-1
-   `80A4969BCD1B3926020888094B9D812A283D3793`. On a later explicitly authorized harmless signing
-   probe, require subject OU and emitted TeamIdentifier `3DDR84M4JS`; stop on any mismatch. Do not
-   select another identity by common name and do not revoke any identity in this task.
-3. Decide Option A vs. Option B (§3) before reserving App IDs — it changes whether 3 or 4 distinct
-   App IDs are needed.
-4. In the Apple Developer portal, register the exact explicit App IDs from §4, enabling App Sandbox
-   and Keychain Sharing where listed.
-5. Register this Mac's device UDID as a development test device under the team.
-6. Create one macOS App Development provisioning profile per App ID.
-7. Download/install only the exact role profiles via Xcode — the cached Gate B profiles share the
-   Team but have the wrong App IDs/entitlements and are unusable here.
-8. Author the four `.entitlements` files (§5/§6) using the archived
-   [`Provisioned/Entitlements`](https://github.com/Shrimpworks/capsule-experiments/tree/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/macos-authority-separation/Provisioned/Entitlements)
-   files as a structural template but with Team-3DDR-scoped,
-   epoch-suffixed group names.
-9. Once real Xcode targets exist (they don't yet — only `cmd/capsuled/main.go` is real product
-   source), wire `CODE_SIGN_ENTITLEMENTS` and `PRODUCT_BUNDLE_IDENTIFIER` per target, matching the
-   `GateBProvisioned.xcodeproj` build-setting pattern already in the repo.
-10. Build and locally run the §8 test matrix, rows 1–13/16/17/20 first, recording exact
-   CDHash/entitlement-digest/Team-ID readbacks at every step per §7.
-11. Only after S5 evidence is retained and reviewed should anyone consider requesting Developer
-    ID/notarization for this team — a distinct, separately-authorized future task.
-12. Whatever S5 evidence is produced must be retained in `capsule-experiments`, while this
-    repository receives the resulting decision, an exact commit-pinned evidence link, this plan's
-    S5 status update, and the `WORKSTREAM_EVIDENCE_LEDGER.md` update. Chat history alone is not
-    retained evidence.
+1. **Preserve completed I1B/R3 evidence.** Team `3DDR84M4JS`, SHA-1 `80A4...D3793`, the ADR-0037
+   topology, and three exact Broker/daemon/Supervisor profiles passed only the retained
+   development-signed, installed, execution-disabled scope. Do not repeat or widen it implicitly.
+2. **Do not register the historical Option A/Option B identifiers.** ADR-0037 selects the visible
+   Broker app plus separately enrolled embedded daemon and Supervisor identities.
+3. **Keep the central operational inventory deferred for the current one-maintainer stage.** The
+   pinned R3 archive and evidence ledger retain current redacted metadata. Create a shared location
+   when a second maintainer, production signing, or CI notarization requires it.
+4. **Before I2B3, obtain explicit authorization for its exact mutations.** Use the selected Team
+   and create only the exact Coordinator/bootstrap profiles and candidate groups required by the
+   [I2B2 gate](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md#exact-i2b3-gate). Include
+   caller/key authorization, App Group/service/container handoff, fresh disposable test keys, and
+   descriptor-relative fault evidence; keep runtime, backend, guest, and attempts absent.
+5. **Retain any later credentialed evidence outside chat.** Archive the exact public metadata and
+   results in `capsule-experiments`, pin its immutable commit here, and update the evidence ledger.
+   Raw profiles, private keys, and credentials remain excluded.
+6. **Keep Developer ID/notarization separate and deferred.** Distribution work requires its own
+   authorization, custody design, clean-host matrix, and evidence; I1B/R3 does not advance it.
 
 ## Explicit non-goals
 
-This plan does not authorize, and did not perform: creating any Apple ID/App ID/profile, touching
-the Apple Developer portal, generating or downloading any provisioning profile, signing any binary,
-creating any Keychain item or Secure Enclave key, or claiming any Capsule component is "validated,"
-"secure," or "production-ready." It does not select between §3's Option A/B, does not invent a
-fourth native-front-end component the repository hasn't chosen, and does not extend scope into
-Developer ID/notarization, which is explicitly excluded.
+This plan does not authorize a new Apple ID/App ID/profile, portal action, profile download,
+signature, Keychain/Secure Enclave key, installed mutation, or claim that any Capsule component is
+"validated," "secure," or "production-ready." The original planning slice performed none of
+those actions; the later separately authorized I1B/R3 experiment performed only its exact retained
+development scope. ADR-0037 supersedes the Option A/Option B choice. Developer ID/notarization
+remains explicitly excluded and deferred.

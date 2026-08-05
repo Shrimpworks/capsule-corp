@@ -563,10 +563,11 @@ Current dependency and priority view:
    blockers close.
    The canonical practical guide is now
    [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
-   Its documentation slice is `PASSED`; it changes no credential or product admission. It requires
-   one explicit W4-versus-3DDR decision, final bundle/App Group topology, and matching selected-team
-   certificates/profiles before R3/I1, and defers Developer ID/notarization/CI release custody to
-   separately authorized work.
+   Its documentation slice is `PASSED`; it changes no credential or product admission. Team
+   `3DDR84M4JS`, the ADR-0037 containing topology, and the three exact I1B/R3 profiles are resolved
+   for that completed experiment. Later I2B3 still requires exact Coordinator/bootstrap profiles,
+   caller/key authorization, and App Group/service/container handoff; Developer ID/notarization/CI
+   release custody remains deferred to separately authorized work.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.

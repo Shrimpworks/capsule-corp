@@ -39,6 +39,12 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   [C1 composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md). C1 itself is `PASSED`
   only as a no-effect contract. Independent-builder equality, governed release publication,
   composed execution, and admission remain open.
+- The exact unsigned Linux/arm64
+  [release-candidate consumption manifest](GOVERNED_RUNTIME_RELEASE_CANDIDATE.md) is `PASSED` for
+  its closed passive-contract scope at self-digest
+  `78cf2e99e58a4e79413f22889dd19f794ac7cdce3e4ec5c167d6c2051d19afaa`. It imports no experiment
+  code or large artifact. Governed release publication remains `BLOCKED`; runtime selection remains
+  `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED` and `RUNTIME-001` unsupported.
 - [C2A execution-profile preparation](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md) is
   `PASSED` only for its passive, refusing contract. It consumes the unchanged C1 bytes and freezes
   the exact host/guest descriptor maps, bounded candidate machine and transport values, teardown,

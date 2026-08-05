@@ -45,6 +45,11 @@ explicitly refuses while final runnable artifact identities and exactly enforcea
 fields remain unresolved. Its schema and independent Go/Node validators create no process, guest,
 runtime consumer, credential, release, or admission state.
 
+[`conformance/governed-deno-core-release-candidate/`](conformance/governed-deno-core-release-candidate/)
+contains the exact unsigned Linux/arm64 candidate consumption manifest and bounded mutation corpus.
+Its self-digest, schema, and offline verifier bind public merged evidence without copying experiment
+code or large artifacts; publication, execution, selection, and admission remain inactive.
+
 [`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
 and exact coverage notes. Repository verification compares its 228 field entries with 20 selected
 current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or

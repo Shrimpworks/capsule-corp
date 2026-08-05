@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./lib/fixture-bytes.mjs";
 
 const sourceMaximumBytes = 262_144;
 const requestHeaderBytes = 216;
@@ -409,10 +409,6 @@ function installationID() {
 
 function digestByte(value) {
   return Buffer.alloc(32, value);
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest();
 }
 
 function mutateU16(value, offset, replacement) {

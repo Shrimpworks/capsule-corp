@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const manifestPath = join(
@@ -126,10 +126,6 @@ const expected = Object.freeze({
   ],
 });
 
-function sha256(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
-
 function assertSafeRelativePath(path, label) {
   assert.equal(typeof path, "string", `${label}: path must be a string`);
   assert.equal(isAbsolute(path), false, `${label}: absolute path forbidden`);
@@ -168,7 +164,7 @@ function assertExactArray(actual, expectedArray, label) {
 
 function assertClosureDigest(value, expectedDigest, label) {
   assert.equal(
-    sha256(Buffer.from(JSON.stringify(value))),
+    sha256Hex(Buffer.from(JSON.stringify(value))),
     expectedDigest,
     `${label}: closure changed`,
   );
@@ -255,7 +251,7 @@ export async function verifyCompiledArtifactManifest(
     );
     const bytes = await readFixture(fixture.localPath);
     assert.equal(bytes.length, fixture.bytes, `${fixture.localPath}: byte length changed`);
-    assert.equal(sha256(bytes), fixture.sha256, `${fixture.localPath}: digest changed`);
+    assert.equal(sha256Hex(bytes), fixture.sha256, `${fixture.localPath}: digest changed`);
     fixturePaths.push(fixture.localPath);
   }
   assert.equal(

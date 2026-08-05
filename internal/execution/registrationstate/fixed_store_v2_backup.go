@@ -70,7 +70,7 @@ func OpenStoreRoot(path string) (StoreRoot, error) {
 // OpenBackupRoot accepts an existing owner-only directory. Creation is left
 // to installation code or the owned local test harness.
 func OpenBackupRoot(path string) (BackupRoot, error) {
-	if err := validateOwnedDirectory(path, 0o700); err != nil {
+	if err := validateOwnedDirectory(path); err != nil {
 		return BackupRoot{}, err
 	}
 	return BackupRoot{path: path}, nil
@@ -265,10 +265,7 @@ func (store *FixedFileStoreV2) CreateCoherentBackup(
 	if err != nil {
 		return BackupManifest{}, err
 	}
-	manifest, err := buildBackupManifest(loaded, activeBytes, destination)
-	if err != nil {
-		return BackupManifest{}, err
-	}
+	manifest := buildBackupManifest(loaded, activeBytes, destination)
 	if err := failBackup(faults, FaultBackupAfterPrepare, false); err != nil {
 		return BackupManifest{}, err
 	}
@@ -327,7 +324,7 @@ func (store *FixedFileStoreV2) CreateCoherentBackup(
 	return verified, nil
 }
 
-func buildBackupManifest(loaded loadedV2State, activeBytes []byte, root BackupRoot) (BackupManifest, error) {
+func buildBackupManifest(loaded loadedV2State, activeBytes []byte, root BackupRoot) BackupManifest {
 	view := loaded.Active.View()
 	version := backupFormatV0
 	segments := make([]backupSegmentDisk, len(loaded.Segments))
@@ -356,7 +353,7 @@ func buildBackupManifest(loaded loadedV2State, activeBytes []byte, root BackupRo
 		ActiveFileDigest: sha256.Sum256(activeBytes), Segments: segments,
 	}
 	disk.ManifestDigest = digestBackupManifest(disk)
-	return BackupManifest{disk: disk, root: root}, nil
+	return BackupManifest{disk: disk, root: root}
 }
 
 func digestBackupManifest(disk backupManifestDisk) BackupManifestDigest {
@@ -466,7 +463,7 @@ func failBackup(faults BackupFaultInjector, point BackupFault, indeterminate boo
 }
 
 func requireEmptyBackupRoot(root BackupRoot) error {
-	if err := validateOwnedDirectory(root.path, 0o700); err != nil {
+	if err := validateOwnedDirectory(root.path); err != nil {
 		return err
 	}
 	entries, err := os.ReadDir(root.path)
@@ -486,7 +483,7 @@ func VerifyCoherentBackup(ctx context.Context, root BackupRoot) (BackupManifest,
 		return BackupManifest{}, ArchiveVerificationReport{}, err
 	}
 	report := ArchiveVerificationReport{Version: 0, Classification: ArchiveVerificationIncomplete}
-	if err := validateOwnedDirectory(root.path, 0o700); err != nil {
+	if err := validateOwnedDirectory(root.path); err != nil {
 		return BackupManifest{}, report, err
 	}
 	entries, err := os.ReadDir(root.path)
@@ -532,7 +529,7 @@ func VerifyCoherentBackup(ctx context.Context, root BackupRoot) (BackupManifest,
 		return BackupManifest{}, report, ErrBackupEvidencePreserved
 	}
 	archiveDirectory := filepath.Join(root.path, backupArchiveDirName)
-	if err := validateOwnedDirectory(archiveDirectory, 0o700); err != nil {
+	if err := validateOwnedDirectory(archiveDirectory); err != nil {
 		report.Classification = ArchiveVerificationCorrupt
 		return BackupManifest{}, report, ErrBackupEvidencePreserved
 	}
@@ -872,7 +869,7 @@ func (store *FixedFileStoreV2) InventoryArchiveArtifacts(
 			stat := info.Sys().(*syscall.Stat_t)
 			report.KnownUnreferenced++
 			candidates = append(candidates, KnownUnreferencedOrphan{
-				digest: segment.Segment.Digest(), device: fmt.Sprint(stat.Dev), inode: uint64(stat.Ino),
+				digest: segment.Segment.Digest(), device: fmt.Sprint(stat.Dev), inode: stat.Ino,
 				checkpoint: loaded.Active.View().CurrentCheckpoint, session: session,
 			})
 		case ArchiveArtifactCrossInstallation:
@@ -974,7 +971,7 @@ func (store *FixedFileStoreV2) DeleteKnownUnreferencedOrphan(
 		return ErrOrphanEvidencePreserved
 	}
 	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || fmt.Sprint(stat.Dev) != candidate.device || uint64(stat.Ino) != candidate.inode {
+	if !ok || fmt.Sprint(stat.Dev) != candidate.device || stat.Ino != candidate.inode {
 		return ErrOrphanEvidencePreserved
 	}
 	if err := failOrphan(faults, FaultOrphanBeforeRemove, false); err != nil {
@@ -1064,9 +1061,9 @@ func loadActiveV2EnvelopeForInventory(path string) (loadedV2State, error) {
 	return loadedV2State{Envelope: envelope, State: envelope.State, Active: active}, nil
 }
 
-func validateOwnedDirectory(path string, mode os.FileMode) error {
+func validateOwnedDirectory(path string) error {
 	info, err := os.Lstat(path) //nolint:gosec // trusted installation/test capability.
-	if err != nil || info.Mode()&os.ModeSymlink != 0 || !info.IsDir() || info.Mode().Perm() != mode {
+	if err != nil || info.Mode()&os.ModeSymlink != 0 || !info.IsDir() || info.Mode().Perm() != 0o700 {
 		return errors.New("owner-only directory shape is unsafe")
 	}
 	stat, ok := info.Sys().(*syscall.Stat_t)

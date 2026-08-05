@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const root = new URL("../schemas/conformance/authority-plane-v0/", import.meta.url);
 const corpus = new URL("../schemas/conformance/v0/", import.meta.url);
@@ -55,7 +55,7 @@ const manifest = Buffer.from(
           ["role-bindings.bin", roleBindings],
           ["source-manifest.cbor", sourceManifest],
           ["main.mjs", source],
-        ].map(([path, bytes]) => [path, { byteLength: bytes.length, sha256: sha256(bytes) }]),
+        ].map(([path, bytes]) => [path, { byteLength: bytes.length, sha256: sha256Hex(bytes) }]),
       ),
     },
     null,
@@ -80,8 +80,4 @@ if (process.argv.includes("--check")) {
   await mkdir(root, { recursive: true });
   for (const [path, bytes] of expected) await writeFile(new URL(path, root), bytes);
   process.stdout.write("generated authority-plane cross-language known answers\n");
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest("hex");
 }

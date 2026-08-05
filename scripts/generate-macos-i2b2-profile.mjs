@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outputRoot = join(repositoryRoot, "schemas/conformance/macos-i2b2-unsigned-installation");
@@ -22,10 +22,6 @@ const fixed = Object.freeze({
 
 function canonicalJSON(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
-}
-
-function sha256(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
 }
 
 function schemaFor(value) {
@@ -57,7 +53,7 @@ function schemaFor(value) {
 
 async function retained(path, expectedSha256 = "") {
   const bytes = await readFile(join(repositoryRoot, path));
-  const digest = sha256(bytes);
+  const digest = sha256Hex(bytes);
   if (expectedSha256) assert.equal(digest, expectedSha256, `${path}: retained digest changed`);
   return { path, bytes: bytes.length, sha256: digest };
 }
@@ -378,7 +374,7 @@ for (const name of ["profile.json", "profile.schema.json", "mutation-corpus.json
   generated.push({
     path: `schemas/conformance/macos-i2b2-unsigned-installation/${name}`,
     bytes: bytes.length,
-    sha256: sha256(bytes),
+    sha256: sha256Hex(bytes),
   });
 }
 const manifest = {
@@ -400,7 +396,7 @@ for (const [name, bytes] of outputs) {
 }
 process.stdout.write(
   canonicalJSON({
-    profileSha256: sha256(profileBytes),
+    profileSha256: sha256Hex(profileBytes),
     profileBytes: Buffer.byteLength(profileBytes),
     cases: mutations.length,
   }),

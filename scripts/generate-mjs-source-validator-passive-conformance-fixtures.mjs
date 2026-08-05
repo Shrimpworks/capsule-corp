@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { fromHex, sha256 } from "./lib/fixture-bytes.mjs";
 
 const protocolVersion = 0;
 const requestKind = 1;
@@ -641,7 +642,7 @@ function encodeCandidate() {
   });
   frame.writeUInt32BE(24_449_903, 36);
   frame.writeUInt32BE(1_854_528, 40);
-  hex("505669a07338603876bc96c242f8d5af386d3a13139e70110a8b52f39bae69ac").copy(frame, 44);
+  fromHex("505669a07338603876bc96c242f8d5af386d3a13139e70110a8b52f39bae69ac").copy(frame, 44);
   const crates = [
     "0f8245ba555b465d3577732d5f9d9306babb0aaa7b80e97a2ce21f74fae442a3",
     "3305400b90fff2a30b272b58fe6080d25369407b2ac37c4ac652996a9677efe0",
@@ -653,7 +654,7 @@ function encodeCandidate() {
   crates.forEach((checksum, index) => {
     const offset = 76 + index * 36;
     frame.writeUInt16BE(index + 1, offset);
-    hex(checksum).copy(frame, offset + 4);
+    fromHex(checksum).copy(frame, offset + 4);
   });
   return frame;
 }
@@ -721,12 +722,4 @@ function domainHash(domain, value) {
     .update(Buffer.from([0]))
     .update(value)
     .digest();
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest();
-}
-
-function hex(value) {
-  return Buffer.from(value, "hex");
 }

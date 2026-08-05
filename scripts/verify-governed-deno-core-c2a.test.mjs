@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const fixtureUrl = new URL(
   "../schemas/conformance/c2a-governed-deno-core/passive-execution-profile.json",
@@ -15,15 +15,19 @@ const exact = await readFile(fixtureUrl);
 const c1Exact = await readFile(c1Url);
 const contract = JSON.parse(exact);
 
-const sha256 = (value) => createHash("sha256").update(value).digest("hex");
-
 test("independently verifies exact passive C2A and unchanged C1 bytes", () => {
   assert.equal(exact.length, 26_850);
-  assert.equal(sha256(exact), "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f");
+  assert.equal(
+    sha256Hex(exact),
+    "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f",
+  );
   assert.equal(c1Exact.length, 9_289);
-  assert.equal(sha256(c1Exact), "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e");
+  assert.equal(
+    sha256Hex(c1Exact),
+    "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+  );
   assert.equal(contract.c1Binding.bytes, c1Exact.length);
-  assert.equal(contract.c1Binding.sha256, sha256(c1Exact));
+  assert.equal(contract.c1Binding.sha256, sha256Hex(c1Exact));
   assert.equal(contract.c1Binding.consumption, "exact-byte-read-only");
   assert.equal(contract.c1Binding.mutation, "forbidden");
   assert.deepEqual(contract.c1PlanAndProfileBindings.executionPlan.requiredReferenceRoles, [
@@ -43,14 +47,14 @@ test("recomputes the C2A main.mjs, SourceManifest, input, and completion known a
   const manifest = encodeSourceManifest("main.mjs", source);
 
   assert.equal(source.length, 103);
-  assert.equal(sha256(source), contract.knownAnswer.source.sha256);
+  assert.equal(sha256Hex(source), contract.knownAnswer.source.sha256);
   assert.equal(manifest.length, 89);
-  assert.equal(sha256(manifest), contract.knownAnswer.source.sourceManifestSha256);
+  assert.equal(sha256Hex(manifest), contract.knownAnswer.source.sourceManifestSha256);
   assert.equal(input.length, 36);
-  assert.equal(sha256(input), contract.knownAnswer.canonicalInput.sha256);
+  assert.equal(sha256Hex(input), contract.knownAnswer.canonicalInput.sha256);
   assert.deepEqual(JSON.parse(input), { message: "capsule-c2a", value: 21 });
   assert.equal(completion.length, 35);
-  assert.equal(sha256(completion), contract.knownAnswer.expectedCompletion.jsonSha256);
+  assert.equal(sha256Hex(completion), contract.knownAnswer.expectedCompletion.jsonSha256);
   assert.deepEqual(JSON.parse(completion), { doubled: 42, echo: "capsule-c2a" });
   assert.equal(contract.knownAnswer.expectedCompletion.commit, "required-last");
   assert.equal(contract.knownAnswer.expectedCompletion.runnerExitAlone, "never-success");
@@ -143,7 +147,7 @@ function encodeSourceManifest(path, content) {
       [1, "capsule.source-manifest"],
       [2, 0],
       [3, path],
-      [4, [[path, createHash("sha256").update(content).digest(), content.length]]],
+      [4, [[path, sha256(content), content.length]]],
       [5, content.length],
     ]),
   );

@@ -1,4 +1,8 @@
-import { createHash } from "node:crypto";
+import { fromHex, repeatedBytes, sha256, sha256Hex, toHex } from "./lib/fixture-bytes.mjs";
+
+function hexBytes(value) {
+  return Uint8Array.from(fromHex(value));
+}
 
 const maxUInt53 = Number.MAX_SAFE_INTEGER;
 const effectiveNow = 1_785_456_000;
@@ -38,7 +42,7 @@ export function addPlanRegistrationRulesAndCases({
 
   const plan = executionPlan();
   const planBytes = cborEncode(plan);
-  const planDigest = sha256Bytes(planBytes);
+  const planDigest = sha256(planBytes);
   const registrationBytes = cborEncode(
     planRegistration({ registrationId: registrationIdA, sequence: 1, planDigest }),
   );
@@ -271,7 +275,7 @@ export function addPlanRegistrationRulesAndCases({
   const epochEightPlanBytes = cborEncode(
     executionPlan({ epochSequence: 8, epochDigest: epochEightDigest }),
   );
-  const epochEightPlanDigest = sha256Bytes(epochEightPlanBytes);
+  const epochEightPlanDigest = sha256(epochEightPlanBytes);
   const epochEightWire = cborEncode(
     planRegistration({
       registrationId: registrationIdB,
@@ -283,7 +287,7 @@ export function addPlanRegistrationRulesAndCases({
   );
   const epochEightBefore = registrationState({
     epochSequence: 8,
-    epochDigestHex: hex(epochEightDigest),
+    epochDigestHex: toHex(epochEightDigest),
     lastRegistrationSequence: 1,
     storedRegistrationCount: 1,
     unexpiredRegistrationCount: 1,
@@ -574,7 +578,7 @@ function addExpiryCases({
       entry.expiresAt === effectiveNow + 300
         ? planBytes
         : cborEncode(executionPlan({ expiresAt: entry.expiresAt }));
-    const candidateDigest = sha256Bytes(candidatePlanBytes);
+    const candidateDigest = sha256(candidatePlanBytes);
     const wire = cborEncode(
       planRegistration({
         registrationId: registrationIdA,
@@ -1310,7 +1314,7 @@ function registrationOperation({
 
 function registrationState({
   epochSequence = 7,
-  epochDigestHex = hex(epochDigest),
+  epochDigestHex = toHex(epochDigest),
   trustPhase = "stable",
   trustReason = null,
   quarantined = false,
@@ -1324,8 +1328,8 @@ function registrationState({
   return {
     contextType: "capsule.conformance.registration-state",
     contextVersion: 0,
-    installationIdHex: hex(installationId),
-    supervisorIdHex: hex(supervisorId),
+    installationIdHex: toHex(installationId),
+    supervisorIdHex: toHex(supervisorId),
     epochSequence,
     epochDigestHex,
     trustPhase,
@@ -1360,8 +1364,8 @@ function stateValues(state) {
 
 function storedRecord({ wireBytes, planBytes, registeredAtUnixSeconds }) {
   return {
-    wireRegistrationHex: hex(wireBytes),
-    exactPlanHex: hex(planBytes),
+    wireRegistrationHex: toHex(wireBytes),
+    exactPlanHex: toHex(planBytes),
     recomputedPlanDigestHex: sha256Hex(planBytes),
     registeredAtUnixSeconds,
     storageFormatVersion: 0,
@@ -1395,25 +1399,5 @@ function populationDigest(label, count, unexpiredCount) {
 }
 
 function identifierValue(value) {
-  return { kind: "value", valueHex: hex(value) };
-}
-
-function repeatedBytes(value, length) {
-  return Uint8Array.from({ length }, () => value);
-}
-
-function hexBytes(value) {
-  return Uint8Array.from(Buffer.from(value, "hex"));
-}
-
-function hex(value) {
-  return Buffer.from(value).toString("hex");
-}
-
-function sha256Bytes(value) {
-  return createHash("sha256").update(value).digest();
-}
-
-function sha256Hex(value) {
-  return createHash("sha256").update(value).digest("hex");
+  return { kind: "value", valueHex: toHex(value) };
 }

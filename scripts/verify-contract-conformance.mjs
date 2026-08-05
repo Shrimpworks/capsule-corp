@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto";
 import { lstat, readdir, readFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const defaultRootDirectory = new URL("../schemas/conformance/v0/", import.meta.url);
 const metadataFiles = new Set(["manifest.json", "manifest.schema.json"]);
@@ -111,7 +111,7 @@ async function verifyFixture(root, fixture, owner) {
       `fixture byte length mismatch for ${owner}: expected ${fixture.byteLength}, got ${bytes.length}`,
     );
   }
-  const digest = createHash("sha256").update(bytes).digest("hex");
+  const digest = sha256Hex(bytes);
   if (digest !== fixture.sha256) {
     throw new Error(
       `fixture SHA-256 mismatch for ${owner}: expected ${fixture.sha256}, got ${digest}`,
@@ -366,7 +366,7 @@ async function assertRegistrationStateContext(root, entry) {
     !/^[0-9a-f]+$/u.test(record.wireRegistrationHex) ||
     record.wireRegistrationHex.length % 2 !== 0 ||
     record.exactPlanHex !== planBytes.toString("hex") ||
-    record.recomputedPlanDigestHex !== createHash("sha256").update(planBytes).digest("hex") ||
+    record.recomputedPlanDigestHex !== sha256Hex(planBytes) ||
     !record.wireRegistrationHex.includes(`055820${record.recomputedPlanDigestHex}`) ||
     record.registeredAtUnixSeconds !== after.timeHighWaterUnixSeconds ||
     record.storageFormatVersion !== 0 ||

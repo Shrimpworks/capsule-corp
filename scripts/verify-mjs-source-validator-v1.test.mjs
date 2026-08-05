@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { sha256 } from "./lib/fixture-bytes.mjs";
 
 const corpusRoot = new URL("../schemas/conformance/v0/", import.meta.url);
 const manifest = JSON.parse(await readFile(new URL("manifest.json", corpusRoot), "utf8"));
@@ -243,10 +243,6 @@ async function requireCurrentRequestContext(role, request) {
   ) {
     refuse("BINDING");
   }
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest();
 }
 
 function allZero(value) {

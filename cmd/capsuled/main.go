@@ -25,6 +25,12 @@ var (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+// run holds the daemon lifecycle so every deferred cleanup (signal-context
+// stop, in particular) unwinds before the process exits.
+func run() int {
 	listenAddress := flag.String("listen", "127.0.0.1:7777", "daemon listen address")
 	flag.Parse()
 
@@ -62,6 +68,7 @@ func main() {
 
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		logger.Error("daemon stopped unexpectedly", "error", err)
-		os.Exit(1)
+		return 1
 	}
+	return 0
 }

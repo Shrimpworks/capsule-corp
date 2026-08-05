@@ -1294,10 +1294,10 @@ func validateActivationCheckpointDisk(
 	envelope diskEnvelopeV2,
 	indexes archivestate.ArchiveIndexes,
 	segments []loadedArchiveSegmentV0,
-) (archivestate.ArchiveCheckpoint, error) {
+) error {
 	disk := envelope.ActivationCheckpoint
 	if disk == nil || len(segments) == 0 {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint is missing")
+		return errors.New("fixed supervisor archive checkpoint is missing")
 	}
 	segment := segments[len(segments)-1]
 	segmentView := segment.Segment.View()
@@ -1311,26 +1311,26 @@ func validateActivationCheckpointDisk(
 		disk.InstallationID != envelope.State.InstallationID || disk.SupervisorID != envelope.State.SupervisorID ||
 		disk.EpochSequence != envelope.State.EpochSequence || disk.EpochDigest != envelope.State.EpochDigest ||
 		disk.DurableTimeHighWater > envelope.State.TimeHighWaterUnixSeconds {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint cross-link mismatch")
+		return errors.New("fixed supervisor archive checkpoint cross-link mismatch")
 	}
 	if len(segments) == 1 {
 		if disk.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointMigrationGenesis {
-			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor first archive checkpoint predecessor mismatch")
+			return errors.New("fixed supervisor first archive checkpoint predecessor mismatch")
 		}
 	} else if disk.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor later archive checkpoint predecessor mismatch")
+		return errors.New("fixed supervisor later archive checkpoint predecessor mismatch")
 	}
 	wantEffectDigest := archivestate.EffectTombstoneSetDigest{}
 	if disk.EffectTombstoneSetDigest != nil {
 		wantEffectDigest = *disk.EffectTombstoneSetDigest
 	}
 	if len(segments) > 1 && disk.EffectTombstoneSetDigest == nil {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor F4C checkpoint effect-tombstone digest is missing")
+		return errors.New("fixed supervisor F4C checkpoint effect-tombstone digest is missing")
 	}
 	disk.HotSetDigests.EffectTombstones = wantEffectDigest
 	if disk.ResultSnapshotGeneration == envelope.SnapshotGeneration {
 		if disk.ArchiveIndexDigest != indexes.CombinedDigest() {
-			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint index mismatch")
+			return errors.New("fixed supervisor archive checkpoint index mismatch")
 		}
 		wantHot := archivestate.HotSetDigests{
 			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
@@ -1340,7 +1340,7 @@ func validateActivationCheckpointDisk(
 			wantHot.EffectTombstones = *envelope.EffectTombstoneSetDigest
 		}
 		if disk.HotSetDigests != wantHot {
-			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint hot-set mismatch")
+			return errors.New("fixed supervisor archive checkpoint hot-set mismatch")
 		}
 	}
 	checkpoint, err := archivestate.NewArchiveCheckpoint(archivestate.ArchiveCheckpointView{
@@ -1353,9 +1353,9 @@ func validateActivationCheckpointDisk(
 		DurableTimeHighWater: disk.DurableTimeHighWater,
 	})
 	if err != nil || checkpoint.Digest() != disk.Digest || checkpoint.Reference() != envelope.CurrentCheckpoint {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint digest mismatch")
+		return errors.New("fixed supervisor archive checkpoint digest mismatch")
 	}
-	return checkpoint, nil
+	return nil
 }
 
 func archiveRoot(storePath string) string { return storePath + ".archive" }
@@ -1571,29 +1571,11 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 			return err
 		}
 	}
-	active, err := archivestate.NewActiveStateV2(archivestate.ActiveStateV2View{
-		StoreFormatVersion: *candidate.StoreFormatVersion, MigrationSourceVersion: *candidate.MigrationSourceVersion,
-		SnapshotGeneration: candidate.SnapshotGeneration, ArchiveGeneration: candidate.ArchiveGeneration,
-		InstallationID: candidate.State.InstallationID, SupervisorID: candidate.State.SupervisorID,
-		EpochSequence: candidate.State.EpochSequence, EpochDigest: candidate.State.EpochDigest,
-		DurableTimeHighWater: candidate.State.TimeHighWaterUnixSeconds,
-		Descriptors:          descriptors, DescriptorSetDigest: candidate.DescriptorSetDigest,
-		Indexes: storedIndexes, IndexDigests: candidate.IndexDigests, CombinedIndexDigest: candidate.CombinedIndexDigest,
-		HotSetDigests: archivestate.HotSetDigests{
-			Registrations: candidate.State.RegistrationSetDigest, Approvals: candidate.State.ApprovalSetDigest,
-			Attempts: candidate.State.AttemptSetDigest, Lifecycles: [32]byte(candidate.LifecycleSetDigest),
-			EffectTombstones: candidateTombstoneDigest,
-		},
-		EffectTombstoneCoverage:   candidate.EffectTombstoneCoverage,
-		VisibleV1EffectSeedCount:  candidate.VisibleV1EffectSeedCount,
-		VisibleV1EffectSeedDigest: candidate.VisibleV1EffectSeedDigest,
-		PreviousCheckpoint:        candidate.PreviousCheckpoint, CurrentCheckpoint: candidate.CurrentCheckpoint,
-		HotCounts: candidate.HotCounts, ArchivedCounts: candidate.ArchivedCounts, TotalCounts: candidate.TotalCounts,
-	})
+	active, err := buildActiveStateV2(candidate, descriptors, storedIndexes, candidateTombstoneDigest)
 	if err != nil || active.View().CurrentCheckpoint != candidate.CurrentCheckpoint {
 		return errors.New("prepared fixed supervisor active projection mismatch")
 	}
-	if _, err := validateActivationCheckpointDisk(candidate, storedIndexes, segments); err != nil {
+	if err := validateActivationCheckpointDisk(candidate, storedIndexes, segments); err != nil {
 		return err
 	}
 	return nil

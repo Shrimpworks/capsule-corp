@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const repository = new URL("../", import.meta.url);
 const root = new URL("schemas/conformance/authenticated-local-ipc-v0/", repository);
@@ -138,7 +138,7 @@ async function json(path) {
 
 function verifyReference(bytes, known, label) {
   assert.equal(bytes.length, known.byteLength, `${label} byte length`);
-  assert.equal(createHash("sha256").update(bytes).digest("hex"), known.sha256, `${label} digest`);
+  assert.equal(sha256Hex(bytes), known.sha256, `${label} digest`);
 }
 
 function sumReferences(value) {

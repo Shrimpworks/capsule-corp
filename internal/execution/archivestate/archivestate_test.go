@@ -790,7 +790,7 @@ func closedCohort(t *testing.T, sequence int, expiry uint64, attemptCount int) R
 		approval := approvalCandidate(t, registration, ordinal, approvalattempt.ApprovalConsumed, expiry)
 		attempt := attemptCandidate(t, registration, approval, ordinal)
 		approval.ConsumedAttemptID = attempt.AttemptID
-		approval.ExactRecordBytes = recordBytes("approval", ordinal, byte(approval.State[0]))
+		approval.ExactRecordBytes = recordBytes("approval", ordinal, approval.State[0])
 		approval.RecordDigest = mustRecordDigest(t, RecordApproval, approval.ExactRecordBytes)
 		cohort.Approvals[index] = approval
 		cohort.Attempts[index] = attempt
@@ -825,7 +825,7 @@ func registrationCandidate(t *testing.T, sequence int, expiry uint64) Registrati
 
 func approvalCandidate(t *testing.T, registration RegistrationCandidate, ordinal int, state approvalattempt.ApprovalState, expiry uint64) ApprovalCandidate {
 	t.Helper()
-	exact := recordBytes("approval", ordinal, byte(state[0]))
+	exact := recordBytes("approval", ordinal, state[0])
 	return ApprovalCandidate{ApprovalID: approvalID(ordinal), AttemptNonce: nonce(ordinal), RegistrationID: registration.RegistrationID,
 		RegistrationSequence: registration.RegistrationSequence, ExpiresAt: v0candidate.UInt53(expiry), State: state,
 		ExactRecordBytes: exact, RecordDigest: mustRecordDigest(t, RecordApproval, exact)}

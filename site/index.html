@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
-      content="Capsule is a local-first project under development for running agent-generated JavaScript and TypeScript jobs with explicit approval, resource, and capability limits."
+      content="Capsule is a local-first macOS project building human-approved execution of one bounded main.mjs module in a fresh disposable Linux guest."
     />
-    <title>Capsule — a local execution project for agent-generated code</title>
+    <title>Capsule — human-approved local execution for agent-generated code</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="./styles.css" />
@@ -25,8 +25,9 @@
       <div class="shell status-band__inner">
         <span class="status-band__mark" aria-hidden="true"></span>
         <p>
-          Warning: Capsule is not yet a security boundary. Do not use it to run hostile code unless
-          another trusted sandbox provides the boundary.
+          Pre-alpha warning: Capsule does not yet have an admitted product path for hostile code.
+          Current runtime, lifecycle, and installation results are scoped engineering evidence—not
+          a usable security boundary.
         </p>
       </div>
     </aside>
@@ -35,11 +36,11 @@
       <section class="hero-marquee" aria-labelledby="hero-title">
         <div class="shell hero-marquee__inner">
           <p class="wordmark" aria-hidden="true">capsule</p>
-          <h1 id="hero-title">Local execution for agent-generated code.</h1>
+          <h1 id="hero-title">Human-approved execution for agent code.</h1>
           <p class="hero-marquee__summary">
-            Capsule is a local-first project under development for running JavaScript and
-            TypeScript jobs proposed by AI agents. Each job is intended to require an exact plan,
-            human approval, and explicit resource and capability limits before it runs.
+            Capsule is building a narrow owner-only alpha for macOS: one byte-exact modern
+            <code>main.mjs</code> module, bounded inline JSON input and output, one-use human
+            approval, and one fresh disposable Linux/arm64 guest per attempt.
           </p>
         </div>
       </section>
@@ -51,15 +52,15 @@
           <h2 id="overview-title">What Capsule is</h2>
           <p>
             Capsule is intended to provide a small local execution service for bounded, one-shot
-            jobs—not a general computer. The public unit is a job with source, input, allowed
-            capabilities, exact limits, and a declared result. Containers, virtual machines, and
-            language runtimes remain implementation details.
+            work—not a general computer. Planning, approval, and execution belong to separate
+            components so the agent-facing service cannot approve its own plan or launch a guest.
           </p>
           <p>
-            The first planned executable slice is dependency-free TypeScript with inline JSON input
-            and bounded JSON output. Network access, subprocesses, inherited environment variables,
-            native add-ons, foreign-function interfaces (FFI), package installation, arbitrary
-            images, and host paths are outside that slice.
+            The first internal alpha is JavaScript-only: exactly one dependency-free
+            <code>main.mjs</code>, at most 262,144 bytes, with bounded inline JSON. TypeScript,
+            package installation, module loading, network access, subprocesses, inherited
+            environment variables, native add-ons, FFI, file artifacts, and live host paths are
+            deliberately deferred or refused.
           </p>
           <p class="link-row">
             <a class="text-link" href="https://github.com/Shrimpworks/capsule-corp"
@@ -95,10 +96,10 @@
         <figure class="system-map">
           <figcaption>Intended flow — not yet a complete product path</figcaption>
           <pre><code>agent or client
-    │  proposes a bounded JavaScript or TypeScript job
+    │  proposes one bounded main.mjs plus inline JSON
     ▼
 daemon — the agent-facing planning service
-    │  validates the proposal and constructs one exact plan
+    │  constructs one exact typed plan; cannot approve or execute it
     ▼
 Execution Supervisor — the trusted execution authority
     │  validates and registers the exact plan; returns a registration ID
@@ -110,9 +111,9 @@ Execution Supervisor
     │  creates one approved attempt by registered plan ID only
     ▼
 external isolation backend
-    │  runs a disposable guest
+    │  creates one fresh disposable Linux/arm64 guest for this attempt
     ▼
-bounded result and enforcement evidence</code></pre>
+bounded JSON result plus independent lifecycle and teardown evidence</code></pre>
         </figure>
 
         <dl class="foundation">
@@ -155,29 +156,41 @@ bounded result and enforcement evidence</code></pre>
         <header class="head-hang">
           <h2 id="status-title">What is implemented today</h2>
           <p>
-            Capsule is a buildable scaffold, not a usable sandbox. The repository contains strict
-            unwired proposal, plan, and registration conformance code; deterministic TypeScript
-            construction of the minimum plan; and Go registration-state handling.
+            Capsule has moved beyond an initial scaffold, but it is not yet a usable sandbox. Status
+            below separates completed engineering slices from active integration and product
+            blockers.
           </p>
         </header>
 
         <dl class="foundation">
           <div class="foundation__item">
-            <dt>Current lifecycle work</dt>
-            <dd>Durable no-guest fake lifecycle</dd>
+            <dt>PASSED — scoped foundations</dt>
+            <dd>Exact contracts, durable mechanics, and governed build evidence</dd>
             <dd class="foundation__note">
-              An unwired Go path registers exact bytes, consumes a candidate approval into one
-              attempt, and records fake lifecycle intents, effects, cleanup, recovery, and capacity
-              state in one fixed local snapshot. The fake backend is hard-coded to create no guest.
+              Single-<code>main.mjs</code> bytes and manifests; plan and registration codecs;
+              approval/attempt, lifecycle, owner-lock, archive, backup, and recovery mechanics;
+              governed Deno, rusty_v8, and libkrun forks; reproducible Linux/arm64 runtime artifacts;
+              and development-signed inactive macOS topology have passed their stated local scopes.
             </dd>
           </div>
           <div class="foundation__item">
-            <dt>Not yet connected</dt>
-            <dd>No product execution path</dd>
+            <dt>IN_PROGRESS — TRENDING_GOOD</dt>
+            <dd>Successor runtime profile and authority-path integration</dd>
             <dd class="foundation__note">
-              The internal mechanics have no product consumer. Authenticated local IPC, production
-              Broker signing and UI, content handling, composed evidence, an admitted runtime and
-              backend, and a signed installed topology remain incomplete or under investigation.
+              Current work is freezing the runnable profile, atomically binding source to registered
+              plans, reviewing the production CBOR/COSE wrapper, hardening governed-fork promotion,
+              and joining the already-tested pieces without widening authority.
+            </dd>
+          </div>
+          <div class="foundation__item">
+            <dt>BLOCKED — product admission</dt>
+            <dd>No hostile-code alpha or admitted runtime/profile yet</dd>
+            <dd class="foundation__note">
+              Capsule still needs one fixed benign guest checkpoint, authenticated local IPC,
+              protected installed Supervisor state, native Broker rendering and fresh user-presence
+              signing, a real adapter with restart reconciliation, composed completion evidence, and
+              the retained hostile/refusal corpus. The fake backend remains hard-coded to create no
+              guest.
             </dd>
           </div>
         </dl>
@@ -211,7 +224,15 @@ bounded result and enforcement evidence</code></pre>
           </div>
           <div class="foundation__item">
             <dt>External isolation</dt>
-            <dd>A separate sandbox or virtual machine must contain hostile guest code</dd>
+            <dd>Every approved attempt gets a fresh disposable guest; guests are never reused</dd>
+          </div>
+          <div class="foundation__item">
+            <dt>Physical absence</dt>
+            <dd>The alpha runtime must omit module loading and ambient host operations</dd>
+          </div>
+          <div class="foundation__item">
+            <dt>Independent completion</dt>
+            <dd>Guest output, EOF, or exit zero cannot prove success without teardown evidence</dd>
           </div>
         </dl>
       </section>
@@ -234,6 +255,13 @@ bounded result and enforcement evidence</code></pre>
           <a href="https://github.com/Shrimpworks/capsule-corp/blob/main/docs/PROJECT.md">
             <span>Project definition</span>
             <span>Purpose, current status, scope, principles, and success criteria</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a
+            href="https://github.com/Shrimpworks/capsule-corp/blob/main/docs/ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md"
+          >
+            <span>Internal-alpha plan</span>
+            <span>Frozen scope, completed foundations, blockers, risks, and ordered gates</span>
             <span aria-hidden="true">↗</span>
           </a>
           <a href="https://github.com/Shrimpworks/capsule-corp/blob/main/docs/SECURITY_OVERVIEW.md">
@@ -274,7 +302,7 @@ bounded result and enforcement evidence</code></pre>
 
     <footer class="foot-line">
       <div class="shell foot-line__inner">
-        <p>Capsule · project under development</p>
+        <p>Capsule · pre-alpha · product admission blocked</p>
         <a href="https://github.com/Shrimpworks/capsule-corp">GitHub ↗</a>
       </div>
     </footer>

@@ -1,0 +1,15 @@
+{
+  "objectType": "capsule.authenticated-local-ipc-register-plan-v0-method-record",
+  "objectVersion": 0,
+  "method": "RegisterPlanV0",
+  "methodVersion": 0,
+  "roleBindingRecordVersion": 0,
+  "service": "com.capsulecorp.capsule.supervisor.daemon.v0",
+  "expectedRole": "daemon",
+  "audience": "capsule.execution-supervisor.local.v0",
+  "purpose": "capsule.ipc.register-plan.v0",
+  "requestDataMaxBytes": 328337,
+  "replyDataMaxBytes": 4096,
+  "deadlineMilliseconds": 5000,
+  "responseLossDisposition": "committed-retry-creates-fresh-registration"
+}

@@ -1,0 +1,19 @@
+{
+  "objectType": "capsule.authenticated-local-ipc-get-registered-plan-v0-request",
+  "objectVersion": 0,
+  "fixtureSerialization": "exact-json-not-xpc-framing",
+  "protocolVersion": 0,
+  "requestId": "51515151515151515151515151515151",
+  "installationId": "11111111111111111111111111111111",
+  "epochSequence": 7,
+  "epochDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+  "methodRecord": {
+    "path": "get-registered-plan-v0.method.json",
+    "byteLength": 557,
+    "sha256": "23e3da25688138b44689e9612677f51e2dccd46ba2480822676e0526f5efaee3"
+  },
+  "body": {
+    "registrationId": "77777777777777777777777777777777"
+  },
+  "applicationDataBytes": 16
+}

@@ -87,6 +87,9 @@ manifest fixtures precede S1/M2 registration/fetch fixtures. The retained
 [S1 consistency stop](AUTHENTICATED_LOCAL_IPC_S1_CONSISTENCY_STOP.md) still records why a
 conditional later TypeScript cutover may not reinterpret the 562-byte v0 binding record or treat
 the 626-byte arithmetic as a layout.
+The follow-on [passive S1 contract](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md) freezes the two
+logical method records and envelopes, exact caps and refusal/copy/response-loss oracles, while
+leaving native transport fields and peer authentication explicitly blocked.
 
 The follow-on grammar/process decision is [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).

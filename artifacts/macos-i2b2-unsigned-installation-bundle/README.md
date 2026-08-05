@@ -45,11 +45,6 @@ The reproducer performs repository-local file construction, plist linting, compa
 readback. It does not call `codesign`, Security, Keychain, Secure Enclave, LocalAuthentication,
 ServiceManagement, XPC, launchd, application installation, or product execution.
 
-The reproducer's compiled binaries under `dist/` (`Capsule`, the XPC launcher stubs, and the copied
-R2 daemon/broker executables) are gitignored, not committed: they reproduce byte-for-byte from the
-command above, so the repository stays limited to source, build scripts, and the evidence/provenance
-manifests that let a consumer verify a published binary against a given commit.
-
 See [the retained construction result](../../docs/MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md),
 [the profile](../../schemas/conformance/macos-i2b2-unsigned-installation/profile.json), and
 [the evidence](evidence/construction.json).

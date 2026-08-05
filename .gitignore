@@ -27,17 +27,6 @@ artifacts/*
 !artifacts/macos-i1b-r3-signed-development-composition/**
 !artifacts/macos-i2b2-unsigned-installation-bundle/
 !artifacts/macos-i2b2-unsigned-installation-bundle/**
-
-# Compiled artifact binaries under artifacts/*/dist/ are reproducible from
-# tracked source via each artifact's scripts/reproduce.sh; keep the
-# repository limited to source, build scripts, and evidence/provenance
-# manifests, and publish these as GitHub Release assets instead of
-# committing them (see the affected artifacts' README.md).
-artifacts/*/dist/**/Capsule
-artifacts/*/dist/**/*Launcher
-artifacts/*/dist/**/capsule-mjs-source-validator-daemon
-artifacts/*/dist/**/capsule-mjs-source-validator-approval-broker
-artifacts/mjs-source-validator-v1/dist/capsule-mjs-source-validator-aarch64-apple-darwin
 tmp/
 *.log
 

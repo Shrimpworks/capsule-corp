@@ -36,5 +36,35 @@
     "rules": {
       "preset": "recommended"
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**", "scripts/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noShadow": "error",
+            "useAwait": "error"
+          },
+          "style": {
+            "noParameterAssign": "error"
+          },
+          "nursery": {
+            "noFloatingPromises": "error",
+            "noMisusedPromises": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "error"
+          }
+        }
+      }
+    }
+  ]
 }

@@ -134,7 +134,7 @@ async function readInputs(): Promise<C2BPassiveBindingInputs> {
   };
 }
 
-async function read(path: string): Promise<Buffer> {
+function read(path: string): Promise<Buffer> {
   return readFile(new URL(path, root));
 }
 

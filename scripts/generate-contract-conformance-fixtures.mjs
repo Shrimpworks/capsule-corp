@@ -795,18 +795,18 @@ function addProposalRulesAndCases() {
     }),
   );
   const resolverContext = ({
-    sourceManifest = null,
-    canonicalInlineInput = null,
+    sourceManifest: sourceManifestFixture = null,
+    canonicalInlineInput: canonicalInlineInputFixture = null,
     wallTime = null,
   } = {}) => ({
     kind: "proposal-resolution",
     profileRegistry,
     userPolicy,
     oracle: {
-      sourceManifest,
-      sourceManifestDigest: sourceManifest?.sha256 ?? null,
-      canonicalInlineInput,
-      inlineInputDigest: canonicalInlineInput?.sha256 ?? null,
+      sourceManifest: sourceManifestFixture,
+      sourceManifestDigest: sourceManifestFixture?.sha256 ?? null,
+      canonicalInlineInput: canonicalInlineInputFixture,
+      inlineInputDigest: canonicalInlineInputFixture?.sha256 ?? null,
       wallTime,
     },
   });

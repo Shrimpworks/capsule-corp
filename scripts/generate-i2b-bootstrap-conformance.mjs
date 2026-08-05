@@ -1,9 +1,10 @@
-import { createECDH, createHash, createHmac } from "node:crypto";
+import { createECDH, createHmac } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { fromHex, sequence, sha256 } from "./lib/fixture-bytes.mjs";
 
 const root = new URL("../schemas/conformance/i2b-bootstrap-v0/", import.meta.url);
 const check = process.argv.includes("--check");
-const privateScalar = hex("1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100");
+const privateScalar = fromHex("1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100");
 const ecdh = createECDH("prime256v1");
 ecdh.setPrivateKey(privateScalar);
 const point = ecdh.getPublicKey(undefined, "uncompressed");
@@ -883,9 +884,6 @@ function cloneMap(value) {
     ]),
   );
 }
-function sha256(value) {
-  return createHash("sha256").update(value).digest();
-}
 function hmac(key, value) {
   return createHmac("sha256", key).update(value).digest();
 }
@@ -902,7 +900,7 @@ function toBigInt(value) {
   return BigInt(`0x${Buffer.from(value).toString("hex")}`);
 }
 function fromBigInt(value, width) {
-  return hex(value.toString(16).padStart(width * 2, "0"));
+  return fromHex(value.toString(16).padStart(width * 2, "0"));
 }
 function uint64be(value) {
   const out = new Uint8Array(8);
@@ -914,10 +912,4 @@ function concatenate(parts) {
 }
 function repeated(length, value) {
   return Buffer.alloc(length, value);
-}
-function sequence(length, start) {
-  return Buffer.from(Array.from({ length }, (_, i) => (start + i) & 0xff));
-}
-function hex(value) {
-  return Buffer.from(value, "hex");
 }

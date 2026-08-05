@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { repeatedBytes, sha256Hex, toHex } from "./lib/fixture-bytes.mjs";
 
 const knownEnvelopeBase64Url =
   "0oRYRKMBJgN4K2FwcGxpY2F0aW9uL2NhcHN1bGUuYXBwcm92YWwtZ3JhbnQrY2Jvcjt2PTAEUWFwcHJvdmFsLXRlc3Qta2V5oFjqrAF2Y2Fwc3VsZS5hcHByb3ZhbC1ncmFudAIAA1ARERERERERERERERERERERBFggIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIFUDMzMzMzMzMzMzMzMzMzMzMGWCBERERERERERERERERERERERERERERERERERERERERERAdQVVVVVVVVVVVVVVVVVVVVVQhQZmZmZmZmZmZmZmZmZmZmZgl0Y2Fwc3VsZS5wbGFuLmFwcHJvdmUKeBxjYXBzdWxlLmV4ZWN1dGlvbi1zdXBlcnZpc29yCxpqa-WADBpqa-asWEARuN_9scveZ7aMR7epQ4uMVlYSvxAIKm0T1Ep_sB4hhm58OtFfuXKw_qK98t5qWEoVuf4-WDSHbhNQNsDICdMk";
@@ -881,7 +881,7 @@ function vectorFixtures({ name, envelope, payload, protectedHeader, keyId, view 
     envelopeBytes: Buffer.from(envelope),
     payloadBytes: Buffer.from(payload),
     protectedBytes: Buffer.from(protectedHeader),
-    keyIdHex: hex(keyId),
+    keyIdHex: toHex(keyId),
     view,
   };
 }
@@ -964,10 +964,10 @@ function approvalAttemptState(overrides = {}) {
   return {
     contextType: "capsule.conformance.approval-attempt-state",
     contextVersion: 0,
-    installationIdHex: hex(installationId),
-    supervisorIdHex: hex(supervisorId),
+    installationIdHex: toHex(installationId),
+    supervisorIdHex: toHex(supervisorId),
     epochSequence: 7,
-    epochDigestHex: hex(epochDigest),
+    epochDigestHex: toHex(epochDigest),
     trustPhase: "stable",
     trustReason: null,
     attemptsEnabled: true,
@@ -987,16 +987,4 @@ function approvalAttemptState(overrides = {}) {
     materializedAttempts: [],
     ...overrides,
   };
-}
-
-function repeatedBytes(value, length) {
-  return Uint8Array.from({ length }, () => value);
-}
-
-function hex(value) {
-  return Buffer.from(value).toString("hex");
-}
-
-function sha256Hex(value) {
-  return createHash("sha256").update(value).digest("hex");
 }

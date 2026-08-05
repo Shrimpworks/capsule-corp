@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const manifestUrl = new URL(
   "../schemas/conformance/governed-deno-core-release-candidate/candidate-manifest.json",
@@ -82,10 +82,6 @@ function refuse(condition, code, message) {
   if (!condition) throw new CandidateRefusal(code, message);
 }
 
-function sha256(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
-
 function unique(values) {
   return new Set(values).size === values.length;
 }
@@ -114,7 +110,7 @@ export function verifyManifestBytes(bytes) {
   const normalized = Buffer.from(
     text.replace(needle, `    "sha256": "${ZERO_DIGEST}"\n  },\n  "status"`),
   );
-  refuse(sha256(normalized) === digest, "RC_MANIFEST_DIGEST_MISMATCH", "self-digest mismatch");
+  refuse(sha256Hex(normalized) === digest, "RC_MANIFEST_DIGEST_MISMATCH", "self-digest mismatch");
   refuse(digest === EXPECTED_SELF_DIGEST, "RC_MANIFEST_DIGEST_MISMATCH", "unknown manifest bytes");
   verifyParsedManifest(manifest);
   const envelopeBytes = [
@@ -314,7 +310,7 @@ export async function verifyC1(manifest, path = fileURLToPath(c1Url)) {
     "C1 size mismatch",
   );
   refuse(
-    sha256(bytes) === manifest.compatibility.c1FixtureSha256,
+    sha256Hex(bytes) === manifest.compatibility.c1FixtureSha256,
     "RC_C1_MISMATCH",
     "C1 digest mismatch",
   );
@@ -338,7 +334,7 @@ export async function verifyEvidence(manifest, evidenceRoot) {
       throw new CandidateRefusal("RC_COMPONENT_MISSING", `missing evidence ${entry.path}`);
     }
     refuse(
-      sha256(bytes) === entry.sha256,
+      sha256Hex(bytes) === entry.sha256,
       "RC_EVIDENCE_MISMATCH",
       `evidence differs: ${entry.path}`,
     );

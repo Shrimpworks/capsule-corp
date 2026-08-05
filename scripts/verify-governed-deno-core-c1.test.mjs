@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const contractUrl = new URL(
   "../schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
@@ -28,7 +28,7 @@ const artifacts = Object.freeze({
 function assertKnownAnswerBytes(bytes) {
   assert.equal(bytes.length, 9_289);
   assert.equal(
-    createHash("sha256").update(bytes).digest("hex"),
+    sha256Hex(bytes),
     "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
   );
 }

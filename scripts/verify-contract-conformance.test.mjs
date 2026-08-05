@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 import { fileURLToPath } from "node:url";
 import Ajv2020 from "ajv/dist/2020.js";
 import { verifyConformanceCorpus } from "./verify-contract-conformance.mjs";
@@ -830,7 +830,7 @@ async function createCheckedInCorpus(t, mutateManifest = () => {}) {
 function reference(path, bytes) {
   return {
     path,
-    sha256: createHash("sha256").update(bytes).digest("hex"),
+    sha256: sha256Hex(bytes),
     byteLength: bytes.length,
   };
 }
@@ -879,16 +879,12 @@ function corpusBytes(path) {
   return readFile(new URL(`../schemas/conformance/v0/${path}`, import.meta.url));
 }
 
-function sha256Hex(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
-
 function encodeSourceManifestForTest(source) {
   const entries = Object.entries(source.files)
     .sort(([left], [right]) => Buffer.compare(Buffer.from(left), Buffer.from(right)))
     .map(([path, content]) => {
       const bytes = Buffer.from(content);
-      return [path, createHash("sha256").update(bytes).digest(), bytes.length];
+      return [path, sha256(bytes), bytes.length];
     });
   return cborForTest(
     new Map([

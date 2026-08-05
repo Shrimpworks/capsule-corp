@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { fromHex, sha256, sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const root = new URL("../schemas/conformance/typescript-approved-byte-v0/", import.meta.url);
 const check = process.argv.includes("--check");
@@ -26,11 +26,11 @@ const profile = map([
   [3, "node:module.stripTypeScriptTypes"],
   [4, "22.22.1"],
   [5, "1.1.5"],
-  [6, hex(toolchain.source)],
+  [6, fromHex(toolchain.source)],
   [7, "darwin"],
   [8, "arm64"],
-  [9, hex(toolchain.distribution)],
-  [10, hex(toolchain.executable)],
+  [9, fromHex(toolchain.distribution)],
+  [10, fromHex(toolchain.executable)],
 ]);
 const options = map([
   [1, "capsule.typescript-normalized-options"],
@@ -48,18 +48,18 @@ const record = map([
   [3, path],
   [4, tsMedia],
   [5, original.length],
-  [6, hashBytes(original)],
+  [6, sha256(original)],
   [7, jsMedia],
   [8, emitted.length],
-  [9, hashBytes(emitted)],
-  [10, hashBytes(profile)],
+  [9, sha256(emitted)],
+  [10, sha256(profile)],
   [11, "22.22.1"],
   [12, "1.1.5"],
-  [13, hex(toolchain.source)],
-  [14, hex(toolchain.distribution)],
-  [15, hex(toolchain.executable)],
+  [13, fromHex(toolchain.source)],
+  [14, fromHex(toolchain.distribution)],
+  [15, fromHex(toolchain.executable)],
   [16, options],
-  [17, hashBytes(options)],
+  [17, sha256(options)],
   [18, "absent"],
   [19, "absent"],
   [20, "reject-any"],
@@ -83,9 +83,9 @@ const recordSet = map([
 const planBindings = map([
   [1, "capsule.typescript-plan-source-bindings"],
   [2, 0],
-  [3, hashBytes(originalManifest)],
-  [4, hashBytes(executableManifest)],
-  [5, hashBytes(recordSet)],
+  [3, sha256(originalManifest)],
+  [4, sha256(executableManifest)],
+  [5, sha256(recordSet)],
 ]);
 
 const fixtures = new Map([
@@ -117,7 +117,7 @@ const mediaTypes = {
 const knownAnswers = [...fixtures].map(([fixturePath, bytes]) => ({
   path: fixturePath,
   byteLength: bytes.length,
-  sha256: hash(bytes),
+  sha256: sha256Hex(bytes),
   ...(mediaTypes[fixturePath] ? { mediaType: mediaTypes[fixturePath] } : {}),
 }));
 const mutations = [
@@ -184,7 +184,7 @@ function sourceManifest(objectType, mediaType, bytes) {
     [1, objectType],
     [2, 0],
     [3, path],
-    [4, [[path, mediaType, hashBytes(bytes), bytes.length]]],
+    [4, [[path, mediaType, sha256(bytes), bytes.length]]],
     [5, bytes.length],
   ]);
 }
@@ -230,14 +230,3 @@ function argument(major, value) {
   throw new Error("fixture integer exceeds uint32");
 }
 
-function hashBytes(bytes) {
-  return createHash("sha256").update(bytes).digest();
-}
-
-function hash(bytes) {
-  return hashBytes(bytes).toString("hex");
-}
-
-function hex(value) {
-  return Buffer.from(value, "hex");
-}

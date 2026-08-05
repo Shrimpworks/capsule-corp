@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const repository = new URL("../", import.meta.url);
 const outputRoot = new URL("schemas/conformance/authenticated-local-ipc-v0/", repository);
@@ -548,15 +548,11 @@ async function repositoryFixture(path) {
 }
 
 function reference(path, bytes) {
-  return { path, byteLength: bytes.length, sha256: sha256(bytes) };
+  return { path, byteLength: bytes.length, sha256: sha256Hex(bytes) };
 }
 
 function jsonBytes(value) {
   return Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest("hex");
 }
 
 function repeatedHex(value, length) {

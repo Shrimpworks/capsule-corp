@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { sha256 } from "./lib/fixture-bytes.mjs";
 
 const profile = "capsule.mjs-source/v0";
 const memberMediaType = "application/capsule.javascript-source;v=0;module=esm";
@@ -497,8 +497,4 @@ function mutateDigest(manifest) {
 
 function bytes(value) {
   return Buffer.from(value, "utf8");
-}
-
-function sha256(value) {
-  return createHash("sha256").update(value).digest();
 }

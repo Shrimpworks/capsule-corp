@@ -114,8 +114,8 @@ func parseEnvelope(_ data: Data, object: String) throws -> Envelope {
     }
     let payloadRaw = object == "request" ? 2048 : 4096
     let protectedRaw = 256
-    let envelopeCalculated = object == "request" ? 1033 : 1698
-    let payloadCalculated = object == "request" ? 861 : 1527
+    let envelopeCalculated = object == "request" ? 1032 : 1697
+    let payloadCalculated = object == "request" ? 860 : 1526
     let protectedCalculated = object == "request" ? 98 : 97
     guard protected.count <= protectedRaw, payload.count <= payloadRaw else { throw Failure.refused("nested-raw-cap") }
     guard data.count <= envelopeCalculated, payload.count <= payloadCalculated, protected.count <= protectedCalculated else { throw Failure.refused("calculated-cap") }
@@ -138,7 +138,89 @@ func verifyEnvelope(_ data: Data, object: String, ordinaryPayload: Data, ordinar
           bytes(protected[4])?.count == 32 else { throw Failure.refused("protected-profile") }
     let payload = try parseMap(envelope.payload, object: object)
     if !selfExpected && envelope.payload != ordinaryPayload { throw Failure.refused("ordinary-binding") }
+    try verifyCryptographicBindings(envelope, payload: payload, protected: protected, object: object)
 
+    if object == "request" {
+        try validateRequestProfile(payload)
+        let issued = uint(payload[31]), notBefore = uint(payload[32]), expires = uint(payload[33])
+        guard let issued, let notBefore, let expires, issued <= notBefore, notBefore < expires, expires - issued <= 300 else { throw Failure.refused("time-window") }
+        guard let now = trustedNow, now >= notBefore, now < expires else { throw Failure.refused("time-admission") }
+        switch replay {
+        case "fresh": return "admit-once"
+        case "pending-exact": return "resume-exact"
+        case "pending-other", "completed-exact": throw Failure.refused("request-replay")
+        default: throw Failure.refused("request-replay-state")
+        }
+    }
+
+    let boundRequestEnvelope = try parseEnvelope(ordinaryRequestEnvelope, object: "request")
+    guard boundRequestEnvelope.payload == ordinaryRequestPayload else { throw Failure.refused("request-envelope-payload-pair") }
+    guard text(payload[1]) == "capsule.supervisor-bootstrap-record", int(payload[2]) == 0,
+          text(payload[3]) == "capsule.installation.bootstrap.record", text(payload[4]) == "capsule.execution-supervisor",
+          bytes(payload[5]) == Data(SHA256.hash(data: ordinaryRequestPayload)),
+          bytes(payload[6]) == Data(SHA256.hash(data: ordinaryRequestEnvelope)),
+          uint(payload[7]) == UInt64(ordinaryRequestEnvelope.count), int(payload[19]) == 1,
+          bool(payload[53]) == false, bool(payload[54]) == false, bool(payload[55]) == false, bool(payload[56]) == false else {
+        throw Failure.refused("record-profile-binding")
+    }
+    let boundRequest = try parseMap(ordinaryRequestPayload, object: "request")
+    let boundProtected = try parseMap(boundRequestEnvelope.protected, object: "protected")
+    try verifyCryptographicBindings(boundRequestEnvelope, payload: boundRequest, protected: boundProtected, object: "request")
+    try validateRequestProfile(boundRequest)
+    guard uint(payload[59]) == uint(boundRequest[31]), uint(payload[60]) == uint(boundRequest[32]),
+          uint(payload[61]) == uint(boundRequest[33]), text(payload[62]) == text(boundRequest[34]),
+          text(payload[63]) == text(boundRequest[1]), uint(payload[64]) == uint(boundRequest[2]),
+          text(payload[65]) == text(boundRequest[3]), text(payload[66]) == text(boundRequest[4]),
+          bytes(payload[8]) == bytes(boundRequest[30]), bytes(payload[9]) == bytes(boundRequest[5]),
+          bytes(payload[10]) == bytes(boundRequest[6]), bytes(payload[11]) == bytes(boundRequest[7]),
+          bytes(payload[12]) == bytes(boundRequest[8]), bytes(payload[13]) == bytes(boundRequest[9]),
+          uint(payload[14]) == uint(boundRequest[10]), bytes(payload[15]) == bytes(boundRequest[11]),
+          bytes(payload[16]) == bytes(boundRequest[12]), bytes(payload[17]) == bytes(boundRequest[13]),
+          bytes(payload[18]) == bytes(boundRequest[14]), uint(payload[19]) == uint(boundRequest[15]),
+          bytes(payload[20]) == bytes(boundRequest[16]), text(payload[21]) == text(boundRequest[17]),
+          text(payload[22]) == text(boundRequest[18]), text(payload[28]) == text(boundRequest[21]),
+          uint(payload[33]) == uint(boundRequest[22]), uint(payload[34]) == uint(boundRequest[23]),
+          text(payload[35]) == text(boundRequest[24]), text(payload[36]) == text(boundRequest[25]),
+          text(payload[42]) == text(boundRequest[26]), text(payload[43]) == text(boundRequest[27]),
+          text(payload[46]) == text(boundRequest[19]), text(payload[47]) == text(boundRequest[20]) else {
+        throw Failure.refused("record-request-stable-binding")
+    }
+    let finalized = uint(payload[52]), requestExpires = uint(payload[61])
+    let issued = uint(payload[67]), notBefore = uint(payload[68]), expires = uint(payload[69])
+    guard let finalized, let requestExpires, let issued, let notBefore, let expires,
+          let now = trustedNow, finalized <= issued, issued <= notBefore, notBefore < expires,
+          expires - issued <= 300, expires <= requestExpires, now >= notBefore, now < expires else {
+        throw Failure.refused("record-time-window")
+    }
+    switch replay {
+    case "fresh", "pending": return "commit-once"
+    case "completed-exact": return "return-retained-envelope"
+    case "completed-other": throw Failure.refused("record-replay")
+    default: throw Failure.refused("record-replay-state")
+    }
+}
+
+func validateRequestProfile(_ payload: [Int: CBOR]) throws {
+    guard text(payload[1]) == "capsule.supervisor-bootstrap-request", int(payload[2]) == 0,
+          text(payload[3]) == "capsule.installation.bootstrap.request", text(payload[4]) == "capsule.execution-supervisor.bootstrap",
+          bytes(payload[5])?.count == 16, bytes(payload[6])?.count == 77, bytes(payload[7])?.count == 32,
+          bytes(payload[8])?.count == 32, bytes(payload[9])?.count == 16,
+          uint(payload[10]).map({ $0 > 0 && $0 <= 4_294_967_295 }) == true,
+          [11, 12, 13, 14, 16].allSatisfy({ bytes(payload[$0])?.count == 32 }),
+          int(payload[15]) == 1, text(payload[17]) == "supervisor-private-app-sandbox",
+          text(payload[18]) == "supervisor.state", text(payload[19]) == "supervisor.bootstrap-request",
+          text(payload[20]) == "supervisor.bootstrap-record", text(payload[21]) == "supervisor.owner",
+          uint(payload[22]) == 384, uint(payload[23]) == 1, text(payload[24]) == "darwin-openat-flock-v0",
+          text(payload[25]) == "supervisor.store", text(payload[26]) == "capsule.supervisor-store/fixed-v1",
+          text(payload[27]) == "conformance-non-product-no-guest", bool(payload[28]) == false,
+          bool(payload[29]) == false, bytes(payload[30])?.count == 32,
+          text(payload[34]) == "one-shot-exact-payload-replay-only" else { throw Failure.refused("request-profile") }
+}
+
+func verifyCryptographicBindings(_ envelope: Envelope, payload: [Int: CBOR], protected: [Int: CBOR], object: String) throws {
+    guard protected.count == 3, int(protected[1]) == -7,
+          text(protected[3]) == (object == "request" ? "application/capsule.supervisor-bootstrap-request+cbor;v=0" : "application/capsule.supervisor-bootstrap-record+cbor;v=0"),
+          bytes(protected[4])?.count == 32 else { throw Failure.refused("protected-profile") }
     let publicKeyBytes = bytes(payload[object == "request" ? 6 : 10])
     let payloadKeyID = bytes(payload[object == "request" ? 7 : 11])
     guard let publicKeyBytes, publicKeyBytes.count == 77, let payloadKeyID,
@@ -162,55 +244,9 @@ func verifyEnvelope(_ data: Data, object: String, ordinaryPayload: Data, ordinar
     let keyMap = try parseMap(publicKeyBytes, object: "public-key")
     guard int(keyMap[1]) == 2, int(keyMap[3]) == -7, int(keyMap[-1]) == 1,
           let x = bytes(keyMap[-2]), x.count == 32, let y = bytes(keyMap[-3]), y.count == 32 else { throw Failure.refused("public-key") }
-    let x963 = Data([4]) + x + y
-    let publicKey = try P256.Signing.PublicKey(x963Representation: x963)
+    let publicKey = try P256.Signing.PublicKey(x963Representation: Data([4]) + x + y)
     let signature = try P256.Signing.ECDSASignature(rawRepresentation: envelope.signature)
     guard publicKey.isValidSignature(signature, for: sigStructure(envelope.protected, envelope.payload)) else { throw Failure.refused("signature") }
-
-    if object == "request" {
-        guard text(payload[1]) == "capsule.supervisor-bootstrap-request", int(payload[2]) == 0,
-              text(payload[3]) == "capsule.installation.bootstrap.request", text(payload[4]) == "capsule.execution-supervisor.bootstrap",
-              bytes(payload[5])?.count == 16, bytes(payload[9])?.count == 16, bytes(payload[30])?.count == 32,
-              int(payload[15]) == 1, bool(payload[28]) == false, bool(payload[29]) == false else { throw Failure.refused("request-profile") }
-        let issued = uint(payload[31]), notBefore = uint(payload[32]), expires = uint(payload[33])
-        guard let issued, let notBefore, let expires, issued <= notBefore, notBefore < expires, expires - issued <= 300 else { throw Failure.refused("time-window") }
-        guard let now = trustedNow, now >= notBefore, now < expires else { throw Failure.refused("time-admission") }
-        switch replay {
-        case "fresh": return "admit-once"
-        case "pending-exact": return "resume-exact"
-        case "pending-other", "completed-exact": throw Failure.refused("request-replay")
-        default: throw Failure.refused("request-replay-state")
-        }
-    }
-
-    guard text(payload[1]) == "capsule.supervisor-bootstrap-record", int(payload[2]) == 0,
-          text(payload[3]) == "capsule.installation.bootstrap.record", text(payload[4]) == "capsule.execution-supervisor",
-          bytes(payload[5]) == Data(SHA256.hash(data: ordinaryRequestPayload)),
-          bytes(payload[6]) == Data(SHA256.hash(data: ordinaryRequestEnvelope)),
-          uint(payload[7]) == UInt64(ordinaryRequestEnvelope.count), int(payload[19]) == 1,
-          bool(payload[53]) == false, bool(payload[54]) == false, bool(payload[55]) == false, bool(payload[56]) == false else {
-        throw Failure.refused("record-profile-binding")
-    }
-    let boundRequest = try parseMap(ordinaryRequestPayload, object: "request")
-    guard uint(payload[59]) == uint(boundRequest[31]), uint(payload[60]) == uint(boundRequest[32]),
-          uint(payload[61]) == uint(boundRequest[33]), text(payload[62]) == text(boundRequest[34]),
-          text(payload[63]) == text(boundRequest[1]), uint(payload[64]) == uint(boundRequest[2]),
-          text(payload[65]) == text(boundRequest[3]), text(payload[66]) == text(boundRequest[4]) else {
-        throw Failure.refused("record-request-stable-binding")
-    }
-    let finalized = uint(payload[52]), requestExpires = uint(payload[61])
-    let issued = uint(payload[67]), notBefore = uint(payload[68]), expires = uint(payload[69])
-    guard let finalized, let requestExpires, let issued, let notBefore, let expires,
-          let now = trustedNow, finalized <= issued, issued <= notBefore, notBefore < expires,
-          expires - issued <= 300, expires <= requestExpires, now >= notBefore, now < expires else {
-        throw Failure.refused("record-time-window")
-    }
-    switch replay {
-    case "fresh", "pending": return "commit-once"
-    case "completed-exact": return "return-retained-envelope"
-    case "completed-other": throw Failure.refused("record-replay")
-    default: throw Failure.refused("record-replay-state")
-    }
 }
 
 func sigStructure(_ protected: Data, _ payload: Data) -> Data {
@@ -242,7 +278,7 @@ let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).append
 let manifestData = try Data(contentsOf: root.appendingPathComponent("manifest.json"))
 guard let manifest = try JSONSerialization.jsonObject(with: manifestData) as? [String: Any],
       manifest["manifestVersion"] as? String == "capsule.i2b-bootstrap-conformance/v0",
-      let cases = manifest["cases"] as? [[String: Any]], cases.count == 71,
+      let cases = manifest["cases"] as? [[String: Any]], cases.count == 95,
       let effects = manifest["effects"] as? [String: Int], effects.values.allSatisfy({ $0 == 0 }) else { throw Failure.refused("manifest") }
 let ordinaryRequestEnvelope = try Data(contentsOf: root.appendingPathComponent("request/ordinary.cose"))
 let ordinaryRequestPayload = try Data(contentsOf: root.appendingPathComponent("request/ordinary.payload.cbor"))
@@ -255,8 +291,14 @@ for testCase in cases {
     let expected = testCase["expected"] as! String, replay = testCase["replay"] as! String, selfExpected = testCase["selfExpected"] as! Bool
     let trustedNow = (testCase["trustedNow"] as? NSNumber)?.uint64Value
     let requestVariant = testCase["requestVariant"] as? String
-    let boundRequestEnvelope = requestVariant == "maximum" ? maximumRequestEnvelope : ordinaryRequestEnvelope
-    let boundRequestPayload = requestVariant == "maximum" ? maximumRequestPayload : ordinaryRequestPayload
+    let requestEnvelopePath = testCase["requestEnvelope"] as? String
+    let requestPayloadPath = testCase["requestPayload"] as? String
+    let boundRequestEnvelope = requestEnvelopePath != nil
+        ? try Data(contentsOf: root.appendingPathComponent(requestEnvelopePath!))
+        : requestVariant == "maximum" ? maximumRequestEnvelope : ordinaryRequestEnvelope
+    let boundRequestPayload = requestPayloadPath != nil
+        ? try Data(contentsOf: root.appendingPathComponent(requestPayloadPath!))
+        : requestVariant == "maximum" ? maximumRequestPayload : ordinaryRequestPayload
     let data = try Data(contentsOf: root.appendingPathComponent(fixture))
     do {
         let decision = try verifyEnvelope(data, object: object, ordinaryPayload: object == "request" ? ordinaryRequestPayload : ordinaryRecordPayload, ordinaryRequestEnvelope: boundRequestEnvelope, ordinaryRequestPayload: boundRequestPayload, selfExpected: selfExpected, trustedNow: trustedNow, replay: replay)

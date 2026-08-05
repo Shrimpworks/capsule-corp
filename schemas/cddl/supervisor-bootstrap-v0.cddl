@@ -51,7 +51,7 @@ capsule-supervisor-bootstrap-request-v0 = {
   31: capsule-unix-seconds, ; issuedAt
   32: capsule-unix-seconds, ; notBefore
   33: capsule-unix-seconds, ; expiresAt
-  34: "one-shot-exact-envelope-replay-only", ; replayDisposition
+  34: "one-shot-exact-payload-replay-only", ; replayDisposition
 }
 
 capsule-supervisor-bootstrap-record-envelope-v0 = #6.18([
@@ -129,7 +129,7 @@ capsule-supervisor-bootstrap-record-v0 = {
   59: capsule-unix-seconds, ; requestIssuedAt
   60: capsule-unix-seconds, ; requestNotBefore
   61: capsule-unix-seconds, ; requestExpiresAt
-  62: "one-shot-exact-envelope-replay-only", ; requestReplayDisposition
+  62: "one-shot-exact-payload-replay-only", ; requestReplayDisposition
   63: "capsule.supervisor-bootstrap-request", ; requestObjectType
   64: 0, ; requestObjectVersion
   65: "capsule.installation.bootstrap.request", ; requestPurpose

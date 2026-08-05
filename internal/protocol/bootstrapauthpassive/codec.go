@@ -186,6 +186,8 @@ func (c *Codec) VerifyRequest(received []byte, expected Request, trustedNow uint
 	protected := exact[parts.protectedStart:parts.protectedEnd]
 	payload := exact[parts.payloadStart:parts.payloadEnd]
 	signature := exact[parts.signatureStart:parts.signatureEnd]
+	envelopeDigest := sha256.Sum256(exact)
+	payloadDigest := sha256.Sum256(payload)
 	if err := predecode(exact, predecodeProfile{maxBytes: RequestEnvelopeRawMaxBytes, maxDepth: 3, maxItems: 7, maxMapEntries: 0, maxArrayElements: 4, allowedTag: 18, allowTag: true}); err != nil {
 		return nil, err
 	}
@@ -212,14 +214,19 @@ func (c *Codec) VerifyRequest(received []byte, expected Request, trustedNow uint
 	if trustedNow >= view.ExpiresAt {
 		return nil, rejected(ClassificationTime, "request-stale-or-expired")
 	}
-	if err := verifySignature(view.InstallationRootPublicKey, protected, payload, signature); err != nil {
+	// Signature verification uses the independently supplied expected key after
+	// Capsule role binding, never the key selected only by payload bytes.
+	if err := verifySignature(expected.InstallationRootPublicKey, protected, payload, signature); err != nil {
 		return nil, err
 	}
-	decision, err := evaluateRequestReplay(sha256.Sum256(exact), view.Nonce, replay)
+	decision, err := evaluateRequestReplay(payloadDigest, view.Nonce, replay)
 	if err != nil {
 		return nil, err
 	}
-	return &VerifiedRequest{exactEnvelope: exact, exactPayload: bytes.Clone(payload), view: view, decision: decision}, nil
+	return &VerifiedRequest{
+		exactEnvelope: exact, exactProtected: bytes.Clone(protected), exactPayload: bytes.Clone(payload),
+		envelopeDigest: envelopeDigest, payloadDigest: payloadDigest, view: view, decision: decision,
+	}, nil
 }
 
 type RecordBindings struct {
@@ -245,6 +252,8 @@ func (c *Codec) VerifyRecord(received []byte, bindings RecordBindings) (*Verifie
 	protected := exact[parts.protectedStart:parts.protectedEnd]
 	payload := exact[parts.payloadStart:parts.payloadEnd]
 	signature := exact[parts.signatureStart:parts.signatureEnd]
+	envelopeDigest := sha256.Sum256(exact)
+	payloadDigest := sha256.Sum256(payload)
 	if err := predecode(exact, predecodeProfile{maxBytes: RecordEnvelopeRawMaxBytes, maxDepth: 3, maxItems: 7, maxMapEntries: 0, maxArrayElements: 4, allowedTag: 18, allowTag: true}); err != nil {
 		return nil, err
 	}
@@ -274,21 +283,76 @@ func (c *Codec) VerifyRecord(received []byte, bindings RecordBindings) (*Verifie
 	if len(bindings.RequestEnvelope) == 0 || len(bindings.RequestEnvelope) > RequestEnvelopeRawMaxBytes || len(bindings.RequestPayload) == 0 || len(bindings.RequestPayload) > RequestPayloadRawMaxBytes {
 		return nil, rejected(ClassificationBinding, "request-binding-shape")
 	}
-	if view.RequestEnvelopeLength != uint64(len(bindings.RequestEnvelope)) || view.RequestEnvelopeDigest != sha256.Sum256(bindings.RequestEnvelope) || view.RequestPayloadDigest != sha256.Sum256(bindings.RequestPayload) {
+	if _, err := frameEnvelope(bindings.RequestEnvelope, RequestEnvelopeRawMaxBytes, RequestProtectedRawMaxBytes, RequestPayloadRawMaxBytes); err != nil {
+		return nil, rejected(ClassificationBinding, "request-envelope-framing")
+	}
+	requestEnvelope := bytes.Clone(bindings.RequestEnvelope)
+	requestPayload := bytes.Clone(bindings.RequestPayload)
+	if view.RequestEnvelopeLength != uint64(len(requestEnvelope)) || view.RequestEnvelopeDigest != sha256.Sum256(requestEnvelope) || view.RequestPayloadDigest != sha256.Sum256(requestPayload) {
 		return nil, rejected(ClassificationBinding, "request-digest-binding")
 	}
-	boundRequest, err := c.decodeRequest(bindings.RequestPayload)
-	if err != nil || view.RequestNonce != boundRequest.Nonce || view.RequestIssuedAt != boundRequest.IssuedAt || view.RequestNotBefore != boundRequest.NotBefore || view.RequestExpiresAt != boundRequest.ExpiresAt || view.RequestReplayDisposition != boundRequest.ReplayDisposition || view.RequestObjectType != boundRequest.ObjectType || view.RequestObjectVersion != boundRequest.ObjectVersion || view.RequestPurpose != boundRequest.Purpose || view.RequestAudience != boundRequest.Audience {
-		return nil, rejected(ClassificationBinding, "request-stable-field-binding")
-	}
-	if err := verifySignature(view.InstallationRootPublicKey, protected, payload, signature); err != nil {
-		return nil, err
-	}
-	decision, err := evaluateRecordReplay(sha256.Sum256(exact), view.RequestNonce, bindings.Replay)
+	boundRequest, err := c.verifyBoundRequest(requestEnvelope, requestPayload, bindings.Expected.InstallationRootPublicKey)
 	if err != nil {
 		return nil, err
 	}
-	return &VerifiedRecord{exactEnvelope: exact, exactPayload: bytes.Clone(payload), view: view, decision: decision}, nil
+	if err := bindRecordToRequest(view, boundRequest); err != nil {
+		return nil, err
+	}
+	if err := verifySignature(bindings.Expected.InstallationRootPublicKey, protected, payload, signature); err != nil {
+		return nil, err
+	}
+	decision, err := evaluateRecordReplay(payloadDigest, view.RequestNonce, bindings.Replay)
+	if err != nil {
+		return nil, err
+	}
+	return &VerifiedRecord{
+		exactEnvelope: exact, exactProtected: bytes.Clone(protected), exactPayload: bytes.Clone(payload),
+		envelopeDigest: envelopeDigest, payloadDigest: payloadDigest, view: view, decision: decision,
+	}, nil
+}
+
+// verifyBoundRequest proves that the separately retained request payload is
+// the exact embedded payload of the retained signed envelope. Record
+// authorization must not compose digests from two independently supplied
+// request byte strings.
+func (c *Codec) verifyBoundRequest(exactEnvelope, exactPayload []byte, trustedKey InstallationRootPublicKey) (Request, error) {
+	parts, err := frameEnvelope(exactEnvelope, RequestEnvelopeRawMaxBytes, RequestProtectedRawMaxBytes, RequestPayloadRawMaxBytes)
+	if err != nil {
+		return Request{}, rejected(ClassificationBinding, "request-envelope-framing")
+	}
+	if len(exactEnvelope) > RequestEnvelopeCalculatedMaxBytes || parts.payloadEnd-parts.payloadStart > RequestPayloadCalculatedMaxBytes || parts.protectedEnd-parts.protectedStart > RequestProtectedCalculatedMaxBytes {
+		return Request{}, rejected(ClassificationBinding, "request-calculated-maximum")
+	}
+	if err := predecode(exactEnvelope, predecodeProfile{maxBytes: RequestEnvelopeRawMaxBytes, maxDepth: 3, maxItems: 7, maxMapEntries: 0, maxArrayElements: 4, allowedTag: 18, allowTag: true}); err != nil {
+		return Request{}, err
+	}
+	embeddedPayload := exactEnvelope[parts.payloadStart:parts.payloadEnd]
+	if !bytes.Equal(embeddedPayload, exactPayload) {
+		return Request{}, rejected(ClassificationBinding, "request-envelope-payload-pair")
+	}
+	protected := exactEnvelope[parts.protectedStart:parts.protectedEnd]
+	header, err := c.decodeProtected(protected, RequestMediaType)
+	if err != nil {
+		return Request{}, err
+	}
+	view, err := c.decodeRequest(exactPayload)
+	if err != nil {
+		return Request{}, err
+	}
+	if header.KeyID != view.SignerKeyID {
+		return Request{}, rejected(ClassificationBinding, "request-protected-payload-key-id")
+	}
+	if err := validateRequestShape(view); err != nil {
+		return Request{}, err
+	}
+	if view.InstallationRootPublicKey != trustedKey {
+		return Request{}, rejected(ClassificationBinding, "request-trusted-key")
+	}
+	signature := exactEnvelope[parts.signatureStart:parts.signatureEnd]
+	if err := verifySignature(trustedKey, protected, exactPayload, signature); err != nil {
+		return Request{}, err
+	}
+	return view, nil
 }
 
 func (c *Codec) decodeProtected(exact []byte, mediaType string) (protectedView, error) {

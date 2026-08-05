@@ -233,12 +233,50 @@ func validateRecordShape(v Record) error {
 	return nil
 }
 
-func evaluateRequestReplay(digest Digest, nonce Nonce, state ReplayState) (Decision, error) {
+func bindRecordToRequest(record Record, request Request) error {
+	if record.RequestNonce != request.Nonce ||
+		record.InstallationID != request.InstallationID ||
+		record.InstallationRootPublicKey != request.InstallationRootPublicKey ||
+		record.SignerKeyID != request.SignerKeyID ||
+		record.SignerAuthorizationIdentity != request.SignerAuthorizationIdentity ||
+		record.SupervisorID != request.SupervisorID ||
+		record.ExpectedEffectiveUID != request.ExpectedEffectiveUID ||
+		record.ContainingReleaseDigest != request.ContainingReleaseDigest ||
+		record.I1ProfileCandidateDigest != request.I1ProfileCandidateDigest ||
+		record.ComponentProfileDigest != request.ComponentProfileDigest ||
+		record.InstallationManifestCandidateDigest != request.InstallationManifestCandidateDigest ||
+		record.TrustEpochSequence != request.TrustEpochSequence ||
+		record.TrustEpochCandidateDigest != request.TrustEpochCandidateDigest ||
+		record.StateRootClass != request.StateRootClass ||
+		record.StateRootName != request.StateRootName ||
+		record.OwnerLockEntryName != request.OwnerLockEntryName ||
+		record.OwnerLockMode != request.OwnerLockMode ||
+		record.OwnerLockLinkCount != request.OwnerLockLinkCount ||
+		record.OwnerLockProfile != request.OwnerLockProfile ||
+		record.StoreEntryName != request.StoreEntryName ||
+		record.StoreFormat != request.StoreFormat ||
+		record.StoreProfile != request.StoreProfile ||
+		record.RequestEntryName != request.RequestEntryName ||
+		record.RecordEntryName != request.RecordEntryName ||
+		record.RequestIssuedAt != request.IssuedAt ||
+		record.RequestNotBefore != request.NotBefore ||
+		record.RequestExpiresAt != request.ExpiresAt ||
+		record.RequestReplayDisposition != request.ReplayDisposition ||
+		record.RequestObjectType != request.ObjectType ||
+		record.RequestObjectVersion != request.ObjectVersion ||
+		record.RequestPurpose != request.Purpose ||
+		record.RequestAudience != request.Audience {
+		return rejected(ClassificationBinding, "request-stable-field-binding")
+	}
+	return nil
+}
+
+func evaluateRequestReplay(payloadDigest Digest, nonce Nonce, state ReplayState) (Decision, error) {
 	switch state.Disposition {
 	case ReplayFresh:
 		return DecisionAdmitOnce, nil
 	case ReplayPending:
-		if state.EnvelopeDigest == digest && state.Nonce == nonce {
+		if state.PayloadDigest == payloadDigest && state.Nonce == nonce {
 			return DecisionResumeExact, nil
 		}
 	case ReplayCompleted:
@@ -249,12 +287,12 @@ func evaluateRequestReplay(digest Digest, nonce Nonce, state ReplayState) (Decis
 	return "", rejected(ClassificationReplay, "request-substitution-or-reused-nonce")
 }
 
-func evaluateRecordReplay(digest Digest, nonce Nonce, state ReplayState) (Decision, error) {
+func evaluateRecordReplay(payloadDigest Digest, nonce Nonce, state ReplayState) (Decision, error) {
 	switch state.Disposition {
 	case ReplayFresh, ReplayPending:
 		return DecisionCommitOnce, nil
 	case ReplayCompleted:
-		if state.EnvelopeDigest == digest && state.Nonce == nonce {
+		if state.PayloadDigest == payloadDigest && state.Nonce == nonce {
 			return DecisionReturnRetained, nil
 		}
 	default:

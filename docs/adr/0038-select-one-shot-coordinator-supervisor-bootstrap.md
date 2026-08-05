@@ -151,11 +151,13 @@ No ordinary path creates, normalizes, rewrites, deletes, or adopts it.
 
 ### Replay, death, and update semantics
 
-The exact request is durably journaled before root creation. Before that commit, death has no
-bootstrap effect. After it, only exact envelope replay may resume. Request expiry limits initial
-admission but does not force a new request after durable admission. Concurrent exact replays
-converge; a different payload, envelope, nonce, key, installation, Supervisor, component profile,
-or epoch refuses.
+The exact request payload and its received envelope are durably journaled before root creation.
+Before that commit, death has no bootstrap effect. After it, only the same canonical payload and
+nonce may resume; a mathematically equivalent ES256 signature addresses that same transaction but
+never replaces the retained envelope. Request expiry limits initial admission but does not force a
+new request after durable admission. Concurrent payload-equivalent replays converge; a different
+payload, nonce, key, installation, Supervisor, component profile, or epoch refuses. Envelope and
+signature bytes remain evidence and response-recovery bytes, not replay identity.
 
 The Coordinator retains the exact request and record envelopes before delivery because ECDSA
 signature bytes are not assumed reproducible. Death or response loss after finalization returns

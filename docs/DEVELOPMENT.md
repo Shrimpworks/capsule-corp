@@ -1,5 +1,10 @@
 # Development
 
+For a sequenced fresh-machine walkthrough (including Apple identity/credential setup and a
+machine-loss recovery drill), see
+[Development machine setup and recovery](DEV_MACHINE_SETUP_AND_RECOVERY.md). This page remains the
+canonical reference for exact toolchain pins and common commands.
+
 ## Prerequisites
 
 - Go 1.23 or newer, as declared by `go.mod`

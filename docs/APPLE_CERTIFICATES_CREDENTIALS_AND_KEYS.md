@@ -642,6 +642,9 @@ The task handoff must retain only redacted evidence and answer each item:
 
 ## Canonical related decisions and limits
 
+- [Development machine setup and recovery](DEV_MACHINE_SETUP_AND_RECOVERY.md) sequences this
+  document's setup sections into an execution checklist and adds an unrehearsed machine-loss
+  recovery drill; this document remains canonical for the policy and rationale behind each step.
 - [Apple Development provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md) retains the exact
   W4/3DDR discovery and installed-test proposal.
 - [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md) defines

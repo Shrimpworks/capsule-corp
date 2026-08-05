@@ -156,5 +156,7 @@ schema/type/example/API replacement. See [Schema status](../schemas/README.md).
 - [Capsule domain primer](CAPSULE_DOMAIN_PRIMER.md) — fast-orientation vocabulary and Go package
   map for a contributor about to write or review Go code here.
 
-Development setup is documented in [Development](DEVELOPMENT.md). GitHub configuration and public
-release checks are documented in [Repository setup](REPOSITORY_SETUP.md).
+Development setup is documented in [Development](DEVELOPMENT.md). The sequenced fresh-machine
+setup, Apple identity/credential checklist, and machine-loss recovery drill are in
+[Development machine setup and recovery](DEV_MACHINE_SETUP_AND_RECOVERY.md). GitHub configuration
+and public release checks are documented in [Repository setup](REPOSITORY_SETUP.md).

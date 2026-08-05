@@ -68,6 +68,33 @@ Record the active default, immutable ref names and commits, candidate target, pr
 verification commands in the fork's governed metadata. A branch name alone is not an immutable
 identity.
 
+### Accepted governed fork readback
+
+The 2026-08-05 post-merge acceptance transition independently verified each merge's parents,
+ancestry, and tree before changing GitHub settings. These are the current accepted defaults:
+
+| Fork | Immutable upstream source | Locked accepted default | Accepted tree | Upstream-integration `main` |
+| --- | --- | --- | --- | --- |
+| [`Shrimpworks/deno`](https://github.com/Shrimpworks/deno) | `capsule/anchor-v2.9.4` / `14eea3160ae5834476aa3b9d317b8d41d991b982` | `capsule/accepted-v2.9.4-r3` / `3fa21d1ae7705ab4bcb4bc98955f25301b20122a` | `6060cb0eb4cd3395a4c141f054634968744617d2` | `98bcf8375eb9f9a8fa7d83fb2f7885ef38244219` |
+| [`Shrimpworks/rusty_v8`](https://github.com/Shrimpworks/rusty_v8) | `capsule/anchor-v150.2.0` / `d305e6afa7736f6e298c30ae6646f7709ee9382b` | `capsule/accepted-v150.2.0-r5` / `d09221062280ae1675fe26c53c3f43871aae2055` | `2632901e6e7e9ac88662756ceb658d4e3e49fceb` | `42d6a1adc3b6ab97eff922638c1e6c3c847a8800` |
+| [`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun) | upstream v1.19.4 / `728df8125077d0db44265f6e997c72b81b65c015` | `capsule/upstream-v1.19.4-r3` / `7432eda5a49220976b0167005aa43ee622f9d632` | `7671440cfbafa58fe20aebf8d4deb2a843ebe346` | `1622c9f46751fc8341555f44d2000589e5d28360` |
+
+The Deno and `rusty_v8` completed r3/r5 review targets are locked at the same accepted commits.
+The libkrun original patch-queue merge remains locked as `capsule/baseline-v1.19.4-r1` at
+`4ea8d1de861ed1c0636fc800b6da8fb71a086aa5`; its superseded accepted line remains locked as
+`capsule/upstream-v1.19.4` at `cf0333cdba478cc34a8570a65b38412da7fd3ecc`. The earlier Deno and
+`rusty_v8` anchor, reviewed-head, accepted, and recovery refs likewise remain protected and
+unchanged.
+
+Settings readback showed every accepted default and completed review target locked with
+administrator enforcement, required pull requests, resolved conversations, no force-push, and no
+deletion. All three `main` branches retain the same protections but remain unlocked integration
+state; this transition added the previously missing protection to libkrun `main`. No required
+status-check contexts were configured on these branches at readback. Required approvals are zero,
+most-recent-push approval is false, and CODEOWNER approval is false while there is one qualified
+maintainer. This is repository governance only: it creates no release and changes no dependency,
+runtime, backend, profile, control-evidence, or product-admission state.
+
 ## Security settings
 
 Enable:

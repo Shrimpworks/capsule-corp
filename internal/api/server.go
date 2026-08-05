@@ -88,6 +88,8 @@ func writeJSON(response http.ResponseWriter, status int, value any) {
 	response.WriteHeader(status)
 
 	if err := json.NewEncoder(response).Encode(value); err != nil {
+		// Headers are already sent; nothing further can be done about a
+		// failed late write here.
 		return
 	}
 }

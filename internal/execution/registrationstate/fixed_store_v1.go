@@ -275,6 +275,12 @@ func (store *FixedFileStoreV1) snapshotV1(ctx context.Context) (fixedStoreV1Snap
 	}, nil
 }
 
+// fixedStoreV1MigrationMu serializes every MigrateFixedFileStoreV0ToV1 call
+// against the same store path, mirroring fixedStoreV2MigrationMu's guard
+// against two concurrent callers independently building and renaming their
+// own envelope onto the same destination.
+var fixedStoreV1MigrationMu sync.Mutex
+
 // MigrateFixedFileStoreV0ToV1 performs the sole E2 write path. It validates
 // v0 under an asserted offline lock, commits exactly one empty lifecycle
 // collection through temp/sync/rename/directory-sync, then reopens v1.
@@ -289,6 +295,8 @@ func MigrateFixedFileStoreV0ToV1(
 	if options.Lock == nil {
 		return nil, ErrMigrationLockRequired
 	}
+	fixedStoreV1MigrationMu.Lock()
+	defer fixedStoreV1MigrationMu.Unlock()
 	if err := options.Lock.CheckOfflineMigrationLock(ctx); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrMigrationLockRequired, err)
 	}
@@ -303,7 +311,7 @@ func MigrateFixedFileStoreV0ToV1(
 		return nil, fmt.Errorf("%w: %v", ErrMigrationLockRequired, err)
 	}
 	envelope := encodedEnvelopeV1(state, nil)
-	if err := persistEnvelopeV1(path, envelope, options.Faults); err != nil {
+	if err := persistEnvelopeV1(ctx, path, envelope, options.Lock, options.Faults); err != nil {
 		return nil, err
 	}
 	if err := options.Lock.CheckOfflineMigrationLock(ctx); err != nil {
@@ -515,7 +523,13 @@ func encodedEnvelopeV1(state installationState, records []lifecyclestate.Record)
 	}
 }
 
-func persistEnvelopeV1(path string, envelope diskEnvelopeV1, faults MigrationFaultInjector) error {
+func persistEnvelopeV1(
+	ctx context.Context,
+	path string,
+	envelope diskEnvelopeV1,
+	lock OfflineMigrationLock,
+	faults MigrationFaultInjector,
+) error {
 	parent := filepath.Dir(path)
 	temporary, err := os.CreateTemp(parent, ".capsule-supervisor-v1-migration-*.tmp")
 	if err != nil {
@@ -547,6 +561,9 @@ func persistEnvelopeV1(path string, envelope diskEnvelopeV1, faults MigrationFau
 		if err := faults.FailMigrationAt(FaultMigrationBeforeRename); err != nil {
 			return errors.New("fixed supervisor v1 migration confirmed before rename failure")
 		}
+	}
+	if err := lock.CheckOfflineMigrationLock(ctx); err != nil {
+		return fmt.Errorf("%w: %v", ErrMigrationLockRequired, err)
 	}
 	if err := os.Rename(temporaryPath, path); err != nil {
 		return errors.New("commit fixed supervisor v1 migration")

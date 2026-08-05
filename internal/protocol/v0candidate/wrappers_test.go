@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -491,4 +492,109 @@ func replaceFirst(t *testing.T, source, old, replacement []byte) []byte {
 	result := bytes.Clone(source)
 	copy(result[index:index+len(old)], replacement)
 	return result
+}
+
+// TestExecutionPlanBoundedTextFieldLengths proves issue #142's coverage gap:
+// SourceEntrypoint's 1-256 byte bound and RuntimeProfileAlias's 1-128 byte
+// bound (both enforced only by decodeBoundedText) are exercised at 0, 1,
+// exact-maximum, and maximum-plus-one, mirroring this package's established
+// exact-maximum/cap-plus-one pattern for every other bounded field.
+func TestExecutionPlanBoundedTextFieldLengths(t *testing.T) {
+	t.Parallel()
+	ordinary := readConformanceFixture(t, "execution-plan/ordinary.cbor")
+
+	tests := []struct {
+		name           string
+		key            uint64
+		length         int
+		classification Classification
+	}{
+		{name: "source-entrypoint zero bytes", key: 7, length: 0, classification: ClassificationSchema},
+		{name: "source-entrypoint one byte", key: 7, length: 1},
+		{name: "source-entrypoint exact maximum (256)", key: 7, length: 256},
+		{name: "source-entrypoint maximum plus one (257)", key: 7, length: 257, classification: ClassificationSchema},
+		{name: "runtime-profile-alias zero bytes", key: 12, length: 0, classification: ClassificationSchema},
+		{name: "runtime-profile-alias one byte", key: 12, length: 1},
+		{name: "runtime-profile-alias exact maximum (128)", key: 12, length: 128},
+		{name: "runtime-profile-alias maximum plus one (129)", key: 12, length: 129, classification: ClassificationSchema},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			mutated := spliceTextFieldValue(t, ordinary, test.key, strings.Repeat("x", test.length))
+			decoded, err := DecodeExecutionPlan(mutated, ordinaryExecutionPlanBindings())
+			assertClassification(t, err, test.classification)
+			if test.classification == "" {
+				if decoded == nil {
+					t.Fatal("accepted case produced no decoded plan")
+				}
+				view := decoded.View()
+				var got string
+				switch test.key {
+				case 7:
+					got = view.SourceEntrypoint
+				case 12:
+					got = view.RuntimeProfileAlias
+				}
+				if got != strings.Repeat("x", test.length) {
+					t.Fatalf("decoded field length = %d, want %d", len(got), test.length)
+				}
+			}
+		})
+	}
+}
+
+// spliceTextFieldValue replaces the CBOR-encoded value of one top-level
+// ExecutionPlan map key with a freshly encoded text string of newValue's
+// exact length, using the production predecode scanner to locate the
+// existing value's byte range so the replacement works regardless of the
+// field's current encoded length. Every other field, and every byte outside
+// the target value, is left untouched.
+func spliceTextFieldValue(t *testing.T, source []byte, targetKey uint64, newValue string) []byte {
+	t.Helper()
+	scanner := cborScanner{bytes: source, profile: executionPlanCBORProfile}
+	major, count, err := scanner.readHead()
+	if err != nil || major != 5 {
+		t.Fatalf("fixture is not a top-level CBOR map: %v", err)
+	}
+	for index := uint64(0); index < count; index++ {
+		keyStart := scanner.offset
+		if err := scanner.scanItem(1); err != nil {
+			t.Fatalf("scan key %d: %v", index, err)
+		}
+		keyReader := cborReader{bytes: source[keyStart:scanner.offset]}
+		key, err := keyReader.unsigned()
+		if err != nil {
+			t.Fatalf("decode key %d: %v", index, err)
+		}
+		valueStart := scanner.offset
+		if err := scanner.scanItem(1); err != nil {
+			t.Fatalf("scan value for key %d: %v", key, err)
+		}
+		if key != targetKey {
+			continue
+		}
+		result := make([]byte, 0, len(source)-(scanner.offset-valueStart)+len(newValue)+4)
+		result = append(result, source[:valueStart]...)
+		result = appendTextValue(result, newValue)
+		result = append(result, source[scanner.offset:]...)
+		return result
+	}
+	t.Fatalf("target key %d not found in fixture", targetKey)
+	return nil
+}
+
+// appendTextValue encodes a CBOR major-type-3 text string using the same
+// minimal/preferred length encoding the predecode scanner requires.
+func appendTextValue(destination []byte, value string) []byte {
+	length := len(value)
+	switch {
+	case length < 24:
+		destination = append(destination, 0x60|byte(length))
+	case length <= 0xff:
+		destination = append(destination, 0x78, byte(length))
+	default:
+		destination = append(destination, 0x79, byte(length>>8), byte(length))
+	}
+	return append(destination, value...)
 }

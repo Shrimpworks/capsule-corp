@@ -15,14 +15,14 @@
     "codex:links": "node scripts/setup-codex-links.mjs",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "generate:conformance": "node scripts/generate-contract-conformance-fixtures.mjs && node scripts/generate-authority-plane-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs",
+    "generate:conformance": "node scripts/generate-contract-conformance-fixtures.mjs && node scripts/generate-authority-plane-conformance.mjs && node scripts/generate-authenticated-local-ipc-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs",
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
     "test": "pnpm --recursive test && node --test scripts/setup-codex-links.test.mjs scripts/verify-compiled-artifact-payload-archive.test.mjs scripts/verify-contract-conformance.test.mjs scripts/verify-field-authority-manifest.test.mjs scripts/verify-governed-deno-core-c1.test.mjs scripts/verify-governed-deno-core-c2a.test.mjs scripts/verify-governed-runtime-release-candidate.test.mjs scripts/verify-mjs-source-validator-v1.test.mjs && pnpm verify:i2b-bootstrap",
     "verify:i2b-bootstrap": "node scripts/generate-i2b-bootstrap-conformance.mjs --check",
     "verify:i2b-bootstrap:swift": "node scripts/generate-i2b-bootstrap-conformance.mjs --check && SWIFT_MODULECACHE_PATH=/tmp/capsule-i2b-swift-module-cache CLANG_MODULE_CACHE_PATH=/tmp/capsule-i2b-clang-module-cache swift scripts/verify-i2b-bootstrap-fixtures.swift",
     "verify:adrs": "node scripts/verify-adr-index.mjs",
-    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/generate-contract-conformance-fixtures.mjs --check && node scripts/generate-authority-plane-conformance.mjs --check && node scripts/verify-authority-plane-conformance.mjs && node scripts/verify-contract-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs --check && node scripts/generate-i2b-bootstrap-conformance.mjs --check && node scripts/generate-macos-i2b2-profile.mjs --check && node scripts/verify-field-authority-manifest.mjs"
+    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/generate-contract-conformance-fixtures.mjs --check && node scripts/generate-authority-plane-conformance.mjs --check && node scripts/verify-authority-plane-conformance.mjs && node scripts/generate-authenticated-local-ipc-conformance.mjs --check && node scripts/verify-authenticated-local-ipc-conformance.mjs && node scripts/verify-contract-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs --check && node scripts/generate-i2b-bootstrap-conformance.mjs --check && node scripts/generate-macos-i2b2-profile.mjs --check && node scripts/verify-field-authority-manifest.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

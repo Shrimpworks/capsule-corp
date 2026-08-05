@@ -52,8 +52,8 @@ Apple-credentialed results remain the evidence for those distinct observations.
 ```text
 accepted ADR-0034 + passed M1 source/manifest fixtures
   -> M2/S1 passive plan-v0 registration/fetch fixture and facade cutover (PASSED)
-       -> S1/M2 native message/bridge fixtures
-       -> S2 authenticated method-specific service activation
+       -> S1 passive RegisterPlanV0/GetRegisteredPlanV0 records/envelopes (PASSED)
+       -> remaining SubmitApprovalV0/RequestAttemptV0 passive records/envelopes (BLOCKED)
        -> S3 native authentication/cap harness
             -> S4 single-process ad-hoc composition with fixed store + fake lifecycle
                  -> S5 installed Apple Development identity/session/update matrix
@@ -68,7 +68,8 @@ Existing independent blockers that S0-S6 do not close:
 ```
 
 ADR-0040 makes Source Validator R2-R5B future defense-in-depth rather than a first-release ordering
-gate. The passive M2/S1 fixture/facade contract is now `PASSED`; native/authenticated S1-S3 remain
+gate. The passive M2/S1 fixture/facade contract and follow-on two-method passive S1 records/logical
+envelopes are now `PASSED`; the other two logical methods and native/authenticated S3 remain
 `BLOCKED`. S5 requires S4 and valid Apple Development identities. S6 requires final intended
 package bytes, Developer ID/notarization authority, and clean disposable hosts.
 
@@ -120,6 +121,12 @@ length, deadline, and first-owner fields; exact maxima and cap-plus-one; closed 
 reason and state/time/trust/core/store/adapter oracles; copy-ownership mutations; response-loss/
 idempotency classifications; structural missing/extra/wrong-type and cross-object refusals; and
 byte equality across implementations.
+
+The follow-on [passive S1 contract](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md) now freezes only
+the two facade-backed method records and logical request/reply projections. It retains exact caps,
+cap-plus-one, current installation/epoch, fixed refusal/no-state, copy-ownership, and response-loss
+oracles with independent Go/Node agreement. It deliberately leaves XPC key spellings, numeric
+message/status tags, transport encoding, and peer-authentication evidence unset.
 
 There is one active plan-v0/source shape, no optional transform field, generic fallback, field
 inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product
@@ -184,9 +191,11 @@ store, and conformance tests. No XPC or product consumer exists.
 
 ## S3: native authentication and cap harness
 
-Status: **blocked** on Source Validator R2-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
-fixture bytes. Native parsing must not
-create a de facto field layout, cap, known answer, or method-version decision.
+Status: `BLOCKED` on the remaining two logical method records, a reviewed exact native XPC
+key/tag/status contract, and a separately authorized local harness. Source Validator R2-R5B is not
+a first-release dependency under ADR-0040. Native parsing must consume the completed Register/fetch
+fixtures and must not reinterpret them as raw XPC framing or invent a conflicting method/record
+version.
 
 Build a strictly local, no-product C/Objective-C XPC harness from fixed identities/messages. It may
 use only ad-hoc signing unless the explicit S5 credentialed environment is active. It creates no

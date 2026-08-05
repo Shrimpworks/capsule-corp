@@ -167,6 +167,9 @@ snapshot, and the fake lifecycle has no job success result and creates no guest.
 6. Verify staged bytes before start.
 7. Persist collection manifest before content release.
 8. Persist terminal transcript and teardown classification before ordinary success is visible.
+   The unwired [FakeBackend compositor foundation](COMPLETION_COMPOSITOR_FOUNDATION.md) exercises
+   the read-only composition and refusal contract, but supplies no completion writer, product
+   persistence, signature, endpoint, backend, or guest evidence.
 
 Steps 4 through 8 remain planned product controls. The E5 no-guest fixed snapshot now exercises
 durable cleanup intent, stable effect/instance identity, and fake reconciliation for the narrower

@@ -53,6 +53,16 @@ func ErrorClassification(err error) (Classification, bool) {
 	}
 	return "", false
 }
+
+// ErrorCode returns the fixed non-caller-controlled reason code for a
+// recognized authority-plane refusal.
+func ErrorCode(err error) (string, bool) {
+	var target *contractError
+	if !errors.As(err, &target) {
+		return "", false
+	}
+	return target.code, true
+}
 func refused(classification Classification, code string) error {
 	return &contractError{classification: classification, code: code}
 }

@@ -1,0 +1,530 @@
+{
+  "objectType": "capsule.governed-deno-core-c2b-passive-binding",
+  "schemaVersion": 3,
+  "domain": "capsule.governed-deno-core.c2b.passive-binding/v3",
+  "identity": "capsule.governed-deno-core-c2b-passive-binding/fixed-owned-guest-passive-successor-v3",
+  "status": "PASSED-passive-successor-contract-only",
+  "predecessors": {
+    "c1": {
+      "fixture": "schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+      "bytes": 9289,
+      "sha256": "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    },
+    "c2a": {
+      "fixture": "schemas/conformance/c2a-governed-deno-core/passive-execution-profile.json",
+      "bytes": 26850,
+      "sha256": "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    },
+    "c2bV1": {
+      "fixture": "schemas/conformance/c2b-governed-deno-core/passive-binding.json",
+      "bytes": 8221,
+      "sha256": "3540d5224bdc81edbceafa1f0f17ac119904a70feab604957ab349dd116961a6",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    },
+    "c2bV2": {
+      "fixture": "schemas/conformance/c2b-governed-deno-core/passive-binding-v2.json",
+      "bytes": 7115,
+      "sha256": "c59f7fdd27834dd7be5a05a3c44a973d6ffa99869b9b99e2531045926827190a",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    }
+  },
+  "governedInputs": {
+    "deno": {
+      "repository": "Shrimpworks/deno",
+      "upstreamCommit": "14eea3160ae5834476aa3b9d317b8d41d991b982",
+      "acceptedCommit": "3fa21d1ae7705ab4bcb4bc98955f25301b20122a",
+      "acceptedTree": "6060cb0eb4cd3395a4c141f054634968744617d2",
+      "artifactSourceMerge": "4cce46bafccd0df9d1709cf406cd03c05b5daa0b",
+      "artifactSourceHead": "29b71f06c2df5ab06721ccbb7bc744fb8104356e",
+      "artifactSourceTree": "172e57551fe5a6683f11c886a81f9634023a5514",
+      "acceptedRelation": "governance-only-descendant-runtime-source-unchanged",
+      "mutableBranchAuthority": false
+    },
+    "rustyV8": {
+      "repository": "Shrimpworks/rusty_v8",
+      "upstreamCommit": "d305e6afa7736f6e298c30ae6646f7709ee9382b",
+      "acceptedCommit": "d09221062280ae1675fe26c53c3f43871aae2055",
+      "acceptedTree": "2632901e6e7e9ac88662756ceb658d4e3e49fceb",
+      "acceptedBuildHead": "84dea3cc1242ce38baca61611546d68c11e0f605",
+      "artifactId": 8941046558,
+      "artifactName": "rusty-v8-v150.2.0-linux-arm64-unsigned",
+      "artifactArchiveSha256": "6073159dcf72318b6d7f58d2032c312900c238500e66ebb1bae42e907e113473",
+      "releaseManifestSha256": "fbeaf2b3ee5630e56bb4b15894205f33b2407d5ba0fd92b6e6a096bc7ac1624b",
+      "mutableBranchAuthority": false
+    },
+    "libkrun": {
+      "repository": "Shrimpworks/libkrun",
+      "upstreamCommit": "728df8125077d0db44265f6e997c72b81b65c015",
+      "acceptedCommit": "7432eda5a49220976b0167005aa43ee622f9d632",
+      "acceptedTree": "7671440cfbafa58fe20aebf8d4deb2a843ebe346",
+      "retainedArtifactSourceCommit": "cf0333cdba478cc34a8570a65b38412da7fd3ecc",
+      "retainedArtifactSourceTree": "ffa4131ddcc6ec66edd623381dae94189ccd3fee",
+      "acceptedChangeClass": "runtime-console-validation-source-change",
+      "acceptedCiRun": 31021879525,
+      "acceptedCiArtifactRetention": "none",
+      "selectedArtifactState": "BLOCKED-accepted-source-bytes-and-digest-not-retained",
+      "mutableBranchAuthority": false
+    },
+    "archiveEvidence": {
+      "repository": "Shrimpworks/capsule-experiments",
+      "pullRequest": 4,
+      "mergeCommit": "50108417ebf1aa45788a4e9a6b4ca6b4448e9972",
+      "reviewedHead": "518eea04e1f81d27e61178b7f4ff164b955dea76",
+      "tree": "cfe9865998bdd1ec556a0424ed30abdf51bb89d9",
+      "retainedRoot": "experiments/gate-c-c2b-no-guest-artifact-closure",
+      "authorityEffect": "records-evidence-only"
+    }
+  },
+  "artifactRoles": {
+    "denoCoreRuntime": {
+      "role": "fixed-fixture-runtime-child",
+      "guestPath": "/usr/local/bin/capsule-deno-core-c2b-fixed-fixture",
+      "bytes": 68496520,
+      "sha256": "e781a90236cdf1272a9a16189c6be033164fa25a5aa9e52376ef998982ec0a77",
+      "state": "retained-unadmitted"
+    },
+    "startupSnapshot": {
+      "role": "fixed-fixture-startup-snapshot",
+      "sha256": "4e8965217d5a6675a880326eee6f690bbeec7e7cb243decf2f3e9f453a871a2c",
+      "state": "embedded-in-retained-runtime-root-unadmitted"
+    },
+    "rustyV8": {
+      "role": "governed-static-runtime-input",
+      "gzipBytes": 37674703,
+      "gzipSha256": "1ae209c9e4ba5803d010d2c79ee4cc0af0126c5a7ebcca211c7e41deaede4cd2",
+      "rawSha256": "e964d6b1b3689e91f8cf488d8a9f05764a03434b2e2e8347be5067300d39a7de",
+      "state": "retained-unsigned-unpublished-unadmitted"
+    },
+    "libkrun": {
+      "role": "host-vmm-library",
+      "requiredBuild": {
+        "platform": "macos-arm64",
+        "defaultFeatures": false,
+        "features": ["blk"],
+        "forbiddenFeatures": [
+          "init-blob",
+          "net",
+          "efi",
+          "gpu",
+          "snd",
+          "input",
+          "tee",
+          "amd-sev",
+          "tdx",
+          "aws-nitro"
+        ]
+      },
+      "retainedPriorArtifact": {
+        "bytes": 4426736,
+        "sha256": "f8e05177ce57a6f773f86d6755a29fe3f2bab92140dfe8caa33663a28584ae52",
+        "sourceCommit": "cf0333cdba478cc34a8570a65b38412da7fd3ecc",
+        "usage": "historical-evidence-only-not-runnable-profile-authority"
+      },
+      "selectedArtifactState": "BLOCKED-no-retained-artifact-from-accepted-7432eda5-source"
+    },
+    "libkrunfw": {
+      "role": "sole-runtime-boot-kernel-carrier",
+      "sourceCommit": "ec4b297964877d83432f9ccda6dad8ff6e9de3e4",
+      "bytes": 24339104,
+      "sha256": "0b14f4b8005dafd33c38df5935b9efdb6381c724224b3967ba1cecbecf10b6e9",
+      "loadName": "@rpath/libkrunfw.5.dylib",
+      "loadSymbol": "krunfw_get_kernel",
+      "state": "retained-unadmitted"
+    },
+    "derivedKernelEvidence": {
+      "role": "derived-evidence-only-not-separate-runtime-input",
+      "version": "Linux 6.12.91",
+      "bytes": 24117248,
+      "sha256": "b50a4165215d5d897ab3614606a2105756cf8f2b2510cbceda9dc06057a5622d",
+      "loadAddress": "0x80000000",
+      "entryAddress": "0x80000000",
+      "separateKernelPathAuthority": "forbidden"
+    },
+    "separateFirmware": {
+      "role": "inapplicable-for-non-efi-libkrunfw-kernel-load",
+      "separateFirmwarePathAuthority": "forbidden",
+      "resolution": "closed-by-libkrunfw-sole-carrier-role"
+    },
+    "trustedInit": {
+      "role": "guest-pid1",
+      "guestPath": "/usr/local/libexec/capsule-init.krun",
+      "bytes": 930144,
+      "sha256": "4f4f2c8bc037c3226b183ad0d6daf35395c49467dfe5786d10a33290adf585cd",
+      "state": "retained-unadmitted"
+    },
+    "trustedLauncher": {
+      "role": "guest-completion-authority-and-fixed-runtime-parent",
+      "guestPath": "/usr/local/libexec/capsule-launcher",
+      "bytes": 995920,
+      "sha256": "fd255394a26affadb1226d3f724494e76fc89785a5cced027a7bb9859d7da32d",
+      "state": "retained-unadmitted"
+    },
+    "runtimeRoot": {
+      "role": "sole-read-only-raw-ext4-root",
+      "bytes": 134217728,
+      "sha256": "390a4786a20d45f1c691ec8c203f84f5e9d372a30e98f867cc8309a144ca6798",
+      "guestDevice": "/dev/vda",
+      "mount": "ext4-ro-nosuid-nodev",
+      "state": "retained-unadmitted"
+    }
+  },
+  "hostRunnerContract": {
+    "role": "single-per-attempt-app-sandboxed-vmm-process",
+    "owner": "execution-supervisor",
+    "service": "none",
+    "privilegedHelper": "none",
+    "callerArguments": "exact-argv0-only",
+    "callerEnvironment": "empty-after-macos-text-encoding-removal",
+    "artifactState": "BLOCKED-final-runner-bytes-and-digest-not-constructed",
+    "preflightEvidence": {
+      "role": "build-only-preflight-not-final-runner",
+      "bytes": 34864,
+      "sha256": "4d56480bec2a34cd2d23f83f199e9eb62951ac66e53319ae45991af7b4000922",
+      "callsLibkrun": false,
+      "usage": "historical-evidence-only"
+    },
+    "configurationSequence": [
+      "validate-exact-argv-environment-and-fds-0-through-7-close-8-and-above",
+      "validate-finalized-unlinked-owned-mode-0400-ordonly-root-fd-and-bound-device-inode-length-digest",
+      "krun_create_ctx",
+      "krun_set_vm_config-vcpus-1-ram-mib-256",
+      "krun_disable_implicit_console",
+      "krun_disable_implicit_init",
+      "krun_disable_implicit_vsock",
+      "krun_add_read_only_raw_root_fd-fd4-vda",
+      "krun_set_root_disk_remount-/dev/vda-ext4-ro,nosuid,nodev",
+      "krun_add_virtio_console_multiport-require-console-id-0",
+      "krun_add_console_port_inout-capsule.source-input-fd5-output-minus1-require-port-id-0",
+      "krun_add_console_port_inout-capsule.input-input-fd6-output-minus1-require-port-id-1",
+      "krun_add_console_port_inout-capsule.completion-input-minus1-output-fd7-require-port-id-2",
+      "krun_set_kernel_console-hvc0",
+      "krun_set_workdir-/",
+      "krun_set_exec-/usr/local/libexec/capsule-init.krun-single-argv-empty-except-fixed-init-environment",
+      "emit-ready-and-wait-for-exact-one-byte-G-followed-by-eof",
+      "krun_start_enter"
+    ],
+    "guestExec": {
+      "path": "/usr/local/libexec/capsule-init.krun",
+      "argv": ["/usr/local/libexec/capsule-init.krun"],
+      "environment": ["HOME=/", "KRUN_DIRECT_BLOCK_ROOT=1", "TERM=linux"],
+      "workingDirectory": "/"
+    },
+    "forbiddenCalls": [
+      "krun_set_kernel",
+      "krun_set_firmware",
+      "krun_add_disk",
+      "krun_set_root",
+      "krun_add_virtiofs",
+      "krun_add_virtiofs2",
+      "krun_add_virtiofs3",
+      "krun_add_virtiofs4",
+      "krun_add_vsock",
+      "krun_add_vsock_port",
+      "krun_add_vsock_port2",
+      "krun_add_net_unixstream",
+      "krun_set_gpu_options",
+      "krun_set_snd_device"
+    ],
+    "completionInterpretation": "runner-exit-is-lifecycle-only-never-workload-success"
+  },
+  "descriptorAndDeviceContract": {
+    "hostDescriptors": [
+      {
+        "fd": 0,
+        "role": "runner-stdin-null",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 1,
+        "role": "runner-stdout",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 2,
+        "role": "runner-stderr",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 3,
+        "role": "record-before-start-control",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 4,
+        "role": "runtime-root",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 5,
+        "role": "registered-source-port-input",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 6,
+        "role": "approved-inline-input-port-input",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 7,
+        "role": "completion-result-port-output",
+        "accessMode": "O_WRONLY"
+      }
+    ],
+    "hostCloseFromInclusive": 8,
+    "guestDescriptorsBeforeRuntimeChild": [
+      {
+        "fd": 0,
+        "role": "launcher-stdin-null",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 1,
+        "role": "launcher-stdout-null",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 2,
+        "role": "launcher-stderr-null",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 3,
+        "role": "registered-source",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 4,
+        "role": "approved-inline-input",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 5,
+        "role": "completion-result",
+        "accessMode": "O_WRONLY-CLOEXEC-before-child"
+      }
+    ],
+    "guestCloseFromInclusive": 6,
+    "runtimeChildDescriptors": [
+      {
+        "fd": 0,
+        "role": "stdin-null",
+        "accessMode": "O_RDONLY"
+      },
+      {
+        "fd": 1,
+        "role": "bounded-stdout-pipe",
+        "accessMode": "O_WRONLY"
+      },
+      {
+        "fd": 2,
+        "role": "bounded-stderr-pipe",
+        "accessMode": "O_WRONLY"
+      }
+    ],
+    "ports": [
+      {
+        "portId": 0,
+        "name": "capsule.source",
+        "inputFd": 5,
+        "outputFd": -1,
+        "guestNode": "/dev/hvc0"
+      },
+      {
+        "portId": 1,
+        "name": "capsule.input",
+        "inputFd": 6,
+        "outputFd": -1,
+        "guestNode": "/dev/vport0p1"
+      },
+      {
+        "portId": 2,
+        "name": "capsule.completion",
+        "inputFd": -1,
+        "outputFd": 7,
+        "guestNode": "/dev/vport0p2"
+      }
+    ],
+    "virtioDevices": [
+      "balloon",
+      "rng",
+      "console-multiport-with-three-fixed-ports",
+      "block-root-vda-read-only"
+    ],
+    "implicitConsole": "explicitly-disabled",
+    "implicitInit": "explicitly-disabled-and-compiled-out",
+    "implicitVsock": "explicitly-disabled",
+    "tsi": "absent-with-no-vsock-device",
+    "forbiddenDevices": [
+      "additional-console",
+      "network",
+      "vsock",
+      "virtiofs",
+      "NullFs",
+      "writable-block",
+      "additional-block",
+      "gpu",
+      "sound",
+      "input"
+    ],
+    "hostSockets": "none",
+    "liveHostPaths": "none"
+  },
+  "runtimeContract": {
+    "sourceAuthority": "fixed-benign-known-answer-only",
+    "source": {
+      "path": "main.mjs",
+      "bytes": 103,
+      "sha256": "c8e940feb89b342de2d5e6bd13c413226676de9a539fce34c4107516e635b475",
+      "sourceManifestBytes": 89,
+      "sourceManifestSha256": "712b1bd9739e4f6b0b027600207cbb08fb21b159a57bd34a15cf0ff8f32661b0"
+    },
+    "input": {
+      "bytes": 36,
+      "sha256": "9de0c909cfb111bd99c3b0b5f7a10972894270c2867022a71b6b6f3c0cd1af6e"
+    },
+    "completion": {
+      "jsonBytes": 35,
+      "jsonSha256": "bb7234ee486b0fbccc2091859ec93499e6a14ea7d6e091cdef60a0e2a6e8371c",
+      "commit": "required-last"
+    },
+    "denoCoreVersion": "0.409.0",
+    "target": "aarch64-unknown-linux-gnu",
+    "v8Flags": ["--jitless", "--random-seed=42"],
+    "moduleLoader": "none",
+    "mainModule": "internal-file:///capsule/main.mjs-from-fixed-compiled-bytes",
+    "extensions": [],
+    "inspector": false,
+    "skipOpRegistration": true,
+    "builtinOps": [
+      "op_get_ext_import_meta_proto",
+      "op_get_extras_binding_object",
+      "op_set_captured_bootstrap"
+    ],
+    "stringCodeGeneration": "v8-context-set_allow_generation_from_strings-false-and-verified",
+    "forbiddenCodeLoading": [
+      "static-import",
+      "export-from",
+      "dynamic-import",
+      "eval",
+      "Function",
+      "WebAssembly",
+      "filesystem-loader",
+      "network-loader",
+      "package-loader"
+    ],
+    "hostSeal": {
+      "seccompTsync": true,
+      "forbiddenSyscalls": ["clone", "clone3", "execve", "execveat", "socket", "socketpair"],
+      "forbiddenExecutableMemory": ["mmap-PROT_EXEC", "mprotect-PROT_EXEC"],
+      "sealMarker": "CAPSULE_HOST_SEAL_ACTIVE"
+    }
+  },
+  "resourceContract": {
+    "vcpus": 1,
+    "guestRamMiB": 256,
+    "wallTimeMs": 1000,
+    "concurrency": 1,
+    "selection": "exact-values-only-no-default-no-clamp",
+    "scratchDevice": "absent-for-fixed-guest",
+    "unknownOrAdditionalResourceField": "refuse"
+  },
+  "transportContract": {
+    "sourcePayloadMaximumBytes": 262144,
+    "sourcePhysicalMaximumBytes": 262296,
+    "inputPayloadMaximumBytes": 262144,
+    "inputPhysicalMaximumBytes": 262296,
+    "completionJsonMaximumBytes": 262144,
+    "completionPhysicalMaximumBytes": 262368,
+    "completionRetainMaximumBytes": 262369,
+    "runnerStdoutRetainedPrefixBytes": 4096,
+    "runnerStderrRetainedPrefixBytes": 4096,
+    "runnerDrainBufferBytes": 32768,
+    "runnerMaximumCaptureFileBytesPerStream": 4194,
+    "continuousDrain": true,
+    "oversizeDisposition": "drain-all-retain-cap-plus-one-refuse",
+    "eofIsCommit": false
+  },
+  "teardownContract": {
+    "owner": "execution-supervisor",
+    "wallActionAtMs": 1000,
+    "cancellationAction": "immediate-independent-of-guest-and-drains",
+    "bestEffortGraceMs": 200,
+    "bestEffortGraceClaim": "unsupported-for-success",
+    "forcedSignal": "SIGKILL",
+    "forcedAbsenceDeadlineMs": 1000,
+    "maximumActionToAbsenceMs": 1200,
+    "identityBeforeSignal": [
+      "pid",
+      "process-start-time",
+      "uid-gid",
+      "executable-path",
+      "code-identifier",
+      "team-id",
+      "cdhash",
+      "code-requirement"
+    ],
+    "identityMismatch": "unresolved-no-signal-no-success",
+    "ordinarySuccessRequires": [
+      "source-integrity",
+      "input-integrity",
+      "runtime-integrity",
+      "valid-last-committed-completion",
+      "bounded-result",
+      "runner-lifecycle-terminal",
+      "child-tree-absent",
+      "authoritative-runner-absence",
+      "cleanup-not-required"
+    ],
+    "authoritativeAbsence": "exact-recorded-runner-identity-no-longer-live-before-deadline",
+    "runnerExit": "lifecycle-only-never-workload-success"
+  },
+  "composedProfile": {
+    "identity": "capsule.governed-deno-core.fixed-owned-guest-passive-successor/v3",
+    "digestAlgorithm": "sha256-over-exact-fixture-with-this-field-replaced-by-64-ascii-zeroes",
+    "contractDigestSha256": "8b1ec936a7b56370716d28557125e46866dea8f21a149704a01f251a0dddbcc1",
+    "state": "BLOCKED-passive-contract-not-runnable-materialization",
+    "authorityEffect": "none",
+    "admitted": false
+  },
+  "workStatus": {
+    "passiveSuccessorContract": "PASSED",
+    "parentGovernedRuntime": "IN_PROGRESS — TRENDING_GOOD",
+    "fixedOwnedGuestEligibility": "BLOCKED",
+    "runtimeProfileAdmission": "BLOCKED",
+    "runtime001": "unsupported",
+    "vmm001": "unsupported"
+  },
+  "nextGuestGate": {
+    "state": "BLOCKED",
+    "requirements": [
+      "retain-exact-libkrun-dylib-built-from-accepted-7432eda5-source-and-verify-expected-tree",
+      "construct-retain-and-review-final-host-runner-exact-bytes-digest-call-sequence-and-mutations",
+      "publish-a-new-versioned-materialization-binding-those-two-identities-to-this-contract",
+      "obtain-separate-owned-disposable-guest-authorization-naming-that-new-profile-digest"
+    ],
+    "guestAuthorization": false,
+    "consumerImplemented": false,
+    "admissionEffect": false
+  },
+  "effects": {
+    "process": false,
+    "runtime": false,
+    "profile": false,
+    "consumer": false,
+    "adapter": false,
+    "backend": false,
+    "vm": false,
+    "guest": false,
+    "credential": false,
+    "signing": false,
+    "publication": false,
+    "release": false,
+    "admission": false
+  }
+}

@@ -250,6 +250,16 @@ data only: no adapter or backend reads them, and they create no runtime/profile 
 admission path. Their only later eligible consumer is a separately authorized composed-profile/
 owned-guest task after every v2 archive, manifest, and artifact identity is reverified.
 
+Immutable C2B v3 is the passive successor contract for that later boundary. It binds exact current
+accepted governed commits/trees and retained artifacts, but refuses to substitute the v2 libkrun
+dylib after accepted runtime source changed. It fixes one Supervisor-owned per-attempt App-Sandboxed
+VMM runner; libkrunfw as the sole non-EFI boot-kernel carrier; exact 0–7 host, 0–5 launcher, and 0–2
+runtime-child FD sets; balloon/RNG/one multiport-console/one read-only-block virtio inventory;
+explicit implicit-console/init/vsock disablement and no TSI; no runtime module loader or V8 string
+code generation; only vCPU/RAM/wall/concurrency resource fields; and external identity-checked
+teardown/absence. Its digest identifies a no-effect passive contract, not runnable bytes. Missing
+current-source libkrun and final-runner artifacts require another version before any owned guest.
+
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
 

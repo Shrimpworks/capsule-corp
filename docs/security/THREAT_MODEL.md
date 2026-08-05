@@ -312,6 +312,13 @@ uses a fixed child FD/argv/environment/cwd manifest, bounds the child result, wa
 child tree, and writes the commit trailer last. The host runner separately starts with an exact
 role-specific FD allowlist because a VMM compromise acquires any ambient descriptor it inherits.
 
+The passive C2B v3 contract makes that boundary exact without claiming execution: host FDs 0–7,
+launcher FDs 0–5, and runtime-child FDs 0–2 are closed; only balloon, RNG, one three-port console,
+and one read-only raw-root block device are allowed; implicit console/init/vsock are explicitly
+disabled; TSI, network, virtiofs/`NullFs`, extra block devices, sockets, and live host paths are
+absent. Libkrunfw supplies the sole non-EFI boot kernel, so external kernel/firmware path calls are
+forbidden. The contract does not authorize a guest and blocks stale libkrun or missing runner bytes.
+
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/
 open/close ordering, or cancellation/backpressure behavior. The exact pinned implementation and any

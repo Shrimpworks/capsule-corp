@@ -8,6 +8,7 @@
 export * from "./execution-plan-builder.js";
 export * from "./governed-deno-core-c2b-passive-binding.js";
 export * from "./governed-deno-core-c2b-passive-binding-v2.js";
+export * from "./governed-deno-core-c2b-passive-binding-v3.js";
 export * from "./job-proposal.js";
 export * from "./job-proposal-decoder.js";
 export * from "./job-proposal-resolver.js";

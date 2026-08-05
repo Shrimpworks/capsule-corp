@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:governed-deno-core-c2b-passive-binding:v3",
+  "title": "GovernedDenoCoreC2bPassiveBinding v3",
+  "description": "Passive no-effect successor contract for one future fixed benign owned guest. Exact Go and TypeScript known-answer validators close every nested value. This schema closes top-level shape, supported resources, status, and effects; it grants no execution or admission authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "objectType",
+    "schemaVersion",
+    "domain",
+    "identity",
+    "status",
+    "predecessors",
+    "governedInputs",
+    "artifactRoles",
+    "hostRunnerContract",
+    "descriptorAndDeviceContract",
+    "runtimeContract",
+    "resourceContract",
+    "transportContract",
+    "teardownContract",
+    "composedProfile",
+    "workStatus",
+    "nextGuestGate",
+    "effects"
+  ],
+  "properties": {
+    "objectType": { "const": "capsule.governed-deno-core-c2b-passive-binding" },
+    "schemaVersion": { "const": 3 },
+    "domain": { "const": "capsule.governed-deno-core.c2b.passive-binding/v3" },
+    "identity": {
+      "const": "capsule.governed-deno-core-c2b-passive-binding/fixed-owned-guest-passive-successor-v3"
+    },
+    "status": { "const": "PASSED-passive-successor-contract-only" },
+    "predecessors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["c1", "c2a", "c2bV1", "c2bV2"],
+      "properties": {
+        "c1": { "$ref": "#/$defs/predecessor" },
+        "c2a": { "$ref": "#/$defs/predecessor" },
+        "c2bV1": { "$ref": "#/$defs/predecessor" },
+        "c2bV2": { "$ref": "#/$defs/predecessor" }
+      }
+    },
+    "governedInputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deno", "rustyV8", "libkrun", "archiveEvidence"],
+      "properties": {
+        "deno": { "type": "object" },
+        "rustyV8": { "type": "object" },
+        "libkrun": { "type": "object" },
+        "archiveEvidence": { "type": "object" }
+      }
+    },
+    "artifactRoles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "denoCoreRuntime",
+        "startupSnapshot",
+        "rustyV8",
+        "libkrun",
+        "libkrunfw",
+        "derivedKernelEvidence",
+        "separateFirmware",
+        "trustedInit",
+        "trustedLauncher",
+        "runtimeRoot"
+      ],
+      "properties": {
+        "denoCoreRuntime": { "type": "object" },
+        "startupSnapshot": { "type": "object" },
+        "rustyV8": { "type": "object" },
+        "libkrun": { "type": "object" },
+        "libkrunfw": { "type": "object" },
+        "derivedKernelEvidence": { "type": "object" },
+        "separateFirmware": { "type": "object" },
+        "trustedInit": { "type": "object" },
+        "trustedLauncher": { "type": "object" },
+        "runtimeRoot": { "type": "object" }
+      }
+    },
+    "hostRunnerContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "owner",
+        "service",
+        "privilegedHelper",
+        "callerArguments",
+        "callerEnvironment",
+        "artifactState",
+        "preflightEvidence",
+        "configurationSequence",
+        "guestExec",
+        "forbiddenCalls",
+        "completionInterpretation"
+      ],
+      "properties": {
+        "role": { "const": "single-per-attempt-app-sandboxed-vmm-process" },
+        "owner": { "const": "execution-supervisor" },
+        "service": { "const": "none" },
+        "privilegedHelper": { "const": "none" },
+        "callerArguments": { "const": "exact-argv0-only" },
+        "callerEnvironment": { "const": "empty-after-macos-text-encoding-removal" },
+        "artifactState": {
+          "const": "BLOCKED-final-runner-bytes-and-digest-not-constructed"
+        },
+        "preflightEvidence": { "type": "object" },
+        "configurationSequence": {
+          "type": "array",
+          "minItems": 18,
+          "maxItems": 18,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "guestExec": { "type": "object" },
+        "forbiddenCalls": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "completionInterpretation": {
+          "const": "runner-exit-is-lifecycle-only-never-workload-success"
+        }
+      }
+    },
+    "descriptorAndDeviceContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hostDescriptors",
+        "hostCloseFromInclusive",
+        "guestDescriptorsBeforeRuntimeChild",
+        "guestCloseFromInclusive",
+        "runtimeChildDescriptors",
+        "ports",
+        "virtioDevices",
+        "implicitConsole",
+        "implicitInit",
+        "implicitVsock",
+        "tsi",
+        "forbiddenDevices",
+        "hostSockets",
+        "liveHostPaths"
+      ],
+      "properties": {
+        "hostDescriptors": { "$ref": "#/$defs/descriptorArray" },
+        "hostCloseFromInclusive": { "const": 8 },
+        "guestDescriptorsBeforeRuntimeChild": { "$ref": "#/$defs/descriptorArray" },
+        "guestCloseFromInclusive": { "const": 6 },
+        "runtimeChildDescriptors": { "$ref": "#/$defs/descriptorArray" },
+        "ports": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "type": "object" }
+        },
+        "virtioDevices": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "implicitConsole": { "const": "explicitly-disabled" },
+        "implicitInit": { "const": "explicitly-disabled-and-compiled-out" },
+        "implicitVsock": { "const": "explicitly-disabled" },
+        "tsi": { "const": "absent-with-no-vsock-device" },
+        "forbiddenDevices": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "hostSockets": { "const": "none" },
+        "liveHostPaths": { "const": "none" }
+      }
+    },
+    "runtimeContract": { "type": "object" },
+    "resourceContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vcpus",
+        "guestRamMiB",
+        "wallTimeMs",
+        "concurrency",
+        "selection",
+        "scratchDevice",
+        "unknownOrAdditionalResourceField"
+      ],
+      "properties": {
+        "vcpus": { "const": 1 },
+        "guestRamMiB": { "const": 256 },
+        "wallTimeMs": { "const": 1000 },
+        "concurrency": { "const": 1 },
+        "selection": { "const": "exact-values-only-no-default-no-clamp" },
+        "scratchDevice": { "const": "absent-for-fixed-guest" },
+        "unknownOrAdditionalResourceField": { "const": "refuse" }
+      }
+    },
+    "transportContract": { "type": "object" },
+    "teardownContract": { "type": "object" },
+    "composedProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "digestAlgorithm",
+        "contractDigestSha256",
+        "state",
+        "authorityEffect",
+        "admitted"
+      ],
+      "properties": {
+        "identity": {
+          "const": "capsule.governed-deno-core.fixed-owned-guest-passive-successor/v3"
+        },
+        "digestAlgorithm": {
+          "const": "sha256-over-exact-fixture-with-this-field-replaced-by-64-ascii-zeroes"
+        },
+        "contractDigestSha256": {
+          "const": "8b1ec936a7b56370716d28557125e46866dea8f21a149704a01f251a0dddbcc1"
+        },
+        "state": { "const": "BLOCKED-passive-contract-not-runnable-materialization" },
+        "authorityEffect": { "const": "none" },
+        "admitted": { "const": false }
+      }
+    },
+    "workStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passiveSuccessorContract",
+        "parentGovernedRuntime",
+        "fixedOwnedGuestEligibility",
+        "runtimeProfileAdmission",
+        "runtime001",
+        "vmm001"
+      ],
+      "properties": {
+        "passiveSuccessorContract": { "const": "PASSED" },
+        "parentGovernedRuntime": { "const": "IN_PROGRESS — TRENDING_GOOD" },
+        "fixedOwnedGuestEligibility": { "const": "BLOCKED" },
+        "runtimeProfileAdmission": { "const": "BLOCKED" },
+        "runtime001": { "const": "unsupported" },
+        "vmm001": { "const": "unsupported" }
+      }
+    },
+    "nextGuestGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "requirements",
+        "guestAuthorization",
+        "consumerImplemented",
+        "admissionEffect"
+      ],
+      "properties": {
+        "state": { "const": "BLOCKED" },
+        "requirements": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "guestAuthorization": { "const": false },
+        "consumerImplemented": { "const": false },
+        "admissionEffect": { "const": false }
+      }
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process",
+        "runtime",
+        "profile",
+        "consumer",
+        "adapter",
+        "backend",
+        "vm",
+        "guest",
+        "credential",
+        "signing",
+        "publication",
+        "release",
+        "admission"
+      ],
+      "properties": {
+        "process": { "const": false },
+        "runtime": { "const": false },
+        "profile": { "const": false },
+        "consumer": { "const": false },
+        "adapter": { "const": false },
+        "backend": { "const": false },
+        "vm": { "const": false },
+        "guest": { "const": false },
+        "credential": { "const": false },
+        "signing": { "const": false },
+        "publication": { "const": false },
+        "release": { "const": false },
+        "admission": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture", "bytes", "sha256", "consumption", "mutation"],
+      "properties": {
+        "fixture": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "consumption": { "const": "exact-byte-read-only" },
+        "mutation": { "const": "forbidden" }
+      }
+    },
+    "descriptorArray": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fd", "role", "accessMode"],
+        "properties": {
+          "fd": { "type": "integer", "minimum": 0, "maximum": 7 },
+          "role": { "type": "string", "minLength": 1 },
+          "accessMode": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

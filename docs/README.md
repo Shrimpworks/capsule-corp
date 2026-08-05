@@ -75,7 +75,11 @@ The follow-on
 unchanged C1/C2A relationship to one exact historical governed build candidate. Its immutable
 [v2 successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V2.md) binds reviewed merged no-guest
 artifact closure under a new identity while keeping final execution/admission inputs null. Neither
-wires a consumer or changes C2B execution or admission status.
+wires a consumer or changes C2B execution or admission status. The
+[v3 passive successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V3.md) replaces those nulls
+with closed roles, omitted unsupported resource fields, exact current governed source identities,
+and a composed passive-contract digest while preserving typed blockers for current-source libkrun
+and final runner artifacts. It also wires no consumer and authorizes no guest.
 
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/

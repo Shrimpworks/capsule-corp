@@ -59,7 +59,13 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   [v2 successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V2.md) pins reviewed experiments PR
   #4 and the no-guest artifact closure while preserving null runner/profile/resource/guest/admission
   fields. Same-host equality is not independent-builder equality. C2B composed-profile/guest
-  execution and admission remain `BLOCKED`.
+  execution and admission remain `BLOCKED`. The immutable
+  [v3 passive successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V3.md) removes those nulls,
+  binds current accepted Deno/`rusty_v8`/libkrun commits and trees, resolves libkrunfw as the sole
+  boot-kernel carrier, freezes the runner/FD/port/device/runtime/resource/teardown contract, and
+  records composed passive-contract digest `8b1ec936...bcc1`. It correctly blocks one owned guest
+  on a retained current-source libkrun dylib, final runner bytes, a new materialized profile, and
+  separate authorization. It wires no consumer and admits nothing.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap

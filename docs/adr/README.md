@@ -79,5 +79,7 @@ its core conclusion.
   — Proposed; fixed-file/FakeBackend oracle `PASSED`, product completion/store integration remains `BLOCKED`
 - [ADR-0043: Freeze Broker rendering and approval verification](0043-freeze-broker-rendering-and-approval-verification.md)
   — Accepted; passive projection and public-key-only COSE verification `PASSED`, installed UI, key use, IPC, and product activation remain `BLOCKED`
+- [ADR-0044: Select one private-XPC internal-alpha CLI submission adapter](0044-select-private-xpc-internal-alpha-cli-adapter.md)
+  — Accepted; passive logical contract `PASSED`, installed authenticated adapter remains `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

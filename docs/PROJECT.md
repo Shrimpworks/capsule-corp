@@ -38,7 +38,10 @@ The [internal-alpha architecture audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md)
 already-passed passive/local mechanics from the still-blocked product composition. The passive
 authority-plane cutover now atomically retains the exact plan, complete bindings, manifest, and
 source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
-path. No connected product path yet carries submitted `main.mjs` through authenticated
+path. Accepted ADR-0044 now selects exactly one bounded private-XPC internal-alpha CLI submission
+candidate and its passive logical envelope/aggregate-flow contract is `PASSED`; no listener,
+signing, peer-authentication, installed inventory, protected state, or consumer is active. No
+connected product path yet carries submitted `main.mjs` through authenticated
 registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle
 drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per attempt and
 moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and physical authority
@@ -255,6 +258,13 @@ unprivileged per-user Supervisor process with a small native XPC/Security front 
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
 calls, but no bridge fixture, installed authenticated endpoint, product consumer, or production
 identity evidence is implemented.
+[Accepted ADR-0044](adr/0044-select-private-xpc-internal-alpha-cli-adapter.md) additionally selects
+one private-XPC `SubmitMainMJSV0` CLI-to-daemon candidate for the owner-only internal alpha. Its
+[passive contract](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md) freezes typed bounded
+request/reply envelopes, exact source lineage, aggregate no-queue flow, cancellation/deadline/
+stall, refusal, and response-loss semantics without registering a service or changing diagnostic
+HTTP. Native peer authentication, installed signed identities, daemon/Broker consumers, and
+product admission remain `BLOCKED`.
 A focused unwired TypeScript Task 3C slice constructs and deterministically encodes the minimum
 `ExecutionPlan` from only Task 3B provenance-bearing plan inputs and separately issued trusted role
 bindings. A later completed focused slice prepares a defensive exact-byte/complete-role handoff and

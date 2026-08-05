@@ -34,6 +34,14 @@ const (
 
 	RegisterPlanV0ResponseLossDisposition      = "committed-retry-creates-fresh-registration"
 	GetRegisteredPlanV0ResponseLossDisposition = "repeatable-read-by-registration-id"
+
+	SupervisorServiceMaxConnections       = uint64(4)
+	SupervisorConnectionMaxInFlight       = uint64(1)
+	SupervisorProcessMaxAdmittedRequests  = uint64(8)
+	SupervisorApplicationQueueCapacity    = uint64(0)
+	SupervisorInFlightRequestDataMaxBytes = uint64(8 * RegisterPlanV0RequestDataMaxBytes)
+	PassiveRequestIDAuthorityDisposition  = "correlation-only"
+	PassiveMethodAuthorityDisposition     = "service-role-purpose-audience-derived" // #nosec G101 -- fixed disposition, not a credential.
 )
 
 var (
@@ -54,32 +62,48 @@ type PassiveRequestID [16]byte
 // passive contract. The future native layer must derive this record from its
 // role-specific service and method dispatch, never from application body data.
 type RegisterPlanV0MethodRecord struct {
-	Method                   string
-	MethodVersion            uint64
-	RoleBindingRecordVersion uint64
-	Service                  string
-	ExpectedRole             CallerRole
-	Audience                 string
-	Purpose                  string
-	RequestDataMaxBytes      uint64
-	ReplyDataMaxBytes        uint64
-	DeadlineMilliseconds     uint64
-	ResponseLossDisposition  string
+	Method                                string
+	MethodVersion                         uint64
+	RoleBindingRecordVersion              uint64
+	Service                               string
+	ExpectedRole                          CallerRole
+	Audience                              string
+	Purpose                               string
+	RequestDataMaxBytes                   uint64
+	ReplyDataMaxBytes                     uint64
+	DeadlineMilliseconds                  uint64
+	ResponseLossDisposition               string
+	PeerRequirementBeforeDeliveryRequired bool
+	MethodAuthorityDisposition            string
+	RequestIDAuthorityDisposition         string
+	ServiceMaxConnections                 uint64
+	ConnectionMaxInFlight                 uint64
+	ProcessMaxAdmittedRequests            uint64
+	ApplicationQueueCapacity              uint64
+	InFlightRequestDataMaxBytes           uint64
 }
 
 // field-authority-object: capsule.authenticated-local-ipc-get-registered-plan-v0-method-record v0
 type GetRegisteredPlanV0MethodRecord struct {
-	Method                   string
-	MethodVersion            uint64
-	RoleBindingRecordVersion uint64
-	Service                  string
-	ExpectedRole             CallerRole
-	Audience                 string
-	Purpose                  string
-	RequestDataMaxBytes      uint64
-	ReplyDataMaxBytes        uint64
-	DeadlineMilliseconds     uint64
-	ResponseLossDisposition  string
+	Method                                string
+	MethodVersion                         uint64
+	RoleBindingRecordVersion              uint64
+	Service                               string
+	ExpectedRole                          CallerRole
+	Audience                              string
+	Purpose                               string
+	RequestDataMaxBytes                   uint64
+	ReplyDataMaxBytes                     uint64
+	DeadlineMilliseconds                  uint64
+	ResponseLossDisposition               string
+	PeerRequirementBeforeDeliveryRequired bool
+	MethodAuthorityDisposition            string
+	RequestIDAuthorityDisposition         string
+	ServiceMaxConnections                 uint64
+	ConnectionMaxInFlight                 uint64
+	ProcessMaxAdmittedRequests            uint64
+	ApplicationQueueCapacity              uint64
+	InFlightRequestDataMaxBytes           uint64
 }
 
 func ExpectedRegisterPlanV0MethodRecord() RegisterPlanV0MethodRecord {
@@ -88,9 +112,17 @@ func ExpectedRegisterPlanV0MethodRecord() RegisterPlanV0MethodRecord {
 		RoleBindingRecordVersion: uint64(RoleBindingRecordVersion),
 		Service:                  DaemonServiceV0, ExpectedRole: Daemon, Audience: PassiveIPCAudience,
 		Purpose: RegisterPlanV0Purpose, RequestDataMaxBytes: RegisterPlanV0RequestDataMaxBytes,
-		ReplyDataMaxBytes:       RegisterPlanV0ReplyDataMaxBytes,
-		DeadlineMilliseconds:    RegisterPlanV0DeadlineMilliseconds,
-		ResponseLossDisposition: RegisterPlanV0ResponseLossDisposition,
+		ReplyDataMaxBytes:                     RegisterPlanV0ReplyDataMaxBytes,
+		DeadlineMilliseconds:                  RegisterPlanV0DeadlineMilliseconds,
+		ResponseLossDisposition:               RegisterPlanV0ResponseLossDisposition,
+		PeerRequirementBeforeDeliveryRequired: true,
+		MethodAuthorityDisposition:            PassiveMethodAuthorityDisposition,
+		RequestIDAuthorityDisposition:         PassiveRequestIDAuthorityDisposition,
+		ServiceMaxConnections:                 SupervisorServiceMaxConnections,
+		ConnectionMaxInFlight:                 SupervisorConnectionMaxInFlight,
+		ProcessMaxAdmittedRequests:            SupervisorProcessMaxAdmittedRequests,
+		ApplicationQueueCapacity:              SupervisorApplicationQueueCapacity,
+		InFlightRequestDataMaxBytes:           SupervisorInFlightRequestDataMaxBytes,
 	}
 }
 
@@ -100,9 +132,17 @@ func ExpectedGetRegisteredPlanV0MethodRecord() GetRegisteredPlanV0MethodRecord {
 		RoleBindingRecordVersion: uint64(RoleBindingRecordVersion),
 		Service:                  BrokerServiceV0, ExpectedRole: Broker, Audience: PassiveIPCAudience,
 		Purpose: GetRegisteredPlanV0Purpose, RequestDataMaxBytes: GetRegisteredPlanV0RequestDataMaxBytes,
-		ReplyDataMaxBytes:       GetRegisteredPlanV0ReplyDataMaxBytes,
-		DeadlineMilliseconds:    GetRegisteredPlanV0DeadlineMilliseconds,
-		ResponseLossDisposition: GetRegisteredPlanV0ResponseLossDisposition,
+		ReplyDataMaxBytes:                     GetRegisteredPlanV0ReplyDataMaxBytes,
+		DeadlineMilliseconds:                  GetRegisteredPlanV0DeadlineMilliseconds,
+		ResponseLossDisposition:               GetRegisteredPlanV0ResponseLossDisposition,
+		PeerRequirementBeforeDeliveryRequired: true,
+		MethodAuthorityDisposition:            PassiveMethodAuthorityDisposition,
+		RequestIDAuthorityDisposition:         PassiveRequestIDAuthorityDisposition,
+		ServiceMaxConnections:                 SupervisorServiceMaxConnections,
+		ConnectionMaxInFlight:                 SupervisorConnectionMaxInFlight,
+		ProcessMaxAdmittedRequests:            SupervisorProcessMaxAdmittedRequests,
+		ApplicationQueueCapacity:              SupervisorApplicationQueueCapacity,
+		InFlightRequestDataMaxBytes:           SupervisorInFlightRequestDataMaxBytes,
 	}
 }
 

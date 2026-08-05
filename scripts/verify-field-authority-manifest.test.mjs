@@ -16,9 +16,9 @@ const checkedInSchema = JSON.parse(await readFile(schemaUrl, "utf8"));
 
 test("verifies the checked-in passive field-authority manifest", async () => {
   assert.deepEqual(await verifyFieldAuthorityManifest({ rootDirectory: repositoryRoot }), {
-    fieldCount: 1159,
-    profileCount: 91,
-    targetCount: 57,
+    fieldCount: 1203,
+    profileCount: 95,
+    targetCount: 60,
   });
 });
 

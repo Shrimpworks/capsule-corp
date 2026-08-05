@@ -56,3 +56,16 @@ func TestRuntimeProfileIsNotAvailable(t *testing.T) {
 		t.Fatalf("draft runtime must not be advertised as available: %+v", body.Profiles[0])
 	}
 }
+
+func TestDiagnosticHTTPHasNoSubmissionOrMutationRoute(t *testing.T) {
+	for _, path := range []string{"/v1/jobs", "/v1/proposals", "/v1/submit", "/v1/register", "/v1/attempts"} {
+		request := httptest.NewRequest(http.MethodPost, path, nil)
+		response := httptest.NewRecorder()
+
+		NewServer(Options{}).ServeHTTP(response, request)
+
+		if response.Code == http.StatusOK || response.Code == http.StatusAccepted || response.Code == http.StatusCreated {
+			t.Fatalf("diagnostic HTTP exposed mutation route %s with status %d", path, response.Code)
+		}
+	}
+}

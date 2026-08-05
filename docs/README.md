@@ -97,6 +97,12 @@ the 626-byte arithmetic as a layout.
 The follow-on [passive S1 contract](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md) freezes the two
 logical method records and envelopes, exact caps and refusal/copy/response-loss oracles, while
 leaving native transport fields and peer authentication explicitly blocked.
+Accepted [ADR-0044](adr/0044-select-private-xpc-internal-alpha-cli-adapter.md) and the
+[passive internal-alpha product-adapter contract](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md)
+select exactly one private-XPC `SubmitMainMJSV0` CLI-to-daemon adapter and freeze bounded aggregate
+flow across submission and registration/fetch. The logical contract and in-process refusal oracles
+are `PASSED`; no endpoint, signing, peer-authentication, protected state, consumer, or product
+admission exists, and diagnostic HTTP remains read-only.
 
 The follow-on grammar/process decision is [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).

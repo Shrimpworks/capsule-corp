@@ -11,5 +11,13 @@
   "requestDataMaxBytes": 328337,
   "replyDataMaxBytes": 4096,
   "deadlineMilliseconds": 5000,
-  "responseLossDisposition": "committed-retry-creates-fresh-registration"
+  "responseLossDisposition": "committed-retry-creates-fresh-registration",
+  "peerRequirementBeforeDeliveryRequired": true,
+  "methodAuthorityDisposition": "service-role-purpose-audience-derived",
+  "requestIdAuthorityDisposition": "correlation-only",
+  "serviceMaxConnections": 4,
+  "connectionMaxInFlight": 1,
+  "processMaxAdmittedRequests": 8,
+  "applicationQueueCapacity": 0,
+  "inFlightRequestDataMaxBytes": 2626696
 }

@@ -1099,6 +1099,53 @@
       "binding": "supervisor-registration-source-custody",
       "unknownBehavior": "reject-registration"
     },
+    "authenticated-local-ipc-cli-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "agent",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-cli-correlation": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "agent",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-cli-current-state": {
+      "authorityClass": "installation-authority",
+      "originRole": "agent",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "authenticated-local-ipc-current-context-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-cli-proposal": {
+      "authorityClass": "untrusted-proposal-data",
+      "originRole": "agent",
+      "validator": "strict-job-proposal-decoder",
+      "resolver": "job-proposal-semantic-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": {
+        "mode": "must-render-after-versioned-cutover",
+        "source": "supervisor-registration-record"
+      },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "binding": "unbound-untrusted-proposal",
+      "unknownBehavior": "reject-proposal"
+    },
     "authenticated-local-ipc-method-record": {
       "authorityClass": "protocol-discriminator",
       "originRole": "execution-supervisor",
@@ -1361,6 +1408,179 @@
       ]
     },
     {
+      "object": "capsule.authenticated-local-ipc-submit-main-mjs-v0-method-record",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_product_adapter.go",
+        "type": "SubmitMainMJSV0MethodRecord"
+      },
+      "fields": [
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodVersion",
+          "sourceField": "MethodVersion",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/service",
+          "sourceField": "Service",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/expectedRole",
+          "sourceField": "ExpectedRole",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/expectedSigningIdentifier",
+          "sourceField": "ExpectedSigningIdentifier",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/purpose",
+          "sourceField": "Purpose",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestMediaType",
+          "sourceField": "RequestMediaType",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestDataMaxBytes",
+          "sourceField": "RequestDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/replyDataMaxBytes",
+          "sourceField": "ReplyDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/deadlineMilliseconds",
+          "sourceField": "DeadlineMilliseconds",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/responseLossDisposition",
+          "sourceField": "ResponseLossDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/peerRequirementBeforeDeliveryRequired",
+          "sourceField": "PeerRequirementBeforeDeliveryRequired",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodAuthorityDisposition",
+          "sourceField": "MethodAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestIdAuthorityDisposition",
+          "sourceField": "RequestIDAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/serviceMaxConnections",
+          "sourceField": "ServiceMaxConnections",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/connectionMaxInFlight",
+          "sourceField": "ConnectionMaxInFlight",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/processMaxAdmittedRequests",
+          "sourceField": "ProcessMaxAdmittedRequests",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/applicationQueueCapacity",
+          "sourceField": "ApplicationQueueCapacity",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/inFlightRequestDataMaxBytes",
+          "sourceField": "InFlightRequestDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-submit-main-mjs-v0-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_product_adapter.go",
+        "type": "PassiveSubmitMainMJSV0Request"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "authenticated-local-ipc-cli-discriminator"
+        },
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-cli-correlation"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "authenticated-local-ipc-cli-current-state"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "authenticated-local-ipc-cli-current-state"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "authenticated-local-ipc-cli-current-state"
+        },
+        {
+          "path": "/exactJobProposalBytes",
+          "sourceField": "proposalBytes",
+          "profile": "authenticated-local-ipc-cli-proposal"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-submit-main-mjs-v0-reply",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_product_adapter.go",
+        "type": "PassiveSubmitMainMJSV0Reply"
+      },
+      "fields": [
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-daemon-correlation"
+        },
+        {
+          "path": "/registrationId",
+          "sourceField": "RegistrationID",
+          "profile": "registration-state"
+        }
+      ]
+    },
+    {
       "object": "capsule.authenticated-local-ipc-register-plan-v0-method-record",
       "version": 0,
       "definition": {
@@ -1422,6 +1642,46 @@
         {
           "path": "/responseLossDisposition",
           "sourceField": "ResponseLossDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/peerRequirementBeforeDeliveryRequired",
+          "sourceField": "PeerRequirementBeforeDeliveryRequired",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodAuthorityDisposition",
+          "sourceField": "MethodAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestIdAuthorityDisposition",
+          "sourceField": "RequestIDAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/serviceMaxConnections",
+          "sourceField": "ServiceMaxConnections",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/connectionMaxInFlight",
+          "sourceField": "ConnectionMaxInFlight",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/processMaxAdmittedRequests",
+          "sourceField": "ProcessMaxAdmittedRequests",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/applicationQueueCapacity",
+          "sourceField": "ApplicationQueueCapacity",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/inFlightRequestDataMaxBytes",
+          "sourceField": "InFlightRequestDataMaxBytes",
           "profile": "authenticated-local-ipc-method-record"
         }
       ]
@@ -1488,6 +1748,46 @@
         {
           "path": "/responseLossDisposition",
           "sourceField": "ResponseLossDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/peerRequirementBeforeDeliveryRequired",
+          "sourceField": "PeerRequirementBeforeDeliveryRequired",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodAuthorityDisposition",
+          "sourceField": "MethodAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestIdAuthorityDisposition",
+          "sourceField": "RequestIDAuthorityDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/serviceMaxConnections",
+          "sourceField": "ServiceMaxConnections",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/connectionMaxInFlight",
+          "sourceField": "ConnectionMaxInFlight",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/processMaxAdmittedRequests",
+          "sourceField": "ProcessMaxAdmittedRequests",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/applicationQueueCapacity",
+          "sourceField": "ApplicationQueueCapacity",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/inFlightRequestDataMaxBytes",
+          "sourceField": "InFlightRequestDataMaxBytes",
           "profile": "authenticated-local-ipc-method-record"
         }
       ]

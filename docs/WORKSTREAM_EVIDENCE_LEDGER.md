@@ -400,6 +400,16 @@ protected-root bootstrap/Trust Coordinator contract, while its App Group and ins
 ordinary IPC groups, Bundle Replacer, minimum-OS, update, and erasure claims remain explicit
 decisions or signed-evidence gates rather than accepted platform facts.
 
+The post-I1B
+[Apple-platform semantics research](MACOS_INSTALLATION_PLATFORM_RESEARCH.md) is `PASSED` in its
+bounded research scope. It retains the documented `SMAppService` lifecycle, supported private-XPC
+and App-Group-named bootstrap candidate, `JoinExistingSession=true` requirement to test,
+App-Group residual authority, stale-Coordinator Keychain limitation, bounded
+`NSUpdateSecurityPolicy` claim, same-volume authorized-replacement candidate, exact failure
+tables, and one-host versus clean-host evidence matrix. It performed no signing, portal,
+Keychain, service, installation, replacement, runtime, backend, or guest mutation. Installed I2B,
+replacement I4, and distribution I6 remain `BLOCKED` on their named evidence.
+
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
 PR #75 merged before PR #74 finalized, so main's first-parent order is `... f6fcf17 -> 6fc31a0 ->
 e930f9d` even though the PR numbers are 73, 75, and 74. The exact source heads above preserve review
@@ -465,10 +475,12 @@ Current dependency and priority view:
    consumers.
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
-3. **Installation plan:** start I0's passive app-bundle/role/bootstrap contract and keep the first
-   developer MVP on manual whole-bundle replacement. Protected Supervisor bootstrap, pairwise IPC,
-   Source Validator launchers, and replacement behavior are I1-I4. Automatic TUF/update-replacer,
-   Developer ID distribution, a support-floor matrix, and complete uninstall remain I5-I6.
+3. **Installation plan:** I0, I1A, I1B, I2A, and the post-I1B platform-semantics research are
+   `PASSED` in their exact scopes. Continue with I2B1 passive signed-object fixtures, then only
+   separately authorized I2B signed Coordinator/bootstrap, protected-container, and
+   descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement remains I4 and
+   `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
+   and complete uninstall remain I5-I6.
 4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original
    construction blocker is closed. Next consume only an independently reviewed exact fork artifact
    into the fork-native Capsule bundle/reproduction path; governed release publication,

@@ -10,8 +10,8 @@ Status: PASSED
 Scope: architecture and planning review only; no installer, service, key, store, update, repair,
   uninstall, runtime, backend, or guest behavior was implemented or exercised
 Evidence or reason: the review supplied a coherent one-application distribution shape, explicit
-  setup/update/repair/uninstall state machines, and a bounded spike order. This plan reconciles
-  those recommendations with current Source Validator, owner-lock, archive, IPC, and trust work.
+  setup/update/repair/uninstall state machines, and a bounded spike order. The post-I1B platform
+  research now classifies the seven Apple-platform questions and their remaining installed stops.
 Remaining work: every installed mechanism and authority-bearing helper below remains subject to
   its named ADR, implementation, signed installed corpus, and product-admission gate.
 Next action: continue from passed execution-disabled developer-signed I1B into the protected
@@ -98,7 +98,8 @@ the narrower composition. A separately signed, on-demand Trust Coordinator owns 
 user-presence-gated installation-root key and signs the closed request/final record. The
 authenticated Supervisor alone creates and observes the fixed root/lock/disabled-store genesis in
 its own container. The visible app only invokes setup UI and `SMAppService` registration; it gains
-no signing key or Supervisor-state authority. Installed support remains blocked on I1B and I2B.
+no signing key or Supervisor-state authority. I1B is complete; installed protected-state support
+remains blocked on I2B.
 
 The selected composition requires:
 
@@ -248,7 +249,7 @@ service-registration evidence exists.
 | I1A | Unsigned app shell and exact seven-role byte/layout construction, execution permanently disabled | `PASSED`; deterministic Swift/AppKit status shell, inert daemon/Supervisor placeholders, exact R2 identities, closed readback and refusal evidence; no signed or installed behavior |
 | I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `PASSED`; exact Team-`3DDR84M4JS` profiles, inside-out signing/readback, private-service reachability, eight refusal cases, per-user registration, and cleanup are retained in [`artifacts/macos-i1b-r3-signed-development-composition`](../artifacts/macos-i1b-r3-signed-development-composition); Apple Development only, no product admission |
 | I2A | Protected-root/bootstrap-owner architecture and passive contract | `PASSED`; Proposed ADR-0038 selects one-shot Coordinator authorization plus Supervisor creation and retains the exact I2B object/order/fault plan without installed behavior |
-| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | `BLOCKED` on passive object/wrapper fixtures, separately authorized test-only key/service/container mutations, exact Coordinator/bootstrap identifiers and profiles, and installed evidence; product-store selection remains separate |
+| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | `BLOCKED` on passive object/wrapper fixtures, separately authorized test-only key/service/container mutations, exact Coordinator/bootstrap identifiers and profiles, and installed evidence; the platform-semantics research is `PASSED`, while product-store selection remains separate |
 | I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R4 confinement/resource/residue evidence plus later consumers; R1-R3 are `PASSED` in their exact scopes |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |
@@ -276,14 +277,18 @@ Before implementation crosses the named authority boundaries, retain separate de
 Do not combine all eight into one approval. Each has a different compromise consequence and
 different installed evidence.
 
-## Remaining research brief
+## Completed platform research and remaining installed questions
 
-The next external research should resolve supported Apple-platform semantics, not produce another
-complete product proposal. Use only current Apple primary documentation, SDK headers/interfaces,
-WWDC material, and well-identified production references. Treat missing public guarantees as
-unknown rather than inferring private behavior.
+The seven-question brief below is answered by the
+[post-I1B Apple-platform semantics research](MACOS_INSTALLATION_PLATFORM_RESEARCH.md). That
+research slice is `PASSED`; it does not advance I2B, I4, or I6 installed evidence. In particular,
+the exact signed Coordinator session/profile, App Group residue, stale-signer Keychain behavior,
+replacement interruption recovery, and clean-host/multi-OS distribution claims remain `BLOCKED`.
 
-### Prompt for deeper Apple-platform research
+The original prompt remains here as the closed scope and challenge criteria for the retained
+result.
+
+### Completed Apple-platform research prompt
 
 > Review the current Capsule macOS installation plan as a defensive architecture research task.
 > Capsule is one visible Swift application with an unprivileged native-fronted Go Execution

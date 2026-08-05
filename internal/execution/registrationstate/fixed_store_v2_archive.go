@@ -21,7 +21,7 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// ArchiveOwner is the narrow owner capability required by the fixed F3
+// ArchiveOwner is the narrow owner capability required by the fixed archive
 // conformance transaction. The selected Darwin installation owner satisfies
 // this interface; tests use an owned local assertion with the same lifetime
 // semantics.
@@ -100,6 +100,7 @@ type archiveCheckpointDisk struct {
 	DescriptorSetDigest      archivestate.ArchiveDescriptorSetDigest `json:"descriptorSetDigest"`
 	ArchiveIndexDigest       archivestate.ArchiveCombinedIndexDigest `json:"archiveIndexDigest"`
 	HotSetDigests            archivestate.HotSetDigests              `json:"hotSetDigests"`
+	EffectTombstoneSetDigest *archivestate.EffectTombstoneSetDigest  `json:"effectTombstoneSetDigest,omitempty"`
 	SourceSnapshotGeneration v0candidate.PositiveUInt53              `json:"sourceSnapshotGeneration"`
 	ResultSnapshotGeneration v0candidate.PositiveUInt53              `json:"resultSnapshotGeneration"`
 	ArchiveGeneration        archivestate.ArchiveGeneration          `json:"archiveGeneration"`
@@ -162,9 +163,9 @@ func cloneLoadedArchiveSegments(segments []loadedArchiveSegmentV0) []loadedArchi
 
 var fixedStoreV2ArchiveMu sync.Mutex
 
-// PlanArchive performs the F3 pure deterministic selection against a freshly
-// reopened complete v2 genesis world. It writes no file and accepts no caller
-// record, path, or lifecycle value.
+// PlanArchive performs pure deterministic selection against a freshly reopened
+// complete v2 world. It writes no file and accepts no caller record, path, or
+// lifecycle value.
 func (store *FixedFileStoreV2) PlanArchive(
 	ctx context.Context,
 	owner ArchiveOwner,
@@ -276,7 +277,8 @@ func (store *FixedFileStoreV2) ActivateArchive(
 	if err != nil {
 		return nil, fmt.Errorf("reopen activated fixed supervisor archive: %w", err)
 	}
-	if len(reopened.segments) != 1 || reopened.segments[0].Segment.Digest() != verified.prepared.segmentDigest ||
+	wantSegments := len(loaded.Segments) + 1
+	if len(reopened.segments) != wantSegments || reopened.segments[wantSegments-1].Segment.Digest() != verified.prepared.segmentDigest ||
 		archiveSegmentPath(store.path, verified.prepared.segmentDigest) != segmentPath {
 		return nil, fmt.Errorf("%w: reopened archive successor mismatch", ErrStoreRepairRequired)
 	}
@@ -320,8 +322,12 @@ func planArchiveFromLoaded(
 	limits archivestate.ArchiveLimits,
 ) (archivestate.ArchivePlan, error) {
 	view := loaded.Active.View()
-	if view.CurrentCheckpoint.Kind != archivestate.ArchiveCheckpointMigrationGenesis || len(loaded.Segments) != 0 {
+	if view.CurrentCheckpoint.Kind != archivestate.ArchiveCheckpointMigrationGenesis &&
+		view.CurrentCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
 		return archivestate.ArchivePlan{}, ErrArchiveStaleTransaction
+	}
+	if len(loaded.Segments) >= archivestate.MaxReferencedArchiveSegments {
+		return archivestate.ArchivePlan{}, errors.New("CAPACITY: fixed supervisor archive segment descriptor capacity")
 	}
 	selectorState, err := selectorStateForHotWorld(loaded, session)
 	if err != nil {
@@ -533,6 +539,10 @@ func buildArchiveCandidate(
 			hotEffectTombstones = append(hotEffectTombstones, tombstone)
 		}
 	}
+	hotEffectTombstones, err := effectTombstonesAtHotAttemptLocations(hotState, hotEffectTombstones)
+	if err != nil {
+		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
+	}
 	if len(segmentState.Registrations) != len(selected) {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, ErrArchiveStaleTransaction
 	}
@@ -542,8 +552,9 @@ func buildArchiveCandidate(
 	if err := recomputeAuthoritySetDigests(&hotState); err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
+	nextOrdinal := archivestate.ArchiveOrdinal(len(loaded.Segments) + 1) //nolint:gosec // bounded above by 64.
 	segmentBytes, segment, err := encodeArchiveSegmentV0(archiveSegmentBuild{
-		Ordinal: 1, SourceSnapshotGeneration: loaded.Active.View().SnapshotGeneration,
+		Ordinal: nextOrdinal, SourceSnapshotGeneration: loaded.Active.View().SnapshotGeneration,
 		ArchiveGeneration:     archivestate.ArchiveGeneration(uint64(loaded.Active.View().ArchiveGeneration) + 1),
 		PriorCheckpointDigest: loaded.Active.View().CurrentCheckpoint.Digest,
 		State:                 segmentState, Lifecycles: segmentLifecycles, EffectTombstones: segmentEffectTombstones,
@@ -561,11 +572,21 @@ func buildArchiveCandidate(
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
-	descriptorDigest, err := archivestate.DigestArchiveDescriptorSet([]archivestate.ArchiveDescriptor{descriptor})
+	descriptors := make([]archivestate.ArchiveDescriptor, 0, len(loaded.Envelope.Descriptors)+1)
+	for _, existingView := range loaded.Envelope.Descriptors {
+		existing, descriptorErr := archivestate.NewArchiveDescriptor(existingView)
+		if descriptorErr != nil {
+			return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, descriptorErr
+		}
+		descriptors = append(descriptors, existing)
+	}
+	descriptors = append(descriptors, descriptor)
+	descriptorDigest, err := archivestate.DigestArchiveDescriptorSet(descriptors)
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
-	indexes, err := reconstructV2IndexesForWorld(hotState, hotLifecycles, hotEffectTombstones, []loadedArchiveSegmentV0{segment})
+	segments := append(cloneLoadedArchiveSegments(loaded.Segments), segment)
+	indexes, err := reconstructV2IndexesForWorld(hotState, hotLifecycles, hotEffectTombstones, segments)
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
@@ -574,15 +595,30 @@ func buildArchiveCandidate(
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
 	hotCounts := countsForIndexView(hotIndexes.View())
-	archivedCounts := segment.Segment.View().Counts
+	archivedCounts, err := addArchiveCounts(loaded.Active.View().ArchivedCounts, segment.Segment.View().Counts)
+	if err != nil {
+		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
+	}
 	totalCounts, err := addArchiveCounts(hotCounts, archivedCounts)
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
 	hotLifecycleDigest := lifecycleSetDigest(hotLifecycles)
+	hotTombstoneDigest, err := archivestate.DigestEffectTombstoneSet(hotEffectTombstones)
+	if err != nil {
+		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
+	}
 	hotSetDigests := archivestate.HotSetDigests{
 		Registrations: hotState.RegistrationSetDigest, Approvals: hotState.ApprovalSetDigest,
 		Attempts: hotState.AttemptSetDigest, Lifecycles: [32]byte(hotLifecycleDigest),
+	}
+	materializeF4C := len(loaded.Segments) > 0 || loaded.Envelope.EffectTombstones != nil
+	if materializeF4C {
+		hotSetDigests.EffectTombstones = hotTombstoneDigest
+	}
+	activeHotSetDigests := archivestate.HotSetDigests{}
+	if materializeF4C {
+		activeHotSetDigests = hotSetDigests
 	}
 	checkpoint, err := archivestate.NewArchiveCheckpoint(archivestate.ArchiveCheckpointView{
 		PreviousCheckpoint: loaded.Active.View().CurrentCheckpoint, NewSegmentDigest: segment.Segment.Digest(),
@@ -605,8 +641,9 @@ func buildArchiveCandidate(
 		InstallationID:         hotState.InstallationID, SupervisorID: hotState.SupervisorID,
 		EpochSequence: hotState.EpochSequence, EpochDigest: hotState.EpochDigest,
 		DurableTimeHighWater: hotState.TimeHighWaterUnixSeconds,
-		Descriptors:          []archivestate.ArchiveDescriptor{descriptor}, DescriptorSetDigest: descriptorDigest,
+		Descriptors:          descriptors, DescriptorSetDigest: descriptorDigest,
 		Indexes: indexes, IndexDigests: indexes.Digests(), CombinedIndexDigest: indexes.CombinedDigest(),
+		HotSetDigests:             activeHotSetDigests,
 		EffectTombstoneCoverage:   archivestate.EffectTombstoneCoverageVisibleV1AndV2,
 		VisibleV1EffectSeedCount:  loaded.Active.View().VisibleV1EffectSeedCount,
 		VisibleV1EffectSeedDigest: loaded.Active.View().VisibleV1EffectSeedDigest,
@@ -624,29 +661,47 @@ func buildArchiveCandidate(
 	}
 	activeView := active.View()
 	checkpointView := checkpoint.View()
-	candidate := diskEnvelopeV2{
-		StoreFormatVersion: &version, MigrationSourceVersion: &sourceVersion,
-		SnapshotGeneration: activeView.SnapshotGeneration, ArchiveGeneration: activeView.ArchiveGeneration,
-		State: hotState, LifecycleSetDigest: hotLifecycleDigest, Lifecycles: lifecycleDisks,
-		Descriptors: []archivestate.ArchiveDescriptorView{descriptor.View()}, DescriptorSetDigest: descriptorDigest,
-		Indexes: archiveIndexesToDisk(indexes), IndexDigests: indexes.Digests(), CombinedIndexDigest: indexes.CombinedDigest(),
-		EffectTombstoneCoverage:   activeView.EffectTombstoneCoverage,
-		VisibleV1EffectSeedCount:  activeView.VisibleV1EffectSeedCount,
-		VisibleV1EffectSeedDigest: activeView.VisibleV1EffectSeedDigest,
-		PreviousCheckpoint:        activeView.PreviousCheckpoint, CurrentCheckpoint: activeView.CurrentCheckpoint,
-		MigrationGenesis: loaded.Envelope.MigrationGenesis,
-		ActivationCheckpoint: &archiveCheckpointDisk{
-			PreviousCheckpoint: checkpointView.PreviousCheckpoint, NewSegmentDigest: checkpointView.NewSegmentDigest,
-			DescriptorSetDigest: checkpointView.DescriptorSetDigest, ArchiveIndexDigest: checkpointView.ArchiveIndexDigest,
-			HotSetDigests:            checkpointView.HotSetDigests,
-			SourceSnapshotGeneration: checkpointView.SourceSnapshotGeneration,
-			ResultSnapshotGeneration: checkpointView.ResultSnapshotGeneration,
-			ArchiveGeneration:        checkpointView.ArchiveGeneration,
-			InstallationID:           checkpointView.InstallationID, SupervisorID: checkpointView.SupervisorID,
-			EpochSequence: checkpointView.EpochSequence, EpochDigest: checkpointView.EpochDigest,
-			DurableTimeHighWater: checkpointView.DurableTimeHighWater, Digest: checkpoint.Digest(),
-		},
-		HotCounts: hotCounts, ArchivedCounts: archivedCounts, TotalCounts: totalCounts,
+	candidate := loaded.Envelope
+	candidate.StoreFormatVersion, candidate.MigrationSourceVersion = &version, &sourceVersion
+	candidate.SnapshotGeneration, candidate.ArchiveGeneration = activeView.SnapshotGeneration, activeView.ArchiveGeneration
+	candidate.State, candidate.LifecycleSetDigest, candidate.Lifecycles = hotState, hotLifecycleDigest, lifecycleDisks
+	candidate.Descriptors = make([]archivestate.ArchiveDescriptorView, len(descriptors))
+	for index, current := range descriptors {
+		candidate.Descriptors[index] = current.View()
+	}
+	candidate.DescriptorSetDigest = descriptorDigest
+	candidate.Indexes, candidate.IndexDigests, candidate.CombinedIndexDigest = archiveIndexesToDisk(indexes), indexes.Digests(), indexes.CombinedDigest()
+	candidate.EffectTombstoneCoverage = activeView.EffectTombstoneCoverage
+	candidate.VisibleV1EffectSeedCount, candidate.VisibleV1EffectSeedDigest = activeView.VisibleV1EffectSeedCount, activeView.VisibleV1EffectSeedDigest
+	candidate.PreviousCheckpoint, candidate.CurrentCheckpoint = activeView.PreviousCheckpoint, activeView.CurrentCheckpoint
+	candidate.ActivationCheckpoint = &archiveCheckpointDisk{
+		PreviousCheckpoint: checkpointView.PreviousCheckpoint, NewSegmentDigest: checkpointView.NewSegmentDigest,
+		DescriptorSetDigest: checkpointView.DescriptorSetDigest, ArchiveIndexDigest: checkpointView.ArchiveIndexDigest,
+		HotSetDigests:            checkpointView.HotSetDigests,
+		SourceSnapshotGeneration: checkpointView.SourceSnapshotGeneration,
+		ResultSnapshotGeneration: checkpointView.ResultSnapshotGeneration,
+		ArchiveGeneration:        checkpointView.ArchiveGeneration,
+		InstallationID:           checkpointView.InstallationID, SupervisorID: checkpointView.SupervisorID,
+		EpochSequence: checkpointView.EpochSequence, EpochDigest: checkpointView.EpochDigest,
+		DurableTimeHighWater: checkpointView.DurableTimeHighWater, Digest: checkpoint.Digest(),
+	}
+	if materializeF4C {
+		candidate.ActivationCheckpoint.EffectTombstoneSetDigest = &hotTombstoneDigest
+		tombstoneDisk := effectTombstonesToDisk(hotEffectTombstones)
+		candidate.EffectTombstones = &tombstoneDisk
+		candidate.EffectTombstoneSetDigest = &hotTombstoneDigest
+		if candidate.MigrationGenesisIndexes == nil {
+			genesisIndexes, genesisErr := reconstructMigrationGenesisIndexes(loaded.State, loaded.Lifecycles, loaded.Segments)
+			if genesisErr != nil {
+				return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, genesisErr
+			}
+			genesisDisk := archiveIndexesToDisk(genesisIndexes)
+			candidate.MigrationGenesisIndexes = &genesisDisk
+		}
+	}
+	candidate.HotCounts, candidate.ArchivedCounts, candidate.TotalCounts = hotCounts, archivedCounts, totalCounts
+	if _, encodeErr := encodeEnvelopeV2(candidate); encodeErr != nil {
+		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, encodeErr
 	}
 	return segmentBytes, segment, candidate, nil
 }
@@ -1106,6 +1161,9 @@ func effectTombstonesAtHotAttemptLocations(
 		}
 		result[index].AttemptLocation = location
 	}
+	sort.Slice(result, func(left, right int) bool {
+		return bytes.Compare(result[left].EffectID[:], result[right].EffectID[:]) < 0
+	})
 	return result, nil
 }
 
@@ -1217,6 +1275,12 @@ func reconstructMigrationGenesisHotSetDigests(
 	sort.Slice(world.Registrations, func(left, right int) bool {
 		return world.Registrations[left].Index.RegistrationSequence < world.Registrations[right].Index.RegistrationSequence
 	})
+	sort.Slice(world.Approvals, func(left, right int) bool {
+		return bytes.Compare(world.Approvals[left].ApprovalID[:], world.Approvals[right].ApprovalID[:]) < 0
+	})
+	sort.Slice(world.Attempts, func(left, right int) bool {
+		return bytes.Compare(world.Attempts[left].AttemptID[:], world.Attempts[right].AttemptID[:]) < 0
+	})
 	if err := recomputeAuthoritySetDigests(&world); err != nil {
 		return archivestate.HotSetDigests{}, err
 	}
@@ -1229,23 +1293,51 @@ func reconstructMigrationGenesisHotSetDigests(
 func validateActivationCheckpointDisk(
 	envelope diskEnvelopeV2,
 	indexes archivestate.ArchiveIndexes,
-	segment loadedArchiveSegmentV0,
+	segments []loadedArchiveSegmentV0,
 ) (archivestate.ArchiveCheckpoint, error) {
 	disk := envelope.ActivationCheckpoint
-	if disk == nil || disk.ArchiveIndexDigest != indexes.CombinedDigest() ||
-		disk.PreviousCheckpoint != envelope.PreviousCheckpoint || disk.NewSegmentDigest != segment.Segment.Digest() ||
+	if disk == nil || len(segments) == 0 {
+		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint is missing")
+	}
+	segment := segments[len(segments)-1]
+	segmentView := segment.Segment.View()
+	if disk == nil || disk.PreviousCheckpoint != envelope.PreviousCheckpoint || disk.NewSegmentDigest != segment.Segment.Digest() ||
+		segmentView.PriorCheckpointDigest != disk.PreviousCheckpoint.Digest ||
 		disk.DescriptorSetDigest != envelope.DescriptorSetDigest ||
 		disk.SourceSnapshotGeneration+1 != disk.ResultSnapshotGeneration ||
+		disk.SourceSnapshotGeneration != segmentView.SourceSnapshotGeneration ||
 		disk.ResultSnapshotGeneration > envelope.SnapshotGeneration || disk.ArchiveGeneration != envelope.ArchiveGeneration ||
+		disk.ArchiveGeneration != segmentView.ArchiveGeneration ||
 		disk.InstallationID != envelope.State.InstallationID || disk.SupervisorID != envelope.State.SupervisorID ||
 		disk.EpochSequence != envelope.State.EpochSequence || disk.EpochDigest != envelope.State.EpochDigest ||
 		disk.DurableTimeHighWater > envelope.State.TimeHighWaterUnixSeconds {
 		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint cross-link mismatch")
 	}
+	if len(segments) == 1 {
+		if disk.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointMigrationGenesis {
+			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor first archive checkpoint predecessor mismatch")
+		}
+	} else if disk.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
+		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor later archive checkpoint predecessor mismatch")
+	}
+	wantEffectDigest := archivestate.EffectTombstoneSetDigest{}
+	if disk.EffectTombstoneSetDigest != nil {
+		wantEffectDigest = *disk.EffectTombstoneSetDigest
+	}
+	if len(segments) > 1 && disk.EffectTombstoneSetDigest == nil {
+		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor F4C checkpoint effect-tombstone digest is missing")
+	}
+	disk.HotSetDigests.EffectTombstones = wantEffectDigest
 	if disk.ResultSnapshotGeneration == envelope.SnapshotGeneration {
+		if disk.ArchiveIndexDigest != indexes.CombinedDigest() {
+			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint index mismatch")
+		}
 		wantHot := archivestate.HotSetDigests{
 			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
 			Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
+		}
+		if envelope.EffectTombstoneSetDigest != nil {
+			wantHot.EffectTombstones = *envelope.EffectTombstoneSetDigest
 		}
 		if disk.HotSetDigests != wantHot {
 			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint hot-set mismatch")
@@ -1355,10 +1447,23 @@ func loadArchiveSegmentsForEnvelope(
 		return nil, 0, errors.New("fixed supervisor archive orphan report overflow")
 	}
 	segments := make([]loadedArchiveSegmentV0, 0, len(envelope.Descriptors))
-	for _, descriptor := range envelope.Descriptors {
+	for index, descriptor := range envelope.Descriptors {
+		wantOrdinal := archivestate.ArchiveOrdinal(index + 1)       //nolint:gosec // descriptor count is capped at 64.
+		wantGeneration := archivestate.ArchiveGeneration(index + 2) //nolint:gosec // descriptor count is capped at 64.
+		if descriptor.Ordinal != wantOrdinal || descriptor.ArchiveGeneration != wantGeneration {
+			return nil, 0, errors.New("fixed supervisor archive descriptor ancestry mismatch")
+		}
 		segment, exists := segmentsByOrdinal[descriptor.Ordinal]
 		if !exists {
 			return nil, 0, errors.New("fixed supervisor archive referenced segment is missing")
+		}
+		if index == 0 {
+			if segment.Segment.View().PriorCheckpointDigest != envelope.MigrationGenesis.Digest {
+				return nil, 0, errors.New("fixed supervisor archive first-segment predecessor mismatch")
+			}
+		} else if segment.Segment.View().PriorCheckpointDigest == (archivestate.ArchiveCheckpointDigest{}) ||
+			segment.Segment.View().SourceSnapshotGeneration <= segments[index-1].Segment.View().SourceSnapshotGeneration {
+			return nil, 0, errors.New("fixed supervisor archive later-segment ancestry mismatch")
 		}
 		segments = append(segments, segment)
 	}
@@ -1413,7 +1518,7 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 	if err := decodeOneClosedJSON(encodedCandidate, &candidate); err != nil {
 		return errors.New("prepared fixed supervisor active successor is not closed")
 	}
-	if candidate.Lifecycles == nil || len(candidate.Descriptors) != 1 || candidate.ActivationCheckpoint == nil {
+	if candidate.Lifecycles == nil || len(candidate.Descriptors) != len(loaded.Segments)+1 || candidate.ActivationCheckpoint == nil {
 		return errors.New("prepared fixed supervisor active successor is incomplete")
 	}
 	records := make([]lifecyclestate.Record, len(candidate.Lifecycles))
@@ -1431,29 +1536,40 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 	if err != nil {
 		return err
 	}
-	candidateHotTombstones, _, _, err := effectTombstonesFromEnvelope(candidate, storedIndexes)
+	candidateHotTombstones, candidateTombstoneDigest, _, err := effectTombstonesFromEnvelope(candidate, storedIndexes)
 	if err != nil {
 		return err
 	}
-	reconstructed, err := reconstructV2IndexesForWorld(candidate.State, records, candidateHotTombstones, []loadedArchiveSegmentV0{decoded})
+	segments := append(cloneLoadedArchiveSegments(loaded.Segments), decoded)
+	reconstructed, err := reconstructV2IndexesForWorld(candidate.State, records, candidateHotTombstones, segments)
 	if err != nil || !reflect.DeepEqual(storedIndexes.View(), reconstructed.View()) {
 		return errors.New("prepared fixed supervisor archive world index mismatch")
 	}
-	genesisIndexes, err := reconstructMigrationGenesisIndexes(candidate.State, records, []loadedArchiveSegmentV0{decoded})
-	if err != nil {
-		return err
+	var genesisIndexes archivestate.ArchiveIndexes
+	var genesisHotDigests archivestate.HotSetDigests
+	if candidate.MigrationGenesisIndexes != nil {
+		genesisIndexes, err = archiveIndexesFromDisk(*candidate.MigrationGenesisIndexes)
+		genesisHotDigests = candidate.MigrationGenesis.HotSetDigests
+	} else {
+		genesisIndexes, err = reconstructMigrationGenesisIndexes(candidate.State, records, segments)
+		if err == nil {
+			genesisHotDigests, err = reconstructMigrationGenesisHotSetDigests(candidate.State, records, segments)
+		}
 	}
-	genesisHotDigests, err := reconstructMigrationGenesisHotSetDigests(candidate.State, records, []loadedArchiveSegmentV0{decoded})
 	if err != nil {
 		return err
 	}
 	genesis, err := validateMigrationGenesisDisk(candidate, genesisIndexes, genesisHotDigests)
-	if err != nil || candidate.PreviousCheckpoint != genesis.Reference() {
+	if err != nil || (len(segments) == 1 && candidate.PreviousCheckpoint != genesis.Reference()) ||
+		(len(segments) > 1 && candidate.PreviousCheckpoint != loaded.Active.View().CurrentCheckpoint) {
 		return fmt.Errorf("prepared fixed supervisor archive genesis mismatch: %w", err)
 	}
-	descriptor, err := archivestate.NewArchiveDescriptor(candidate.Descriptors[0])
-	if err != nil {
-		return err
+	descriptors := make([]archivestate.ArchiveDescriptor, len(candidate.Descriptors))
+	for index, descriptorView := range candidate.Descriptors {
+		descriptors[index], err = archivestate.NewArchiveDescriptor(descriptorView)
+		if err != nil {
+			return err
+		}
 	}
 	active, err := archivestate.NewActiveStateV2(archivestate.ActiveStateV2View{
 		StoreFormatVersion: *candidate.StoreFormatVersion, MigrationSourceVersion: *candidate.MigrationSourceVersion,
@@ -1461,8 +1577,13 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 		InstallationID: candidate.State.InstallationID, SupervisorID: candidate.State.SupervisorID,
 		EpochSequence: candidate.State.EpochSequence, EpochDigest: candidate.State.EpochDigest,
 		DurableTimeHighWater: candidate.State.TimeHighWaterUnixSeconds,
-		Descriptors:          []archivestate.ArchiveDescriptor{descriptor}, DescriptorSetDigest: candidate.DescriptorSetDigest,
+		Descriptors:          descriptors, DescriptorSetDigest: candidate.DescriptorSetDigest,
 		Indexes: storedIndexes, IndexDigests: candidate.IndexDigests, CombinedIndexDigest: candidate.CombinedIndexDigest,
+		HotSetDigests: archivestate.HotSetDigests{
+			Registrations: candidate.State.RegistrationSetDigest, Approvals: candidate.State.ApprovalSetDigest,
+			Attempts: candidate.State.AttemptSetDigest, Lifecycles: [32]byte(candidate.LifecycleSetDigest),
+			EffectTombstones: candidateTombstoneDigest,
+		},
 		EffectTombstoneCoverage:   candidate.EffectTombstoneCoverage,
 		VisibleV1EffectSeedCount:  candidate.VisibleV1EffectSeedCount,
 		VisibleV1EffectSeedDigest: candidate.VisibleV1EffectSeedDigest,
@@ -1472,7 +1593,7 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 	if err != nil || active.View().CurrentCheckpoint != candidate.CurrentCheckpoint {
 		return errors.New("prepared fixed supervisor active projection mismatch")
 	}
-	if _, err := validateActivationCheckpointDisk(candidate, storedIndexes, decoded); err != nil {
+	if _, err := validateActivationCheckpointDisk(candidate, storedIndexes, segments); err != nil {
 		return err
 	}
 	return nil

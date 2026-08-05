@@ -4,7 +4,7 @@ The roadmap is ordered by uncertainty and risk reduction rather than feature cou
 spikes may be built outside the final product shape. Their retained evidence—not prototype code
 quality—is the deliverable.
 
-Live per-item status — Archive F2-F4B, owner-lock G2/G3, ADR-0034-0036 Source Validator R0-R4,
+Live per-item status — Archive F2-F4C, owner-lock G2/G3, ADR-0034-0036 Source Validator R0-R4,
 governed `deno_core`, macOS installation (including I1B), and the rest — is tracked in the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard), the single
 current-status source; this roadmap defines phase order and exit evidence and does not restate live
@@ -194,7 +194,9 @@ immutable complete-cohort segment under the owner assertion and fully verifies t
 successor. F4A adds read-only retained-global lookup/replay/passive-collision routing and excludes
 archived attempts from hot recovery. The retained F4B blocker records the former effect-history
 contradiction; F4B now passes atomic mutation and independent append-only effect tombstones in the
-exact fixed-store scope. F4C second-segment/bounded growth is the next archive slice.
+exact fixed-store scope. F4C now passes bounded second/later immutable-segment growth through the
+exact 64-segment ceiling in its [retained result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md). F5
+backup/orphan policy is the next archive slice.
 Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
@@ -259,9 +261,10 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Retain the completed ADR-0031 effect-history correction and
-  [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), then continue the fixed-store archive
-  oracle into F4C bounded growth and F5 backup/orphan/reporting, retaining full closed cohorts
+- Retain the completed ADR-0031 effect-history correction,
+  [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
+  [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), then continue the fixed-store archive
+  oracle into F5 backup/orphan/reporting, retaining full closed cohorts
   and exact tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned

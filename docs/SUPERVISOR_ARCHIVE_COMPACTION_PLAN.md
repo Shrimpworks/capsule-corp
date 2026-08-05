@@ -26,8 +26,10 @@ predecessor or successor under the owner assertion. The follow-on
 lookup, replay, passive collision routing, and hot-only `AttemptID` recovery. The retained
 [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former effect-history gap;
 the [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic authority/lifecycle
-mutation and the independent append-only effect source in the fixed-store scope. F4C second-
-segment/bounded-growth activation and production admission remain outside the passed scope.
+mutation and the independent append-only effect source in the fixed-store scope. The
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now passes deterministic second/later
+immutable-segment activation and exact segment 64/65 bounded growth. F5-F6 and production
+admission remain outside the passed scope.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -314,7 +316,7 @@ against both a hot cohort and an archived cohort:
 The state oracle records before/after hot set digests, archive checkpoint/index digests, counts,
 references, time high water, and complete file bytes for every refusal.
 
-## Capacity and bounded-growth oracle — F4C pending
+## Capacity and bounded-growth oracle — F4C complete
 
 Tests use compact generated records and encoded-size estimators to prove:
 
@@ -328,6 +330,13 @@ Tests use compact generated records and encoded-size estimators to prove:
 - an orphan segment does not consume logical archive capacity until referenced, but physical disk
   exhaustion is a confirmed local failure and never triggers deletion of referenced state; and
 - no full-cap case evicts, merges, rewrites, or changes a retained authority state.
+
+Observed result: `PASSED` in the exact fixed-store local-conformance scope. The focused F4C oracle
+activates 64 referenced one-cohort segments and refuses segment 65 without rewriting or evicting
+the remaining hot cohort or any referenced bytes. The inherited exact inclusive and cap-plus-one
+cohort, record, index, segment-byte, and active-byte cases remain passing. Exact answers, fault/
+death/race results, and limitations are retained in the
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md).
 
 The plan makes no throughput, latency, disk-life, or indefinite-service claim. A separate
 quantitative budget and production-engine campaign is required before consumer activation.
@@ -668,9 +677,10 @@ Acceptance: existing Slice B/E5 mutation, replay, response-loss, fault, and reco
 v2 with archived collision equivalents. No second segment, new tombstone-only commit, consumer,
 adapter call, runtime, backend, or guest is added.
 
-Observed result: `PASSED` in this exact scope. F4C-F6 and product admission remain open.
+Observed result: `PASSED` in this exact scope. F4C is separately complete; F5-F6 and product
+admission remain open.
 
-### Slice F4C: second-segment activation and bounded growth — pending
+### Slice F4C: second-segment activation and bounded growth — complete
 
 - Generalize the sealed F3 activation transaction to a second and later segment within the exact
   64-segment bound.
@@ -681,6 +691,14 @@ Observed result: `PASSED` in this exact scope. F4C-F6 and product admission rema
 Acceptance: a second eligible cohort activates into a second referenced segment; every exact cap
 accepts and cap plus one refuses with all hot and referenced history unchanged. No cleanup,
 deletion, backup, production engine, consumer, adapter, runtime, backend, or guest is added.
+
+Observed result: `PASSED` in this exact scope. The
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) retains exact second-segment known answers,
+deterministic later-generation/checkpoint ancestry, full retained-global lookup/replay/recovery,
+historical/current effect resolution across a mutation between activations, all thirteen activation
+fault points, four process-death points, concurrent retry convergence, second-segment mutation and
+substitution refusals, exact segment 64 acceptance, and segment 65 no-rewrite refusal. F5-F6 and
+product admission remain `BLOCKED`.
 
 ### Slice F5: coherent backup, orphan handling, and offline verification
 

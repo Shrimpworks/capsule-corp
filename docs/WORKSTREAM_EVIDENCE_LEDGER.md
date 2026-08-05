@@ -288,8 +288,10 @@ F4A's retained lookup/replay/passive-collision/hot-only-recovery scope is also `
 retained [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former effect-history
 contradiction and its selected correction. The
 [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes the exact fixed-store atomic
-mutation, independent tombstone, durable replay, historical lookup, and fault/collision scope.
-F4C-F6 remain deferred.
+mutation, independent tombstone, durable replay, historical lookup, and fault/collision scope. The
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) passes deterministic second/later segment
+activation, exact 64-segment acceptance/65 refusal, retained-global reconstruction, and complete
+old-or-new fault/death evidence. F5-F6 remain deferred.
 
 The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
 Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
@@ -472,9 +474,10 @@ Current dependency and priority view:
 
 1. **Next archive slice:** F2 migration/full verification, F3 first-segment activation, F4A
    retained lookup/replay/passive-collision routing, and the
-   [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) are `PASSED` in their
-   exact local scopes. Continue with F4C bounded second-segment/index growth; keep F5 backup/orphan
-   cleanup/reporting and F6 production-engine work separate.
+   [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
+   [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) are `PASSED` in their exact
+   local scopes. Continue with F5 backup/orphan cleanup and reporting; keep F6 production-engine
+   work separate.
 2. **Source Validator R3 signed composition passed; product blocked:** Accepted ADR-0036 closes R0 with
    two role-specific private launchers, residual private-container scratch plus mandatory cleanup,
    and an evidence-derived reactive watermark with no hard-peak or host-availability claim. Product

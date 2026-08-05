@@ -639,6 +639,10 @@ contradiction. The [F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) no
 independent append-only source for same-transaction issuance, full hot/archive reconstruction, and
 historical `superseded-by-current` lookup without a false lifecycle record. Corrupt, omitted,
 partial, substituted, or cross-linked tombstone state refuses without rewrite or fallback. The
+[F4C result](../SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now carries those independent tombstones
+and complete cohorts through deterministic second/later immutable-segment activation, exact
+segment 64/65 capacity behavior, and old-or-complete-new reopen without deletion or adapter calls.
+The
 finite fixed-store checkpoint still provides no
 production engine, multi-process lock, power-loss result,
 restore/anti-rollback mechanism, referenced-history deletion, continuous service, consumer, or

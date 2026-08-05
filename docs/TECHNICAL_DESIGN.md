@@ -121,7 +121,10 @@ The retained [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records t
 current-effect contradiction and ADR-0031's independent-source correction. The
 [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic fixed-store v2 authority/
 lifecycle mutation, same-transaction append-only effect issuance, durable exact replay, and direct
-hot/archive historical resolution. F4C remains deferred.
+hot/archive historical resolution. The
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now passes deterministic second/later
+segment activation and exact segment 64/65 bounded growth in the same fixed-store scope; F5-F6
+remain deferred.
 
 ## Reference workflow
 
@@ -849,8 +852,9 @@ still adds no retained lookup, v2 authority mutation, second segment, consumer, 
 now adds only read-only retained-global lookup/replay/passive-collision routing and hot-only
 `AttemptID` recovery. F4B now adds atomic authority/lifecycle mutation plus the independent
 append-only tombstone source and is `PASSED` in the exact fixed-store scope documented in the
-[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md). F4C second-segment/bounded growth remains
-open in the design. A production engine plus real
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md). F4C now passes second/later-segment
+activation and exact 64-segment bounded growth in the
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md). A production engine plus real
 power-loss proof remain deferred.
 
 ## Error and violation taxonomy
@@ -893,8 +897,9 @@ implemented.
    [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md), and
    [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md),
    [F4A retained lookup](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md), and the completed
-   [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md). Continue with F4C
-   bounded growth, then F5 backup/orphan/offline reporting before the bounded SQLite
+   [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
+   [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md). Continue with F5
+   backup/orphan/offline reporting before the bounded SQLite
    comparison. Keep the fixed snapshot as the logical oracle; do not promote it into the product
    store.
 3. Continue the Source Validator replacement after accepted R0/ADR-0036 in this strict order:

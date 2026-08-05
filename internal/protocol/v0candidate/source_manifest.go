@@ -137,6 +137,14 @@ func DecodeSourceManifest(received []byte, mediaType string, sourceBytes []byte)
 	if err != nil {
 		return nil, domain("SourceManifest source bytes do not satisfy the exact main.mjs byte contract")
 	}
+	// Reject an out-of-bounds length before cloning so an oversized received
+	// slice cannot force a full-size allocation ahead of rejection.
+	if len(received) < SourceManifestMinCBORBytes {
+		return nil, malformed("SourceManifest is shorter than its minimum canonical encoding")
+	}
+	if len(received) > SourceManifestMaxCBORBytes {
+		return nil, malformed("CBOR raw-byte limit exceeded")
+	}
 	authoritative := bytes.Clone(received)
 	if err := PredecodeSourceManifestCBOR(authoritative); err != nil {
 		return nil, err

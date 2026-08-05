@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 )
 
@@ -166,6 +167,33 @@ func TestMJSFoundationKnownAnswersAndDefensiveCopies(t *testing.T) {
 	view.Members[0].LogicalPath = "changed.mjs"
 	if decoded.View().Members[0].LogicalPath != MJSMainPath {
 		t.Fatal("manifest view retained caller-mutable member storage")
+	}
+}
+
+// TestDecodeSourceManifestRejectsOversizedInputBeforeCloning proves the
+// cap-before-copy ordering: an oversized received buffer must be rejected by
+// its raw length before DecodeSourceManifest clones it. A regression that
+// clones first (as this function once did) allocates bytes proportional to
+// the attacker-controlled input size before the length check ever runs.
+func TestDecodeSourceManifestRejectsOversizedInputBeforeCloning(t *testing.T) {
+	source := readConformanceFixture(t, "mjs-source/ordinary.mjs")
+	oversized := make([]byte, 4<<20) // 4 MiB: far beyond SourceManifestMaxCBORBytes (95).
+
+	runtime.GC()
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	_, err := DecodeSourceManifest(oversized, SourceManifestMediaType, source)
+	runtime.ReadMemStats(&after)
+
+	if err == nil {
+		t.Fatal("expected rejection of an oversized SourceManifest")
+	}
+	if classification, ok := ErrorClassification(err); !ok || classification != ClassificationMalformed {
+		t.Fatalf("classification = %v (recognized %v), want MALFORMED: %v", classification, ok, err)
+	}
+	const allocationBudget = 64 * 1024 // bytes; far below the 4 MiB input, comfortably above legitimate small work.
+	if delta := after.TotalAlloc - before.TotalAlloc; delta > allocationBudget {
+		t.Fatalf("oversized input allocated %d bytes before length rejection (budget %d); cap-before-copy regressed", delta, allocationBudget)
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"capsule.local/capsule/internal/protocol/v0candidate"
@@ -201,6 +202,29 @@ func TestSourceManifestRestorationCorpus(t *testing.T) {
 			_, err := codec.Decode(test.manifest, v0candidate.SourceManifestMediaType, source)
 			assertClassification(t, err, "reject", test.classification)
 		})
+	}
+}
+
+// TestDecodeRejectsOversizedInputBeforeCloning proves the cap-before-copy
+// ordering: an oversized received buffer must be rejected by its raw length
+// before Decode clones it. A regression that clones first (as this function
+// once did) allocates bytes proportional to the attacker-controlled input
+// size before the length check ever runs.
+func TestDecodeRejectsOversizedInputBeforeCloning(t *testing.T) {
+	codec := mustCodec(t)
+	source := readFixture(t, "mjs-source/ordinary.mjs")
+	oversized := make([]byte, 4<<20) // 4 MiB: far beyond SourceManifestMaxCBORBytes (95).
+
+	runtime.GC()
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	_, err := codec.Decode(oversized, v0candidate.SourceManifestMediaType, source)
+	runtime.ReadMemStats(&after)
+
+	assertClassification(t, err, "reject", FailureMalformed)
+	const allocationBudget = 64 * 1024 // bytes; far below the 4 MiB input, comfortably above legitimate small work.
+	if delta := after.TotalAlloc - before.TotalAlloc; delta > allocationBudget {
+		t.Fatalf("oversized input allocated %d bytes before length rejection (budget %d); cap-before-copy regressed", delta, allocationBudget)
 	}
 }
 

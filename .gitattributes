@@ -9,3 +9,6 @@
 schemas/conformance/v0/shared/*.bin binary
 schemas/conformance/v0/mjs-source/* binary
 schemas/conformance/v0/mjs-source-manifest/* binary
+schemas/conformance/c2b-host-runner-materialized-v4/capsule-host-runner binary
+schemas/conformance/c2b-host-runner-materialized-v4/*.dylib binary
+schemas/conformance/c2b-host-runner-materialized-v4/libkrun.h -whitespace

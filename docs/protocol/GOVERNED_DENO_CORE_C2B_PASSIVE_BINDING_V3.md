@@ -148,3 +148,9 @@ The later [host-runner source contract v1](GOVERNED_DENO_CORE_C2B_HOST_RUNNER_SO
 does not fill step 2: the accepted header/current-source dylib are not retained locally, no exact
 ABI runner was compiled, and no final runner bytes or digest exist. V3 remains immutable and fixed-
 owned-guest eligibility remains `BLOCKED`.
+
+The later [v4 materialized successor](GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md) is
+`PASSED` for steps 1 through 3 only: it retains exact current-source libkrun and final-runner bytes,
+an independent ABI audit, and a new composed digest without loading or executing either artifact.
+Step 4 remains `BLOCKED`; separate guest authorization must name that exact v4 digest. V3 bytes and
+this historical gate remain unchanged.

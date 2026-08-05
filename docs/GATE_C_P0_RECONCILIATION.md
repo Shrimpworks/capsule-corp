@@ -11,10 +11,11 @@ not new backend evidence, a frozen libkrun profile, or permission to execute use
 ## Current interpretation
 
 The P0 candidates below are historical inputs. Governed Deno/`rusty_v8`/libkrun promotions and the
-C2B v3 passive successor are now `PASSED` in their exact scopes; old promotion-branch mismatches
-are not current blockers. Current-source libkrun dylib and final runner materialization, real
-transport/guest evidence, the remaining P0 controls, and runtime/profile admission remain
-`BLOCKED`. The exact stock Bun and broad governed Bun candidates remain `NO_GO`; no other missing
+C2B v3 passive successor and v4 build/static materialization are now `PASSED` in their exact
+scopes; old promotion-branch mismatches are not current blockers. Real transport/guest evidence,
+the remaining P0 controls, and runtime/profile admission remain `BLOCKED`. The fixed benign owned
+guest also remains `BLOCKED` on separate authorization naming v4's exact digest. The exact stock
+Bun and broad governed Bun candidates remain `NO_GO`; no other missing
 evidence is labeled `NO_GO`.
 
 ## Purpose

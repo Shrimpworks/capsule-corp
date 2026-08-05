@@ -82,7 +82,11 @@ wires a consumer or changes C2B execution or admission status. The
 [v3 passive successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V3.md) replaces those nulls
 with closed roles, omitted unsupported resource fields, exact current governed source identities,
 and a composed passive-contract digest while preserving typed blockers for current-source libkrun
-and final runner artifacts. It also wires no consumer and authorizes no guest.
+and final runner artifacts. The immutable
+[v4 materialized successor](protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md) closes only
+those build/static blockers with exact accepted header/current-source libkrun, independent ABI
+review, unsigned final runner bytes, and a new composed digest. It also wires no consumer,
+executes no runner or guest, and authorizes no guest.
 
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/

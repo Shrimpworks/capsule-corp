@@ -327,6 +327,15 @@ disabled; TSI, network, virtiofs/`NullFs`, extra block devices, sockets, and liv
 absent. Libkrunfw supplies the sole non-EFI boot kernel, so external kernel/firmware path calls are
 forbidden. The contract does not authorize a guest and blocks stale libkrun or missing runner bytes.
 
+The immutable C2B v4 build/static successor closes those two artifact blockers without weakening
+the boundary. Its retained unsigned runner imports only the reviewed fixed calls, validates exact
+FDs 0–7, closes from 8, disables implicit console/init/vsock, creates the three ports in fixed
+order, and accepts no path, plan, profile, image, mount, backend flag, or replacement configuration.
+Exact source confirms libkrunfw is the sole non-EFI boot-kernel carrier; no separate firmware
+identity is invented. The runner and libkrun were never loaded or executed. Guest authorization,
+hostile-guest transport validation, installed confinement, and runtime/profile admission remain
+`BLOCKED`.
+
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/
 open/close ordering, or cancellation/backpressure behavior. The exact pinned implementation and any

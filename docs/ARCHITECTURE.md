@@ -260,6 +260,16 @@ code generation; only vCPU/RAM/wall/concurrency resource fields; and external id
 teardown/absence. Its digest identifies a no-effect passive contract, not runnable bytes. Missing
 current-source libkrun and final-runner artifacts require another version before any owned guest.
 
+Immutable C2B v4 is that build/static successor. It retains a dylib built twice from exact accepted
+libkrun commit/tree, the exact accepted header, an independent ABI audit, final C17 runner source
+and byte-equal unsigned runner bytes, and composed-profile digest
+`e390085caaaba73ebc19f95bc9871305e4f9268c2283d7394133fa4491f4ba82`. The runner accepts only the
+sealed FD topology, closes from 8, disables implicit devices, uses the fixed three-port call order,
+and has no execute-time replacement authority. Libkrunfw remains the sole non-EFI boot-kernel
+carrier; no separate firmware identity exists. V4 has no product consumer and was not executed.
+One fixed benign owned guest remains `BLOCKED` on separate authorization; admission remains
+`BLOCKED`.
+
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
 

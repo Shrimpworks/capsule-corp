@@ -32,9 +32,10 @@ direction, not product admission or evidence closure.
 Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and the
 [full audit synthesis](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) now define the release path:
 
-1. preserve the passed governed fork promotions and passive C2B v3 successor, then materialize a
-   current-source libkrun dylib and final runner;
-2. run one separately authorized fixed benign owned guest as a controlled experiment;
+1. preserve the passed governed fork promotions, passive C2B v3 successor, and v4 build/static
+   materialization;
+2. run one separately authorized fixed benign owned guest naming the exact v4 composed digest as a
+   controlled experiment;
 3. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
    passive atomic plan/bindings/manifest/source custody, then implement Broker fetch/render/approval;
 4. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
@@ -94,9 +95,11 @@ unadmitted manifest candidate; it keeps the host runner non-final and every comp
 resource, guest-evidence, and admission field null. Same-host equality is not independent-builder
 equality. The v3 passive successor binds current accepted governed source heads/trees, preserves
 the stale libkrun dylib as evidence only, resolves boot/runner/device/runtime/resource/teardown
-semantics, and supplies an immutable passive-contract digest without adding a consumer. One fixed
-owned guest remains `BLOCKED` on current-source libkrun bytes, final runner bytes, a new materialized
-profile, and separate authorization. C2 remains the first separately authorized composed execution
+semantics, and supplies an immutable passive-contract digest without adding a consumer. The v4
+successor retains exact accepted header/current-source libkrun and final-runner bytes, independently
+audits their ABI, and supplies a new immutable composed digest without execution or a consumer. One
+fixed owned guest remains `BLOCKED` on separate authorization naming that digest. C2 remains the
+first separately authorized composed execution
 boundary. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
@@ -389,12 +392,13 @@ Exit evidence:
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
   EOF, or inferring success from runner exit.
-- Treat C2B v1, v2, and v3 as immutable inputs. V3 binds the accepted governed heads and resolves
+- Treat C2B v1, v2, v3, and v4 as immutable inputs. V3 binds the accepted governed heads and resolves
   runner/libkrunfw/kernel, descriptor, device, resource, and teardown semantics without rewriting
-  earlier evidence. Reverify every archive, manifest, and artifact identity before use. A
-  current-source libkrun dylib and final runner require a new materialized binding before any
-  separately authorized fixed-owned-guest task; neither passive consumption nor that experiment
-  admits a runtime or profile.
+  earlier evidence. V4 binds the exact accepted header, current-source unsigned libkrun dylib,
+  independently reviewed ABI, unsigned final runner, and new composed digest without execution.
+  Reverify every archive, manifest, and artifact identity before use. Any fixed-owned-guest task
+  requires separate authorization naming the v4 digest; neither passive consumption nor that
+  experiment admits a runtime or profile.
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.

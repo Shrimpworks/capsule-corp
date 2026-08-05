@@ -10,11 +10,11 @@ hostile/user workloads with the retained experiment code.
 
 ## Current interpretation (2026-08-05)
 
-This remains a historical spike synthesis. Later governed fork promotions and C2B v3 passive
-successor binding are `PASSED` in their exact governance and zero-effect scopes. They do not alter
-this checkpoint's non-admission conclusion. A current-source libkrun dylib, final runner, and new
-materialized successor remain `BLOCKED`; only then may a separately authorized fixed benign owned
-guest experiment run. Hostile owner-only internal alpha and later external alpha are separate
+This remains a historical spike synthesis. Later governed fork promotions, C2B v3 passive
+successor binding, and v4 build/static materialization are `PASSED` in their exact scopes. They do
+not alter this checkpoint's non-admission conclusion. A separately authorized fixed benign owned
+guest experiment naming v4's exact digest remains `BLOCKED`. Hostile owner-only internal alpha and
+later external alpha are separate
 product gates and remain unadmitted.
 
 ## Bottom line

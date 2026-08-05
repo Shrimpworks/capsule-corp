@@ -73,6 +73,14 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   virtiofs authority, and external teardown. Accepted ABI header/current-source dylib inputs are
   not retained locally, so no final runner artifact or new materialized profile exists. C2B guest
   eligibility and admission remain `BLOCKED`.
+- The immutable [C2B v4 materialized profile](protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md)
+  is `PASSED` only for controlled build/static closure. It retains the exact accepted header,
+  twice-reproduced current-source unsigned dylib, independent ABI audit, byte-equal unsigned final
+  runner, and composed digest `e390085c...ba82`. It freezes FDs 0–7, close-from 8, three ordered
+  console ports, explicit implicit-device disablement, fixed imports/order, no replacement
+  authority, libkrunfw-only boot with no separate firmware, and Supervisor teardown. Neither
+  runner nor libkrun was executed or loaded. Fixed-owned-guest eligibility and admission remain
+  `BLOCKED`; the next guest task requires separate authorization naming the exact v4 digest.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap

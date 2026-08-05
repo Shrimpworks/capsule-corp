@@ -14,7 +14,7 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 
 | Checkpoint | Status | Boundary |
 | --- | --- | --- |
-| First fixed benign owned guest | `BLOCKED` | Controlled sealed-fixture experiment only. It needs a current-source libkrun dylib, final runner, and separate authorization; it is not product alpha and accepts no user source. |
+| First fixed benign owned guest | `BLOCKED` | Controlled sealed-fixture experiment only. V4 closes build/static materialization; execution still needs separate authorization naming the exact v4 digest. It is not product alpha and accepts no user source. |
 | Hostile owner-only internal alpha | `IN_PROGRESS — TRENDING_GOOD` | One named owner Mac, manual Apple Development installation, exact `main.mjs` plus bounded inline JSON, and one fresh guest per attempt. Product admission remains `BLOCKED`. |
 | Later external alpha | `BLOCKED` | Developer ID/notarization/update, clean-host/minimum-OS, F6/restore/continuity, and public-distribution evidence are absent. |
 
@@ -40,7 +40,7 @@ refusal and physical absence of host authority.
 ```text
 governance promotions PASSED
   -> C2B v3 passive successor PASSED
-  -> current-source libkrun dylib + final runner
+  -> C2B v4 build/static materialization PASSED
   -> fixed benign owned guest checkpoint
 
 bounded authenticated CLI adapter
@@ -81,8 +81,8 @@ separate authorization; neither path alone is product alpha.
 
 ## Ordered closure
 
-1. Preserve the passed governed fork promotions and C2B v3 passive successor; materialize a
-   current-source libkrun dylib and final runner before the separately authorized fixed guest.
+1. Preserve the passed governed fork promotions, C2B v3 passive successor, and v4 build/static
+   materialization; require separate authorization naming v4's exact digest before the fixed guest.
 2. Preserve the passed exact-one-`main.mjs` proposal and atomic custody/fetch oracle; freeze the
    selected authenticated product adapter and current field authority without restoring broad
    legacy acceptance.

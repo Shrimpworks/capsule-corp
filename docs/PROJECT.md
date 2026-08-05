@@ -18,15 +18,14 @@ Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short:
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
 and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's fixed-store
 v1-to-v2 migration/full verifier, F3's first immutable-segment activation, F4A's read-only
-retained lookup/replay/uniqueness routing, and F4B's atomic authority/lifecycle mutation are also `PASSED` in their narrow local-conformance
+retained lookup/replay/uniqueness routing, F4B's atomic authority/lifecycle mutation, and F4C's
+bounded second/later immutable-segment growth are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
 `IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
 only in their passive zero-effect scopes, while C2B composed-profile/guest execution remains
-`BLOCKED`. Archive F4B is now `BLOCKED` on a passive effect-history
-contract correction:
-F4A binds retained effect lookup to the lifecycle record's single current effect, while ADR-0031
-requires every earlier v2 effect tombstone to survive replacement of that field. None of those
+`BLOCKED`. Archive F5 backup/orphan cleanup and F6 production-engine selection remain `BLOCKED`.
+None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.
 
@@ -221,7 +220,9 @@ backend, or guest. F4B mutation and F4C bounded growth remain outside F4A's pass
 current-effect contradiction and ADR-0031's selected independent-source correction. The
 [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic fixed-store v2 mutation,
 same-transaction append-only effect issuance, exact replay, and corrected hot/archive
-reconstruction/lookup. F4C and F5-F6 remain deferred.
+reconstruction/lookup. The [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now passes
+deterministic second/later segment activation, retained-global reconstruction, exact segment 64/65
+capacity behavior, and old-or-complete-new reopen. F5-F6 remain deferred.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

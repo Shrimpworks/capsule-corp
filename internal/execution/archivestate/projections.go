@@ -732,6 +732,12 @@ func encodeCheckpointView(encoder *digestEncoder, view ArchiveCheckpointView) {
 	encoder.bytes(view.HotSetDigests.Approvals[:])
 	encoder.bytes(view.HotSetDigests.Attempts[:])
 	encoder.bytes(view.HotSetDigests.Lifecycles[:])
+	// Retain the exact legacy F3 checkpoint answer when the independent F4B
+	// tombstone source was not materialized. Every F4C checkpoint carries and
+	// domain-binds the fifth hot-set digest.
+	if view.HotSetDigests.EffectTombstones != (EffectTombstoneSetDigest{}) {
+		encoder.bytes(view.HotSetDigests.EffectTombstones[:])
+	}
 	encoder.uint64(uint64(view.SourceSnapshotGeneration))
 	encoder.uint64(uint64(view.ResultSnapshotGeneration))
 	encoder.uint64(uint64(view.ArchiveGeneration))

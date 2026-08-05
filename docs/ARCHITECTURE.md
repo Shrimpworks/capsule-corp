@@ -291,8 +291,10 @@ locations, retains passive collision checks, and excludes archived terminal atte
 [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former current-effect
 contradiction. The [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now adds atomic v2
 authority/lifecycle mutation and an independent append-only effect-tombstone source that direct
-hot/archive reconstruction and historical lookup verify without inventing lifecycle history. F4C bounded
-growth and F5+ backup/orphan/engine work remain open. The fixed checkpoint remains a finite conformance oracle, not a production engine or
+hot/archive reconstruction and historical lookup verify without inventing lifecycle history. The
+[F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now adds deterministic second/later immutable-
+segment activation through the exact 64-segment ceiling while preserving those records and
+lookups. F5+ backup/orphan/engine work remains open. The fixed checkpoint remains a finite conformance oracle, not a production engine or
 continuous-service mechanism, and referenced archive history is not deletable under that proposal.
 
 ### Trust verifier and repository

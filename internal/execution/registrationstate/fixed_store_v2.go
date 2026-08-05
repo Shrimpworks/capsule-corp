@@ -40,11 +40,12 @@ type V1ToV2MigrationOptions struct {
 }
 
 // FixedFileStoreV2 is the completely verified fixed-oracle v2 view. F2 adds
-// migration genesis, F3 adds exactly one sealed immutable-segment activation,
+// migration genesis, F3 adds the first sealed immutable-segment activation,
 // F4A adds read-only retained-global lookup/collision routing, and F4B adds
 // atomic authority/lifecycle mutation plus the independent append-only effect-
-// tombstone source. No completed slice here authorizes adapter invocation, a
-// consumer, a runtime/backend, or a guest.
+// tombstone source. F4C adds bounded second/later immutable-segment growth. No
+// completed slice here authorizes adapter invocation, a consumer, a runtime/
+// backend, or a guest.
 type FixedFileStoreV2 struct {
 	*FixedFileStoreV1
 	active          archivestate.ActiveStateV2
@@ -54,7 +55,7 @@ type FixedFileStoreV2 struct {
 	authorityFaults map[StoreFault]error
 }
 
-// FixedFileStoreV2VerificationReport is the bounded, content-free F2/F3 full
+// FixedFileStoreV2VerificationReport is the bounded, content-free v2 full
 // verification result. It deliberately includes no path or retained bytes.
 type FixedFileStoreV2VerificationReport struct {
 	StoreFormatVersion     uint64
@@ -730,11 +731,18 @@ func loadV2State(path string) (loadedV2State, error) {
 			return loadedV2State{}, errors.New("fixed supervisor v2 genesis world mismatch")
 		}
 	case archivestate.ArchiveCheckpointActivation:
-		if len(segments) != 1 || envelope.SnapshotGeneration < 2 || envelope.ArchiveGeneration != 2 ||
-			envelope.PreviousCheckpoint != genesis.Reference() || envelope.ActivationCheckpoint == nil {
-			return loadedV2State{}, errors.New("fixed supervisor F3 v2 activation world mismatch")
+		if len(segments) == 0 || envelope.SnapshotGeneration < 2 ||
+			envelope.ArchiveGeneration != archivestate.ArchiveGeneration(len(segments)+1) ||
+			envelope.ActivationCheckpoint == nil {
+			return loadedV2State{}, errors.New("fixed supervisor v2 activation world mismatch")
 		}
-		if _, checkpointErr := validateActivationCheckpointDisk(envelope, storedIndexes, segments[0]); checkpointErr != nil {
+		if len(segments) == 1 && envelope.PreviousCheckpoint != genesis.Reference() {
+			return loadedV2State{}, errors.New("fixed supervisor F3 predecessor mismatch")
+		}
+		if len(segments) > 1 && envelope.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
+			return loadedV2State{}, errors.New("fixed supervisor F4C predecessor kind mismatch")
+		}
+		if _, checkpointErr := validateActivationCheckpointDisk(envelope, storedIndexes, segments); checkpointErr != nil {
 			return loadedV2State{}, checkpointErr
 		}
 	default:

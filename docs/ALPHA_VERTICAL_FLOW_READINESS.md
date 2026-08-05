@@ -12,13 +12,19 @@ release milestone and no longer waits on the host Source Validator. The fixed be
 checkpoint is a separate engineering experiment, not product alpha. See the full
 [architecture and release audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md).
 
+| Checkpoint | Status | Boundary |
+| --- | --- | --- |
+| First fixed benign owned guest | `BLOCKED` | Controlled sealed-fixture experiment only. It needs a current-source libkrun dylib, final runner, and separate authorization; it is not product alpha and accepts no user source. |
+| Hostile owner-only internal alpha | `IN_PROGRESS — TRENDING_GOOD` | One named owner Mac, manual Apple Development installation, exact `main.mjs` plus bounded inline JSON, and one fresh guest per attempt. Product admission remains `BLOCKED`. |
+| Later external alpha | `BLOCKED` | Developer ID/notarization/update, clean-host/minimum-OS, F6/restore/continuity, and public-distribution evidence are absent. |
+
 ## What exists and what is missing
 
 | Stage | Retained contract or mechanic | Scoped status | Missing product boundary |
 | --- | --- | --- | --- |
 | Submit one `main.mjs` | `MJSMainSource`, canonical `SourceManifest`, exact byte/cap/digest fixtures | `PASSED` for passive bytes | No selected authenticated bounded CLI-to-daemon submission adapter. Diagnostic HTTP remains read-only. |
-| Build the plan | `ExecutionPlan`, strict wrappers, pure unwired resolver/builder candidates | `PASSED` for passive/unwired mechanics | Replace the broad legacy proposal with exactly one `main.mjs`; bind only supported limits and exact runtime/profile identity. |
-| Register source and plan | Local registration/store mechanics | `PASSED` only for their current unwired fields | Atomically retain exact plan, complete bindings, manifest, and source bytes; expose method-specific authenticated registration/fetch. |
+| Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Select the authenticated product adapter and bind only admitted limits and exact runtime/profile identity. |
+| Register source and plan | Atomic passive fixed-store registration/fetch facade | `PASSED` for the unwired oracle | Expose it only through method-specific authenticated product registration/fetch backed by protected production state. |
 | Fetch and render approval | ADR-0029 method design and native app scaffolding | `BLOCKED` | Broker must fetch Supervisor-owned bytes, render fixed typed facts, and treat an opaque RegistrationID only as an untrusted locator. |
 | Sign and retain approval | Approval fixtures plus local consume/create/replay mechanics | `PASSED` only for fixture/store evidence | Fresh `LAContext`, explicit user-presence key policy, no fallback, strict production COSE/key authorization, and installed Broker/Supervisor integration. |
 | Create and drive attempt | Durable attempt/lifecycle/FakeBackend mechanics | `PASSED` for no-guest local mechanics | Authenticated product call, protected owner/store, real sealed adapter, stable backend identity, restart reconciliation, and one fresh guest. |
@@ -32,14 +38,16 @@ refusal and physical absence of host authority.
 ## Dependency graph
 
 ```text
-governance promotion hardening
-  -> successor runnable profile closure
+governance promotions PASSED
+  -> C2B v3 passive successor PASSED
+  -> current-source libkrun dylib + final runner
   -> fixed benign owned guest checkpoint
 
 bounded authenticated CLI adapter
   -> exact main.mjs + SourceManifest
   -> narrow plan construction
-  -> atomic plan/bindings/manifest/source registration
+  -> passive atomic custody/fetch PASSED
+  -> authenticated product registration/fetch
   -> Broker fetches Supervisor-owned bytes
   -> fixed rendering + fresh user-presence approval
   -> production approval verification
@@ -72,17 +80,17 @@ separate authorization; neither path alone is product alpha.
 
 ## Ordered closure
 
-1. Require governed admission checks, generic governed-branch CI filters, administrator
-   enforcement, and a no-rewrite bad-promotion runbook before consuming another promoted head.
-2. Freeze the successor runnable composition and run one fixed benign owned guest.
-3. Freeze the narrow proposal, atomic custody/fetch object, selected adapter envelope, and complete
-   field authority without preserving broad legacy acceptance.
-4. Implement authenticated role-specific IPC, protected Supervisor state, Broker rendering,
+1. Preserve the passed governed fork promotions and C2B v3 passive successor; materialize a
+   current-source libkrun dylib and final runner before the separately authorized fixed guest.
+2. Preserve the passed exact-one-`main.mjs` proposal and atomic custody/fetch oracle; freeze the
+   selected authenticated product adapter and current field authority without restoring broad
+   legacy acceptance.
+3. Implement authenticated role-specific IPC, protected Supervisor state, Broker rendering,
    production signing/verification, and the bounded fixed-store policy.
-5. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
+4. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
    real adapter.
-6. Implement the completion/transcript/fixed-summary compositor.
-7. Run the minimum hostile source/authority/transport/root/lifecycle/restoration corpus in the exact
+5. Implement the completion/transcript/fixed-summary compositor.
+6. Run the minimum hostile source/authority/transport/root/lifecycle/restoration corpus in the exact
    signed-installed profile.
 
 ## Honest exit condition

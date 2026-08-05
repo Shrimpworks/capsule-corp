@@ -34,20 +34,23 @@ remain separate from work status.
 
 The [internal-alpha architecture audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) and
 [vertical-flow readiness map](ALPHA_VERTICAL_FLOW_READINESS.md) separate the many
-already-passed passive/local mechanics from the still-blocked product composition. There is no
-current product path from submitted `main.mjs` through planning, atomic source custody,
-authenticated registration, Broker rendering/signing, approval verification, attempt creation,
-real lifecycle drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per
-attempt and moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and physical
-authority omission remain mandatory. The diagnostic HTTP server, fresh-registration semantics,
-and retained-vector-only `FixtureVerifier` must not be repurposed to close the gap.
+already-passed passive/local mechanics from the still-blocked product composition. The passive
+authority-plane cutover now atomically retains the exact plan, complete bindings, manifest, and
+source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
+path. No connected product path yet carries submitted `main.mjs` through authenticated
+registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle
+drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per attempt and
+moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and physical authority
+omission remain mandatory. The diagnostic HTTP server, fresh-registration semantics, and
+retained-vector-only `FixtureVerifier` must not be repurposed to close the gap.
 
 Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
 bootstrap-only Supervisor descriptor, inactive entitlement/constraint inputs, exact I1/I2B1
-cross-links, closed inventory, and no-create activation refusal. Installed I2B remains `BLOCKED`
-on production wrapper review and separately authorized I2B3 signing/key/App Group/service/container
-handoff evidence; no installed security-control claim follows.
+cross-links, closed inventory, and no-create activation refusal. The narrow production-shaped
+I2B1 CBOR/COSE wrapper review is `PASSED` for passive checked-in vectors only. Installed I2B remains
+`BLOCKED` on separately authorized I2B3 signing/key authorization/App Group/service/container
+handoff and descriptor-relative store-open evidence; no installed security-control claim follows.
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
@@ -143,16 +146,10 @@ Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and the product validato
 `BLOCKED`. ADR-0040 moves R4/R5 off the internal-alpha critical path while preserving ADR-0035/0036
 as later defense-in-depth.
 
-Phase 2B now retains a closed 100-rule, 510-case, 631-fixture conformance corpus for raw decoding,
+Phase 2B now retains a closed 95-rule, 502-case, 624-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,
-and the unwired ADR-0024 approval/attempt boundary. The unwired implementation verifies 80
-TypeScript proposal targets: 62 raw/schema cases plus all 18 semantic-resolution cases. It also
-verifies those 80 proposal targets plus 40 MJS byte/manifest targets and 46 passive v1 Source
-Validator targets in TypeScript. Go verifies 391 targets: the previously retained 177 plus the same
-40 MJS byte/manifest targets, 128 passive v0 Source Validator frame targets, and 46 passive v1
-targets; a standalone test-only Rust oracle verifies the 128 v0 frames and does not cover v1. The earlier
-177 comprise 81 internal-CBOR/wrapper cases, all 40 registration-state cases, 44
-passive approval/attempt cases, and 12 fixed-store transition oracles. The approval/attempt work
+the passive authority-plane cutover, and the unwired ADR-0024 approval/attempt boundary. The
+generated verifier is canonical for the current per-language distribution. The approval/attempt work
 adds distinct identifiers/references, the fixed internal classification vocabulary, the exact
 candidate approval known answer, a bounded fixture-only verifier, and one unwired transactionally
 colocated fixed registration/approval/attempt store. The no-guest fake lifecycle now resolves and
@@ -180,8 +177,9 @@ ran. I2A now passes the exact design/contract scope by selecting a one-shot Coor
 Supervisor-created protected root plus bounded request/record, ordering, and fault rules. Passive
 I2B1 now freezes the exact 34-field request and 69-field record, 71 independently generated
 known-answer/refusal cases, agreeing Go/Swift verification, and 570 field classifications across
-44 targets. Exact Capsule role profiles, production wrapper review, installed container/handoff
-evidence, and descriptor-relative store open remain I2B blockers. There is no
+44 targets. The narrow production-shaped wrapper review now passes its passive checked-in-vector
+scope. Exact Capsule caller/key authorization, live signing and durable replay, installed
+container/handoff evidence, and descriptor-relative store open remain I2B blockers. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate

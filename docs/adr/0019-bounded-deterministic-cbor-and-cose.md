@@ -103,3 +103,9 @@ This ADR stays Proposed until all of the following hold:
   `ExecutionPlan` and `PlanRegistration` CDDL candidates and byte-exact fixtures. These add object
   coverage but do not satisfy the production-wrapper, Swift, fuzzing, or integration acceptance
   conditions above.
+- [Production-shaped I2B1 wrapper review](../PRODUCTION_SHAPED_CBOR_COSE_WRAPPER_REVIEW.md), which
+  passes 95 checked-in-vector Go/Swift cases for exact request/payload pairing, repeated-field
+  binding, payload-owned replay, caps, mutations, and fuzz targets. This closes only that passive
+  I2B1 slice. Live signing, authenticated caller/key authorization, durable replay, installed
+  same-byte consumers, the remaining signed-object families, and this ADR's full acceptance remain
+  `BLOCKED`; the ADR stays Proposed.

@@ -1,12 +1,21 @@
 # Gate C P0 reconciliation
 
 Date: 2026-08-01
-Evidence last reconciled: 2026-08-03
+Evidence last reconciled: 2026-08-05
 
 Status: planning decision with retained P0 evidence checkpoints after independent adversarial
 review and targeted source research. This document refines the remaining work in the
 [Gate C readiness synthesis](GATE_C_READINESS_CHECKPOINT.md). It records hypotheses to test; it is
 not new backend evidence, a frozen libkrun profile, or permission to execute user bytes.
+
+## Current interpretation
+
+The P0 candidates below are historical inputs. Governed Deno/`rusty_v8`/libkrun promotions and the
+C2B v3 passive successor are now `PASSED` in their exact scopes; old promotion-branch mismatches
+are not current blockers. Current-source libkrun dylib and final runner materialization, real
+transport/guest evidence, the remaining P0 controls, and runtime/profile admission remain
+`BLOCKED`. The exact stock Bun and broad governed Bun candidates remain `NO_GO`; no other missing
+evidence is labeled `NO_GO`.
 
 ## Purpose
 

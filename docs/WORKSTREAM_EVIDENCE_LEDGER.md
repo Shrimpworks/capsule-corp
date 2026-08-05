@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-04
+Date: 2026-08-05
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -14,6 +14,22 @@ from its parent workstream, ADR lifecycle, control-evidence state, and product a
 The consolidated outcomes, exact known answers, application status, combined verification, and
 next dependency boundary for the latest group are recorded in the
 [Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+
+## 2026-08-05 merged-state reconciliation
+
+| Slice | Scoped result | Parent boundary |
+| --- | --- | --- |
+| Passive authority-plane atomic cutover | `PASSED`: exact-one-`main.mjs` plan, bindings, manifest, source, registration, and defensive fetch publish atomically in the fixed-store oracle. | Authenticated product facades, Broker/approval, attempt, runtime, backend, and guest remain `BLOCKED`. |
+| C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | Current-source libkrun dylib, final runner, fixed-owned-guest eligibility, and admission remain `BLOCKED`. |
+| Production-shaped I2B1 CBOR/COSE wrapper review | `PASSED`: 95 Go/Swift checked-in-vector cases close pairing, repeated-field binding, payload-owned replay, caps, mutations, and fuzz targets. | Live signing, caller/key authorization, durable replay, installed consumers, and product admission remain `BLOCKED`. |
+| Compiled-artifact archive migration | `PASSED`: 210 completed payload/evidence files are pinned to capsule-experiments commit `0944ffd8cfd01ec23e4ae99138b0931d56804077`; Capsule retains compact conformance metadata and six deterministic I2B2 source inputs. | No product, signing, installation, runtime, or admission status changes. |
+| Governed fork promotions | `PASSED`: Deno r3, `rusty_v8` r5, and libkrun r3 accepted lines are locked defaults with historical refs protected. | Governed runtime engineering is `IN_PROGRESS — TRENDING_GOOD`; release and admission remain `BLOCKED`. |
+| Source Validator R3/R4 | R3 `PASSED` its exact Apple Development signed, installed, inactive-policy composition. Exact R4-v1 candidates are `NO_GO`; R4-v2 was not executed. | Product R4/R5 remains `BLOCKED` and post-alpha defense-in-depth. |
+| Archive F5 | `PASSED`: owner-held coherent backup, complete-copy verification, read-only exact-anchor restore admission, known-orphan cleanup, and offline reporting. | F6, restore activation, production-engine, power-loss/rollback, and external-alpha continuity remain `BLOCKED`. |
+
+The current generated conformance totals are 95 rules, 502 cases, and 624 fixtures. The current
+field-authority manifest has 1,111 fields across 81 profiles and 50 targets. These whole-repository
+totals supersede older checkpoint counts without rewriting their historical evidence.
 
 ## 2026-08-05 internal-alpha architecture audit synthesis
 
@@ -94,7 +110,7 @@ product finding. Every completed track result was recovered into the repository 
 | ADR-0035 V2 Source Validator process profile | `019fcd7b-b0d1-74b1-9eb9-4dc1db12509d` separate user-visible defensive/local-only implementation/research delegation | Exact V2 candidate `BLOCKED`. The strict test-only macOS bootstrap fixes target/profile argv, empty environment, cwd, post-exec FD inventory, CPU/file/FD/child/output/wall limits, group kill/reap, and fault refusal, but `RLIMIT_AS` returns `EINVAL` before V1 `exec`. An explicitly unbounded diagnostic mutation verifies ordinary/exact-maximum frames, partial/duplicate/trailing/oversize/crash/signal/timeout/cancel and clean-later behavior while proving owned out-of-cwd reads, IPv4/Unix socket creation without connect, cwd metadata/empty-file writes, and a 512 MiB mapping remain. Supported App Sandbox child entitlements change the fixed V1 bytes; deprecated custom sandboxing is not used. V1 remains unchanged/not enrolled; no Keychain/Supervisor state, product consumer, runtime, backend, or guest participated. | [Pinned V2 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-v2), machine-readable candidate profile, Darwin Go tests, native bootstrap/probe source, and entitlement-copy mutation oracle |
 | ADR-0035 V2 supported macOS replacement design | `019fc2de-552d-77a0-aa47-35ac39d02edc` user-visible defensive/local-only research/design delegation after merged PR #123 | Scoped research/design `PASSED`; product Source Validator remains `BLOCKED`. Official Apple guidance makes direct App Sandbox inheritance `NO_GO` for this parser because it preserves daemon/Broker static rights. The only plausible supported composition found is a separately App-Sandboxed method-specific XPC launcher owning one fresh parser child, but its topology is unselected, App Sandbox grants a writable private container, and no public unprivileged hard memory cap is usable. The public-SDK footprint setter returned `KERN_NO_ACCESS`; `proc_pid_rusage` monitoring is reactive, not a peak ceiling. R0-R5 fixes the new identity, signing, resource, kill/drain/reap, fault, consumer, and update plan. V0/V1/V2 bytes remain unchanged; no signing identity, service, consumer, runtime, backend, or guest was used. | [`MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md`](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md), [`README.md`](../artifacts/mjs-source-validator-v2-replacement/README.md), fixed C probe, machine-readable observation, official Apple links, and installed macOS 26.5 SDK header observations |
 | ADR-0036 Source Validator R0 architecture/resource decision | `019fc2de-552d-77a0-aa47-35ac39d02edc` user-visible architecture/contract delegation after merged PR #126 | R0 architecture decision `PASSED`; product Source Validator and M2/S1 remain `BLOCKED`. Accepted ADR-0036 selects two role-specific private App-Sandboxed XPC launchers and matching parser/profile families; no shared service/result/cache/container/group/key exists. Each private container is residual scratch authority only, with mandatory cleanup/residue evidence that is not a confidentiality proof. A later evidence-derived reactive physical-footprint watermark replaces the unavailable hard ceiling without a hard-peak/exact-cap or host-availability claim; numeric threshold/cadence/baseline/overshoot/kill values remain unset. Exact stop conditions cover unsupported private reachability, authority/native-loading/network/filesystem escape, orphan/cleanup failure, mixed versions, and unacceptable measured host risk. V0/V1/V2 bytes remain unchanged; no artifact, signing identity, service, parser execution, consumer, runtime, backend, or guest was created or used. | [ADR-0036](adr/0036-select-role-separated-source-validator-launchers.md), [passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), reconciled replacement/implementation plans, and canonical architecture/threat/roadmap records |
-| ADR-0036 Source Validator R1 passive v1 contract | current user-visible defensive/local-only implementation | Scoped R1 `PASSED`; product Source Validator remains `BLOCKED`. Forty-six generated cases freeze separate daemon/Broker request, result, process-profile, artifact-profile, consumer-projection, and inactive resource-policy frames. Exact/cap-plus-one, trusted-context mismatch, cross-role, cross-version, trailing, and invented-measurement refusals have zero effects. Go and Node independently decode all cases; 14 role-distinct known answers are retained. The inactive policy binds structural frame/concurrency limits only, while all evidence-derived measurements remain unset for R4. No XPC service, child, parser execution, signing, consumer, runtime, backend, or guest exists. | [`MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md`](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), generated conformance fixtures, `sourcevalidatorpassive` v1 Go codec/tests, independent Node verifier, and 335-field/26-target field-authority manifest |
+| ADR-0036 Source Validator R1 passive v1 contract | current user-visible defensive/local-only implementation | Scoped R1 `PASSED`; product Source Validator remains `BLOCKED`. Forty-six generated cases freeze separate daemon/Broker request, result, process-profile, artifact-profile, consumer-projection, and inactive resource-policy frames. Exact/cap-plus-one, trusted-context mismatch, cross-role, cross-version, trailing, and invented-measurement refusals have zero effects. Go and Node independently decode all cases; 14 role-distinct known answers are retained. The inactive policy binds structural frame/concurrency limits only, while all evidence-derived measurements remain unset for R4. No XPC service, child, parser execution, signing, consumer, runtime, backend, or guest exists. | [`MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md`](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), generated conformance fixtures, `sourcevalidatorpassive` v1 Go codec/tests, independent Node verifier, and the then-current 335-field/26-target manifest checkpoint; current whole-manifest totals are recorded above |
 | ADR-0036 Source Validator R2 unsigned role bundles | current user-visible defensive/local-only implementation | Scoped R2 `PASSED`; product Source Validator remains `BLOCKED`. Two private role-specific XPC bundle layouts, two native launchers, and two exact Oxc 0.140.0/Rust 1.95.0 parser children build offline and compare byte-for-byte across two clean same-host directories. Four executable digests are role-distinct. Source/lock/license/notice/CycloneDX/unsigned in-toto evidence and `libSystem`-only launcher closure are retained. Each launcher accepts only one `request` data value and validates the fixed role/frame/source/inactive-policy binding. Because R1's only accepted policy is inactive, it refuses without spawn. No Apple identity, signing, installation, enrollment, reachable service, consumer, active resource values, runtime, backend, or guest participated; this is not independent-builder evidence. | [Pinned R2 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-r2), exact bundle/parser bytes, construction/build/source/license/SBOM/provenance/reproduction evidence, Rust tests, and benign role-known-answer process verifier |
 | P0-1 FD-native immutable runtime-root custody | `019fc4c1-7d40-77b3-a2e9-51d3e2775972`, delegated from `019fc2de-552d-77a0-aa47-35ac39d02edc` | PATCH-CANDIDATE: the narrow fixed-role raw-only API passed local attachment/custody, focused sanitizer tests, five deliberate mutations, and four owned unsandboxed guest digest runs with no root-path opens. P0-1C remains open until the exact final signed installed App Sandbox/protected-construction corpus passes. | [`RESULTS.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-root-custody/RESULTS.md), [`FD_NATIVE_PATCH_REVIEW.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-root-custody/FD_NATIVE_PATCH_REVIEW.md), governed patch, and selected evidence |
 | P0-2 `NullFs` disposition | Earlier replacement `019fc2e8-445e-7cb2-b4c2-54d84282c3fe`, replacing task `019fc2e6-cf9d-7210-b2f3-f3bf2244e83a`; later prototype merged in PR #30 | `GOVERNED-PATCH`: the smallest deletion failed bootstrap, but the later direct-block-root prototype booted without virtiofs, reran 36 adversarial plus four identity cases without the original failure, and made removal credible. It is not admitted; independent patch review, route closure, P0-1 custody, P0-3 transport, and final signed P0-4 evidence remain. | [`NULLFS_P0_2.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/NULLFS_P0_2.md), [`NULLFS_P0_2_DISPOSITION.md`](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/gate-c-libkrun-adversarial/NULLFS_P0_2_DISPOSITION.md), governed prototype patch, and compact evidence |
@@ -265,8 +281,9 @@ constructions retain an exact 31-file/eight-role bundle, profile SHA-256
 `e92f7629774258f1dff68df7882b663479916c5feb4110db5460de3cef0af903`, exact I1A/I1B/I2B1
 cross-links, inactive service/entitlement/constraint inputs, and no-create refusal. No identity,
 profile, signing, key, service, process, container, protected state, runtime, backend, or guest was
-used. Installed I2B remains `BLOCKED` on production wrapper review and separately authorized I2B3
-signing/key/App Group/service/container handoff evidence.
+used. The narrow production-shaped wrapper review is `PASSED` for passive checked-in vectors.
+Installed I2B remains `BLOCKED` on separately authorized I2B3 signing, caller/key authorization,
+App Group/service/container handoff, and descriptor-relative store-open evidence.
 
 Source Preparer P0 remains `BLOCKED` as a separate conditional later feature merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -317,11 +334,9 @@ and explicit deletion of only a sealed known-unreferenced segment after live and
 reference scans. It preserves unknown/corrupt/mixed/cross-installation evidence and activates no
 restore. F6 remains deferred.
 
-The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
-Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
-targets plus 40 independently verified MJS byte/manifest targets in each language. Twenty-eight
-exact source-language adjudication cases remain `pending`. Slice C adds focused Go tests rather
-than manifest cases.
+The current closed conformance corpus has 95 rules, 502 cases, and 624 fixtures. The generated
+verifier is canonical for its current per-language distribution. Historical per-slice counts remain
+evidence for those slices, not current whole-repository totals.
 
 ## Production CBOR/COSE dependency comparison
 
@@ -471,9 +486,8 @@ Completed and retained:
   and validation, colocated transactions, the no-guest fake driver, exact 256-active/4,096-retained
   ceilings, destroyed-only capacity release, and repeated-startup/exhaustion evidence. No consumer,
   real adapter, runtime, backend process, or guest is present; and
-- passive field-authority verification for 335 fields across 26 selected pre-freeze targets,
-  including nested MJS SourceManifest member coverage without claiming recursive coverage for
-  future Source Preparer or plan-v1 objects; and
+- passive field-authority verification now covering 1,111 fields across 81 profiles and 50 targets,
+  without claiming coverage for future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections and eligibility selection; F2 owner-asserted all-hot
   migration/full verification; F3 immutable-segment publication/activation; F4A retained lookup;
   F4B atomic mutation/independent effect tombstones; F4C bounded later growth; and F5 coherent
@@ -494,8 +508,8 @@ Completed and retained:
 - exact public governed libkrun source identity through merge
   `cf0333cdba478cc34a8570a65b38412da7fd3ecc`, with the unchanged five-patch aggregate, bounded
   console/raw-FD library evidence, two local lifecycle fixes, and improved coverage. The Linux-
-  arm64 library build passed while its unit job was cancelled; the post-merge branch/verifier
-  mismatch, absent independent review, remaining uncovered code, release obligations, and every
+  arm64 library build passed while its unit job was cancelled; absent independent review,
+  remaining uncovered code, release obligations, and every
   guest/product admission boundary remain explicit.
 
 Current dependency and priority view:
@@ -519,8 +533,9 @@ Current dependency and priority view:
    and maintain exact documentation plus field authority.
 3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, I2B2 unsigned
    construction, and the post-I1B platform-semantics research are `PASSED` in their exact scopes.
-   Continue only after production wrapper review with separately authorized I2B3 signed
-   Coordinator/bootstrap, protected-container, and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
+   The narrow production-shaped wrapper review is `PASSED`; continue with separately authorized
+   I2B3 signed Coordinator/bootstrap, caller/key authorization, protected-container, durable replay,
+   and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
    remains I4 and `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
    and complete uninstall remain I5-I6.
 4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original
@@ -565,10 +580,11 @@ Current dependency and priority view:
    remains `BLOCKED` outside the internal-alpha critical path and may resume only with a revised
    supportable lifetime/residue contract. M2/S1 no longer waits on R5 under ADR-0040. No product
    validator endpoint is authorized.
-8. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
-   first-release critical path. M1 narrows the proposal/source/manifest to one byte-exact
-   `main.mjs`; S1/M2 then generates the revised `RegisterPlanV0`/fetch projections and exact caps
-   from complete field authority. No S1 fixtures exist and no product endpoint is authorized.
+8. **Passive authority-plane cutover passed; product connection blocked:** accepted ADR-0034 removes
+   Source Preparer/plan-v1 from the first-release critical path. M1 and the exact-one-`main.mjs`
+   proposal feed the atomic `RegisterPlanV0`/fetch fixed-store oracle with generated caps and
+   complete current field authority. No authenticated product endpoint, Broker/approval consumer,
+   attempt, runtime, backend, or guest is authorized.
 
 TypeScript remains conditional. If later selected, Source Preparer P0A and ADR-0030's atomic
 plan-v1/RegisterPlanV1 cutover still apply with no dual active v0/v1 acceptance. CommonJS, package

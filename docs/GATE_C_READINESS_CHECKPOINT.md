@@ -8,6 +8,15 @@ Status: completed cross-track synthesis. This document records spike decisions a
 history. It is not a backend posture promotion, a `BackendValidationRecord`, or permission to run
 hostile/user workloads with the retained experiment code.
 
+## Current interpretation (2026-08-05)
+
+This remains a historical spike synthesis. Later governed fork promotions and C2B v3 passive
+successor binding are `PASSED` in their exact governance and zero-effect scopes. They do not alter
+this checkpoint's non-admission conclusion. A current-source libkrun dylib, final runner, and new
+materialized successor remain `BLOCKED`; only then may a separately authorized fixed benign owned
+guest experiment run. Hostile owner-only internal alpha and later external alpha are separate
+product gates and remain unadmitted.
+
 ## Bottom line
 
 All five libkrun/HVF implementation-readiness tracks completed and their retained source,

@@ -238,6 +238,12 @@ capacity behavior, and old-or-complete-new reopen. The
 read-only anchor comparison/restore admission, bounded offline reporting, and explicitly selected
 known-unreferenced orphan removal. It performs no restore activation or referenced-history deletion
 and makes no rollback, secure-deletion, APFS, or production durability claim. F6 remains deferred.
+The [passive durable completion-last contract](DURABLE_COMPLETION_CONTRACT.md) is now `PASSED` in its
+separate fixed-file/FakeBackend conformance scope. It atomically retains one immutable completion,
+bounded transcript, and fixed summary only after exact terminal lifecycle and fake authoritative
+absence; response loss and restart converge, while EOF, exit zero, stale replay, forged records,
+and unresolved teardown refuse. FakeBackend has no real runner, so runner identity remains explicit
+`unresolved` and product completion/store integration remains `BLOCKED`.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

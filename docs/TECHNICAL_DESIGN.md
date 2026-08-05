@@ -67,6 +67,14 @@ identities, reconciliation, exact active/retained ceilings, and repeated-startup
 Supervisor topology for the future authenticated boundary. No native bridge fixture, product XPC
 service, production owner lock, consumer, runtime, backend effect, or guest is connected.
 
+The follow-on [passive durable completion-last contract](DURABLE_COMPLETION_CONTRACT.md) now adds a
+separate bounded fixed-file producer/store oracle. It revalidates retained attempt, plan, source,
+runtime/profile, lifecycle, teardown, and fake absence facts before atomically publishing one
+completion-last record, transcript, and fixed summary. EOF, runner exit zero, forged/mixed records,
+stale replay, and unresolved cleanup do not establish completion. FakeBackend creates no runner, so
+runner identity remains explicitly unresolved. This is local conformance evidence, not a product
+store or completion path.
+
 Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
 installation-root-authorized, Supervisor-created, pre-created sibling object, acquire nonblocking
 BSD `flock`, and retain the opaque `CLOEXEC` descriptor for the Supervisor lifetime. Proposed
@@ -128,6 +136,13 @@ segment activation and exact segment 64/65 bounded growth in the same fixed-stor
 backup, complete-copy verification, read-only exact-anchor restore admission, offline reporting,
 and explicit known-unreferenced orphan cleanup. Restore activation, automatic deletion, rollback
 prevention, secure deletion, real APFS durability, and F6 remain deferred.
+
+The passive completion producer/store transaction is also `PASSED` in its narrow fixed-file/
+FakeBackend scope. Its version-0 object and bounded transcript bind the exact source manifest,
+runtime/profile, result integrity, destroyed lifecycle, fake instance, cleanup/absence disposition,
+and explicit no-real-runner limitation. Response loss and restart return the immutable result for
+the same `AttemptID`. Product store integration, real result transport, trusted launcher, runner
+identity, process-tree absence, signing, Broker release, and receipt composition remain blocked.
 
 ## Reference workflow
 
@@ -918,9 +933,12 @@ implemented.
    internal alpha does not wait on Source Validator R4/R5; a later consumer remains bound by
    ADR-0035/0036 and adds no Supervisor call beyond ADR-0029's closed surface.
 6. Connect that product path to the already-passed no-guest registration, approval/attempt, durable
-   lifecycle, owner-lock G2, and archive oracle. Add composed evidence only from retained Supervisor
-   state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.
-7. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
+   lifecycle, owner-lock G2, archive oracle, and passive durable completion-last transaction. Add
+   composed evidence only from retained Supervisor state; keep `FakeBackend.CreatesGuest() == false`
+   until runtime/backend admission, and do not treat the separate completion file as the product
+   engine.
+7. Integrate inline JSON ownership and the already-passed bounded fake output/fixed-summary contract
+   only after real result-integrity, runner, teardown/absence, and product-store owners close.
 8. Retain the exact governed Linux/arm64 handoff and passed passive C1 composition contract, then
    retain immutable C2B v1 plus its no-guest build-closure v2 successor and passive runnable-profile
    contract v3 without wiring a consumer, then close C2

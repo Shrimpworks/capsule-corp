@@ -257,6 +257,7 @@ func buildProjection(
 		SupervisorID:                  created.Attempt.SupervisorID,
 		ApprovalPayloadDigest:         created.Attempt.ApprovalPayloadDigest,
 		AuthorizationIdentity:         created.Attempt.AuthorizationIdentity,
+		SourceManifestDigest:          bindings.SourceManifestDigest,
 		RuntimeBundleManifestDigest:   bindings.RuntimeBundleManifestDigest,
 		ProfileRegistryEntryDigest:    bindings.ProfileRegistryEntryDigest,
 		BackendValidationRecordDigest: bindings.BackendValidationRecordDigest,
@@ -285,6 +286,7 @@ type transcriptJSON struct {
 	SupervisorID                  string `json:"supervisorId"`
 	ApprovalPayloadDigest         string `json:"approvalPayloadDigest"`
 	AuthorizationIdentity         string `json:"authorizationIdentity"`
+	SourceManifestDigest          string `json:"sourceManifestDigest"`
 	RuntimeBundleManifestDigest   string `json:"runtimeBundleManifestDigest"`
 	ProfileRegistryEntryDigest    string `json:"profileRegistryEntryDigest"`
 	BackendValidationRecordDigest string `json:"backendValidationRecordDigest"`
@@ -295,11 +297,14 @@ type transcriptJSON struct {
 	CompletionRecordDigest        string `json:"completionRecordDigest"`
 	ResultJSONBytes               uint64 `json:"resultJsonBytes"`
 	ResultJSONDigest              string `json:"resultJsonDigest"`
+	ResultIntegrity               string `json:"resultIntegrity"`
 	Completion                    string `json:"completion"`
+	TerminalClassification        string `json:"terminalClassification"`
 	Lifecycle                     string `json:"lifecycle"`
 	LifecycleOperationSequence    uint64 `json:"lifecycleOperationSequence"`
 	Teardown                      string `json:"teardown"`
 	Absence                       string `json:"absence"`
+	RunnerIdentity                string `json:"runnerIdentity"`
 	CleanupRequired               bool   `json:"cleanupRequired"`
 	Limitation                    string `json:"limitation"`
 }
@@ -317,6 +322,7 @@ func encodeTranscript(projection TerminalProjectionView) ([]byte, TranscriptDige
 		SupervisorID:                  hex.EncodeToString(projection.SupervisorID[:]),
 		ApprovalPayloadDigest:         hex.EncodeToString(projection.ApprovalPayloadDigest[:]),
 		AuthorizationIdentity:         hex.EncodeToString(projection.AuthorizationIdentity[:]),
+		SourceManifestDigest:          hex.EncodeToString(projection.SourceManifestDigest[:]),
 		RuntimeBundleManifestDigest:   hex.EncodeToString(projection.RuntimeBundleManifestDigest[:]),
 		ProfileRegistryEntryDigest:    hex.EncodeToString(projection.ProfileRegistryEntryDigest[:]),
 		BackendValidationRecordDigest: hex.EncodeToString(projection.BackendValidationRecordDigest[:]),
@@ -327,9 +333,13 @@ func encodeTranscript(projection TerminalProjectionView) ([]byte, TranscriptDige
 		CompletionRecordDigest:        hex.EncodeToString(projection.CompletionRecordDigest[:]),
 		ResultJSONBytes:               uint64(len(projection.ResultJSON)),
 		ResultJSONDigest:              hex.EncodeToString(projection.ResultJSONDigest[:]),
-		Completion:                    string(CompletionCommittedLast), Lifecycle: string(projection.LifecycleState),
-		LifecycleOperationSequence: uint64(projection.LifecycleOperationSequence),
-		Teardown:                   "destroy-confirmed", Absence: string(projection.LifecycleLastReconciliation),
+		ResultIntegrity:               string(ResultIntegrityTypedJSONSHA256),
+		Completion:                    string(CompletionCommittedLast),
+		TerminalClassification:        string(TerminalCompletedFakeLocal),
+		Lifecycle:                     string(projection.LifecycleState),
+		LifecycleOperationSequence:    uint64(projection.LifecycleOperationSequence),
+		Teardown:                      "destroy-confirmed", Absence: string(projection.LifecycleLastReconciliation),
+		RunnerIdentity:  string(RunnerIdentityUnresolvedFake),
 		CleanupRequired: projection.CleanupRequired,
 		Limitation:      "no-guest-local-mechanic-not-signed-attestation-or-product-success",
 	}

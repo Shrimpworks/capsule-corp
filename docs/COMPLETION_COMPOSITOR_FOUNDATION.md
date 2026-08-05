@@ -73,7 +73,8 @@ guest completion port, integrity/result producer, real process-tree absence proo
 consumer, signature, receipt, or installed-profile evidence. FakeBackend creates no guest, so this
 slice cannot validate guest completion or teardown.
 
-Next work must separately freeze and implement the Supervisor-owned durable completion producer
-and store transaction, then connect the compositor only after the completion-last, transport,
-integrity, teardown, and authoritative-absence controls have their own retained evidence and
-authorization.
+The follow-on [passive durable completion-last contract](DURABLE_COMPLETION_CONTRACT.md) now freezes
+and implements the Supervisor-owned local producer/store transaction and connects this compositor
+inside that fixed-file/FakeBackend oracle. Real transport, trusted-launcher result integrity, runner
+identity, process-tree teardown/absence, product-store integration, signing, and consumer
+authorization remain blocked.

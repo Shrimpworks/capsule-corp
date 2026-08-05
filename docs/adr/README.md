@@ -75,5 +75,7 @@ its core conclusion.
   — Accepted; fixed benign guest is a separate experiment, hostile owner-only alpha is the product checkpoint, external alpha is later
 - [ADR-0041: Freeze the passive fixed-owned-guest successor contract](0041-freeze-passive-fixed-owned-guest-successor.md)
   — Accepted; C2B v3 passive binding `PASSED`, current-source runnable artifacts and guest admission remain `BLOCKED`
+- [ADR-0042: Freeze the passive durable completion-last transaction](0042-freeze-passive-durable-completion-transaction.md)
+  — Proposed; fixed-file/FakeBackend oracle `PASSED`, product completion/store integration remains `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

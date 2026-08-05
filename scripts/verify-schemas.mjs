@@ -59,6 +59,13 @@ const fixtures = [
       import.meta.url,
     ),
   ],
+  [
+    "governed-deno-core-release-candidate.schema.json",
+    new URL(
+      "../schemas/conformance/governed-deno-core-release-candidate/candidate-manifest.json",
+      import.meta.url,
+    ),
+  ],
 ];
 
 for (const [schemaName, fixtureUrl] of fixtures) {

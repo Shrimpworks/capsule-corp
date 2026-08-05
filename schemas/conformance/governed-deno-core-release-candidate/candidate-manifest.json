@@ -1,0 +1,554 @@
+{
+  "objectType": "capsule.governed-deno-core.release-candidate-consumption-manifest",
+  "schemaVersion": 1,
+  "candidateId": "governed-deno-core-linux-arm64-rc-2026-08-04-1",
+  "selfDigest": {
+    "algorithm": "sha256",
+    "normalization": "replace-this-value-with-64-ascii-zeroes-in-the-exact-utf8-file",
+    "sha256": "78cf2e99e58a4e79413f22889dd19f794ac7cdce3e4ec5c167d6c2051d19afaa"
+  },
+  "status": {
+    "construction": "PASSED",
+    "releasePublication": "BLOCKED",
+    "runtimeSelection": "IN_PROGRESS — TRENDING_GOOD",
+    "runtimeAdmission": "BLOCKED",
+    "runtime001": "unsupported"
+  },
+  "target": {
+    "operatingSystem": "linux",
+    "architecture": "arm64",
+    "rustTarget": "aarch64-unknown-linux-gnu",
+    "objectFormat": "ELF64",
+    "endianness": "little",
+    "abi": "GNU glibc",
+    "minimumAssumptions": {
+      "glibc": "2.36-9+deb12u14",
+      "libgcc": "12.2.0-14+deb12u1",
+      "dynamicLoader": "/lib/ld-linux-aarch64.so.1",
+      "explicitLoaderArguments": ["--inhibit-cache", "--library-path", "/lib/aarch64-linux-gnu"],
+      "kernelInputsOutsideRoot": ["procfs", "cgroupfs", "/dev/urandom"],
+      "substitutionAllowed": false
+    }
+  },
+  "governedSources": {
+    "deno": {
+      "repository": "https://github.com/Shrimpworks/deno.git",
+      "upstreamCommit": "14eea3160ae5834476aa3b9d317b8d41d991b982",
+      "upstreamTree": "2732e7fb4f51907ce8a95ac068481c28185a21d2",
+      "governedCommits": [
+        "8d8c9e56a4972d3a8779799572ea3e818ce84338",
+        "a86d5b7c277f5884820b2f1ae498d334b0759dae",
+        "1fdc8cea7da481e132c21d4c283e42539ac447eb",
+        "aafa35a9ef319dd2422552fe9d5ab2f7e91bb7ec",
+        "9adb0b68b55bca81644827f1e7749a3acb091bed"
+      ],
+      "governedHead": "9adb0b68b55bca81644827f1e7749a3acb091bed",
+      "governedTree": "72edd0f7b5f83b918945860653714e344c8a303f",
+      "mergeCommit": "ea18b9dc21ff8ebd19347be7095f47937ee14ec2",
+      "mergeParents": [
+        "14eea3160ae5834476aa3b9d317b8d41d991b982",
+        "9adb0b68b55bca81644827f1e7749a3acb091bed"
+      ],
+      "sourceArchive": {
+        "path": "sources/Shrimpworks-deno-source.tar.gz",
+        "size": 32342282,
+        "sha256": "d117cc1594c9876717deba66a7792c7d5520cdf6379642b412931614b848bd54"
+      },
+      "workspaceCargoLockSha256": "4dd8f08c8b223adbf3468fce5fe9e0468dfe9f4a255129cc304cb604fa0d389d",
+      "physicalOmissionPatchSha256": "f45fda69db3875dbd730aa9568cb88ff6cc35a25c8d82edb5fa3b521c19bac37",
+      "deterministicOrderingPatchSha256": "9dd33fd423ce98f030d80eba5cb386d5236b7ca103aa45b58ce5b36125d8061e",
+      "restorationMutationSha256": "e0e98557b709437d464464922a3c4d4cc45af1832d32108d584cfe771125ee40",
+      "governanceDocumentSha256": "da22a7856b49bc06a1fb4921f1f97eb1c8951d80572ec0f4efcc55d586da8f32",
+      "verifierSha256": "a880c599ee538b655c614d7da4111b05e62cb66a9bcca4cd4ddae1cc44c47aaa"
+    },
+    "rustyV8": {
+      "repository": "https://github.com/Shrimpworks/rusty_v8.git",
+      "upstreamCommit": "d305e6afa7736f6e298c30ae6646f7709ee9382b",
+      "upstreamTree": "e55bc850420d20b1ea2230eef9da6e26c07ef765",
+      "governedHead": "80e863ddb942a4aa2b384e794fc23e35b9d2bb15",
+      "governedTree": "d8950a7a1ee907761720b23d24eaa9b63aa33b10",
+      "mergeCommit": "cbf56de2e1156b1cf1561fdbaea7172a0aa056f4",
+      "mergeParents": [
+        "eddede228a9214c4dfb6a85aeca22abc0679100d",
+        "80e863ddb942a4aa2b384e794fc23e35b9d2bb15"
+      ],
+      "rejectedTerminalHeads": [
+        "17698caedb8721c132a3e2f08f7ab0ae212f313a",
+        "a43ee7486c3e05bce5d6e5db586b3e2e688c33cf",
+        "c774d71b9b1d0021a5283b07d9185d6ec4d41b95",
+        "e21917350e48cc920c9ed1984e671a6bb2113df0"
+      ],
+      "sourceLockSha256": "df1630e159dfec398ca8d71305431d441b6953efc910de63f4c0e6e28f251855",
+      "builderLockSha256": "da45206bfdea87b0dc3ddb9ec31babdce264862174ec30450baddee2d8c1f70b",
+      "expectedOutputsSha256": "da5543735995f960bfd1a22489b242e706c8c4a2aa7392c2644004a6e464b17d",
+      "recursiveGitlinkCount": 20,
+      "v8Commit": "ac1e23989121713ca642f6650b34deff7b686896",
+      "v8PatchCount": 4
+    }
+  },
+  "construction": {
+    "prefetchNetwork": "connected-declared-digest-pinned-inputs-only",
+    "buildTestEvidenceNetwork": "disabled",
+    "emptyOutputsAndCaches": true,
+    "sourceDateEpoch": 0,
+    "locale": "C",
+    "timezone": "UTC",
+    "workspace": "/workspace",
+    "snapshotLogicalCpuCount": 1,
+    "snapshotCpuSet": "0",
+    "aslr": "disabled-with-setarch-aarch64-R",
+    "independentBuilder": false,
+    "rustyV8Builder": {
+      "image": "docker.io/library/rust@sha256:307d198027388f780db83929487de35084a73ecbaa31319989438db38103439f",
+      "indexDigest": "sha256:e187887ec511b3d93e45c0231d2f0fd59f1347526c58aa86343aa83c74f3e1a9",
+      "buildPlatform": "linux/amd64",
+      "targetPlatform": "linux/arm64",
+      "method": "cross-under-Docker-platform-emulation"
+    },
+    "denoAndRootBuilder": {
+      "image": "rust:1.95.0-bookworm@sha256:6258907abe69656e41cd992e0b705cdcfabcbbe3db374f92ed2d47121282d4a1",
+      "platformImageId": "sha256:7cf1e580ef5539f03b58560753e8ab84c8c360960d99dff714004aa98f203977",
+      "platform": "linux/arm64"
+    },
+    "toolchain": {
+      "denoRustc": "rustc 1.95.0 59807616e1fa2540724bfbac14d7976d7e4a3860",
+      "denoCargo": "cargo 1.95.0 f2d3ce0bd7f24a49f8f72d9000448f8838c4e850",
+      "denoLlvm": "22.1.2",
+      "rustyV8Rustc": "rustc 1.91.0 f8297e351a40c1439a467bbbb6879088047f50b3",
+      "rustyV8Cargo": "cargo 1.91.0 ea2d97820c16195b0ca3fadb4319fe512c199a43",
+      "rustyV8Llvm": "21.1.2",
+      "clangArchiveSha256": "de584381536aa5ba2403033c4f8b70f3c39c2e5d7fa87c953b7fd8bfbba0ee2a",
+      "clangRevision": "llvmorg-23-init-10931-g20b6ec66-11",
+      "gnInstanceId": "2w75WgzO2nc2UMXt6PDqnK3LCqbHZ-11ME5WIr4hJQQC",
+      "gnArchiveSha256": "db0ef95a0cceda773650c5ede8f0ea9cadcb0aa6c767ed75304e5622be212504",
+      "ninjaInstanceId": "Px8cwPaaG8_fZ_tsK8dBmx3YEruNDnmvqb-oo1U7UIIC",
+      "ninjaArchiveSha256": "3f1f1cc0f69a1bcfdf67fb6c2bc7419b1dd812bb8d0e79afa9bfa8a3553b5082",
+      "targetRustStdSha256": "ff23dc81f796d64e34e866a44fd0bcae726e34014835369b8f9393a544167eca",
+      "chromiumRustToolchainSha256": "832de79f8d90940f4aaef023f83a00c1e7210c023f4d57f606b7bf9831c889aa",
+      "crossPackageCount": 22,
+      "crossPackageSnapshot": "https://snapshot.debian.org/archive/debian/20251104T000000Z",
+      "cargoSourceBundle": {
+        "path": "sources/cargo-source-bundle.tar.gz",
+        "size": 70134953,
+        "sha256": "1e96e49a516e4cf6a9ec79acae9a9eb3d0ee52b332695fa11476a97e1e50d1d4"
+      }
+    }
+  },
+  "runtimeSubjects": [
+    {
+      "role": "rusty-v8-static-archive-raw",
+      "path": "artifacts/librusty_v8_simdutf_release_aarch64-unknown-linux-gnu.a",
+      "mediaType": "application/x-archive",
+      "size": 184789162,
+      "sha256": "e964d6b1b3689e91f8cf488d8a9f05764a03434b2e2e8347be5067300d39a7de"
+    },
+    {
+      "role": "rusty-v8-static-archive-gzip",
+      "path": "artifacts/librusty_v8_simdutf_release_aarch64-unknown-linux-gnu.a.gz",
+      "mediaType": "application/gzip",
+      "size": 37674703,
+      "sha256": "1ae209c9e4ba5803d010d2c79ee4cc0af0126c5a7ebcca211c7e41deaede4cd2"
+    },
+    {
+      "role": "deno-core-binary",
+      "path": "artifacts/capsule-deno-core-physical-omission",
+      "mediaType": "application/x-elf",
+      "size": 68497624,
+      "sha256": "56d3acefd2cc2f5136a0b8143c47131e49a58fbf66382dfd3e84f715ce8e2898"
+    },
+    {
+      "role": "startup-snapshot",
+      "path": "artifacts/capsule_core_snapshot.bin",
+      "mediaType": "application/octet-stream",
+      "size": 699988,
+      "sha256": "4e8965217d5a6675a880326eee6f690bbeec7e7cb243decf2f3e9f453a871a2c"
+    },
+    {
+      "role": "two-file-runtime-bundle",
+      "path": "artifacts/capsule-deno-core-runtime-bundle.tar.gz",
+      "mediaType": "application/gzip",
+      "size": 20983891,
+      "sha256": "0cc08f93e82fcfe68b033e8807975a3bd67068a817da811a87a73aedc3f23937"
+    },
+    {
+      "role": "dynamic-root-manifest",
+      "path": "artifacts/runtime-root-files.tsv",
+      "mediaType": "text/tab-separated-values",
+      "size": 1807,
+      "sha256": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8"
+    },
+    {
+      "role": "dynamic-root-tar",
+      "path": "artifacts/rootfs.tar",
+      "mediaType": "application/x-tar",
+      "size": 71895040,
+      "sha256": "9c46b45c4d220aedcc47c9ee53e875bc71d31d0b881b51740aaa9b882b5741e6"
+    },
+    {
+      "role": "dynamic-root-gzip",
+      "path": "artifacts/rootfs.tar.gz",
+      "mediaType": "application/gzip",
+      "size": 22192615,
+      "sha256": "e847651b35cd425dd8f6fe3bd45d693aff0af244e3a7bd30c629fa125cac62e8"
+    }
+  ],
+  "runtimeAuthority": {
+    "denoCoreVersion": "0.409.0",
+    "extensionRegistry": [],
+    "builtinOps": [
+      "op_get_ext_import_meta_proto",
+      "op_get_extras_binding_object",
+      "op_set_captured_bootstrap"
+    ],
+    "finalLinkStatementSha256": "18793b423311e8e6a906cf4572d343ee33406c2c228343c42b6d85665c134429",
+    "moduleLoader": "none",
+    "v8Flags": ["--jitless", "--random-seed=42"],
+    "exactStatement": "the ordered registry and final linked deno_core binary contain exactly the three named bootstrap ops; zero extra, missing, renamed, or restored ops are permitted"
+  },
+  "dynamicRoot": {
+    "entryCount": 22,
+    "regularFileBytes": 71871210,
+    "typeCounts": { "directory": 11, "file": 10, "symlink": 1 },
+    "modeCounts": { "directory-0755": 11, "file-0644": 8, "file-0755": 2, "symlink-0755": 1 },
+    "orderedEntryManifestSha256": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8",
+    "loaderAndLibraries": [
+      {
+        "path": "lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
+        "mode": "0755",
+        "size": 202912,
+        "sha256": "17538b8f9889a470c061f69a8fea8124da89627311cd16546c133a89f09056df",
+        "binaryPackage": "libc6_2.36-9+deb12u14_arm64.deb"
+      },
+      {
+        "path": "lib/ld-linux-aarch64.so.1",
+        "mode": "0755",
+        "type": "symlink",
+        "linkTarget": "aarch64-linux-gnu/ld-linux-aarch64.so.1",
+        "sha256": "8f5d71dfa5070a28dd64d8d3694da7521290a475809f29b01ed81ffa4984584b",
+        "binaryPackage": "libc6_2.36-9+deb12u14_arm64.deb"
+      },
+      {
+        "path": "lib/aarch64-linux-gnu/libc.so.6",
+        "mode": "0644",
+        "size": 1651408,
+        "sha256": "e4ac8ae1d81e4865e3aadedb962879cf9415903b2ba81ec75e9962b86ab8b0",
+        "binaryPackage": "libc6_2.36-9+deb12u14_arm64.deb"
+      },
+      {
+        "path": "lib/aarch64-linux-gnu/libm.so.6",
+        "mode": "0644",
+        "size": 591960,
+        "sha256": "3c4cb3be0b974edf05f023f85ab15107fb5afc2687163593d0d4cf8e80c17b39",
+        "binaryPackage": "libc6_2.36-9+deb12u14_arm64.deb"
+      },
+      {
+        "path": "lib/aarch64-linux-gnu/libgcc_s.so.1",
+        "mode": "0644",
+        "size": 133448,
+        "sha256": "046856f95f4636f1fc7c3a12bf4f3cd5634c2fc5145c3fdf7395d4f349fa69c7",
+        "binaryPackage": "libgcc-s1_12.2.0-14+deb12u1_arm64.deb"
+      }
+    ],
+    "sourceCorrespondence": [
+      {
+        "path": "root-inputs/gcc-12-base_12.2.0-14+deb12u1_arm64.deb",
+        "size": 37624,
+        "sha256": "674cf6cba6d432bd200c45fe866c1652c7a53523cc2e7a613e05bc4abf7b5440",
+        "role": "runtime-binary-package"
+      },
+      {
+        "path": "root-inputs/gcc-12_12.2.0-14+deb12u1.debian.tar.xz",
+        "size": 1675204,
+        "sha256": "59f7f7763a0c355e3f27ff9e7ac80d06382b29939361a87e7b139226bfe7402e",
+        "role": "corresponding-source"
+      },
+      {
+        "path": "root-inputs/gcc-12_12.2.0-14+deb12u1.dsc",
+        "size": 27330,
+        "sha256": "3aed0b189189c744dc9f4b74798a51d3e512ea85e492568db788a927c88e20ba",
+        "role": "source-descriptor"
+      },
+      {
+        "path": "root-inputs/gcc-12_12.2.0.orig.tar.gz",
+        "size": 87090343,
+        "sha256": "b8298be16aeeb96a889c6afed0a8e2241b47452e89cc81fe65ea849d5c740fcb",
+        "role": "corresponding-source"
+      },
+      {
+        "path": "root-inputs/glibc_2.36-9+deb12u14.debian.tar.xz",
+        "size": 918488,
+        "sha256": "cf4ac9cd98185452cae3ef34e2e4ee12753e3d93fd0c62c61396d4a47eec902f",
+        "role": "corresponding-source"
+      },
+      {
+        "path": "root-inputs/glibc_2.36-9+deb12u14.dsc",
+        "size": 9765,
+        "sha256": "cfe1f0b8dc1fa211ce5a45b3725cc38b29f88667f1140ebdca6de35cf9c6f1fd",
+        "role": "source-descriptor"
+      },
+      {
+        "path": "root-inputs/glibc_2.36.orig.tar.xz",
+        "size": 19363988,
+        "sha256": "a543c02070d46ccaf866957efd13f10c924daa74c86a90a0254db09a92a708ee",
+        "role": "corresponding-source"
+      },
+      {
+        "path": "root-inputs/libc6_2.36-9+deb12u14_arm64.deb",
+        "size": 2324660,
+        "sha256": "01f4330719fd4f65580e16ea5a0527f372fca750e8f588d26deaf09f2d3b1cf4",
+        "role": "runtime-binary-package"
+      },
+      {
+        "path": "root-inputs/libgcc-s1_12.2.0-14+deb12u1_arm64.deb",
+        "size": 34816,
+        "sha256": "576926b283613db80168ddf76380a3bd877602778cf0d226caa7bfbfa71eacf3",
+        "role": "runtime-binary-package"
+      },
+      {
+        "path": "root-inputs/strace_6.1-0.1_arm64.deb",
+        "size": 1192916,
+        "sha256": "751817724af91cb95df566a21a154f9a7dcdd938e700e5cb9a5a47eb19752ea2",
+        "role": "evidence-harness-only-not-runtime-root"
+      }
+    ]
+  },
+  "supplyChainMaterials": [
+    {
+      "role": "rusty-v8-build-metadata",
+      "path": "materials/rusty-v8/build-metadata.tar.gz",
+      "size": 1788292,
+      "sha256": "89b8ac74baddab900c6399bdf95739352deb664f07692ec8d5c2c0b01033935c"
+    },
+    {
+      "role": "rusty-v8-corresponding-source",
+      "path": "materials/rusty-v8/corresponding-source.tar.gz",
+      "size": 202703184,
+      "sha256": "8cf75b005e0dfe7e4b8c0a424e3350ed6701a53c9531d8e3ee3a67d5c14a2eff"
+    },
+    {
+      "role": "rusty-v8-fixed-verification",
+      "path": "materials/rusty-v8/fixed-verification.txt",
+      "size": 138,
+      "sha256": "fca2291b04fbafcb2d0d331246fd805ca7fcf28831a6ba8a6d198ad5d009de73"
+    },
+    {
+      "role": "rusty-v8-licenses-notices",
+      "path": "materials/rusty-v8/licenses-notices.tar.gz",
+      "size": 1945095,
+      "sha256": "336aade62182917a7251116c2deca73ef3a51758f025b02b3b90f4423adc7314"
+    },
+    {
+      "role": "rusty-v8-unsigned-provenance",
+      "path": "materials/rusty-v8/provenance.intoto.json",
+      "size": 32372,
+      "sha256": "9ba3debd274f85f419883a2475789348437a1ea89027b4a3517487936cf7df3f"
+    },
+    {
+      "role": "rusty-v8-cyclonedx-sbom",
+      "path": "materials/rusty-v8/sbom.cdx.json",
+      "size": 152583,
+      "sha256": "fb776c27efcefc56a03371bdef093ec79e36657c795dc12dd68edc50421b4675"
+    },
+    {
+      "role": "rusty-v8-spdx-sbom",
+      "path": "materials/rusty-v8/sbom.spdx.json",
+      "size": 173987,
+      "sha256": "6d2da4c12ba771265753b14e489aa42ef8bc76ce0cdbca00bcea9d4f126b4b5d"
+    },
+    {
+      "role": "rusty-v8-generated-binding",
+      "path": "materials/rusty-v8/src_binding_simdutf_release_aarch64-unknown-linux-gnu.rs",
+      "size": 40369,
+      "sha256": "8603f09ab95e79620ea29f73933c09ae3618c6f924472c0ce36d5c614d1ceba4"
+    },
+    {
+      "role": "rusty-v8-artifact-checksums",
+      "path": "materials/rusty-v8/artifact-sha256sums.txt",
+      "size": 770,
+      "sha256": "7418b55184c0e160dba70e21e4717376f0cecd7e79d9c53ce93ebeb4c77a289c"
+    },
+    {
+      "role": "runtime-cyclonedx-sbom",
+      "path": "materials/runtime/sbom.cdx.json",
+      "size": 93247,
+      "sha256": "b2b2e68db9acaa40cf0f6d3004b104b0e0d0aed6b9f1b8cb2583a65061454651"
+    },
+    {
+      "role": "runtime-unsigned-provenance",
+      "path": "materials/runtime/provenance.intoto.json",
+      "size": 5658,
+      "sha256": "4afcbae85a6feddcdd5742e8905a34a450cae60f7bdc3c1546444bf0196952ae"
+    },
+    {
+      "role": "source-license-closure",
+      "path": "materials/runtime/source-license-closure.json",
+      "size": 5203,
+      "sha256": "cb1446c52206dd23f5e502cfde265629c2d69142b43260a58cf8eabde68dd6ee"
+    },
+    {
+      "role": "rusty-v8-release-manifest",
+      "path": "materials/rusty-v8/release-manifest.json",
+      "size": 1743,
+      "sha256": "92183e13e5bf3d6cdf13e12610024643c49990aec98a6571e74bea77a08c0e2c"
+    }
+  ],
+  "evidence": {
+    "repository": "https://github.com/Shrimpworks/capsule-experiments.git",
+    "mergeCommit": "fa03d7043b4f0653081d6c5733d597f49f6efd1c",
+    "mergeTree": "f80775335232ff4750f62998e5cc4d8e120ce90e",
+    "basePath": "experiments/gate-c-fork-native-deno-runtime-bundle",
+    "files": [
+      {
+        "path": "HANDOFF.md",
+        "sha256": "4fd5f2365cc44ef9b1cfefd1bf5d126d39d7a77fbf6964bcd047cbd83de210dd"
+      },
+      {
+        "path": "manifests/input-contract.json",
+        "sha256": "67cd0b00d6e92c4710bab05cae5a715507a40978e0f8d7d436991225cd07a851"
+      },
+      {
+        "path": "manifests/known-answers.json",
+        "sha256": "abc1bc3f9e22860bdbf7a2ba06ca958ba7e5d8f1a239f98539d4f78ccde827da"
+      },
+      {
+        "path": "evidence/2026-08-04/ref-verification.json",
+        "sha256": "7cb086ce168e56bbd9b9f7caa415fb8ba5f55abf0ad103c2b020cfa015badb89"
+      },
+      {
+        "path": "evidence/2026-08-04/runtime-bundle-manifest.json",
+        "sha256": "6fc7736823b018615406ab2f1a6be6ee61978538645f01ae85a8e99f415ea56d"
+      },
+      {
+        "path": "evidence/2026-08-04/environment.json",
+        "sha256": "100058730512b0baaa77b6debb888311506c8f0879b41efa7bd2a09bfbeefb2a"
+      },
+      {
+        "path": "evidence/2026-08-04/runtime-root-files.tsv",
+        "sha256": "100832dbb37737f29341bc5404df6d4405b8d6b706f274028892801fa88e7de8"
+      },
+      {
+        "path": "evidence/2026-08-04/final-link-symbols.txt",
+        "sha256": "18793b423311e8e6a906cf4572d343ee33406c2c228343c42b6d85665c134429"
+      },
+      {
+        "path": "evidence/2026-08-04/source-license-closure.json",
+        "sha256": "cb1446c52206dd23f5e502cfde265629c2d69142b43260a58cf8eabde68dd6ee"
+      },
+      {
+        "path": "evidence/2026-08-04/provenance.intoto.json",
+        "sha256": "4afcbae85a6feddcdd5742e8905a34a450cae60f7bdc3c1546444bf0196952ae"
+      },
+      {
+        "path": "evidence/2026-08-04/sbom.cdx.json",
+        "sha256": "b2b2e68db9acaa40cf0f6d3004b104b0e0d0aed6b9f1b8cb2583a65061454651"
+      }
+    ]
+  },
+  "compatibility": {
+    "runtimeProfile": "capsule.governed-deno-core.controlled-development/c1-candidate-only",
+    "c1Contract": "capsule.governed-deno-core.controlled-development-composition/c1",
+    "c1FixturePath": "schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+    "c1FixtureSize": 9289,
+    "c1FixtureSha256": "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+    "c1Status": "PASSED-passive-zero-effects",
+    "c2ReferenceEligible": true,
+    "executionEligible": false,
+    "admissionEligible": false,
+    "c2Dependencies": {
+      "libkrun": {
+        "repository": "https://github.com/Shrimpworks/libkrun.git",
+        "upstreamCommit": "728df8125077d0db44265f6e997c72b81b65c015",
+        "governedBase": "4ea8d1de861ed1c0636fc800b6da8fb71a086aa5",
+        "governedHead": "8a2c91943793668f31a1cf7af431933be935bb58",
+        "governedTree": "ffa4131ddcc6ec66edd623381dae94189ccd3fee",
+        "mergeCommit": "cf0333cdba478cc34a8570a65b38412da7fd3ecc",
+        "mergeParents": [
+          "4ea8d1de861ed1c0636fc800b6da8fb71a086aa5",
+          "8a2c91943793668f31a1cf7af431933be935bb58"
+        ],
+        "fivePatchAggregateSha256": "d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5",
+        "includedInThisCandidate": false,
+        "reason": "backend and launcher composition remain a separate C2 boundary"
+      }
+    }
+  },
+  "closurePolicy": {
+    "movableReferencesAllowed": false,
+    "unknownFieldsAllowed": false,
+    "unknownEntriesAllowed": false,
+    "requiredRuntimeSubjectCount": 8,
+    "requiredSupplyChainMaterialCount": 13,
+    "requiredDynamicRootInputCount": 10,
+    "requiredCandidateEnvelopeFileCount": 32,
+    "byteCaps": {
+      "candidateManifest": 32768,
+      "rustyV8RawArchive": 2147483648,
+      "rustyV8GzipArchive": 67108864,
+      "denoBinary": 104857600,
+      "denoSnapshot": 2097152,
+      "denoTwoFileBundle": 134217728,
+      "dynamicRootManifest": 8192,
+      "dynamicRootTar": 134217728,
+      "dynamicRootGzip": 67108864,
+      "individualSupplyChainMaterial": 268435456,
+      "individualDynamicRootInput": 104857600,
+      "candidateEnvelopeTotal": 1073741824
+    },
+    "allowedEnvelopeFileTypes": ["regular-file"],
+    "allowedEnvelopeModes": ["0644"],
+    "innerRootAllowedTypes": ["directory", "file", "symlink"],
+    "innerRootAllowedModes": ["0644", "0755"],
+    "pathOrder": "exact-role-order-declared-in-this-manifest; inner-root-strict-increasing-unsigned-UTF-8-byte-order",
+    "arrayOrder": "manifest-order-is-authoritative",
+    "duplicatePathsAllowed": false,
+    "sizeAndDigestRequiredForEveryRegularFile": true,
+    "refusalCodes": [
+      "RC_MANIFEST_DIGEST_MISMATCH",
+      "RC_MANIFEST_UNKNOWN_FIELD",
+      "RC_MOVABLE_REFERENCE",
+      "RC_SOURCE_ANCESTRY_MISMATCH",
+      "RC_STALE_SOURCE_HEAD",
+      "RC_COMPONENT_MISSING",
+      "RC_COMPONENT_EXTRA",
+      "RC_COMPONENT_SUBSTITUTED",
+      "RC_COMPONENT_SIZE_MISMATCH",
+      "RC_COMPONENT_MODE_MISMATCH",
+      "RC_COMPONENT_ORDER_MISMATCH",
+      "RC_EVIDENCE_MISMATCH",
+      "RC_C1_MISMATCH",
+      "RC_SIGNATURE_STATE_MISMATCH",
+      "RC_PUBLICATION_STATE_MISMATCH",
+      "RC_ADMISSION_STATE_MISMATCH"
+    ]
+  },
+  "releaseState": {
+    "candidateManifest": "unsigned-release-candidate-consumption-contract-only",
+    "artifactSignature": "absent-required-before-publication",
+    "provenanceSignature": "absent-required-before-publication",
+    "notarization": "not-applicable-to-linux-runtime-subjects-placeholder-for-final-distribution-composition",
+    "publication": "blocked-not-published",
+    "supersedes": [],
+    "revoked": false,
+    "runtimeSelected": false,
+    "runtimeAdmitted": false
+  },
+  "limitations": [
+    "same physical Apple Silicon host and Docker Desktop/LinuxKit daemon for local reconstruction",
+    "rusty_v8 used an amd64-host to arm64-target cross build under Docker platform emulation",
+    "same-host A/B equality is not independent-builder equality",
+    "GitHub Actions run 30925045754 is comparison-only and is not a reconstruction input",
+    "unsigned experiment provenance has no release attestation or signer identity",
+    "no governed release location, signature, transparency record, revocation metadata, or release publication exists",
+    "no libkrun, kernel, init, launcher, numeric descriptor manifest, enforceable machine profile, guest, or installed composition is bound",
+    "C1 is passive and C2 external-isolation composition evidence does not exist",
+    "RUNTIME-001 remains unsupported and no runtime or profile is admitted"
+  ],
+  "invalidationTriggers": [
+    "any Deno upstream anchor, governed commit, merge, tree, patch, restoration oracle, Cargo lock, or source archive change",
+    "any rusty_v8 upstream anchor, governed commit, merge, tree, source lock, builder lock, V8/gitlink, toolchain, generated binding, archive, SBOM, notice, source, or provenance change",
+    "any builder image, compiler, linker, GN, Ninja, sysroot, cross package, workspace, CPU visibility, CPU set, ASLR, locale, timezone, network, or cache boundary change",
+    "any runtime binary, snapshot, two-file bundle, dynamic-root entry, loader, library, package source, tar, gzip, mode, owner, order, count, size, or digest change",
+    "any three-op registry, final-link, extension, loader, V8 flag, C1 contract, source profile, or refusal-boundary change",
+    "any publication, signature, provenance-signature, revocation, supersession, runtime-selection, runtime-admission, or RUNTIME-001 state change"
+  ]
+}

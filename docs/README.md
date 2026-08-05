@@ -51,6 +51,8 @@ handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDEN
 
 The governed runtime's first composed-profile slice is the passive
 [C1 controlled-development composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md).
+The exact unsigned governed Linux/arm64 candidate and its publication/admission boundary are in the
+[governed runtime release-candidate contract](GOVERNED_RUNTIME_RELEASE_CANDIDATE.md).
 It fixes the intended `.mjs` JSON-in/JSON-out surface and exact governed construction identities
 without creating a guest or admitting a runtime. The follow-on passive
 [C2A execution-profile contract](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md) freezes the

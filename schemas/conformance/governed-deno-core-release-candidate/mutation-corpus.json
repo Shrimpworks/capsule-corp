@@ -1,0 +1,112 @@
+[
+  {
+    "name": "trailing-byte",
+    "operation": "append-byte",
+    "value": "\n",
+    "expectedRefusal": "RC_MANIFEST_DIGEST_MISMATCH"
+  },
+  {
+    "name": "unknown-top-level-field",
+    "operation": "add",
+    "pointer": "/unknown",
+    "value": true,
+    "expectedRefusal": "RC_MANIFEST_UNKNOWN_FIELD"
+  },
+  {
+    "name": "movable-source-reference",
+    "operation": "replace",
+    "pointer": "/governedSources/deno/repository",
+    "value": "https://github.com/Shrimpworks/deno/tree/main",
+    "expectedRefusal": "RC_MOVABLE_REFERENCE"
+  },
+  {
+    "name": "stale-rusty-v8-head",
+    "operation": "replace",
+    "pointer": "/governedSources/rustyV8/governedHead",
+    "value": "a43ee7486c3e05bce5d6e5db586b3e2e688c33cf",
+    "expectedRefusal": "RC_STALE_SOURCE_HEAD"
+  },
+  {
+    "name": "substituted-merge-parent",
+    "operation": "replace",
+    "pointer": "/governedSources/deno/mergeParents/0",
+    "value": "0000000000000000000000000000000000000000",
+    "expectedRefusal": "RC_SOURCE_ANCESTRY_MISMATCH"
+  },
+  {
+    "name": "missing-runtime-subject",
+    "operation": "remove",
+    "pointer": "/runtimeSubjects/7",
+    "expectedRefusal": "RC_COMPONENT_MISSING"
+  },
+  {
+    "name": "extra-runtime-subject",
+    "operation": "add",
+    "pointer": "/runtimeSubjects/-",
+    "copyPointer": "/runtimeSubjects/7",
+    "expectedRefusal": "RC_COMPONENT_EXTRA"
+  },
+  {
+    "name": "substituted-runtime-subject",
+    "operation": "replace",
+    "pointer": "/runtimeSubjects/2/sha256",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000",
+    "expectedRefusal": "RC_COMPONENT_SUBSTITUTED"
+  },
+  {
+    "name": "cap-below-exact-binary",
+    "operation": "replace",
+    "pointer": "/closurePolicy/byteCaps/denoBinary",
+    "value": 68497623,
+    "expectedRefusal": "RC_COMPONENT_SIZE_MISMATCH"
+  },
+  {
+    "name": "unknown-envelope-mode",
+    "operation": "add",
+    "pointer": "/closurePolicy/allowedEnvelopeModes/-",
+    "value": "0755",
+    "expectedRefusal": "RC_COMPONENT_MODE_MISMATCH"
+  },
+  {
+    "name": "three-op-order-substitution",
+    "operation": "swap",
+    "pointer": "/runtimeAuthority/builtinOps/0",
+    "otherPointer": "/runtimeAuthority/builtinOps/1",
+    "expectedRefusal": "RC_COMPONENT_ORDER_MISMATCH"
+  },
+  {
+    "name": "substituted-evidence",
+    "operation": "replace",
+    "pointer": "/evidence/files/3/sha256",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000",
+    "expectedRefusal": "RC_EVIDENCE_MISMATCH"
+  },
+  {
+    "name": "stale-c1",
+    "operation": "replace",
+    "pointer": "/compatibility/c1FixtureSha256",
+    "value": "0000000000000000000000000000000000000000000000000000000000000000",
+    "expectedRefusal": "RC_C1_MISMATCH"
+  },
+  {
+    "name": "invented-artifact-signature",
+    "operation": "replace",
+    "pointer": "/releaseState/artifactSignature",
+    "value": "signed",
+    "expectedRefusal": "RC_SIGNATURE_STATE_MISMATCH"
+  },
+  {
+    "name": "invented-publication",
+    "operation": "replace",
+    "pointer": "/releaseState/publication",
+    "value": "published",
+    "expectedRefusal": "RC_PUBLICATION_STATE_MISMATCH"
+  },
+  {
+    "name": "invented-admission",
+    "operation": "replace",
+    "pointer": "/releaseState/runtimeAdmitted",
+    "value": true,
+    "expectedRefusal": "RC_ADMISSION_STATE_MISMATCH"
+  }
+]

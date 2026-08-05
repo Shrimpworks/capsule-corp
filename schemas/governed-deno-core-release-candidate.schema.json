@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capsule.local/schemas/governed-deno-core-release-candidate.schema.json",
+  "title": "Unsigned governed deno_core Linux/arm64 release-candidate consumption manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "objectType",
+    "schemaVersion",
+    "candidateId",
+    "selfDigest",
+    "status",
+    "target",
+    "governedSources",
+    "construction",
+    "runtimeSubjects",
+    "runtimeAuthority",
+    "dynamicRoot",
+    "supplyChainMaterials",
+    "evidence",
+    "compatibility",
+    "closurePolicy",
+    "releaseState",
+    "limitations",
+    "invalidationTriggers"
+  ],
+  "properties": {
+    "objectType": {
+      "const": "capsule.governed-deno-core.release-candidate-consumption-manifest"
+    },
+    "schemaVersion": { "const": 1 },
+    "candidateId": { "const": "governed-deno-core-linux-arm64-rc-2026-08-04-1" },
+    "selfDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "normalization", "sha256"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "normalization": {
+          "const": "replace-this-value-with-64-ascii-zeroes-in-the-exact-utf8-file"
+        },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "status": {
+      "const": {
+        "construction": "PASSED",
+        "releasePublication": "BLOCKED",
+        "runtimeSelection": "IN_PROGRESS — TRENDING_GOOD",
+        "runtimeAdmission": "BLOCKED",
+        "runtime001": "unsupported"
+      }
+    },
+    "target": { "$ref": "#/$defs/closedObject" },
+    "governedSources": { "$ref": "#/$defs/closedObject" },
+    "construction": { "$ref": "#/$defs/closedObject" },
+    "runtimeSubjects": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": { "$ref": "#/$defs/fileIdentity" }
+    },
+    "runtimeAuthority": { "$ref": "#/$defs/closedObject" },
+    "dynamicRoot": { "$ref": "#/$defs/closedObject" },
+    "supplyChainMaterials": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": { "$ref": "#/$defs/materialIdentity" }
+    },
+    "evidence": { "$ref": "#/$defs/closedObject" },
+    "compatibility": { "$ref": "#/$defs/closedObject" },
+    "closurePolicy": { "$ref": "#/$defs/closedObject" },
+    "releaseState": { "$ref": "#/$defs/closedObject" },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "invalidationTriggers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "closedObject": { "type": "object", "minProperties": 1 },
+    "fileIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "path", "mediaType", "size", "sha256"],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "pattern": "^[a-z0-9][a-zA-Z0-9._/+~-]*$" },
+        "mediaType": { "type": "string", "minLength": 1 },
+        "size": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "materialIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "path", "size", "sha256"],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "pattern": "^[a-z0-9][a-zA-Z0-9._/+~-]*$" },
+        "size": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/digest" }
+      }
+    }
+  }
+}

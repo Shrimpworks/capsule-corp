@@ -40,6 +40,7 @@ its core conclusion.
 - [ADR-0017: V0 omits unsupported authority and uses logical resource slots](0017-narrow-v0-proposal-and-logical-slots.md)
 - [ADR-0018: Platform-specific trusted components use least privilege](0018-platform-specific-trusted-components.md)
 - [ADR-0019: Use bounded deterministic CBOR and object-specific COSE profiles](0019-bounded-deterministic-cbor-and-cose.md)
+  — Proposed; narrow passive I2B1 production-shaped wrapper review `PASSED`, full signed-object and installed-consumer acceptance remains `BLOCKED`
 - [ADR-0020: Pivot the production backend from Apple Containerization](0020-pivot-production-backend-from-apple-containerization.md)
   — refined by ADR-0022
 - [ADR-0021: Scope operational Keychain groups to security epochs](0021-security-epoch-keychain-groups.md)
@@ -58,7 +59,7 @@ its core conclusion.
   — Proposed
 - [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
 - [ADR-0031: Checkpoint closed Supervisor cohorts into immutable retained archives](0031-checkpoint-closed-supervisor-cohorts.md)
-  — Proposed
+  — Proposed; F1-F5 fixed-store oracle `PASSED`, F6 production-engine and restore activation remain `BLOCKED`
 - [ADR-0032: Select an enrolled TypeScript Source Preparer and immutable source store](0032-select-enrolled-typescript-source-preparer.md)
   — Proposed
 - [ADR-0033: Select an enrolled BSD `flock` object for Supervisor ownership](0033-select-enrolled-flock-supervisor-owner.md)
@@ -68,9 +69,11 @@ its core conclusion.
 - [ADR-0036: Select role-separated Source Validator launchers and reactive footprint policy](0036-select-role-separated-source-validator-launchers.md)
 - [ADR-0037: Freeze the passive one-application macOS installation I0 contract](0037-freeze-passive-macos-installation-i0-contract.md)
 - [ADR-0038: Select a one-shot Trust Coordinator to authorize Supervisor-created protected state](0038-select-one-shot-coordinator-supervisor-bootstrap.md)
-  — Proposed
+  — Proposed; passive I2B1 wrapper review and I2B2 construction `PASSED`, installed I2B remains `BLOCKED`
 - [ADR-0039: License Capsule-owned material under Apache-2.0](0039-license-capsule-under-apache-2.0.md)
 - [ADR-0040: Freeze the owner-only internal alpha posture](0040-freeze-owner-only-internal-alpha-posture.md)
+  — Accepted; fixed benign guest is a separate experiment, hostile owner-only alpha is the product checkpoint, external alpha is later
 - [ADR-0041: Freeze the passive fixed-owned-guest successor contract](0041-freeze-passive-fixed-owned-guest-successor.md)
+  — Accepted; C2B v3 passive binding `PASSED`, current-source runnable artifacts and guest admission remain `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -32,10 +32,11 @@ direction, not product admission or evidence closure.
 Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and the
 [full audit synthesis](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) now define the release path:
 
-1. harden governed promotion before consuming another promoted fork head;
-2. close one successor runnable profile and run one fixed benign owned guest;
-3. implement one bounded authenticated CLI adapter, the exact single-`main.mjs` proposal, atomic
-   plan/bindings/manifest/source custody, and Broker fetch/render/approval;
+1. preserve the passed governed fork promotions and passive C2B v3 successor, then materialize a
+   current-source libkrun dylib and final runner;
+2. run one separately authorized fixed benign owned guest as a controlled experiment;
+3. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
+   passive atomic plan/bindings/manifest/source custody, then implement Broker fetch/render/approval;
 4. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
    adapter/recovery, and completion evidence; and
 5. run the minimum hostile `.mjs` and restoration corpus with one fresh guest per attempt.
@@ -44,7 +45,8 @@ Host Source Validator R4/R5 is later defense-in-depth rather than an internal-al
 R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and `BLOCKED`. F6 is also deferred only for the
 strict owner-only disposable fixed-store posture. TypeScript, automatic update, Developer ID
 distribution, clean-host/minimum-OS coverage, restore, and production storage are external-alpha
-work.
+work. The fixed guest is not product alpha; the hostile owner-only internal alpha is the next
+product checkpoint, and external alpha remains a later distinct gate.
 
 ## Phase 0: architecture and claim baseline
 
@@ -221,9 +223,10 @@ archived attempts from hot recovery. The retained F4B blocker records the former
 contradiction; F4B now passes atomic mutation and independent append-only effect tombstones in the
 exact fixed-store scope. F4C now passes bounded second/later immutable-segment growth through the
 exact 64-segment ceiling in its [retained result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md). F5
-backup/orphan policy is the next archive slice.
-Production-engine selection,
-implementation/installed validation of the selected owner lock and power loss, coherent
+now passes manifest-last coherent backup, complete-copy verification, read-only exact-anchor restore
+admission, bounded offline reporting, and explicit known-unreferenced orphan removal in the same
+fixed-store oracle. F6 production-engine selection is the next archive slice.
+Installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
 consumer behavior remain open.
 
@@ -247,8 +250,10 @@ scratch authority only, with mandatory cleanup/residue testing that is not a con
 proof. The public footprint setter returned `KERN_NO_ACCESS`, so the accepted contract is a later
 evidence-derived reactive footprint watermark with one direct child per launcher request, bounded
 combined two-role concurrency, fixed sampling, and kill/drain/reap—not a hard peak/exact cap or
-host-availability guarantee. R1 now passes with those measurements explicitly inactive and zero;
-R4 alone may derive threshold/cadence/baseline/overshoot/kill-latency values.
+host-availability guarantee. R1 now passes with those measurements explicitly inactive and zero.
+R3 also passes its exact Apple Development signed, installed, inactive-policy composition. Exact
+R4-v1 candidates are `NO_GO`; R4-v2 was not executed, product R4/R5 remains `BLOCKED`, and R4 alone
+may derive threshold/cadence/baseline/overshoot/kill-latency values.
 Supervisor custody, Broker rendering, and runtime no-loader evidence remain unimplemented.
 Accepted ADR-0035 selects exact Oxc 0.140.0 as the engineering candidate for a separate
 one-shot Source Validator after a bounded parse-only comparison. V0 observes the fixed typed
@@ -256,12 +261,11 @@ protocol and cross-language passive conformance. V1 observes exact build bytes, 
 SBOM, unsigned provenance, same-host reproduction, and V0/M1 behavior without enrollment. Later
 slices must prove independent reproduction and signed enrollment, disposable OS profile,
 independent role-private daemon/Broker invocation, grammar/mutation corpus, resource/residue
-evidence, and fault recovery. R1 passive contracts/fixtures and R2 unsigned construction are now
-retained. R2's role-specific bundles and parser children reproduce offline across two clean
-same-host directories; their exact inactive policies predecode and refuse without spawning. Work
-proceeds strictly as R3 separately authorized signing/install, R4
-confinement/resource/residue corpus,
-R5D daemon consumer and R5B Broker consumer are future conditional work; they are not predecessors
+evidence, and fault recovery. R1 passive contracts/fixtures, R2 unsigned construction, and R3
+signed installed inactive-policy composition are now retained. R2's role-specific bundles and
+parser children reproduce offline across two clean same-host directories; their exact inactive
+policies predecode and refuse without spawning. R4-v2 confinement/resource/residue, R5D daemon
+consumer, and R5B Broker consumer are future conditional work; they are not predecessors
 of the now-passed passive M2/S1 fixture/facade checkpoint. Unsupported private-XPC
 reachability, widened authority/native loading/network/filesystem escape, orphan/cleanup failure,
 mixed-version acceptance, or unacceptable measured host risk stops the exact candidate. No product
@@ -296,8 +300,10 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned
   `fxamacker/cbor` only for future object-specific typed encode/decode while keeping Capsule
   predecode/caps/canonical/binding/replay controls, and rejects `go-cose` as a product envelope
-  dependency. Before root-module admission, freeze the applicable object set, complete independent
-  review, and demonstrate the production-shaped Swift and Supervisor/Broker same-byte path.
+  dependency. The narrow I2B1 production-shaped Go/Swift same-byte wrapper review is `PASSED` for
+  checked-in public-key vectors only. Before broader root-module admission, freeze each remaining
+  object set and close caller/key authorization, live signing, durable replay, installed consumers,
+  and independent review.
 - After F2 and G2 close their active logical/ownership work, run the single bounded SQLite
   production-engine comparison from the reuse map. Do not turn the fixed snapshot into an
   unbounded product store or select a driver before the complete graph and C/native boundary are
@@ -383,11 +389,12 @@ Exit evidence:
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
   EOF, or inferring success from runner exit.
-- Treat C2B v1 and v2 as immutable inputs. The former dependencies are merged; v2 pins their
-  reviewed no-guest successor evidence without rewriting v1. Reverify every v2 archive, manifest,
-  and artifact identity before use. Any changed head, tree, evidence record, or artifact creates a
-  new binding identity. Consumption belongs to a separately authorized composed-profile/owned-guest
-  task and does not itself admit a runtime or profile.
+- Treat C2B v1, v2, and v3 as immutable inputs. V3 binds the accepted governed heads and resolves
+  runner/libkrunfw/kernel, descriptor, device, resource, and teardown semantics without rewriting
+  earlier evidence. Reverify every archive, manifest, and artifact identity before use. A
+  current-source libkrun dylib and final runner require a new materialized binding before any
+  separately authorized fixed-owned-guest task; neither passive consumption nor that experiment
+  admits a runtime or profile.
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.

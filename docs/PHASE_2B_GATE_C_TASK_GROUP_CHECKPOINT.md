@@ -1,11 +1,13 @@
 # Phase 2B and Gate C current maintainer checkpoint
 
-Date: 2026-08-04
+Date: 2026-08-05
 
-Status: repository checkpoint through current main plus the passive V0 contract, bounded V1
-artifact, blocked V2 process-profile evidence, and the passed supported-profile replacement design.
-This is a status and dependency
-index. It does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
+Status: current merged-state dependency index. Passive authority-plane cutover, C2B v3 successor,
+the narrow production-shaped wrapper review, compiled-artifact archive migration, governed fork
+promotions, Source Validator R3, and archive F5 are `PASSED` only in their exact retained scopes.
+The hostile owner-only internal-alpha parent is `IN_PROGRESS — TRENDING_GOOD`; connected product
+authority, fixed-owned-guest eligibility/admission, and external alpha remain `BLOCKED`. This
+checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 
 ## How to read the status
@@ -27,21 +29,22 @@ Keep these evidence classes separate:
 
 ## Durable repository state
 
-The current closed conformance corpus has 100 rules, 510 cases, and 631 fixtures. The unwired
-Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
-targets plus 40 independently verified MJS byte/manifest targets in each language. Go and a
-standalone test-only Rust oracle additionally verify 128 exact passive v0 Source Validator frames;
-Go and Node independently verify 46 role-separated passive v1 frames.
-Twenty-eight exact M1 HOLD result oracles are retained and the unwired V1 artifact reproduces them,
-and both are `PASSED` in their exact passive or unwired scopes. Product Source Validator work is
-`BLOCKED` on the retained V2 macOS resource/confinement stop and R3-R5B. The passive
-field-authority foundation covers 335 fields across 26 selected pre-freeze targets, including
-SourceManifest and v0/v1 passive Source Validator objects; it does not classify future Source
-Preparer or plan-v1 objects.
+The current closed conformance corpus has 95 rules, 502 cases, and 624 fixtures. The current
+field-authority manifest classifies 1,111 fields across 81 profiles and 50 targets. The generated
+verifiers are canonical for detailed language and object coverage. Product Source Validator work
+is `BLOCKED`, but R1/R2 and exact Apple Development signed, installed, inactive-policy R3 are
+`PASSED`; exact R4-v1 candidates are `NO_GO`, and R4-v2 was not executed. The archive migration
+pins bulky completed compiled evidence to the exact capsule-experiments archive commit while this
+repository retains compact conformance metadata and required deterministic source inputs. It does
+not change product status or admission.
 
 The no-guest fixed-store lifecycle remains at E5 `local-mechanic`: exact registration,
 approval/attempt, lifecycle intent/effect, recovery, and 256-active/4,096-retained capacity oracles
 exist, while ownership is still injected in-process and `FakeBackend.CreatesGuest() == false`.
+The later passive authority-plane cutover now atomically retains exact-one-`main.mjs` source,
+manifest, resolved bindings, plan, and registration and fetches defensive copies by
+`RegistrationID`. It remains an unwired fixed-store oracle with no authenticated endpoint, Broker,
+approval, attempt, runtime, backend, or guest effect.
 
 Archive Slice F1 is now implemented as passive `internal/execution/archivestate` types, exact
 limits and known-answer digests, defensive copies, and a deterministic complete-cohort eligibility
@@ -80,9 +83,9 @@ exact [passive V0 byte contract](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_CONTRACT.
 profile remains unsigned/not enrolled and lacks independent reproduction, V2 confinement, an
 endpoint, and a consumer. V2 now retains exact fixed-I/O/fault mechanics plus the stop: `RLIMIT_AS`
 returns `EINVAL`, the explicit unbounded diagnostic mutation retains file/socket/write authority,
-and supported App Sandbox child entitlements change the fixed V1 bytes. Those V1-V5 gates are
-`BLOCKED`; JobProposal
-narrowing and all S1/M2 registration/fetch work remain `BLOCKED` on them.
+and supported App Sandbox child entitlements change the fixed V1 bytes. Product R4/R5 remains
+`BLOCKED`; exact R4-v1 candidates are `NO_GO`. The exact-one-`main.mjs` proposal and passive S1/M2
+registration/fetch cutover no longer wait on the product validator.
 
 The supported replacement research and R0 architecture slices pass only their exact scopes.
 Direct App Sandbox inheritance is `NO_GO`. Accepted ADR-0036 selects two role-specific private
@@ -91,17 +94,16 @@ result, cache, container, group, or key. Each writable private container is resi
 authority only with mandatory cleanup/residue evidence that is not a confidentiality proof. The
 public footprint setter returned `KERN_NO_ACCESS`, so the accepted policy is a later evidence-
 derived reactive watermark with no hard-peak/exact-cap or host-availability claim. R1 retains the
-passive identities and R2 retains exact unsigned role bundles; R3-R5B own separately authorized signing/install, installed
-confinement/resource/residue evidence, sequential consumers, and updates. No numeric resource value,
-active policy measurement, Apple signing identity, installed service, or consumer exists.
+passive identities, R2 retains exact unsigned role bundles, and R3 passes its exact signed,
+installed, inactive-policy composition. R4-v2 and R5B/R5D own later confinement/resource/residue
+and sequential-consumer evidence. No active policy measurement or product consumer exists.
 
-The proposed
-`RegisterPlanV0` would atomically submit exact plan bytes, the
-complete 562-byte role projection, the exact 87..95-byte canonical source manifest, and 0..262,144
-source bytes; `GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Candidate
-application-data maxima are 328,337 request bytes and 332,433 fetch-reply bytes, pending generated
-fixture verification from the complete field-authority projection. No S1 fixture, facade, bridge,
-endpoint, consumer, or source-custody store extension exists yet.
+The passive `RegisterPlanV0` cutover atomically retains exact plan bytes, the complete 562-byte role
+projection, the exact 87..95-byte canonical source manifest, and 0..262,144 source bytes;
+`GetRegisteredPlanV0` returns Supervisor-retained defensive copies. Generated fixtures verify the
+328,337-byte request and 332,433-byte fetch-reply caps and atomic all-or-nothing publication. No
+authenticated bridge, endpoint, Broker consumer, approval, attempt, runtime, backend, or guest is
+created, and the fixed-store oracle is not product admission.
 
 PR #72 retained the Source Preparer as **BLOCKED**. A separately enrolled unprivileged Source
 Preparer remains only a conditional later TypeScript design. P1 passive
@@ -121,6 +123,16 @@ acceptance. The 626-byte TypeScript arithmetic remains no layout, cap, or known 
 
 ## Governed runtime and libkrun source state
 
+The governed promotion slice is `PASSED`: fork defaults are locked at Deno
+`capsule/accepted-v2.9.4-r3`, `rusty_v8` `capsule/accepted-v150.2.0-r5`, and libkrun
+`capsule/upstream-v1.19.4-r3` with historical accepted heads protected and each `main` retained only
+as mutable integration state. C2B v3 passively binds those accepted identities and resolves the
+fixed-owned-guest contract. The retained libkrun dylib predates the accepted source and the
+build-only preflight is not a runner, so current-source dylib and final runner materialization,
+fixed-owned-guest eligibility, and runtime/profile admission remain `BLOCKED`. Governance and
+passive binding admit no artifact, runtime, backend, profile, or guest. The paragraphs below retain
+the earlier transfer and merge evidence as historical provenance.
+
 The current governed integration destination is
 [`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), transferred from the historical
 `dills122/libkrun` location. It remains a public fork of `libkrun/libkrun`; transferred PRs #1 and
@@ -136,7 +148,7 @@ The governed libkrun follow-up merged PR #2 from head
 `d19fd0ff159c699acccda2621519de45a09408bf3847b418ac34e02b79e805d5`, fixes the observed
 queued-backpressure shutdown loop and inactive-state lifecycle defect, and moves the four changed
 console files from 13/88 to 37/88 covered functions and 90/728 to 298/733 covered lines. The
-remaining uncovered code, branch/verifier pin mismatch, independent review, caller shared-status
+remaining uncovered code, independent review, caller shared-status
 hazard, hostile control/queue/descriptor work, real transport, distinct launcher, guest/VMM,
 installed composition, release obligations, and final profile reruns remain open. This is governed
 fork source and local library evidence only; no guest, backend, or profile is admitted.
@@ -163,15 +175,15 @@ remains `BLOCKED`.
 
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
-| F2-F4B `PASSED` local conformance / `IN_PROGRESS — TRENDING_GOOD` parent workstream | Archive F2-F4B / F4C+ | F2 migration/full verification, F3 first immutable-segment activation, F4A read-only retained lookup, and F4B atomic mutation/independent tombstone retention pass their exact fixed-store scopes with missing-history preservation, publish-before-reference ordering, durable exact replay, complete old-or-new reopen, hot/archive semantic equality, and zero adapter calls. See the [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md). F4C bounded growth and production archive/store admission remain later. |
+| F2-F5 `PASSED` local conformance / F6 `BLOCKED` | Archive F2-F6 | F2 migration/full verification, F3 activation, F4A retained lookup, F4B mutation/tombstones, F4C bounded growth, and F5 coherent backup/read-only restore admission/known-orphan cleanup/offline reporting pass only in the owner-held fixed-store oracle. F6 production-engine, installed APFS/power-loss, restore activation, rollback, and external-alpha continuity remain blocked. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. Apple Membership Details confirms emitted Team `3DDR84M4JS` is the account Team and W4 is only a certificate display suffix. G3 remains blocked on exact 3DDR role profiles and protected-root bootstrap/signed-record/descriptor-relative store composition. |
-| `PASSED` prerequisites, replacement research, and R0 decision / product and downstream `BLOCKED` | `.mjs` Source Validator and S1/M2 | The exact Oxc selection, passive frames, unwired V1 artifact, negative V2 checkpoint, and ADR-0036 R0 decision passed their bounded scopes. Direct inherited helpers are rejected; two role-specific private launchers, residual scratch/cleanup, and reactive-resource claim boundaries are selected. Keep product and S1/M2 blocked. |
-| R1/R2 `PASSED`; R3/product `BLOCKED` | Source Validator R1-R5B | Passive v1 contracts/field authority retain role-distinct known answers, inactive policy, exact caps, and independent Go/Node decoding. R2 retains two offline unsigned role-specific bundles/parser children, same-host clean-directory equality, supply evidence, and inactive predecode/refusal with no spawn. The R3 packet is exact but blocked on containing fixtures, role profiles, signed constraints, and separate mutation authorization. Then continue through confinement/resource/residue, daemon consumer, Broker consumer, and M2/S1. Stop on unsupported private reachability, authority/native-loading/network/filesystem escape, orphan/cleanup, mixed update, or unacceptable measured host risk. |
+| `PASSED` passive S1/M2 cutover / product integration `BLOCKED` | `.mjs` authority plane | Exact-one-`main.mjs` planning and atomic registration/fetch pass as unwired fixed-store mechanics. Authenticated product facades, Broker rendering/signing, production verification, protected state, and connected attempt/runtime consumers remain blocked. |
+| R1/R2/R3 `PASSED`; product `BLOCKED` | Source Validator R1-R5B | Passive contracts and unsigned construction retain role-distinct known answers, inactive policy, caps, and independent decoding. R3 passes the exact Apple Development signed, installed, inactive-policy composition. Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted. Product R4/R5 remains later defense-in-depth and is not an alpha prerequisite. |
 | `PASSED` bounded unwired conformance / signed parent `BLOCKED` | Production-shaped CBOR/COSE wrapper | The [v0 object-set/wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) keeps `SourceManifest` v0 in its narrow canonical wrapper and freezes only I2B1 request/record as the applicable passive signed set. The [independent wrapper review](PRODUCTION_SHAPED_CBOR_COSE_WRAPPER_REVIEW.md) retains Capsule predecode/caps/canonical bytes, exact COSE headers and signature profile, complete signed-request/record binding, payload-owned replay identity, 95 agreeing Go/Swift cases, and fuzz targets. Approval, installed role/profile/CDHash and key authorization, same-byte consumers, live signing, and production admission remain blocked; `go-cose` stays test-only and absent. |
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | `PASSED` bounded construction and passive contract | Fork-native bundle and C1 composition | The merged handoff reconstructs the exact Linux/arm64 binary/snapshot/root identities; C1 fixes the no-effect app/runtime/logical-descriptor/resource contract. Neither result releases or admits bytes. |
-| Later C2 composition | Governed runtime plus libkrun | Requires exact governed runner/kernel/init/libkrun/launcher identities, a selected closed numeric descriptor and machine-resource manifest, and explicit authorization for an owned disposable development guest, followed by the exact runtime-surface/transport/fault/teardown corpus. |
+| C2B v3 `PASSED` passive / fixed guest `BLOCKED` | Governed runtime plus libkrun | V3 binds accepted governed heads and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics. It still needs a current-source libkrun dylib, final runner, new materialized successor, and separate authorization before the fixed benign owned guest. No hostile owner source or product admission belongs to that experiment. |
 | Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference, and Apple Membership Details confirms Team `3DDR84M4JS`. New Apple Development SHA-1 `80A4...D3793` is locally present but not authorized. Exact 3DDR role profiles and separate credentialed authorization remain required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 

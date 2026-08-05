@@ -197,9 +197,12 @@ fenced without authority recovery.
 - The design keeps the installation-root private key outside the visible app, daemon, Supervisor,
   updater, and replacer while avoiding a permanent agent or privileged helper.
 - I2B1 passive objects and I2B2 unsigned construction are `PASSED` in their exact scopes.
-- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, production
-  wrapper review, separately authorized test-only signing/Keychain/App Group/SMAppService
-  mutations, same-user/stale/debug/session/update evidence, and descriptor-relative G2 composition.
+- The narrow production-shaped I2B1 wrapper review is `PASSED` for passive checked-in vectors. It
+  adds no live key, signing, authenticated caller/key registry, durable replay, installed consumer,
+  or product admission.
+- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, separately
+  authorized test-only signing/Keychain/App Group/SMAppService mutations, caller/key authorization,
+  same-user/stale/debug/session/update evidence, and descriptor-relative G2 composition.
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.
 - Product-store selection, production signed corpus, archive F4B+, ordinary authenticated IPC,

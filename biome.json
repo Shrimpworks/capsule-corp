@@ -15,6 +15,7 @@
       "!!schemas/conformance/v0/mjs-source",
       "!!schemas/conformance/v0/mjs-source-manifest",
       "!!schemas/conformance/v0/source-manifest",
+      "!!schemas/conformance/authority-plane-v0",
       "!!schemas/conformance/typescript-approved-byte-v0",
       "!!schemas/conformance/c2b-governed-deno-core/inputs",
       "!!schemas/conformance/macos-i2b2-unsigned-installation/profile.schema.json",

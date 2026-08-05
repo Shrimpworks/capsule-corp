@@ -1055,6 +1055,50 @@
         "separately-authorized-composed-profile-owned-guest-task-after-gate"
       ]
     },
+    "authority-plane-nominal-bindings": {
+      "authorityClass": "approval-visible-authority",
+      "originRole": "daemon-planner",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "requests-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "derived-from-untrusted" },
+      "binding": "execution-plan-v0-exact-bytes-and-digest",
+      "unknownBehavior": "reject-registration"
+    },
+    "authority-plane-resolved-bindings": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "execution-supervisor",
+      "validator": "execution-plan-cbor-decoder",
+      "resolver": "execution-plan-role-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "supervisor-registration-source-custody",
+      "unknownBehavior": "reject-registration"
+    },
+    "authority-plane-source-manifest": {
+      "authorityClass": "content-capability",
+      "originRole": "daemon-planner",
+      "validator": "source-manifest-cbor-decoder",
+      "resolver": "source-manifest-byte-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "contentStatus": { "userContent": "identity-only", "guestControl": "derived-from-untrusted" },
+      "binding": "supervisor-registration-source-custody",
+      "unknownBehavior": "reject-registration"
+    },
+    "authority-plane-source-bytes": {
+      "authorityClass": "content-capability",
+      "originRole": "agent",
+      "validator": "source-manifest-cbor-decoder",
+      "resolver": "source-manifest-byte-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "must-render", "source": "supervisor-registration-record" },
+      "contentStatus": { "userContent": "may-contain", "guestControl": "untrusted-value" },
+      "binding": "supervisor-registration-source-custody",
+      "unknownBehavior": "reject-registration"
+    },
     "macos-installation-i2b2-unsigned-profile": {
       "authorityClass": "evidence-only-observation",
       "originRole": "passive-fixture-generator",
@@ -1108,8 +1152,8 @@
           "profile": "proposal-source"
         },
         {
-          "path": "/source/files/*",
-          "sourceField": "/source/files/*",
+          "path": "/source/files/main-mjs",
+          "sourceField": "/source/files/main.mjs",
           "profile": "proposal-source"
         },
         {
@@ -1176,6 +1220,65 @@
           "path": "/labels/*",
           "sourceField": "/labels/*",
           "profile": "proposal-metadata"
+        }
+      ]
+    },
+    {
+      "object": "capsule.register-plan-v0-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/contracts.go",
+        "type": "RegisterPlanV0Request"
+      },
+      "fields": [
+        { "path": "/exactPlanBytes", "sourceField": "plan", "profile": "plan-content" },
+        {
+          "path": "/nominalRoleBindingBytes",
+          "sourceField": "bindings",
+          "profile": "authority-plane-nominal-bindings"
+        },
+        {
+          "path": "/sourceManifestBytes",
+          "sourceField": "manifest",
+          "profile": "authority-plane-source-manifest"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "source",
+          "profile": "authority-plane-source-bytes"
+        }
+      ]
+    },
+    {
+      "object": "capsule.get-registered-plan-v0-reply",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/contracts.go",
+        "type": "GetRegisteredPlanV0Reply"
+      },
+      "fields": [
+        { "path": "/exactPlanBytes", "sourceField": "plan", "profile": "plan-content" },
+        {
+          "path": "/resolvedRoleBindingBytes",
+          "sourceField": "bindings",
+          "profile": "authority-plane-resolved-bindings"
+        },
+        {
+          "path": "/planRegistrationBytes",
+          "sourceField": "registration",
+          "profile": "registration-state"
+        },
+        {
+          "path": "/sourceManifestBytes",
+          "sourceField": "manifest",
+          "profile": "authority-plane-source-manifest"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "source",
+          "profile": "authority-plane-source-bytes"
         }
       ]
     },

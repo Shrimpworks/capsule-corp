@@ -712,7 +712,7 @@ func ordinaryPlanBindings() v0candidate.ExecutionPlanRoleBindings {
 	return v0candidate.ExecutionPlanRoleBindings{
 		InstallationID:                  repeated16[v0candidate.InstallationID](0x11),
 		EpochDigest:                     repeated32[v0candidate.TrustEpochDigest](0x22),
-		SourceManifestDigest:            mustHex32WithoutTest[v0candidate.SourceManifestDigest]("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+		SourceManifestDigest:            mustHex32WithoutTest[v0candidate.SourceManifestDigest]("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"),
 		InlineInputDigest:               mustHex32WithoutTest[v0candidate.InlineInputDigest]("bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72"),
 		RuntimeBundleManifestDigest:     repeated32[v0candidate.RuntimeBundleManifestDigest](0x55),
 		ProfileReviewAttestationDigests: []v0candidate.ProfileReviewAttestationDigest{repeated32[v0candidate.ProfileReviewAttestationDigest](0x66), repeated32[v0candidate.ProfileReviewAttestationDigest](0x67)},
@@ -727,7 +727,7 @@ func ordinaryPlanBindings() v0candidate.ExecutionPlanRoleBindings {
 func ordinaryRegistrationBindings(id byte) v0candidate.PlanRegistrationRoleBindings {
 	return v0candidate.PlanRegistrationRoleBindings{
 		RegistrationID: repeated16[v0candidate.RegistrationID](id),
-		PlanDigest:     mustHex32WithoutTest[v0candidate.ExecutionPlanDigest]("627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c"),
+		PlanDigest:     mustHex32WithoutTest[v0candidate.ExecutionPlanDigest]("ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241"),
 		InstallationID: repeated16[v0candidate.InstallationID](0x11),
 		EpochDigest:    repeated32[v0candidate.TrustEpochDigest](0x22),
 		SupervisorID:   repeated16[v0candidate.SupervisorID](0x55),

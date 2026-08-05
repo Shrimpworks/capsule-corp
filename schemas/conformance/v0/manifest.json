@@ -842,9 +842,9 @@
       ]
     },
     {
-      "id": "job-proposal.source.path-grammar",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "Source paths use the exact relative case-sensitive ASCII grammar.",
+      "id": "job-proposal.source.exact-main-mjs",
+      "source": "ADR-0034#single-member-source-profile",
+      "description": "Source is exactly one main.mjs member; legacy JS, TS, CJS, and multi-file bundles are refused.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -857,54 +857,9 @@
       ]
     },
     {
-      "id": "job-proposal.source.path-bytes",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "One source path contains at most 256 ASCII bytes.",
-      "requiredCases": [
-        {
-          "decision": "accept",
-          "variant": "exact-maximum"
-        },
-        {
-          "decision": "reject",
-          "variant": "cap-plus-one"
-        }
-      ]
-    },
-    {
-      "id": "job-proposal.source.segment-bytes",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "One source path segment contains at most 64 ASCII bytes.",
-      "requiredCases": [
-        {
-          "decision": "accept",
-          "variant": "exact-maximum"
-        },
-        {
-          "decision": "reject",
-          "variant": "cap-plus-one"
-        }
-      ]
-    },
-    {
-      "id": "job-proposal.source.file-count",
-      "source": "ADR-0023#strict-jobproposal-raw-profile",
-      "description": "A proposal contains at most 32 source file entries.",
-      "requiredCases": [
-        {
-          "decision": "accept",
-          "variant": "exact-maximum"
-        },
-        {
-          "decision": "reject",
-          "variant": "cap-plus-one"
-        }
-      ]
-    },
-    {
       "id": "job-proposal.source.file-bytes",
-      "source": "ADR-0023#strict-jobproposal-raw-profile",
-      "description": "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+      "source": "ADR-0034#single-member-source-profile",
+      "description": "Exact main.mjs content contains at most 262,144 strict UTF-8 bytes.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -917,39 +872,9 @@
       ]
     },
     {
-      "id": "job-proposal.source.aggregate-bytes",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
-      "requiredCases": [
-        {
-          "decision": "accept",
-          "variant": "exact-maximum"
-        },
-        {
-          "decision": "reject",
-          "variant": "cap-plus-one"
-        }
-      ]
-    },
-    {
-      "id": "job-proposal.source.manifest-identity",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
-      "requiredCases": [
-        {
-          "decision": "accept",
-          "variant": "ordinary"
-        },
-        {
-          "decision": "accept",
-          "variant": "exact-maximum"
-        }
-      ]
-    },
-    {
-      "id": "job-proposal.source.entrypoint-membership",
-      "source": "ADR-0023#source-path-and-source-manifest-identity",
-      "description": "The entrypoint exactly equals one source-file key.",
+      "id": "job-proposal.source.manifest-identity-v0",
+      "source": "ADR-0034#source-manifest-v0",
+      "description": "The canonical single-member SourceManifest binds exact main.mjs bytes.",
       "requiredCases": [
         {
           "decision": "accept",
@@ -15371,8 +15296,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15389,10 +15314,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -15430,8 +15355,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/authority-network-placeholder.json",
-        "sha256": "56f354890feac70c5a70cd42a4e0796bd40c5f018888804388385da798076ee1",
-        "byteLength": 887
+        "sha256": "4edb35fdcd17116d3c1c475959212238d13387e249ca772d5dcbd1a860b7bf1f",
+        "byteLength": 796
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15515,10 +15440,10 @@
       }
     },
     {
-      "id": "job-proposal.source.path-grammar.accept",
-      "description": "Accept case-distinct relative ASCII source paths.",
+      "id": "job-proposal.source.exact-main-mjs.accept",
+      "description": "Accept exactly one main.mjs source member.",
       "ruleIds": [
-        "job-proposal.source.path-grammar"
+        "job-proposal.source.exact-main-mjs"
       ],
       "object": "JobProposal",
       "wireFormat": "json",
@@ -15526,8 +15451,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15544,10 +15469,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -15574,19 +15499,19 @@
       }
     },
     {
-      "id": "job-proposal.source.path-grammar.reject-dot-segment",
-      "description": "Reject a dot-dot source path segment before semantic resolution.",
+      "id": "job-proposal.source.exact-main-mjs.reject-legacy-typescript",
+      "description": "Refuse the historical main.ts proposal shape.",
       "ruleIds": [
-        "job-proposal.source.path-grammar"
+        "job-proposal.source.exact-main-mjs"
       ],
       "object": "JobProposal",
       "wireFormat": "json",
       "mediaType": "application/capsule.job-proposal+json;v=0",
       "variant": "malformed",
       "fixture": {
-        "path": "job-proposal/source-path-dot-segment.json",
-        "sha256": "e105058b08e3961cc673ac1fb08273a0deb597552eb2962844d36df113c0be5f",
-        "byteLength": 777
+        "path": "job-proposal/source-legacy-main-ts.json",
+        "sha256": "5e2571872b74a85a5f5b9d53c9cd451a79044f83b24e5e0d939e463f4939f9b7",
+        "byteLength": 735
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15610,7 +15535,7 @@
       },
       "expected": {
         "decision": "reject",
-        "classification": "SCHEMA",
+        "classification": "DOMAIN",
         "owner": "job-proposal-schema",
         "authorityStateChanged": false
       },
@@ -15622,259 +15547,19 @@
       }
     },
     {
-      "id": "job-proposal.source.path-bytes.exact-maximum",
-      "description": "Accept an exact 256-byte source path and matching entrypoint.",
+      "id": "job-proposal.source.exact-main-mjs.reject-extra-member",
+      "description": "Refuse additive multi-file source authority.",
       "ruleIds": [
-        "job-proposal.source.path-bytes"
+        "job-proposal.source.exact-main-mjs"
       ],
       "object": "JobProposal",
       "wireFormat": "json",
       "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "exact-maximum",
+      "variant": "malformed",
       "fixture": {
-        "path": "job-proposal/source-path-exact.json",
-        "sha256": "889f7c9e053eb4568fa37086ff9cc2e76dda1ea4e2bec0a10296c4786f817632",
-        "byteLength": 1233
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "accept",
-        "classification": null,
-        "owner": "job-proposal-schema",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.path-bytes.cap-plus-one",
-      "description": "Reject a 257-byte source path without truncation or normalization.",
-      "ruleIds": [
-        "job-proposal.source.path-bytes"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "cap-plus-one",
-      "fixture": {
-        "path": "job-proposal/source-path-over.json",
-        "sha256": "bfefff28435f5aaa2f82c446a723275e7ceddb36dc3991c5b5be8f727cb8431a",
-        "byteLength": 1235
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "reject",
-        "classification": "SCHEMA",
-        "owner": "job-proposal-schema",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.segment-bytes.exact-maximum",
-      "description": "Accept an exact 64-byte non-entrypoint source path segment.",
-      "ruleIds": [
-        "job-proposal.source.segment-bytes"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "exact-maximum",
-      "fixture": {
-        "path": "job-proposal/source-segment-exact.json",
-        "sha256": "a6191c65cdb7d83d29eb6c93416cd07bd1496c6842a16496f8fecfbb8d9066f1",
-        "byteLength": 835
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "accept",
-        "classification": null,
-        "owner": "job-proposal-schema",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.segment-bytes.cap-plus-one",
-      "description": "Reject a 65-byte source path segment.",
-      "ruleIds": [
-        "job-proposal.source.segment-bytes"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "cap-plus-one",
-      "fixture": {
-        "path": "job-proposal/source-segment-over.json",
-        "sha256": "67c055fe4144eedc83182780124abd24c18254d262eaf165b1a9fdac7b8ba6f5",
-        "byteLength": 836
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "reject",
-        "classification": "SCHEMA",
-        "owner": "job-proposal-schema",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.file-count.exact-maximum",
-      "description": "Accept exactly 32 source file entries.",
-      "ruleIds": [
-        "job-proposal.source.file-count"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "exact-maximum",
-      "fixture": {
-        "path": "job-proposal/source-file-count-exact.json",
-        "sha256": "3a8597ba4781d312256901fd36667d4109d43cf4e9de79a65bcc7c8e36f00205",
-        "byteLength": 1341
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "accept",
-        "classification": null,
-        "owner": "job-proposal-schema",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.file-count.cap-plus-one",
-      "description": "Reject 33 source file entries.",
-      "ruleIds": [
-        "job-proposal.source.file-count"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "cap-plus-one",
-      "fixture": {
-        "path": "job-proposal/source-file-count-over.json",
-        "sha256": "0ba15d30fa5eb42217ed5f6ee1130e0bb7d5464e4e4e51082239b88201d34420",
-        "byteLength": 1361
+        "path": "job-proposal/source-extra-member.json",
+        "sha256": "3ad465c069756d556c497505d5dd98801f2947e21d38382be50d2146bec0637f",
+        "byteLength": 773
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15911,7 +15596,7 @@
     },
     {
       "id": "job-proposal.source.file-bytes.exact-maximum",
-      "description": "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+      "description": "Accept main.mjs containing exactly 262,144 UTF-8 bytes.",
       "ruleIds": [
         "job-proposal.source.file-bytes"
       ],
@@ -15921,8 +15606,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/source-file-bytes-exact.json",
-        "sha256": "cb2681fd2cb02a1508494de5b18f5c8afc5061c16655e72d37f93869475c8edc",
-        "byteLength": 262867
+        "sha256": "722b9691bff7399a63554bb5a77f9703cee6d09fd3ec1eeb7eba823edcc9edb4",
+        "byteLength": 262869
       },
       "context": {
         "kind": "proposal-resolution",
@@ -15959,7 +15644,7 @@
     },
     {
       "id": "job-proposal.source.file-bytes.cap-plus-one",
-      "description": "Reject one source file containing 262,145 UTF-8 bytes.",
+      "description": "Refuse main.mjs containing 262,145 UTF-8 bytes.",
       "ruleIds": [
         "job-proposal.source.file-bytes"
       ],
@@ -15969,8 +15654,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/source-file-bytes-over.json",
-        "sha256": "5642e299e91b7803fd874ba5ae574877ad5f0e928c2a8a20fe163927cb41eb40",
-        "byteLength": 262868
+        "sha256": "b651507c5eb42851218522ea57ac2e40cef08c64a0a8e265a51b61869c153ddf",
+        "byteLength": 262870
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16006,107 +15691,10 @@
       }
     },
     {
-      "id": "job-proposal.source.aggregate-bytes.exact-maximum",
-      "description": "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
+      "id": "job-proposal.source.manifest-identity-v0.known-answer",
+      "description": "Derive the canonical retained SourceManifest bytes and digest.",
       "ruleIds": [
-        "job-proposal.source.aggregate-bytes",
-        "job-proposal.source.manifest-identity"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "exact-maximum",
-      "fixture": {
-        "path": "job-proposal/source-aggregate-exact.json",
-        "sha256": "0fcb54d8b9c973e2e144cc62f7c4503d9681f4f6931d6e55516cd7aad8f8871a",
-        "byteLength": 1049352
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "accept",
-        "classification": null,
-        "owner": "job-proposal-semantic-validator",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.aggregate-bytes.cap-plus-one",
-      "description": "Reject 1,048,577 aggregate source bytes without clamping a file.",
-      "ruleIds": [
-        "job-proposal.source.aggregate-bytes"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "cap-plus-one",
-      "fixture": {
-        "path": "job-proposal/source-aggregate-over.json",
-        "sha256": "aac806c3ecb4274b538258ea1df6149e6a1ce6f623e02809cc6110799c21625d",
-        "byteLength": 1049374
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": null,
-          "sourceManifestDigest": null,
-          "canonicalInlineInput": null,
-          "inlineInputDigest": null,
-          "wallTime": null
-        }
-      },
-      "expected": {
-        "decision": "reject",
-        "classification": "SEMANTIC",
-        "owner": "job-proposal-semantic-validator",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.manifest-identity.known-answer",
-      "description": "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
-      "ruleIds": [
-        "job-proposal.source.manifest-identity"
+        "job-proposal.source.manifest-identity-v0"
       ],
       "object": "JobProposal",
       "wireFormat": "json",
@@ -16114,8 +15702,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16132,10 +15720,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -16162,78 +15750,19 @@
       }
     },
     {
-      "id": "job-proposal.source.entrypoint-membership.accept",
-      "description": "Accept an entrypoint that exactly matches a source path.",
+      "id": "job-proposal.source.manifest-identity-v0.reject-leading-bom",
+      "description": "Refuse a leading BOM before deriving source custody.",
       "ruleIds": [
-        "job-proposal.source.entrypoint-membership"
-      ],
-      "object": "JobProposal",
-      "wireFormat": "json",
-      "mediaType": "application/capsule.job-proposal+json;v=0",
-      "variant": "ordinary",
-      "fixture": {
-        "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
-      },
-      "context": {
-        "kind": "proposal-resolution",
-        "profileRegistry": {
-          "path": "contexts/profile-registry.json",
-          "sha256": "8213f3695a32959345a71a7da1934276f701fc11be440815951a54582615c275",
-          "byteLength": 419
-        },
-        "userPolicy": {
-          "path": "contexts/user-policy.json",
-          "sha256": "04e0eb53c8a0187cc3d93fcd58f55d9253c6a2c443f63632040d3c3a6aae947d",
-          "byteLength": 150
-        },
-        "oracle": {
-          "sourceManifest": {
-            "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
-          },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-          "canonicalInlineInput": {
-            "path": "canonical-inline-input/ordinary.json",
-            "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
-            "byteLength": 118
-          },
-          "inlineInputDigest": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
-          "wallTime": {
-            "milliseconds": 5000,
-            "origin": "requested"
-          }
-        }
-      },
-      "expected": {
-        "decision": "accept",
-        "classification": null,
-        "owner": "job-proposal-semantic-validator",
-        "authorityStateChanged": false
-      },
-      "implementations": {
-        "fixture-integrity": "verified",
-        "go": "pending",
-        "typescript": "verified",
-        "swift": "not-applicable"
-      }
-    },
-    {
-      "id": "job-proposal.source.entrypoint-membership.reject-missing",
-      "description": "Reject a valid entrypoint path that is absent from the source map.",
-      "ruleIds": [
-        "job-proposal.source.entrypoint-membership"
+        "job-proposal.source.manifest-identity-v0"
       ],
       "object": "JobProposal",
       "wireFormat": "json",
       "mediaType": "application/capsule.job-proposal+json;v=0",
       "variant": "malformed",
       "fixture": {
-        "path": "job-proposal/entrypoint-not-member.json",
-        "sha256": "7f8af716a8994a2face2a2937d900bb2a82046a5b18e1f7d35c92e89811d9741",
-        "byteLength": 866
+        "path": "job-proposal/source-leading-bom.json",
+        "sha256": "fd2db0d57d6e31b106dc2c3c2bc78d14d7c6f33e8b577c7bbd8c2fb7f96be7b6",
+        "byteLength": 740
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16280,8 +15809,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16298,10 +15827,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -16329,7 +15858,7 @@
     },
     {
       "id": "job-proposal.input.canonical-identity.equivalent-public-json",
-      "description": "Different public key order and escape spelling derive the same canonical bytes.",
+      "description": "The retained public JSON known answer derives the same canonical input bytes.",
       "ruleIds": [
         "job-proposal.input.canonical-identity"
       ],
@@ -16339,8 +15868,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/equivalent-public-json.json",
-        "sha256": "fabaa21a35f66fd3913055e4e25b5c8cc000fcefe0d1a9fb6b11054a4fe053e2",
-        "byteLength": 659
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16357,10 +15886,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -16398,8 +15927,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/inline-input-unicode-key.json",
-        "sha256": "4203002310cecb673ec662532409c4920dcd6965d5f0de896006ad6746c51253",
-        "byteLength": 662
+        "sha256": "20f2730fcc0d1aac773bf918b6d0e55605e70c7fedd9f852adf72d5454375f0d",
+        "byteLength": 571
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16446,8 +15975,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/inline-input-bytes-exact.json",
-        "sha256": "565ef0885cf28f97e0a2c145c8a68d89993268a11cafb37299a3fb0f15aa5792",
-        "byteLength": 262818
+        "sha256": "9ab96c42f6ad7ca24b226b8e1b936f78d2053bc2155edce1419f23eba8695b1d",
+        "byteLength": 262727
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16494,8 +16023,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/inline-input-bytes-over.json",
-        "sha256": "75ded4967796e9a8ba2d967a9a63df63f87f4b439bf21ce29d5cfe374178b591",
-        "byteLength": 262819
+        "sha256": "d1138876fe75dc9f5ca462cf847c30d8f9e794cc8974ac459cc69343e90dd3c1",
+        "byteLength": 262728
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16542,8 +16071,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16560,10 +16089,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -16601,8 +16130,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "job-proposal/input-slot-wrong-domain.json",
-        "sha256": "2fb9cbd350aba9caacbbef1c849a6a60a06992b328f3fe850f74abc955fec972",
-        "byteLength": 871
+        "sha256": "20c708092a7b93b42d8004fdb23d65aa8780d802a1a06f67a83d96cc88539675",
+        "byteLength": 780
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16649,8 +16178,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/input-slot-unknown.json",
-        "sha256": "cb57ad861d1935428f34985572e40a8eb16a76f1dd6397ddb9d5d0406413387e",
-        "byteLength": 865
+        "sha256": "6447303932a044a630fa8034b66547adbd6dd98079b19a3ac2f7cdf98296dc74",
+        "byteLength": 774
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16697,8 +16226,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "job-proposal/output-slot-wrong-domain.json",
-        "sha256": "c42abdbfa7d7aa8745e4f191612faf19afbe3789e350ba9496f77b36953e8003",
-        "byteLength": 863
+        "sha256": "aa7514b5d89a50bc0b50c1af475a59c05e3c723a9d68da75b55ddc29b76f89dc",
+        "byteLength": 772
       },
       "context": {
         "kind": "proposal-resolution",
@@ -16745,8 +16274,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/labels-count-exact.json",
-        "sha256": "6537d75a0e82b8ab34d6629cf4f7b1660b8c0f07bdc76ac2cf2bacf466600c68",
-        "byteLength": 996
+        "sha256": "f2fd6c077625664318e98a1a43723b63133171280d5d66faecf4b5f5012df262",
+        "byteLength": 905
       },
       "context": {
         "kind": "none"
@@ -16776,8 +16305,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/labels-count-over.json",
-        "sha256": "ab02f2263cec12b185efa0054c4017aeb273fda6ab04b797c8b89c268c12d147",
-        "byteLength": 1016
+        "sha256": "9ed0759bb8b9a63fbb1778cfc5323123665a779b16db45755b1eb5f7b7085f7d",
+        "byteLength": 925
       },
       "context": {
         "kind": "none"
@@ -16807,8 +16336,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/label-key-exact.json",
-        "sha256": "8e228d8bb2e4d0299687ba019765b205e1d52793eb39ef8185cc89537c40cabe",
-        "byteLength": 881
+        "sha256": "9174ff418494b1217bde8dea8c0f029a136faeda904f6b8b9e31221aa9716179",
+        "byteLength": 790
       },
       "context": {
         "kind": "none"
@@ -16838,8 +16367,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/label-key-over.json",
-        "sha256": "104ea5c4a8c62a4752decb83e2f97f3a1e4718f583711498f2b28b2e4b862e44",
-        "byteLength": 882
+        "sha256": "6121a4f8ffc1a26f8cab6222d195272f414639b30022122bf2683c6291886dc9",
+        "byteLength": 791
       },
       "context": {
         "kind": "none"
@@ -16869,8 +16398,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/label-value-exact.json",
-        "sha256": "5bd4e3fa423d922905a7f757259996e076e310295e71eafadd9c8cd5705dcc98",
-        "byteLength": 983
+        "sha256": "2f7b9ded53e99d5bb595d8e5fef78f1d6219d82ee10c6c66f6c720b33e2f6a04",
+        "byteLength": 892
       },
       "context": {
         "kind": "none"
@@ -16900,8 +16429,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/label-value-over.json",
-        "sha256": "80780f6926b3d29fd94602266ba8086d91cba09dcae787fcfedb088878322720",
-        "byteLength": 984
+        "sha256": "e79addc824a97d88ef609e759cbbfacfdd0ed00371f0ef017434cc2c9c4a1927",
+        "byteLength": 893
       },
       "context": {
         "kind": "none"
@@ -16931,8 +16460,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/label-printable.json",
-        "sha256": "02fb68689c4d17c6e3268b26e35152016ed3adf85d50458bede3e7596708e8ad",
-        "byteLength": 864
+        "sha256": "d67bca385cbd7d4486b449d5a3dd6682499a6fb28c7c057974ee3a30b0140f55",
+        "byteLength": 773
       },
       "context": {
         "kind": "none"
@@ -16962,8 +16491,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/label-control.json",
-        "sha256": "3dd62770d0b42952858e8603ede85c0032f25577b35ad484b1afd254d238d556",
-        "byteLength": 866
+        "sha256": "e7f1c1d71e061337325657c9b358eecc0161f3705fe027c3957d765a901c5e24",
+        "byteLength": 775
       },
       "context": {
         "kind": "none"
@@ -16993,8 +16522,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17011,10 +16540,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -17052,8 +16581,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/profile-unknown.json",
-        "sha256": "4d188b67e2c7c1f2d2cfe14d888e749bfabe92db358c23c5a46851cedf5c96d5",
-        "byteLength": 868
+        "sha256": "7769dc00b9bac5a8bfec9e12202f5f1fd488cfc406656539115c4ce4add82a52",
+        "byteLength": 777
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17100,8 +16629,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "job-proposal/profile-inactive.json",
-        "sha256": "46892660a451aab92d0af8c9d388bc620cf1b2d4be32b7bb9324fd7175b8e646",
-        "byteLength": 869
+        "sha256": "f04f8ef03ea5017bfba906f4414ff5e66194541215e077f857e94c172f4d29d4",
+        "byteLength": 778
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17148,8 +16677,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/ordinary.json",
-        "sha256": "fe7c671543275864aefa990a62502735b0f68c70d79738baf1af75ec8b71f3b2",
-        "byteLength": 867
+        "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e",
+        "byteLength": 776
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17166,10 +16695,10 @@
         "oracle": {
           "sourceManifest": {
             "path": "source-manifest/ordinary.cbor",
-            "sha256": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
-            "byteLength": 178
+            "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
+            "byteLength": 89
           },
-          "sourceManifestDigest": "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+          "sourceManifestDigest": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
           "canonicalInlineInput": {
             "path": "canonical-inline-input/ordinary.json",
             "sha256": "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -17207,8 +16736,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "job-proposal/wall-time-defaulted.json",
-        "sha256": "f04c00bbbc0b44c8e13319633eb135c4af1edc05a0925d9804bbf9ab50b1c0b5",
-        "byteLength": 841
+        "sha256": "cbdc3115165d28910f66a542cfb66a953ba0cec3969db88059826fee01fdeb92",
+        "byteLength": 750
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17258,8 +16787,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "job-proposal/wall-time-exact-ceiling.json",
-        "sha256": "2698672d4e6d7f2ec91cd311790c3121d1a37e808ee7f5d3d757ea5b40be1e0b",
-        "byteLength": 868
+        "sha256": "12ac2735f0afba92adf5c218d2eb232d2323f891dd44a98c9f28b8a8d18a48f4",
+        "byteLength": 777
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17309,8 +16838,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "job-proposal/wall-time-over-ceiling.json",
-        "sha256": "75276c26491af5bd1054a8438ecccda795abd648e9552e0805bd53431976593c",
-        "byteLength": 868
+        "sha256": "3e9fde1c51e421330c35fd8def48b651c789f951b1127eb3d36ced02b046707d",
+        "byteLength": 777
       },
       "context": {
         "kind": "proposal-resolution",
@@ -17357,8 +16886,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -17382,8 +16911,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/execution-plan-registration-exact-bytes.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -17406,8 +16935,8 @@
       "variant": "nonzero",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -17431,8 +16960,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/execution-plan-registration-mutation-after-submission.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -17455,8 +16984,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -17480,8 +17009,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/execution-plan-registration-validator-copy-mutation.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -17504,8 +17033,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17538,7 +17067,7 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/plan-registration-object.cbor",
-        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "sha256": "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199",
         "byteLength": 165
       },
       "context": {
@@ -17569,8 +17098,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "plan-registration/execution-plan-object.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "none"
@@ -17600,8 +17129,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-supervisor-as-installation.cbor",
-        "sha256": "28aca0e99ce32147480d736583a79950d7ca994b005b4f5a7f340c53778d85ce",
-        "byteLength": 530
+        "sha256": "65672c000f45bb807c653291742abc93fc166b325f94513e4322a07115fdfb6a",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17634,8 +17163,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-inline-input-as-epoch.cbor",
-        "sha256": "272af9a5209b3c721841298907af4489d3693efe840ef8585fc920b2d401e7ef",
-        "byteLength": 530
+        "sha256": "ed6eeae93667e400fd0fbf58b38854e1d81581a1b14eb737e5a6c9f0ece98732",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17668,8 +17197,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-inline-input-as-source.cbor",
-        "sha256": "66811e266d722e934077d05951d20900b8544fbc899be9865d10e4c1164008b5",
-        "byteLength": 530
+        "sha256": "9e21bf2f70a4cc2d7c98a36a3dfe7dae1cbdeae1ee0c1ce1c0ee1c0dfff67b90",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17702,8 +17231,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-source-manifest-as-inline-input.cbor",
-        "sha256": "6aab663912dda6ba34a157ec159db21a7106b6bca5f04d1786d09a592e2498b5",
-        "byteLength": 530
+        "sha256": "1777982b6c1056765ca6ef65594271bc29bca593b84ed6e8bd5af56cfcb638dd",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17736,8 +17265,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-profile-registry-as-runtime-bundle.cbor",
-        "sha256": "78c23bdbe2b5408c654259b42bc46c482b9131c4694139b8ce2da595009cee5b",
-        "byteLength": 530
+        "sha256": "b16a6637a2e5c9bdc46a532566282f2fd6df15a057d559da4d9a4baf77ecca31",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17770,8 +17299,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-runtime-bundle-as-review-attestation.cbor",
-        "sha256": "290567bc6245ef0e5017a0c4ba08667abc8c52353ed4bfcafe1eeb318af29a8a",
-        "byteLength": 496
+        "sha256": "fb7e17869f302852226058b06ff2bd6de0fd3dbb992e72106aaa709c3c9bbcf9",
+        "byteLength": 493
       },
       "context": {
         "kind": "scalar-role",
@@ -17804,8 +17333,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-review-attestation-as-profile-registry.cbor",
-        "sha256": "79022b435461f2ed835d58e03ee978a33d1d340f29b1e23c1a5240be227e237c",
-        "byteLength": 530
+        "sha256": "49371a1cabe48489f85e6a7366507d508d5d80d3c822d31cba79d0a0d5251e6b",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17838,8 +17367,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-backend-config-as-validation.cbor",
-        "sha256": "34a5243f766ab8ec8385b04216798b6d10067e569c41a7ddf3a177dc0e93e94c",
-        "byteLength": 530
+        "sha256": "75b50286ad25753c206f13a8cbf059571f00de9e92560f6211bdb6b9f25a4931",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17872,8 +17401,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-backend-validation-as-config.cbor",
-        "sha256": "389b4bfb136b59f7f27ef41852ccf1209a4028605768db19528aa6a1919f2f02",
-        "byteLength": 530
+        "sha256": "c2e02688e7ae68bb4e960b83a73c91199a915471285f4a9f3d00afe2bef82b2d",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17906,8 +17435,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-policy-as-trust-snapshot.cbor",
-        "sha256": "f8d4626f08ae3e2f6e87d0da81f3022861ed8e5a6e78a1c3d7b60929e64464b2",
-        "byteLength": 530
+        "sha256": "12e7c7c79b8d7e92b7ed36d70fc992306218a20e9ae59f6baceb518be0d1fd0b",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17940,8 +17469,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/domain-trust-snapshot-as-policy.cbor",
-        "sha256": "0dc36d73a5bea2ccd33db15942576e71371455abaa6af7e4304f6acb95531edc",
-        "byteLength": 530
+        "sha256": "6a3e9b59ae2c72794d50234918e0f5b3bd158577c25842411fec514cf85f7444",
+        "byteLength": 527
       },
       "context": {
         "kind": "scalar-role",
@@ -17974,7 +17503,7 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "plan-registration/domain-installation-as-registration.cbor",
-        "sha256": "231e65de9957d6a25486c71cd2cd7084e00c4760bb1bb681e2ed197da9005812",
+        "sha256": "b91050f48db4fe9640b76ffaf9524e6a1d31cd8d86bbaa5f60383ed238c23352",
         "byteLength": 165
       },
       "context": {
@@ -18042,7 +17571,7 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "plan-registration/domain-plan-as-epoch-digest.cbor",
-        "sha256": "065b69ba209315d4f355bf1b8575ea9206dc01386133b350ba97a2bd24cec029",
+        "sha256": "ab97193eb93d6bc57ef26a2967840710fcd205de2f04c0d1b17f46af546f606c",
         "byteLength": 165
       },
       "context": {
@@ -18076,7 +17605,7 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "plan-registration/domain-registration-as-supervisor.cbor",
-        "sha256": "6cd1956af1623412bd4eb30ff4c515dc956190b2e6683c5584e97ed4dd12cdde",
+        "sha256": "002197c03d4b1138ae11b5773312d9c8dc1565a3621b332efb4e1c44896242cf",
         "byteLength": 165
       },
       "context": {
@@ -18110,7 +17639,7 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "plan-registration/plan-a-registration-b.cbor",
-        "sha256": "e3da610326802cfb5e57c6d95fb9ec691651f6d0e86c13372cfea5d2c6c10b54",
+        "sha256": "29eb6ed28a2042105cfe318c81ff430cc3081a4530992a938d6061d520b762ff",
         "byteLength": 165
       },
       "context": {
@@ -18122,8 +17651,8 @@
         },
         "before": {
           "path": "contexts/registration/plan-registration-binding-plan-a-registration-b.before.json",
-          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-          "byteLength": 2332
+          "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+          "byteLength": 2326
         }
       },
       "expected": {
@@ -18135,8 +17664,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-binding-plan-a-registration-b.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -18159,8 +17688,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18184,8 +17713,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-channel-authenticated-daemon.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -18208,8 +17737,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18233,8 +17762,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-creation-first-fresh-registration.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -18257,8 +17786,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18306,8 +17835,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18355,8 +17884,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18404,8 +17933,8 @@
       "variant": "nonzero",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18416,8 +17945,8 @@
         },
         "before": {
           "path": "contexts/registration/plan-registration-creation-duplicate-plan-bytes.before.json",
-          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-          "byteLength": 2332
+          "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+          "byteLength": 2326
         }
       },
       "expected": {
@@ -18429,8 +17958,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-creation-duplicate-plan-bytes.after.json",
-            "sha256": "253e9f3a6e1aa8f7dcddc63d086df3a2e09c012a5299b80661e8f510235f5cf4",
-            "byteLength": 4008
+            "sha256": "9f254277d65ac3bec395d0adfcf4a930a4a1c375ba143b4188f990b5424b5f81",
+            "byteLength": 3996
           }
         }
       },
@@ -18453,8 +17982,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/epoch-eight.cbor",
-        "sha256": "43c9342db21199143ba76ccd7575b15794d1828ac1ad51ab07aeba37be51de43",
-        "byteLength": 530
+        "sha256": "ed4dedc01e50b64d724c5705c0d07ea9523b06b5050dccf7d6c2ba076d03ce3c",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18478,8 +18007,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-sequence-continues-across-epoch.after.json",
-            "sha256": "482425a5234fc58a31ca2a30163e562364921c77983124f64752296cb04a2d9f",
-            "byteLength": 2332
+            "sha256": "5dcfe02479e8b8dfe3976cf4f183f63398cbdd86df8d36845f79f7a9447167d2",
+            "byteLength": 2326
           }
         }
       },
@@ -18502,8 +18031,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18527,8 +18056,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-sequence-uint53-maximum.after.json",
-            "sha256": "9f8a96067d51cc67273f84b1c05210d1548fd9b301bf638bdfc3b8456da251fd",
-            "byteLength": 2363
+            "sha256": "b48e50480e11db12a293d31baa5df00e3226d2eb3a702b3ee8882aca64b19ed0",
+            "byteLength": 2357
           }
         }
       },
@@ -18551,8 +18080,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18600,8 +18129,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/expires-equality-expired.cbor",
-        "sha256": "ec9e457a7d69f64f63084b61a0c937136b23610014fd36bb590f2dc855c585b5",
-        "byteLength": 530
+        "sha256": "291b6c51767f466f6d54a45e04c23246242becc6248a297f8eec527fc7ce8239",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18649,8 +18178,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/expires-one-second.cbor",
-        "sha256": "3c9f43105de452f89cbb738baa37d44e167d5b5bb1a33926603fe7fb8be51f3d",
-        "byteLength": 530
+        "sha256": "c72bab6c8302b98820bdd7735b64406c0b7c795cda9d7a91acdb9ff7092f0f23",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18674,8 +18203,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-expiry-one-second.after.json",
-            "sha256": "6f42160ccefce6b82139561a4e9c98c3654664f4df25d19177c92f49273d909b",
-            "byteLength": 2332
+            "sha256": "038af9ba79820a1aa79b2abdbe68e70185611c7cbe182a745d1132a8df19277f",
+            "byteLength": 2326
           }
         }
       },
@@ -18698,8 +18227,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/expires-exact-300-seconds.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18723,8 +18252,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-expiry-exact-300-seconds.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -18747,8 +18276,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "execution-plan/expires-301-seconds.cbor",
-        "sha256": "ea6276c6acc31fb813e1824e283f18be540ab7651b3b6f7343d2f7570f0b433d",
-        "byteLength": 530
+        "sha256": "6790beb89eedb8f80f7581e2bade2d2a5f2f23f98d87bdd0ede6529adee29a39",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18796,7 +18325,7 @@
       "variant": "malformed",
       "fixture": {
         "path": "plan-registration/ordinary.cbor",
-        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "sha256": "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199",
         "byteLength": 165
       },
       "context": {
@@ -18808,8 +18337,8 @@
         },
         "before": {
           "path": "contexts/registration/plan-registration-expiry-use-at-equality.before.json",
-          "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
-          "byteLength": 2332
+          "sha256": "abfb550e8d53d4a74caece82093f706c7863589a52aa63faccb8740c6f163bab",
+          "byteLength": 2326
         }
       },
       "expected": {
@@ -18821,8 +18350,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-expiry-use-at-equality.after.json",
-            "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
-            "byteLength": 2332
+            "sha256": "abfb550e8d53d4a74caece82093f706c7863589a52aa63faccb8740c6f163bab",
+            "byteLength": 2326
           }
         }
       },
@@ -18845,8 +18374,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18870,8 +18399,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-time-initial-high-water.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -18894,8 +18423,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18919,8 +18448,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-time-final-reread-uses-later-high-water.after.json",
-            "sha256": "f1647a40e0954c4b3c942a1adaecf17edf46a48531ca0d6e509fe606edba2711",
-            "byteLength": 2332
+            "sha256": "7468e52bded0b13a916f1e5a6d04d3d28a8a253893074b8da52a83bb6bef4fbf",
+            "byteLength": 2326
           }
         }
       },
@@ -18943,8 +18472,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -18992,7 +18521,7 @@
       "variant": "malformed",
       "fixture": {
         "path": "plan-registration/ordinary.cbor",
-        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "sha256": "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199",
         "byteLength": 165
       },
       "context": {
@@ -19004,8 +18533,8 @@
         },
         "before": {
           "path": "contexts/registration/plan-registration-time-clock-rollback-cannot-resurrect.before.json",
-          "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
-          "byteLength": 2332
+          "sha256": "abfb550e8d53d4a74caece82093f706c7863589a52aa63faccb8740c6f163bab",
+          "byteLength": 2326
         }
       },
       "expected": {
@@ -19017,8 +18546,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-time-clock-rollback-cannot-resurrect.after.json",
-            "sha256": "af3428ecf7207143c684bc41097965f62049396abd614f06572c037a8182bd7d",
-            "byteLength": 2332
+            "sha256": "abfb550e8d53d4a74caece82093f706c7863589a52aa63faccb8740c6f163bab",
+            "byteLength": 2326
           }
         }
       },
@@ -19041,8 +18570,8 @@
       "variant": "wrong-domain",
       "fixture": {
         "path": "execution-plan/wrong-epoch-binding.cbor",
-        "sha256": "eb27521d9659f5647e531c5b7fd5ef8c26584ac8c972e153873a9ed862bc715e",
-        "byteLength": 530
+        "sha256": "ff1506bd6d831b11bdb1c7e928d34fb34d137b84024065eb21d5fc486cea0277",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19139,8 +18668,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19188,8 +18717,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19213,8 +18742,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-trust-stable.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -19237,8 +18766,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19286,8 +18815,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19335,8 +18864,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19384,8 +18913,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19409,8 +18938,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-capacity-unexpired-exact-256.after.json",
-            "sha256": "ed92fbba9c37fdadffc17a5a973cd566626d994d9c61b4c211eb3c7f73645cc0",
-            "byteLength": 2342
+            "sha256": "c4790a82f3bd826473676ab66e63707707468e4be3ecdff1adbfb030ed207d61",
+            "byteLength": 2336
           }
         }
       },
@@ -19433,8 +18962,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19482,8 +19011,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19507,8 +19036,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-capacity-expiry-equality-not-unexpired.after.json",
-            "sha256": "688c62a97f4d51756b5fccdce979a0e7e2ad609f81e4112576d056f8e3690e27",
-            "byteLength": 2340
+            "sha256": "79b001bffbf72dcdfc25e8b82f0fda3dc5094d3b7b04333e16706b6fb52c01f1",
+            "byteLength": 2334
           }
         }
       },
@@ -19531,8 +19060,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19556,8 +19085,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-capacity-stored-exact-4096.after.json",
-            "sha256": "5269c20d3a53a40f29a0cfe85ef093d1a994e68d9111f9b638ad2b3f3b116746",
-            "byteLength": 2342
+            "sha256": "b6bf777f09eaf933ad1a99a3dffcac584791638abbf29d81548529fba9fda5d0",
+            "byteLength": 2336
           }
         }
       },
@@ -19580,8 +19109,8 @@
       "variant": "cap-plus-one",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19629,8 +19158,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19678,8 +19207,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19727,8 +19256,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19739,8 +19268,8 @@
         },
         "before": {
           "path": "contexts/registration/plan-registration-identifier-duplicate.before.json",
-          "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-          "byteLength": 2332
+          "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+          "byteLength": 2326
         }
       },
       "expected": {
@@ -19752,8 +19281,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-identifier-duplicate.after.json",
-            "sha256": "55e0fe7a1420ef409ec4bb35448b9a5e38c7c32957d8fa4b8e181a3885b1da06",
-            "byteLength": 2332
+            "sha256": "2fdd39de56bdeddaa1987a691d1788161e9efe7e21d107942ab5c23c9b6e41c5",
+            "byteLength": 2326
           }
         }
       },
@@ -19776,8 +19305,8 @@
       "variant": "malformed",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19825,8 +19354,8 @@
       "variant": "ordinary",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19850,8 +19379,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-transaction-atomic-commit.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },
@@ -19874,7 +19403,7 @@
       "variant": "ordinary",
       "fixture": {
         "path": "plan-registration/ordinary.cbor",
-        "sha256": "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+        "sha256": "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199",
         "byteLength": 165
       },
       "context": {
@@ -19910,8 +19439,8 @@
       "variant": "exact-maximum",
       "fixture": {
         "path": "execution-plan/ordinary.cbor",
-        "sha256": "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
-        "byteLength": 530
+        "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
+        "byteLength": 527
       },
       "context": {
         "kind": "registration-state",
@@ -19935,8 +19464,8 @@
           "kind": "exact",
           "after": {
             "path": "contexts/registration/plan-registration-storage-minimum-stored-record.after.json",
-            "sha256": "9d6670e559086a9d455497f0b7dd46f68fab0f64d82c29db0b9635c7ae22e7e5",
-            "byteLength": 2332
+            "sha256": "11bf70672464fb1180e7a052a50952096dd75b7469218d7d3d27a75e9c303b64",
+            "byteLength": 2326
           }
         }
       },

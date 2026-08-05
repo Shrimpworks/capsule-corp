@@ -2,11 +2,9 @@
   "apiVersion": "capsule.dev/v0",
   "kind": "JobProposal",
   "source": {
-    "entrypoint": "src/main.ts",
+    "entrypoint": "main.mjs",
     "files": {
-      "z.ts": "export const z = \"🚀\";\n",
-      "src/main.ts": "import { a } from \"../A.ts\";\nconsole.log(a);\n",
-      "A.ts": "export const a = 1;\r\n"
+      "main.mjs": "export default function (value) { return value; }\n"
     }
   },
   "runtimeProfile": "fixture-active@1",

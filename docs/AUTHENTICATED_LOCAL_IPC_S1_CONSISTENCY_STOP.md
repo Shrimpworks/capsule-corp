@@ -63,20 +63,22 @@ plan likewise forbids freezing or reinterpreting 562 bytes for the three new pla
 current TypeScript and Go registration/lifecycle bindings still contain the single v0
 `sourceManifestDigest`; the approved-byte roles remain separate passive Slice A fixtures.
 
-`RegisterPlanV0` and its 562-byte projection therefore remain historical/current-plan-v0 design
-only. They will not be frozen into an S1 corpus. The 626-byte arithmetic above is not an approved
-layout, cap, record, or known answer.
+At the time of this stop, `RegisterPlanV0` and its 562-byte projection remained
+historical/current-plan-v0 design only and were not frozen into an S1 corpus. ADR-0034 later made
+the 562-byte projection usable for the narrower single-`main.mjs` first-release contract, and the
+passive cutover now retains that record in `schemas/conformance/authority-plane-v0/`. The 626-byte
+TypeScript arithmetic remains neither an approved layout nor a known answer.
 
 ## Retained baselines and counts
 
-This stop preserves the existing generated corpora unchanged:
+At the time it was recorded, this stop preserved the existing generated corpora unchanged:
 
 - main conformance corpus: 82 rules, 262 cases, and 368 fixture files, excluding its manifest and
   manifest schema;
 - TypeScript approved-byte corpus: 9 known-answer files and 14 refusal mutations; and
 - S1 artifacts added by this task: 0 fixture files, 0 cases, and 0 byte known answers.
 
-Relevant retained known answers are:
+The checkpoint's historical known answers were:
 
 | Artifact | Bytes | SHA-256 |
 | --- | ---: | --- |
@@ -87,8 +89,10 @@ Relevant retained known answers are:
 | Executable-JavaScript manifest | 174 | `295138062d0785785373b8c468fee75f77a28131d0974f30f69c4050425e9814` |
 | Transformation-record set | 714 | `5738283a5accdbd8b736af81982dc46068172ec502f5c43e4113fe7de10c76eb` |
 
-There is no retained 562-byte S1 record and no 626-byte successor known answer. Producing either
-would violate the selected atomic-cutover path.
+There was no retained 562-byte S1 record at this checkpoint, and there remains no 626-byte
+successor known answer. The later passive single-`main.mjs` cutover retains the exact 562-byte v0
+record without reviving the rejected three-role TypeScript authority; see
+`AUTHORITY_PLANE_PASSIVE_CUTOVER.md`.
 
 ## Retained TypeScript integration path
 

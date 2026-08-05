@@ -37,16 +37,16 @@ const task3aCases = manifest.cases.filter(
 );
 
 test("Task 3A marks exactly its raw and schema manifest slice verified", () => {
-  assert.equal(task3aCases.length, 62);
+  assert.equal(task3aCases.length, 57);
   assert.equal(
     task3aCases.filter((entry) => entry.expected.owner === "public-raw-decoder").length,
     38,
   );
   assert.equal(
     task3aCases.filter((entry) => entry.expected.owner === "job-proposal-schema").length,
-    24,
+    19,
   );
-  assert.equal(new Set(task3aCases.map((entry) => entry.fixture.path)).size, 60);
+  assert.equal(new Set(task3aCases.map((entry) => entry.fixture.path)).size, 55);
 });
 
 for (const entry of task3aCases) {
@@ -131,26 +131,20 @@ test("decoder copies caller bytes and freezes the passive candidate graph", () =
   const candidate: DecodedJobProposalCandidate = result.proposal;
   bytes.fill(0);
 
-  assert.equal(
-    candidate.source.files["main.ts" as keyof typeof candidate.source.files],
-    "export {};\n",
-  );
+  assert.equal(candidate.source.files["main.mjs"], "export {};\n");
   assert.equal(candidate.input.value instanceof Object, true);
   assert.equal(Object.isFrozen(candidate), true);
   assert.equal(Object.isFrozen(candidate.source), true);
   assert.equal(Object.isFrozen(candidate.source.files), true);
   assert.equal(Object.isFrozen(candidate.outputs), true);
   assert.equal(Object.isFrozen(candidate.input.value), true);
-  assert.equal(Reflect.set(candidate.source.files, "main.ts", "changed"), false);
-  assert.equal(
-    candidate.source.files["main.ts" as keyof typeof candidate.source.files],
-    "export {};\n",
-  );
+  assert.equal(Reflect.set(candidate.source.files, "main.mjs", "changed"), false);
+  assert.equal(candidate.source.files["main.mjs"], "export {};\n");
 });
 
 test("raw string budget distinguishes source content from non-source strings", () => {
   const sourceAtSemanticLayer = ordinaryProposal();
-  sourceAtSemanticLayer.source.files["main.ts"] = "x".repeat(70_000);
+  sourceAtSemanticLayer.source.files["main.mjs"] = "x".repeat(70_000);
   const sourceResult = decodeObject(sourceAtSemanticLayer);
   assert.equal(sourceResult.ok, true);
 
@@ -194,7 +188,7 @@ function ordinaryProposal(): {
   return {
     apiVersion: "capsule.dev/v0",
     kind: "JobProposal",
-    source: { entrypoint: "main.ts", files: { "main.ts": "export {};\n" } },
+    source: { entrypoint: "main.mjs", files: { "main.mjs": "export {};\n" } },
     runtimeProfile: "fixture-active@1",
     input: { slot: "primary-data", kind: "inline-json", value: { message: "hello" } },
     requestedLimits: { wallTimeMs: 5_000 },

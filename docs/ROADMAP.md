@@ -232,8 +232,8 @@ the existing plan-v0 source role, with no static/dynamic dependency request or m
 fallback. Its passive source-byte/SourceManifest foundation is retained, and an exact
 division-versus-regexp counterexample continues to bar the removed scanner. The Source Validator's
 passive V0 frames are exact, and V1 retains one unwired exact artifact plus supply-chain evidence,
-but the product validator and downstream S1/M2 registration/fetch slices remain on hold pending
-R3-R5B. R2 retains exact unsigned role-specific bundle/parser construction with inactive
+but the product validator remains future defense-in-depth under ADR-0040. The passive S1/M2
+registration/fetch fixture and facade cutover is now `PASSED` without waiting for R3-R5B. R2 retains exact unsigned role-specific bundle/parser construction with inactive
 predecode/refusal and no spawn. The exact historical V2 macOS checkpoint is `BLOCKED`: its strict
 bootstrap cannot lower `RLIMIT_AS`, the explicit unbounded diagnostic mutation retains ambient
 file/socket/write authority, and Apple's supported App Sandbox child entitlement shape changes the
@@ -261,7 +261,8 @@ retained. R2's role-specific bundles and parser children reproduce offline acros
 same-host directories; their exact inactive policies predecode and refuse without spawning. Work
 proceeds strictly as R3 separately authorized signing/install, R4
 confinement/resource/residue corpus,
-R5D daemon consumer, R5B Broker consumer, then M2/S1 checkpoint. Unsupported private-XPC
+R5D daemon consumer and R5B Broker consumer are future conditional work; they are not predecessors
+of the now-passed passive M2/S1 fixture/facade checkpoint. Unsupported private-XPC
 reachability, widened authority/native loading/network/filesystem escape, orphan/cleanup failure,
 mixed-version acceptance, or unacceptable measured host risk stops the exact candidate. No product
 validator or runtime enforcement exists.

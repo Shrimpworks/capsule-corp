@@ -60,31 +60,22 @@
       "required": ["entrypoint", "files"],
       "properties": {
         "entrypoint": {
-          "$ref": "#/$defs/sourceEntrypoint"
+          "const": "main.mjs"
         },
         "files": {
           "type": "object",
           "minProperties": 1,
-          "maxProperties": 32,
-          "propertyNames": {
-            "$ref": "#/$defs/sourcePath"
-          },
-          "additionalProperties": {
-            "type": "string",
-            "maxLength": 262144
+          "maxProperties": 1,
+          "additionalProperties": false,
+          "required": ["main.mjs"],
+          "properties": {
+            "main.mjs": {
+              "type": "string",
+              "maxLength": 262144
+            }
           }
         }
       }
-    },
-    "sourcePath": {
-      "type": "string",
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}(?:/[A-Za-z0-9][A-Za-z0-9._-]{0,63})*$",
-      "maxLength": 256
-    },
-    "sourceEntrypoint": {
-      "type": "string",
-      "pattern": "^(?:[A-Za-z0-9][A-Za-z0-9._-]{0,63}/)*[A-Za-z0-9][A-Za-z0-9._-]{0,55}\\.(?:js|mjs|cjs|ts|mts|cts)$",
-      "maxLength": 256
     },
     "runtimeProfileAlias": {
       "type": "string",

@@ -90,10 +90,10 @@ func TestExecutionPlanWrapperRetainsKnownAnswerAndCopiesEveryView(t *testing.T) 
 	if !bytes.Equal(decoded.AuthoritativeBytes(), expected) {
 		t.Fatal("authoritative bytes changed after caller-buffer mutation")
 	}
-	if len(decoded.AuthoritativeBytes()) != 530 {
+	if len(decoded.AuthoritativeBytes()) != 527 {
 		t.Fatalf("unexpected authoritative byte length %d", len(decoded.AuthoritativeBytes()))
 	}
-	expectedDigest := mustHex32[ExecutionPlanDigest](t, "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c")
+	expectedDigest := mustHex32[ExecutionPlanDigest](t, "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241")
 	if decoded.Digest() != expectedDigest {
 		t.Fatalf("unexpected exact-byte plan digest %x", decoded.Digest())
 	}
@@ -107,7 +107,7 @@ func TestExecutionPlanWrapperRetainsKnownAnswerAndCopiesEveryView(t *testing.T) 
 	if view.ObjectType != ExecutionPlanObjectType || view.ObjectVersion != CandidateObjectVersion {
 		t.Fatalf("unexpected object header: %#v", view)
 	}
-	if view.SourceEntrypoint != "src/main.ts" || view.WallTimeMS != 5_000 || view.ExpiresAt != 1_785_456_300 {
+	if view.SourceEntrypoint != "main.mjs" || view.WallTimeMS != 5_000 || view.ExpiresAt != 1_785_456_300 {
 		t.Fatalf("unexpected decoded ExecutionPlan view: %#v", view)
 	}
 	view.ProfileReviewAttestationDigests[0][0] ^= 0xff
@@ -132,7 +132,7 @@ func TestPlanRegistrationWrapperRetainsKnownAnswerAndCopiesCallerBuffer(t *testi
 	if len(decoded.AuthoritativeBytes()) != 165 {
 		t.Fatalf("unexpected authoritative registration byte length %d", len(decoded.AuthoritativeBytes()))
 	}
-	if digest := sha256.Sum256(decoded.AuthoritativeBytes()); hex.EncodeToString(digest[:]) != "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614" {
+	if digest := sha256.Sum256(decoded.AuthoritativeBytes()); hex.EncodeToString(digest[:]) != "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199" {
 		t.Fatalf("unexpected registration known-answer digest %x", digest)
 	}
 	view := decoded.View()
@@ -392,7 +392,7 @@ func ordinaryExecutionPlanBindings() ExecutionPlanRoleBindings {
 	return ExecutionPlanRoleBindings{
 		InstallationID:                  repeated16[InstallationID](0x11),
 		EpochDigest:                     repeated32[TrustEpochDigest](0x22),
-		SourceManifestDigest:            mustHex32NoTest[SourceManifestDigest]("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+		SourceManifestDigest:            mustHex32NoTest[SourceManifestDigest]("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"),
 		InlineInputDigest:               mustHex32NoTest[InlineInputDigest]("bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72"),
 		RuntimeBundleManifestDigest:     repeated32[RuntimeBundleManifestDigest](0x55),
 		ProfileReviewAttestationDigests: []ProfileReviewAttestationDigest{repeated32[ProfileReviewAttestationDigest](0x66), repeated32[ProfileReviewAttestationDigest](0x67)},
@@ -407,7 +407,7 @@ func ordinaryExecutionPlanBindings() ExecutionPlanRoleBindings {
 func ordinaryPlanRegistrationBindings() PlanRegistrationRoleBindings {
 	return PlanRegistrationRoleBindings{
 		RegistrationID: repeated16[RegistrationID](0x77),
-		PlanDigest:     mustHex32NoTest[ExecutionPlanDigest]("627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c"),
+		PlanDigest:     mustHex32NoTest[ExecutionPlanDigest]("ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241"),
 		InstallationID: repeated16[InstallationID](0x11),
 		EpochDigest:    repeated32[TrustEpochDigest](0x22),
 		SupervisorID:   repeated16[SupervisorID](0x55),

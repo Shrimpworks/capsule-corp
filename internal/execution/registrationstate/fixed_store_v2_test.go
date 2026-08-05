@@ -182,9 +182,9 @@ func TestFixedStoreV2KnownAnswers(t *testing.T) {
 			Counts:            archivestate.ArchiveCounts{},
 		},
 		{
-			BytesSHA256:       "569ba7c1aa25432a1001b1ca7122a7772ccfe954a18a484d26ed71b4255b8dca",
-			CombinedIndex:     "924c78b9508123feb1b78fd62b71df6cace9c97b4887f2d67bbdc6ef2a9a7de5",
-			GenesisCheckpoint: "983c2474dbef1fa6908de0fa02f96e2aaf7245bce48399e224a0f8a2c349a23e",
+			BytesSHA256:       "5da7c6759db833a12f59e46a15381869cf5ca3342475c6d6a9fc4ad00cd0a014",
+			CombinedIndex:     "fcfcb569e6171031a423f5362a8952630b26780cf87b0ea245a0fe072717cf25",
+			GenesisCheckpoint: "88742cc38495014a5a4440e75e8da889bedb78bb2897290864eee4e4fe3f863c",
 			VisibleSeed:       "17de5f44f523dab94ca4b215ce7779358146fb094fa6d208e0190cb0ba69e0a1",
 			Counts: archivestate.ArchiveCounts{
 				Registrations: 1, Approvals: 1, Attempts: 1, Nonces: 1,
@@ -192,9 +192,9 @@ func TestFixedStoreV2KnownAnswers(t *testing.T) {
 			},
 		},
 		{
-			BytesSHA256:       "29c706be5d8a55958acacae7ad01a001576a307d847fd610a6f2c0e57f291235",
-			CombinedIndex:     "2dc21df5c66bdb46f7ba80ed6566b12912a6b9b79a1f5b7a3d325f507bea65c2",
-			GenesisCheckpoint: "3b5de809e6cbcda85b94439a9142cdc69243b1d18f912dbe8fc81ba6e4101a99",
+			BytesSHA256:       "17efb88d0dc9f5d6f5a2e006d581b40c6f699efdd11f42f917f24b4e7611cbdc",
+			CombinedIndex:     "11c4d39ce3c06b811807b0002b32677847efe10ec5cce4475345c2fcbc8a1b54",
+			GenesisCheckpoint: "af950b032e90e38f80f0fabf8287d71b79e6adb5a60aecb39f7e81c1d5cc4fff",
 			VisibleSeed:       "acee3fa25e62c185eb1e9b26313b6f04b9c88e57857e0fb400371c2c5a67295f",
 			Counts: archivestate.ArchiveCounts{
 				Registrations: 1, Approvals: 1, Attempts: 1, Lifecycles: 1,

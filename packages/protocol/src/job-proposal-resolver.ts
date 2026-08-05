@@ -2,14 +2,6 @@ import { createHash } from "node:crypto";
 
 import { isRetainedDecodedJobProposalCandidate } from "./decoded-job-proposal-candidate.js";
 import {
-  concatenateBytes,
-  encodeCborArrayHeader,
-  encodeCborByteString,
-  encodeCborMapHeader,
-  encodeCborText,
-  encodeCborUnsigned,
-} from "./internal-cbor-primitives.js";
-import {
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
   type DecodedJobProposalCandidate,
@@ -21,10 +13,10 @@ import {
   type SourcePath,
   TRANSFORMED_JSON_OUTPUT_SLOT,
 } from "./job-proposal.js";
+import { MJS_MAIN_PATH, validateMjsSourceBytes } from "./mjs-source-candidate.js";
 import { retainResolvedJobProposalPlanInputs } from "./resolved-job-proposal-provenance.js";
+import { encodeSourceManifestV0 } from "./source-manifest-candidate.js";
 
-const MAX_SOURCE_FILE_BYTES = 262_144;
-const MAX_SOURCE_AGGREGATE_BYTES = 1_048_576;
 const MAX_CANONICAL_INLINE_INPUT_BYTES = 262_144;
 
 declare const resolvedScalarBrand: unique symbol;
@@ -342,36 +334,22 @@ function resolveSource(
 ):
   | { readonly ok: true; readonly source: ResolvedSourceBundle }
   | { readonly ok: false; readonly refusal: JobProposalResolutionRefusal } {
-  const sourceEntries = Object.entries(proposal.source.files).sort(compareEntries);
-  if (!Object.hasOwn(proposal.source.files, proposal.source.entrypoint)) {
-    return rejected("SEMANTIC", "SOURCE_ENTRYPOINT_MEMBERSHIP");
+  const contentBytes = new TextEncoder().encode(proposal.source.files[MJS_MAIN_PATH]);
+  const validatedSource = validateMjsSourceBytes(contentBytes);
+  if (!validatedSource.ok) {
+    return rejected("SEMANTIC", "SOURCE_FILE_BYTES");
   }
+  const retainedSourceBytes = validatedSource.source.copyExactBytes();
+  const files: readonly ResolvedSourceFile[] = Object.freeze([
+    Object.freeze({
+      path: MJS_MAIN_PATH as SourcePath,
+      utf8Bytes: retainExactBytes(retainedSourceBytes),
+      contentDigest: digestHex(retainedSourceBytes, "source-content"),
+    }),
+  ]);
+  const aggregateByteLength = retainedSourceBytes.byteLength;
 
-  let aggregateByteLength = 0;
-  const files: ResolvedSourceFile[] = [];
-  for (const [path, content] of sourceEntries) {
-    const contentBytes = new TextEncoder().encode(content);
-    if (contentBytes.byteLength > MAX_SOURCE_FILE_BYTES) {
-      return rejected("SEMANTIC", "SOURCE_FILE_BYTES");
-    }
-    aggregateByteLength += contentBytes.byteLength;
-    if (aggregateByteLength > MAX_SOURCE_AGGREGATE_BYTES) {
-      return rejected("SEMANTIC", "SOURCE_AGGREGATE_BYTES");
-    }
-    files.push(
-      Object.freeze({
-        path: path as SourcePath,
-        utf8Bytes: retainExactBytes(contentBytes),
-        contentDigest: digestHex(contentBytes, "source-content"),
-      }),
-    );
-  }
-
-  const manifestBytes = encodeSourceManifest(
-    proposal.source.entrypoint,
-    files,
-    aggregateByteLength,
-  );
+  const manifestBytes = encodeSourceManifestV0(validatedSource.source);
   const manifest = Object.freeze({
     exactBytes: retainExactBytes(manifestBytes),
     digest: digestHex(manifestBytes, "source-manifest"),
@@ -379,8 +357,8 @@ function resolveSource(
   return Object.freeze({
     ok: true,
     source: Object.freeze({
-      entrypoint: proposal.source.entrypoint,
-      files: Object.freeze(files),
+      entrypoint: MJS_MAIN_PATH as SourceEntrypoint,
+      files,
       aggregateByteLength,
       manifest,
     }),
@@ -524,32 +502,6 @@ class BoundedByteWriter {
   }
 }
 
-function encodeSourceManifest(
-  entrypoint: SourceEntrypoint,
-  files: readonly ResolvedSourceFile[],
-  aggregateByteLength: number,
-): Uint8Array {
-  return concatenateBytes([
-    encodeCborMapHeader(5),
-    encodeCborUnsigned(1),
-    encodeCborText("capsule.source-manifest"),
-    encodeCborUnsigned(2),
-    encodeCborUnsigned(0),
-    encodeCborUnsigned(3),
-    encodeCborText(entrypoint),
-    encodeCborUnsigned(4),
-    encodeCborArrayHeader(files.length),
-    ...files.flatMap((file) => [
-      encodeCborArrayHeader(3),
-      encodeCborText(file.path),
-      encodeCborByteString(hexToBytes(file.contentDigest)),
-      encodeCborUnsigned(file.utf8Bytes.byteLength),
-    ]),
-    encodeCborUnsigned(5),
-    encodeCborUnsigned(aggregateByteLength),
-  ]);
-}
-
 function retainExactBytes(bytes: Uint8Array): RetainedExactBytes {
   return Object.freeze({
     byteLength: bytes.byteLength,
@@ -562,10 +514,6 @@ function digestHex<Role extends ResolvedDigestRole>(
   _role: Role,
 ): ResolvedDigestHex<Role> {
   return createHash("sha256").update(bytes).digest("hex") as ResolvedDigestHex<Role>;
-}
-
-function hexToBytes(value: string): Uint8Array {
-  return Uint8Array.from(Buffer.from(value, "hex"));
 }
 
 function compareEntries(

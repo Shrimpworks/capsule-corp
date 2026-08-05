@@ -8,13 +8,12 @@ slice. No byte maximum in this document is calculated or invented; every number 
 verbatim from ADR-0029/ADR-0034 prose (marked as unverified until fixture-generated) or explicitly
 marked "blocked on M1."
 
-Current dependency reconciliation (2026-08-04): M1 and Source Validator R1 have passed, but this
-slice remains `BLOCKED`. Accepted ADR-0036 requires the remaining sequential Source Validator path
-first: R2 unsigned launcher/parser construction, separately authorized R3
-signing/install, R4 confinement/reactive-resource/residue corpus, R5D daemon consumer, and R5B
-Approval Broker consumer. Only then does the M2/S1 checkpoint update the historical M1-blocked
-items below and decide whether to run this plan. V0/V1/V2 evidence remains unchanged; no Source
-Validator result becomes a Supervisor registration/fetch field.
+Current dependency reconciliation (2026-08-05): `PASSED` for the passive fixture/facade cutover
+recorded in [AUTHORITY_PLANE_PASSIVE_CUTOVER.md](AUTHORITY_PLANE_PASSIVE_CUTOVER.md). ADR-0040
+removed Source Validator R2-R5B from the first-release critical path, so fixture-generated caps,
+the fixed role projection, atomic local custody, and defensive Broker readback now precede any
+future R5B consumer. No Source Validator result became a registration/fetch field. Authenticated
+IPC, installation, signing, and product consumer activation remain `BLOCKED` separate slices.
 
 Reviewer: Claude, independent read-only planning at the request of the Capsule orchestrator
 (codex).
@@ -30,18 +29,12 @@ Read-only planning. It read `AGENTS.md`, [ADR-0029](adr/0029-select-authenticate
 code in `internal/protocol/v0candidate/`, `internal/execution/registrationstate/`, and
 `internal/execution/approvalattempt/`.
 
-**Grounding fact:** no Go, TypeScript, or `.mjs` fixture file implements the `RegisterPlanV0`/
-`GetRegisteredPlanV0` wire shapes anywhere in the repository today; the only hits are prose in
-ADRs/plan docs. What already exists and is reusable as-is: `internal/protocol/v0candidate/
-contracts.go` (decoded Go views `ExecutionPlan`/`PlanRegistration` plus nominal ID/digest types),
-`internal/execution/registrationstate/component.go`'s `Component.RegisterPlan` (the exact Go
-operation ADR-0029 says `RegisterPlanV0` must call), and the closed field-authority manifest (30
-profiles, 15 targets, 164 fields as of this review). No Go struct or CDDL yet exists for the
-562-byte role-binding record, the single-member `SourceManifest` v0, or any
-`RegisterPlanV0`/`GetRegisteredPlanV0` request/reply envelope — this slice must define them. There
-is also no read-only Broker fetch facade in Go yet; ADR-0029/the IPC plan both scope its full
-implementation to S2, but its typed projection must be designed now so S1/M2 fixtures and S2 share
-one contract.
+**Implemented fact:** `internal/execution/authorityplane/` now owns the passive method-specific
+request/reply structs, exact 562-byte role record, pre-commit binding validation, all-or-none fixed
+store transaction, and read-only Broker projection. `schemas/conformance/authority-plane-v0/`
+provides independently verified TypeScript/Go known answers and generated cap arithmetic. The
+facade remains unwired and carries no authenticated endpoint, signing, runtime, backend, or guest
+claim.
 
 ## Field ownership
 
@@ -215,7 +208,7 @@ require M1.
 
 ## Field-authority manifest additions
 
-These additions are deferred to the post-R5B M2/S1 checkpoint. R1 owns a separate additive set of
+These additions were completed before any R5B consumer under ADR-0040. R1 owns a separate set of
 role-specific Source Validator v1 request/result/process/profile/resource-policy classifications;
 it must not pre-create these Supervisor IPC targets or treat its unmeasured resource fields as an
 active policy.
@@ -264,8 +257,7 @@ experiment code into product packages or claims ADR-0019 acceptance; record exac
 versions and distinguish "generated and independently verified" from "generated only" in retained
 evidence.
 
-This process can be designed and scaffolded now but cannot run to completion until M1 supplies the
-`SourceManifest` encoder and its own fixture corpus.
+This process now runs from the retained M1 `SourceManifest` and source-byte corpus.
 
 ## Dependency-aware implementation plan
 

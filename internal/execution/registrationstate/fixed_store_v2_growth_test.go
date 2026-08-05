@@ -95,11 +95,11 @@ func TestFixedStoreV2SecondSegmentKnownAnswerLookupReplayAndRecovery(t *testing.
 		got  []byte
 		want string
 	}{
-		{"active-file", activeDigest[:], "22d0ab0d3a4d06ab507ed5248b0645591734f2162709d791fd83a2160da366b3"},
-		{"second-segment", secondFileDigest[:], "1aec9165d1026ee312e32043c1aa85dbd06c8804e8b439d3e05e59fa8210316b"},
-		{"second-semantic", secondSemanticDigest[:], "4adcd3d80596d6e17e21f29f197f39658df0e1debc9ee4851f7d4f72bcdce7d7"},
-		{"second-checkpoint", report.CurrentCheckpoint.Digest[:], "af26eaee606097864da7bdc2e311a193808d63d5fdce42e1b9b32f566c313374"},
-		{"combined-index", combinedIndexDigest[:], "7d139e5ce710c54dfead1e3a6cd3fbb1adb50e56a2af428cccc04b9f9956b6c3"},
+		{"active-file", activeDigest[:], "0c03403504686204007b26519f71e2bbfe7365acf295cfd0c93e055050e592cf"},
+		{"second-segment", secondFileDigest[:], "5638f9a3e10374cf9b6c3cece471dc8cdedd3d074b8a9d38c7a9d1304dbc3d82"},
+		{"second-semantic", secondSemanticDigest[:], "db57a840b1e5ea75b0ffe4700664300b0108e818620518be6f8811c4eb3476e8"},
+		{"second-checkpoint", report.CurrentCheckpoint.Digest[:], "5e310a41ea2fc17fe43d211cdab6d44c1377700a1992a37c30c94dc4d143b9e8"},
+		{"combined-index", combinedIndexDigest[:], "b7d4f6a92313c2c8b629d06c04fa9be03ec891e4ca5157cf1409dc3360396d3c"},
 	}
 	for _, answer := range known {
 		if got := hex.EncodeToString(answer.got); got != answer.want {

@@ -4,8 +4,7 @@
   "source": {
     "entrypoint": "main.ts",
     "files": {
-      "main.ts": "export {};\n",
-      "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss/helper.ts": "export {};\n"
+      "main.ts": "export {};\n"
     }
   },
   "runtimeProfile": "fixture-active@1",

@@ -1099,6 +1099,116 @@
       "binding": "supervisor-registration-source-custody",
       "unknownBehavior": "reject-registration"
     },
+    "authenticated-local-ipc-method-record": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "execution-supervisor",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "selects-predeclared-alternative",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-method-record",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-daemon-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "daemon-planner",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-broker-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "approval-broker",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-daemon-correlation": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "daemon-planner",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-broker-correlation": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "approval-broker",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-supervisor-correlation": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "execution-supervisor",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-daemon-current-state": {
+      "authorityClass": "installation-authority",
+      "originRole": "daemon-planner",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "authenticated-local-ipc-current-context-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-broker-current-state": {
+      "authorityClass": "installation-authority",
+      "originRole": "approval-broker",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "authenticated-local-ipc-current-context-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-registration-lookup": {
+      "authorityClass": "supervisor-authoritative-state",
+      "originRole": "approval-broker",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "registration-state-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
+    "authenticated-local-ipc-refusal": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "execution-supervisor",
+      "validator": "authenticated-local-ipc-passive-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-authenticated-local-ipc-v0-logical-envelope",
+      "unknownBehavior": "reject-passive-fixture"
+    },
     "macos-installation-i2b2-unsigned-profile": {
       "authorityClass": "evidence-only-observation",
       "originRole": "passive-fixture-generator",
@@ -1248,6 +1358,311 @@
           "sourceField": "source",
           "profile": "authority-plane-source-bytes"
         }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-register-plan-v0-method-record",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "RegisterPlanV0MethodRecord"
+      },
+      "fields": [
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodVersion",
+          "sourceField": "MethodVersion",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/roleBindingRecordVersion",
+          "sourceField": "RoleBindingRecordVersion",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/service",
+          "sourceField": "Service",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/expectedRole",
+          "sourceField": "ExpectedRole",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/purpose",
+          "sourceField": "Purpose",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestDataMaxBytes",
+          "sourceField": "RequestDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/replyDataMaxBytes",
+          "sourceField": "ReplyDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/deadlineMilliseconds",
+          "sourceField": "DeadlineMilliseconds",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/responseLossDisposition",
+          "sourceField": "ResponseLossDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-get-registered-plan-v0-method-record",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "GetRegisteredPlanV0MethodRecord"
+      },
+      "fields": [
+        {
+          "path": "/method",
+          "sourceField": "Method",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/methodVersion",
+          "sourceField": "MethodVersion",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/roleBindingRecordVersion",
+          "sourceField": "RoleBindingRecordVersion",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/service",
+          "sourceField": "Service",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/expectedRole",
+          "sourceField": "ExpectedRole",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/purpose",
+          "sourceField": "Purpose",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/requestDataMaxBytes",
+          "sourceField": "RequestDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/replyDataMaxBytes",
+          "sourceField": "ReplyDataMaxBytes",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/deadlineMilliseconds",
+          "sourceField": "DeadlineMilliseconds",
+          "profile": "authenticated-local-ipc-method-record"
+        },
+        {
+          "path": "/responseLossDisposition",
+          "sourceField": "ResponseLossDisposition",
+          "profile": "authenticated-local-ipc-method-record"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-register-plan-v0-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "PassiveRegisterPlanV0Request"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "authenticated-local-ipc-daemon-discriminator"
+        },
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-daemon-correlation"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "authenticated-local-ipc-daemon-current-state"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "authenticated-local-ipc-daemon-current-state"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "authenticated-local-ipc-daemon-current-state"
+        },
+        { "path": "/exactPlanBytes", "sourceField": "exactPlanBytes", "profile": "plan-content" },
+        {
+          "path": "/roleBindingBytes",
+          "sourceField": "roleBindingBytes",
+          "profile": "authority-plane-nominal-bindings"
+        },
+        {
+          "path": "/sourceManifestBytes",
+          "sourceField": "sourceManifestBytes",
+          "profile": "authority-plane-source-manifest"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "sourceBytes",
+          "profile": "authority-plane-source-bytes"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-get-registered-plan-v0-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "PassiveGetRegisteredPlanV0Request"
+      },
+      "fields": [
+        {
+          "path": "/protocolVersion",
+          "sourceField": "ProtocolVersion",
+          "profile": "authenticated-local-ipc-broker-discriminator"
+        },
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-broker-correlation"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "authenticated-local-ipc-broker-current-state"
+        },
+        {
+          "path": "/epochSequence",
+          "sourceField": "EpochSequence",
+          "profile": "authenticated-local-ipc-broker-current-state"
+        },
+        {
+          "path": "/epochDigest",
+          "sourceField": "EpochDigest",
+          "profile": "authenticated-local-ipc-broker-current-state"
+        },
+        {
+          "path": "/registrationId",
+          "sourceField": "RegistrationID",
+          "profile": "authenticated-local-ipc-registration-lookup"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-register-plan-v0-reply",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "PassiveRegisterPlanV0Reply"
+      },
+      "fields": [
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-supervisor-correlation"
+        },
+        {
+          "path": "/planRegistrationBytes",
+          "sourceField": "planRegistrationBytes",
+          "profile": "registration-state"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-get-registered-plan-v0-reply",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "PassiveGetRegisteredPlanV0Reply"
+      },
+      "fields": [
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-supervisor-correlation"
+        },
+        { "path": "/exactPlanBytes", "sourceField": "exactPlanBytes", "profile": "plan-content" },
+        {
+          "path": "/roleBindingBytes",
+          "sourceField": "roleBindingBytes",
+          "profile": "authority-plane-resolved-bindings"
+        },
+        {
+          "path": "/planRegistrationBytes",
+          "sourceField": "planRegistrationBytes",
+          "profile": "registration-state"
+        },
+        {
+          "path": "/sourceManifestBytes",
+          "sourceField": "sourceManifestBytes",
+          "profile": "authority-plane-source-manifest"
+        },
+        {
+          "path": "/sourceBytes",
+          "sourceField": "sourceBytes",
+          "profile": "authority-plane-source-bytes"
+        }
+      ]
+    },
+    {
+      "object": "capsule.authenticated-local-ipc-refusal-reply",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/execution/authorityplane/passive_ipc.go",
+        "type": "PassiveRefusalReply"
+      },
+      "fields": [
+        {
+          "path": "/requestId",
+          "sourceField": "RequestID",
+          "profile": "authenticated-local-ipc-supervisor-correlation"
+        },
+        {
+          "path": "/classification",
+          "sourceField": "Classification",
+          "profile": "authenticated-local-ipc-refusal"
+        },
+        { "path": "/reason", "sourceField": "Reason", "profile": "authenticated-local-ipc-refusal" }
       ]
     },
     {

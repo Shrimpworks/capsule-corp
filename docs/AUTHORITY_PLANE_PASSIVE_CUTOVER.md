@@ -40,3 +40,8 @@ accepts their source-less shape as equivalent authority.
 ADR-0040 removes Source Validator R5B from this contract's predecessor chain. A future Broker
 consumer may independently validate and render only the exact fetched Supervisor-owned bytes; it
 must not add a validator result to registration or revive broad source authority.
+
+The next passive boundary is retained in
+[the S1 logical-envelope result](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md). It versions the
+two method records with the existing v0 role record and adds no native transport or authentication
+claim.

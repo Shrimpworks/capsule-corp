@@ -1,0 +1,89 @@
+{
+  "objectType": "capsule.authenticated-local-ipc-passive-conformance",
+  "objectVersion": 0,
+  "status": "passive-unwired-no-transport",
+  "protocolVersion": 0,
+  "audience": "capsule.execution-supervisor.local.v0",
+  "roleBindingRecordVersion": 0,
+  "transportEncoding": null,
+  "numericMessageTags": null,
+  "peerAuthenticationEvidence": null,
+  "caps": {
+    "executionPlan": 65536,
+    "roleBindings": 562,
+    "sourceManifest": 95,
+    "source": 262144,
+    "planRegistration": 4096,
+    "registerPlanV0Request": 328337,
+    "registerPlanV0Reply": 4096,
+    "getRegisteredPlanV0Request": 16,
+    "getRegisteredPlanV0Reply": 332433
+  },
+  "methodCount": 2,
+  "refusalCaseCount": 25,
+  "maximumCaseCount": 8,
+  "knownAnswers": {
+    "register-plan-v0.method.json": {
+      "path": "register-plan-v0.method.json",
+      "byteLength": 550,
+      "sha256": "d71ffe04d3a936a237ed2c38cc5706d6e961a17eed4a648d102f69c73bcdd57f"
+    },
+    "register-plan-v0.request.json": {
+      "path": "register-plan-v0.request.json",
+      "byteLength": 1466,
+      "sha256": "13d3bd1822e816d38c6a214b20e712f2a469ccb984b2d6b94cde8ecb74ab60c8"
+    },
+    "register-plan-v0.reply.json": {
+      "path": "register-plan-v0.reply.json",
+      "byteLength": 471,
+      "sha256": "18b3feca9951ac5ba76d80fb896d667efa17602e7a9200076ec4c0aa39575df1"
+    },
+    "get-registered-plan-v0.method.json": {
+      "path": "get-registered-plan-v0.method.json",
+      "byteLength": 557,
+      "sha256": "23e3da25688138b44689e9612677f51e2dccd46ba2480822676e0526f5efaee3"
+    },
+    "get-registered-plan-v0.request.json": {
+      "path": "get-registered-plan-v0.request.json",
+      "byteLength": 684,
+      "sha256": "19c935c2b2a04d74ff0dcfde4183e68389a1233695e13363b579a582f177f546"
+    },
+    "get-registered-plan-v0.reply.json": {
+      "path": "get-registered-plan-v0.reply.json",
+      "byteLength": 1328,
+      "sha256": "1e4abf3fb12aa1aa2b71e585fee151143548798031050e40051e59212a8a96d0"
+    },
+    "oracles.json": {
+      "path": "oracles.json",
+      "byteLength": 19173,
+      "sha256": "cbc92e66425713235a2dd46790d67f6c42a3bc72e1e263026bf606578b8ccb30"
+    }
+  },
+  "bodyFixtures": {
+    "exactPlanBytes": {
+      "path": "schemas/conformance/authority-plane-v0/execution-plan.cbor",
+      "byteLength": 527,
+      "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241"
+    },
+    "roleBindingBytes": {
+      "path": "schemas/conformance/authority-plane-v0/role-bindings.bin",
+      "byteLength": 562,
+      "sha256": "38995b7af11a5c971b9c7ebd46f24513f06750dffcdd5d49a9fdf41173b5244c"
+    },
+    "planRegistrationBytes": {
+      "path": "schemas/conformance/v0/plan-registration/ordinary.cbor",
+      "byteLength": 165,
+      "sha256": "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199"
+    },
+    "sourceManifestBytes": {
+      "path": "schemas/conformance/authority-plane-v0/source-manifest.cbor",
+      "byteLength": 89,
+      "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"
+    },
+    "sourceBytes": {
+      "path": "schemas/conformance/authority-plane-v0/main.mjs",
+      "byteLength": 50,
+      "sha256": "681f39365de1369ee486fa34e88b993c60df5a835006b65e0d8916df717c31cc"
+    }
+  }
+}

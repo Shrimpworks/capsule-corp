@@ -31,9 +31,13 @@ I2B2 now extends the unchanged I1A bytes with the eighth, installation-only Trus
 and inactive Supervisor bootstrap descriptor. Its unsigned profile freezes exact identifiers,
 cross-links, entitlement/constraint candidates, protected-state names, and cleanup/repair
 projections while requiring `unsigned-profile-inactive` refusal. This is `PASSED` construction
-evidence only; production wrapper review and separately authorized I2B3 signing/key/App Group/
-service/container handoff remain `BLOCKED`. See the
-[I2B2 construction result](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md).
+evidence only. The production-shaped wrapper review and I2B3 exact Team-3DDR profile/signing
+preflight are also `PASSED` in their narrow scopes. I2B3 then stopped before Keychain, service,
+installation, Coordinator, or root work because the archived I1B Supervisor profile could rewrite
+current-profile state in the stable private container. A versioned signing/container identity
+decision now blocks the remaining handoff. See the
+[I2B2 construction result](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md) and
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 
 ## Current versus intended state
 

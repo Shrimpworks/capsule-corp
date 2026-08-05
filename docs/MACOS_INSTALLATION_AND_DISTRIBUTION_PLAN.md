@@ -14,9 +14,9 @@ Evidence or reason: the review supplied a coherent one-application distribution 
   research now classifies the seven Apple-platform questions and their remaining installed stops.
 Remaining work: every installed mechanism and authority-bearing helper below remains subject to
   its named ADR, implementation, signed installed corpus, and product-admission gate.
-Next action: after passed I2B2 unsigned construction, review the production signed-object wrapper
-  and separately authorize I2B3 signing/key/App Group/service/container handoff evidence.
-Parent status: macOS product installation and distribution are IN_PROGRESS — TRENDING_GOOD.
+Next action: decide the Supervisor signing/container epoch after the I2B3 stale-profile blocker,
+  then provision and separately authorize the replacement protected-root handoff corpus.
+Parent status: macOS product installation and distribution are IN_PROGRESS — TRENDING_BAD.
 ```
 
 The intended product experience is one application, not a collection of separately installed
@@ -249,7 +249,7 @@ service-registration evidence exists.
 | I1A | Unsigned app shell and exact seven-role byte/layout construction, execution permanently disabled | `PASSED`; deterministic Swift/AppKit status shell, inert daemon/Supervisor placeholders, exact R2 identities, closed readback and refusal evidence; no signed or installed behavior |
 | I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `PASSED`; exact Team-`3DDR84M4JS` profiles, inside-out signing/readback, private-service reachability, eight refusal cases, per-user registration, and cleanup are retained in the [pinned R3 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1b-r3-signed-development-composition); Apple Development only, no product admission or Release asset claim |
 | I2A | Protected-root/bootstrap-owner architecture and passive contract | `PASSED`; Proposed ADR-0038 selects one-shot Coordinator authorization plus Supervisor creation and retains the exact I2B object/order/fault plan without installed behavior |
-| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | I2B1 passive request/record objects and I2B2 unsigned installation-only construction are `PASSED`; installed I2B is `BLOCKED` on production wrapper review and separately authorized I2B3 exact Team-3DDR signing/key/App Group/service/container handoff evidence, followed by I2B4-I2B5 installed faults; product-store selection remains separate |
+| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | I2B1 passive objects, I2B2 unsigned construction, the production-shaped wrapper review, and I2B3 exact Team-3DDR profile/signing preflight are `PASSED` in their narrow scopes. I2B3 is `BLOCKED` because the archived I1B Supervisor profile rewrote current-profile state in the stable App Sandbox container. Resume only after an ADR-selected signing/container epoch and new authorization; I2B4-I2B5 and product-store selection remain separate. |
 | I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R4 confinement/resource/residue evidence plus later consumers; R1-R3 are `PASSED` in their exact scopes |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |

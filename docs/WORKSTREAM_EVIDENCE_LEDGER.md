@@ -24,6 +24,7 @@ next dependency boundary for the latest group are recorded in the
 | C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | Current-source libkrun dylib, final runner, fixed-owned-guest eligibility, and admission remain `BLOCKED`. |
 | C2B v4 build/static materialization | `PASSED`: exact accepted header, twice-reproduced current-source unsigned libkrun dylib, independent ABI audit, byte-equal unsigned final runner, and composed digest are retained with no execution. | Fixed-owned-guest eligibility is `BLOCKED` on separate authorization naming the exact v4 digest; admission remains `BLOCKED`. |
 | Production-shaped I2B1 CBOR/COSE wrapper review | `PASSED`: 95 Go/Swift checked-in-vector cases close pairing, repeated-field binding, payload-owned replay, caps, mutations, and fuzz targets. | Live signing, caller/key authorization, durable replay, installed consumers, and product admission remain `BLOCKED`. |
+| I2B3 Team-3DDR signing preflight and stale-profile stop | Exact Coordinator/Supervisor profile creation and signed-entitlement readback `PASSED`. The required stale-profile fault probe also `PASSED` as a decisive test: the archived I1B Supervisor profile rewrote a current-profile sentinel in the stable private container, cleanup removed the exact test state, and the workflow stopped before keys, services, installation, or root creation. | Exact I2B3 is `BLOCKED` on an ADR-selected signing/container epoch; installed owner-lock/product admission do not advance. See the [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md). |
 | Compiled-artifact archive migration | `PASSED`: 210 completed payload/evidence files are pinned to capsule-experiments commit `0944ffd8cfd01ec23e4ae99138b0931d56804077`; Capsule retains compact conformance metadata and six deterministic I2B2 source inputs. | No product, signing, installation, runtime, or admission status changes. |
 | Governed fork promotions | `PASSED`: Deno r3, `rusty_v8` r5, and libkrun r3 accepted lines are locked defaults with historical refs protected. | Governed runtime engineering is `IN_PROGRESS — TRENDING_GOOD`; release and admission remain `BLOCKED`. |
 | Source Validator R3/R4 | R3 `PASSED` its exact Apple Development signed, installed, inactive-policy composition. Exact R4-v1 candidates are `NO_GO`; R4-v2 was not executed. | Product R4/R5 remains `BLOCKED` and post-alpha defense-in-depth. |
@@ -286,8 +287,13 @@ constructions retain an exact 31-file/eight-role bundle, profile SHA-256
 cross-links, inactive service/entitlement/constraint inputs, and no-create refusal. No identity,
 profile, signing, key, service, process, container, protected state, runtime, backend, or guest was
 used. The narrow production-shaped wrapper review is `PASSED` for passive checked-in vectors.
-Installed I2B remains `BLOCKED` on separately authorized I2B3 signing, caller/key authorization,
-App Group/service/container handoff, and descriptor-relative store-open evidence.
+The I2B3 exact Team-3DDR profile/signing preflight also `PASSED`, but the mandatory stale-profile
+test then proved that the archived I1B Supervisor profile could rewrite current-profile state in
+the stable App Sandbox container. The exact sentinel was cleaned and the run stopped before
+Keychain, service, installation, Coordinator, or protected-root work. Installed I2B remains
+`BLOCKED` on an ADR-selected signing/container epoch followed by separately authorized caller/key,
+service/root, and descriptor-relative evidence. See the
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 
 Source Preparer P0 remains `BLOCKED` as a separate conditional later feature merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -536,10 +542,12 @@ Current dependency and priority view:
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
 3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, I2B2 unsigned
-   construction, and the post-I1B platform-semantics research are `PASSED` in their exact scopes.
-   The narrow production-shaped wrapper review is `PASSED`; continue with separately authorized
-   I2B3 signed Coordinator/bootstrap, caller/key authorization, protected-container, durable replay,
-   and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
+   construction, the production-shaped wrapper review, and the I2B3 exact-profile/signing preflight
+   are `PASSED` in their exact scopes. The required I2B3 stale-profile test then proved that the
+   archived I1B Supervisor profile could rewrite current-profile state in the stable private
+   container. Continue only after an ADR selects a signing/container epoch and a later task
+   separately authorizes caller/key, service/root, durable-replay, and descriptor-relative
+   fixed-v1 evidence. Manual whole-bundle replacement
    remains I4 and `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
    and complete uninstall remain I5-I6.
 4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original
@@ -568,9 +576,11 @@ Current dependency and priority view:
    [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md).
    Its documentation slice is `PASSED`; it changes no credential or product admission. Team
    `3DDR84M4JS`, the ADR-0037 containing topology, and the three exact I1B/R3 profiles are resolved
-   for that completed experiment. Later I2B3 still requires exact Coordinator/bootstrap profiles,
-   caller/key authorization, and App Group/service/container handoff; Developer ID/notarization/CI
-   release custody remains deferred to separately authorized work.
+   for that completed experiment. I2B3 later created and signed exact Coordinator/Supervisor
+   profiles, then stopped before caller/key and App Group/service/root handoff because the archived
+   I1B Supervisor profile retained write access to the stable private container. An ADR-selected
+   signing/container epoch and new authorization are required; Developer ID/notarization/CI release
+   custody remains deferred to separately authorized work.
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.

@@ -9,6 +9,9 @@ experiments/
 
 # Runtime state
 .capsule/
+# Generated design-tooling state; not read by anything in this repository's
+# own build, lint, or CI pipeline.
+.hallmark/
 artifacts/*
 !artifacts/mjs-source-validator-v1/
 !artifacts/mjs-source-validator-v1/**

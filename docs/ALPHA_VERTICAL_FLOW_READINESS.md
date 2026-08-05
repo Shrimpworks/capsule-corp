@@ -22,7 +22,7 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 | Fetch and render approval | ADR-0029 method design and native app scaffolding | `BLOCKED` | Broker must fetch Supervisor-owned bytes, render fixed typed facts, and treat an opaque RegistrationID only as an untrusted locator. |
 | Sign and retain approval | Approval fixtures plus local consume/create/replay mechanics | `PASSED` only for fixture/store evidence | Fresh `LAContext`, explicit user-presence key policy, no fallback, strict production COSE/key authorization, and installed Broker/Supervisor integration. |
 | Create and drive attempt | Durable attempt/lifecycle/FakeBackend mechanics | `PASSED` for no-guest local mechanics | Authenticated product call, protected owner/store, real sealed adapter, stable backend identity, restart reconciliation, and one fresh guest. |
-| Compose completion | Intended transcript/receipt/fixed-summary model | `BLOCKED` | Supervisor-derived compositor joining completion-last, integrity, lifecycle, teardown, and authoritative process-tree absence. |
+| Compose completion | [Unwired fixed FakeBackend compositor foundation](COMPLETION_COMPOSITOR_FOUNDATION.md) | `PASSED` for the read-only no-guest foundation | No durable completion producer/store transaction, guest port, integrity/result producer, real teardown/absence proof, authenticated consumer, signing, receipt, or installed composition. |
 
 The Oxc Source Validator's passive, artifact, and R3 signed inactive evidence remains retained.
 Product R4/R5 is `BLOCKED`, and exact R4-v1 candidates are `NO_GO`. ADR-0040 moves this control to
@@ -81,7 +81,9 @@ separate authorization; neither path alone is product alpha.
    production signing/verification, and the bounded fixed-store policy.
 5. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
    real adapter.
-6. Implement the completion/transcript/fixed-summary compositor.
+6. Connect the unwired completion/transcript/fixed-summary compositor only after implementing the
+   Supervisor-owned durable completion producer and the real integrity, teardown, and absence
+   facts it must consume.
 7. Run the minimum hostile source/authority/transport/root/lifecycle/restoration corpus in the exact
    signed-installed profile.
 

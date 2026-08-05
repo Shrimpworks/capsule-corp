@@ -28,8 +28,10 @@ lookup, replay, passive collision routing, and hot-only `AttemptID` recovery. Th
 the [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic authority/lifecycle
 mutation and the independent append-only effect source in the fixed-store scope. The
 [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now passes deterministic second/later
-immutable-segment activation and exact segment 64/65 bounded growth. F5-F6 and production
-admission remain outside the passed scope.
+immutable-segment activation and exact segment 64/65 bounded growth. The
+[F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) now passes owner-held coherent backup,
+read-only restore admission, explicit known-orphan handling, and fixed-shape offline reporting.
+F6 and production admission remain outside the passed scope.
 
 Normative proposal:
 [ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md).
@@ -526,6 +528,14 @@ type SupervisorArchiveStore interface {
 }
 ```
 
+F5 retains the equivalent concrete internal boundary in `registrationstate`: `StoreRoot` and
+`BackupRoot` are opaque trusted local capabilities; `CreateCoherentBackup` requires the live
+`ArchiveOwner`; `VerifyCoherentBackup` and `VerifyArchiveSet(..., VerificationFull)` are read-only;
+`VerifyRestoreAdmission` requires the owner and compares only with an injected
+`IndependentLatestCheckpoint`; and `InventoryArchiveArtifacts` returns sealed
+`KnownUnreferencedOrphan` values. `DeleteKnownUnreferencedOrphan` accepts only one of those sealed
+values and repeats the live and supplied-backup reference scan. None is a public/IPC path API.
+
 F4A extends `internal/execution/registrationstate` with these read-only
 `FixedFileStoreV2` methods and closed, location-independent response projections:
 
@@ -677,7 +687,7 @@ Acceptance: existing Slice B/E5 mutation, replay, response-loss, fault, and reco
 v2 with archived collision equivalents. No second segment, new tombstone-only commit, consumer,
 adapter call, runtime, backend, or guest is added.
 
-Observed result: `PASSED` in this exact scope. F4C is separately complete; F5-F6 and product
+Observed result: `PASSED` in this exact scope. F4C and F5 are separately complete; F6 and product
 admission remain open.
 
 ### Slice F4C: second-segment activation and bounded growth — complete
@@ -697,10 +707,10 @@ Observed result: `PASSED` in this exact scope. The
 deterministic later-generation/checkpoint ancestry, full retained-global lookup/replay/recovery,
 historical/current effect resolution across a mutation between activations, all thirteen activation
 fault points, four process-death points, concurrent retry convergence, second-segment mutation and
-substitution refusals, exact segment 64 acceptance, and segment 65 no-rewrite refusal. F5-F6 and
-product admission remain `BLOCKED`.
+substitution refusals, exact segment 64 acceptance, and segment 65 no-rewrite refusal. F5 is
+separately complete; F6 and product admission remain `BLOCKED`.
 
-### Slice F5: coherent backup, orphan handling, and offline verification
+### Slice F5: coherent backup, orphan handling, and offline verification — complete
 
 - Implement verified backup creation and read-only restore admission.
 - Implement the narrow known-unreferenced orphan deletion rule.
@@ -709,6 +719,19 @@ product admission remain `BLOCKED`.
 
 Acceptance: no restore activation or referenced-history deletion exists. No rollback-resistance or
 secure-deletion claim advances.
+
+Observed result: `PASSED` in the exact owner-held fixed-store local-conformance scope. Backup
+manifest v0 copies `state.json` plus every referenced digest-addressed segment and binds exact file
+digests/lengths, installation/Supervisor/epoch, current and previous checkpoints, migration
+genesis, snapshot/archive ancestry, visible-v1 seed, independent effect-tombstone digest, and
+hot/archived/total counts. `manifest.json` is written last and the complete set is independently
+reopened. Read-only restore admission is eligible only for exact equality with an injected
+independent latest-checkpoint fixture; no-anchor, older, future, and incomparable candidates remain
+rollback-uncertain. Offline inventory preserves unknown/corrupt/mixed/cross-installation evidence,
+and deletion requires explicit selection of a sealed fully verified known-unreferenced segment plus
+a repeated live/supplied-backup reference scan. Exact faults, death/race/cap evidence, known answer,
+and limitations are retained in the [F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md). F6 is not
+started.
 
 ### Slice F6: production-engine experiment and decision
 

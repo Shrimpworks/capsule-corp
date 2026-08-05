@@ -24,7 +24,9 @@ scopes. Product Source Validator work, installed owner-lock G3, and runtime/prof
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
 `IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
 only in their passive zero-effect scopes, while C2B composed-profile/guest execution remains
-`BLOCKED`. Archive F5 backup/orphan cleanup and F6 production-engine selection remain `BLOCKED`.
+`BLOCKED`. Archive F5 coherent backup, read-only restore admission, explicit known-orphan cleanup,
+and offline reporting are `PASSED` in their owner-held local fixed-store scope. F6 production-engine
+selection and every production durability/restore/consumer claim remain `BLOCKED`.
 None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.
@@ -230,7 +232,11 @@ current-effect contradiction and ADR-0031's selected independent-source correcti
 same-transaction append-only effect issuance, exact replay, and corrected hot/archive
 reconstruction/lookup. The [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now passes
 deterministic second/later segment activation, retained-global reconstruction, exact segment 64/65
-capacity behavior, and old-or-complete-new reopen. F5-F6 remain deferred.
+capacity behavior, and old-or-complete-new reopen. The
+[F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) now passes manifest-last coherent backup,
+read-only anchor comparison/restore admission, bounded offline reporting, and explicitly selected
+known-unreferenced orphan removal. It performs no restore activation or referenced-history deletion
+and makes no rollback, secure-deletion, APFS, or production durability claim. F6 remains deferred.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

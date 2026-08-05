@@ -293,7 +293,12 @@ contradiction and its selected correction. The
 mutation, independent tombstone, durable replay, historical lookup, and fault/collision scope. The
 [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) passes deterministic second/later segment
 activation, exact 64-segment acceptance/65 refusal, retained-global reconstruction, and complete
-old-or-new fault/death evidence. F5-F6 remain deferred.
+old-or-new fault/death evidence. The
+[F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) passes owner-held manifest-last coherent backup,
+complete-copy verification, read-only exact-anchor restore admission, bounded offline reporting,
+and explicit deletion of only a sealed known-unreferenced segment after live and supplied-backup
+reference scans. It preserves unknown/corrupt/mixed/cross-installation evidence and activates no
+restore. F6 remains deferred.
 
 The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
 Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
@@ -449,11 +454,12 @@ Completed and retained:
 - passive field-authority verification for 335 fields across 26 selected pre-freeze targets,
   including nested MJS SourceManifest member coverage without claiming recursive coverage for
   future Source Preparer or plan-v1 objects; and
-- archive Slice F1 passive projections, limits/known answers, defensive copies, and deterministic
-  eligibility selection; F2's owner-asserted all-hot v1-to-v2 migration and read-only full
-  verifier; and F3's one immutable complete-cohort segment publication and atomic activation.
-  Retained lookup, v2 authority mutation, second activation, backup/orphan cleanup, adapter calls,
-  and consumers remain absent; and
+- archive Slice F1 passive projections and eligibility selection; F2 owner-asserted all-hot
+  migration/full verification; F3 immutable-segment publication/activation; F4A retained lookup;
+  F4B atomic mutation/independent effect tombstones; F4C bounded later growth; and F5 coherent
+  backup/read-only restore admission/explicit known-orphan cleanup/offline reporting. Production
+  engine, restore activation, referenced-history deletion, adapter calls, and consumers remain
+  absent; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
   bounded G2 current-v1/no-guest startup composition, plus I2A's passed owner/contract decision;
   signed-object fixtures and installed protected-root evidence remain unimplemented, and installed
@@ -474,12 +480,12 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Next archive slice:** F2 migration/full verification, F3 first-segment activation, F4A
+1. **Archive logical oracle complete through F5:** F2 migration/full verification, F3 first-segment activation, F4A
    retained lookup/replay/passive-collision routing, and the
    [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
-   [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) are `PASSED` in their exact
-   local scopes. Continue with F5 backup/orphan cleanup and reporting; keep F6 production-engine
-   work separate.
+   [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), and
+   [F5 backup result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) are `PASSED` in their exact local
+   scopes. Keep F6 production-engine work separate and do not infer restore activation.
 2. **Source Validator R3 signed composition passed; product blocked:** Accepted ADR-0036 closes R0 with
    two role-specific private launchers, residual private-container scratch plus mandatory cleanup,
    and an evidence-derived reactive watermark with no hard-peak or host-availability claim. Product

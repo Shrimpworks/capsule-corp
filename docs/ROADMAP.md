@@ -264,9 +264,9 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Define stable error, violation, posture, lifecycle, and recovery records.
 - Retain the completed ADR-0031 effect-history correction,
   [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
-  [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), then continue the fixed-store archive
-  oracle into F5 backup/orphan/reporting, retaining full closed cohorts
-  and exact tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
+  [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), and
+  [F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md), retaining full closed cohorts and exact
+  tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned
   `fxamacker/cbor` only for future object-specific typed encode/decode while keeping Capsule

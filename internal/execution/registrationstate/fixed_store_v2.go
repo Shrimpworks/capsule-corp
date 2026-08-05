@@ -43,7 +43,9 @@ type V1ToV2MigrationOptions struct {
 // migration genesis, F3 adds the first sealed immutable-segment activation,
 // F4A adds read-only retained-global lookup/collision routing, and F4B adds
 // atomic authority/lifecycle mutation plus the independent append-only effect-
-// tombstone source. F4C adds bounded second/later immutable-segment growth. No
+// tombstone source. F4C adds bounded second/later immutable-segment growth. F5
+// adds owner-held coherent backup, read-only restore admission, explicit known-
+// orphan removal, and offline reporting without restore activation. No
 // completed slice here authorizes adapter invocation, a consumer, a runtime/
 // backend, or a guest.
 type FixedFileStoreV2 struct {

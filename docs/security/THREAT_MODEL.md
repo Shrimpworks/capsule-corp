@@ -642,11 +642,14 @@ partial, substituted, or cross-linked tombstone state refuses without rewrite or
 [F4C result](../SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now carries those independent tombstones
 and complete cohorts through deterministic second/later immutable-segment activation, exact
 segment 64/65 capacity behavior, and old-or-complete-new reopen without deletion or adapter calls.
-The
-finite fixed-store checkpoint still provides no
-production engine, multi-process lock, power-loss result,
-restore/anti-rollback mechanism, referenced-history deletion, continuous service, consumer, or
-guest evidence.
+The [F5 result](../SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) now retains an exact manifest-last copy
+of active v2 plus every referenced segment, full copied-set reopen, read-only exact-anchor restore
+admission, fixed-shape offline inventory, and explicit removal of only a sealed known-unreferenced
+segment after live and supplied-backup reference scans. Unknown, corrupt, mixed-generation, and
+cross-installation artifacts refuse and remain evidence. The finite fixed-store checkpoint still
+provides no production engine, installed multi-process/protected-root evidence, power-loss result,
+restore activation/anti-rollback mechanism, referenced-history deletion, continuous service,
+consumer, or guest evidence.
 
 ### Non-guarantees
 

@@ -708,38 +708,54 @@ func decodeV1Consumer(expected V1ConsumerRole, frame []byte) (*V1ConsumerProject
 	return value, nil
 }
 
-func v1PutRequestCommon(frame []byte, request *V1ValidationRequest) {
+// v1CommonFrameFields is the field set shared byte-for-byte between the
+// request and result frame headers: role/correlation/epoch/source/policy
+// identity common to both directions of the v1 exchange.
+type v1CommonFrameFields struct {
+	Role                  V1ConsumerRole
+	CorrelationID         V1CorrelationID
+	InstallationID        V1InstallationID
+	EpochSequence         uint64
+	EpochDigest           V1Digest
+	SourceByteLength      uint32
+	SourceDigest          V1Digest
+	ArtifactProfileDigest V1Digest
+	ResourcePolicyDigest  V1Digest
+}
+
+func v1PutCommonFrame(frame []byte, frameKind uint16, fields v1CommonFrameFields) {
 	binary.BigEndian.PutUint16(frame[12:14], 1)
-	binary.BigEndian.PutUint16(frame[14:16], V1RequestFrameKind)
-	binary.BigEndian.PutUint16(frame[16:18], uint16(request.Role))
+	binary.BigEndian.PutUint16(frame[14:16], frameKind)
+	binary.BigEndian.PutUint16(frame[16:18], uint16(fields.Role))
 	for index := 0; index < 11; index++ {
-		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(request.Role, uint16(index+1)))
+		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(fields.Role, uint16(index+1)))
 	}
-	copy(frame[44:60], request.CorrelationID[:])
-	copy(frame[60:76], request.InstallationID[:])
-	binary.BigEndian.PutUint64(frame[76:84], request.EpochSequence)
-	copy(frame[84:116], request.EpochDigest[:])
-	binary.BigEndian.PutUint32(frame[116:120], request.SourceByteLength)
-	copy(frame[120:152], request.SourceDigest[:])
-	copy(frame[152:184], request.ArtifactProfileDigest[:])
-	copy(frame[184:216], request.ResourcePolicyDigest[:])
+	copy(frame[44:60], fields.CorrelationID[:])
+	copy(frame[60:76], fields.InstallationID[:])
+	binary.BigEndian.PutUint64(frame[76:84], fields.EpochSequence)
+	copy(frame[84:116], fields.EpochDigest[:])
+	binary.BigEndian.PutUint32(frame[116:120], fields.SourceByteLength)
+	copy(frame[120:152], fields.SourceDigest[:])
+	copy(frame[152:184], fields.ArtifactProfileDigest[:])
+	copy(frame[184:216], fields.ResourcePolicyDigest[:])
+}
+
+func v1PutRequestCommon(frame []byte, request *V1ValidationRequest) {
+	v1PutCommonFrame(frame, V1RequestFrameKind, v1CommonFrameFields{
+		Role: request.Role, CorrelationID: request.CorrelationID, InstallationID: request.InstallationID,
+		EpochSequence: request.EpochSequence, EpochDigest: request.EpochDigest,
+		SourceByteLength: request.SourceByteLength, SourceDigest: request.SourceDigest,
+		ArtifactProfileDigest: request.ArtifactProfileDigest, ResourcePolicyDigest: request.ResourcePolicyDigest,
+	})
 }
 
 func v1PutResultCommon(frame []byte, result *V1ValidationResult) {
-	binary.BigEndian.PutUint16(frame[12:14], 1)
-	binary.BigEndian.PutUint16(frame[14:16], V1ResultFrameKind)
-	binary.BigEndian.PutUint16(frame[16:18], uint16(result.Role))
-	for index := 0; index < 11; index++ {
-		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(result.Role, uint16(index+1)))
-	}
-	copy(frame[44:60], result.CorrelationID[:])
-	copy(frame[60:76], result.InstallationID[:])
-	binary.BigEndian.PutUint64(frame[76:84], result.EpochSequence)
-	copy(frame[84:116], result.EpochDigest[:])
-	binary.BigEndian.PutUint32(frame[116:120], result.SourceByteLength)
-	copy(frame[120:152], result.SourceDigest[:])
-	copy(frame[152:184], result.ArtifactProfileDigest[:])
-	copy(frame[184:216], result.ResourcePolicyDigest[:])
+	v1PutCommonFrame(frame, V1ResultFrameKind, v1CommonFrameFields{
+		Role: result.Role, CorrelationID: result.CorrelationID, InstallationID: result.InstallationID,
+		EpochSequence: result.EpochSequence, EpochDigest: result.EpochDigest,
+		SourceByteLength: result.SourceByteLength, SourceDigest: result.SourceDigest,
+		ArtifactProfileDigest: result.ArtifactProfileDigest, ResourcePolicyDigest: result.ResourcePolicyDigest,
+	})
 }
 
 func validateV1Request(request *V1ValidationRequest) error {

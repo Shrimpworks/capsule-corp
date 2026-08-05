@@ -118,6 +118,38 @@ type diskEnvelopeV2 struct {
 	TotalCounts    archivestate.ArchiveCounts `json:"totalCounts"`
 }
 
+// buildActiveStateV2 projects a decoded v2 envelope (either the loaded on-disk
+// state or a prepared candidate successor) into archivestate.ActiveStateV2,
+// given the descriptors and indexes already reconstructed by the caller.
+func buildActiveStateV2(
+	envelope diskEnvelopeV2,
+	descriptors []archivestate.ArchiveDescriptor,
+	storedIndexes archivestate.ArchiveIndexes,
+	tombstoneDigest archivestate.EffectTombstoneSetDigest,
+) (archivestate.ActiveStateV2, error) {
+	return archivestate.NewActiveStateV2(archivestate.ActiveStateV2View{
+		StoreFormatVersion:     *envelope.StoreFormatVersion,
+		MigrationSourceVersion: *envelope.MigrationSourceVersion,
+		SnapshotGeneration:     envelope.SnapshotGeneration, ArchiveGeneration: envelope.ArchiveGeneration,
+		InstallationID: envelope.State.InstallationID, SupervisorID: envelope.State.SupervisorID,
+		EpochSequence: envelope.State.EpochSequence, EpochDigest: envelope.State.EpochDigest,
+		DurableTimeHighWater: envelope.State.TimeHighWaterUnixSeconds,
+		Descriptors:          descriptors, DescriptorSetDigest: envelope.DescriptorSetDigest,
+		Indexes: storedIndexes, IndexDigests: envelope.IndexDigests,
+		CombinedIndexDigest: envelope.CombinedIndexDigest,
+		HotSetDigests: archivestate.HotSetDigests{
+			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
+			Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
+			EffectTombstones: tombstoneDigest,
+		},
+		EffectTombstoneCoverage:   envelope.EffectTombstoneCoverage,
+		VisibleV1EffectSeedCount:  envelope.VisibleV1EffectSeedCount,
+		VisibleV1EffectSeedDigest: envelope.VisibleV1EffectSeedDigest,
+		PreviousCheckpoint:        envelope.PreviousCheckpoint, CurrentCheckpoint: envelope.CurrentCheckpoint,
+		HotCounts: envelope.HotCounts, ArchivedCounts: envelope.ArchivedCounts, TotalCounts: envelope.TotalCounts,
+	})
+}
+
 type migrationGenesisDisk struct {
 	Kind                      string                                  `json:"kind"`
 	StoreFormatVersion        uint64                                  `json:"storeFormatVersion"`
@@ -699,27 +731,7 @@ func loadV2State(path string) (loadedV2State, error) {
 		}
 		descriptors[index] = descriptor
 	}
-	active, err := archivestate.NewActiveStateV2(archivestate.ActiveStateV2View{
-		StoreFormatVersion:     *envelope.StoreFormatVersion,
-		MigrationSourceVersion: *envelope.MigrationSourceVersion,
-		SnapshotGeneration:     envelope.SnapshotGeneration, ArchiveGeneration: envelope.ArchiveGeneration,
-		InstallationID: envelope.State.InstallationID, SupervisorID: envelope.State.SupervisorID,
-		EpochSequence: envelope.State.EpochSequence, EpochDigest: envelope.State.EpochDigest,
-		DurableTimeHighWater: envelope.State.TimeHighWaterUnixSeconds,
-		Descriptors:          descriptors, DescriptorSetDigest: envelope.DescriptorSetDigest,
-		Indexes: storedIndexes, IndexDigests: envelope.IndexDigests,
-		CombinedIndexDigest: envelope.CombinedIndexDigest,
-		HotSetDigests: archivestate.HotSetDigests{
-			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
-			Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
-			EffectTombstones: tombstoneDigest,
-		},
-		EffectTombstoneCoverage:   envelope.EffectTombstoneCoverage,
-		VisibleV1EffectSeedCount:  envelope.VisibleV1EffectSeedCount,
-		VisibleV1EffectSeedDigest: envelope.VisibleV1EffectSeedDigest,
-		PreviousCheckpoint:        envelope.PreviousCheckpoint, CurrentCheckpoint: envelope.CurrentCheckpoint,
-		HotCounts: envelope.HotCounts, ArchivedCounts: envelope.ArchivedCounts, TotalCounts: envelope.TotalCounts,
-	})
+	active, err := buildActiveStateV2(envelope, descriptors, storedIndexes, tombstoneDigest)
 	if err != nil {
 		return loadedV2State{}, err
 	}
@@ -744,7 +756,7 @@ func loadV2State(path string) (loadedV2State, error) {
 		if len(segments) > 1 && envelope.PreviousCheckpoint.Kind != archivestate.ArchiveCheckpointActivation {
 			return loadedV2State{}, errors.New("fixed supervisor F4C predecessor kind mismatch")
 		}
-		if _, checkpointErr := validateActivationCheckpointDisk(envelope, storedIndexes, segments); checkpointErr != nil {
+		if checkpointErr := validateActivationCheckpointDisk(envelope, storedIndexes, segments); checkpointErr != nil {
 			return loadedV2State{}, checkpointErr
 		}
 	default:

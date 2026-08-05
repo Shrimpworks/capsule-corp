@@ -55,6 +55,15 @@ Configure each fork according to its recorded role:
 - Every automation or agent must create pull requests with explicit repository, base, and head
   arguments and read those fields back with the stored body and draft state.
 
+When an owned fork has only one qualified maintainer, protect its mutable default and governed
+review targets with required pull requests, green required checks, resolved conversations,
+administrator enforcement, no force-push, no deletion, and explicit evidence/settings readback.
+Set the required approving-review count to zero, require-approval-of-most-recent-push to false, and
+required CODEOWNER review to false; the maintainer must perform and record a self-review. Enable
+external approval enforcement only when a second qualified maintainer is available. This GitHub
+merge setting does not waive the independent security approval required above for admitted runtime
+bytes or new validation claims, and it does not waive DCO or upstream-submission authorization.
+
 Record the active default, immutable ref names and commits, candidate target, protections, and
 verification commands in the fork's governed metadata. A branch name alone is not an immutable
 identity.

@@ -69,5 +69,6 @@ its core conclusion.
 - [ADR-0037: Freeze the passive one-application macOS installation I0 contract](0037-freeze-passive-macos-installation-i0-contract.md)
 - [ADR-0038: Select a one-shot Trust Coordinator to authorize Supervisor-created protected state](0038-select-one-shot-coordinator-supervisor-bootstrap.md)
   — Proposed
+- [ADR-0039: License Capsule-owned material under Apache-2.0](0039-license-capsule-under-apache-2.0.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

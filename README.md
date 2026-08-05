@@ -168,5 +168,6 @@ according to [SECURITY.md](SECURITY.md).
 
 ## License
 
-No license has been selected. Until one is added, the repository is not offered under an open-
-source license.
+Capsule-owned material is licensed under the [Apache License, Version 2.0](LICENSE). Third-party
+components and retained artifacts remain under their respective licenses; see
+[Licensing](docs/LICENSING.md) and [Third-party notices](THIRD_PARTY_NOTICES.md).

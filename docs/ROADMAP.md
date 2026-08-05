@@ -288,6 +288,13 @@ Exit evidence:
 
 ## Phase 3: registered-plan and fake-backend lifecycle
 
+The ordered consumer-to-Supervisor dependency and the distinction between retained mechanics and a
+working alpha path are summarized in the
+[alpha vertical-flow readiness map](ALPHA_VERTICAL_FLOW_READINESS.md). In particular, the current
+diagnostic HTTP server is not already the selected submission boundary, `RegisterPlanV0` remains
+fresh-registration behavior, and `FixtureVerifier` remains a retained-vector test oracle rather
+than a production approval verifier.
+
 - Implement daemon plan generation and Supervisor plan registration.
 - Before activating the candidate agent endpoint, define and enforce the daemon's aggregate
   connection, concurrency, in-flight-byte, queue, deadline, cancellation, downstream-stall, and

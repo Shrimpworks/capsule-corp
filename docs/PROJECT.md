@@ -29,6 +29,14 @@ None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.
 
+The [alpha vertical-flow readiness map](ALPHA_VERTICAL_FLOW_READINESS.md) separates the many
+already-passed passive/local mechanics from the still-blocked product composition. There is no
+current product path from submitted `main.mjs` through the two Source Validator consumers,
+planning, authenticated registration, Broker rendering/signing, approval verification, attempt
+creation, fake lifecycle drive, and a fixed completion summary. That map also records why the
+diagnostic HTTP server, fresh-registration semantics, retained-vector-only `FixtureVerifier`, and
+rejected inherited-helper validator design must not be silently repurposed to close the gap.
+
 Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
 bootstrap-only Supervisor descriptor, inactive entitlement/constraint inputs, exact I1/I2B1

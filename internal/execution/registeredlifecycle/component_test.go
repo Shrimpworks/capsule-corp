@@ -1100,7 +1100,7 @@ func mustRead(t *testing.T, path string) []byte {
 func ordinaryBindings() v0candidate.ExecutionPlanRoleBindings {
 	return v0candidate.ExecutionPlanRoleBindings{
 		InstallationID: repeated16[v0candidate.InstallationID](0x11), EpochDigest: repeated32[v0candidate.TrustEpochDigest](0x22),
-		SourceManifestDigest:            hex32[v0candidate.SourceManifestDigest]("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+		SourceManifestDigest:            hex32[v0candidate.SourceManifestDigest]("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"),
 		InlineInputDigest:               hex32[v0candidate.InlineInputDigest]("bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72"),
 		RuntimeBundleManifestDigest:     repeated32[v0candidate.RuntimeBundleManifestDigest](0x55),
 		ProfileReviewAttestationDigests: []v0candidate.ProfileReviewAttestationDigest{repeated32[v0candidate.ProfileReviewAttestationDigest](0x66), repeated32[v0candidate.ProfileReviewAttestationDigest](0x67)},

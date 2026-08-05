@@ -144,6 +144,7 @@
             "unbound-untrusted-proposal",
             "execution-plan-v0-exact-bytes-and-digest",
             "supervisor-registration-record",
+            "supervisor-registration-source-custody",
             "approval-grant-v0-signature-and-registration",
             "durable-approval-record",
             "atomic-execution-attempt-record",

@@ -1,0 +1,32 @@
+{
+  "objectType": "capsule.authority-plane-conformance",
+  "objectVersion": 0,
+  "roleBindingRecordVersion": 0,
+  "caps": {
+    "executionPlan": 65536,
+    "roleBindings": 562,
+    "sourceManifest": 95,
+    "source": 262144,
+    "planRegistration": 4096,
+    "registerPlanV0": 328337,
+    "getRegisteredPlanV0": 332433
+  },
+  "fixtures": {
+    "execution-plan.cbor": {
+      "byteLength": 527,
+      "sha256": "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241"
+    },
+    "role-bindings.bin": {
+      "byteLength": 562,
+      "sha256": "38995b7af11a5c971b9c7ebd46f24513f06750dffcdd5d49a9fdf41173b5244c"
+    },
+    "source-manifest.cbor": {
+      "byteLength": 89,
+      "sha256": "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"
+    },
+    "main.mjs": {
+      "byteLength": 50,
+      "sha256": "681f39365de1369ee486fa34e88b993c60df5a835006b65e0d8916df717c31cc"
+    }
+  }
+}

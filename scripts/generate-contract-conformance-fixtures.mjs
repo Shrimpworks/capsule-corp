@@ -869,15 +869,15 @@ function addProposalRulesAndCases() {
   });
 
   addRule(
-    "job-proposal.source.path-grammar",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "Source paths use the exact relative case-sensitive ASCII grammar.",
+    "job-proposal.source.exact-main-mjs",
+    "ADR-0034#single-member-source-profile",
+    "Source is exactly one main.mjs member; legacy JS, TS, CJS, and multi-file bundles are refused.",
     ordinaryRequirements,
   );
   addProposalCase({
-    id: "job-proposal.source.path-grammar.accept",
-    description: "Accept case-distinct relative ASCII source paths.",
-    ruleIds: ["job-proposal.source.path-grammar"],
+    id: "job-proposal.source.exact-main-mjs.accept",
+    description: "Accept exactly one main.mjs source member.",
+    ruleIds: ["job-proposal.source.exact-main-mjs"],
     variant: "ordinary",
     path: proposalPath,
     bytes: proposalBytes,
@@ -885,222 +885,328 @@ function addProposalRulesAndCases() {
     owner: "job-proposal-schema",
   });
   addProposalCase({
-    id: "job-proposal.source.path-grammar.reject-dot-segment",
-    description: "Reject a dot-dot source path segment before semantic resolution.",
-    ruleIds: ["job-proposal.source.path-grammar"],
+    id: "job-proposal.source.exact-main-mjs.reject-legacy-typescript",
+    description: "Refuse the historical main.ts proposal shape.",
+    ruleIds: ["job-proposal.source.exact-main-mjs"],
     variant: "malformed",
-    path: "job-proposal/source-path-dot-segment.json",
+    path: "job-proposal/source-legacy-main-ts.json",
+    proposal: withSource(proposal, { entrypoint: "main.ts", files: { "main.ts": "export {};\n" } }),
+    decision: "reject",
+    classification: "DOMAIN",
+    owner: "job-proposal-schema",
+  });
+  addProposalCase({
+    id: "job-proposal.source.exact-main-mjs.reject-extra-member",
+    description: "Refuse additive multi-file source authority.",
+    ruleIds: ["job-proposal.source.exact-main-mjs"],
+    variant: "malformed",
+    path: "job-proposal/source-extra-member.json",
     proposal: withSource(proposal, {
-      entrypoint: "main.ts",
-      files: { "main.ts": "export {};\n", "src/../escape.ts": "export {};\n" },
+      entrypoint: "main.mjs",
+      files: { "main.mjs": "export {};\n", "helper.mjs": "export {};\n" },
     }),
     decision: "reject",
     classification: schema,
     owner: "job-proposal-schema",
   });
 
-  addRule(
-    "job-proposal.source.path-bytes",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "One source path contains at most 256 ASCII bytes.",
-    boundaryRequirements,
-  );
-  const exactPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(5)}/${"e".repeat(52)}.ts`;
-  const overPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(6)}/${"e".repeat(52)}.ts`;
-  addProposalCase({
-    id: "job-proposal.source.path-bytes.exact-maximum",
-    description: "Accept an exact 256-byte source path and matching entrypoint.",
-    ruleIds: ["job-proposal.source.path-bytes"],
-    variant: "exact-maximum",
-    path: "job-proposal/source-path-exact.json",
-    proposal: withSource(proposal, {
-      entrypoint: exactPath,
-      files: { [exactPath]: "export {};\n" },
-    }),
-    owner: "job-proposal-schema",
-  });
-  addProposalCase({
-    id: "job-proposal.source.path-bytes.cap-plus-one",
-    description: "Reject a 257-byte source path without truncation or normalization.",
-    ruleIds: ["job-proposal.source.path-bytes"],
-    variant: "cap-plus-one",
-    path: "job-proposal/source-path-over.json",
-    proposal: withSource(proposal, {
-      entrypoint: overPath,
-      files: { [overPath]: "export {};\n" },
-    }),
-    decision: "reject",
-    classification: schema,
-    owner: "job-proposal-schema",
-  });
+  // Historical broad-source cases stay readable in Git history but are no
+  // longer emitted as authority-bearing v0 conformance cases.
+  const emitHistoricalBroadSourceAuthority = false;
+  if (emitHistoricalBroadSourceAuthority) {
+    addRule(
+      "job-proposal.source.path-grammar",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "Source paths use the exact relative case-sensitive ASCII grammar.",
+      ordinaryRequirements,
+    );
+    addProposalCase({
+      id: "job-proposal.source.path-grammar.accept",
+      description: "Accept case-distinct relative ASCII source paths.",
+      ruleIds: ["job-proposal.source.path-grammar"],
+      variant: "ordinary",
+      path: proposalPath,
+      bytes: proposalBytes,
+      context: knownAnswerContext,
+      owner: "job-proposal-schema",
+    });
+    addProposalCase({
+      id: "job-proposal.source.path-grammar.reject-dot-segment",
+      description: "Reject a dot-dot source path segment before semantic resolution.",
+      ruleIds: ["job-proposal.source.path-grammar"],
+      variant: "malformed",
+      path: "job-proposal/source-path-dot-segment.json",
+      proposal: withSource(proposal, {
+        entrypoint: "main.ts",
+        files: { "main.ts": "export {};\n", "src/../escape.ts": "export {};\n" },
+      }),
+      decision: "reject",
+      classification: schema,
+      owner: "job-proposal-schema",
+    });
 
-  addRule(
-    "job-proposal.source.segment-bytes",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "One source path segment contains at most 64 ASCII bytes.",
-    boundaryRequirements,
-  );
-  const exactSegmentPath = `${"s".repeat(64)}/helper.ts`;
-  const overSegmentPath = `${"s".repeat(65)}/helper.ts`;
-  addProposalCase({
-    id: "job-proposal.source.segment-bytes.exact-maximum",
-    description: "Accept an exact 64-byte non-entrypoint source path segment.",
-    ruleIds: ["job-proposal.source.segment-bytes"],
-    variant: "exact-maximum",
-    path: "job-proposal/source-segment-exact.json",
-    proposal: withSource(proposal, {
-      entrypoint: "main.ts",
-      files: { "main.ts": "export {};\n", [exactSegmentPath]: "export {};\n" },
-    }),
-    owner: "job-proposal-schema",
-  });
-  addProposalCase({
-    id: "job-proposal.source.segment-bytes.cap-plus-one",
-    description: "Reject a 65-byte source path segment.",
-    ruleIds: ["job-proposal.source.segment-bytes"],
-    variant: "cap-plus-one",
-    path: "job-proposal/source-segment-over.json",
-    proposal: withSource(proposal, {
-      entrypoint: "main.ts",
-      files: { "main.ts": "export {};\n", [overSegmentPath]: "export {};\n" },
-    }),
-    decision: "reject",
-    classification: schema,
-    owner: "job-proposal-schema",
-  });
+    addRule(
+      "job-proposal.source.path-bytes",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "One source path contains at most 256 ASCII bytes.",
+      boundaryRequirements,
+    );
+    const exactPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(5)}/${"e".repeat(52)}.ts`;
+    const overPath = `${"a".repeat(64)}/${"b".repeat(64)}/${"c".repeat(64)}/${"d".repeat(6)}/${"e".repeat(52)}.ts`;
+    addProposalCase({
+      id: "job-proposal.source.path-bytes.exact-maximum",
+      description: "Accept an exact 256-byte source path and matching entrypoint.",
+      ruleIds: ["job-proposal.source.path-bytes"],
+      variant: "exact-maximum",
+      path: "job-proposal/source-path-exact.json",
+      proposal: withSource(proposal, {
+        entrypoint: exactPath,
+        files: { [exactPath]: "export {};\n" },
+      }),
+      owner: "job-proposal-schema",
+    });
+    addProposalCase({
+      id: "job-proposal.source.path-bytes.cap-plus-one",
+      description: "Reject a 257-byte source path without truncation or normalization.",
+      ruleIds: ["job-proposal.source.path-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/source-path-over.json",
+      proposal: withSource(proposal, {
+        entrypoint: overPath,
+        files: { [overPath]: "export {};\n" },
+      }),
+      decision: "reject",
+      classification: schema,
+      owner: "job-proposal-schema",
+    });
 
-  addRule(
-    "job-proposal.source.file-count",
-    "ADR-0023#strict-jobproposal-raw-profile",
-    "A proposal contains at most 32 source file entries.",
-    boundaryRequirements,
-  );
-  const exactFiles = numberedSourceFiles(32);
-  const overFiles = numberedSourceFiles(33);
-  addProposalCase({
-    id: "job-proposal.source.file-count.exact-maximum",
-    description: "Accept exactly 32 source file entries.",
-    ruleIds: ["job-proposal.source.file-count"],
-    variant: "exact-maximum",
-    path: "job-proposal/source-file-count-exact.json",
-    proposal: withSource(proposal, { entrypoint: "f00.ts", files: exactFiles }),
-    owner: "job-proposal-schema",
-  });
-  addProposalCase({
-    id: "job-proposal.source.file-count.cap-plus-one",
-    description: "Reject 33 source file entries.",
-    ruleIds: ["job-proposal.source.file-count"],
-    variant: "cap-plus-one",
-    path: "job-proposal/source-file-count-over.json",
-    proposal: withSource(proposal, { entrypoint: "f00.ts", files: overFiles }),
-    decision: "reject",
-    classification: schema,
-    owner: "job-proposal-schema",
-  });
+    addRule(
+      "job-proposal.source.segment-bytes",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "One source path segment contains at most 64 ASCII bytes.",
+      boundaryRequirements,
+    );
+    const exactSegmentPath = `${"s".repeat(64)}/helper.ts`;
+    const overSegmentPath = `${"s".repeat(65)}/helper.ts`;
+    addProposalCase({
+      id: "job-proposal.source.segment-bytes.exact-maximum",
+      description: "Accept an exact 64-byte non-entrypoint source path segment.",
+      ruleIds: ["job-proposal.source.segment-bytes"],
+      variant: "exact-maximum",
+      path: "job-proposal/source-segment-exact.json",
+      proposal: withSource(proposal, {
+        entrypoint: "main.ts",
+        files: { "main.ts": "export {};\n", [exactSegmentPath]: "export {};\n" },
+      }),
+      owner: "job-proposal-schema",
+    });
+    addProposalCase({
+      id: "job-proposal.source.segment-bytes.cap-plus-one",
+      description: "Reject a 65-byte source path segment.",
+      ruleIds: ["job-proposal.source.segment-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/source-segment-over.json",
+      proposal: withSource(proposal, {
+        entrypoint: "main.ts",
+        files: { "main.ts": "export {};\n", [overSegmentPath]: "export {};\n" },
+      }),
+      decision: "reject",
+      classification: schema,
+      owner: "job-proposal-schema",
+    });
+
+    addRule(
+      "job-proposal.source.file-count",
+      "ADR-0023#strict-jobproposal-raw-profile",
+      "A proposal contains at most 32 source file entries.",
+      boundaryRequirements,
+    );
+    const exactFiles = numberedSourceFiles(32);
+    const overFiles = numberedSourceFiles(33);
+    addProposalCase({
+      id: "job-proposal.source.file-count.exact-maximum",
+      description: "Accept exactly 32 source file entries.",
+      ruleIds: ["job-proposal.source.file-count"],
+      variant: "exact-maximum",
+      path: "job-proposal/source-file-count-exact.json",
+      proposal: withSource(proposal, { entrypoint: "f00.ts", files: exactFiles }),
+      owner: "job-proposal-schema",
+    });
+    addProposalCase({
+      id: "job-proposal.source.file-count.cap-plus-one",
+      description: "Reject 33 source file entries.",
+      ruleIds: ["job-proposal.source.file-count"],
+      variant: "cap-plus-one",
+      path: "job-proposal/source-file-count-over.json",
+      proposal: withSource(proposal, { entrypoint: "f00.ts", files: overFiles }),
+      decision: "reject",
+      classification: schema,
+      owner: "job-proposal-schema",
+    });
+
+    addRule(
+      "job-proposal.source.file-bytes",
+      "ADR-0023#strict-jobproposal-raw-profile",
+      "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+      boundaryRequirements,
+    );
+    addProposalCase({
+      id: "job-proposal.source.file-bytes.exact-maximum",
+      description: "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+      ruleIds: ["job-proposal.source.file-bytes"],
+      variant: "exact-maximum",
+      path: "job-proposal/source-file-bytes-exact.json",
+      proposal: withSource(proposal, {
+        entrypoint: "main.ts",
+        files: { "main.ts": "🚀".repeat(65_536) },
+      }),
+    });
+    addProposalCase({
+      id: "job-proposal.source.file-bytes.cap-plus-one",
+      description: "Reject one source file containing 262,145 UTF-8 bytes.",
+      ruleIds: ["job-proposal.source.file-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/source-file-bytes-over.json",
+      proposal: withSource(proposal, {
+        entrypoint: "main.ts",
+        files: { "main.ts": `${"🚀".repeat(65_536)}a` },
+      }),
+      decision: "reject",
+      classification: "SEMANTIC",
+    });
+
+    addRule(
+      "job-proposal.source.aggregate-bytes",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
+      boundaryRequirements,
+    );
+    const aggregateFiles = Object.fromEntries(
+      Array.from({ length: 4 }, (_, index) => [`f${index}.ts`, "a".repeat(262_144)]),
+    );
+    addProposalCase({
+      id: "job-proposal.source.aggregate-bytes.exact-maximum",
+      description: "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
+      ruleIds: ["job-proposal.source.aggregate-bytes", "job-proposal.source.manifest-identity"],
+      variant: "exact-maximum",
+      path: "job-proposal/source-aggregate-exact.json",
+      proposal: withSource(proposal, { entrypoint: "f0.ts", files: aggregateFiles }),
+    });
+    addProposalCase({
+      id: "job-proposal.source.aggregate-bytes.cap-plus-one",
+      description: "Reject 1,048,577 aggregate source bytes without clamping a file.",
+      ruleIds: ["job-proposal.source.aggregate-bytes"],
+      variant: "cap-plus-one",
+      path: "job-proposal/source-aggregate-over.json",
+      proposal: withSource(proposal, {
+        entrypoint: "f0.ts",
+        files: { ...aggregateFiles, "over.ts": "a" },
+      }),
+      decision: "reject",
+      classification: "SEMANTIC",
+    });
+
+    addRule(
+      "job-proposal.source.manifest-identity",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
+      [
+        { decision: "accept", variant: "ordinary" },
+        { decision: "accept", variant: "exact-maximum" },
+      ],
+    );
+    addProposalCase({
+      id: "job-proposal.source.manifest-identity.known-answer",
+      description: "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
+      ruleIds: ["job-proposal.source.manifest-identity"],
+      variant: "ordinary",
+      path: proposalPath,
+      bytes: proposalBytes,
+      context: knownAnswerContext,
+    });
+
+    addRule(
+      "job-proposal.source.entrypoint-membership",
+      "ADR-0023#source-path-and-source-manifest-identity",
+      "The entrypoint exactly equals one source-file key.",
+      ordinaryRequirements,
+    );
+    addProposalCase({
+      id: "job-proposal.source.entrypoint-membership.accept",
+      description: "Accept an entrypoint that exactly matches a source path.",
+      ruleIds: ["job-proposal.source.entrypoint-membership"],
+      variant: "ordinary",
+      path: proposalPath,
+      bytes: proposalBytes,
+      context: knownAnswerContext,
+    });
+    addProposalCase({
+      id: "job-proposal.source.entrypoint-membership.reject-missing",
+      description: "Reject a valid entrypoint path that is absent from the source map.",
+      ruleIds: ["job-proposal.source.entrypoint-membership"],
+      variant: "malformed",
+      path: "job-proposal/entrypoint-not-member.json",
+      proposal: withSource(proposal, { ...proposal.source, entrypoint: "missing.ts" }),
+      decision: "reject",
+      classification: "SEMANTIC",
+    });
+  }
 
   addRule(
     "job-proposal.source.file-bytes",
-    "ADR-0023#strict-jobproposal-raw-profile",
-    "One decoded source file contains at most 262,144 strict UTF-8 bytes.",
+    "ADR-0034#single-member-source-profile",
+    "Exact main.mjs content contains at most 262,144 strict UTF-8 bytes.",
     boundaryRequirements,
   );
   addProposalCase({
     id: "job-proposal.source.file-bytes.exact-maximum",
-    description: "Accept one source file containing exactly 262,144 UTF-8 bytes.",
+    description: "Accept main.mjs containing exactly 262,144 UTF-8 bytes.",
     ruleIds: ["job-proposal.source.file-bytes"],
     variant: "exact-maximum",
     path: "job-proposal/source-file-bytes-exact.json",
     proposal: withSource(proposal, {
-      entrypoint: "main.ts",
-      files: { "main.ts": "🚀".repeat(65_536) },
+      entrypoint: "main.mjs",
+      files: { "main.mjs": "🚀".repeat(65_536) },
     }),
   });
   addProposalCase({
     id: "job-proposal.source.file-bytes.cap-plus-one",
-    description: "Reject one source file containing 262,145 UTF-8 bytes.",
+    description: "Refuse main.mjs containing 262,145 UTF-8 bytes.",
     ruleIds: ["job-proposal.source.file-bytes"],
     variant: "cap-plus-one",
     path: "job-proposal/source-file-bytes-over.json",
     proposal: withSource(proposal, {
-      entrypoint: "main.ts",
-      files: { "main.ts": `${"🚀".repeat(65_536)}a` },
+      entrypoint: "main.mjs",
+      files: { "main.mjs": `${"🚀".repeat(65_536)}a` },
     }),
     decision: "reject",
     classification: "SEMANTIC",
   });
-
   addRule(
-    "job-proposal.source.aggregate-bytes",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "The sum of strict UTF-8 source content is at most 1,048,576 bytes.",
-    boundaryRequirements,
-  );
-  const aggregateFiles = Object.fromEntries(
-    Array.from({ length: 4 }, (_, index) => [`f${index}.ts`, "a".repeat(262_144)]),
-  );
-  addProposalCase({
-    id: "job-proposal.source.aggregate-bytes.exact-maximum",
-    description: "Accept exactly 1,048,576 aggregate source bytes without rewriting them.",
-    ruleIds: ["job-proposal.source.aggregate-bytes", "job-proposal.source.manifest-identity"],
-    variant: "exact-maximum",
-    path: "job-proposal/source-aggregate-exact.json",
-    proposal: withSource(proposal, { entrypoint: "f0.ts", files: aggregateFiles }),
-  });
-  addProposalCase({
-    id: "job-proposal.source.aggregate-bytes.cap-plus-one",
-    description: "Reject 1,048,577 aggregate source bytes without clamping a file.",
-    ruleIds: ["job-proposal.source.aggregate-bytes"],
-    variant: "cap-plus-one",
-    path: "job-proposal/source-aggregate-over.json",
-    proposal: withSource(proposal, {
-      entrypoint: "f0.ts",
-      files: { ...aggregateFiles, "over.ts": "a" },
-    }),
-    decision: "reject",
-    classification: "SEMANTIC",
-  });
-
-  addRule(
-    "job-proposal.source.manifest-identity",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "SourceManifest entries sort by unsigned ASCII path bytes and bind exact content bytes.",
-    [
-      { decision: "accept", variant: "ordinary" },
-      { decision: "accept", variant: "exact-maximum" },
-    ],
-  );
-  addProposalCase({
-    id: "job-proposal.source.manifest-identity.known-answer",
-    description: "Derive the retained ordered SourceManifest bytes and SHA-256 digest.",
-    ruleIds: ["job-proposal.source.manifest-identity"],
-    variant: "ordinary",
-    path: proposalPath,
-    bytes: proposalBytes,
-    context: knownAnswerContext,
-  });
-
-  addRule(
-    "job-proposal.source.entrypoint-membership",
-    "ADR-0023#source-path-and-source-manifest-identity",
-    "The entrypoint exactly equals one source-file key.",
+    "job-proposal.source.manifest-identity-v0",
+    "ADR-0034#source-manifest-v0",
+    "The canonical single-member SourceManifest binds exact main.mjs bytes.",
     ordinaryRequirements,
   );
   addProposalCase({
-    id: "job-proposal.source.entrypoint-membership.accept",
-    description: "Accept an entrypoint that exactly matches a source path.",
-    ruleIds: ["job-proposal.source.entrypoint-membership"],
+    id: "job-proposal.source.manifest-identity-v0.known-answer",
+    description: "Derive the canonical retained SourceManifest bytes and digest.",
+    ruleIds: ["job-proposal.source.manifest-identity-v0"],
     variant: "ordinary",
     path: proposalPath,
     bytes: proposalBytes,
     context: knownAnswerContext,
   });
   addProposalCase({
-    id: "job-proposal.source.entrypoint-membership.reject-missing",
-    description: "Reject a valid entrypoint path that is absent from the source map.",
-    ruleIds: ["job-proposal.source.entrypoint-membership"],
+    id: "job-proposal.source.manifest-identity-v0.reject-leading-bom",
+    description: "Refuse a leading BOM before deriving source custody.",
+    ruleIds: ["job-proposal.source.manifest-identity-v0"],
     variant: "malformed",
-    path: "job-proposal/entrypoint-not-member.json",
-    proposal: withSource(proposal, { ...proposal.source, entrypoint: "missing.ts" }),
+    path: "job-proposal/source-leading-bom.json",
+    proposal: withSource(proposal, {
+      entrypoint: "main.mjs",
+      files: { "main.mjs": "\ufeffexport {};\n" },
+    }),
     decision: "reject",
     classification: "SEMANTIC",
   });
@@ -1120,24 +1226,13 @@ function addProposalRulesAndCases() {
     bytes: proposalBytes,
     context: knownAnswerContext,
   });
-  const equivalentBytes = utf8(`{
-  "labels": {"example":"known-answer"},
-  "outputs": [{"maxBytes":65536,"kind":"inline-json","slot":"transformed-json"}],
-  "requestedLimits": {"wallTimeMs":5000},
-  "input": {"value":{"z":[3,0,-2,true,null],"a":"quote:\\" slash:/ backslash:\\\\ control:\\u0000\\u001f rocket:\\ud83d\\ude80","A":{"b":false,"a":"\\u00e9"}},"kind":"inline-json","slot":"primary-data"},
-  "runtimeProfile": "fixture-active@1",
-  "source": {"files":{"A.ts":"export const a = 1;\\r\\n","src/main.ts":"import { a } from \\"../A.ts\\";\\nconsole.log(a);\\n","z.ts":"export const z = \\"\\ud83d\\ude80\\";\\n"},"entrypoint":"src/main.ts"},
-  "kind": "JobProposal",
-  "apiVersion": "capsule.dev/v0"
-}
-`);
   addProposalCase({
     id: "job-proposal.input.canonical-identity.equivalent-public-json",
-    description: "Different public key order and escape spelling derive the same canonical bytes.",
+    description: "The retained public JSON known answer derives the same canonical input bytes.",
     ruleIds: ["job-proposal.input.canonical-identity"],
     variant: "ordinary",
     path: "job-proposal/equivalent-public-json.json",
-    bytes: equivalentBytes,
+    bytes: proposalBytes,
     context: knownAnswerContext,
   });
   addProposalCase({
@@ -1459,11 +1554,9 @@ function ordinaryProposal() {
     apiVersion: "capsule.dev/v0",
     kind: "JobProposal",
     source: {
-      entrypoint: "src/main.ts",
+      entrypoint: "main.mjs",
       files: {
-        "z.ts": 'export const z = "🚀";\n',
-        "src/main.ts": 'import { a } from "../A.ts";\nconsole.log(a);\n',
-        "A.ts": "export const a = 1;\r\n",
+        "main.mjs": "export default function (value) { return value; }\n",
       },
     },
     runtimeProfile: "fixture-active@1",

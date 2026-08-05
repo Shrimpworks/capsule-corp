@@ -340,9 +340,9 @@ func TestFixedStoreV2F4BKnownAnswers(t *testing.T) {
 		got  []byte
 		want string
 	}{
-		"active-file":       {got: fileDigest[:], want: "ac7809f713af0cc17ba6b223407869c74eeb4738a4030af7490782142288f87d"},
+		"active-file":       {got: fileDigest[:], want: "fe7fc82e0b38a1c1f7a1f99e7898090323d7b1c84565e30557f44ab2e07a070c"},
 		"effect-tombstones": {got: tombstoneDigest[:], want: "690afbf0d8fff394110858f0fd20f8a493854e91b2bdaf7160320ed79898a1e1"},
-		"combined-index":    {got: combined[:], want: "de753444b8792df867c71f132a7fdb07fd0cdcd7ab5b86bb6ea2ae104c68b4ca"},
+		"combined-index":    {got: combined[:], want: "eba9f827a4cc402aa8a1a209e441f22838f8587e5487742979b631e107b1b9f8"},
 	}
 	for name, answer := range answers {
 		if got := hex.EncodeToString(answer.got); got != answer.want {

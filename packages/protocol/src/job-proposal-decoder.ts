@@ -3,17 +3,14 @@ import {
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
   asSafeJsonInteger,
-  asSourceEntrypoint,
-  asSourcePath,
   type DecodedJobProposalCandidate,
   type InlineJsonValue,
   JOB_PROPOSAL_API_VERSION,
   JOB_PROPOSAL_KIND,
+  JOB_PROPOSAL_MAIN_PATH,
   type JobProposal,
   PRIMARY_DATA_INPUT_SLOT,
   type RuntimeProfileAlias,
-  type SourceEntrypoint,
-  type SourcePath,
   TRANSFORMED_JSON_OUTPUT_SLOT,
 } from "./job-proposal.js";
 import {
@@ -155,33 +152,25 @@ function decodeSource(value: StrictJsonValue | undefined): JobProposal["source"]
   const source = requireObject(value);
   requireClosedFields(source, SOURCE_REQUIRED);
 
-  const entrypointValue = requireString(source.entrypoint);
-  let entrypoint: SourceEntrypoint;
-  try {
-    entrypoint = asSourceEntrypoint(entrypointValue);
-  } catch {
-    schemaFail("SCHEMA", "SOURCE_ENTRYPOINT");
+  const entrypoint = requireString(source.entrypoint);
+  if (entrypoint !== JOB_PROPOSAL_MAIN_PATH) {
+    schemaFail("DOMAIN", "SOURCE_ENTRYPOINT");
   }
 
   const filesValue = requireObject(source.files);
   const fileEntries = Object.entries(filesValue);
-  if (fileEntries.length < 1 || fileEntries.length > 32) {
+  if (fileEntries.length !== 1 || !Object.hasOwn(filesValue, JOB_PROPOSAL_MAIN_PATH)) {
     schemaFail("SCHEMA", "FIELD_VALUE");
   }
-  const files: Array<readonly [SourcePath, string]> = [];
-  for (const [pathValue, contentValue] of fileEntries) {
-    let path: SourcePath;
-    try {
-      path = asSourcePath(pathValue);
-    } catch {
-      schemaFail("SCHEMA", "SOURCE_PATH");
-    }
-    files.push([path, requireString(contentValue)]);
+  if (fileEntries[0]?.[0] !== JOB_PROPOSAL_MAIN_PATH) {
+    schemaFail("SCHEMA", "SOURCE_PATH");
   }
 
   return Object.freeze({
-    entrypoint,
-    files: Object.freeze(Object.fromEntries(files)) as Readonly<Record<SourcePath, string>>,
+    entrypoint: JOB_PROPOSAL_MAIN_PATH,
+    files: Object.freeze({
+      "main.mjs": requireString(filesValue[JOB_PROPOSAL_MAIN_PATH]),
+    }),
   });
 }
 

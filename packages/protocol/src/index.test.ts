@@ -5,8 +5,6 @@ import {
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
   asSafeJsonInteger,
-  asSourceEntrypoint,
-  asSourcePath,
   createDenyByDefaultCapabilities,
   JOB_PROPOSAL_API_VERSION,
   JOB_PROPOSAL_KIND,
@@ -44,9 +42,9 @@ test("passive JobProposal candidate exposes only fixed first-slice roles", () =>
     apiVersion: JOB_PROPOSAL_API_VERSION,
     kind: JOB_PROPOSAL_KIND,
     source: {
-      entrypoint: asSourceEntrypoint("main.ts"),
+      entrypoint: "main.mjs",
       files: {
-        [asSourcePath("main.ts")]: "console.log('{}');",
+        "main.mjs": "console.log('{}');",
       },
     },
     runtimeProfile: asRuntimeProfileAlias("bun-data@1"),
@@ -73,9 +71,6 @@ test("passive JobProposal candidate exposes only fixed first-slice roles", () =>
 });
 
 test("candidate scalar constructors reject ambiguous or unsafe values", () => {
-  assert.throws(() => asSourcePath("/main.ts"), /source path/u);
-  assert.throws(() => asSourcePath("lib/../main.ts"), /source path/u);
-  assert.throws(() => asSourceEntrypoint("README.md"), /entrypoint/u);
   assert.throws(() => asRuntimeProfileAlias("Bun@latest"), /runtime profile alias/u);
   assert.throws(() => asPositiveSafeInteger(0), /positive safe integer/u);
   assert.throws(() => asPositiveSafeInteger(Number.MAX_SAFE_INTEGER + 1), /positive safe integer/u);

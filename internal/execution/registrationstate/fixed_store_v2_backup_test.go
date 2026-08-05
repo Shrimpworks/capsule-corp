@@ -80,7 +80,7 @@ func TestCoherentBackupIncludesAndVerifiesExactArchiveSet(t *testing.T) {
 		t.Fatalf("backup manifest/report mismatch: %#v %#v", manifest.View(), report)
 	}
 	knownDigest := manifest.View().ManifestDigest
-	if got, want := hex.EncodeToString(knownDigest[:]), "deaec00c9500340be0f56a306deade47d262d0b0f4bce18f9efe26a8512195d2"; got != want {
+	if got, want := hex.EncodeToString(knownDigest[:]), "e9cee67bba449f9ebd2397f5e6c1c2e786201f7deee65d4e81643e4ef827ec1a"; got != want {
 		t.Fatalf("coherent backup manifest known answer = %s", got)
 	}
 	if !bytes.Equal(activeBefore, mustReadFile(t, filepath.Join(destination.path, backupActiveName))) ||

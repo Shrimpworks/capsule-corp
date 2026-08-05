@@ -8,7 +8,7 @@ const registrationIdA = repeatedBytes(0x77, 16);
 const registrationIdB = repeatedBytes(0x78, 16);
 const epochDigest = repeatedBytes(0x22, 32);
 const sourceManifestDigest = hexBytes(
-  "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+  "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
 );
 const inlineInputDigest = hexBytes(
   "bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72",
@@ -1241,8 +1241,8 @@ function executionPlan({
     [4, epochSequence],
     [5, planEpochDigest],
     [6, planSourceManifestDigest],
-    [7, "src/main.ts"],
-    [8, 91],
+    [7, "main.mjs"],
+    [8, 50],
     [9, "primary-data"],
     [10, planInlineInputDigest],
     [11, 118],

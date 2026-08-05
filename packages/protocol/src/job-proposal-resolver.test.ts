@@ -78,12 +78,12 @@ const profileRegistry = createTrustedProfileRegistryContext(registryFixture.prof
 const userPolicy = createTrustedUserPolicyContext(policyFixture);
 
 test("Task 3B marks exactly its semantic-resolution manifest slice verified", () => {
-  assert.equal(semanticCases.length, 18);
+  assert.equal(semanticCases.length, 15);
   assert.equal(
     semanticCases.every((entry) => entry.implementations.typescript === "verified"),
     true,
   );
-  assert.equal(new Set(semanticCases.map((entry) => entry.fixture.path)).size, 14);
+  assert.equal(new Set(semanticCases.map((entry) => entry.fixture.path)).size, 12);
 });
 
 for (const entry of semanticCases) {
@@ -117,13 +117,13 @@ test("resolver retains sorted exact source and canonical input known answers", a
   const resolved = await resolveFixture("job-proposal/ordinary.json");
   assert.deepEqual(
     resolved.source.files.map((file) => file.path),
-    ["A.ts", "src/main.ts", "z.ts"],
+    ["main.mjs"],
   );
-  assert.equal(resolved.source.aggregateByteLength, 91);
-  assert.equal(resolved.source.manifest.exactBytes.byteLength, 178);
+  assert.equal(resolved.source.aggregateByteLength, 50);
+  assert.equal(resolved.source.manifest.exactBytes.byteLength, 89);
   assert.equal(
     resolved.source.manifest.digest,
-    "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+    "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
   );
   assert.equal(resolved.inlineInput.exactBytes.byteLength, 118);
   assert.equal(
@@ -133,8 +133,8 @@ test("resolver retains sorted exact source and canonical input known answers", a
   assert.deepEqual(resolved.wallTime, { milliseconds: 5_000, origin: "requested" });
   assert.deepEqual(resolved.planInputs, {
     sourceManifestDigest: resolved.source.manifest.digest,
-    sourceEntrypoint: "src/main.ts",
-    sourceByteLength: 91,
+    sourceEntrypoint: "main.mjs",
+    sourceByteLength: 50,
     inputSlot: "primary-data",
     inlineInputDigest: resolved.inlineInput.digest,
     inlineInputByteLength: 118,

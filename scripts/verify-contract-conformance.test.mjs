@@ -14,7 +14,7 @@ const checkedInCorpus = new URL("../schemas/conformance/v0/", import.meta.url);
 test("verifies the checked-in foundational conformance corpus", async () => {
   const result = await verifyConformanceCorpus({ rootDirectory: checkedInCorpus });
 
-  assert.deepEqual(result, { caseCount: 510, fixtureCount: 631, ruleCount: 100 });
+  assert.deepEqual(result, { caseCount: 502, fixtureCount: 624, ruleCount: 95 });
 });
 
 test("retains exact JSON boundary values and their cap-plus-one pairs", async () => {
@@ -101,7 +101,7 @@ test("retains representative noncanonical CBOR bytes without decoding and re-enc
 
 test("retains independently specified source-manifest and canonical-input known answers", async () => {
   const expectedSourceManifestHex =
-    "a5017763617073756c652e736f757263652d6d616e69666573740200036b7372632f6d61696e2e747304838364412e74735820f8bfa98819f02db4df7eca4c610e70f3f8fa171d31e5abfaaebfe2dfec05f67c15836b7372632f6d61696e2e747358208d154e7e242fc07090f574f7e79237f4f4f1599eea50d98e053a8a2bdcc3be12182d83647a2e74735820e6b6daa9299b27161cefff62532ecd829cd9db9513179a0466be04a74d345593181905185b";
+    "a5017763617073756c652e736f757263652d6d616e6966657374020003686d61696e2e6d6a73048183686d61696e2e6d6a735820681f39365de1369ee486fa34e88b993c60df5a835006b65e0d8916df717c31cc1832051832";
   const expectedCanonicalInlineInput =
     '{"A":{"a":"é","b":false},"a":"quote:\\" slash:/ backslash:\\\\ control:\\u0000\\u001f rocket:🚀","z":[3,0,-2,true,null]}';
   const sourceManifest = await corpusBytes("source-manifest/ordinary.cbor");
@@ -110,7 +110,7 @@ test("retains independently specified source-manifest and canonical-input known 
   assert.equal(sourceManifest.toString("hex"), expectedSourceManifestHex);
   assert.equal(
     sha256Hex(sourceManifest),
-    "e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171",
+    "c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14",
   );
   assert.equal(canonicalInlineInput.toString("utf8"), expectedCanonicalInlineInput);
   assert.equal(
@@ -152,9 +152,9 @@ test("retains independently specified execution-plan and registration known answ
       [3, Buffer.alloc(16, 0x11)],
       [4, 7],
       [5, Buffer.alloc(32, 0x22)],
-      [6, Buffer.from("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171", "hex")],
-      [7, "src/main.ts"],
-      [8, 91],
+      [6, Buffer.from("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14", "hex")],
+      [7, "main.mjs"],
+      [8, 50],
       [9, "primary-data"],
       [10, Buffer.from("bd9968c72c34a6779dfe3259937a1d9a9e558036c7cd4895ef634fbf76181e72", "hex")],
       [11, 118],
@@ -190,14 +190,14 @@ test("retains independently specified execution-plan and registration known answ
   );
 
   assert.deepEqual(await corpusBytes("execution-plan/ordinary.cbor"), plan);
-  assert.equal(plan.length, 530);
-  assert.equal(sha256Hex(plan), "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c");
+  assert.equal(plan.length, 527);
+  assert.equal(sha256Hex(plan), "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241");
   assert.notEqual(sha256Hex(plan), "88".repeat(32));
   assert.deepEqual(await corpusBytes("plan-registration/ordinary.cbor"), registration);
   assert.equal(registration.length, 165);
   assert.equal(
     sha256Hex(registration),
-    "f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614",
+    "82f9e72dcb8b0f6e16990c2e09aad4ac8661e72ff72820edf1b57ef5f9537199",
   );
 });
 
@@ -263,7 +263,7 @@ test("retains the closed Task 2.4 registration-state matrix and stored record", 
   );
   assert.equal(
     exactAfter.materializedRecords[0].recomputedPlanDigestHex,
-    "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c",
+    "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241",
   );
   assert.deepEqual(
     {
@@ -433,36 +433,17 @@ test("retains exact proposal semantic boundaries and fixed resolver results", as
     "labels",
   ]);
 
-  const exactPathProposal = await corpusJson("job-proposal/source-path-exact.json");
-  const overPathProposal = await corpusJson("job-proposal/source-path-over.json");
-  assert.equal(Buffer.byteLength(exactPathProposal.source.entrypoint), 256);
-  assert.equal(Buffer.byteLength(overPathProposal.source.entrypoint), 257);
-
-  const exactSegmentProposal = await corpusJson("job-proposal/source-segment-exact.json");
-  const overSegmentProposal = await corpusJson("job-proposal/source-segment-over.json");
-  assert.equal(
-    Buffer.byteLength(Object.keys(exactSegmentProposal.source.files)[1].split("/")[0]),
-    64,
-  );
-  assert.equal(
-    Buffer.byteLength(Object.keys(overSegmentProposal.source.files)[1].split("/")[0]),
-    65,
-  );
-
-  const exactFileCount = await corpusJson("job-proposal/source-file-count-exact.json");
-  const overFileCount = await corpusJson("job-proposal/source-file-count-over.json");
-  assert.equal(Object.keys(exactFileCount.source.files).length, 32);
-  assert.equal(Object.keys(overFileCount.source.files).length, 33);
+  assert.equal(ordinaryProposal.source.entrypoint, "main.mjs");
+  assert.deepEqual(Object.keys(ordinaryProposal.source.files), ["main.mjs"]);
+  const legacyProposal = await corpusJson("job-proposal/source-legacy-main-ts.json");
+  const extraMemberProposal = await corpusJson("job-proposal/source-extra-member.json");
+  assert.equal(legacyProposal.source.entrypoint, "main.ts");
+  assert.deepEqual(Object.keys(extraMemberProposal.source.files), ["main.mjs", "helper.mjs"]);
 
   const exactFileProposal = await corpusJson("job-proposal/source-file-bytes-exact.json");
   const overFileProposal = await corpusJson("job-proposal/source-file-bytes-over.json");
-  assert.equal(Buffer.byteLength(exactFileProposal.source.files["main.ts"]), 262_144);
-  assert.equal(Buffer.byteLength(overFileProposal.source.files["main.ts"]), 262_145);
-
-  const exactAggregate = await corpusJson("job-proposal/source-aggregate-exact.json");
-  const overAggregate = await corpusJson("job-proposal/source-aggregate-over.json");
-  assert.equal(sourceAggregateBytes(exactAggregate), 1_048_576);
-  assert.equal(sourceAggregateBytes(overAggregate), 1_048_577);
+  assert.equal(Buffer.byteLength(exactFileProposal.source.files["main.mjs"]), 262_144);
+  assert.equal(Buffer.byteLength(overFileProposal.source.files["main.mjs"]), 262_145);
 
   const exactInput = await corpusJson("job-proposal/inline-input-bytes-exact.json");
   const overInput = await corpusJson("job-proposal/inline-input-bytes-over.json");
@@ -546,15 +527,17 @@ test("assigns Task 2.3 rejections to the first owner without authority change", 
       "job-proposal.schema.authority-omission.reject-placeholder",
       ["job-proposal-schema", "UNSUPPORTED"],
     ],
-    ["job-proposal.source.path-grammar.reject-dot-segment", ["job-proposal-schema", "SCHEMA"]],
-    ["job-proposal.source.path-bytes.cap-plus-one", ["job-proposal-schema", "SCHEMA"]],
-    ["job-proposal.source.segment-bytes.cap-plus-one", ["job-proposal-schema", "SCHEMA"]],
     [
-      "job-proposal.source.entrypoint-membership.reject-missing",
+      "job-proposal.source.exact-main-mjs.reject-legacy-typescript",
+      ["job-proposal-schema", "DOMAIN"],
+    ],
+    ["job-proposal.source.exact-main-mjs.reject-extra-member", ["job-proposal-schema", "SCHEMA"]],
+    [
+      "job-proposal.source.file-bytes.cap-plus-one",
       ["job-proposal-semantic-validator", "SEMANTIC"],
     ],
     [
-      "job-proposal.source.aggregate-bytes.cap-plus-one",
+      "job-proposal.source.manifest-identity-v0.reject-leading-bom",
       ["job-proposal-semantic-validator", "SEMANTIC"],
     ],
     [
@@ -898,13 +881,6 @@ function corpusBytes(path) {
 
 function sha256Hex(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
-}
-
-function sourceAggregateBytes(proposal) {
-  return Object.values(proposal.source.files).reduce(
-    (total, content) => total + Buffer.byteLength(content),
-    0,
-  );
 }
 
 function encodeSourceManifestForTest(source) {

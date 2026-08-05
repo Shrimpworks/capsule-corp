@@ -2,10 +2,9 @@
   "apiVersion": "capsule.dev/v0",
   "kind": "JobProposal",
   "source": {
-    "entrypoint": "main.ts",
+    "entrypoint": "main.mjs",
     "files": {
-      "main.ts": "export {};\n",
-      "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss/helper.ts": "export {};\n"
+      "main.mjs": "﻿export {};\n"
     }
   },
   "runtimeProfile": "fixture-active@1",

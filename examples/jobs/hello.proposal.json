@@ -2,9 +2,9 @@
   "apiVersion": "capsule.dev/v0",
   "kind": "JobProposal",
   "source": {
-    "entrypoint": "main.ts",
+    "entrypoint": "main.mjs",
     "files": {
-      "main.ts": "const input = { message: 'hello' };\nconsole.log(JSON.stringify(input));\n"
+      "main.mjs": "export default function (input) { return input; }\n"
     }
   },
   "runtimeProfile": "bun-data@1",

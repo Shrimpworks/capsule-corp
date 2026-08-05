@@ -7,6 +7,9 @@ It does not accept ADR-0019 or ADR-0023, activate an endpoint or consumer, autho
 handle user content, or create a guest. The fixed Task 4B file store is limited to test/development
 conformance and cannot be activated before archival/compaction review. The cross-language
 handoff uses a local conformance command only; its JSON wrapper is not an IPC or product transport.
+The counts and byte answers below record this historical checkpoint; the later single-`main.mjs`
+atomic cutover supersedes its JobProposal, SourceManifest, ExecutionPlan, and PlanRegistration
+answers in `AUTHORITY_PLANE_PASSIVE_CUTOVER.md`.
 
 ## Integrated tasks
 
@@ -102,10 +105,10 @@ retained exact bytes, digests, and nested arrays are deeply immutable passive va
 return defensive copies. Copied/generic Task 3B inputs or trusted-binding objects fail with fixed
 internal `BINDING` refusal data.
 
-The ordinary Task 3B proposal plus retained trusted bindings emits the exact 530-byte
+At this checkpoint, the ordinary Task 3B proposal plus retained trusted bindings emitted the exact 530-byte
 `execution-plan/ordinary.cbor` known answer with digest
 `627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c`. The existing Go Task 4A
-wrapper independently accepts that same fixture with complete trusted role bindings. The slice
+wrapper independently accepted that same fixture with complete trusted role bindings. The slice
 does not decode received plans, register bytes, call `SupervisorCore`, create approval or attempt
 authority, retrieve content, invoke a runtime/backend, or create a guest.
 

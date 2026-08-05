@@ -51,16 +51,9 @@ Apple-credentialed results remain the evidence for those distinct observations.
 
 ```text
 accepted ADR-0034 + passed M1 source/manifest fixtures
-  -> accepted Source Validator R0 / ADR-0036
-       -> R1 passive role-specific v1 contracts/field-authority fixtures (PASSED)
-       -> R2 unsigned launcher/parser construction
-       -> separately authorized R3 signing/install
-       -> R4 confinement/reactive-resource/residue corpus
-       -> R5D daemon consumer
-       -> R5B Approval Broker consumer
-       -> M2/S1 checkpoint
-       -> S1/M2 Supervisor message/bridge fixtures
-       -> S2 Go method-specific facade and Broker fetch projection
+  -> M2/S1 passive plan-v0 registration/fetch fixture and facade cutover (PASSED)
+       -> S1/M2 native message/bridge fixtures
+       -> S2 authenticated method-specific service activation
        -> S3 native authentication/cap harness
             -> S4 single-process ad-hoc composition with fixed store + fake lifecycle
                  -> S5 installed Apple Development identity/session/update matrix
@@ -74,9 +67,10 @@ Existing independent blockers that S0-S6 do not close:
   runtime/backend/profile admission and evidence composition
 ```
 
-Source Validator R1 is retained; R2-R5B are sequential. S1 fixtures may proceed in parallel by language only after the M2/S1
-checkpoint. S2 and S3 may proceed in parallel after the shared fixture contract. S5 requires S4 and valid Apple Development identities. S6 requires
-final intended package bytes, Developer ID/notarization authority, and clean disposable hosts.
+ADR-0040 makes Source Validator R2-R5B future defense-in-depth rather than a first-release ordering
+gate. The passive M2/S1 fixture/facade contract is now `PASSED`; native/authenticated S1-S3 remain
+`BLOCKED`. S5 requires S4 and valid Apple Development identities. S6 requires final intended
+package bytes, Developer ID/notarization authority, and clean disposable hosts.
 
 ## S0: decision review and invariant lock
 
@@ -95,7 +89,7 @@ Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 Exit evidence: accepted or explicitly revised ADR text. A topology or responsibility change stops
 this plan and requires an updated Proposed ADR before implementation.
 
-## M1, Source Validator R2-R5B, and S1/M2: sequential contract boundary
+## M1 and S1/M2: passive contract boundary
 
 Accepted ADR-0034 removes TypeScript and the Source Preparer from the first-release critical path.
 The first active contract is one byte-exact pass-through `main.mjs` member under the existing
@@ -104,24 +98,21 @@ still governs a conditional later TypeScript plan-v1 cutover; its 626-byte arith
 layout, cap, or known answer.
 
 M1 has atomically narrowed the passive proposal/source contract, generated the single-member
-87..95-byte canonical source-manifest boundary, closes the non-executing no-module-request oracle,
-and adds recursive source-manifest field-authority coverage. It replaces incompatible `.js`,
+87..95-byte canonical source-manifest boundary, and adds recursive source-manifest field-authority
+coverage. It replaces incompatible `.js`,
 `.cjs`, `.ts`, `.mts`, and `.cts` accepts rather than adding a second active source profile.
 
-Accepted ADR-0036 now requires the role-specific Source Validator sequence to finish first: R1
-passive v1 contracts/field authority; R2 unsigned construction; separately authorized R3 signing/
-install; R4 confinement/reactive-resource/residue evidence; R5D daemon consumer; and R5B Broker
-consumer. V0/V1/V2 bytes remain unchanged. No active footprint threshold, sample cadence, or
-overshoot may be invented before R4. The M2/S1 checkpoint then reconciles JobProposal and
-registration/fetch authority before this plan resumes.
+ADR-0040 removes the role-specific Source Validator sequence from this first-release contract's
+predecessor chain. R2-R5B remain future conditional defense-in-depth work. No validator result is
+accepted as plan, registration, or fetch authority.
 
-S1/M2 then adds no-product native, Go, and Swift-readable fixtures for the finalized common header,
+S1/M2 now adds no-product Go and TypeScript-readable fixtures for the finalized application data,
 four role-specific operations, success replies, and fixed refusals. `RegisterPlanV0` atomically
 carries exact plan bytes, the complete 562-byte plan-role projection, the exact source manifest,
 and exact `main.mjs` bytes. `GetRegisteredPlanV0` returns defensive Supervisor-retained copies of
 all four plus the registration. Candidate application-data maxima are 328,337 request bytes and
-332,433 fetch-reply bytes, but the fixture generator must derive and verify them from closed
-canonical definitions and the field-authority manifest before code treats them as caps.
+332,433 fetch-reply bytes; the fixture generator derives and verifies them from closed canonical
+definitions before code treats them as caps. Native/Swift transport framing remains a later slice.
 
 The fixture manifest must retain exact plan/registration/approval and complete-binding known
 answers; protocol, service, role, tag, audience, purpose, request, installation, epoch, source,
@@ -147,10 +138,10 @@ and cannot become a registration field, cache, or substitute for Supervisor byte
 
 ## S2: Go facade and store projection
 
-Status: **blocked** on Source Validator R2-R5B, the M2/S1 checkpoint, and the shared S1/M2 `.mjs`
-fixture bytes. Conditional TypeScript,
-plan v1, and Source Preparer evidence are not first-release dependencies. S2 must not define field
-authority inside the Go facade or treat the 626-byte TypeScript arithmetic as a record.
+Status: `PASSED` for the passive RegisterPlanV0/GetRegisteredPlanV0 facade and fixed-store
+transaction oracle. Authenticated service activation, the other two methods, and native transport
+remain `BLOCKED`. Conditional TypeScript, plan v1, and Source Preparer evidence are not
+first-release dependencies. S2 does not treat the 626-byte TypeScript arithmetic as a record.
 
 Implement an internal, unwired facade with one Go entry point per method. The facade does not
 accept role or purpose from request bytes; each entry point constructs the existing fixed

@@ -121,15 +121,15 @@ func TestFixedStoreV2ArchivePrepareVerifyActivateKnownAnswer(t *testing.T) {
 		got  []byte
 		want string
 	}{
-		"active-file":      {activeDigest[:], "dfcaf10b8c3b747a50bf553e73a637574f009874b62615680a5c9813aae28c45"},
-		"segment-file":     {segmentDigest[:], "2e1b883ade8b5e7349eea6a842b8f0f8320386e58ba29bfbfb9ff3397303abcd"},
-		"segment-semantic": {semanticDigest[:], "e0532c64181191d67d6d8b1f5dd4423277f2dcfa228bc2176e8580880c39fbdc"},
-		"checkpoint":       {report.CurrentCheckpoint.Digest[:], "1dddc0d54bd5591f9fa586cafbd01543023abb556215220d966794aaab386a92"},
-		"combined-index":   {combinedIndexDigest[:], "0a4bbc13e6deea3f05deca26871e69aa59b7190c8e4b7eba8f0d4efddcd3da3e"},
+		"active-file":      {activeDigest[:], "91e1978fc55420000b9cfce526d9a840554cb203119488c2539007f81daea1ad"},
+		"segment-file":     {segmentDigest[:], "f78aa7b19bd1ef2f3a09fc641adf787e741ec72e7f6dfb6183be3d877e6cddc9"},
+		"segment-semantic": {semanticDigest[:], "a6c126be25f24c1f631280d34b64e55d8389b53632391ff250f4cf7e17fb41ea"},
+		"checkpoint":       {report.CurrentCheckpoint.Digest[:], "8f71152e057d9c75bd20b50b5a73e03ed3c59e38be353a26b4afa29f933afccc"},
+		"combined-index":   {combinedIndexDigest[:], "7b9e25c9e6cb877188e0b1e5373e5950fd1d5bacdbebf71bef18eb25854f635e"},
 	}
 	for name, answer := range knownAnswers {
 		if got := hex.EncodeToString(answer.got); got != answer.want {
-			t.Fatalf("%s known answer = %s, want %s", name, got, answer.want)
+			t.Errorf("%s known answer = %s, want %s", name, got, answer.want)
 		}
 	}
 	if owner.checks < 7 {

@@ -27,7 +27,7 @@ import {
 } from "./index.js";
 
 const corpusRoot = new URL("../../../schemas/conformance/v0/", import.meta.url);
-const expectedPlanDigest = "627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c";
+const expectedPlanDigest = "ef268a0b829adc1ce1307203f4b805f63379954ccf41e8e20a7487b6e5acf241";
 
 test("Task 3C emits the retained preferred-CBOR ExecutionPlan known answer", async () => {
   const planInputs = await ordinaryPlanInputs();
@@ -40,7 +40,7 @@ test("Task 3C emits the retained preferred-CBOR ExecutionPlan known answer", asy
   const expected = new Uint8Array(
     await readFile(new URL("execution-plan/ordinary.cbor", corpusRoot)),
   );
-  assert.equal(result.plan.exactBytes.byteLength, 530);
+  assert.equal(result.plan.exactBytes.byteLength, 527);
   assert.deepEqual(result.plan.copyExactBytes(), expected);
   assert.equal(Buffer.from(result.plan.digest.bytes).toString("hex"), expectedPlanDigest);
   assert.deepEqual(result.plan.candidate, {
@@ -51,10 +51,10 @@ test("Task 3C emits the retained preferred-CBOR ExecutionPlan known answer", asy
     epochDigest: retained("trust-epoch", repeatedBytes(0x22, 32)),
     sourceManifestDigest: retained(
       "source-manifest",
-      hexBytes("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+      hexBytes("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"),
     ),
-    sourceEntrypoint: "src/main.ts",
-    sourceByteLength: 91,
+    sourceEntrypoint: "main.mjs",
+    sourceByteLength: 50,
     inputSlot: "primary-data",
     inlineInputDigest: retained(
       "inline-input",
@@ -260,7 +260,7 @@ test("unwired registration handoff retains only defensive exact-byte and complet
     return;
   }
 
-  assert.equal(prepared.handoff.exactPlanByteLength, 530);
+  assert.equal(prepared.handoff.exactPlanByteLength, 527);
   assert.equal(Object.isFrozen(prepared.handoff), true);
   assert.equal(Object.isFrozen(prepared.handoff.roleBindings), true);
   assert.equal(
@@ -459,7 +459,7 @@ function ordinaryRegistrationRoleBindings(
     installationId: createTrustedExecutionPlanInstallationId(repeatedBytes(0x11, 16)),
     epochDigest: trustedDigest(0x22, "trust-epoch"),
     sourceManifestDigest: createTrustedExecutionPlanDigest(
-      hexBytes("e5e09b2435baedf897526a89c698c0b0531437a69472372ae426f62d801fc171"),
+      hexBytes("c387c80094027ffbcacb573f44f5f6b4dec4d243bb436b24dd644434feaa1d14"),
       "source-manifest",
     ),
     inlineInputDigest: createTrustedExecutionPlanDigest(

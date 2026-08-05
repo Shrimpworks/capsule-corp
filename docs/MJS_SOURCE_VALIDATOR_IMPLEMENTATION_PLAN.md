@@ -79,7 +79,7 @@ endpoint, or begin the later product slices.
 Exit evidence: reproducible-build comparison, SBOM/notice review, artifact
 signature and assessment, tamper/rollback/missing-artifact refusals.
 
-Observed bounded V1 checkpoint: [`artifacts/mjs-source-validator-v1/`](../artifacts/mjs-source-validator-v1/)
+Observed bounded V1 checkpoint: [archived Source Validator V1](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-v1)
 packages only the selected Oxc mode plus pinned `sha2` for the V0 digest, emits exact V0 results for
 all 28 M1 HOLD cases, retains a 74-dependency lock, complete checksum/source/license/notice and
 CycloneDX inventories, and reproduces the 1,146,656-byte macOS arm64 executable byte-for-byte in
@@ -113,7 +113,7 @@ denial, fork/child escape, inherited-FD audit, memory/CPU/output exhaustion,
 deadline/reap behavior, and post-crash clean restart. Until this evidence exists,
 process separation is crash isolation only, not an admitted security boundary.
 
-Observed V2 checkpoint: [`artifacts/mjs-source-validator-v2/`](../artifacts/mjs-source-validator-v2/)
+Observed V2 checkpoint: [archived Source Validator V2](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-v2)
 retains the exact macOS arm64 stop plus a Darwin-only diagnostic harness. The strict test bootstrap
 fixes the V1 target and profile argument, empty environment, fresh cwd, three post-exec role FDs,
 one process group, and CPU/file/FD/child/output/wall limits, but lowering `RLIMIT_AS` to 256 MiB
@@ -166,7 +166,7 @@ layouts and matching role-specific parser children build offline from Rust 1.95.
 0.140.0. Two clean same-host source/target/bundle directories produce byte-identical retained
 files. Source, lock, license/notice, CycloneDX, static dynamic-library closure, exact benign known
 answers, and unsigned in-toto evidence are retained under
-[`artifacts/mjs-source-validator-r2`](../artifacts/mjs-source-validator-r2/README.md). This is not an
+[archived Source Validator R2](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-r2). This is not an
 independent-builder result.
 
 The launchers accept only one `request` data value and validate exact role/frame/source/policy

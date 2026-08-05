@@ -279,7 +279,8 @@ The bounded V1 follow-up retains an unwired 1,146,656-byte macOS arm64 executabl
 `ba2a6b38be6b4eea8c067887cf80988756e2f4a551d128bf2dabdaf7f2ecb600`, built with Rust 1.95.0
 from a 74-dependency lock. Its source/checksum/license/notice/SBOM/provenance manifests, exact V0
 and M1 results, restoration mutations, and two-clean-directory same-host reproduction are retained
-under `artifacts/mjs-source-validator-v1/`. Its V0 artifact profile is explicitly not enrolled:
+under the [exact compiled-payload archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-v1).
+Its V0 artifact profile is explicitly not enrolled:
 the provenance and assessment are unsigned, reproduction is not independent, and no vulnerability
 owner/SLA or installation-authority signature exists. V2 confinement and every consumer remain
 unimplemented. This evidence therefore narrows V1 without admitting a product profile.

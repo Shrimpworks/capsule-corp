@@ -72,18 +72,20 @@ per bundle path. Cap-plus-one fixtures refuse before parse or remaining readback
 
 ## Construction and refusal evidence
 
-Run:
+The one-time reproducer and byte-bound tests are retained in the
+[pinned I2B2 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i2b2-unsigned-installation-bundle).
+Normal Capsule CI verifies the immutable archive and the compact conformance/mutation fixture:
 
 ```sh
-./artifacts/macos-i2b2-unsigned-installation-bundle/scripts/reproduce.sh
-node --test scripts/verify-macos-i2b2.test.mjs
+./scripts/verify-compiled-artifact-archive-remote.sh
+node --test scripts/verify-compiled-artifact-payload-archive.test.mjs
 ```
 
-The reproducer assembles from the checked-in I1A tree plus seven closed I2B2 inputs in two clean
-temporary directories, compares the directories recursively, lints all new plists, performs
-independent readback, and then retains the exact bundle and evidence. The I1A bundle manifest,
-construction evidence, I1B enrollment, I2B1 fixtures, and their known answers are inputs only and
-remain unchanged.
+At the source commit, the archived reproducer assembled from the I1A tree plus seven closed I2B2
+inputs in two clean temporary directories, compared the directories recursively, linted all new
+plists, performed independent readback, and retained the exact bundle and evidence. The compact
+local fixture keeps the six small I2B2 source inputs required to reproduce the unchanged profile
+known answer; the I1A manifest/evidence and I1B enrollment remain exact archived metadata links.
 
 Mutation tests refuse missing, extra, duplicate, mixed, substituted, wrong-role, wrong-profile,
 wrong containing release, wrong service, unsafe entitlement, executable Coordinator, active

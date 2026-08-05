@@ -62,6 +62,36 @@ async function retained(path, expectedSha256 = "") {
   return { path, bytes: bytes.length, sha256: digest };
 }
 
+const compiledArtifactManifest = JSON.parse(
+  await readFile(
+    join(repositoryRoot, "schemas/conformance/compiled-artifact-payloads/manifest.json"),
+    "utf8",
+  ),
+);
+
+function archivedBinding(key) {
+  const binding = compiledArtifactManifest.historicalBindings[key];
+  assert.ok(binding, `${key}: archived binding missing`);
+  assert.match(binding.path, /^artifacts\//, `${key}: historical path changed`);
+  assert.match(binding.sha256, /^[0-9a-f]{64}$/, `${key}: archived digest invalid`);
+  assert.ok(binding.bytes > 0, `${key}: archived byte length invalid`);
+  return binding;
+}
+
+async function retainedSourceFixture(historicalPath) {
+  const fixture = compiledArtifactManifest.sourceFixtures.find(
+    (candidate) => candidate.historicalPath === historicalPath,
+  );
+  assert.ok(fixture, `${historicalPath}: source fixture not declared`);
+  const retainedFixture = await retained(fixture.localPath, fixture.sha256);
+  assert.equal(
+    retainedFixture.bytes,
+    fixture.bytes,
+    `${historicalPath}: retained byte length changed`,
+  );
+  return { path: historicalPath, bytes: retainedFixture.bytes, sha256: retainedFixture.sha256 };
+}
+
 function entitlement(roleId, key, disposition, valueIdentity) {
   return { roleId, key, disposition, valueIdentity, activationState: "inactive-unsigned-refusing" };
 }
@@ -73,38 +103,29 @@ assert.equal(i0Profile.profileId, "capsule.macos-installation.no-guest/i0");
 assert.equal(i0Profile.roles.length, 7);
 assert.equal(i0Profile.signing.state, "inactive-refusing");
 
-const i1aManifest = await retained(
-  "artifacts/macos-i1a-unsigned-app-shell/dist/Capsule.app/Contents/Resources/CapsuleConstruction/bundle-manifest.json",
-  "5bd80097775908031b1a4c90680e8c7656cc5e9f97df2cc187592f75ee67a56f",
-);
-const i1aEvidence = await retained(
-  "artifacts/macos-i1a-unsigned-app-shell/evidence/construction.json",
-  "31f79bdbd3dae29f6cfa340683ce59bc445041db0da12a66b1c051abc3db6ae5",
-);
-const i1bEnrollment = await retained(
-  "artifacts/macos-i1b-r3-signed-development-composition/evidence/signed-enrollment.json",
-  "afc7002032fc1ff4ead29269e7a370d94524aff42ca9181827a03233a31fbc94",
-);
+const i1aManifest = archivedBinding("i1aBundleManifest");
+const i1aEvidence = archivedBinding("i1aConstructionEvidence");
+const i1bEnrollment = archivedBinding("i1bSignedDevelopmentEnrollment");
 const i2b1Manifest = await retained(
   "schemas/conformance/i2b-bootstrap-v0/manifest.json",
   "9f1b8a86be9ada8e6afa4b913aef027dfe031d9ab69b0d0913c4f63132163203",
 );
-const coordinatorInfo = await retained(
+const coordinatorInfo = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/templates/coordinator-Info.plist",
 );
-const coordinatorPlaceholder = await retained(
+const coordinatorPlaceholder = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/placeholders/CapsuleTrustBootstrap",
 );
-const supervisorLaunchAgent = await retained(
+const supervisorLaunchAgent = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/templates/supervisor-LaunchAgent.plist",
 );
-const coordinatorEntitlements = await retained(
+const coordinatorEntitlements = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/Entitlements/coordinator.plist",
 );
-const supervisorEntitlements = await retained(
+const supervisorEntitlements = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/Entitlements/supervisor.plist",
 );
-const bootstrapConstraint = await retained(
+const bootstrapConstraint = await retainedSourceFixture(
   "artifacts/macos-i2b2-unsigned-installation-bundle/Constraints/coordinator-supervisor-bootstrap.json",
 );
 

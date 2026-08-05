@@ -19,6 +19,26 @@ repository.
 The archive root retains `SOURCE_FILES.txt`, `SHA256SUMS`, and `SOURCE.md`. Ignored build outputs,
 caches, credentials, signing material, and untracked local files were not copied.
 
+## Completed compiled artifact payload migration
+
+- Capsule source commit: `bd926f436003d61a70c0312d9605804b2735449e`
+- Exact archive commit: `0944ffd8cfd01ec23e4ae99138b0931d56804077`
+- Review: [`capsule-experiments` draft PR #5](https://github.com/Shrimpworks/capsule-experiments/pull/5)
+- [Pinned archive root](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads)
+- Scope: 210 files covering Source Validator V1/V2/R2, I1A, R3, and I2B2 payload, dependent
+  harness, evidence, reproduction, tests, documents, and ADR bindings
+- Binary closure: 15 tracked Mach-O placements representing six unique compiled identities, plus
+  seven binary-vector placements representing three identities
+- Remote verification: a fresh network clone fetched the exact commit and its archive verifier
+  passed before Capsule removed any payload
+
+The repository retains the small
+[`compiled-artifact-payloads` conformance fixture](../schemas/conformance/compiled-artifact-payloads/manifest.json),
+six deterministic I2B2 source inputs, exact archive-fetch CI, and mutation checks for pins,
+identities, placement/copy closure, modes, historical bindings, and R3's evidence-only state. R3
+never tracked its signed executable payloads. Its Apple Development evidence is not Developer ID,
+notarization, distribution, or a published Release asset.
+
 ## Repository boundary
 
 Keep here:

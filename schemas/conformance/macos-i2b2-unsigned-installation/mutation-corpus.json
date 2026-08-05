@@ -1,0 +1,58 @@
+[
+  {
+    "id": "profile-raw-cap-plus-one",
+    "expected": "refuse-profile-raw-cap"
+  },
+  {
+    "id": "bundle-path-cap-plus-one",
+    "expected": "refuse-bundle-path-cap"
+  },
+  {
+    "id": "role-missing",
+    "expected": "refuse-role-inventory"
+  },
+  {
+    "id": "role-extra",
+    "expected": "refuse-role-inventory"
+  },
+  {
+    "id": "role-duplicate",
+    "expected": "refuse-role-inventory"
+  },
+  {
+    "id": "role-mixed",
+    "expected": "refuse-role-inventory"
+  },
+  {
+    "id": "wrong-containing-release",
+    "expected": "refuse-release-binding"
+  },
+  {
+    "id": "wrong-i1-profile",
+    "expected": "refuse-profile-binding"
+  },
+  {
+    "id": "wrong-bootstrap-service",
+    "expected": "refuse-service-binding"
+  },
+  {
+    "id": "unsafe-entitlement",
+    "expected": "refuse-entitlement"
+  },
+  {
+    "id": "active-signing",
+    "expected": "refuse-inactive-boundary"
+  },
+  {
+    "id": "bootstrap-created",
+    "expected": "refuse-no-create-boundary"
+  },
+  {
+    "id": "store-created",
+    "expected": "refuse-no-create-boundary"
+  },
+  {
+    "id": "unknown-field",
+    "expected": "refuse-schema"
+  }
+]

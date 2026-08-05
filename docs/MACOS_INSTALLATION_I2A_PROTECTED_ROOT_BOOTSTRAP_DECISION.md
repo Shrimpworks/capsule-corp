@@ -15,13 +15,14 @@ Evidence or reason: current Apple public interfaces support an embedded on-deman
   the only process with Supervisor-container authority while keeping installation-root signing in
   a separate user-presence-gated role. The closed fault plan preserves every I0/I1/G2 no-create,
   no-guest, and repair-required invariant.
-Remaining work: production wrapper review,
-  separately authorized test-only key/service/container mutations, installed denial/fault
-  evidence, and descriptor-relative fixed-v1 composition remain I2B work. Product-store selection,
-  product IPC, update/restore, runtime/backend/guest, and attempt activation remain outside I2A.
-Next action: implement I2B2 unsigned installation-only construction; I2B1 request/record fixtures
-  and field authority are retained in the passive contract, and I1B is already complete.
-Parent status: installed I2 protected-root composition is BLOCKED on the named I2B2-I2B5 evidence;
+Remaining work: I2B2 unsigned construction is passed; production wrapper review, separately
+  authorized I2B3 test-only signing/key/App Group/service/container mutations, installed
+  denial/fault evidence, and descriptor-relative fixed-v1 composition remain I2B work.
+  Product-store selection, product IPC, update/restore, runtime/backend/guest, and attempt
+  activation remain outside I2A.
+Next action: review the production signed-object wrapper, then separately authorize I2B3 with exact
+  Team-3DDR profiles and fresh disposable test signing/key/App Group/service/container inputs.
+Parent status: installed I2 protected-root composition is BLOCKED on the named I2B3-I2B5 evidence;
   macOS installation remains IN_PROGRESS — TRENDING_GOOD.
 ```
 
@@ -413,6 +414,8 @@ use only owned disposable fixtures and never an existing Capsule or unrelated co
 
 ### I2B2: unsigned installation-only bundle construction
 
+- Status: `PASSED` for deterministic unsigned bytes/layout only; see the
+  [I2B2 construction result](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md).
 - Extend the I1 tree with the exact Trust Coordinator XPC bundle, bootstrap-only service
   descriptor, App Group/Keychain/launch-constraint projections, and fixed no-create state names.
 - Keep all profiles inactive, Coordinator request signing unavailable, Supervisor placeholder

@@ -27,6 +27,14 @@ refuses missing, mixed, extra, mode-changed, manifest-changed, or substituted fi
 Apple signing identity and activates no entitlement, service, bootstrap, IPC, runtime, backend, or
 guest. See the [I1A construction result](MACOS_INSTALLATION_I1A_UNSIGNED_CONSTRUCTION.md).
 
+I2B2 now extends the unchanged I1A bytes with the eighth, installation-only Trust Coordinator role
+and inactive Supervisor bootstrap descriptor. Its unsigned profile freezes exact identifiers,
+cross-links, entitlement/constraint candidates, protected-state names, and cleanup/repair
+projections while requiring `unsigned-profile-inactive` refusal. This is `PASSED` construction
+evidence only; production wrapper review and separately authorized I2B3 signing/key/App Group/
+service/container handoff remain `BLOCKED`. See the
+[I2B2 construction result](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md).
+
 ## Current versus intended state
 
 The repository currently contains buildable Go and TypeScript scaffolding. It does not yet launch a

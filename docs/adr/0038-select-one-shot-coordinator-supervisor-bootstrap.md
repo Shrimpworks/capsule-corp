@@ -76,6 +76,13 @@ potential Keychain namespace remain empty of Capsule keys, files, defaults, sock
 migration, and authority material and are tested as residual capability. The visible app and daemon
 are not members.
 
+I2B2 freezes the Coordinator-only installation-root group as
+`3DDR84M4JS.com.capsulecorp.capsule.trust-bootstrap.installation-root.epoch-1` and the Supervisor
+bootstrap-anchor group as
+`3DDR84M4JS.com.capsulecorp.capsule.supervisor.bootstrap-anchor.epoch-1`. These are unsigned,
+inactive profile inputs only. They confer no Keychain access and require fresh exact profiles,
+keys, negative cross-group checks, and separately authorized I2B3 installed evidence.
+
 The Supervisor exposes only two setup messages on that service: prepare/observe one protected-root
 bootstrap and finalize it with the installation-root-signed record. Exact Coordinator and
 Supervisor Team, signing ID, active CDHash/profile/entitlements, EUID, audit session, debug state,
@@ -187,8 +194,9 @@ fenced without authority recovery.
   a new version rather than mutate those known answers.
 - The design keeps the installation-root private key outside the visible app, daemon, Supervisor,
   updater, and replacer while avoiding a permanent agent or privileged helper.
-- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, passive
-  object/field-authority fixtures, separately authorized test-only signing/Keychain/App Group/SMAppService
+- I2B1 passive objects and I2B2 unsigned construction are `PASSED` in their exact scopes.
+- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, production
+  wrapper review, separately authorized test-only signing/Keychain/App Group/SMAppService
   mutations, same-user/stale/debug/session/update evidence, and descriptor-relative G2 composition.
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.

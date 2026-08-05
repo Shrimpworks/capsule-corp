@@ -22,6 +22,8 @@ artifacts/*
 !artifacts/macos-i1a-unsigned-app-shell/**
 !artifacts/macos-i1b-r3-signed-development-composition/
 !artifacts/macos-i1b-r3-signed-development-composition/**
+!artifacts/macos-i2b2-unsigned-installation-bundle/
+!artifacts/macos-i2b2-unsigned-installation-bundle/**
 tmp/
 *.log
 

@@ -894,6 +894,23 @@
         "governed-runtime-c2b-passive-typescript-validator",
         "separately-authorized-composed-profile-owned-guest-task-after-gate"
       ]
+    },
+    "macos-installation-i2b2-unsigned-profile": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "macos-installation-i2b2-unsigned-validator",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": {
+        "mode": "not-rendered",
+        "source": "none"
+      },
+      "contentStatus": {
+        "userContent": "none",
+        "guestControl": "none"
+      },
+      "binding": "passive-macos-installation-i2b2-profile-exact-json",
+      "unknownBehavior": "reject-passive-fixture"
     }
   },
   "targets": [
@@ -4912,6 +4929,721 @@
           "path": "/effects/admission",
           "sourceField": "/effects/admission",
           "profile": "governed-runtime-c2b-passive-gate"
+        }
+      ]
+    },
+    {
+      "object": "capsule.macos-i2b2-unsigned-installation-profile",
+      "version": 0,
+      "definition": {
+        "kind": "json-schema",
+        "path": "schemas/conformance/macos-i2b2-unsigned-installation/profile.schema.json"
+      },
+      "fields": [
+        {
+          "path": "/schema",
+          "sourceField": "/schema",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/checkpoint",
+          "sourceField": "/checkpoint",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/status",
+          "sourceField": "/status",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/profileId",
+          "sourceField": "/profileId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/intendedDevelopmentTeamId",
+          "sourceField": "/intendedDevelopmentTeamId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease",
+          "sourceField": "/containingRelease",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/identity",
+          "sourceField": "/containingRelease/identity",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/baseProfileId",
+          "sourceField": "/containingRelease/baseProfileId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aBundleManifest",
+          "sourceField": "/containingRelease/i1aBundleManifest",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aBundleManifest/path",
+          "sourceField": "/containingRelease/i1aBundleManifest/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aBundleManifest/bytes",
+          "sourceField": "/containingRelease/i1aBundleManifest/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aBundleManifest/sha256",
+          "sourceField": "/containingRelease/i1aBundleManifest/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aConstructionEvidence",
+          "sourceField": "/containingRelease/i1aConstructionEvidence",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aConstructionEvidence/path",
+          "sourceField": "/containingRelease/i1aConstructionEvidence/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aConstructionEvidence/bytes",
+          "sourceField": "/containingRelease/i1aConstructionEvidence/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1aConstructionEvidence/sha256",
+          "sourceField": "/containingRelease/i1aConstructionEvidence/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1bSignedDevelopmentEnrollment",
+          "sourceField": "/containingRelease/i1bSignedDevelopmentEnrollment",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1bSignedDevelopmentEnrollment/path",
+          "sourceField": "/containingRelease/i1bSignedDevelopmentEnrollment/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1bSignedDevelopmentEnrollment/bytes",
+          "sourceField": "/containingRelease/i1bSignedDevelopmentEnrollment/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/i1bSignedDevelopmentEnrollment/sha256",
+          "sourceField": "/containingRelease/i1bSignedDevelopmentEnrollment/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/signedI2B3ReleaseDigestState",
+          "sourceField": "/containingRelease/signedI2B3ReleaseDigestState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/containingRelease/signedI2B3ComponentProfileDigestState",
+          "sourceField": "/containingRelease/signedI2B3ComponentProfileDigestState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles",
+          "sourceField": "/roles",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/roleId",
+          "sourceField": "/roles/*/roleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/containingRoleId",
+          "sourceField": "/roles/*/containingRoleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/bundlePath",
+          "sourceField": "/roles/*/bundlePath",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/executablePath",
+          "sourceField": "/roles/*/executablePath",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/bundleIdentifier",
+          "sourceField": "/roles/*/bundleIdentifier",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/signingIdentifier",
+          "sourceField": "/roles/*/signingIdentifier",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/required",
+          "sourceField": "/roles/*/required",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/roles/*/sourceProfile",
+          "sourceField": "/roles/*/sourceProfile",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs",
+          "sourceField": "/executableInputs",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs/*/roleId",
+          "sourceField": "/executableInputs/*/roleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs/*/identityClass",
+          "sourceField": "/executableInputs/*/identityClass",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs/*/path",
+          "sourceField": "/executableInputs/*/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs/*/bytes",
+          "sourceField": "/executableInputs/*/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/executableInputs/*/sha256",
+          "sourceField": "/executableInputs/*/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services",
+          "sourceField": "/services",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/serviceId",
+          "sourceField": "/services/*/serviceId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/serviceName",
+          "sourceField": "/services/*/serviceName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/ownerRoleId",
+          "sourceField": "/services/*/ownerRoleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/peerRoleId",
+          "sourceField": "/services/*/peerRoleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/protocolIdentity",
+          "sourceField": "/services/*/protocolIdentity",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/methodSet",
+          "sourceField": "/services/*/methodSet",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/services/*/activationState",
+          "sourceField": "/services/*/activationState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements",
+          "sourceField": "/entitlements",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements/*/roleId",
+          "sourceField": "/entitlements/*/roleId",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements/*/key",
+          "sourceField": "/entitlements/*/key",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements/*/disposition",
+          "sourceField": "/entitlements/*/disposition",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements/*/valueIdentity",
+          "sourceField": "/entitlements/*/valueIdentity",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlements/*/activationState",
+          "sourceField": "/entitlements/*/activationState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlementInputs",
+          "sourceField": "/entitlementInputs",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlementInputs/*/path",
+          "sourceField": "/entitlementInputs/*/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlementInputs/*/bytes",
+          "sourceField": "/entitlementInputs/*/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/entitlementInputs/*/sha256",
+          "sourceField": "/entitlementInputs/*/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints",
+          "sourceField": "/constraints",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/projection",
+          "sourceField": "/constraints/projection",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/projection/path",
+          "sourceField": "/constraints/projection/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/projection/bytes",
+          "sourceField": "/constraints/projection/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/projection/sha256",
+          "sourceField": "/constraints/projection/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/teamIdentifier",
+          "sourceField": "/constraints/teamIdentifier",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/coordinatorSigningIdentifier",
+          "sourceField": "/constraints/coordinatorSigningIdentifier",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/supervisorSigningIdentifier",
+          "sourceField": "/constraints/supervisorSigningIdentifier",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/activeCodeDirectoryHashSetState",
+          "sourceField": "/constraints/activeCodeDirectoryHashSetState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/activeEffectiveEntitlementDigestSetState",
+          "sourceField": "/constraints/activeEffectiveEntitlementDigestSetState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/constraints/activationDecision",
+          "sourceField": "/constraints/activationDecision",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects",
+          "sourceField": "/bootstrapObjects",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/fixtureManifest",
+          "sourceField": "/bootstrapObjects/fixtureManifest",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/fixtureManifest/path",
+          "sourceField": "/bootstrapObjects/fixtureManifest/path",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/fixtureManifest/bytes",
+          "sourceField": "/bootstrapObjects/fixtureManifest/bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/fixtureManifest/sha256",
+          "sourceField": "/bootstrapObjects/fixtureManifest/sha256",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request",
+          "sourceField": "/bootstrapObjects/request",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/objectType",
+          "sourceField": "/bootstrapObjects/request/objectType",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/version",
+          "sourceField": "/bootstrapObjects/request/version",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/purpose",
+          "sourceField": "/bootstrapObjects/request/purpose",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/audience",
+          "sourceField": "/bootstrapObjects/request/audience",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/mediaType",
+          "sourceField": "/bootstrapObjects/request/mediaType",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/containingReleaseBinding",
+          "sourceField": "/bootstrapObjects/request/containingReleaseBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/i1ProfileBinding",
+          "sourceField": "/bootstrapObjects/request/i1ProfileBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/componentProfileBinding",
+          "sourceField": "/bootstrapObjects/request/componentProfileBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/request/signingState",
+          "sourceField": "/bootstrapObjects/request/signingState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record",
+          "sourceField": "/bootstrapObjects/record",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/objectType",
+          "sourceField": "/bootstrapObjects/record/objectType",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/version",
+          "sourceField": "/bootstrapObjects/record/version",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/purpose",
+          "sourceField": "/bootstrapObjects/record/purpose",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/audience",
+          "sourceField": "/bootstrapObjects/record/audience",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/mediaType",
+          "sourceField": "/bootstrapObjects/record/mediaType",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/containingReleaseBinding",
+          "sourceField": "/bootstrapObjects/record/containingReleaseBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/i1ProfileBinding",
+          "sourceField": "/bootstrapObjects/record/i1ProfileBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/componentProfileBinding",
+          "sourceField": "/bootstrapObjects/record/componentProfileBinding",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/bootstrapObjects/record/signingState",
+          "sourceField": "/bootstrapObjects/record/signingState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState",
+          "sourceField": "/protectedState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/stateRootClass",
+          "sourceField": "/protectedState/stateRootClass",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/privateParentName",
+          "sourceField": "/protectedState/privateParentName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/stateRootName",
+          "sourceField": "/protectedState/stateRootName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/pendingJournalName",
+          "sourceField": "/protectedState/pendingJournalName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/stagingRootPrefix",
+          "sourceField": "/protectedState/stagingRootPrefix",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/publishIntentName",
+          "sourceField": "/protectedState/publishIntentName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/ownerEntryName",
+          "sourceField": "/protectedState/ownerEntryName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/ownerMode",
+          "sourceField": "/protectedState/ownerMode",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/ownerLinkCount",
+          "sourceField": "/protectedState/ownerLinkCount",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/ownerProfile",
+          "sourceField": "/protectedState/ownerProfile",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/storeEntryName",
+          "sourceField": "/protectedState/storeEntryName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/storeFormat",
+          "sourceField": "/protectedState/storeFormat",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/storeProfile",
+          "sourceField": "/protectedState/storeProfile",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/requestEntryName",
+          "sourceField": "/protectedState/requestEntryName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/recordEntryName",
+          "sourceField": "/protectedState/recordEntryName",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/protectedState/ordinaryStartupOperation",
+          "sourceField": "/protectedState/ordinaryStartupOperation",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection",
+          "sourceField": "/stateProjection",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/signingState",
+          "sourceField": "/stateProjection/signingState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/provisioningProfileState",
+          "sourceField": "/stateProjection/provisioningProfileState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/coordinatorExecutableState",
+          "sourceField": "/stateProjection/coordinatorExecutableState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/supervisorExecutableState",
+          "sourceField": "/stateProjection/supervisorExecutableState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/serviceRegistrationState",
+          "sourceField": "/stateProjection/serviceRegistrationState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/serviceLaunchState",
+          "sourceField": "/stateProjection/serviceLaunchState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/coordinatorSigningState",
+          "sourceField": "/stateProjection/coordinatorSigningState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/installationRootKeyState",
+          "sourceField": "/stateProjection/installationRootKeyState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/bootstrapRequestState",
+          "sourceField": "/stateProjection/bootstrapRequestState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/bootstrapRecordState",
+          "sourceField": "/stateProjection/bootstrapRecordState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/protectedRootState",
+          "sourceField": "/stateProjection/protectedRootState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/ownerState",
+          "sourceField": "/stateProjection/ownerState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/storeState",
+          "sourceField": "/stateProjection/storeState",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/attemptsEnabled",
+          "sourceField": "/stateProjection/attemptsEnabled",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/runtimePresent",
+          "sourceField": "/stateProjection/runtimePresent",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/backendPresent",
+          "sourceField": "/stateProjection/backendPresent",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/guestPresent",
+          "sourceField": "/stateProjection/guestPresent",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/activationDecision",
+          "sourceField": "/stateProjection/activationDecision",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/stateProjection/activationReason",
+          "sourceField": "/stateProjection/activationReason",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair",
+          "sourceField": "/cleanupRepair",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/cleanupProjection",
+          "sourceField": "/cleanupRepair/cleanupProjection",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/protectedStateMutation",
+          "sourceField": "/cleanupRepair/protectedStateMutation",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/appGroupMutation",
+          "sourceField": "/cleanupRepair/appGroupMutation",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/keychainMutation",
+          "sourceField": "/cleanupRepair/keychainMutation",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/serviceMutation",
+          "sourceField": "/cleanupRepair/serviceMutation",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/repairProjection",
+          "sourceField": "/cleanupRepair/repairProjection",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/cleanupRepair/nextGate",
+          "sourceField": "/cleanupRepair/nextGate",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/readbackCaps",
+          "sourceField": "/readbackCaps",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/readbackCaps/profileRawBytes",
+          "sourceField": "/readbackCaps/profileRawBytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/readbackCaps/bundleManifestRawBytes",
+          "sourceField": "/readbackCaps/bundleManifestRawBytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/readbackCaps/bundleFileCount",
+          "sourceField": "/readbackCaps/bundleFileCount",
+          "profile": "macos-installation-i2b2-unsigned-profile"
+        },
+        {
+          "path": "/readbackCaps/bundlePathUtf8Bytes",
+          "sourceField": "/readbackCaps/bundlePathUtf8Bytes",
+          "profile": "macos-installation-i2b2-unsigned-profile"
         }
       ]
     }

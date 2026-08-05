@@ -91,7 +91,8 @@
             "source-validator-passive-v1-verifier",
             "macos-installation-i0-passive-validator",
             "supervisor-bootstrap-cose-cbor-verifier",
-            "governed-runtime-c2b-passive-validator"
+            "governed-runtime-c2b-passive-validator",
+            "macos-installation-i2b2-unsigned-validator"
           ]
         },
         "resolver": {
@@ -157,6 +158,7 @@
             "passive-macos-installation-i0-profile-exact-json",
             "passive-macos-installation-i0-transition-exact-json",
             "passive-macos-installation-i0-retention-exact-json",
+            "passive-macos-installation-i2b2-profile-exact-json",
             "passive-supervisor-bootstrap-request-v0-signature",
             "passive-supervisor-bootstrap-record-v0-signature",
             "passive-governed-runtime-c2b-binding-v1-exact-json"

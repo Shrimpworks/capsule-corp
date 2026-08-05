@@ -1,0 +1,122 @@
+{
+  "contract": "capsule.c2b.host-runner-source-contract/v1",
+  "status": "PASSED-passive-static-source-contract-only",
+  "source": {
+    "path": "capsule-host-runner-contract.c",
+    "language": "C17-passive-source-contract",
+    "bytes": 3996,
+    "sha256": "7dbc8e5c21acd776fec653665517b6da1ecfe07278da0444d710c251744978b2",
+    "finalRunnerArtifact": false,
+    "callsLibkrun": false
+  },
+  "predecessor": {
+    "c2bV3Bytes": 18357,
+    "c2bV3Sha256": "d72327bba369484a56db7d543a32e8bbd4eac403230ac65d63709ac3ba3bbdfb",
+    "c2bV3ContractSha256": "8b1ec936a7b56370716d28557125e46866dea8f21a149704a01f251a0dddbcc1"
+  },
+  "acceptedLibkrun": {
+    "repository": "Shrimpworks/libkrun",
+    "upstream": "728df8125077d0db44265f6e997c72b81b65c015",
+    "acceptedCommit": "7432eda5a49220976b0167005aa43ee622f9d632",
+    "acceptedTree": "7671440cfbafa58fe20aebf8d4deb2a843ebe346",
+    "headerAndDylibState": "BLOCKED-not-retained-locally-for-final-build"
+  },
+  "launchAuthority": {
+    "owner": "execution-supervisor",
+    "cardinality": "exactly-one-runner-process-per-AttemptID",
+    "descriptor": "sealed-supervisor-inherited-process-and-fd-manifest-only",
+    "runnerAcceptsAttemptIDBytes": false,
+    "executeTimeReplacementValues": false,
+    "daemonRoute": false,
+    "service": false,
+    "privilegedHelper": false
+  },
+  "preflight": {
+    "argv": "exact-argv0-only",
+    "environment": "empty-after-macos-text-encoding-removal",
+    "hostFds": [
+      { "fd": 0, "role": "runner-stdin-null", "accessMode": "O_RDONLY" },
+      { "fd": 1, "role": "runner-stdout", "accessMode": "O_WRONLY" },
+      { "fd": 2, "role": "runner-stderr", "accessMode": "O_WRONLY" },
+      { "fd": 3, "role": "record-before-start-control", "accessMode": "O_RDONLY" },
+      { "fd": 4, "role": "runtime-root", "accessMode": "O_RDONLY" },
+      { "fd": 5, "role": "registered-source-port-input", "accessMode": "O_RDONLY" },
+      { "fd": 6, "role": "approved-inline-input-port-input", "accessMode": "O_RDONLY" },
+      { "fd": 7, "role": "completion-result-port-output", "accessMode": "O_WRONLY" }
+    ],
+    "closeFromInclusive": 8,
+    "root": "fd4-unlinked-regular-mode-0400-ordonly-fixed-length-and-digest",
+    "failure": "refuse-before-next-step-and-before-krun_start_enter"
+  },
+  "ports": [
+    {
+      "portId": 0,
+      "name": "capsule.source",
+      "inputFd": 5,
+      "outputFd": -1,
+      "guestNode": "/dev/hvc0"
+    },
+    {
+      "portId": 1,
+      "name": "capsule.input",
+      "inputFd": 6,
+      "outputFd": -1,
+      "guestNode": "/dev/vport0p1"
+    },
+    {
+      "portId": 2,
+      "name": "capsule.completion",
+      "inputFd": -1,
+      "outputFd": 7,
+      "guestNode": "/dev/vport0p2"
+    }
+  ],
+  "devices": [
+    "balloon",
+    "rng",
+    "console-multiport-with-three-fixed-ports",
+    "block-root-vda-read-only"
+  ],
+  "forbiddenAuthority": [
+    "network",
+    "vsock",
+    "tsi",
+    "virtiofs",
+    "NullFs",
+    "writable-block",
+    "additional-block",
+    "host-socket",
+    "live-host-path",
+    "kernel-path",
+    "firmware-path",
+    "legacy-disk-path",
+    "root-path",
+    "execute-time-config"
+  ],
+  "teardown": {
+    "owner": "execution-supervisor",
+    "runnerExit": "lifecycle-only-never-workload-success",
+    "identityRevalidation": "pid-start-uid-gid-executable-path-code-identity",
+    "forcedSignal": "SIGKILL",
+    "forcedAbsenceDeadlineMs": 1000,
+    "maximumActionToAbsenceMs": 1200,
+    "identityMismatch": "unresolved-no-signal-no-success",
+    "authoritativeAbsenceRequired": true
+  },
+  "blockers": [
+    "accepted-libkrun-header-and-current-source-dylib-not-retained-locally",
+    "final-runner-abi-build-bytes-digest-and-call-audit-not-created",
+    "new-versioned-materialized-profile-not-created",
+    "owned-disposable-guest-authorization-not-granted"
+  ],
+  "effects": {
+    "process": false,
+    "libkrun": false,
+    "hvf": false,
+    "vm": false,
+    "guest": false,
+    "signing": false,
+    "installation": false,
+    "admission": false
+  }
+}

@@ -869,7 +869,7 @@ func (store *FixedFileStoreV2) InventoryArchiveArtifacts(
 			stat := info.Sys().(*syscall.Stat_t)
 			report.KnownUnreferenced++
 			candidates = append(candidates, KnownUnreferencedOrphan{
-				digest: segment.Segment.Digest(), device: fmt.Sprint(stat.Dev), inode: uint64(stat.Ino),
+				digest: segment.Segment.Digest(), device: fmt.Sprint(stat.Dev), inode: stat.Ino,
 				checkpoint: loaded.Active.View().CurrentCheckpoint, session: session,
 			})
 		case ArchiveArtifactCrossInstallation:
@@ -971,7 +971,7 @@ func (store *FixedFileStoreV2) DeleteKnownUnreferencedOrphan(
 		return ErrOrphanEvidencePreserved
 	}
 	stat, ok := info.Sys().(*syscall.Stat_t)
-	if !ok || fmt.Sprint(stat.Dev) != candidate.device || uint64(stat.Ino) != candidate.inode {
+	if !ok || fmt.Sprint(stat.Dev) != candidate.device || stat.Ino != candidate.inode {
 		return ErrOrphanEvidencePreserved
 	}
 	if err := failOrphan(faults, FaultOrphanBeforeRemove, false); err != nil {

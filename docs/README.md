@@ -36,6 +36,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 17. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
     contracts/mechanics, missing consumers, corrected authority boundaries, and ordered product
     closure
+18. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
+    Supervisor-owned projection, public-key-only COSE verification, exact claim boundary, and
+    installed-product blockers
 
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs

@@ -25,8 +25,8 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 | Submit one `main.mjs` | `MJSMainSource`, canonical `SourceManifest`, exact byte/cap/digest fixtures | `PASSED` for passive bytes | No selected authenticated bounded CLI-to-daemon submission adapter. Diagnostic HTTP remains read-only. |
 | Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Select the authenticated product adapter and bind only admitted limits and exact runtime/profile identity. |
 | Register source and plan | Atomic passive fixed-store registration/fetch facade | `PASSED` for the unwired oracle | Expose it only through method-specific authenticated product registration/fetch backed by protected production state. |
-| Fetch and render approval | ADR-0029 method design and native app scaffolding | `BLOCKED` | Broker must fetch Supervisor-owned bytes, render fixed typed facts, and treat an opaque RegistrationID only as an untrusted locator. |
-| Sign and retain approval | Approval fixtures plus local consume/create/replay mechanics | `PASSED` only for fixture/store evidence | Fresh `LAContext`, explicit user-presence key policy, no fallback, strict production COSE/key authorization, and installed Broker/Supervisor integration. |
+| Fetch and render approval | Accepted ADR-0043 read-only projection over passive Supervisor readback | `PASSED` for the unwired projection | Authenticated product fetch, native UI, installed spoof/focus/cancel evidence, and Supervisor custody of inline-input content if it must be shown. |
+| Sign, verify, and retain approval | ADR-0043 public-key-only strict verifier plus local consume/create/replay mechanics | `PASSED` for unwired crypto/store mechanics | Fresh live `LAContext`, Secure Enclave key operation, installed key authorization and same-byte Broker/Supervisor integration. |
 | Create and drive attempt | Durable attempt/lifecycle/FakeBackend mechanics | `PASSED` for no-guest local mechanics | Authenticated product call, protected owner/store, real sealed adapter, stable backend identity, restart reconciliation, and one fresh guest. |
 | Compose completion | [Unwired fixed FakeBackend compositor foundation](COMPLETION_COMPOSITOR_FOUNDATION.md) | `PASSED` for the read-only no-guest foundation | No durable completion producer/store transaction, guest port, integrity/result producer, real teardown/absence proof, authenticated consumer, signing, receipt, or installed composition. |
 
@@ -48,9 +48,9 @@ bounded authenticated CLI adapter
   -> narrow plan construction
   -> passive atomic custody/fetch PASSED
   -> authenticated product registration/fetch
-  -> Broker fetches Supervisor-owned bytes
-  -> fixed rendering + fresh user-presence approval
-  -> production approval verification
+  -> passive fixed rendering + public-key verification PASSED
+  -> authenticated Broker fetch + installed fixed rendering
+  -> fresh user-presence signing + installed verification
   -> one-use AttemptID creation
   -> sealed real adapter + fresh governed guest
   -> completion-last + teardown/absence composition
@@ -66,7 +66,8 @@ separate authorization; neither path alone is product alpha.
 1. Do not turn the diagnostic HTTP server into a mutation or authority surface.
 2. Registration remains deliberately fresh; request IDs are correlation, not generic authority
    deduplication.
-3. `FixtureVerifier` is test-only and cannot verify newly signed production approvals.
+3. `FixtureVerifier` is test-only. ADR-0043's cryptographic verifier is production-shaped but
+   unwired and cannot authorize a product approval path.
 4. The legacy multi-file JavaScript/TypeScript proposal and stale receipt schema are not alpha
    consumers.
 5. Approval renders Supervisor-retained typed bytes, never daemon-supplied prose.
@@ -85,8 +86,9 @@ separate authorization; neither path alone is product alpha.
 2. Preserve the passed exact-one-`main.mjs` proposal and atomic custody/fetch oracle; freeze the
    selected authenticated product adapter and current field authority without restoring broad
    legacy acceptance.
-3. Implement authenticated role-specific IPC, protected Supervisor state, Broker rendering,
-   production signing/verification, and the bounded fixed-store policy.
+3. Preserve ADR-0043's passive projection/verifier and implement authenticated role-specific IPC,
+   protected Supervisor state, native Broker UI, live signing, installed verification, and the
+   bounded fixed-store policy.
 4. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
    real adapter.
 5. Implement the completion/transcript/fixed-summary compositor.

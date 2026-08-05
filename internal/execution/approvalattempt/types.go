@@ -177,8 +177,9 @@ func NewAttemptReference(attemptID AttemptID) (AttemptReference, error) {
 
 func (reference AttemptReference) AttemptID() AttemptID { return reference.attemptID }
 
-// ApprovalKeyAuthorizationIdentity is a fixture-only resolved identity. The
-// production KeyAuthorization object remains blocked on ADR-0019.
+// ApprovalKeyAuthorizationIdentity identifies trusted resolved signer policy.
+// It is used by retained fixtures and the unwired production-shaped verifier;
+// installed Keychain authorization remains blocked.
 type ApprovalKeyAuthorizationIdentity [32]byte
 
 func NewApprovalKeyAuthorizationIdentity(value []byte) (ApprovalKeyAuthorizationIdentity, error) {
@@ -219,6 +220,11 @@ type ApprovalGrantRoleBindings struct {
 	AttemptNonce          AttemptNonce
 	ProtectedKeyID        []byte
 	AuthorizationIdentity ApprovalKeyAuthorizationIdentity
+	// EffectiveNow is the Supervisor's durable effective-time observation.
+	// RegistrationExpiresAt is the exact retained registration expiry. The
+	// fixture verifier ignores both; ProductionShapedVerifier requires both.
+	EffectiveNow          v0candidate.UInt53
+	RegistrationExpiresAt v0candidate.UInt53
 }
 
 func cloneRoleBindings(bindings ApprovalGrantRoleBindings) ApprovalGrantRoleBindings {

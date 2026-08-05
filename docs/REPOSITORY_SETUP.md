@@ -10,7 +10,7 @@ before a public preview and review it whenever ownership or release policy chang
 - Add the repository description, topics, and project URL.
 - Choose a license before accepting external contributions or distributing releases.
 - Adopt a code of conduct and private enforcement contact before accepting external contributions.
-- Keep the default branch named `main`.
+- Keep the canonical `capsule-corp` repository's default branch named `main`.
 
 ## Branch protection
 
@@ -32,6 +32,32 @@ satisfy that approval. If no independent qualified reviewer is available, experi
 may record the limitation, but the changed bytes cannot enter an admitted runtime bundle or
 support a new validation claim. Preserve exact reviewed patch/source digests and rerun deliberate
 capability-restoration tests after any affected rebase or rebuild.
+
+## Governed upstream forks
+
+Do not reuse the canonical repository's `main` convention blindly for owned dependency forks.
+Configure each fork according to its recorded role:
+
+- A fork primarily carrying Capsule-governed bytes uses its latest accepted governed line as the
+  default branch. Its upstream-oriented `main` remains integration state and does not imply Capsule
+  adoption.
+- Preserve the upstream anchor, original governed patch-queue merge, and every superseded accepted
+  head under explicit versioned refs. Lock immutable refs with administrator enforcement; disable
+  force-pushes and deletion.
+- Start each governed update from the preceding accepted commit on a fresh versioned target branch.
+  Require a pull request, keep it draft through evidence and human review, then lock the accepted
+  head before switching the fork default.
+- Never merge an upstream development branch into a pinned governed line. Backport logical commits
+  separately, resolve version-specific conflicts without widening behavior, and rerun the governed
+  source, unit, mutation, sanitizer, coverage, architecture, and authorized guest gates that apply.
+- Upstream contribution preparation uses an explicitly named upstream baseline or integration
+  branch. It cannot change Capsule product state without a later governed backport.
+- Every automation or agent must create pull requests with explicit repository, base, and head
+  arguments and read those fields back with the stored body and draft state.
+
+Record the active default, immutable ref names and commits, candidate target, protections, and
+verification commands in the fork's governed metadata. A branch name alone is not an immutable
+identity.
 
 ## Security settings
 

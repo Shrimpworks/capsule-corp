@@ -79,11 +79,14 @@ fault/corruption/substitution/concurrency/owner-loss/process-death limitations. 
 replay, and passive uniqueness routing are now implemented by the read-only
 [F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). The retained
 [F4B blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former contradiction. The
-[F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now implements atomic v2 authority/
-lifecycle mutation and the selected independent append-only effect-tombstone source in the exact
-fixed-store local-conformance scope. F4C multi-
-segment bounded growth, backup, cleanup policy, and later slices remain unimplemented. The fixed
-oracle is not selected as the production engine.
+[F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) implements atomic v2 authority/lifecycle
+mutation and the selected independent append-only effect-tombstone source in the exact fixed-store
+local-conformance scope. The [F4C result](../SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) implements
+bounded second/later-segment growth, and the
+[F5 result](../SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) implements owner-held manifest-last coherent
+backup, read-only restore admission, bounded offline inventory/reporting, and explicit sealed
+known-unreferenced orphan removal. F5 activates no restore and deletes no referenced or unknown
+history. The fixed oracle is not selected as the production engine; F6 remains unimplemented.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
 checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
 evidence-backed selection. Convenience, familiarity, or avoiding a migration is not a selection
@@ -699,24 +702,27 @@ retains the former contradiction. "Effect-tombstone source of truth is independe
 lifecycle record" above records the selected contract, and the
 [F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now implements its Supervisor-only,
 same-transaction append-only collection, direct reconstruction/lookup, fifth `HotSetDigests`
-member, and fault/replay/collision corpus. This ADR remains Proposed: F4C second-segment growth,
-backup/orphan cleanup, a production engine, a product consumer, and every other listed blocker
-remain open.
+member, and fault/replay/collision corpus. The
+[F4C result](../SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) and
+[F5 result](../SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) complete their exact local fixed-store
+conformance scopes. This ADR remains Proposed: F6 production-engine selection, installed owner/
+storage evidence, real power-loss and restore activation, a production latest-checkpoint posture,
+a product consumer, and every other listed blocker remain open.
 
 ## Acceptance blockers
 
-This ADR remains Proposed and consumer activation remains blocked until all applicable work exists:
+The fixed-store F1-F5 conformance slices and their byte-exact/corruption/fault corpus satisfy the
+first design-only condition. This ADR remains Proposed and consumer activation remains blocked on:
 
-1. the fixed-store conformance slices and byte-exact/corruption/fault corpus in the linked plan;
-2. the ADR-0033 Go/Darwin owner-lock port and installed protected-root hostile-file/session/update
+1. the ADR-0033 Go/Darwin owner-lock port and installed protected-root hostile-file/session/update
    evidence;
-3. a separately selected production engine with real APFS/power-loss, locking, backup, migration,
+2. a separately selected production engine with real APFS/power-loss, locking, backup, migration,
    corruption, and quantitative performance evidence;
-4. an independently protected latest checkpoint/non-rollbackable anchor, or an explicit product
+3. an independently protected latest checkpoint/non-rollbackable anchor, or an explicit product
    posture that keeps rollback-uncertain restore disabled;
-5. reviewed retention, evidence/export, and secure-deletion policy before any referenced archive
+4. reviewed retention, evidence/export, and secure-deletion policy before any referenced archive
    body or tombstone can be removed; and
-6. production approval verification, authenticated IPC, trust/update integration, evidence
+5. production approval verification, authenticated IPC, trust/update integration, evidence
    composition, consumers, and all existing runtime/backend/content gates.
 
 No blocker may be inferred complete from the fixed-file or no-guest fake evidence.

@@ -512,9 +512,11 @@ composes it with the current owner-required v1/no-guest startup, same-session co
 recovery, post-open fence, and ordered close under owned temporary roots.
 
 **Open production work.** The authenticated bootstrap and Apple-signed protected-state-root/
-session/update/reboot matrix remain unimplemented. Archive F4B mutation/new tombstones, F4C bounded
-growth, and F5 backup/orphan-cleanup work, production archive/compaction, rollback handling, real power-loss tests,
-real-backend reconciliation, signed evidence, and installed recovery are unresolved.
+session/update/reboot matrix remain unimplemented. Fixed-store archive F4B mutation/tombstones,
+F4C bounded growth, and F5 backup/read-only restore admission/orphan reporting now pass only their
+local conformance scopes. Production engine selection, restore activation, rollback handling,
+referenced-history retention/deletion policy, real power-loss tests, real-backend reconciliation,
+signed evidence, and installed recovery remain unresolved.
 
 ## What exists today
 

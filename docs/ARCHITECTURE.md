@@ -294,8 +294,14 @@ authority/lifecycle mutation and an independent append-only effect-tombstone sou
 hot/archive reconstruction and historical lookup verify without inventing lifecycle history. The
 [F4C result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) now adds deterministic second/later immutable-
 segment activation through the exact 64-segment ceiling while preserving those records and
-lookups. F5+ backup/orphan/engine work remains open. The fixed checkpoint remains a finite conformance oracle, not a production engine or
-continuous-service mechanism, and referenced archive history is not deletable under that proposal.
+lookups. The [F5 result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) now adds an owner-held manifest-last
+copy of the active v2 bytes and all referenced segments, independent full-copy reopen, read-only
+restore admission against an injected exact latest-checkpoint fixture, bounded offline inventory,
+and explicit deletion of only one sealed fully verified known-unreferenced segment. Unknown,
+corrupt, mixed-generation, cross-installation, referenced, or backup-referenced artifacts refuse
+and remain evidence. F5 performs no restore activation or automatic deletion. The fixed checkpoint
+remains a finite conformance oracle, not a production engine or continuous-service mechanism, and
+referenced archive history is not deletable under that proposal. F6 remains open.
 
 ### Trust verifier and repository
 

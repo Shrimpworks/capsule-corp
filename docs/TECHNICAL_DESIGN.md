@@ -934,6 +934,10 @@ implemented.
    inventory, loader/string-codegen controls, supported resource fields, and teardown/absence
    semantics. It deliberately leaves current-source libkrun and final-runner artifacts as blockers;
    a new version must bind those exact bytes before the separately authorized guest task.
+   The follow-on passive host-runner source contract freezes exact C17 call-plan/preflight bytes
+   and mutation verification only. It does not copy or guess the unavailable accepted ABI, compile
+   or link a runner, call libkrun/HVF, or fill v3's final-artifact blocker. Retain the exact accepted
+   header/current-source dylib locally before final ABI implementation and materialization.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

@@ -311,6 +311,13 @@ carrier; the Supervisor-owned per-attempt runner, exact descriptors/devices, loa
 controls, supported resources, teardown/absence rules, and composed passive-contract digest are
 fixed. Unsupported resource fields are absent. A current-source libkrun dylib and final runner
 artifact are still missing, so fixed-owned-guest eligibility and admission remain `BLOCKED`.
+The follow-on [host-runner source contract v1](protocol/GOVERNED_DENO_CORE_C2B_HOST_RUNNER_SOURCE_V1.md)
+is `PASSED` only for exact passive C17 call-plan bytes and a dependency-free local mutation
+verifier. It freezes Supervisor ownership, one runner per AttemptID, FDs 0–7, raw-root FD 4,
+three console ports, explicit implicit-device disable calls, ordering, forbidden authority, and
+external teardown without compiling or calling libkrun. Accepted ABI header/current-source dylib
+inputs, final runner build bytes/digest, a new materialized profile, guest authorization, and
+admission remain `BLOCKED`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

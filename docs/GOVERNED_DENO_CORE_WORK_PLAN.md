@@ -66,6 +66,13 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   records composed passive-contract digest `8b1ec936...bcc1`. It correctly blocks one owned guest
   on a retained current-source libkrun dylib, final runner bytes, a new materialized profile, and
   separate authorization. It wires no consumer and admits nothing.
+- The [C2B host-runner source contract v1](protocol/GOVERNED_DENO_CORE_C2B_HOST_RUNNER_SOURCE_V1.md)
+  is `PASSED` only for static C17 call-plan bytes and dependency-free local mutation verification.
+  It freezes one Supervisor-owned runner per AttemptID, sealed inherited FDs 0 through 7, raw-root
+  FD 4, three ports, explicit implicit-device disable calls, exact ordering, no path/network/vsock/
+  virtiofs authority, and external teardown. Accepted ABI header/current-source dylib inputs are
+  not retained locally, so no final runner artifact or new materialized profile exists. C2B guest
+  eligibility and admission remain `BLOCKED`.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap

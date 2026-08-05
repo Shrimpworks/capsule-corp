@@ -22,8 +22,8 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 
 | Stage | Retained contract or mechanic | Scoped status | Missing product boundary |
 | --- | --- | --- | --- |
-| Submit one `main.mjs` | `MJSMainSource`, canonical `SourceManifest`, exact byte/cap/digest fixtures | `PASSED` for passive bytes | No selected authenticated bounded CLI-to-daemon submission adapter. Diagnostic HTTP remains read-only. |
-| Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Select the authenticated product adapter and bind only admitted limits and exact runtime/profile identity. |
+| Submit one `main.mjs` | Exact-one proposal plus [selected passive private-XPC CLI adapter](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md), bounded envelope, flow, refusal, and response-loss fixtures | `PASSED` for the passive/unwired contract | Implement native peer authentication, the versioned signed CLI inventory, and the daemon consumer. Diagnostic HTTP remains read-only. |
+| Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Connect only the selected method-specific adapter and bind admitted limits plus exact runtime/profile identity. |
 | Register source and plan | Atomic passive fixed-store registration/fetch facade | `PASSED` for the unwired oracle | Expose it only through method-specific authenticated product registration/fetch backed by protected production state. |
 | Fetch and render approval | Accepted ADR-0043 read-only projection over passive Supervisor readback | `PASSED` for the unwired projection | Authenticated product fetch, native UI, installed spoof/focus/cancel evidence, and Supervisor custody of inline-input content if it must be shown. |
 | Sign, verify, and retain approval | ADR-0043 public-key-only strict verifier plus local consume/create/replay mechanics | `PASSED` for unwired crypto/store mechanics | Fresh live `LAContext`, Secure Enclave key operation, installed key authorization and same-byte Broker/Supervisor integration. |
@@ -43,7 +43,8 @@ governance promotions PASSED
   -> C2B v4 build/static materialization PASSED
   -> fixed benign owned guest checkpoint
 
-bounded authenticated CLI adapter
+passive bounded CLI adapter contract PASSED
+  -> native authenticated CLI adapter
   -> exact main.mjs + SourceManifest
   -> narrow plan construction
   -> passive atomic custody/fetch PASSED
@@ -83,12 +84,11 @@ separate authorization; neither path alone is product alpha.
 
 1. Preserve the passed governed fork promotions, C2B v3 passive successor, and v4 build/static
    materialization; require separate authorization naming v4's exact digest before the fixed guest.
-2. Preserve the passed exact-one-`main.mjs` proposal and atomic custody/fetch oracle; freeze the
-   selected authenticated product adapter and current field authority without restoring broad
-   legacy acceptance.
-3. Preserve ADR-0043's passive projection/verifier and implement authenticated role-specific IPC,
-   protected Supervisor state, native Broker UI, live signing, installed verification, and the
-   bounded fixed-store policy.
+2. Preserve the passed exact-one-`main.mjs` proposal, selected passive CLI adapter, and atomic
+   custody/fetch oracle without restoring broad legacy acceptance.
+3. Preserve ADR-0043's passive projection/verifier and implement the frozen authenticated
+   role-specific IPC, protected Supervisor state, native Broker UI, live signing, installed
+   verification, and the bounded fixed-store policy.
 4. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
    real adapter.
 5. Implement the completion/transcript/fixed-summary compositor.

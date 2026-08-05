@@ -53,6 +53,7 @@ Apple-credentialed results remain the evidence for those distinct observations.
 accepted ADR-0034 + passed M1 source/manifest fixtures
   -> M2/S1 passive plan-v0 registration/fetch fixture and facade cutover (PASSED)
        -> S1 passive RegisterPlanV0/GetRegisteredPlanV0 records/envelopes (PASSED)
+       -> ADR-0044 passive SubmitMainMJSV0 product-adapter record/envelope/flow (PASSED)
        -> remaining SubmitApprovalV0/RequestAttemptV0 passive records/envelopes (BLOCKED)
        -> S3 native authentication/cap harness
             -> S4 single-process ad-hoc composition with fixed store + fake lifecycle
@@ -68,10 +69,11 @@ Existing independent blockers that S0-S6 do not close:
 ```
 
 ADR-0040 makes Source Validator R2-R5B future defense-in-depth rather than a first-release ordering
-gate. The passive M2/S1 fixture/facade contract and follow-on two-method passive S1 records/logical
-envelopes are now `PASSED`; the other two logical methods and native/authenticated S3 remain
-`BLOCKED`. S5 requires S4 and valid Apple Development identities. S6 requires final intended
-package bytes, Developer ID/notarization authority, and clean disposable hosts.
+gate. The passive M2/S1 fixture/facade contract, follow-on two-method passive S1 records/logical
+envelopes, and ADR-0044's exact CLI submission method plus aggregate flow contract are `PASSED`.
+The other two logical methods and native/authenticated S3 remain `BLOCKED`. S5 requires S4 and
+valid Apple Development identities. S6 requires final intended package bytes, Developer ID/
+notarization authority, and clean disposable hosts.
 
 ## S0: decision review and invariant lock
 
@@ -127,6 +129,17 @@ the two facade-backed method records and logical request/reply projections. It r
 cap-plus-one, current installation/epoch, fixed refusal/no-state, copy-ownership, and response-loss
 oracles with independent Go/Node agreement. It deliberately leaves XPC key spellings, numeric
 message/status tags, transport encoding, and peer-authentication evidence unset.
+
+Accepted [ADR-0044](adr/0044-select-private-xpc-internal-alpha-cli-adapter.md) and the
+[passive product-adapter result](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md) select exactly
+one developer-signed internal-alpha private-XPC candidate, `SubmitMainMJSV0`, from the CLI to the
+daemon. Its typed logical request carries only the exact strict-JSON `JobProposal`; its reply
+carries only a Supervisor-issued `RegistrationID`. Generated fixtures and the unexported
+in-process harness freeze cap/cap-plus-one, method-derived bindings, correlation-only request IDs,
+zero-queue aggregate flow, deadline/cancellation/stall, zero-state refusal, and response-loss
+semantics across submission and the existing registration/fetch plane. This is passive evidence:
+the XPC encoding, listener, peer check, signing, installed inventory, daemon consumer, and protected
+state remain `BLOCKED`, and diagnostic HTTP gains no mutation route.
 
 There is one active plan-v0/source shape, no optional transform field, generic fallback, field
 inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product
@@ -192,7 +205,8 @@ store, and conformance tests. No XPC or product consumer exists.
 ## S3: native authentication and cap harness
 
 Status: `BLOCKED` on the remaining two logical method records, a reviewed exact native XPC
-key/tag/status contract, and a separately authorized local harness. Source Validator R2-R5B is not
+key/tag/status contract for the three frozen passive methods, and a separately authorized local
+harness. Source Validator R2-R5B is not
 a first-release dependency under ADR-0040. Native parsing must consume the completed Register/fetch
 fixtures and must not reinterpret them as raw XPC framing or invent a conflicting method/record
 version.

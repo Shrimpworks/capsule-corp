@@ -9,8 +9,8 @@
   "epochDigest": "2222222222222222222222222222222222222222222222222222222222222222",
   "methodRecord": {
     "path": "register-plan-v0.method.json",
-    "byteLength": 550,
-    "sha256": "d71ffe04d3a936a237ed2c38cc5706d6e961a17eed4a648d102f69c73bcdd57f"
+    "byteLength": 897,
+    "sha256": "2ea0606dd0489259758a6183161ee76b17d7ac416d3491ab55917ed0213f0d1d"
   },
   "body": {
     "exactPlanBytes": {

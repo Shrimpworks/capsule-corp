@@ -9,8 +9,8 @@
   "epochDigest": "2222222222222222222222222222222222222222222222222222222222222222",
   "methodRecord": {
     "path": "get-registered-plan-v0.method.json",
-    "byteLength": 557,
-    "sha256": "23e3da25688138b44689e9612677f51e2dccd46ba2480822676e0526f5efaee3"
+    "byteLength": 904,
+    "sha256": "99e535546c68d2ea73adaa52541aea468884dbc7d24c483f792e59b2fddccaf5"
   },
   "body": {
     "registrationId": "77777777777777777777777777777777"

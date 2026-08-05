@@ -4,11 +4,13 @@
   "status": "passive-unwired-no-transport",
   "protocolVersion": 0,
   "audience": "capsule.execution-supervisor.local.v0",
+  "submissionAudience": "capsule.daemon.local.v0",
   "roleBindingRecordVersion": 0,
   "transportEncoding": null,
   "numericMessageTags": null,
   "peerAuthenticationEvidence": null,
   "caps": {
+    "jobProposal": 2097152,
     "executionPlan": 65536,
     "roleBindings": 562,
     "sourceManifest": 95,
@@ -17,21 +19,38 @@
     "registerPlanV0Request": 328337,
     "registerPlanV0Reply": 4096,
     "getRegisteredPlanV0Request": 16,
-    "getRegisteredPlanV0Reply": 332433
+    "getRegisteredPlanV0Reply": 332433,
+    "submitMainMJSV0Request": 2097152,
+    "submitMainMJSV0Reply": 16
   },
-  "methodCount": 2,
-  "refusalCaseCount": 25,
-  "maximumCaseCount": 8,
+  "methodCount": 3,
+  "refusalCaseCount": 37,
+  "maximumCaseCount": 12,
   "knownAnswers": {
+    "submit-main-mjs-v0.method.json": {
+      "path": "submit-main-mjs-v0.method.json",
+      "byteLength": 992,
+      "sha256": "e070a3e3fce99ab0a96ec4021e2ab7286e69dd4ae152edada813197d8764679c"
+    },
+    "submit-main-mjs-v0.request.json": {
+      "path": "submit-main-mjs-v0.request.json",
+      "byteLength": 832,
+      "sha256": "7349502f04e35732c5910c54bbdb677464612c85a4df397b3d3f9562be0233b3"
+    },
+    "submit-main-mjs-v0.reply.json": {
+      "path": "submit-main-mjs-v0.reply.json",
+      "byteLength": 312,
+      "sha256": "e9add26faa1ed1a0d3fe2326859d56687c3348f950d36ff4a374fd1781358b36"
+    },
     "register-plan-v0.method.json": {
       "path": "register-plan-v0.method.json",
-      "byteLength": 550,
-      "sha256": "d71ffe04d3a936a237ed2c38cc5706d6e961a17eed4a648d102f69c73bcdd57f"
+      "byteLength": 897,
+      "sha256": "2ea0606dd0489259758a6183161ee76b17d7ac416d3491ab55917ed0213f0d1d"
     },
     "register-plan-v0.request.json": {
       "path": "register-plan-v0.request.json",
       "byteLength": 1466,
-      "sha256": "13d3bd1822e816d38c6a214b20e712f2a469ccb984b2d6b94cde8ecb74ab60c8"
+      "sha256": "a8a28b4af85fd0a666c5abf8c7302f74d6f2169673d1628c887a13490f81d973"
     },
     "register-plan-v0.reply.json": {
       "path": "register-plan-v0.reply.json",
@@ -40,13 +59,13 @@
     },
     "get-registered-plan-v0.method.json": {
       "path": "get-registered-plan-v0.method.json",
-      "byteLength": 557,
-      "sha256": "23e3da25688138b44689e9612677f51e2dccd46ba2480822676e0526f5efaee3"
+      "byteLength": 904,
+      "sha256": "99e535546c68d2ea73adaa52541aea468884dbc7d24c483f792e59b2fddccaf5"
     },
     "get-registered-plan-v0.request.json": {
       "path": "get-registered-plan-v0.request.json",
       "byteLength": 684,
-      "sha256": "19c935c2b2a04d74ff0dcfde4183e68389a1233695e13363b579a582f177f546"
+      "sha256": "f810344038b46f1396432a349b73aa0e965032a7e55cf5fc831956f7d5336e5f"
     },
     "get-registered-plan-v0.reply.json": {
       "path": "get-registered-plan-v0.reply.json",
@@ -55,11 +74,16 @@
     },
     "oracles.json": {
       "path": "oracles.json",
-      "byteLength": 19173,
-      "sha256": "cbc92e66425713235a2dd46790d67f6c42a3bc72e1e263026bf606578b8ccb30"
+      "byteLength": 31872,
+      "sha256": "a3266b4374708a9b873d403615f0a6d3895261ef4fd4373b7944a0a26f8d9977"
     }
   },
   "bodyFixtures": {
+    "exactJobProposalBytes": {
+      "path": "schemas/conformance/v0/job-proposal/ordinary.json",
+      "byteLength": 776,
+      "sha256": "8edd032c329b80f79a0b2cffe2dbff4dccfd5a08ff1c1313801c7f8a2f851d3e"
+    },
     "exactPlanBytes": {
       "path": "schemas/conformance/authority-plane-v0/execution-plan.cbor",
       "byteLength": 527,

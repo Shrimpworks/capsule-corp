@@ -11,8 +11,9 @@ import (
 type CallerRole string
 
 const (
-	Daemon CallerRole = "daemon"
-	Broker CallerRole = "broker"
+	InternalAlphaCLI CallerRole = "internal-alpha-cli"
+	Daemon           CallerRole = "daemon"
+	Broker           CallerRole = "broker"
 )
 const (
 	RegisterPlanV0Purpose      = "capsule.ipc.register-plan.v0"

@@ -21,19 +21,27 @@ type passiveFixtureReference struct {
 }
 
 type passiveMethodFixture struct {
-	ObjectType               string     `json:"objectType"`
-	ObjectVersion            uint64     `json:"objectVersion"`
-	Method                   string     `json:"method"`
-	MethodVersion            uint64     `json:"methodVersion"`
-	RoleBindingRecordVersion uint64     `json:"roleBindingRecordVersion"`
-	Service                  string     `json:"service"`
-	ExpectedRole             CallerRole `json:"expectedRole"`
-	Audience                 string     `json:"audience"`
-	Purpose                  string     `json:"purpose"`
-	RequestDataMaxBytes      uint64     `json:"requestDataMaxBytes"`
-	ReplyDataMaxBytes        uint64     `json:"replyDataMaxBytes"`
-	DeadlineMilliseconds     uint64     `json:"deadlineMilliseconds"`
-	ResponseLossDisposition  string     `json:"responseLossDisposition"`
+	ObjectType                            string     `json:"objectType"`
+	ObjectVersion                         uint64     `json:"objectVersion"`
+	Method                                string     `json:"method"`
+	MethodVersion                         uint64     `json:"methodVersion"`
+	RoleBindingRecordVersion              uint64     `json:"roleBindingRecordVersion"`
+	Service                               string     `json:"service"`
+	ExpectedRole                          CallerRole `json:"expectedRole"`
+	Audience                              string     `json:"audience"`
+	Purpose                               string     `json:"purpose"`
+	RequestDataMaxBytes                   uint64     `json:"requestDataMaxBytes"`
+	ReplyDataMaxBytes                     uint64     `json:"replyDataMaxBytes"`
+	DeadlineMilliseconds                  uint64     `json:"deadlineMilliseconds"`
+	ResponseLossDisposition               string     `json:"responseLossDisposition"`
+	PeerRequirementBeforeDeliveryRequired bool       `json:"peerRequirementBeforeDeliveryRequired"`
+	MethodAuthorityDisposition            string     `json:"methodAuthorityDisposition"`
+	RequestIDAuthorityDisposition         string     `json:"requestIdAuthorityDisposition"`
+	ServiceMaxConnections                 uint64     `json:"serviceMaxConnections"`
+	ConnectionMaxInFlight                 uint64     `json:"connectionMaxInFlight"`
+	ProcessMaxAdmittedRequests            uint64     `json:"processMaxAdmittedRequests"`
+	ApplicationQueueCapacity              uint64     `json:"applicationQueueCapacity"`
+	InFlightRequestDataMaxBytes           uint64     `json:"inFlightRequestDataMaxBytes"`
 }
 
 type passiveRegisterRequestFixture struct {
@@ -185,10 +193,18 @@ func TestPassiveCrossLanguageKnownAnswers(t *testing.T) {
 			RoleBindingRecordVersion: registerMethod.RoleBindingRecordVersion,
 			Service:                  registerMethod.Service, ExpectedRole: registerMethod.ExpectedRole,
 			Audience: registerMethod.Audience, Purpose: registerMethod.Purpose,
-			RequestDataMaxBytes:     registerMethod.RequestDataMaxBytes,
-			ReplyDataMaxBytes:       registerMethod.ReplyDataMaxBytes,
-			DeadlineMilliseconds:    registerMethod.DeadlineMilliseconds,
-			ResponseLossDisposition: registerMethod.ResponseLossDisposition,
+			RequestDataMaxBytes:                   registerMethod.RequestDataMaxBytes,
+			ReplyDataMaxBytes:                     registerMethod.ReplyDataMaxBytes,
+			DeadlineMilliseconds:                  registerMethod.DeadlineMilliseconds,
+			ResponseLossDisposition:               registerMethod.ResponseLossDisposition,
+			PeerRequirementBeforeDeliveryRequired: registerMethod.PeerRequirementBeforeDeliveryRequired,
+			MethodAuthorityDisposition:            registerMethod.MethodAuthorityDisposition,
+			RequestIDAuthorityDisposition:         registerMethod.RequestIDAuthorityDisposition,
+			ServiceMaxConnections:                 registerMethod.ServiceMaxConnections,
+			ConnectionMaxInFlight:                 registerMethod.ConnectionMaxInFlight,
+			ProcessMaxAdmittedRequests:            registerMethod.ProcessMaxAdmittedRequests,
+			ApplicationQueueCapacity:              registerMethod.ApplicationQueueCapacity,
+			InFlightRequestDataMaxBytes:           registerMethod.InFlightRequestDataMaxBytes,
 		}) != expectedRegister {
 		t.Fatal("Go RegisterPlanV0 method record disagrees with generated TypeScript fixture")
 	}
@@ -203,10 +219,18 @@ func TestPassiveCrossLanguageKnownAnswers(t *testing.T) {
 			RoleBindingRecordVersion: getMethod.RoleBindingRecordVersion,
 			Service:                  getMethod.Service, ExpectedRole: getMethod.ExpectedRole,
 			Audience: getMethod.Audience, Purpose: getMethod.Purpose,
-			RequestDataMaxBytes:     getMethod.RequestDataMaxBytes,
-			ReplyDataMaxBytes:       getMethod.ReplyDataMaxBytes,
-			DeadlineMilliseconds:    getMethod.DeadlineMilliseconds,
-			ResponseLossDisposition: getMethod.ResponseLossDisposition,
+			RequestDataMaxBytes:                   getMethod.RequestDataMaxBytes,
+			ReplyDataMaxBytes:                     getMethod.ReplyDataMaxBytes,
+			DeadlineMilliseconds:                  getMethod.DeadlineMilliseconds,
+			ResponseLossDisposition:               getMethod.ResponseLossDisposition,
+			PeerRequirementBeforeDeliveryRequired: getMethod.PeerRequirementBeforeDeliveryRequired,
+			MethodAuthorityDisposition:            getMethod.MethodAuthorityDisposition,
+			RequestIDAuthorityDisposition:         getMethod.RequestIDAuthorityDisposition,
+			ServiceMaxConnections:                 getMethod.ServiceMaxConnections,
+			ConnectionMaxInFlight:                 getMethod.ConnectionMaxInFlight,
+			ProcessMaxAdmittedRequests:            getMethod.ProcessMaxAdmittedRequests,
+			ApplicationQueueCapacity:              getMethod.ApplicationQueueCapacity,
+			InFlightRequestDataMaxBytes:           getMethod.InFlightRequestDataMaxBytes,
 		}) != expectedGet {
 		t.Fatal("Go GetRegisteredPlanV0 method record disagrees with generated TypeScript fixture")
 	}

@@ -64,7 +64,7 @@ const request = new Map([
   [31, 2_000_000_000],
   [32, 2_000_000_000],
   [33, 2_000_000_300],
-  [34, "one-shot-exact-envelope-replay-only"],
+  [34, "one-shot-exact-payload-replay-only"],
 ]);
 
 const requestPayload = encode(request);
@@ -135,7 +135,7 @@ const record = new Map([
   [59, 2_000_000_000],
   [60, 2_000_000_000],
   [61, 2_000_000_300],
-  [62, "one-shot-exact-envelope-replay-only"],
+  [62, "one-shot-exact-payload-replay-only"],
   [63, "capsule.supervisor-bootstrap-request"],
   [64, 0],
   [65, "capsule.installation.bootstrap.request"],
@@ -207,11 +207,47 @@ accept(
   2_000_000_001,
   "pending-exact",
 );
+const complementaryRequestEnvelope = envelope(
+  "application/capsule.supervisor-bootstrap-request+cbor;v=0",
+  requestPayload,
+  { complementaryS: true },
+);
+add("request/complementary-s.cose", complementaryRequestEnvelope);
+accept(
+  "request-complementary-s-fresh",
+  "request",
+  "request/complementary-s.cose",
+  "admit-once",
+  2_000_000_001,
+  "fresh",
+);
+accept(
+  "request-complementary-s-pending-replay",
+  "request",
+  "request/complementary-s.cose",
+  "resume-exact",
+  2_000_000_001,
+  "pending-exact",
+);
 accept("record-ordinary", "record", "record/ordinary.cose", "commit-once", 2_000_000_101, "fresh");
 accept(
   "record-response-loss",
   "record",
   "record/ordinary.cose",
+  "return-retained-envelope",
+  2_000_000_101,
+  "completed-exact",
+);
+const complementaryRecordEnvelope = envelope(
+  "application/capsule.supervisor-bootstrap-record+cbor;v=0",
+  recordPayload,
+  { complementaryS: true },
+);
+add("record/complementary-s.cose", complementaryRecordEnvelope);
+accept(
+  "record-complementary-s-response-loss",
+  "record",
+  "record/complementary-s.cose",
   "return-retained-envelope",
   2_000_000_101,
   "completed-exact",
@@ -368,6 +404,104 @@ addSignedReject(
   concatenate([recordPayload, Uint8Array.of(0)]),
 );
 addSignedReject("record-cross-object-payload", "record", requestPayload);
+
+// Restore the exact COSE profile independently for both signed objects. The
+// envelopes below are validly signed wherever signature verification is the
+// control under test; structural profiles still fail before signature use.
+for (const profile of [
+  {
+    object: "request",
+    media: "application/capsule.supervisor-bootstrap-request+cbor;v=0",
+    payload: requestPayload,
+    map: request,
+  },
+  {
+    object: "record",
+    media: "application/capsule.supervisor-bootstrap-record+cbor;v=0",
+    payload: recordPayload,
+    map: record,
+  },
+]) {
+  const wrongType = cloneMap(profile.map);
+  wrongType.set(2, "0");
+  addSignedReject(`${profile.object}-wrong-field-type`, profile.object, encode(wrongType));
+
+  const wrongAlgorithm = protectedHeaderMap(profile.media);
+  wrongAlgorithm.set(1, -8);
+  addEnvelopeReject(`${profile.object}-protected-wrong-algorithm`, profile, {
+    protectedBytes: encode(wrongAlgorithm),
+  });
+
+  const wrongMedia = protectedHeaderMap(profile.media);
+  wrongMedia.set(3, "application/capsule.wrong+cbor;v=0");
+  addEnvelopeReject(`${profile.object}-protected-wrong-content-type`, profile, {
+    protectedBytes: encode(wrongMedia),
+  });
+
+  const unknownProtected = protectedHeaderMap(profile.media);
+  unknownProtected.set(1000, 1);
+  addEnvelopeReject(`${profile.object}-protected-unknown-label`, profile, {
+    protectedBytes: encode(unknownProtected),
+  });
+
+  addEnvelopeReject(`${profile.object}-protected-noncanonical-order`, profile, {
+    protectedBytes: encodeMap([...protectedHeaderMap(profile.media).entries()].reverse(), false),
+  });
+  addEnvelopeReject(`${profile.object}-nonempty-unprotected`, profile, {
+    unprotectedBytes: encode(new Map([[4, keyId]])),
+  });
+  addEnvelopeReject(`${profile.object}-nonempty-external-aad`, profile, {
+    externalAAD: Buffer.from("capsule-test-nonempty-external-aad", "utf8"),
+  });
+  addEnvelopeReject(`${profile.object}-detached-payload`, profile, { detachedPayload: true });
+  addEnvelopeReject(`${profile.object}-der-signature`, profile, { derSignature: true });
+}
+
+// Record verification must prove that retained request envelope and payload
+// are one exact signed pair, then bind every repeated request field. These
+// records are validly signed so signature verification alone cannot save an
+// omitted Capsule-owned cross-object check.
+const splitPairRecord = cloneMap(maximumRecord);
+splitPairRecord.set(6, sha256(requestEnvelope));
+splitPairRecord.set(7, requestEnvelope.length);
+addRecordBindingReject(
+  "record-request-envelope-payload-split",
+  splitPairRecord,
+  "request/ordinary.cose",
+  "request/calculated-maximum.payload.cbor",
+);
+
+const componentProfileRequest = cloneMap(request);
+componentProfileRequest.set(13, repeated(32, 0xb3));
+const componentProfileRequestPayload = encode(componentProfileRequest);
+const componentProfileRequestEnvelope = envelope(
+  "application/capsule.supervisor-bootstrap-request+cbor;v=0",
+  componentProfileRequestPayload,
+);
+add("request/record-binding-component-profile.payload.cbor", componentProfileRequestPayload);
+add("request/record-binding-component-profile.cose", componentProfileRequestEnvelope);
+const componentProfileRecord = cloneMap(record);
+componentProfileRecord.set(5, sha256(componentProfileRequestPayload));
+componentProfileRecord.set(6, sha256(componentProfileRequestEnvelope));
+componentProfileRecord.set(7, componentProfileRequestEnvelope.length);
+addRecordBindingReject(
+  "record-request-component-profile-substitution",
+  componentProfileRecord,
+  "request/record-binding-component-profile.cose",
+  "request/record-binding-component-profile.payload.cbor",
+);
+
+const tamperedBoundRequestEnvelope = Buffer.from(requestEnvelope);
+tamperedBoundRequestEnvelope[tamperedBoundRequestEnvelope.length - 1] ^= 1;
+add("request/record-binding-tampered-signature.cose", tamperedBoundRequestEnvelope);
+const tamperedRequestRecord = cloneMap(record);
+tamperedRequestRecord.set(6, sha256(tamperedBoundRequestEnvelope));
+addRecordBindingReject(
+  "record-request-signature-substitution",
+  tamperedRequestRecord,
+  "request/record-binding-tampered-signature.cose",
+  "request/ordinary.payload.cbor",
+);
 
 const signatureTamper = Buffer.from(requestEnvelope);
 signatureTamper[signatureTamper.length - 1] ^= 1;
@@ -586,30 +720,76 @@ function addRejectBytes(id, object, value) {
     selfExpected: false,
   });
 }
+function addEnvelopeReject(id, profile, options) {
+  addRejectBytes(id, profile.object, envelope(profile.media, profile.payload, options));
+}
+function addRecordBindingReject(id, recordMap, boundRequestEnvelope, boundRequestPayload) {
+  const path = `record/${id}.cose`;
+  add(
+    path,
+    envelope("application/capsule.supervisor-bootstrap-record+cbor;v=0", encode(recordMap)),
+  );
+  cases.push({
+    id,
+    object: "record",
+    fixture: path,
+    expected: "REFUSE",
+    trustedNow: 2_000_000_101,
+    replay: "fresh",
+    selfExpected: true,
+    requestEnvelope: boundRequestEnvelope,
+    requestPayload: boundRequestPayload,
+  });
+}
 function add(path, value) {
   files.set(path, Buffer.from(value));
 }
 
 function protectedHeader(media) {
-  return encode(
-    new Map([
-      [1, -7],
-      [3, media],
-      [4, keyId],
-    ]),
-  );
+  return encode(protectedHeaderMap(media));
+}
+function protectedHeaderMap(media) {
+  return new Map([
+    [1, -7],
+    [3, media],
+    [4, keyId],
+  ]);
 }
 function envelope(media, payload, options = {}) {
-  const protectedBytes = protectedHeader(media);
-  const signature =
-    options.signatureLength === 63 ? repeated(63, 1) : sign(sigStructure(protectedBytes, payload));
+  const protectedBytes = options.protectedBytes ?? protectedHeader(media);
+  const externalAAD = options.externalAAD ?? new Uint8Array();
+  let signature =
+    options.signatureLength === 63
+      ? repeated(63, 1)
+      : sign(sigStructure(protectedBytes, payload, externalAAD));
+  if (options.complementaryS) signature = complementarySignature(signature);
+  if (options.derSignature) signature = derSignature(signature);
   return concatenate([
     Uint8Array.of(0xd2, 0x84),
     encodeBytes(protectedBytes),
-    Uint8Array.of(0xa0),
-    encodeBytes(payload),
+    options.unprotectedBytes ?? Uint8Array.of(0xa0),
+    options.detachedPayload ? Uint8Array.of(0xf6) : encodeBytes(payload),
     encodeBytes(signature),
   ]);
+}
+function complementarySignature(signature) {
+  const n = BigInt("0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551");
+  const result = Buffer.from(signature);
+  const s = toBigInt(result.subarray(32));
+  if (s === 0n || s >= n) throw new Error("invalid fixture S scalar");
+  result.set(fromBigInt(n - s, 32), 32);
+  return result;
+}
+function derSignature(signature) {
+  const integer = (scalar) => {
+    let value = Buffer.from(scalar);
+    while (value.length > 1 && value[0] === 0) value = value.subarray(1);
+    if (value[0] & 0x80) value = concatenate([Uint8Array.of(0), value]);
+    return concatenate([Uint8Array.of(0x02, value.length), value]);
+  };
+  const r = integer(signature.subarray(0, 32));
+  const s = integer(signature.subarray(32, 64));
+  return concatenate([Uint8Array.of(0x30, r.length + s.length), r, s]);
 }
 function framedEnvelope(payload, signature, media) {
   return concatenate([
@@ -620,8 +800,8 @@ function framedEnvelope(payload, signature, media) {
     encodeBytes(signature),
   ]);
 }
-function sigStructure(protectedBytes, payload) {
-  return encode(["Signature1", protectedBytes, new Uint8Array(), payload]);
+function sigStructure(protectedBytes, payload, externalAAD = new Uint8Array()) {
+  return encode(["Signature1", protectedBytes, externalAAD, payload]);
 }
 
 function sign(message) {

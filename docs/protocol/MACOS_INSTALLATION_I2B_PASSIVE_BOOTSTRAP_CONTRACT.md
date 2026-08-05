@@ -9,11 +9,11 @@ Scope: closed deterministic-CBOR/COSE_Sign1 request and record shapes, nominal G
   passive verification, independently generated Node known answers, independent Go/Swift
   verification, recursive field authority, replay/time/refusal fixtures, and future transaction
   ordering only; no signer or installed ceremony is implemented
-Evidence or reason: 71 repository cases contain 6 accepts and 65 refusals. Go and an actual
+Evidence or reason: 95 repository cases contain 9 accepts and 86 refusals. Go and an actual
   CryptoKit-backed Swift verifier agree on every case and verify the independent RFC6979-P256
   Node signatures. Raw/calculate caps, canonical bytes, strict fields, signature shape, signer
   authorization, time, replay, request binding, and defensive copy ownership are enforced.
-Remaining work: production wrapper review/fuzzing, authorized signing/key/container/service
+Remaining work: authorized signing/key/container/service
   mutations, protected-root creation, owner/store composition, and installed fault evidence.
 Next action: separately authorize I2B2 unsigned installation-only construction; do not activate or
   perform the I2B3 ceremony from this passive slice.
@@ -57,7 +57,7 @@ profile, and installation-manifest-candidate digests; epoch sequence `1` and can
 Supervisor identity and nonroot UID; every fixed root/retained-entry/owner/store profile value;
 zero attempt and guest authority; a nonzero 32-byte nonce; `issuedAt <= notBefore < expiresAt` with
 an inclusive maximum 300-second issued-to-expiry window; and
-`one-shot-exact-envelope-replay-only`.
+`one-shot-exact-payload-replay-only`.
 
 The record repeats those stable installation/release/I1/component/epoch/Supervisor/key bindings,
 binds SHA-256 and length of the exact request payload/envelope plus the nonce, binds the observed
@@ -88,8 +88,8 @@ closed maximum shapes; no string or collection is padded to fit a chosen cap.
 
 | Object | payload raw / calculated | protected raw / calculated | envelope raw / calculated | depth/items/map/array payload profile |
 | --- | ---: | ---: | ---: | --- |
-| request | 2,048 / **861** | 256 / **98** | 4,096 / **1,033** | 2 / 69 / 34 / 0 |
-| record | 4,096 / **1,527** | 256 / **97** | 6,144 / **1,698** | 2 / 139 / 69 / 0 |
+| request | 2,048 / **860** | 256 / **98** | 4,096 / **1,032** | 2 / 69 / 34 / 0 |
+| record | 4,096 / **1,526** | 256 / **97** | 6,144 / **1,697** | 2 / 139 / 69 / 0 |
 
 Every maximum is inclusive. The exact calculated-maximum objects accept. Calculated maximum plus
 one refuses at the calculated gate. Each raw cap plus one refuses before copy, state, signature,
@@ -103,13 +103,15 @@ exported. `go-cose` remains absent and production-NO_GO.
 ## Replay, time, and refusal semantics
 
 - Fresh request: admit once only while `notBefore <= trustedNow < expiresAt`.
-- Pending exact envelope digest plus exact nonce: resume the same transaction.
-- Pending different envelope/payload/key/nonce or a reused nonce: refuse replay/substitution.
+- Pending exact canonical payload digest plus exact nonce: resume the same transaction and keep the
+  already retained envelope; an equivalent valid signature does not replace it.
+- Pending different payload/key/nonce or a reused nonce: refuse replay/substitution.
 - Completed request, including an exact replay: fixed already-enrolled refusal before state.
 - Fresh/pending record: validate its own active time window and commit once against the exact
   retained request bindings.
-- Completed exact record after response loss: return the byte-identical retained envelope.
-- Completed different record/nonce/envelope: refuse; never sign, create, or commit again.
+- Completed payload-equivalent record after response loss: return the byte-identical retained
+  envelope, never the newly presented equivalent-signature envelope.
+- Completed different record payload/nonce: refuse; never sign, create, or commit again.
 
 Signature bytes are retained for byte-identical response recovery but never define semantic or
 replay identity. Payload bytes, payload/envelope digests, the authorization identity, installation,
@@ -146,7 +148,7 @@ for the Coordinator or caller to create filesystem objects.
 | Failure | Required future result |
 | --- | --- |
 | wrong domain/purpose/audience/install/epoch/Supervisor/release/I1/root/lock/store/key | refuse before creation/publication; zero enrollment |
-| zero nonce, reused nonce, different exact bytes for the replay tuple | replay refusal; retained request/record unchanged |
+| zero nonce, reused nonce, or different canonical payload for the replay tuple | replay refusal; retained request/record unchanged |
 | future, stale, expired, or over-300-second first admission | time refusal; zero filesystem/Keychain/store authority |
 | noncanonical/duplicate/unknown/trailing CBOR, cross-object payload, wrong signature shape | bounded structural refusal before semantic state |
 | payload/envelope/request-digest substitution or unknown signer authorization | signature/binding refusal; no publish/anchor/store work |
@@ -166,8 +168,14 @@ generation, Keychain, Secure Enclave, or LocalAuthentication operation.
 `scripts/generate-i2b-bootstrap-conformance.mjs` independently encodes deterministic CBOR and
 RFC6979 P-256 signatures. Go verifies the closed fxamacker-backed passive boundary and defensive
 ownership. `scripts/verify-i2b-bootstrap-fixtures.swift` is a real independent strict CBOR,
-Sig_structure, CryptoKit ES256, binding, time, and replay verifier. Agreement is 71/71 cases: six
-accepts and 65 refusals.
+Sig_structure, CryptoKit ES256, binding, time, and replay verifier. Agreement is 95/95 cases: nine
+accepts and 86 refusals. The expanded restoration set directly covers both objects' protected-
+header allowlist/order, empty unprotected map, nonempty external AAD, detached payload, DER/raw
+signature shape, wrong field types, equivalent signatures, split request pairs, complete repeated-
+field binding, and substituted bound-request signatures.
+
+The independent production-shaped wrapper review and responsibility split are retained in
+[`PRODUCTION_SHAPED_CBOR_COSE_WRAPPER_REVIEW.md`](../PRODUCTION_SHAPED_CBOR_COSE_WRAPPER_REVIEW.md).
 
 This does not admit a production signer or wrapper, perform user presence, select a production key
 implementation, access signing identities, create a Keychain item/container/root/lock/store,

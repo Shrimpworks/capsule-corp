@@ -28,7 +28,7 @@ const (
 	StoreEntryName              = "supervisor.store"
 	StoreFormat                 = "capsule.supervisor-store/fixed-v1"
 	StoreProfile                = "conformance-non-product-no-guest"
-	RequestReplayDisposition    = "one-shot-exact-envelope-replay-only"
+	RequestReplayDisposition    = "one-shot-exact-payload-replay-only"
 	RequestRetentionPolicy      = "retain-exact-envelope-mode-0400-single-link"
 	RecordRetentionPolicy       = "retain-exact-envelope-file-and-epoch-anchor"
 	InstallationTransition      = "installation-candidate-to-protected-root-disabled"
@@ -46,12 +46,12 @@ const (
 
 	// These are patched only when the complete closed maximum shapes change.
 	// Tests independently encode those shapes and require exact equality.
-	RequestPayloadCalculatedMaxBytes   = 861
+	RequestPayloadCalculatedMaxBytes   = 860
 	RequestProtectedCalculatedMaxBytes = 98
-	RequestEnvelopeCalculatedMaxBytes  = 1033
-	RecordPayloadCalculatedMaxBytes    = 1527
+	RequestEnvelopeCalculatedMaxBytes  = 1032
+	RecordPayloadCalculatedMaxBytes    = 1526
 	RecordProtectedCalculatedMaxBytes  = 97
-	RecordEnvelopeCalculatedMaxBytes   = 1698
+	RecordEnvelopeCalculatedMaxBytes   = 1697
 )
 
 type Digest [32]byte
@@ -191,6 +191,7 @@ const (
 
 type ReplayState struct {
 	Disposition    ReplayDisposition
+	PayloadDigest  Digest
 	EnvelopeDigest Digest
 	Nonce          Nonce
 }
@@ -205,25 +206,37 @@ const (
 )
 
 type VerifiedRequest struct {
-	exactEnvelope []byte
-	exactPayload  []byte
-	view          Request
-	decision      Decision
+	exactEnvelope  []byte
+	exactProtected []byte
+	exactPayload   []byte
+	envelopeDigest Digest
+	payloadDigest  Digest
+	view           Request
+	decision       Decision
 }
 
-func (v *VerifiedRequest) ExactEnvelope() []byte { return bytes.Clone(v.exactEnvelope) }
-func (v *VerifiedRequest) ExactPayload() []byte  { return bytes.Clone(v.exactPayload) }
-func (v *VerifiedRequest) View() Request         { return v.view }
-func (v *VerifiedRequest) Decision() Decision    { return v.decision }
+func (v *VerifiedRequest) ExactEnvelope() []byte  { return bytes.Clone(v.exactEnvelope) }
+func (v *VerifiedRequest) ExactProtected() []byte { return bytes.Clone(v.exactProtected) }
+func (v *VerifiedRequest) ExactPayload() []byte   { return bytes.Clone(v.exactPayload) }
+func (v *VerifiedRequest) EnvelopeDigest() Digest { return v.envelopeDigest }
+func (v *VerifiedRequest) PayloadDigest() Digest  { return v.payloadDigest }
+func (v *VerifiedRequest) View() Request          { return v.view }
+func (v *VerifiedRequest) Decision() Decision     { return v.decision }
 
 type VerifiedRecord struct {
-	exactEnvelope []byte
-	exactPayload  []byte
-	view          Record
-	decision      Decision
+	exactEnvelope  []byte
+	exactProtected []byte
+	exactPayload   []byte
+	envelopeDigest Digest
+	payloadDigest  Digest
+	view           Record
+	decision       Decision
 }
 
-func (v *VerifiedRecord) ExactEnvelope() []byte { return bytes.Clone(v.exactEnvelope) }
-func (v *VerifiedRecord) ExactPayload() []byte  { return bytes.Clone(v.exactPayload) }
-func (v *VerifiedRecord) View() Record          { return v.view }
-func (v *VerifiedRecord) Decision() Decision    { return v.decision }
+func (v *VerifiedRecord) ExactEnvelope() []byte  { return bytes.Clone(v.exactEnvelope) }
+func (v *VerifiedRecord) ExactProtected() []byte { return bytes.Clone(v.exactProtected) }
+func (v *VerifiedRecord) ExactPayload() []byte   { return bytes.Clone(v.exactPayload) }
+func (v *VerifiedRecord) EnvelopeDigest() Digest { return v.envelopeDigest }
+func (v *VerifiedRecord) PayloadDigest() Digest  { return v.payloadDigest }
+func (v *VerifiedRecord) View() Record           { return v.view }
+func (v *VerifiedRecord) Decision() Decision     { return v.decision }

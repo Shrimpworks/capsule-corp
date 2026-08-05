@@ -260,8 +260,8 @@ signature, key, service, container, file, process, runtime, backend, or guest. I
 
 I2B2 is `PASSED` for unsigned installation-only bytes and layout. Two clean repository-local
 constructions retain an exact 31-file/eight-role bundle, profile SHA-256
-`a061291fe76d3bb460673adf25a322b0aa6d87d43619503eacaf3889eef4144b`, bundle-manifest SHA-256
-`f706e3597958a6f694de7fb7c57f3e66d9cd5cd6a7f99e389de40018923c5c5d`, exact I1A/I1B/I2B1
+`7c6d410bd99b165a7f882914ca889d8796366d6ba60f0c76d5b30577abc6f5b7`, bundle-manifest SHA-256
+`e92f7629774258f1dff68df7882b663479916c5feb4110db5460de3cef0af903`, exact I1A/I1B/I2B1
 cross-links, inactive service/entitlement/constraint inputs, and no-create refusal. No identity,
 profile, signing, key, service, process, container, protected state, runtime, backend, or guest was
 used. Installed I2B remains `BLOCKED` on production wrapper review and separately authorized I2B3
@@ -331,13 +331,16 @@ cross-language known answers, exercises restoration mutations and trusted-key/bi
 retains bounded fuzz/resource/footprint results. It selects only object-specific fxamacker typed
 encode/decode and records a production NO-GO for go-cose.
 
-The later [v0 object-set and wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) freezes only
-`SourceManifest` v0 as implementation-eligible, retains plan/registration/approval and the
-conditional TypeScript family as pre-freeze, and adds exact fxamacker v2.9.2 plus float16 v0.8.4 to
-the root module behind one unwired object-specific codec. Existing authority packages do not
-import it. The retained handwritten implementation remains the independent oracle; no signing key,
-COSE dependency, consumer, IPC, store, runtime, backend, guest, ADR promotion, or product-control
-status is added.
+The later [v0 object-set and wrapper result](V0_CBOR_OBJECT_SET_AND_WRAPPER.md) keeps
+`SourceManifest` v0 implementation-eligible and freezes the passive I2B1 request/record set while
+retaining plan/registration/approval and the conditional TypeScript family as pre-freeze. Exact
+fxamacker v2.9.2 plus float16 v0.8.4 remain behind object-specific codecs. The subsequent
+[production-shaped wrapper review](PRODUCTION_SHAPED_CBOR_COSE_WRAPPER_REVIEW.md) corrects exact
+signed-request pairing, complete repeated-field binding, and payload-owned replay identity; Go and
+independent Swift agree on 95 cases and Go retains three fuzz targets. No production signing key,
+COSE dependency, authenticated role/profile/CDHash path, local key-authorization registry, durable
+replay ledger, consumer, IPC activation, store, runtime, backend, guest, ADR-0019 promotion, or
+product-control status is added.
 
 ## Integrated pull-request checkpoints
 

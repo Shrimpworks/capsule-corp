@@ -6,14 +6,14 @@
   "authorizationIdentityHex": "41c5f9f7d86347ce61c7fe98c332abc5cc591380b01f96259c5fd2789cf5b669",
   "maxima": {
     "request": {
-      "payload": 861,
+      "payload": 860,
       "protected": 98,
-      "envelope": 1033
+      "envelope": 1032
     },
     "record": {
-      "payload": 1527,
+      "payload": 1526,
       "protected": 97,
-      "envelope": 1698
+      "envelope": 1697
     }
   },
   "effects": {
@@ -51,6 +51,28 @@
       "requestVariant": "ordinary"
     },
     {
+      "id": "request-complementary-s-fresh",
+      "object": "request",
+      "fixture": "request/complementary-s.cose",
+      "expected": "ACCEPT",
+      "decision": "admit-once",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "request-complementary-s-pending-replay",
+      "object": "request",
+      "fixture": "request/complementary-s.cose",
+      "expected": "ACCEPT",
+      "decision": "resume-exact",
+      "trustedNow": 2000000001,
+      "replay": "pending-exact",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
       "id": "record-ordinary",
       "object": "record",
       "fixture": "record/ordinary.cose",
@@ -65,6 +87,17 @@
       "id": "record-response-loss",
       "object": "record",
       "fixture": "record/ordinary.cose",
+      "expected": "ACCEPT",
+      "decision": "return-retained-envelope",
+      "trustedNow": 2000000101,
+      "replay": "completed-exact",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "record-complementary-s-response-loss",
+      "object": "record",
+      "fixture": "record/complementary-s.cose",
       "expected": "ACCEPT",
       "decision": "return-retained-envelope",
       "trustedNow": 2000000101,
@@ -570,6 +603,201 @@
       "trustedNow": 2000000101,
       "replay": "fresh",
       "selfExpected": false
+    },
+    {
+      "id": "request-wrong-field-type",
+      "object": "request",
+      "fixture": "request/request-wrong-field-type.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-protected-wrong-algorithm",
+      "object": "request",
+      "fixture": "request/request-protected-wrong-algorithm.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-protected-wrong-content-type",
+      "object": "request",
+      "fixture": "request/request-protected-wrong-content-type.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-protected-unknown-label",
+      "object": "request",
+      "fixture": "request/request-protected-unknown-label.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-protected-noncanonical-order",
+      "object": "request",
+      "fixture": "request/request-protected-noncanonical-order.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-nonempty-unprotected",
+      "object": "request",
+      "fixture": "request/request-nonempty-unprotected.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-nonempty-external-aad",
+      "object": "request",
+      "fixture": "request/request-nonempty-external-aad.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-detached-payload",
+      "object": "request",
+      "fixture": "request/request-detached-payload.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-der-signature",
+      "object": "request",
+      "fixture": "request/request-der-signature.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-field-type",
+      "object": "record",
+      "fixture": "record/record-wrong-field-type.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-protected-wrong-algorithm",
+      "object": "record",
+      "fixture": "record/record-protected-wrong-algorithm.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-protected-wrong-content-type",
+      "object": "record",
+      "fixture": "record/record-protected-wrong-content-type.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-protected-unknown-label",
+      "object": "record",
+      "fixture": "record/record-protected-unknown-label.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-protected-noncanonical-order",
+      "object": "record",
+      "fixture": "record/record-protected-noncanonical-order.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-nonempty-unprotected",
+      "object": "record",
+      "fixture": "record/record-nonempty-unprotected.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-nonempty-external-aad",
+      "object": "record",
+      "fixture": "record/record-nonempty-external-aad.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-detached-payload",
+      "object": "record",
+      "fixture": "record/record-detached-payload.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-der-signature",
+      "object": "record",
+      "fixture": "record/record-der-signature.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-request-envelope-payload-split",
+      "object": "record",
+      "fixture": "record/record-request-envelope-payload-split.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": true,
+      "requestEnvelope": "request/ordinary.cose",
+      "requestPayload": "request/calculated-maximum.payload.cbor"
+    },
+    {
+      "id": "record-request-component-profile-substitution",
+      "object": "record",
+      "fixture": "record/record-request-component-profile-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": true,
+      "requestEnvelope": "request/record-binding-component-profile.cose",
+      "requestPayload": "request/record-binding-component-profile.payload.cbor"
+    },
+    {
+      "id": "record-request-signature-substitution",
+      "object": "record",
+      "fixture": "record/record-request-signature-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": true,
+      "requestEnvelope": "request/record-binding-tampered-signature.cose",
+      "requestPayload": "request/ordinary.payload.cbor"
     },
     {
       "id": "request-envelope-substitution",

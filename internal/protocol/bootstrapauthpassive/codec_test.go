@@ -22,20 +22,22 @@ type fixtureManifest struct {
 }
 
 type fixtureCase struct {
-	ID             string  `json:"id"`
-	Object         string  `json:"object"`
-	Fixture        string  `json:"fixture"`
-	Expected       string  `json:"expected"`
-	Decision       string  `json:"decision"`
-	TrustedNow     *uint64 `json:"trustedNow"`
-	Replay         string  `json:"replay"`
-	SelfExpected   bool    `json:"selfExpected"`
-	RequestVariant string  `json:"requestVariant"`
+	ID              string  `json:"id"`
+	Object          string  `json:"object"`
+	Fixture         string  `json:"fixture"`
+	Expected        string  `json:"expected"`
+	Decision        string  `json:"decision"`
+	TrustedNow      *uint64 `json:"trustedNow"`
+	Replay          string  `json:"replay"`
+	SelfExpected    bool    `json:"selfExpected"`
+	RequestVariant  string  `json:"requestVariant"`
+	RequestEnvelope string  `json:"requestEnvelope"`
+	RequestPayload  string  `json:"requestPayload"`
 }
 
 func TestPassiveBootstrapConformance(t *testing.T) {
 	manifest := readManifest(t)
-	if manifest.ManifestVersion != "capsule.i2b-bootstrap-conformance/v0" || len(manifest.Cases) != 71 {
+	if manifest.ManifestVersion != "capsule.i2b-bootstrap-conformance/v0" || len(manifest.Cases) != 95 {
 		t.Fatalf("unexpected corpus identity/count: %q/%d", manifest.ManifestVersion, len(manifest.Cases))
 	}
 	if manifest.Maxima.Request.Payload != RequestPayloadCalculatedMaxBytes || manifest.Maxima.Request.Protected != RequestProtectedCalculatedMaxBytes || manifest.Maxima.Request.Envelope != RequestEnvelopeCalculatedMaxBytes ||
@@ -80,6 +82,12 @@ func TestPassiveBootstrapConformance(t *testing.T) {
 				requestEnvelope, requestPayload := ordinaryRequestEnvelope, ordinaryRequestPayload
 				if tc.RequestVariant == "maximum" {
 					requestEnvelope, requestPayload = maximumRequestEnvelope, maximumRequestPayload
+				}
+				if tc.RequestEnvelope != "" {
+					requestEnvelope = readFixture(t, tc.RequestEnvelope)
+				}
+				if tc.RequestPayload != "" {
+					requestPayload = readFixture(t, tc.RequestPayload)
 				}
 				expected := ordinaryRecord
 				if tc.SelfExpected {
@@ -127,6 +135,14 @@ func TestPassiveBootstrapDefensiveCopies(t *testing.T) {
 	if bytes.Equal(payload, verified.ExactPayload()) {
 		t.Fatal("payload accessor did not return a defensive copy")
 	}
+	protected := verified.ExactProtected()
+	protected[0] ^= 0xff
+	if bytes.Equal(protected, verified.ExactProtected()) {
+		t.Fatal("protected accessor did not return a defensive copy")
+	}
+	if verified.EnvelopeDigest() != sha256.Sum256(original) || verified.PayloadDigest() != sha256.Sum256(verified.ExactPayload()) {
+		t.Fatal("request exact-byte digest identity changed")
+	}
 
 	recordBytes := readFixture(t, "record/ordinary.cose")
 	recordExpected := decodeRecordFixture(t, codec, recordBytes)
@@ -138,6 +154,78 @@ func TestPassiveBootstrapDefensiveCopies(t *testing.T) {
 	recordBytes[0] ^= 0xff
 	if !bytes.Equal(recordVerified.ExactEnvelope(), recordOriginal) {
 		t.Fatal("record caller mutation changed retained envelope")
+	}
+	recordPayload := recordVerified.ExactPayload()
+	recordPayload[0] ^= 0xff
+	if bytes.Equal(recordPayload, recordVerified.ExactPayload()) {
+		t.Fatal("record payload accessor did not return a defensive copy")
+	}
+	recordProtected := recordVerified.ExactProtected()
+	recordProtected[0] ^= 0xff
+	if bytes.Equal(recordProtected, recordVerified.ExactProtected()) {
+		t.Fatal("record protected accessor did not return a defensive copy")
+	}
+	if recordVerified.EnvelopeDigest() != sha256.Sum256(recordOriginal) || recordVerified.PayloadDigest() != sha256.Sum256(recordVerified.ExactPayload()) {
+		t.Fatal("record exact-byte digest identity changed")
+	}
+}
+
+func TestPassiveBootstrapReplayIdentityUsesPayload(t *testing.T) {
+	codec, err := NewCodec()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ordinaryRequestEnvelope := readFixture(t, "request/ordinary.cose")
+	ordinaryRequest := decodeRequestFixture(t, codec, ordinaryRequestEnvelope)
+	ordinaryRequestReplay := replayFor("pending-exact", ordinaryRequestEnvelope, ordinaryRequest.Nonce)
+	complementaryRequestEnvelope := readFixture(t, "request/complementary-s.cose")
+
+	request, err := codec.VerifyRequest(complementaryRequestEnvelope, ordinaryRequest, 2_000_000_001, ordinaryRequestReplay)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if request.Decision() != DecisionResumeExact || request.PayloadDigest() != ordinaryRequestReplay.PayloadDigest || request.EnvelopeDigest() == ordinaryRequestReplay.EnvelopeDigest {
+		t.Fatal("complementary-S request did not retain payload-owned replay identity and distinct envelope evidence")
+	}
+
+	ordinaryRecordEnvelope := readFixture(t, "record/ordinary.cose")
+	ordinaryRecord := decodeRecordFixture(t, codec, ordinaryRecordEnvelope)
+	ordinaryRecordReplay := replayFor("completed-exact", ordinaryRecordEnvelope, ordinaryRecord.RequestNonce)
+	complementaryRecordEnvelope := readFixture(t, "record/complementary-s.cose")
+	record, err := codec.VerifyRecord(complementaryRecordEnvelope, RecordBindings{
+		Expected: ordinaryRecord, RequestEnvelope: ordinaryRequestEnvelope,
+		RequestPayload: readFixture(t, "request/ordinary.payload.cbor"), TrustedNow: 2_000_000_101,
+		Replay: ordinaryRecordReplay,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if record.Decision() != DecisionReturnRetained || record.PayloadDigest() != ordinaryRecordReplay.PayloadDigest || record.EnvelopeDigest() == ordinaryRecordReplay.EnvelopeDigest {
+		t.Fatal("complementary-S record did not retain payload-owned replay identity and distinct envelope evidence")
+	}
+}
+
+func TestSigStructureUsesEmptyExternalAAD(t *testing.T) {
+	codec, err := NewCodec()
+	if err != nil {
+		t.Fatal(err)
+	}
+	envelope := readFixture(t, "request/ordinary.cose")
+	parts, err := frameEnvelope(envelope, RequestEnvelopeRawMaxBytes, RequestProtectedRawMaxBytes, RequestPayloadRawMaxBytes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	protected := envelope[parts.protectedStart:parts.protectedEnd]
+	payload := envelope[parts.payloadStart:parts.payloadEnd]
+	structure := sigStructure(protected, payload)
+	protectedStart := 2 + len("Signature1")
+	protectedHeaderBytes := appendByteString(nil, protected)
+	externalAADOffset := protectedStart + len(protectedHeaderBytes)
+	if structure[externalAADOffset] != 0x40 {
+		t.Fatalf("Sig_structure external_aad encoding = 0x%02x, want empty bstr 0x40", structure[externalAADOffset])
+	}
+	if err := verifySignature(decodeRequestFixture(t, codec, envelope).InstallationRootPublicKey, protected, payload, envelope[parts.signatureStart:parts.signatureEnd]); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -166,20 +254,26 @@ func decodeRecordFixture(t *testing.T, codec *Codec, envelope []byte) Record {
 	return view
 }
 func replayFor(kind string, envelope []byte, nonce Nonce) ReplayState {
-	digest := sha256.Sum256(envelope)
-	switch kind {
-	case "fresh":
+	if kind == "fresh" {
 		return ReplayState{Disposition: ReplayFresh}
+	}
+	parts, err := frameEnvelope(envelope, RecordEnvelopeRawMaxBytes, RecordProtectedRawMaxBytes, RecordPayloadRawMaxBytes)
+	if err != nil {
+		panic(err)
+	}
+	payloadDigest := sha256.Sum256(envelope[parts.payloadStart:parts.payloadEnd])
+	envelopeDigest := sha256.Sum256(envelope)
+	switch kind {
 	case "pending-exact":
-		return ReplayState{Disposition: ReplayPending, EnvelopeDigest: digest, Nonce: nonce}
+		return ReplayState{Disposition: ReplayPending, PayloadDigest: payloadDigest, EnvelopeDigest: envelopeDigest, Nonce: nonce}
 	case "completed-exact":
-		return ReplayState{Disposition: ReplayCompleted, EnvelopeDigest: digest, Nonce: nonce}
+		return ReplayState{Disposition: ReplayCompleted, PayloadDigest: payloadDigest, EnvelopeDigest: envelopeDigest, Nonce: nonce}
 	case "pending-other":
-		digest[0] ^= 1
-		return ReplayState{Disposition: ReplayPending, EnvelopeDigest: digest, Nonce: nonce}
+		payloadDigest[0] ^= 1
+		return ReplayState{Disposition: ReplayPending, PayloadDigest: payloadDigest, EnvelopeDigest: envelopeDigest, Nonce: nonce}
 	case "completed-other":
-		digest[0] ^= 1
-		return ReplayState{Disposition: ReplayCompleted, EnvelopeDigest: digest, Nonce: nonce}
+		payloadDigest[0] ^= 1
+		return ReplayState{Disposition: ReplayCompleted, PayloadDigest: payloadDigest, EnvelopeDigest: envelopeDigest, Nonce: nonce}
 	default:
 		panic("unknown replay fixture")
 	}

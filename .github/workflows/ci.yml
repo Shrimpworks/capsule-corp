@@ -14,6 +14,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  compiled-artifact-archive:
+    name: Compiled artifact archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Fetch and verify immutable archive
+        run: ./scripts/verify-compiled-artifact-archive-remote.sh
+
   go:
     name: Go
     runs-on: ubuntu-latest

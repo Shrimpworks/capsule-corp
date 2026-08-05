@@ -2,8 +2,8 @@
 
 Date: 2026-08-04
 
-Status: `PASSED` for the exact Apple Development installed experiment retained at
-[`artifacts/macos-i1b-r3-signed-development-composition`](../artifacts/macos-i1b-r3-signed-development-composition).
+Status: `PASSED` for the exact Apple Development installed experiment retained in the
+[pinned R3 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1b-r3-signed-development-composition).
 The containing fixtures, exact profiles, signed constraints/entitlements, installed reachability,
 refusal matrix, and cleanup evidence passed with execution disabled. This packet authorizes nothing
 by itself; the experiment ran under the later explicit user authorization recorded by its scope and
@@ -26,8 +26,8 @@ Application SHA-1 `AD70CEDCA605604676C2853A229AA4664AD3F750` are not selected.
 
 ## Exact roles, bytes, and placement
 
-R3 starts only from a fresh successful R2 reproduction whose unsigned file digests equal
-[`artifacts/mjs-source-validator-r2/evidence/construction.json`](../artifacts/mjs-source-validator-r2/evidence/construction.json):
+R3 starts only from a fresh successful R2 reproduction whose unsigned file digests equal the
+[pinned R2 construction evidence](https://github.com/Shrimpworks/capsule-experiments/blob/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-r2/evidence/construction.json):
 
 | Role | Containing bundle | Private service/signing identifier | R2 launcher SHA-256 | Parser signing identifier and R2 SHA-256 | Required installed placement |
 | --- | --- | --- | --- | --- | --- |

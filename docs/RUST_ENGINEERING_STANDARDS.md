@@ -3,13 +3,12 @@
 This is the code-quality bar for Rust in this repository. It is a companion to `AGENTS.md`, not a
 replacement — `AGENTS.md` governs security-sensitive behavior and wins on any conflict.
 
-Scope: Rust currently exists only in `artifacts/mjs-source-validator-v1` and
-`artifacts/mjs-source-validator-r2` — spike/experiment artifacts under `AGENTS.md`'s spike-code
-rules, retained here as evidence rather than as a wired product component today (see
-`docs/EXPERIMENT_ARCHIVE.md`). This document is the bar for that Rust whenever it's touched, and
-the floor a future production Rust component inherits if one is ever admitted. It assumes standard
-Rust idiom (`rustfmt` defaults, `clippy::pedantic`-adjacent judgment); where this document is
-silent, follow the existing style in `artifacts/mjs-source-validator-r2/src/lib.rs`.
+Scope: the historical Source Validator V1/R2 Rust is retained in the
+[exact compiled-payload archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts).
+It remains spike/experiment evidence, not a wired product component. This document is the bar for
+that Rust when reviewing the archive and the floor a future production Rust component inherits if
+one is admitted. It assumes standard Rust idiom (`rustfmt` defaults,
+`clippy::pedantic`-adjacent judgment); where silent, follow the archived R2 style.
 
 ## Toolchain and dependencies
 
@@ -18,7 +17,7 @@ silent, follow the existing style in `artifacts/mjs-source-validator-r2/src/lib.
   unreviewed transitive upgrade landing silently is exactly the dependency-handling risk
   `AGENTS.md` treats as security-sensitive.
 - Pin the toolchain via `rust-toolchain.toml` (`channel = "1.95.0"`), and build with `--locked
-  --offline` (see `reproduce.sh` in both artifact directories) — never drop `--locked` to work
+  --offline` (see `reproduce.sh` in both archived artifact directories) — never drop `--locked` to work
   around a lockfile mismatch; regenerate the lockfile deliberately instead.
 - Keep `[profile.release]`'s `panic = "abort"`, `codegen-units = 1`, `lto = true`, and `strip =
   "symbols"` for anything built as a shipped binary artifact.

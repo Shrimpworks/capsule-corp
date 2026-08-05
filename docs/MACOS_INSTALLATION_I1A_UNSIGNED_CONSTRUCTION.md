@@ -9,7 +9,7 @@ Scope: one deterministic visible Swift status app and the exact I0 seven-role un
   tree; closed Info.plists, inactive launch-agent descriptors, role/service/entitlement
   projections, nested-code order, byte manifest, independent readback, and refusal fixtures
 Evidence or reason: two clean local source/module-cache builds produced identical Broker Mach-O
-  and complete bundle bytes; the checked-in manifest binds 23 files and readback refuses missing,
+  and complete bundle bytes; the archived manifest binds 23 files and readback refuses missing,
   mixed, extra, substituted, changed-mode, or changed-manifest input before returning the permanent
   inactive-signing refusal
 Remaining work: Apple identity/profile authorization, signed effective entitlements and CDHashes,
@@ -22,8 +22,8 @@ Parent status: developer-signed installed I1 composition is BLOCKED
 
 ## Constructed tree and identities
 
-The retained output is
-`artifacts/macos-i1a-unsigned-app-shell/dist/Capsule.app`. It is not installed or launched.
+The retained output is the [pinned archived `Capsule.app`](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1a-unsigned-app-shell/dist/Capsule.app).
+It is not installed or launched.
 
 | Required I0 role | Bundle/signing identity | Constructed byte identity |
 | --- | --- | --- |

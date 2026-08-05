@@ -131,7 +131,7 @@ guarantee. Threshold, cadence, baseline, and overshoot remain unset until the se
 signed corpus. R1's [passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md) is
 now `PASSED`: 46 generated cases freeze role-distinct request/result/profile/consumer bytes,
 inactive policy shape, exact caps, and cross-role/cross-version refusal with independent Go/Node
-decoding. R2's [unsigned role bundles](../artifacts/mjs-source-validator-r2/README.md) are also
+decoding. R2's [unsigned role bundles](https://github.com/Shrimpworks/capsule-experiments/blob/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-r2/README.md) are also
 `PASSED` in their exact construction scope: two private role-specific XPC bundle layouts and
 matching Oxc parser children rebuild offline and compare byte-for-byte across two clean same-host
 directories. Complete source/lock/notice/SBOM/unsigned-provenance inventories and the launchers'

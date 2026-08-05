@@ -22,7 +22,9 @@ async function makeGitCheckout(root) {
   await execFileAsync("git", ["config", "user.name", "Test"], { cwd: root });
   await writeFile(join(root, "seed.txt"), "seed\n");
   await execFileAsync("git", ["add", "."], { cwd: root });
-  await execFileAsync("git", ["commit", "--quiet", "-m", "seed"], { cwd: root });
+  await execFileAsync("git", ["-c", "commit.gpgsign=false", "commit", "--quiet", "-m", "seed"], {
+    cwd: root,
+  });
   const { stdout } = await execFileAsync("git", ["rev-parse", "HEAD"], { cwd: root });
   return stdout.trim();
 }

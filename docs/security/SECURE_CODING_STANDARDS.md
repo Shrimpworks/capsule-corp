@@ -23,8 +23,8 @@ them get a pass on secure coding practice because their language isn't the "main
   - `docs/RUST_ENGINEERING_STANDARDS.md`
   - Swift has no dedicated engineering-standards document yet — see Known gaps below. The
     cross-language principles here still apply to
-    `artifacts/macos-i1a-unsigned-app-shell/Sources/CapsuleStatusApp.swift` and any future Broker
-    Swift code.
+    the [archived I1A `CapsuleStatusApp.swift`](https://github.com/Shrimpworks/capsule-experiments/blob/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1a-unsigned-app-shell/Sources/CapsuleStatusApp.swift)
+    and any future Broker Swift code.
 
 ## Cross-language principles
 

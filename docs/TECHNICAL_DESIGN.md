@@ -910,9 +910,12 @@ implemented.
    state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.
 7. Implement inline JSON ownership, bounded JSON output, and fixed agent summary.
 8. Retain the exact governed Linux/arm64 handoff and passed passive C1 composition contract, then
-   close C2 runtime authority, immutable root custody, `NullFs`, closed numeric descriptors,
+   retain the versioned passive C2B fixed-fixture binding without wiring a consumer, then close C2
+   runtime authority, immutable root custody, `NullFs`, closed numeric descriptors,
    enforceable machine resources, typed port transport, and complete installed-bundle admission;
-   do not connect user bytes to libkrun before all pass.
+   do not connect user bytes to libkrun before all pass. The passive binding's two upstream draft
+   PRs must merge and its heads, trees, and artifacts must be reverified before a separately
+   authorized composed-profile/owned-guest task may consume it.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

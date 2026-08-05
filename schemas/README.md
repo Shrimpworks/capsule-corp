@@ -45,12 +45,18 @@ explicitly refuses while final runnable artifact identities and exactly enforcea
 fields remain unresolved. Its schema and independent Go/Node validators create no process, guest,
 runtime consumer, credential, release, or admission state.
 
+[`conformance/c2b-governed-deno-core/`](conformance/c2b-governed-deno-core/) contains the exact
+8,221-byte passive C2B binding plus byte-for-byte mirrors of its two draft-head input records. The
+binding preserves C1/C2A, fixes one source/input/completion known answer and six artifact identities,
+and records the merge/reverification gate. Independent Go and TypeScript validators consume only
+these passive bytes; no product consumer, runtime, profile, backend, VM, guest, or admission exists.
+
 [`conformance/governed-deno-core-release-candidate/`](conformance/governed-deno-core-release-candidate/)
 contains the exact unsigned Linux/arm64 candidate consumption manifest and bounded mutation corpus.
 Its self-digest, schema, and offline verifier bind public merged evidence without copying experiment
 code or large artifacts; publication, execution, selection, and admission remain inactive.
 
 [`authority/`](authority/) contains the closed passive field-authority manifest, its JSON Schema,
-and exact coverage notes. Repository verification compares its 228 field entries with 20 selected
+and exact coverage notes. Repository verification compares its 713 field entries with 45 selected
 current JSON Schema, CDDL, and Go targets and fails on missing, unknown, duplicate, stale, or
 nonexistent classifications. This is a pre-freeze development invariant, not schema admission.

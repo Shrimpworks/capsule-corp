@@ -1,5 +1,5 @@
 /* Hallmark · macrostructure: Marquee Hero · genre: atmospheric · theme: Terminal
- * tone: technical/austere · anchor hue: cyan · enrichment: user-supplied concept crop · nav: N8 · footer: Ft2
+ * tone: technical/austere · anchor hue: cyan · enrichment: generated responsive diagram · nav: N8 · footer: Ft2
  * audience: people evaluating Capsule + contributors · use: understand intent → GitHub
  * pre-emit critique: P5 H5 E5 S5 R5 V4
  * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47)
@@ -207,7 +207,7 @@ h3 {
 }
 
 .hero-marquee {
-  min-height: 76svh;
+  min-height: 62svh;
   display: grid;
   align-items: end;
 }
@@ -215,7 +215,7 @@ h3 {
 .hero-marquee__inner {
   display: grid;
   gap: var(--space-xl);
-  padding-block: var(--space-2xl) var(--space-3xl);
+  padding-block: var(--space-xl) var(--space-2xl);
 }
 
 .hero-marquee__summary {
@@ -239,8 +239,8 @@ h3 {
 
 .overview {
   display: grid;
-  gap: var(--space-2xl);
-  padding-block: var(--space-3xl) var(--space-4xl);
+  gap: var(--space-xl);
+  padding-block: var(--space-2xl);
 }
 
 .overview__lead {
@@ -283,14 +283,14 @@ h3 {
 .head-hang {
   display: grid;
   gap: var(--space-lg);
-  padding-block: var(--space-3xl) var(--space-xl);
+  padding-block: var(--space-xl) var(--space-lg);
 }
 
 .boundary,
 .concept,
 .status,
 .requirements {
-  padding-block-end: var(--space-4xl);
+  padding-block-end: var(--space-2xl);
 }
 
 .concept__head {
@@ -401,7 +401,7 @@ h3 {
 }
 
 .docs {
-  padding-block-end: var(--space-4xl);
+  padding-block-end: var(--space-2xl);
 }
 
 .doc-index {
@@ -469,7 +469,7 @@ h3 {
 
 @media (min-width: 40rem) {
   .hero-marquee__inner {
-    padding-block-end: var(--space-3xl);
+    padding-block-end: var(--space-2xl);
   }
 
   .foundation {

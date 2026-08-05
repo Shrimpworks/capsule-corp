@@ -90,7 +90,8 @@
             "source-validator-passive-verifier",
             "source-validator-passive-v1-verifier",
             "macos-installation-i0-passive-validator",
-            "supervisor-bootstrap-cose-cbor-verifier"
+            "supervisor-bootstrap-cose-cbor-verifier",
+            "governed-runtime-c2b-passive-validator"
           ]
         },
         "resolver": {
@@ -113,7 +114,8 @@
             "macos-installation-i0-transition-resolver",
             "macos-installation-i0-retention-resolver",
             "supervisor-bootstrap-request-binding-resolver",
-            "supervisor-bootstrap-record-binding-resolver"
+            "supervisor-bootstrap-record-binding-resolver",
+            "governed-runtime-c2b-passive-binding-resolver"
           ]
         },
         "authorityEffect": {
@@ -156,7 +158,8 @@
             "passive-macos-installation-i0-transition-exact-json",
             "passive-macos-installation-i0-retention-exact-json",
             "passive-supervisor-bootstrap-request-v0-signature",
-            "passive-supervisor-bootstrap-record-v0-signature"
+            "passive-supervisor-bootstrap-record-v0-signature",
+            "passive-governed-runtime-c2b-binding-v1-exact-json"
           ]
         },
         "unknownBehavior": {
@@ -170,6 +173,21 @@
             "reject-passive-fixture",
             "reject-bootstrap"
           ]
+        },
+        "retainer": {
+          "enum": ["capsule-repository-conformance-fixture"]
+        },
+        "allowedConsumers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "governed-runtime-c2b-passive-go-validator",
+              "governed-runtime-c2b-passive-typescript-validator",
+              "separately-authorized-composed-profile-owned-guest-task-after-gate"
+            ]
+          }
         }
       }
     },

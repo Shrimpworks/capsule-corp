@@ -1,7 +1,7 @@
 # Passive field-authority classification
 
 [`field-authority-manifest.json`](field-authority-manifest.json) is the closed, machine-readable
-development invariant for selected current passive targets. Its 570 entries cover 44 objects:
+development invariant for selected current passive targets. Its 713 entries cover 45 objects:
 
 - the `JobProposal` v0 candidate;
 - `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` v0 candidates;
@@ -15,7 +15,9 @@ development invariant for selected current passive targets. Its 570 entries cove
 - the passive macOS installation I0 profile, role/service/entitlement/signing/bootstrap
   projections, and update/repair/uninstall transition and retention classifiers; and
 - the passive I2B1 installation-root public-key projection plus signed Supervisor bootstrap
-  request and record, including every release/I1/epoch/root/owner/store/retention/replay field.
+  request and record, including every release/I1/epoch/root/owner/store/retention/replay field; and
+- the passive governed-runtime C2B fixed-fixture binding, including every predecessor, upstream
+  evidence, known-answer, artifact, dependency gate, status, limitation, and zero-effect field.
 
 Each field references one complete classification profile that fixes its origin role,
 validator/resolver, authority effect, approval visibility and source, content/guest-control
@@ -29,6 +31,10 @@ maps, and explicitly version-marked Go passive structs. It rejects missing field
 classification values, duplicate paths/source fields, stale object identities or versions, and
 classified fields absent from their target definition. Focused mutation tests retain each failure
 mode.
+
+Every C2B passive field additionally names the Capsule conformance fixture as retainer, the Go and
+TypeScript validators as current consumers, and only the separately authorized composed-profile/
+owned-guest task after its explicit merge/reverification gate as a later eligible consumer.
 
 This directory does not freeze a schema, activate a consumer, assign the unresolved production
 TypeScript transformation owner, admit a runtime/backend, or authorize execution. It deliberately

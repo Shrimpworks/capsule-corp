@@ -78,6 +78,7 @@ canonical-wrapper acceptance conditions.
 
 ### Execution and evidence objects
 
+- `GovernedDenoCoreC2bPassiveBinding` (passive conformance evidence only; version 1)
 - `ExecutionAttempt`
 - `RuntimeIntegrityAssessment`
 - `SupervisorEvent`
@@ -119,18 +120,30 @@ verification. The manifest should begin with the passive candidate objects and e
 the coordinated versioned migrations that add new target fields; it must not extend the deprecated
 mixed `Job` model.
 
-The passive implementation now retains a closed 335-field manifest across 26 selected
+The passive implementation now retains a closed 713-field manifest across 45 selected
 targets: the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` candidates;
 the passive approval reference, attempt reference, durable approval record, and immutable attempt;
 the TypeScript approved-byte object family plus its future-plan source-binding projection; the
 single-member MJS `SourceManifest` including its nested path/digest/length fields; the passive
-Source Validator v0 request, result, engineering-candidate, and artifact-profile records; and the
-v1 request, result, resource-policy, process-profile, artifact-profile, and consumer projection.
+Source Validator v0 request, result, engineering-candidate, and artifact-profile records; the
+v1 request, result, resource-policy, process-profile, artifact-profile, and consumer projection;
+and the closed `GovernedDenoCoreC2bPassiveBinding` v1 plus its exact C1, C2A, fork-supplement,
+build-evidence, artifact, dependency, limitation, status, and next-gate descendants.
 Repository verification compares those classifications directly with the current JSON Schema,
 numbered CDDL maps, and version-marked Go passive structs. Focused mutations prove rejection of a
-missing field (including a nested member field), unknown classification, duplicate path, stale object version, and classification
-for a field absent from its canonical target. The durable approval envelope digest is classified
+missing field (including a nested member field), unknown classification, duplicate path, stale
+object version, and classification for a field absent from its canonical target. The durable
+approval envelope digest is classified
 as evidence-only and never as replay or ledger authority.
+
+Every C2B binding field is supplied only by the repository's passive conformance-fixture generator,
+validated by the independent strict Go and TypeScript C2B validators, and retained only as the
+versioned repository conformance fixture. Current consumers are those validators and repository
+schema/known-answer tests. The only named later eligible consumer is a separately authorized
+composed-profile/owned-guest task after both draft dependency PRs merge and every dependency and
+artifact identity is reverified. That eligibility does not activate a consumer, admit a runtime or
+profile, or grant execution authority. Any changed dependency head, tree, or artifact requires a
+new binding/evidence identity; the v1 bytes remain immutable.
 
 The Source Validator result fields are evidence-only observations, and its fixture artifact profile
 does not enroll an executable. This coverage remains pre-freeze and unwired. It does not classify
@@ -160,6 +173,9 @@ until the signed R4 corpus.
 - `ExecutionReceipt`: user-facing composition of plan, approval, transcript, artifact, and posture
   evidence.
 - `AgentExecutionSummary`: separately minimized fixed response; not a redacted full receipt.
+- `GovernedDenoCoreC2bPassiveBinding`: immutable evidence-only reconciliation of unchanged C1/C2A
+  known answers with one exact fixed-fixture fork/build candidate; never a runtime/profile
+  admission, plan, registration, approval, descriptor, or execution authorization.
 
 These terms are never interchangeable. `jobId` alone cannot substitute for registration or attempt
 identity.

@@ -28,6 +28,11 @@ Status values:
 A row's status covers its whole claim. A `proposed` or `unsupported` row may cite a narrower local
 mechanic without promoting the larger production or guest-facing claim.
 
+The governed `deno_core` C2B fixed-fixture passive binding is repository conformance evidence only.
+It preserves exact C1/C2A and draft-head build identities with zero effects; it supplies no runtime,
+profile, VMM, device, backend, or guest observation. It therefore does not advance `RUNTIME-001` or
+`VMM-001`, which remain `unsupported`, and does not change runtime/profile admission.
+
 | Claim ID | Claim | Threat | Owner | Mechanism | Live verification | Required attack tests | Receipt/transcript evidence | Known limitation | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | SER-001 | A Go CBOR dependency cannot replace Capsule's raw predecode, canonical-on-wire, closed-object, trusted-binding, key-authorization, or payload-replay controls | Generic CBOR/COSE feature restoration, parser allocation, header/key confusion, equivalent-signature replay split | Protocol maintainers + Supervisor/Broker owners | Exact fxamacker v2.9.2 is reachable only through one unwired object-specific `SourceManifest` codec after Capsule predecode; the handwritten oracle remains and go-cose is rejected for product use | [Production comparison](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/production-cbor-cose-profile/RESULTS.md) plus [v0 object-set/wrapper result](../V0_CBOR_OBJECT_SET_AND_WRAPPER.md): all 19 applicable Go/TypeScript cases, three exact known answers, 10,000 wrapper/oracle round trips, 673,967 30-second fuzz executions, focused race, ownership and restoration probes | Duplicate/unknown/out-of-order fields, tags, indefinite/nonpreferred forms, floats/simple/UTF-8/trailing data, depth/collection/exact/cap+1 resources, wrong type/object/version/domain, and direct generic-mode restoration | None; no receipt/transcript consumer exists | Unwired local wrapper evidence only: signed-object set, Swift production wrapper, Supervisor/Broker same-byte path, live key, COSE, replay ledger, consumer, and product control remain blocked; ADR-0019 remains Proposed | local-mechanic |

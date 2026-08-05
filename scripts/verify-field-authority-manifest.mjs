@@ -54,6 +54,22 @@ export async function verifyFieldAuthorityManifest(options = {}) {
           `unknown classification profile for ${identity}${field.path}: ${field.profile}`,
         );
       }
+      if (target.object === "capsule.governed-deno-core-c2b-passive-binding") {
+        const profile = manifest.profiles[field.profile];
+        const expectedConsumers = [
+          "governed-runtime-c2b-passive-go-validator",
+          "governed-runtime-c2b-passive-typescript-validator",
+          "separately-authorized-composed-profile-owned-guest-task-after-gate",
+        ];
+        if (
+          profile.retainer !== "capsule-repository-conformance-fixture" ||
+          JSON.stringify(profile.allowedConsumers) !== JSON.stringify(expectedConsumers)
+        ) {
+          throw new Error(
+            `incomplete retention or consumer classification for ${identity}${field.path}`,
+          );
+        }
+      }
       usedProfiles.add(field.profile);
       fieldCount += 1;
     }

@@ -64,6 +64,10 @@ without creating a guest or admitting a runtime. The follow-on passive
 refusing descriptor, candidate machine, transport, teardown, artifact-blocker, known-answer, and
 C2B evidence profile without executing it. C2B owns the first separately authorized composed
 execution evidence and remains blocked.
+The follow-on
+[C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md) freezes the
+unchanged C1/C2A relationship to one exact governed build candidate and its draft-head evidence.
+It wires no consumer and does not change C2B execution or admission status.
 
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/

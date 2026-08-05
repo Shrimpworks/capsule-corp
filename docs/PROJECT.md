@@ -21,8 +21,9 @@ v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F
 retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
-`IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A is `PASSED` only for passive execution-profile
-preparation and C2B remains `BLOCKED`. Archive F4B is now `BLOCKED` on a passive effect-history
+`IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
+only in their passive zero-effect scopes, while C2B composed-profile/guest execution remains
+`BLOCKED`. Archive F4B is now `BLOCKED` on a passive effect-history
 contract correction:
 F4A binds retained effect lookup to the lifecycle record's single current effect, while ADR-0031
 requires every earlier v2 effect tombstone to survive replacement of that field. None of those
@@ -267,6 +268,12 @@ no guest or runtime and is `PASSED` only for passive preparation. Missing final 
 and composed runtime-profile identities, launcher-child and exact scratch contracts, governed
 review/P0 closure, and separate guest authorization keep C2B `BLOCKED`; admission and
 `RUNTIME-001`/`VMM-001` remain unchanged.
+The follow-on [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
+is now `PASSED` only for immutable reconciliation of unchanged C1/C2A with the exact governed-fork
+PR #2 and experiments PR #3 draft heads, fixed workload bytes, build evidence, and six-item artifact
+inventory. Both draft PRs remain merge dependencies; same-host equality is not independent-builder
+equality. C2B composed-profile/guest execution and runtime/profile admission remain `BLOCKED`, and
+`RUNTIME-001`/`VMM-001` remain unsupported.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

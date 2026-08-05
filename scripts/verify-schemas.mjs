@@ -60,6 +60,10 @@ const fixtures = [
     ),
   ],
   [
+    "governed-deno-core-c2b-passive-binding.schema.json",
+    new URL("../schemas/conformance/c2b-governed-deno-core/passive-binding.json", import.meta.url),
+  ],
+  [
     "governed-deno-core-release-candidate.schema.json",
     new URL(
       "../schemas/conformance/governed-deno-core-release-candidate/candidate-manifest.json",
@@ -182,6 +186,54 @@ for (const [name, fixture] of invalidC2A) {
     throw new Error(`invalid C2A fixture was accepted: ${name}`);
   }
   process.stdout.write(`rejected invalid C2A fixture: ${name}\n`);
+}
+
+const c2bSchema = schemas.get("governed-deno-core-c2b-passive-binding.schema.json");
+const validateC2B = ajv.getSchema(c2bSchema.$id);
+const validC2B = JSON.parse(
+  await readFile(
+    new URL("../schemas/conformance/c2b-governed-deno-core/passive-binding.json", import.meta.url),
+    "utf8",
+  ),
+);
+const invalidC2B = [
+  [
+    "wrong domain",
+    mutate(validC2B, (fixture) => {
+      fixture.domain = "capsule.other/v1";
+    }),
+  ],
+  [
+    "unknown nested authority field",
+    mutate(validC2B, (fixture) => {
+      fixture.fixedFixture.authority.callerBytes = true;
+    }),
+  ],
+  [
+    "changed fixed-fixture cap",
+    mutate(validC2B, (fixture) => {
+      fixture.fixedFixture.source.maximumBytes += 1;
+    }),
+  ],
+  [
+    "invented admission",
+    mutate(validC2B, (fixture) => {
+      fixture.effects.admission = true;
+    }),
+  ],
+  [
+    "missing merge dependency",
+    mutate(validC2B, (fixture) => {
+      fixture.dependencyMergePolicy.dependencies.pop();
+    }),
+  ],
+];
+
+for (const [name, fixture] of invalidC2B) {
+  if (validateC2B(fixture)) {
+    throw new Error(`invalid C2B passive binding was accepted: ${name}`);
+  }
+  process.stdout.write(`rejected invalid C2B passive binding: ${name}\n`);
 }
 
 function mutate(value, mutation) {

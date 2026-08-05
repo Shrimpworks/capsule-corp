@@ -18,6 +18,7 @@
       "!!schemas/conformance/v0/mjs-source-manifest",
       "!!schemas/conformance/v0/source-manifest",
       "!!schemas/conformance/typescript-approved-byte-v0",
+      "!!schemas/conformance/c2b-governed-deno-core/inputs",
       "!!.claude/worktrees",
       "!!**/.codex/skills",
       "!!.codex/steering/javascript-esm-steering.md"

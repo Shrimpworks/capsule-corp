@@ -51,6 +51,12 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   known answer, restoration corpus, and complete C2B matrix. It creates no guest or runtime. C2B
   is `BLOCKED` on final runnable artifact identities, the launcher-child contract, exact scratch
   enforcement, remaining governed review/P0 closures, and separate guest authorization.
+- [C2B fixed-fixture passive reconciliation](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
+  is `PASSED` only for its 8,221-byte immutable zero-effect binding. It preserves C1/C2A exactly
+  and binds Deno draft PR #2 head `29b71f06...356e`/tree `172e5755...5514`, experiments draft PR
+  #3 head `e016386c...b334`/tree `cc03aca8...ac34`, the fixed known answers, and six exact artifact
+  identities. The two PRs remain merge dependencies; same-host equality is not independent-builder
+  equality. C2B composed-profile/guest execution and admission remain `BLOCKED`.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap
@@ -151,8 +157,10 @@ transport/launcher reproduction remain later requirements.
   scratch ceilings remain null and refusing; all nine final runnable artifact identities and the
   composed runtime-profile identity/digest remain unresolved.
 - C2B is `BLOCKED`. Once its named artifact, launcher, resource, review, and P0 dependencies close,
-  request separate authorization and run the fixed JSON-in/JSON-out job only in the owned
-  disposable development guest. C2B must not broaden the C2A fixture or imply admission.
+  and after the two passive-binding dependency PRs merge with their heads, trees, and artifact
+  identities reverified, request separate authorization and run the fixed JSON-in/JSON-out job only
+  in the owned disposable development guest. C2B must not broaden the C2A fixture or imply
+  admission.
 - Complete signed installed P0-1C/P0-4B custody, App Sandbox, Team identity, notarization, staple,
   Gatekeeper, clean-host, session/recovery, and supported-OS-floor evidence.
 - Make a separate admission ADR only after every required control row has exact retained evidence.

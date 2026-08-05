@@ -10,9 +10,10 @@ below.
 The intended macOS product packaging and staged setup/update scope is in the
 [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). It keeps
 the user experience to one Swift application while preserving the internal daemon, Broker,
-Supervisor, Source Validator launcher, Runner, and later update-role boundaries. No proposed
-Trust Coordinator or Bundle Replacer is product authority until a separate ADR and signed installed
-corpus support it.
+Supervisor, Source Validator launcher, Runner, and later update-role boundaries. Proposed ADR-0038
+now selects a narrow on-demand Trust Coordinator as the protected-root request/record signer; it is
+not installed product authority until I2B's signed corpus supports it. No Bundle Replacer is
+product authority until a separate ADR and signed installed corpus support it.
 
 Accepted ADR-0037 and the generated passive I0 profile now freeze the no-guest application's exact
 seven-role tree, service/entitlement projections, lifecycle classifiers, and inactive gates. That
@@ -59,15 +60,17 @@ Supervisor topology for the future authenticated boundary. No native bridge fixt
 service, production owner lock, consumer, runtime, backend effect, or guest is connected.
 
 Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
-installer-enrolled pre-created sibling object, acquire nonblocking BSD `flock`, and retain the
-opaque `CLOEXEC` descriptor for the Supervisor lifetime. Its bounded local harness observed
+installation-root-authorized, Supervisor-created, pre-created sibling object, acquire nonblocking
+BSD `flock`, and retain the opaque `CLOEXEC` descriptor for the Supervisor lifetime. Proposed
+ADR-0038 selects the one-shot Coordinator/Supervisor authorization and creation ceremony. The
+bounded owner harness observed
 process/descriptor semantics and refusal-before-store ordering only. Passive G1 adds the internal
 Go/Darwin owner package using the selected descriptor-relative syscalls. G2 now composes it before
 the existing v1 store and sorted no-guest recovery, uses its one owner-session ID for both store
 and coordinator, permanently fences lifecycle reads/mutations after a failed held-owner check, and
 closes lifecycle/store state before the descriptor. The owned-temporary-root fault/process corpus
-does not wire product startup, authenticate the bootstrap projection, or provide installed
-protected-root evidence.
+does not wire product startup or provide the I2B signed handoff and installed protected-root
+evidence.
 
 Proposed ADR-0031 defines the next archive boundary. A complete expired
 registration cohort may leave the hot snapshot only after every bound attempt is durably destroyed
@@ -361,9 +364,10 @@ process, or privileged helper is selected. Installed signing/session/owner-lock 
 open at the product-evidence level: ADR-0033 selects the mechanism and G2 composes the local current
 v1/no-guest port. Bounded G3 discovery stopped before installed build because the certificate's
 common-name suffix was mistaken for a Team ID. Apple Membership Details now confirms the emitted
-Team `3DDR84M4JS` is the account Team; no exact Capsule role profile is cached. G3 also retained the
-unresolved protected-root bootstrap authority, signed
-per-installation record, and descriptor-relative closed-store opening blockers. The installed
+Team `3DDR84M4JS` is the account Team; no exact Capsule role profile is cached. I2A/Proposed
+ADR-0038 now resolve the protected-root bootstrap authority and define the signed request/record;
+passive fixtures, the installed handoff/container, and descriptor-relative closed-store opening
+remain blockers. The installed
 protected-root/session/update matrix remains unrun. Any later separate or privileged
 component still requires a new ADR. Adding Rust or
 another language requires a narrow interface and a demonstrated reduction in privileged risk, not

@@ -321,15 +321,19 @@ the [F2 v1 mapping resolution](SUPERVISOR_ARCHIVE_F2_V1_MAPPING_BLOCKER.md). No 
 migration, or full verifier has been added.
 
 [Proposed ADR-0033](adr/0033-select-enrolled-flock-supervisor-owner.md) now selects the exact
-later owner primitive: validate one installer-enrolled pre-created sibling object through a
-retained protected state-root descriptor, acquire nonblocking BSD `flock`, and retain the opaque
+later owner primitive: validate one installation-root-authorized, Supervisor-created, pre-created
+sibling object through a retained protected state-root descriptor, acquire nonblocking BSD
+`flock`, and retain the opaque
 `CLOEXEC` descriptor for the full process lifetime. Its owned local harness observed duplicate
 refusal before store work, process-death release, fork/exec behavior, and rename/replacement risk.
 Passive G1 implements the internal Go/Darwin acquisition. G2 now composes it with the current v1
 store and no-guest startup/recovery path under owned temporary roots: one owner session binds store
 and coordinator, duplicate ownership refuses before store work, post-open owner failure fences, and
-store shutdown precedes descriptor release. The signed bootstrap, installed protected-state-root
-matrix, session/update/reboot evidence, archive/v2 port, and product wiring remain absent.
+store shutdown precedes descriptor release. [Proposed ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md)
+now selects the on-demand Trust Coordinator/Supervisor ceremony, signed request/record, and
+descriptor-relative root/open contract. Its passive design slice is `PASSED`; the signed handoff,
+installed protected-state-root matrix, session/update/reboot evidence, archive/v2 port, and product
+wiring remain absent and `BLOCKED` in I2B.
 
 ## Target acceptance tests
 

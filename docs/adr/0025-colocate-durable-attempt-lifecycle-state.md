@@ -199,8 +199,8 @@ Startup occurs in this order:
    before store read-modify-write, recovery, archive, or adapter work. Process death closes the last
    inherited description and releases the lock. The local semantics and passive G1 Go/Darwin
    acquisition pass under owned temporary roots. Bounded G2 now composes the current v1/no-guest
-   startup in that harness; the signed bootstrap and installed protected-root matrix remain
-   unimplemented.
+   startup in that harness. Proposed ADR-0038 now selects the signed bootstrap composition, but its
+   I2B signed handoff and installed protected-root matrix remain unimplemented.
 2. Open without automatic creation, enforce file type/ownership/permission policy, bound the read,
    decode the exact supported version, and validate snapshot, set digests, capacities, immutable
    bindings, cross-links, state transitions, and time rules.

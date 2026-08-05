@@ -84,16 +84,16 @@ Receipts must state which mechanism, if any, was active.
 A general shared app group is not used merely for convenience. Cross-component data moves through
 authenticated typed IPC or narrow handles.
 
-Proposed ADR-0033 currently assigns one-time private state-root and owner-lock creation to the
-trusted containing application/installer. The installation review identifies a competing
-component-private-container composition: the authenticated setup ceremony authorizes creation,
-the Supervisor creates the exact objects inside its own container, and a separately authorized
-bootstrap role enrolls the returned closed identity projection. That alternative is not selected
-by documentation alone. The signed protected-container spike must determine the supported owner
-and amend ADR-0033 before product code.
+Proposed ADR-0038 now selects the component-private-container composition. A separately signed,
+on-demand Trust Coordinator owns the user-presence-gated installation-root key, constructs and
+signs the closed request/final record, and retains no Supervisor state. The authenticated
+Supervisor alone creates and observes the exact root, lock, and disabled fixed-store genesis in
+its own container. The visible app only orchestrates setup and service registration. I2A is a
+passed design/contract slice; I2B still must prove the exact signed handoff, private-container
+denials, request/record bytes, Keychain groups, descriptor-relative store open, and fault matrix.
 
-Whichever bootstrap composition is selected, ordinary updates preserve the same root and lock
-object. Normal Supervisor startup, the daemon, and store openers never create or replace it. Loss,
+Ordinary updates preserve the same root and lock object. Normal Supervisor startup, the visible
+app, the daemon, updater/replacer, and store openers never create or replace it. Loss,
 relocation, or restore to a different inode is repair-required and needs an authorized forward
 epoch/new-installation decision. The BSD advisory lock serializes cooperating Supervisors;
 installed protected-directory enforcement is what must deny baseline same-UID path replacement.

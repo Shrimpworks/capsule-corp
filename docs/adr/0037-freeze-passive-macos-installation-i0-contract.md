@@ -2,6 +2,7 @@
 
 - Status: Accepted
 - Date: 2026-08-04
+- Protected-root bootstrap refinement: ADR-0038 on 2026-08-04
 - Refines: ADR-0012, ADR-0029, ADR-0033, and ADR-0036
 - Decision scope: passive Slice I0 no-guest identities, layouts, and refusal semantics only
 
@@ -14,10 +15,11 @@ could reject missing, mixed, or extra installed roles before I1 builds signed ap
 
 Several values cannot honestly be activated. G3 found that the available certificate's display
 name suggests Team `W4QUR9FUL4`, while its subject OU, signed-byte `TeamIdentifier`, and all cached
-profiles are Team `3DDR84M4JS`. The protected Supervisor-root bootstrap owner remains unresolved
-between the containing application and an authenticated Supervisor-created private-container
-composition. ADR-0029's pairwise App Group/private-service residual authority, the product store,
-and complete replacement authority are also unselected. Reusing either Team value, an ad-hoc
+profiles are Team `3DDR84M4JS`. The protected Supervisor-root bootstrap owner was unresolved in I0;
+Proposed ADR-0038 subsequently selects an on-demand Trust Coordinator authorization plus
+authenticated Supervisor-created private-container composition without changing these historical
+I0 known answers. ADR-0029's pairwise App Group/private-service residual authority, the product
+store, and complete replacement authority are also unselected. Reusing either Team value, an ad-hoc
 signature, R2's unsigned bytes, or a prose placeholder as an active profile would create false
 installed identity evidence.
 

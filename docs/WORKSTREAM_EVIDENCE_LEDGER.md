@@ -184,8 +184,9 @@ production reconciliation, consumers, content, evidence, runtime, backend, and g
 
 ## Supervisor owner-lock design checkpoint
 
-Proposed ADR-0033 selects a pre-created installer-enrolled sibling object, exact
-UID/mode/type/link/device/inode validation, and lifetime nonblocking BSD `flock`. The retained
+Proposed ADR-0033 selects a pre-created enrolled sibling object, exact
+UID/mode/type/link/device/inode validation, and lifetime nonblocking BSD `flock`. Proposed
+ADR-0038 now selects the installation-root-authorized, Supervisor-created enrollment ceremony. The retained
 [development-only experiment](https://github.com/Shrimpworks/capsule-experiments/blob/0d8233b55f153b27a901a9ec45a3834208e3aa86/experiments/supervisor-owner-lock-boundary/RESULTS.md) observed
 duplicate-process refusal before store/recovery markers, last-description/process-death release,
 dup/fork/exec/`CLOEXEC` behavior, POSIX record-lock any-close risk, macOS 26 OFD behavior,
@@ -212,8 +213,11 @@ its public subject OU and the TeamIdentifier on an exact harmless signed probe a
 was not used, and there was no ad-hoc fallback. The checkpoint retains exact test-only role,
 service, entitlement/profile, state/lock/store, and complete bootstrap-field fixtures plus a pure
 v1/v2 exact-tuple refusal model. Its noncredential run passes the real G1/G2 Darwin corpus. It
-creates no signed bootstrap or installed/protected result and additionally records the unresolved
-trusted-installer-to-private-container bootstrap and descriptor-relative store-open blockers.
+creates no signed bootstrap or installed/protected result and records the then-unresolved
+trusted-installer-to-private-container bootstrap plus descriptor-relative store-open blockers.
+I2A/Proposed ADR-0038 now resolves the first blocker in design by selecting a one-shot
+Coordinator-authorized/Supervisor-created private root; passive object fixtures and installed I2B
+evidence remain absent.
 The 2026-08-04 exact-selector follow-up confirms the selector never chose Developer ID or another
 fallback: the development certificate itself emits 3DDR. It also rejects the default designated
 requirement as W4 evidence because that requirement binds only the misleading common name, not the
@@ -221,8 +225,19 @@ Team OU. Apple Membership Details later confirmed `3DDR84M4JS` is the Individual
 and `W4QUR9FUL4` is a member/display suffix. User-run discovery also reported new valid Apple
 Development SHA-1 `80A4969BCD1B3926020888094B9D812A283D3793` with private-key pairing; presence is
 not authorization. Both standard local profile caches contain only the same three 3DDR Gate
-B/wildcard profiles with nonmatching App IDs, and installed G3 remains blocked before build or
-launch on exact role profiles and the protected-root composition.
+B/wildcard profiles with nonmatching App IDs, and installed G3/I2B remains blocked before build or
+launch on exact role profiles, passive signed-object fixtures, the selected handoff/container
+corpus, and descriptor-relative store composition.
+
+I2A is `PASSED` in its exact architecture/contract scope. Proposed ADR-0038 selects an on-demand,
+separately signed Trust Coordinator with a Coordinator-only installation-root Keychain group and a
+bootstrap-only Coordinator/Supervisor App Group. The Coordinator constructs and installation-root-
+signs the bounded request/final record; the Supervisor alone creates the fixed root, owner, and
+fixed-v1 no-guest genesis in its private container. The retained I2A plan freezes field authority,
+purpose/audience, nonce/time/replay/death behavior, descriptor-relative file/sync/rename ordering,
+same-user/stale/debug/session/update/rollback oracles, and I2B1-I2B5. It created no fixture bytes,
+signature, key, service, container, file, process, runtime, backend, or guest. Installed I2 remains
+`BLOCKED`; product store selection and attempt activation remain outside I2A.
 
 Source Preparer P0 remains `BLOCKED` as a separate conditional later feature merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
@@ -380,8 +395,9 @@ The 2026-08-04 external macOS installation/update/repair/uninstall review is ret
 [reconciled installation plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md), not as product
 evidence. Its one-app/DMG direction and state-machine work are carried forward. Its direct
 daemon/Broker parser-child topology is superseded by the supported-profile result: only distinct
-App-Sandboxed role-specific launcher candidates proceed. Its App Group, protected-root bootstrap,
-Trust Coordinator, Bundle Replacer, minimum-OS, update, and erasure claims remain explicit
+App-Sandboxed role-specific launcher candidates proceed. Proposed ADR-0038 now selects the
+protected-root bootstrap/Trust Coordinator contract, while its App Group and installed evidence,
+ordinary IPC groups, Bundle Replacer, minimum-OS, update, and erasure claims remain explicit
 decisions or signed-evidence gates rather than accepted platform facts.
 
 The merge commits, not former draft-PR state or chat handoffs, are the integration checkpoints.
@@ -415,9 +431,10 @@ Completed and retained:
   Retained lookup, v2 authority mutation, second activation, backup/orphan cleanup, adapter calls,
   and consumers remain absent; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
-  bounded G2 current-v1/no-guest startup composition, while signed bootstrap and installed
-  protected-root evidence remain unimplemented; installed G3 is blocked by the mismatched
-  Team/profile plus unresolved protected-bootstrap/store-open composition; and
+  bounded G2 current-v1/no-guest startup composition, plus I2A's passed owner/contract decision;
+  signed-object fixtures and installed protected-root evidence remain unimplemented, and installed
+  G3/I2B is blocked by exact Team profiles, the protected-container/handoff corpus, and descriptor-
+  relative store composition; and
 - governed `deno_core` physical omission, same-host package reproduction, the abandoned official
   V8 asset-publication route,
   standalone dynamic-root evidence, and the now-closed fork Linux/arm64 construction blocker.

@@ -192,7 +192,7 @@ substituted for the other.
 | Developer ID Application identity | Apple | Release custodian | Sign direct-distribution code | High-value exportable private key unless separately hardware-backed | Team-3DDR identity present; use/distribution admission deferred and unauthorized |
 | Developer ID Installer identity | Apple | Package release custodian | Sign selected `.pkg` outer package | High-value private key | Unnecessary unless `.pkg` selected |
 | Notarization API key or app-specific password | Apple/App Store Connect | Release/notarization operator | Authenticate uploads and status/log reads | Secret; API `.p8` is downloadable once | Deferred |
-| Installation-root key | Capsule protocol | One-shot installation/Host Broker ceremony; final owner unresolved | Enroll operational keys and authorize trust transitions | Prefer nonexportable Secure Enclave reference; never daemon | Design selected; creation owner unresolved |
+| Installation-root key | Capsule protocol | On-demand Trust Coordinator ceremony selected by Proposed ADR-0038 | Sign the protected-root bootstrap request/record, enroll operational keys, and authorize later trust transitions | Prefer nonexportable Secure Enclave reference in a Coordinator-only group; never visible app, daemon, Supervisor, updater, or replacer | I2A owner/contract selected; passive and installed I2B evidence blocked |
 | Approval key | Capsule protocol | Approval Broker | Sign `capsule.plan.approve` after fresh user presence | Prefer nonexportable, user-presence-gated | Not implemented |
 | Supervisor evidence key | Capsule protocol | Execution Supervisor | Sign `capsule.execution.attest` objects | Prefer nonexportable, noninteractive, narrow access group | Not implemented |
 | Optional content-attestation key | Capsule protocol | Content Broker, only if required | Attest content-custody claims | Separate purpose and access group | Deferred/not selected |
@@ -240,7 +240,7 @@ the Supervisor App Group/private-service choice remain unresolved.
 | Broker Source Validator launcher | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Private XPC service embedded only in Broker app; separately signed nested bundle | Same R3 evidence rule as daemon launcher | Separate private scratch container; no Approval-key use and no cross-role route |
 | Broker parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Exact embedded executable launched only by Broker launcher; separately signed nested code | Normally no independent profile unless required by entitlement | Broker-role-specific constraints; cannot accept daemon requests/results |
 | Optional update verifier | Not selected | Future separately enrolled executable or agent; if executable, independently signed nested code | Exact App ID/profile only after ADR and capability selection | May fetch/verify pinned TUF metadata and emit bounded `PreparedUpdate`; no replacement, installation root, Supervisor mutation, or execution |
-| Optional trust/bootstrap coordinator | Not selected | One-shot future authority component; independent signed identity if selected | Requires ADR before any App ID/profile | Rare user-authorized ceremony only; no background/network/execution authority |
+| Trust/bootstrap coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` proposed by ADR-0038 | On-demand private XPC service embedded in `Capsule.app`; separately signed nested bundle | Exact App ID/profile, Coordinator-only installation-root Keychain group, and bootstrap-only Coordinator/Supervisor App Group require I2B evidence | Rare user-authorized request/record signing only; no visible-app key access, background registration, network, Supervisor state, updater/replacer, or execution authority |
 | Optional bundle replacer | Not selected | Future mechanical helper; independent signed identity if selected | Requires ADR; Developer ID Installer is still unnecessary unless distribution is a `.pkg` | Installs one pre-authorized exact bundle; no target selection, network, trust, repair, or execution |
 | Governed runtime bundle, kernel, firmware, runtime root | Closed release artifacts | Data/resource bundles unless a contained file is executable code; sign any Mach-O as nested code and bind all bytes in release/TUF manifests | No independent App ID/profile for inert data | No ambient download or mutation; exact provenance, hash, version, license, review, and runtime-profile binding |
 | libkrun and native libraries | Exact dylibs/frameworks in reviewed closure | Nested code signed inside-out before containing executable/app; libraries do not receive app entitlements or profiles | No independent profile for libraries | Hardened library validation and exact closure; not an authority process by themselves |
@@ -655,7 +655,8 @@ The task handoff must retain only redacted evidence and answer each item:
 - [Ecosystem reuse and adoption](ECOSYSTEM_REUSE_AND_ADOPTION.md) remains the dependency and
   provenance admission checklist for runtime, libkrun, update, TUF, and signing tooling.
 
-No new ADR is added by this guide. It makes no unresolved ownership choice. The containing-app
-identity, Supervisor protected-root bootstrap owner, pairwise App Group/private-service topology,
-Trust Coordinator, update verifier, Bundle Replacer, TUF operations, distribution location,
-minimum macOS version, and `.pkg` path remain explicit decision points.
+Proposed ADR-0038 now resolves the Supervisor protected-root bootstrap owner in design: an
+on-demand Trust Coordinator signs and the Supervisor creates. This guide does not make that path
+installed evidence. The containing-app identity, ordinary Supervisor IPC App Group/private-service
+topology, update verifier, Bundle Replacer, TUF operations, distribution location, minimum macOS
+version, and `.pkg` path remain explicit decision points.

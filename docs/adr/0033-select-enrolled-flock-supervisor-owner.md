@@ -3,6 +3,7 @@
 - Status: Proposed
 - Date: 2026-08-03
 - Refines if accepted: ADR-0012, ADR-0018, ADR-0025, ADR-0029, and ADR-0031
+- Bootstrap responsibility refined by: ADR-0038
 
 ## Context
 
@@ -59,10 +60,16 @@ Supervisor state root, lock descriptor, or owner-session domain.
 
 ### Trusted bootstrap and installation responsibility
 
-The trusted containing application/installer creates the lock object exactly once while creating
-a new Supervisor-private state root. It uses exclusive no-follow creation, sets mode `0600`, syncs
-the file and directory, reopens it, and records this closed bootstrap projection in the signed
-installation/epoch material:
+Proposed ADR-0038 resolves the former containing-application/Supervisor ambiguity. A separately
+enrolled on-demand Trust Coordinator constructs and installation-root-signs the closed request and
+final record; only the Supervisor creates the state root, lock, and disabled store genesis inside
+its own private App Sandbox container. The visible app may invoke setup UI and register the
+Supervisor service but receives no installation-root key or Supervisor-state authority.
+
+During that one authorized transaction, the Supervisor uses exclusive no-follow descriptor-
+relative creation, sets the owner mode to `0600`, syncs the file and directories, reopens it, and
+returns only a bounded typed observation to the Coordinator. The Coordinator independently
+constructs and signs this closed bootstrap projection in the installation/epoch material:
 
 - bootstrap format/version;
 - installation ID and Supervisor ID;
@@ -71,10 +78,11 @@ installation/epoch material:
 - owner-lock device/inode/mode/link-count policy; and
 - expected store format and active trust-epoch binding.
 
-The daemon, Broker, backend, updater network path, normal Supervisor startup, and store opener may
-not create or replace the lock. Ordinary binary updates preserve the private state root and the
-same lock inode. An updater that cannot preserve it must leave attempts disabled and enter the
-prepared repair/new-installation path; it may not silently create another object.
+The daemon, Broker, visible app, backend, updater network path, bundle replacer, normal Supervisor
+startup, and store opener may not create or replace the lock. Ordinary binary updates preserve the
+private state root and the same lock inode. An updater that cannot preserve it must leave attempts
+disabled and enter the prepared repair/new-installation path; it may not silently create another
+object.
 
 This ADR selects no general same-installation replacement procedure. Store relocation, restore to
 a new inode, or loss of the lock object requires a separately authorized offline repair/restore
@@ -184,10 +192,11 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 - The first bounded G3 checkpoint left installed G3 `BLOCKED` before installed build. The authorized Apple
   Development certificate's common-name suffix says `W4QUR9FUL4`, but its subject OU and an exact
   signed-byte TeamIdentifier are `3DDR84M4JS`. Apple Membership Details later confirmed 3DDR is the
-  account Team and W4 is a member/display suffix; no exact Capsule role profile is cached. Its noncredential fixture
-  retains exact experimental role/state/bootstrap/update fields only. Protected-root creation by a
-  trusted installer, the signed per-installation bootstrap envelope/parser, and descriptor-relative
-  closed-store opening remain separate blockers even after matching credentials exist.
+  account Team and W4 is a member/display suffix; no exact Capsule role profile is cached. Its
+  noncredential fixture retains exact experimental role/state/bootstrap/update fields only.
+  ADR-0038 now selects a one-shot Coordinator-authorized/Supervisor-created composition, but its
+  passive envelopes, installed handoff, exact role profiles, protected-container denial corpus,
+  and descriptor-relative closed-store opening remain separate I2B blockers.
 - This decision does not select a production store, authenticate IPC, prevent coherent rollback,
   provide source-store protection or worker confinement, provide continuous service, or admit a
   runtime/backend/guest.
@@ -199,6 +208,8 @@ or requires unsafe absence/PID inference. Normal startup never creates the owner
 - [Bounded G2 owned v1/no-guest startup](../../internal/execution/registeredlifecycle/owned_startup.go)
 - [Historical G3 installed identity/session/update result](https://github.com/Shrimpworks/capsule-experiments/blob/3e9c9cbc3e0314439771151f1fd99c2b3a5a50b9/experiments/supervisor-owner-lock-installed-g3/RESULTS.md)
 - [Owner-lock implementation and fault plan](../SUPERVISOR_OWNER_LOCK_PLAN.md)
+- [ADR-0038 protected-root bootstrap](0038-select-one-shot-coordinator-supervisor-bootstrap.md)
+- [I2A decision and I2B fault plan](../MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md)
 - [ADR-0025 durable lifecycle](0025-colocate-durable-attempt-lifecycle-state.md)
 - [ADR-0029 Supervisor topology](0029-select-authenticated-local-ipc-topology.md)
 - [ADR-0031 archive boundary](0031-checkpoint-closed-supervisor-cohorts.md)

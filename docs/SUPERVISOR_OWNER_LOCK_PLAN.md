@@ -1,9 +1,11 @@
 # Supervisor owner-lock implementation and fault plan
 
-Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. Installed
-G3 is `BLOCKED` by the exact certificate/profile mismatch and protected-root composition named
-below; the path remains intended. The historical discovery result is retained as evidence, not as
-a current `NO_GO` work status.
+Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. I2A now
+`PASSED` the protected-root owner/contract decision through Proposed ADR-0038. Installed G3/I2B is
+still `BLOCKED` by I1B exact profiles, passive signed-object/wrapper fixtures, authorized installed
+mutations, protected-container evidence, and descriptor-relative store composition; the path
+remains intended. The historical discovery result is retained as evidence, not as a current
+`NO_GO` work status.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
 backend, runtime, or guest is wired by this plan.
@@ -82,15 +84,16 @@ until all callers migrate. No product build may expose an ownerless store opener
 
 G1 defines and validates only the immutable in-process `OwnerLockEnrollment` projection: nonzero
 installation/Supervisor/UID/root/lock identities plus one closed ASCII lock entry name. The
-complete signed bootstrap record and byte-exact fixture remain G2/G3 work because they must also
+complete signed bootstrap record and byte-exact fixture remain I2B work because they must also
 bind the mutable store name/format and active trust epoch without freezing a partial authority
 record. Missing identities, zero values, path separators, `.`/`..`, non-ASCII names, and names over
 the platform component limit refuse now.
 
-The trusted installer creates the state root and lock, syncs them, reopens them, and signs/enrolls
-the observed identities. Startup reads no daemon-supplied path. The store may change inode on each
-atomic transaction; its closed name and decoded installation/Supervisor/epoch state, not inode,
-bind it to the held root and owner.
+Under Proposed ADR-0038, a one-shot Trust Coordinator installation-root-signs the request and final
+record, while the Supervisor creates the root, lock, and disabled fixed-store genesis inside its
+own private container, syncs and reopens them, and returns only a typed observation. Startup reads
+no caller path. The store may change inode on each atomic transaction; its closed name and decoded
+installation/Supervisor/epoch state, not inode, bind it to the held root and owner.
 
 ## Fault and recovery oracles
 
@@ -187,11 +190,11 @@ confirms 3DDR is the account Team; it still finds no exact Capsule role profile.
 The retained G3 experiment fixes only test identifiers, closed entitlement/profile requirements,
 state/lock/store names, the complete bootstrap field projection, and a pure v1/v2 exact-tuple
 update/refusal model. Its noncredential run reuses the real G1/G2 Darwin corpus. This adds no
-authenticated bootstrap: the installation-root signing envelope/parser is absent. It also exposes
-two composition blockers that credentials alone do not solve: the trusted installer must create
-the Supervisor-private protected root without a broad shared app group or normal-start creation
-fallback, and the final store must open the closed sibling name descriptor-relative to the retained
-root rather than through G2's trusted absolute test path.
+authenticated bootstrap: the installation-root signing envelope/parser is absent. Proposed
+ADR-0038 now resolves the first design blocker with a one-shot Coordinator-authorized,
+Supervisor-created private root and dedicated bootstrap-only pairwise App Group. I2B still must
+prove that exact residual group/container composition and open the final store's closed sibling
+name descriptor-relative to the retained root rather than through G2's trusted absolute test path.
 
 - Package the exact Supervisor fixture under the selected protected private state root.
 - Exercise Apple Development then Developer ID/notarized builds, wrong/stale identity, wrong
@@ -223,8 +226,8 @@ Retained checkpoint:
 
 ## Remaining blockers
 
-The retained local semantics and blocked G3 work do not close protected installed storage,
-exact Team-3DDR role profiles, authenticated bootstrap creation/signing,
+The retained local semantics and passed I2A decision do not close protected installed storage,
+exact Team-3DDR role profiles, passive/installed authenticated bootstrap creation/signing,
 session/reboot/update behavior, support floor, real power loss, production engine, coherent
 restore/rollback, authenticated IPC, production approvals, content/evidence, runtime/backend, or
 guest gates. `flock` remains advisory and supplies no same-UID containment without the installed

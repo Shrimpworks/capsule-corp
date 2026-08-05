@@ -67,5 +67,7 @@ its core conclusion.
 - [ADR-0035: Select a disposable `.mjs` Source Validator](0035-select-disposable-mjs-source-validator.md)
 - [ADR-0036: Select role-separated Source Validator launchers and reactive footprint policy](0036-select-role-separated-source-validator-launchers.md)
 - [ADR-0037: Freeze the passive one-application macOS installation I0 contract](0037-freeze-passive-macos-installation-i0-contract.md)
+- [ADR-0038: Select a one-shot Trust Coordinator to authorize Supervisor-created protected state](0038-select-one-shot-coordinator-supervisor-bootstrap.md)
+  — Proposed
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

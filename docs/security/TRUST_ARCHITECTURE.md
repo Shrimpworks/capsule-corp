@@ -20,6 +20,7 @@ DIDs can name principals and verification methods, but do not grant authority.
 | Human authorization | Approval Broker | Fetch/render registered plan, require user presence, sign one attempt-bound approval | Plan creation, backend launch, enforcement claims |
 | Content custody | Content Broker | Select/snapshot user files, own user content, transfer attempt-scoped handles, release output | Agent endpoint, general network, backend launch |
 | Execution enforcement | Execution Supervisor | Register exact bytes, enforce hard safety, consume grants, create/destroy guests, sign transcript | Public agent parsing, file picker, rich parsing, network trust resolution |
+| Installation bootstrap | On-demand Trust Coordinator | With fresh user presence, construct and installation-root-sign one closed Supervisor bootstrap request and record | Supervisor-state creation, Approval/evidence signing, update/replacement, backend launch |
 | Release/profile distribution | Updater/trust verifier | Verify TUF metadata and produce a bounded local trust snapshot | Per-job approval, backend launch, user-content access |
 | Optional observation | Runtime Guardian | Report relevant Endpoint Security events | Approval or launch authority |
 
@@ -63,7 +64,7 @@ validation. See ADR-0021.
 
 | Key | Custodian | Authorized purpose | Availability |
 | --- | --- | --- | --- |
-| Installation root | Installation/Host Broker ceremony | Enroll operational keys and authorize trust transitions | Rare; user/admin presence in v0 |
+| Installation root | On-demand Trust Coordinator ceremony selected by Proposed ADR-0038 | Enroll operational keys and authorize trust transitions | Rare; fresh user presence in v0 |
 | Approval key | Approval Broker | `capsule.plan.approve` | Fresh user presence per v0 plan |
 | Supervisor evidence key | Execution Supervisor | `capsule.execution.attest` | Noninteractive, narrow process use |
 | Optional Broker content key | Content Broker | `capsule.content.attest` | Noninteractive only if cross-process claims require it |
@@ -73,8 +74,10 @@ A key authorization binds installation, public key/key ID, purpose, issuer, vali
 sequence, replacement/revocation relationship, and allowed object types. A signature is rejected if
 any binding fails even when its mathematics is valid.
 
-The installation root is not available to the daemon and is not used for routine receipts. Receipt
-or evidence signing authority never substitutes for user approval.
+The installation root is not available to the visible app, daemon, Approval/Content Broker,
+Supervisor, updater, or bundle replacer and is not used for routine receipts. Apple code identity
+authenticates installed participants but never substitutes for this Capsule signing authority.
+Receipt or evidence signing authority never substitutes for user approval.
 
 ## DIDs
 

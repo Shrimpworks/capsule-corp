@@ -11,8 +11,9 @@ All labels below follow the [canonical work status language](STATUS_LANGUAGE.md)
 migration/full-verifier scope; F3's first immutable-segment activation and F4A's read-only retained
 lookup are also `PASSED`. F4B is `BLOCKED` on the retained
 [effect-history representation](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md). Owner-lock G2 is `PASSED` for its
-retained local mechanic, while G3 is `BLOCKED` pending exact Team-3DDR role profiles plus a
-selected protected-root bootstrap/signed-record/store-open composition. ADR-0034's M1 bytes,
+retained local mechanic, while I2A's protected-root owner/contract decision is `PASSED`. G3/I2B is
+`BLOCKED` pending exact Team-3DDR role profiles, passive signed-object fixtures, installed
+container/handoff evidence, and descriptor-relative store-open composition. ADR-0034's M1 bytes,
 Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
 their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
 R1 passive v1 contracts/fixtures and R2 unsigned role-specific construction are `PASSED`. The
@@ -182,8 +183,9 @@ enrolled sibling object plus lifetime nonblocking BSD `flock` after one owned lo
 descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin acquisition. G2
 now supplies the owner-required current v1/no-guest startup composition, same-session
 store/coordinator, sorted recovery, post-open fencing, and ordered close under owned temporary
-roots. The signed bootstrap and installed protected-state-root/session/update matrix remain
-unimplemented. The first bounded G3 discovery stopped before installed build: certificate SHA-1
+roots. Proposed ADR-0038 now selects the one-shot Coordinator-authorized/Supervisor-created
+bootstrap and its signed-object contract, but passive fixtures and the installed protected-state-
+root/session/update matrix remain unimplemented. The first bounded G3 discovery stopped before installed build: certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` has display suffix `W4QUR9FUL4` but X.509 subject OU
 and signed-byte TeamIdentifier `3DDR84M4JS`, and every cached profile is also 3DDR. Apple Membership
 Details later confirmed 3DDR is the account Team and W4 is a member/display suffix. The cached
@@ -496,8 +498,9 @@ Exit evidence:
 - Produce compact signed local trust snapshots outside the live Supervisor path.
 - Support offline bundles and pinned self-hosted repositories.
 - Implement explicit crash-safe install, update, repair, and key-replacement ceremonies.
-- Keep Trust Coordinator and Bundle Replacer authority in separate reviewed ADRs; neither role is
-  implied by choosing a DMG or a TUF metadata format.
+- Keep Proposed ADR-0038's narrow bootstrap Trust Coordinator and any future update/repair methods
+  separate from a reviewed Bundle Replacer ADR; neither replacement authority nor wider
+  Coordinator power is implied by choosing a DMG or a TUF metadata format.
 
 ## Phase 9: optional Guardian and external witness
 

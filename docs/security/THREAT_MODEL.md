@@ -255,6 +255,16 @@ Product use therefore requires the installed Supervisor-private protected state 
 device/inode enrollment, and fail-closed repair on mismatch. No cross-user or elevated local-
 capability claim follows from the lock.
 
+Proposed ADR-0038 selects the bootstrap authority without advancing installed evidence. A
+separately enrolled, on-demand Trust Coordinator uses a Coordinator-only user-presence-gated
+installation-root key to sign one closed request and the final observed record. The Supervisor
+alone creates the fixed root/owner/disabled-store genesis in its private container. The visible
+app, daemon, updater, and replacer receive neither key nor state authority. A dedicated
+Coordinator/Supervisor App Group supplies only the setup Mach name; Capsule creates no shared-
+container entry or shared Keychain item and treats both namespaces as residual capability. Apple
+peer/code identity authenticates the handoff but never substitutes for the Capsule installation-
+root signature.
+
 The proposed Source Preparer's sole role-namespaced store is an ownership topology, not a security
 boundary by itself. TypeScript P1 requires an exact OS-enforced protected container with the Source
 Preparer as its single enrolled member and negative open/link/replace/map/rename/handle-retention
@@ -329,8 +339,9 @@ enters `repair-required` rather than accepting whichever components start.
 #### Identity and key authority
 
 - Normative local identity is installation ID plus locally authorized public keys.
-- Installation-root, Approval, and Supervisor evidence keys are purpose-separated and inaccessible
-  to the daemon.
+- Installation-root, Approval, and Supervisor evidence keys are purpose-separated. The
+  installation-root key is available only to the on-demand Trust Coordinator ceremony; the
+  visible app, daemon, Supervisor, updater, and replacer cannot use it.
 - Approval requires fresh user presence for every v0 plan.
 - Unknown, revoked, suspended, replaced, expired, wrong-purpose, wrong-type, wrong-audience,
   wrong-installation, and wrong-epoch keys/objects fail closed.
@@ -409,6 +420,9 @@ enters `repair-required` rather than accepting whichever components start.
 - One enrolled installation owner lock is acquired before store read/mutation, recovery, archive,
   backup, repair, or adapter work; duplicate ownership refuses without creating a lock/store or
   issuing an owner-session permit.
+- Initial root/owner/store creation occurs only under an exact installation-root-signed request
+  from the enrolled Coordinator. Ordinary startup reads the fixed signed anchor and opens without
+  creation; missing or mismatched protected state is repair-required.
 - Grant consumption, attempt identity, trust/quarantine state, backend handles/cleanup leases, and
   content release state are durable before dependent side effects.
 - Cross-store messages are authenticated, bounded, idempotent, and attempt/epoch/content-bound.

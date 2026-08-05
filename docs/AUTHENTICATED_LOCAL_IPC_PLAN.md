@@ -7,6 +7,12 @@ Owner: Execution Supervisor and macOS platform boundary.
 
 Decision: [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md).
 
+Protected-root bootstrap refinement:
+[Proposed ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md) selects a
+separate installation-only Coordinator/Supervisor service with two closed setup messages. That
+service carries no ordinary product authority and becomes a fixed already-enrolled refusal after
+genesis; the two services and four calls in this plan remain the disabled ordinary surface.
+
 ## Scope and safety boundary
 
 Defensively validate Capsule's daemon/Broker/Supervisor role separation using only passive typed
@@ -63,7 +69,7 @@ accepted ADR-0034 + passed M1 source/manifest fixtures
 
 Existing independent blockers that S0-S6 do not close:
   ADR-0019 production wrappers/key authorization
-  Supervisor archive/compaction + rollback/backup + owner lock
+  Supervisor archive/compaction + rollback/backup + installed ADR-0038 protected-root bootstrap
   Broker UI/user-presence/content custody
   runtime/backend/profile admission and evidence composition
 ```
@@ -77,7 +83,8 @@ final intended package bytes, Developer ID/notarization authority, and clean dis
 Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 
 - one unprivileged per-user Supervisor process and no helper;
-- two role-specific service names and exactly four calls;
+- exactly two ordinary role-specific service names and four ordinary calls, separate from
+  ADR-0038's setup-only service and two bootstrap messages;
 - native authentication before application-body decode;
 - method-specific, copy-only in-process bridge ownership;
 - Go-only durable authority/lifecycle ownership;
@@ -133,9 +140,10 @@ Go copy-ownership tests, the full refusal and response-loss/replay test matrices
 manifest additions, and an explicit list of every value blocked on M1 — is in
 [M2/S1 conformance slice plan](M2_S1_CONFORMANCE_SLICE_PLAN.md).
 
-The Source Validator launchers do not add a Supervisor call or change the two Supervisor services
-and four methods in ADR-0029. A source-validation result is never submitted to the Supervisor and
-cannot become a registration field, cache, or substitute for Supervisor byte/manifest custody.
+The Source Validator launchers do not add an ordinary Supervisor call or change the two ordinary
+Supervisor services and four methods in ADR-0029. ADR-0038's separate setup-only service also does
+not widen this product surface. A source-validation result is never submitted to the Supervisor
+and cannot become a registration field, cache, or substitute for Supervisor byte/manifest custody.
 
 ## S2: Go facade and store projection
 

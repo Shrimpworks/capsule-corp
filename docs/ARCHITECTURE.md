@@ -204,9 +204,12 @@ installed identity/session evidence remains open. Proposed ADR-0033 selects a pr
 sibling object held by nonblocking BSD `flock` for the process lifetime. Passive G1 implements
 the internal opaque Go/Darwin acquisition capability. G2 now requires it before the current v1
 store opener and sorted no-guest recovery, binds the store and coordinator to its one session,
-fences on post-open ownership failure, and closes the store before releasing the descriptor. The
-signed bootstrap record and installed protected-root/session/update matrix remain open, so this is
-still an unwired local mechanic rather than a product authority boundary.
+fences on post-open ownership failure, and closes the store before releasing the descriptor.
+Proposed ADR-0038 now selects a separately enrolled on-demand Trust Coordinator to installation-
+root-sign the request/record while the Supervisor creates the private root and lock. The passive
+objects, installed handoff/container/session/update matrix, and descriptor-relative store
+composition remain open, so this is still an unwired local mechanic rather than a product
+authority boundary.
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 

@@ -4,6 +4,7 @@
 - Date: 2026-08-03
 - First-release source-contract refinement: ADR-0034 on 2026-08-03
 - Source Validator launcher refinement: ADR-0036 on 2026-08-04
+- Protected-root bootstrap refinement: ADR-0038 on 2026-08-04
 - Refines if accepted: ADR-0005, ADR-0011, ADR-0012, ADR-0013, ADR-0018, ADR-0019,
   ADR-0023, ADR-0024, and ADR-0025
 
@@ -44,6 +45,11 @@ Each launcher is embedded for exactly one consumer role, owns no durable authori
 backend route, and cannot accept the other role. They are parser-confinement boundaries, not
 Supervisor helpers, lifecycle owners, or a daemon-to-backend path.
 
+Proposed ADR-0038 separately adds one installation-only Coordinator/Supervisor Mach service and two
+closed protected-root bootstrap messages. That service is not an ordinary daemon/Broker authority
+call, carries no plan/approval/backend/store operation, and becomes a fixed already-enrolled
+refusal after genesis. It does not change the two ordinary services or four product calls below.
+
 ## Proposed decision
 
 ### One process and one crash/recovery boundary
@@ -80,8 +86,8 @@ installation owner lock; the restarted process validates the same store and comp
 
 ### Enrolled services and peers
 
-The candidate has exactly two role-specific Mach services, recorded verbatim in the active
-`InstallationManifest`:
+The ordinary product candidate has exactly two role-specific Mach services, recorded verbatim in
+the active `InstallationManifest`:
 
 | Service | Enrolled peer | Closed calls |
 | --- | --- | --- |
@@ -271,13 +277,14 @@ Startup follows ADR-0025 before normal call dispatch:
 5. keep all four calls fail-closed while recovery, quarantine, repair-required state, exhausted
    reconciliation, or unresolved cleanup prevents attempt enablement.
 
-Proposed ADR-0033 supplies the exact owner-lock decision for step 1: an installer-enrolled
-pre-created sibling object, exact descriptor identity checks, and lifetime nonblocking BSD
-`flock`. The lock is acquired before store access and a busy contender performs no core or adapter
-work. Bounded G1 acquisition and G2 current-v1/no-guest startup composition now have owned-
-temporary-root evidence only. This ADR's installed identity/session/update gates still require the
-authenticated bootstrap and protected-state-root matrix; the local composition does not close
-those gates.
+Proposed ADR-0033 supplies the exact owner-lock primitive for step 1: a pre-created enrolled sibling
+object, exact descriptor identity checks, and lifetime nonblocking BSD `flock`. Proposed ADR-0038
+selects the separate installation-root-authorized Coordinator request/record and Supervisor-created
+private-root ceremony. The lock is acquired before store access and a busy contender performs no
+core or adapter work. Bounded G1 acquisition and G2 current-v1/no-guest startup composition now have
+owned-temporary-root evidence only. This ADR's installed identity/session/update gates still require
+the I2B signed handoff and protected-state-root matrix; the local composition does not close those
+gates.
 
 Recovery never calls `RegisterPlan`, re-submits approval bytes, asks whether an approval is still
 usable, or rechecks registration/approval expiry for an already committed attempt. It never accepts

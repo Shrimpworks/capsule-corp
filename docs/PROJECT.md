@@ -37,10 +37,12 @@ now records the intended user-facing shape as one Swift `Capsule.app` distribute
 embedded, narrowly enrolled per-user components. That direction is `IN_PROGRESS — TRENDING_GOOD`,
 not installed-product evidence. A developer-signed MVP deliberately starts with manual whole-app
 replacement; automatic TUF updates, a custom Bundle Replacer, Developer ID/notarized distribution,
-minimum-OS support, and complete uninstall semantics remain later work. The protected Supervisor-
-container bootstrap, App Group/private-XPC residual authority, two role-specific Source Validator
-launchers, and any Trust Coordinator or Bundle Replacer authority require separate decisions and
-signed installed evidence.
+minimum-OS support, and complete uninstall semantics remain later work. Proposed ADR-0038 now
+selects the protected Supervisor-container bootstrap owner and on-demand Trust Coordinator
+contract; its I2B App Group/XPC/container/key evidence remains blocked. Ordinary product
+Supervisor App Group/private-XPC authority and Bundle Replacer authority still require decisions;
+the already-selected role-specific Source Validator launchers still require signed installed
+evidence.
 
 The passive I0 installation slice is now `PASSED` in its exact no-side-effect scope. Accepted
 [ADR-0037](adr/0037-freeze-passive-macos-installation-i0-contract.md) retains one visible Broker
@@ -151,8 +153,10 @@ Apple Development common-name suffix `W4QUR9FUL4` did not match emitted TeamIden
 member/display suffix. Installed G3 remains **BLOCKED**, not abandoned. The retained G3 fixture
 fixes test-only role/state/bootstrap fields and reruns the noncredential G1/G2 corpus, but no
 3DDR-enrolled app, service, protected root, signed per-installation record, session, or update case
-ran. Exact Capsule role profiles, the selected protected-root bootstrap ceremony, signed record,
-and descriptor-relative store open remain blockers. There is no
+ran. I2A now passes the exact design/contract scope by selecting a one-shot Coordinator-authorized,
+Supervisor-created protected root plus bounded request/record, ordering, and fault rules. Exact
+Capsule role profiles, passive signed-object fixtures, installed container/handoff evidence, and
+descriptor-relative store open remain I2B blockers. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate

@@ -24,8 +24,9 @@ tools. Internally, Capsule still uses several narrowly enrolled processes becaus
 boundaries prevent one compromised role from inheriting every key, state store, parser, updater,
 and execution capability.
 
-This plan is not an installer ADR and does not select the proposed Trust Coordinator, Bundle
-Replacer, updater implementation, application location, or minimum supported macOS release. It
+This plan is not an installer ADR and does not select the Bundle Replacer, updater implementation,
+application location, or minimum supported macOS release. Proposed ADR-0038 now selects the narrow
+Trust Coordinator/bootstrap responsibility; its installed evidence remains I2B work. This plan
 defines what may be implemented now, what requires another decision, and which work can be deferred
 without blocking the first developer MVP.
 
@@ -76,12 +77,12 @@ that current evidence cannot support are explicit inactive refusal gates.
 | Broker Source Validator launcher | same narrow parser operation for Broker-retained source | daemon requests, approval key use, Capsule stores, runtime/backend paths | ADR-0036 architecture and R1 passive contracts `PASSED`; product work `BLOCKED` on R2-R5B |
 | Runner | one sealed Supervisor-issued attempt descriptor and the closed runtime/backend descriptor set | registration, approval, update, repair, installation-root, or arbitrary host-path authority | `IN_PROGRESS — TRENDING_GOOD`; not admitted |
 | Update verifier/agent | pinned release metadata retrieval and verification; bounded prepared-update output | installation-root key, Supervisor mutation, replacement authority, execution authority | later beta/production design; not selected |
-| Trust/bootstrap coordinator | if selected, one user-authorized installation/epoch ceremony over closed inputs | routine background operation, network fetching, Supervisor store mutation, execution | new authority role; ADR and signed evidence required |
+| Trust/bootstrap coordinator | one user-authorized installation/epoch ceremony over closed inputs; installation-root signing of the I2 request/record | routine background operation, network fetching, Supervisor store mutation, execution | selected by Proposed ADR-0038 as an on-demand XPC role; I2B evidence blocked |
 | Bundle replacer | if selected, mechanical replacement of one pre-authorized exact bundle | network, target selection, trust decisions, store repair, execution | new authority role; ADR and replacement evidence required |
 
-The last three rows are intentionally not treated as implementation details. A Trust Coordinator
-or Bundle Replacer would be a new authority-bearing component and cannot be added without a
-separate architecture decision and closed method/identity/fault contract.
+The last three rows are intentionally not treated as implementation details. Proposed ADR-0038
+supplies the Trust Coordinator's closed method/identity/fault contract. A Bundle Replacer and any
+later Coordinator update/repair method still require separate decisions and evidence.
 
 ## Installation and protected state
 
@@ -91,16 +92,15 @@ same user. The installed composition must prove that the admitted Supervisor ide
 container and that baseline same-user processes cannot replace the state-root or owner-lock
 entries.
 
-There is one unresolved bootstrap decision:
+Proposed [ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md) and the
+[I2A decision/fault plan](MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md) now select
+the narrower composition. A separately signed, on-demand Trust Coordinator owns the
+user-presence-gated installation-root key and signs the closed request/final record. The
+authenticated Supervisor alone creates and observes the fixed root/lock/disabled-store genesis in
+its own container. The visible app only invokes setup UI and `SMAppService` registration; it gains
+no signing key or Supervisor-state authority. Installed support remains blocked on I1B and I2B.
 
-- Proposed ADR-0033 currently assigns one-time state-root and owner-lock creation to the trusted
-  containing application/installer.
-- A component-private container suggests a narrower composition in which an authenticated setup
-  ceremony authorizes the Supervisor and the Supervisor creates those objects inside its own
-  container, returning a closed identity projection for enrollment.
-
-Neither wording is silently selected here. The next installed spike must determine the supported
-composition and then amend ADR-0033. In either composition:
+The selected composition requires:
 
 1. creation is exclusive, no-follow, one-time, synchronized, and fully reopened;
 2. the signed bootstrap record binds installation, Supervisor, state-root, owner-lock, store
@@ -247,7 +247,8 @@ service-registration evidence exists.
 | I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `PASSED`; exact inactive profile, generated cases/digests, field authority, and pure missing/mixed/extra/transition/retention validators retained; no installed behavior |
 | I1A | Unsigned app shell and exact seven-role byte/layout construction, execution permanently disabled | `PASSED`; deterministic Swift/AppKit status shell, inert daemon/Supervisor placeholders, exact R2 identities, closed readback and refusal evidence; no signed or installed behavior |
 | I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `BLOCKED` on separate credentialed authorization, matching Team-`3DDR84M4JS` profiles, and proof of the exact supported signed bundle/service composition |
-| I2 | Protected Supervisor container, one-time bootstrap, ADR-0033 owner-lock/store open, same-user mutation and restart corpus | `BLOCKED` on I1, the bootstrap-owner decision, product-store selection, and matching signed identities/profiles |
+| I2A | Protected-root/bootstrap-owner architecture and passive contract | `PASSED`; Proposed ADR-0038 selects one-shot Coordinator authorization plus Supervisor creation and retains the exact I2B object/order/fault plan without installed behavior |
+| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | `BLOCKED` on I1B, passive object/wrapper fixtures, separately authorized test-only key/service/container mutations, and matching signed identities/profiles; product-store selection remains separate |
 | I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R1-R4 contract/construction/signed evidence; the Source Validator architecture/resource decision itself is `PASSED` |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |
@@ -261,11 +262,13 @@ and must not connect user bytes to libkrun merely because installation mechanics
 Before implementation crosses the named authority boundaries, retain separate decisions for:
 
 1. the one-app/DMG and embedded per-user service topology, including supported install location;
-2. the exact protected-container bootstrap owner and ADR-0033 amendment;
+2. the exact protected-container bootstrap owner, now selected by Proposed ADR-0038, followed by
+   its I2B installed evidence;
 3. App Group/private-service residual authority and final Mach/XPC naming;
 4. the two Source Validator launchers and quantified reactive-resource contract, now selected by
    Accepted ADR-0036 while passive contracts and installed evidence remain blocked;
-5. Trust Coordinator authority, if that role remains necessary;
+5. Trust Coordinator authority, now narrowed by Proposed ADR-0038 to the on-demand bootstrap
+   request/record signer; later update/repair methods still require their own decision;
 6. update verifier/TUF profile and `TrustSnapshot` contract;
 7. Bundle Replacer authority and complete-bundle replacement transaction; and
 8. uninstall/local-erasure semantics and archive/external-evidence retention.
@@ -301,11 +304,12 @@ unknown rather than inferring private behavior.
 >    Supervisor and daemon in one containing app, and what are the exact `SMAppService`
 >    registration, approval, replacement, unregister/re-register, login, logout, and restart
 >    semantics when the containing app is replaced?
-> 2. Can a first-run containing app authenticate a newly registered Supervisor and authorize the
->    Supervisor to create a state root and pre-created owner-lock object inside the Supervisor's
->    own private container? Identify the exact supported communication path, container association,
->    code-signing/provisioning requirements, and any bootstrap circularity. If Apple does not
->    document a guarantee, say so.
+> 2. Validate ADR-0038's selected handoff: the containing app invokes its on-demand private Trust
+>    Coordinator, registers the Supervisor LaunchAgent, and only the exact Coordinator/Supervisor
+>    pair use one bootstrap App-Group-named XPC service. Determine whether the exact nested bundle,
+>    container association, service launch, code-signing/provisioning, and two-message sequence are
+>    supported; identify any bootstrap circularity. If Apple does not document a guarantee, say so
+>    and keep I2B blocked rather than choosing a wider fallback.
 > 3. For sandboxed peer XPC, when are App Groups required for Mach service naming or lookup? What
 >    shared-container, Keychain, preferences, or other capabilities follow from membership? Compare
 >    two pairwise groups with supported private XPC-service alternatives, and identify what can be
@@ -320,11 +324,12 @@ unknown rather than inferring private behavior.
 >    running-code, quarantine, translocation, Gatekeeper, nested-code, crash, rollback, and
 >    same-volume atomicity limitations. Compare a small custom replacer with stock Sparkle only as
 >    mechanisms; neither may become Capsule's trust authority.
-> 6. What exact authority must a one-shot bootstrap/trust coordinator hold to create or authorize a
->    per-installation key and trust epoch without giving the Broker, daemon, updater, replacer, or
->    continuously running Supervisor installation-root authority? Include Keychain access-group,
->    Secure Enclave, LocalAuthentication, stale same-Team code, process-death, replay, and update
->    consequences.
+> 6. Validate the exact authority ADR-0038 assigns to the on-demand Trust Coordinator: one
+>    Coordinator-only installation-root Keychain group, fresh user presence, the two closed
+>    request/record signing purposes, and the bootstrap-only pairwise App Group. Confirm denial to
+>    the visible app, daemon, updater, replacer, and continuously running Supervisor. Include Secure
+>    Enclave/LocalAuthentication availability, stale same-Team code, process-death, replay, and
+>    update consequences.
 > 7. Which claims can be tested on one owned current macOS host with Apple Development and Developer
 >    ID identities, and which claims fundamentally require separate clean hosts or multiple OS
 >    versions? Produce a minimal local evidence matrix and mark distribution-only evidence as

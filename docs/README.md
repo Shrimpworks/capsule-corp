@@ -24,7 +24,10 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 13. [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md) — one-
     application packaging direction, role boundaries, setup/update/repair/uninstall sequencing,
     staged MVP scope, blockers, and the focused Apple-platform research brief
-14. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
+14. [macOS I2A protected-root bootstrap decision](MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md)
+    — selected Coordinator/Supervisor authority split, signed request/record contract,
+    descriptor-relative ordering, fault oracles, and exact I2B slices
+15. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
     — canonical Team-ID decision, environment/component matrices, safe setup and verification,
     storage/rotation policy, redacted inventory, and Dylan's next actions
 
@@ -98,6 +101,7 @@ a transformer, endpoint, runtime, or execution path and is not a first-release d
 - [Trust repositories](TRUST_REPOSITORIES.md)
 - [Update and recovery](UPDATE_AND_RECOVERY.md)
 - [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
+- [macOS I2A protected-root bootstrap decision](MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md)
 - [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
 - [Protocol object model](protocol/OBJECT_MODEL.md)
 

@@ -231,10 +231,35 @@ function inspectGoStruct(source, typeName) {
     throw new Error(`canonical Go struct is unterminated: ${typeName}`);
   }
   const fields = new Set();
-  for (const line of source.slice(structStart, structEnd).split("\n")) {
-    const field = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s+[^/]/u.exec(line);
-    if (field) {
-      fields.add(field[1]);
+  for (const rawLine of source.slice(structStart, structEnd).split("\n")) {
+    let line = rawLine.trim();
+    if (line === "") {
+      continue;
+    }
+    // Strip a trailing line comment that isn't inside a backtick struct tag,
+    // so a same-line "// ..." doesn't defeat the embedded-field match below.
+    const tag = /`[^`]*`/u.exec(line);
+    const commentSearchFrom = tag ? tag.index + tag[0].length : 0;
+    const commentIndex = line.indexOf("//", commentSearchFrom);
+    if (commentIndex >= 0) {
+      line = line.slice(0, commentIndex).trim();
+    }
+    if (line === "") {
+      continue;
+    }
+    const named = /^([A-Za-z_][A-Za-z0-9_]*)\s+\S/u.exec(line);
+    if (named) {
+      fields.add(named[1]);
+      continue;
+    }
+    // An embedded (anonymous) field is only its type: an optional pointer,
+    // an optional package qualifier, and an optional struct tag — with no
+    // separate field name preceding it. The field name is the type's own
+    // (unqualified) name.
+    const embedded =
+      /^\*?(?:[A-Za-z_][A-Za-z0-9_]*\.)?([A-Za-z_][A-Za-z0-9_]*)(?:\s+`[^`]*`)?$/u.exec(line);
+    if (embedded) {
+      fields.add(embedded[1]);
     }
   }
   if (fields.size === 0) {
@@ -258,10 +283,35 @@ function assertExactCoverage(identity, canonicalFields, classifiedFields) {
 
 function findClosingBrace(source, bodyStart) {
   let depth = 1;
-  for (let index = bodyStart; index < source.length; index += 1) {
-    if (source[index] === "{") depth += 1;
-    if (source[index] === "}") depth -= 1;
-    if (depth === 0) return index;
+  let index = bodyStart;
+  while (index < source.length) {
+    const char = source[index];
+    if (char === '"') {
+      // Skip over a CDDL text string's content so a brace or semicolon
+      // inside quotes never affects depth counting or comment detection.
+      index += 1;
+      while (index < source.length && source[index] !== '"') {
+        index += source[index] === "\\" ? 2 : 1;
+      }
+      if (index >= source.length) {
+        throw new Error("canonical CDDL map contains an unterminated text string");
+      }
+      index += 1;
+      continue;
+    }
+    if (char === ";") {
+      // Skip a line comment so a brace inside it never affects depth counting.
+      const lineEnd = source.indexOf("\n", index);
+      index = lineEnd < 0 ? source.length : lineEnd + 1;
+      continue;
+    }
+    if (char === "{") {
+      depth += 1;
+    } else if (char === "}") {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+    index += 1;
   }
   throw new Error("canonical CDDL map is unterminated");
 }

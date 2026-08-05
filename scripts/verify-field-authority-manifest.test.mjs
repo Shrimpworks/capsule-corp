@@ -1,11 +1,18 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { verifyFieldAuthorityManifest } from "./verify-field-authority-manifest.mjs";
 
 const repositoryRoot = new URL("../", import.meta.url);
 const manifestUrl = new URL("../schemas/authority/field-authority-manifest.json", import.meta.url);
 const checkedInManifest = JSON.parse(await readFile(manifestUrl, "utf8"));
+const schemaUrl = new URL(
+  "../schemas/authority/field-authority-manifest.schema.json",
+  import.meta.url,
+);
+const checkedInSchema = JSON.parse(await readFile(schemaUrl, "utf8"));
 
 test("verifies the checked-in passive field-authority manifest", async () => {
   assert.deepEqual(await verifyFieldAuthorityManifest({ rootDirectory: repositoryRoot }), {
@@ -105,8 +112,104 @@ test("rejects a missing nested SourceManifest member classification", async () =
   );
 });
 
+test("classifies an embedded Go struct field with no separate field name", async () => {
+  const root = await mkdtemp(join(tmpdir(), "field-authority-go-"));
+  try {
+    await mkdir(join(root, "internal", "fixture"), { recursive: true });
+    await writeFile(
+      join(root, "internal", "fixture", "types.go"),
+      [
+        "package fixture",
+        "",
+        "// field-authority-object: capsule.embedded-fixture v0",
+        "type Fixture struct {",
+        "\tEmbeddedRole",
+        "\tName string",
+        "}",
+        "",
+      ].join("\n"),
+    );
+    const manifest = minimalManifest({
+      object: "capsule.embedded-fixture",
+      version: 0,
+      definition: { kind: "go-struct", path: "internal/fixture/types.go", type: "Fixture" },
+      fields: [
+        { path: "/embeddedRole", sourceField: "EmbeddedRole", profile: "supervisor-reference" },
+        { path: "/name", sourceField: "Name", profile: "supervisor-reference" },
+      ],
+    });
+    const result = await verifyFieldAuthorityManifest({
+      manifest,
+      schema: checkedInSchema,
+      rootDirectory: root,
+    });
+    assert.equal(result.fieldCount, 2);
+
+    // Proves the embedded field is actually required, not merely tolerated:
+    // dropping its classification must now be caught as missing coverage.
+    const withoutEmbedded = structuredClone(manifest);
+    withoutEmbedded.targets[0].fields.shift();
+    await assert.rejects(
+      verifyFieldAuthorityManifest({
+        manifest: withoutEmbedded,
+        schema: checkedInSchema,
+        rootDirectory: root,
+      }),
+      /missing field classifications for capsule\.embedded-fixture@0: EmbeddedRole/u,
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("finds the closing brace of a CDDL rule with a brace inside a string and a comment", async () => {
+  const root = await mkdtemp(join(tmpdir(), "field-authority-cddl-"));
+  try {
+    await mkdir(join(root, "schemas", "fixture"), { recursive: true });
+    await writeFile(
+      join(root, "schemas", "fixture", "rule.cddl"),
+      [
+        "fixture-rule = {",
+        '  1: "capsule.embedded-fixture" ; a trailing comment with a stray } brace',
+        "  2: 0,",
+        '  3: "a text value containing a { brace",',
+        "}",
+        "",
+      ].join("\n"),
+    );
+    const manifest = minimalManifest({
+      object: "capsule.embedded-fixture",
+      version: 0,
+      definition: { kind: "cddl-map", path: "schemas/fixture/rule.cddl", rule: "fixture-rule" },
+      fields: [
+        { path: "/1", sourceField: "1", profile: "supervisor-reference" },
+        { path: "/2", sourceField: "2", profile: "supervisor-reference" },
+        { path: "/3", sourceField: "3", profile: "supervisor-reference" },
+      ],
+    });
+    const result = await verifyFieldAuthorityManifest({
+      manifest,
+      schema: checkedInSchema,
+      rootDirectory: root,
+    });
+    assert.equal(result.fieldCount, 3);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 function cloneManifest() {
   return structuredClone(checkedInManifest);
+}
+
+function minimalManifest(soleTarget) {
+  return {
+    manifestVersion: checkedInManifest.manifestVersion,
+    status: checkedInManifest.status,
+    vocabularyVersion: checkedInManifest.vocabularyVersion,
+    profiles: { "supervisor-reference": checkedInManifest.profiles["supervisor-reference"] },
+    targets: [soleTarget],
+  };
 }
 
 function target(manifest, object) {

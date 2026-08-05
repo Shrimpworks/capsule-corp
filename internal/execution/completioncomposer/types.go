@@ -28,6 +28,8 @@ const (
 	ClassificationBinding          Classification = "BINDING"
 	ClassificationNotTerminal      Classification = "NOT_TERMINAL"
 	ClassificationRecoveryRequired Classification = "RECOVERY_REQUIRED"
+	ClassificationCapacity         Classification = "CAPACITY"
+	ClassificationReplay           Classification = "REPLAY"
 	ClassificationLocalFailure     Classification = "LOCAL_FAILURE"
 )
 
@@ -220,6 +222,7 @@ type TerminalProjectionView struct {
 	SupervisorID                  v0candidate.SupervisorID
 	ApprovalPayloadDigest         approvalattempt.ApprovalPayloadDigest
 	AuthorizationIdentity         approvalattempt.ApprovalKeyAuthorizationIdentity
+	SourceManifestDigest          v0candidate.SourceManifestDigest
 	RuntimeBundleManifestDigest   v0candidate.RuntimeBundleManifestDigest
 	ProfileRegistryEntryDigest    v0candidate.ProfileRegistryEntryDigest
 	BackendValidationRecordDigest v0candidate.BackendValidationRecordDigest

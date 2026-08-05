@@ -270,6 +270,15 @@ owner-required composition. This is repository-local mechanic evidence only: it 
 protected-root evidence, a production database, a real adapter, guest lifecycle evidence, or
 evidence composition.
 
+The separate [passive durable completion-last oracle](DURABLE_COMPLETION_CONTRACT.md) now composes
+those retained attempt/lifecycle facts into one atomically published fixed-file completion,
+transcript, and fixed summary. It is `PASSED` only for FakeBackend fixtures and local commit faults.
+It treats EOF and runner exit as non-authoritative, never commits unresolved cleanup, and returns
+the same bytes for an exact `AttemptID` replay. Because FakeBackend creates no runner or process
+tree, runner identity is explicitly unresolved and fake absence is not real teardown evidence.
+This file is not a selected second product database; product integration must use the future
+Supervisor authority/lifecycle engine under the installed sole owner.
+
 The development-only ADR-0033 experiment observed duplicate-process refusal, last-descriptor
 release, `CLOEXEC`, enrolled file checks, and replacement limitations on one host. It selected the
 mechanism. G2 now wires only the current fixed snapshot/no-guest recovery mechanic to it. Installed

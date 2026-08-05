@@ -611,6 +611,14 @@ control, installed protected-root boundary, consumer, real backend, or guest. Th
 claim registry is [Control Evidence Matrix](CONTROL_EVIDENCE_MATRIX.md); rows advance only for the
 exact retained mechanism and evidence they name.
 
+The [passive durable completion-last contract](../DURABLE_COMPLETION_CONTRACT.md) now retains one
+additional local oracle: only a transaction over committed attempt/lifecycle truth can publish the
+FakeBackend completion, bounded transcript, and fixed summary. EOF, runner exit zero, forged or
+mixed records, changed replay, response loss, and unresolved teardown cannot manufacture or replace
+that object. FakeBackend has no runner or process tree, so the retained record says runner identity
+is unresolved and limits absence to the simulator; it supplies no real teardown or product-success
+evidence.
+
 Passive owner-lock G1 implements the internal Darwin enrolled-object acquisition and opaque
 lifetime capability. G2 composes it with only the current v1/no-guest startup under owned temporary
 roots, including duplicate-before-store refusal, sorted recovery, response-loss/process-death

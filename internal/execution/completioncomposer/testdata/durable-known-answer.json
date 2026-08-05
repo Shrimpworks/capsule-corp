@@ -1,0 +1,5 @@
+{
+  "durableRecordSha256": "551e1524a2875da290407613863f14bc19219eb7bc057920c121bbdb1c0a14d0",
+  "transcriptSha256": "42eaf8ec00d638c2d4b521d1be17366bb4b20b203f18898868ef23c2c8c8a9bd",
+  "publicSummaryJson": "{\"state\":\"completed\",\"attemptId\":\"attempt_b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2\",\"transcriptId\":\"transcript_sha256_42eaf8ec00d638c2d4b521d1be17366bb4b20b203f18898868ef23c2c8c8a9bd\"}"
+}

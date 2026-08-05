@@ -77,12 +77,11 @@ valid-orphan reporting without deletion, and complete predecessor-or-successor r
 [F3 result](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) retains its exact known answers and
 fault/corruption/substitution/concurrency/owner-loss/process-death limitations. Retained lookup,
 replay, and passive uniqueness routing are now implemented by the read-only
-[F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). F4B v2 authority/lifecycle mutation and
-new effect tombstones are now
-[`BLOCKED` on an exact retained effect-history contradiction](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md):
-F4A full reconstruction and `ResolveEffect` bind one effect to the lifecycle record's single
-current effect field, but this ADR requires every earlier v2 effect tombstone to remain after that
-field is replaced. A passive versioned format/lookup correction must precede mutation. F4C multi-
+[F4A result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). The retained
+[F4B blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former contradiction. The
+[F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now implements atomic v2 authority/
+lifecycle mutation and the selected independent append-only effect-tombstone source in the exact
+fixed-store local-conformance scope. F4C multi-
 segment bounded growth, backup, cleanup policy, and later slices remain unimplemented. The fixed
 oracle is not selected as the production engine.
 SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
@@ -693,20 +692,16 @@ missing-lifecycle representation and rejects a narrower state-changing migration
 [stateful F2 migration/full verifier](../SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md) is now `PASSED`
 in its exact local fixed-store scope. The
 [stateful F3 first-segment activation](../SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md) is also
-`PASSED` in its exact local fixed-store scope. This ADR remains Proposed: F3 does not implement
-retained lookup, v2 authority mutation, a second segment, backup/orphan cleanup, a production
-engine, or a product consumer. The follow-on read-only
+`PASSED` in its exact local fixed-store scope. The follow-on read-only
 [F4A retained lookup result](../SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) is `PASSED` in its exact
-local scope. The executable
-[F4B mutation blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) retains why its current
-effect lookup/reconstruction semantics cannot also retain historical v2 effect tombstones after
-the lifecycle field changes. "Effect-tombstone source of truth is independent of the lifecycle
-record" above now records the passive contract correction: an independent, Supervisor-only,
-same-transaction append-only effect-tombstone set that the retained-global effect index and
-`ResolveEffect` must read from directly instead of reconstructing from lifecycle records. F4B
-remains `BLOCKED` until that correction is implemented — new hot-state collection, corrected
-reconstruction and lookup, and the added `HotSetDigests` member — and its fault/replay/collision
-corpus passes; F4C second-segment growth and every other listed blocker remain open.
+local scope. The executable [F4B mutation blocker](../SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md)
+retains the former contradiction. "Effect-tombstone source of truth is independent of the
+lifecycle record" above records the selected contract, and the
+[F4B result](../SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now implements its Supervisor-only,
+same-transaction append-only collection, direct reconstruction/lookup, fifth `HotSetDigests`
+member, and fault/replay/collision corpus. This ADR remains Proposed: F4C second-segment growth,
+backup/orphan cleanup, a production engine, a product consumer, and every other listed blocker
+remain open.
 
 ## Acceptance blockers
 

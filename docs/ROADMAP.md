@@ -191,11 +191,10 @@ fixed-store v2 checkpoint is selected only as the local oracle. Slice F1 and bot
 corrections remain the contract foundation. Stateful F2 writes the all-hot, empty-archive v2
 migration successor and fully verifies it. Stateful F3 publishes and activates exactly one
 immutable complete-cohort segment under the owner assertion and fully verifies the generation-two
-successor. It performs no retained lookup, v2 authority mutation, second activation, deletion, or
-consumer behavior. F4A now adds only read-only retained-global lookup/replay/passive-collision
-routing and excludes archived attempts from hot recovery. F4B mutation/new effect tombstones and
-F4C second-segment/bounded growth remain the intended next slices, but F4B cannot begin until the
-passive versioned effect-history/lookup/segment correction named in the retained blocker lands.
+successor. F4A adds read-only retained-global lookup/replay/passive-collision routing and excludes
+archived attempts from hot recovery. The retained F4B blocker records the former effect-history
+contradiction; F4B now passes atomic mutation and independent append-only effect tombstones in the
+exact fixed-store scope. F4C second-segment/bounded growth is the next archive slice.
 Production-engine selection,
 implementation/installed validation of the selected owner lock and power loss, coherent
 restore/anti-rollback, continuous service, and all
@@ -260,10 +259,9 @@ scaffold was removed in PR #49 under ADR-0027. See the
 - Freeze strict raw decoding, canonical bytes, digest, signature, type/domain separation, and safe
   numeric rules using retained cross-language fixtures.
 - Define stable error, violation, posture, lifecycle, and recovery records.
-- Correct the passive ADR-0031 effect-history/lookup/segment contract named by the
-  [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md), then continue the fixed-store archive
-  oracle from completed F1-F4A into F4B atomic mutation/new effect tombstones, F4C bounded growth,
-  and F5 backup/orphan/reporting, retaining full closed cohorts
+- Retain the completed ADR-0031 effect-history correction and
+  [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), then continue the fixed-store archive
+  oracle into F4C bounded growth and F5 backup/orphan/reporting, retaining full closed cohorts
   and exact tombstone indexes without referenced deletion, then compare a pinned production-engine candidate against the same logical,
   corruption, locking, backup, APFS, and power-loss corpus.
 - Retain the completed bounded production CBOR/COSE dependency comparison: it selects pinned

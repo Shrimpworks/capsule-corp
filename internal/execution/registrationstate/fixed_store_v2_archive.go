@@ -140,11 +140,12 @@ type archiveSegmentDiskV0 struct {
 }
 
 type loadedArchiveSegmentV0 struct {
-	Disk       archiveSegmentDiskV0
-	State      installationState
-	Lifecycles []lifecyclestate.Record
-	Segment    archivestate.ArchiveSegment
-	Bytes      []byte
+	Disk             archiveSegmentDiskV0
+	State            installationState
+	Lifecycles       []lifecyclestate.Record
+	EffectTombstones []archivestate.EffectIndexEntry
+	Segment          archivestate.ArchiveSegment
+	Bytes            []byte
 }
 
 func cloneLoadedArchiveSegments(segments []loadedArchiveSegmentV0) []loadedArchiveSegmentV0 {
@@ -153,6 +154,7 @@ func cloneLoadedArchiveSegments(segments []loadedArchiveSegmentV0) []loadedArchi
 		result[index] = segment
 		result[index].State = cloneState(segment.State)
 		result[index].Lifecycles = cloneLifecycleRecords(segment.Lifecycles, segment.State.TimeHighWaterUnixSeconds)
+		result[index].EffectTombstones = cloneEffectTombstones(segment.EffectTombstones)
 		result[index].Bytes = bytes.Clone(segment.Bytes)
 	}
 	return result
@@ -522,6 +524,15 @@ func buildArchiveCandidate(
 			hotLifecycles = append(hotLifecycles, record)
 		}
 	}
+	segmentEffectTombstones := make([]archivestate.EffectIndexEntry, 0, len(loaded.EffectTombstones))
+	hotEffectTombstones := make([]archivestate.EffectIndexEntry, 0, len(loaded.EffectTombstones))
+	for _, tombstone := range loaded.EffectTombstones {
+		if _, exists := segmentAttemptIDs[tombstone.AttemptID]; exists {
+			segmentEffectTombstones = append(segmentEffectTombstones, tombstone)
+		} else {
+			hotEffectTombstones = append(hotEffectTombstones, tombstone)
+		}
+	}
 	if len(segmentState.Registrations) != len(selected) {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, ErrArchiveStaleTransaction
 	}
@@ -535,7 +546,7 @@ func buildArchiveCandidate(
 		Ordinal: 1, SourceSnapshotGeneration: loaded.Active.View().SnapshotGeneration,
 		ArchiveGeneration:     archivestate.ArchiveGeneration(uint64(loaded.Active.View().ArchiveGeneration) + 1),
 		PriorCheckpointDigest: loaded.Active.View().CurrentCheckpoint.Digest,
-		State:                 segmentState, Lifecycles: segmentLifecycles,
+		State:                 segmentState, Lifecycles: segmentLifecycles, EffectTombstones: segmentEffectTombstones,
 	})
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
@@ -554,11 +565,11 @@ func buildArchiveCandidate(
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
-	indexes, err := reconstructV2IndexesForWorld(hotState, hotLifecycles, []loadedArchiveSegmentV0{segment})
+	indexes, err := reconstructV2IndexesForWorld(hotState, hotLifecycles, hotEffectTombstones, []loadedArchiveSegmentV0{segment})
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
-	hotIndexes, err := reconstructV2Indexes(hotState, hotLifecycles)
+	hotIndexes, err := reconstructV2Indexes(hotState, hotLifecycles, hotEffectTombstones)
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, diskEnvelopeV2{}, err
 	}
@@ -685,6 +696,7 @@ type archiveSegmentBuild struct {
 	PriorCheckpointDigest    archivestate.ArchiveCheckpointDigest
 	State                    installationState
 	Lifecycles               []lifecyclestate.Record
+	EffectTombstones         []archivestate.EffectIndexEntry
 }
 
 func encodeArchiveSegmentV0(build archiveSegmentBuild) ([]byte, loadedArchiveSegmentV0, error) {
@@ -692,7 +704,7 @@ func encodeArchiveSegmentV0(build archiveSegmentBuild) ([]byte, loadedArchiveSeg
 	if err != nil {
 		return nil, loadedArchiveSegmentV0{}, err
 	}
-	provisional := loadedArchiveSegmentV0{State: cloneState(build.State), Lifecycles: cloneLifecycleRecords(build.Lifecycles, build.State.TimeHighWaterUnixSeconds)}
+	provisional := loadedArchiveSegmentV0{State: cloneState(build.State), Lifecycles: cloneLifecycleRecords(build.Lifecycles, build.State.TimeHighWaterUnixSeconds), EffectTombstones: cloneEffectTombstones(build.EffectTombstones)}
 	provisional.Disk = archiveSegmentDiskV0{Ordinal: build.Ordinal, Cohorts: cohortDisks}
 	archivedIndexes, err := archiveIndexesForLoadedSegment(provisional)
 	if err != nil {
@@ -915,7 +927,14 @@ func decodeArchiveSegmentV0(data []byte) (loadedArchiveSegmentV0, error) {
 	if err := validateV1State(state, lifecycles, lifecycleSetDigest(lifecycles)); err != nil {
 		return loadedArchiveSegmentV0{}, fmt.Errorf("fixed supervisor archive record cross-link mismatch: %w", err)
 	}
-	provisional := loadedArchiveSegmentV0{Disk: disk, State: state, Lifecycles: lifecycles, Bytes: bytes.Clone(data)}
+	storedDerived, err := archiveIndexesFromDisk(disk.DerivedIndexes)
+	if err != nil {
+		return loadedArchiveSegmentV0{}, errors.New("fixed supervisor archive derived index is invalid")
+	}
+	provisional := loadedArchiveSegmentV0{
+		Disk: disk, State: state, Lifecycles: lifecycles,
+		EffectTombstones: cloneEffectTombstones(storedDerived.View().Effects), Bytes: bytes.Clone(data),
+	}
 	archivedIndexes, err := archiveIndexesForLoadedSegment(provisional)
 	if err != nil {
 		return loadedArchiveSegmentV0{}, err
@@ -929,8 +948,7 @@ func decodeArchiveSegmentV0(data []byte) (loadedArchiveSegmentV0, error) {
 	if err != nil {
 		return loadedArchiveSegmentV0{}, err
 	}
-	storedDerived, err := archiveIndexesFromDisk(disk.DerivedIndexes)
-	if err != nil || !reflect.DeepEqual(storedDerived.View(), derived.View()) {
+	if !reflect.DeepEqual(storedDerived.View(), derived.View()) {
 		return loadedArchiveSegmentV0{}, errors.New("fixed supervisor archive derived index mismatch")
 	}
 	_, projections, err := segmentCohorts(state, lifecycles)
@@ -974,7 +992,11 @@ func decodeArchiveSegmentDigest(encoded string) (archivestate.ArchiveSegmentDige
 }
 
 func archiveIndexesForLoadedSegment(segment loadedArchiveSegmentV0) (archivestate.ArchiveIndexes, error) {
-	base, err := reconstructV2Indexes(segment.State, segment.Lifecycles)
+	hotTombstones, err := effectTombstonesAtHotAttemptLocations(segment.State, segment.EffectTombstones)
+	if err != nil {
+		return archivestate.ArchiveIndexes{}, err
+	}
+	base, err := reconstructV2Indexes(segment.State, segment.Lifecycles, hotTombstones)
 	if err != nil {
 		return archivestate.ArchiveIndexes{}, err
 	}
@@ -1060,12 +1082,40 @@ func archiveIndexesForLoadedSegment(segment loadedArchiveSegmentV0) (archivestat
 	return archivestate.NewArchiveIndexes(view)
 }
 
+func effectTombstonesAtHotAttemptLocations(
+	state installationState,
+	entries []archivestate.EffectIndexEntry,
+) ([]archivestate.EffectIndexEntry, error) {
+	attempts := append([]approvalattempt.ExecutionAttempt(nil), state.Attempts...)
+	sort.Slice(attempts, func(left, right int) bool {
+		return bytes.Compare(attempts[left].AttemptID[:], attempts[right].AttemptID[:]) < 0
+	})
+	locations := make(map[approvalattempt.AttemptID]archivestate.RecordLocation, len(attempts))
+	for index, attempt := range attempts {
+		location, err := archivestate.NewHotRecordLocation(archivestate.RecordAttempt, v0candidate.PositiveUInt53(index+1))
+		if err != nil {
+			return nil, err
+		}
+		locations[attempt.AttemptID] = location
+	}
+	result := cloneEffectTombstones(entries)
+	for index := range result {
+		location, ok := locations[result[index].AttemptID]
+		if !ok {
+			return nil, errors.New("archive effect tombstone attempt is missing")
+		}
+		result[index].AttemptLocation = location
+	}
+	return result, nil
+}
+
 func reconstructV2IndexesForWorld(
 	hot installationState,
 	hotLifecycles []lifecyclestate.Record,
+	hotEffectTombstones []archivestate.EffectIndexEntry,
 	segments []loadedArchiveSegmentV0,
 ) (archivestate.ArchiveIndexes, error) {
-	hotIndexes, err := reconstructV2Indexes(hot, hotLifecycles)
+	hotIndexes, err := reconstructV2Indexes(hot, hotLifecycles, hotEffectTombstones)
 	if err != nil {
 		return archivestate.ArchiveIndexes{}, err
 	}
@@ -1142,7 +1192,13 @@ func reconstructMigrationGenesisIndexes(
 		rightID := lifecycles[right].Bindings().View().AttemptID
 		return bytes.Compare(leftID[:], rightID[:]) < 0
 	})
-	return reconstructV2Indexes(world, lifecycles)
+	// Migration-genesis locations are all-hot, regardless of where F3 later
+	// carried the same immutable seed. Rebuild those typed locations exactly.
+	seedTombstones, err := visibleV1EffectTombstones(world, lifecycles)
+	if err != nil {
+		return archivestate.ArchiveIndexes{}, err
+	}
+	return reconstructV2Indexes(world, lifecycles, seedTombstones)
 }
 
 func reconstructMigrationGenesisHotSetDigests(
@@ -1180,18 +1236,20 @@ func validateActivationCheckpointDisk(
 		disk.PreviousCheckpoint != envelope.PreviousCheckpoint || disk.NewSegmentDigest != segment.Segment.Digest() ||
 		disk.DescriptorSetDigest != envelope.DescriptorSetDigest ||
 		disk.SourceSnapshotGeneration+1 != disk.ResultSnapshotGeneration ||
-		disk.ResultSnapshotGeneration != envelope.SnapshotGeneration || disk.ArchiveGeneration != envelope.ArchiveGeneration ||
+		disk.ResultSnapshotGeneration > envelope.SnapshotGeneration || disk.ArchiveGeneration != envelope.ArchiveGeneration ||
 		disk.InstallationID != envelope.State.InstallationID || disk.SupervisorID != envelope.State.SupervisorID ||
 		disk.EpochSequence != envelope.State.EpochSequence || disk.EpochDigest != envelope.State.EpochDigest ||
-		disk.DurableTimeHighWater != envelope.State.TimeHighWaterUnixSeconds {
+		disk.DurableTimeHighWater > envelope.State.TimeHighWaterUnixSeconds {
 		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint cross-link mismatch")
 	}
-	wantHot := archivestate.HotSetDigests{
-		Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
-		Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
-	}
-	if disk.HotSetDigests != wantHot {
-		return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint hot-set mismatch")
+	if disk.ResultSnapshotGeneration == envelope.SnapshotGeneration {
+		wantHot := archivestate.HotSetDigests{
+			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
+			Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
+		}
+		if disk.HotSetDigests != wantHot {
+			return archivestate.ArchiveCheckpoint{}, errors.New("fixed supervisor archive checkpoint hot-set mismatch")
+		}
 	}
 	checkpoint, err := archivestate.NewArchiveCheckpoint(archivestate.ArchiveCheckpointView{
 		PreviousCheckpoint: disk.PreviousCheckpoint, NewSegmentDigest: disk.NewSegmentDigest,
@@ -1285,7 +1343,7 @@ func loadArchiveSegmentsForEnvelope(
 			segmentView.SupervisorID != envelope.State.SupervisorID ||
 			segmentView.EpochSequence != envelope.State.EpochSequence ||
 			segmentView.EpochDigest != envelope.State.EpochDigest ||
-			segmentView.DurableTimeHighWater != envelope.State.TimeHighWaterUnixSeconds {
+			segmentView.DurableTimeHighWater > envelope.State.TimeHighWaterUnixSeconds {
 			return nil, 0, errors.New("fixed supervisor archive descriptor cross-link mismatch")
 		}
 		if _, duplicate := segmentsByOrdinal[descriptor.Ordinal]; duplicate {
@@ -1373,7 +1431,11 @@ func verifyPreparedAgainstLoaded(loaded loadedV2State, prepared PreparedFixedSto
 	if err != nil {
 		return err
 	}
-	reconstructed, err := reconstructV2IndexesForWorld(candidate.State, records, []loadedArchiveSegmentV0{decoded})
+	candidateHotTombstones, _, _, err := effectTombstonesFromEnvelope(candidate, storedIndexes)
+	if err != nil {
+		return err
+	}
+	reconstructed, err := reconstructV2IndexesForWorld(candidate.State, records, candidateHotTombstones, []loadedArchiveSegmentV0{decoded})
 	if err != nil || !reflect.DeepEqual(storedIndexes.View(), reconstructed.View()) {
 		return errors.New("prepared fixed supervisor archive world index mismatch")
 	}

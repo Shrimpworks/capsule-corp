@@ -504,11 +504,19 @@ type HotSetDigests struct {
 	Approvals     [32]byte
 	Attempts      [32]byte
 	Lifecycles    [32]byte
+	// EffectTombstones is deliberately excluded from the legacy F2/F3 JSON
+	// representation. Exact predecessor checkpoint bytes retain zero here;
+	// F4B active worlds bind the separately persisted nonzero collection digest.
+	EffectTombstones EffectTombstoneSetDigest `json:"-"`
 }
 
 func validHotSetDigests(digests HotSetDigests) bool {
 	return digests.Registrations != ([32]byte{}) && digests.Approvals != ([32]byte{}) &&
 		digests.Attempts != ([32]byte{}) && digests.Lifecycles != ([32]byte{})
+}
+
+func validF4BHotSetDigests(digests HotSetDigests) bool {
+	return validHotSetDigests(digests) && digests.EffectTombstones != (EffectTombstoneSetDigest{})
 }
 
 // ArchiveCheckpointKind prevents a migration genesis from being interpreted
@@ -751,6 +759,7 @@ type ActiveStateV2View struct {
 	Indexes                   ArchiveIndexes
 	IndexDigests              ArchiveIndexDigests
 	CombinedIndexDigest       ArchiveCombinedIndexDigest
+	HotSetDigests             HotSetDigests
 	EffectTombstoneCoverage   string
 	VisibleV1EffectSeedCount  uint64
 	VisibleV1EffectSeedDigest ArchiveEffectSeedDigest
@@ -789,6 +798,9 @@ func NewActiveStateV2(view ActiveStateV2View) (ActiveStateV2, error) {
 	}
 	if indexes.scope() != ArchiveIndexScopeRetainedGlobal {
 		return ActiveStateV2{}, classified(ClassificationDomain, "active-v2-index-scope")
+	}
+	if view.HotSetDigests != (HotSetDigests{}) && !validF4BHotSetDigests(view.HotSetDigests) {
+		return ActiveStateV2{}, classified(ClassificationBinding, "active-v2-hot-set-digests")
 	}
 	seedCount, seedDigest, seedErr := effectSeedForIndexes(indexes)
 	if seedErr != nil || seedCount != view.VisibleV1EffectSeedCount ||

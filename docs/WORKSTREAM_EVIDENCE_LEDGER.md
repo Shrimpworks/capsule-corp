@@ -275,12 +275,12 @@ concurrency/owner-loss/process-death oracles. It adds no retained lookup, v2 mut
 segment, orphan deletion, backup, engine, adapter, or consumer. The design deliberately leaves
 referenced-history deletion, implementation/installed validation of the selected owner lock and
 power loss, coherent rollback prevention, continuous service, consumers, and guests blocked.
-F4A's retained lookup/replay/passive-collision/hot-only-recovery scope is also `PASSED`. The first
-F4B implementation review is `BLOCKED` on the retained
-[effect-history contradiction](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md): F4A derives and resolves
-only the current lifecycle effect, while ADR-0031 requires earlier v2 effects to remain after that
-field changes. The retained local witness refuses without rewrite. A passive versioned correction
-is the integration destination before F4B resumes; F4C-F6 remain deferred.
+F4A's retained lookup/replay/passive-collision/hot-only-recovery scope is also `PASSED`. The
+retained [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former effect-history
+contradiction and its selected correction. The
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes the exact fixed-store atomic
+mutation, independent tombstone, durable replay, historical lookup, and fault/collision scope.
+F4C-F6 remain deferred.
 
 The current closed conformance corpus has 89 rules, 330 cases, and 433 fixtures. The unwired
 Go/TypeScript implementation covers the previously recorded 177 Go and 80 TypeScript proposal
@@ -461,11 +461,10 @@ Completed and retained:
 
 Current dependency and priority view:
 
-1. **Next archive slice:** F2 migration/full verification, F3 first-segment activation, and F4A
-   retained lookup/replay/passive-collision routing are `PASSED` in their exact local scopes. F4B
-   is `BLOCKED` until the passive versioned effect-history/lookup/segment correction in the
-   [retained blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) lands. Then resume F4B atomic v2
-   mutation/new effect tombstones and F4C bounded second-segment/index growth; keep F5 backup/orphan
+1. **Next archive slice:** F2 migration/full verification, F3 first-segment activation, F4A
+   retained lookup/replay/passive-collision routing, and the
+   [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) are `PASSED` in their
+   exact local scopes. Continue with F4C bounded second-segment/index growth; keep F5 backup/orphan
    cleanup/reporting and F6 production-engine work separate.
 2. **Source Validator R3 signed composition passed; product blocked:** Accepted ADR-0036 closes R0 with
    two role-specific private launchers, residual private-container scratch plus mandatory cleanup,

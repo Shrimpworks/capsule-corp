@@ -287,10 +287,11 @@ authority mutation, multi-segment growth, backup/orphan-cleanup policy, and prod
 remain outside F3. Read-only F4A now routes exact retained registration/approval/attempt/nonce/
 effect/instance and replay identities exclusively through freshly verified retained-global typed
 locations, retains passive collision checks, and excludes archived terminal attempts from hot
-`AttemptID` recovery; see the [F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). F4B mutation
-is now [blocked](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) because F4A reconstructs and resolves
-only the lifecycle record's current effect while ADR-0031 requires earlier v2 effect tombstones to
-survive later field replacement. A passive versioned correction must precede mutation. F4C bounded
+`AttemptID` recovery; see the [F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). The retained
+[F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former current-effect
+contradiction. The [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now adds atomic v2
+authority/lifecycle mutation and an independent append-only effect-tombstone source that direct
+hot/archive reconstruction and historical lookup verify without inventing lifecycle history. F4C bounded
 growth and F5+ backup/orphan/engine work remain open. The fixed checkpoint remains a finite conformance oracle, not a production engine or
 continuous-service mechanism, and referenced archive history is not deletable under that proposal.
 

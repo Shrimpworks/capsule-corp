@@ -17,8 +17,8 @@ boundary and must not be used to execute hostile code without another trusted sa
 Current work uses the [canonical status language](STATUS_LANGUAGE.md). In short: the passive
 single-file `.mjs` foundation, bounded Oxc parser/process selection, no-guest Supervisor lifecycle,
 and G2 local owner composition are `PASSED` in their exact scopes. Archive F2's fixed-store
-v1-to-v2 migration/full verifier, F3's first immutable-segment activation, and F4A's read-only
-retained lookup/replay/uniqueness routing are also `PASSED` in their narrow local-conformance
+v1-to-v2 migration/full verifier, F3's first immutable-segment activation, F4A's read-only
+retained lookup/replay/uniqueness routing, and F4B's atomic authority/lifecycle mutation are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
 `IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
@@ -209,10 +209,11 @@ plus passive collision queries and hot-only `AttemptID` recovery. See the
 [F4A retained lookup result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md). It adds no v2 write,
 authority/lifecycle mutation, new effect tombstone, second segment, adapter, consumer, runtime,
 backend, or guest. F4B mutation and F4C bounded growth remain outside F4A's passed scope.
-[The retained F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) now proves that mutation
-cannot safely begin until a passive versioned effect-history/lookup/segment correction reconciles
-F4A's current-effect reconstruction with ADR-0031's append-only v2 tombstones. F4B is `BLOCKED`,
-not abandoned; F4C and F5-F6 remain deferred.
+[The retained F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former
+current-effect contradiction and ADR-0031's selected independent-source correction. The
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic fixed-store v2 mutation,
+same-transaction append-only effect issuance, exact replay, and corrected hot/archive
+reconstruction/lookup. F4C and F5-F6 remain deferred.
 [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed

@@ -1,15 +1,15 @@
 # Supervisor archive F4B effect-tombstone mutation blocker
 
-Status: `BLOCKED` for Slice F4B atomic fixed-store v2 authority/lifecycle mutation
-*implementation*. The required contract decision below is now recorded in ADR-0031; F4B remains
-blocked only on building and verifying it.
+Status: `PASSED` as a retained historical blocker/correction record. The former Slice F4B
+implementation blocker was closed by the independent-source correction and the exact fixed-store
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md).
 
 Date: 2026-08-04
 
 Parent: Supervisor archive/compaction conformance workstream.
 
-Parent status: `IN_PROGRESS — TRENDING_GOOD`. F1 through F4A remain `PASSED` in their exact
-scopes; this result identifies the contract correction required before F4B can safely begin.
+Parent status: `IN_PROGRESS — TRENDING_GOOD`. F1 through F4B are `PASSED` in their exact scopes;
+F4C-F6 and product admission remain open.
 
 ## Defensive scope and stop decision
 
@@ -20,7 +20,8 @@ production database, archive deletion, signing operation, or unrelated system or
 
 The F4B task carried an explicit stop condition: if F4A's interfaces could not support atomic F4B
 without contradicting ADR-0031, retain the exact blocker instead of inventing semantics. That stop
-condition is met. No v2 mutation behavior was added.
+condition was met in the original review. No v2 mutation behavior was added by that review; the
+separate resumed F4B slice later implemented the selected correction.
 
 ## Exact contradiction
 
@@ -59,12 +60,10 @@ record/location, alternate scan, fallback, or silent lookup-semantic change is n
 
 ## Retained executable witness
 
-`TestFixedStoreV2F4BHistoricalEffectTombstoneCannotSatisfyF4AReconstruction` constructs the exact
-closed two-effect ledger for one attempt: a visible-v1 seed followed by a v2-issued current effect.
-The passive `archivestate.ArchiveIndexes` type accepts both sorted entries, proving that the
-identifier projection itself is expressible. The F4A fixed-store full verifier then rejects the
-same retained ledger because reconstruction can recover only the current effect. The test also
-proves refusal preserves the exact active bytes.
+`TestFixedStoreV2F4BIndependentTombstoneSourceResolvesTheF4ABlocker` retains the same visible-v1
+seed followed by a v2-issued current effect as a positive regression oracle. Full reopen now reads
+both entries from the independent source, resolves the seed as `superseded-by-current` without a
+false lifecycle, and resolves the v2 effect as current.
 
 This is a representation/verification blocker, not a random-ID collision, capacity issue,
 implementation inconvenience, or candidate `NO_GO` decision.
@@ -123,17 +122,18 @@ the effect-tombstone set.
 
 ## Resume condition and deferred work
 
-F4B implementation resumes now that this passive contract correction is recorded in ADR-0031. The
-implementing slice must add the effect-tombstone hot-state collection, correct
+F4B implementation resumed after this passive contract correction was recorded in ADR-0031. The
+completed slice added the effect-tombstone hot-state collection, corrected
 `reconstructV2Indexes`/`reconstructV2IndexesForWorld`/archive-segment verification/`ResolveEffect`
-to read from it, add the `HotSetDigests` member, and regenerate the affected F4A/F4B known-answer
-fixtures — while still preserving all passed F2 and F3 byte answers untouched. The resumed slice
-must still perform same-transaction retained-global checks for registration, approval, attempt,
+to read from it, added the `HotSetDigests` member, and added affected F4B known answers while
+preserving all passed F2 and F3 bytes. It performs same-transaction retained-global checks for registration, approval, attempt,
 nonce, effect, instance, approval-replay, and attempt-replay identities; preserve missing lifecycle
 as absence; preserve `AttemptID`-only recovery, owner/session fencing, exact capacities,
 publish-before-reference ordering, and fail-closed no-rewrite behavior; and add the requested
 fault, response-loss, reopen, concurrency, collision, and restoration oracles.
 
-F4C second-segment/bounded-growth work, F5 backup/orphan/offline-report policy, and F6 production-
-engine selection remain deferred. This blocker adds no authority, effect, archive, deletion,
+The exact implementation and evidence are retained in the
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md). F4C second-segment/bounded-growth work, F5
+backup/orphan/offline-report policy, and F6 production-engine selection remain deferred. This
+blocker record adds no authority, effect, archive, deletion,
 adapter, consumer, runtime, backend, guest, or production claim. ADR-0031 remains Proposed.

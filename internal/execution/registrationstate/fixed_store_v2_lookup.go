@@ -42,8 +42,17 @@ type RetainedNonce struct {
 	Approval      approvalattempt.ApprovalRecord
 }
 
-// RetainedEffect binds one visible effect tombstone to the issuing attempt and
-// lifecycle record. It is not an effect transcript.
+type RetainedEffectClassification string
+
+const (
+	RetainedEffectCurrent             RetainedEffectClassification = "current"
+	RetainedEffectSupersededByCurrent RetainedEffectClassification = "superseded-by-current"
+)
+
+// RetainedEffect binds one visible effect tombstone to its own immutable
+// issuance facts. LifecyclePresent is true only while the tombstone still
+// names the lifecycle record's current effect; historical resolution never
+// mislabels the later lifecycle record as the issuing record.
 type RetainedEffect struct {
 	EffectID                   lifecyclestate.EffectID
 	AttemptID                  approvalattempt.AttemptID
@@ -51,7 +60,9 @@ type RetainedEffect struct {
 	Operation                  lifecyclestate.Operation
 	IssuanceSnapshotGeneration v0candidate.PositiveUInt53
 	VisibleV1Seed              bool
+	Classification             RetainedEffectClassification
 	Attempt                    approvalattempt.ExecutionAttempt
+	LifecyclePresent           bool
 	Lifecycle                  lifecyclestate.Record
 }
 
@@ -190,8 +201,9 @@ func (store *FixedFileStoreV2) ResolveNonce(
 	return RetainedNonce{AttemptNonce: nonce, PayloadDigest: entry.PayloadDigest, Approval: approvalattempt.CloneApprovalRecord(approval)}, nil
 }
 
-// ResolveEffect resolves one effect tombstone and its issuing records. F4A
-// cannot reconstruct overwritten pre-v2 effect IDs and never claims to do so.
+// ResolveEffect resolves one effect tombstone from the independent retained
+// ledger. Superseded effects return tombstone-bound issuance facts and the
+// immutable attempt, but never the current lifecycle as their issuing record.
 func (store *FixedFileStoreV2) ResolveEffect(
 	ctx context.Context,
 	effectID lifecyclestate.EffectID,
@@ -216,18 +228,29 @@ func (store *FixedFileStoreV2) ResolveEffect(
 		return RetainedEffect{}, retainedLookupFailure(errors.New("retained effect attempt or lifecycle is missing"))
 	}
 	view := attempt.Lifecycle.View()
-	if view.EffectID != entry.EffectID || view.OperationSequence != entry.OperationSequence ||
-		view.Operation != entry.Operation || view.SnapshotGeneration != entry.IssuanceSnapshotGeneration {
-		return RetainedEffect{}, retainedLookupFailure(errors.New("retained effect lifecycle cross-link mismatch"))
-	}
 	if attemptLocation, ok := attemptIndexLocation(indexes, entry.AttemptID); !ok || attemptLocation.View() != entry.AttemptLocation.View() {
 		return RetainedEffect{}, retainedLookupFailure(errors.New("retained effect location cross-link mismatch"))
 	}
-	return RetainedEffect{
+	result := RetainedEffect{
 		EffectID: entry.EffectID, AttemptID: entry.AttemptID, OperationSequence: entry.OperationSequence,
 		Operation: entry.Operation, IssuanceSnapshotGeneration: entry.IssuanceSnapshotGeneration,
-		VisibleV1Seed: entry.VisibleV1Seed, Attempt: attempt.Attempt, Lifecycle: attempt.Lifecycle,
-	}, nil
+		VisibleV1Seed: entry.VisibleV1Seed, Attempt: attempt.Attempt,
+	}
+	if view.EffectID == entry.EffectID {
+		if view.OperationSequence != entry.OperationSequence || view.Operation != entry.Operation ||
+			entry.IssuanceSnapshotGeneration > view.SnapshotGeneration {
+			return RetainedEffect{}, retainedLookupFailure(errors.New("retained current effect lifecycle cross-link mismatch"))
+		}
+		result.Classification = RetainedEffectCurrent
+		result.LifecyclePresent = true
+		result.Lifecycle = attempt.Lifecycle
+		return result, nil
+	}
+	if entry.OperationSequence >= view.OperationSequence || entry.IssuanceSnapshotGeneration > view.SnapshotGeneration {
+		return RetainedEffect{}, retainedLookupFailure(errors.New("retained historical effect lifecycle order mismatch"))
+	}
+	result.Classification = RetainedEffectSupersededByCurrent
+	return result, nil
 }
 
 // ResolveInstance resolves one retained instance digest through its tombstone
@@ -374,8 +397,9 @@ func (store *FixedFileStoreV2) QueryRetainedIdentityCollisions(
 }
 
 // CheckRetainedIdentityAvailability returns REPLAY when any queried identity
-// is already retained. F4B must repeat this check inside its future atomic
-// mutation; this passive F4A helper alone reserves nothing.
+// is already retained. F4B independently repeats the same closed retained-
+// global collision validation while deriving every atomic successor; this
+// passive F4A helper alone still reserves nothing.
 func (store *FixedFileStoreV2) CheckRetainedIdentityAvailability(
 	ctx context.Context,
 	candidates RetainedIdentityCandidates,

@@ -1,0 +1,185 @@
+{
+  "objectType": "capsule.governed-deno-core-c2b-passive-binding",
+  "schemaVersion": 2,
+  "domain": "capsule.governed-deno-core.c2b.passive-binding/v2",
+  "identity": "capsule.governed-deno-core-c2b-passive-binding/c1-c2a-no-guest-build-closure-v2",
+  "status": "PASSED-passive-no-guest-build-closure-only",
+  "predecessors": {
+    "c1": {
+      "identity": "capsule.governed-deno-core.controlled-development-composition/c1",
+      "fixture": "schemas/conformance/c1-governed-deno-core/controlled-development-profile.json",
+      "bytes": 9289,
+      "sha256": "d5d75e638a15be6c9f4a3230d17309d085f6ec103a73b64d9e0fd656a5423c9e",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    },
+    "c2a": {
+      "identity": "capsule.governed-deno-core.execution-profile-preparation/c2a",
+      "fixture": "schemas/conformance/c2a-governed-deno-core/passive-execution-profile.json",
+      "bytes": 26850,
+      "sha256": "d4ce88888186266f5d251e6246c889b1fd46d7746bb0ba56bcc4b3ce4675992f",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    },
+    "c2bV1": {
+      "identity": "capsule.governed-deno-core-c2b-passive-binding/c1-c2a-v1",
+      "fixture": "schemas/conformance/c2b-governed-deno-core/passive-binding.json",
+      "bytes": 8221,
+      "sha256": "3540d5224bdc81edbceafa1f0f17ac119904a70feab604957ab349dd116961a6",
+      "consumption": "exact-byte-read-only",
+      "mutation": "forbidden"
+    }
+  },
+  "archiveEvidence": {
+    "repository": "Shrimpworks/capsule-experiments",
+    "pullRequest": 4,
+    "pullRequestState": "merged-reviewed",
+    "mergeCommit": "50108417ebf1aa45788a4e9a6b4ca6b4448e9972",
+    "reviewedHead": "518eea04e1f81d27e61178b7f4ff164b955dea76",
+    "tree": "cfe9865998bdd1ec556a0424ed30abdf51bb89d9",
+    "baselineParent": "22b9eb2e92d17398e2844ad122e6c28faaf3a678",
+    "retainedRoot": "experiments/gate-c-c2b-no-guest-artifact-closure",
+    "runtimeBundleCandidate": {
+      "retainedPath": "manifests/runtime-bundle-candidate.json",
+      "bytes": 8845,
+      "sha256": "d37c9311cf21e87cf693594ebb6bbf6c29bcb50d13c3f8a5e8334a0f02d30607",
+      "selfDigestOfNullFormSha256": "4f875a69afcee05371c9d3cb75d61a278c01f6fd428d97196030ece058a907bd"
+    },
+    "artifactClosureReport": {
+      "retainedPath": "manifests/artifact-closure-report.json",
+      "bytes": 3671,
+      "sha256": "6a082be63bb15f96e19f5c11673717e546d4fd8ef602d19d1f2b5036daac573d",
+      "selfDigestOfNullFormSha256": "400ceae0c45903e35fb9b62f0d525abe59e6cfc9522e46210ddc57c3a443cbce"
+    },
+    "evidenceDigests": {
+      "sourceRefs": "bfe102f41154d0bf9f4bef9caf82c305254c323bd56538128b993cfdf93724e9",
+      "verification": "c0ad705d877f677cbec4cded2d45284703e76ed9b2febda02332898c7e715a9f",
+      "mutations": "82169eed59add58bb9cb0e3a2cb0c98aed955b19bf8580d7a98940dfe3680aa1",
+      "sbom": "6d4539e11d18043ee9287fc88f16904a89c1c66836e1d8350aaf8572e9bbf0ec",
+      "licenses": "11fbebda3ea8c5dd9c750767f93a3d991e79459627a05e76ed4d9e715a1e8d99",
+      "unsignedProvenance": "e52044d6edf96485a3792e6955ba15109220ec9151ab22c862bbac07a9b4ea68"
+    },
+    "independentPassiveVerification": "PASSED",
+    "authorityEffect": "records-evidence-only"
+  },
+  "constructedArtifacts": [
+    {
+      "role": "governed-libkrun-dylib",
+      "selectedPath": "artifact-pack/macos/libkrun.1.dylib",
+      "mode": "0755",
+      "bytes": 4426736,
+      "sha256": "f8e05177ce57a6f773f86d6755a29fe3f2bab92140dfe8caa33663a28584ae52",
+      "admitted": false
+    },
+    {
+      "role": "libkrunfw-dylib",
+      "selectedPath": "artifact-pack/macos/libkrunfw.5.dylib",
+      "mode": "0755",
+      "bytes": 24339104,
+      "sha256": "0b14f4b8005dafd33c38df5935b9efdb6381c724224b3967ba1cecbecf10b6e9",
+      "admitted": false
+    },
+    {
+      "role": "guest-kernel",
+      "selectedPath": "artifact-pack/macos/linux-6.12.91-arm64.bin",
+      "mode": "0644",
+      "bytes": 24117248,
+      "sha256": "b50a4165215d5d897ab3614606a2105756cf8f2b2510cbceda9dc06057a5622d",
+      "admitted": false
+    },
+    {
+      "role": "trusted-init",
+      "selectedPath": "/usr/local/libexec/capsule-init.krun",
+      "mode": "0755",
+      "bytes": 930144,
+      "sha256": "4f4f2c8bc037c3226b183ad0d6daf35395c49467dfe5786d10a33290adf585cd",
+      "admitted": false
+    },
+    {
+      "role": "trusted-launcher",
+      "selectedPath": "/usr/local/libexec/capsule-launcher",
+      "mode": "0755",
+      "bytes": 995920,
+      "sha256": "fd255394a26affadb1226d3f724494e76fc89785a5cced027a7bb9859d7da32d",
+      "admitted": false
+    },
+    {
+      "role": "raw-ext4-runtime-root",
+      "selectedPath": "artifact-pack/linux/capsule-c2b-runtime-root.ext4",
+      "mode": "0644",
+      "bytes": 134217728,
+      "sha256": "390a4786a20d45f1c691ec8c203f84f5e9d372a30e98f867cc8309a144ca6798",
+      "admitted": false
+    }
+  ],
+  "runtimeManifestCandidate": {
+    "role": "governed-runtime-bundle-manifest-candidate",
+    "selectedPath": "manifests/runtime-bundle-candidate.json",
+    "bytes": 8845,
+    "sha256": "d37c9311cf21e87cf693594ebb6bbf6c29bcb50d13c3f8a5e8334a0f02d30607",
+    "canonicalAuthority": null,
+    "admitted": false
+  },
+  "hostPreflightHarness": {
+    "role": "host-runner-build-only-preflight",
+    "selectedPath": "artifact-pack/macos/capsule-host-runner-preflight",
+    "mode": "0755",
+    "bytes": 34864,
+    "sha256": "4d56480bec2a34cd2d23f83f199e9eb62951ac66e53319ae45991af7b4000922",
+    "usage": "build-only-passive-preflight",
+    "finalHostRunnerIdentity": null,
+    "final": false,
+    "callsLibkrun": false,
+    "admitted": false
+  },
+  "unresolved": {
+    "refusal": "required-null-until-exact-retained-evidence-closes-field",
+    "finalHostRunnerIdentity": null,
+    "separateFirmwareIdentity": null,
+    "composedProfileIdentity": null,
+    "composedProfileDigest": null,
+    "cpuTimeLimitMs": null,
+    "hostVmmMemoryLimitBytes": null,
+    "scratchMaximumBytes": null,
+    "guestEvidence": null,
+    "runtimeManifestAdmission": null,
+    "runtimeProfileAdmission": null,
+    "backendAdmission": null
+  },
+  "workStatus": {
+    "noGuestBuildArtifactClosure": "PASSED",
+    "parentGovernedRuntime": "IN_PROGRESS — TRENDING_GOOD",
+    "c2bComposedProfileGuestExecution": "BLOCKED",
+    "runtimeProfileAdmission": "BLOCKED",
+    "runtime001": "unsupported",
+    "vmm001": "unsupported"
+  },
+  "nextConsumerGate": {
+    "state": "BLOCKED",
+    "consumer": "separately-authorized-composed-profile-owned-guest-task",
+    "requirements": [
+      "final-host-runner-identity-and-lifecycle-evidence",
+      "separate-firmware-role-resolution",
+      "supported-resource-mechanisms-and-values",
+      "accepted-composed-profile-identity-and-digest",
+      "separate-owned-disposable-guest-authorization"
+    ],
+    "implemented": false,
+    "admissionEffect": false
+  },
+  "effects": {
+    "process": false,
+    "runtime": false,
+    "profile": false,
+    "consumer": false,
+    "adapter": false,
+    "backend": false,
+    "vm": false,
+    "guest": false,
+    "credential": false,
+    "signing": false,
+    "publication": false,
+    "release": false,
+    "admission": false
+  }
+}

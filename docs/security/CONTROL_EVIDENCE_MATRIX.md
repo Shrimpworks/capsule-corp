@@ -28,10 +28,12 @@ Status values:
 A row's status covers its whole claim. A `proposed` or `unsupported` row may cite a narrower local
 mechanic without promoting the larger production or guest-facing claim.
 
-The governed `deno_core` C2B fixed-fixture passive binding is repository conformance evidence only.
-It preserves exact C1/C2A and draft-head build identities with zero effects; it supplies no runtime,
-profile, VMM, device, backend, or guest observation. It therefore does not advance `RUNTIME-001` or
-`VMM-001`, which remain `unsupported`, and does not change runtime/profile admission.
+The governed `deno_core` C2B passive bindings are repository conformance evidence only. Immutable
+v1 preserves its historical C1/C2A/build checkpoint; v2 binds merged no-guest artifact identities,
+an unadmitted manifest candidate, and a non-final preflight harness while keeping unresolved and
+admission fields null. Neither supplies runtime, profile, VMM, device, backend, or guest observation.
+They therefore do not advance `RUNTIME-001` or `VMM-001`, which remain `unsupported`, and do not
+change runtime/profile admission.
 
 | Claim ID | Claim | Threat | Owner | Mechanism | Live verification | Required attack tests | Receipt/transcript evidence | Known limitation | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

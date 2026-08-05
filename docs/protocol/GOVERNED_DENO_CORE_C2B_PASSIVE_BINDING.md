@@ -50,10 +50,15 @@ Historical build-evidence v1 identity
 record succeeds it because of the exact governed-fork formatter-policy commit; it does not edit or
 erase v1.
 
-Both upstream pull requests are explicit merge dependencies:
+The v1 bytes permanently retain both pull requests as then-unmet merge dependencies:
 
 - [`Shrimpworks/deno` PR #2](https://github.com/Shrimpworks/deno/pull/2);
 - [`Shrimpworks/capsule-experiments` PR #3](https://github.com/Shrimpworks/capsule-experiments/pull/3).
+
+Both later merged: Deno PR #2 at merge `4cce46bafccd0df9d1709cf406cd03c05b5daa0b`, and
+experiments PR #3 at merge `22b9eb2e92d17398e2844ad122e6c28faaf3a678`. That later fact does not
+rewrite v1. The immutable [v2 successor](GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V2.md) records the
+reviewed merged evidence and no-guest artifact closure under a new identity.
 
 ## Fixed bytes and artifact inventory
 
@@ -100,13 +105,13 @@ become authority.
 
 ## Exact next consumer gate
 
-This passive reconciliation is `PASSED` in its local scope. The next task remains `BLOCKED` until:
+This historical v1 reconciliation is `PASSED` in its local scope. Its first two dependency facts
+closed after v1 froze and are recorded only by the v2 successor. The composed-profile task remains
+`BLOCKED` until:
 
-1. both dependency pull requests merge;
-2. their exact merged heads and trees are reverified;
-3. every bound artifact identity is reverified;
-4. all C2A composed-profile blockers are closed; and
-5. a separate task receives explicit authorization for the named owned disposable guest.
+1. the v2 successor and every bound artifact identity are reverified;
+2. all remaining C2A composed-profile blockers are closed; and
+3. a separate task receives explicit authorization for the named owned disposable guest.
 
 Only then may that separately authorized task consume this passive binding while composing the
 fixed profile and running the already-fixed benign fixture. This task does not implement that

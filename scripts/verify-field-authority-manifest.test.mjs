@@ -9,9 +9,9 @@ const checkedInManifest = JSON.parse(await readFile(manifestUrl, "utf8"));
 
 test("verifies the checked-in passive field-authority manifest", async () => {
   assert.deepEqual(await verifyFieldAuthorityManifest({ rootDirectory: repositoryRoot }), {
-    fieldCount: 854,
-    profileCount: 69,
-    targetCount: 46,
+    fieldCount: 974,
+    profileCount: 73,
+    targetCount: 47,
   });
 });
 
@@ -31,6 +31,15 @@ test("rejects a missing recursive C2B passive field classification", async () =>
 test("rejects an incomplete C2B passive consumer classification", async () => {
   const manifest = cloneManifest();
   manifest.profiles["governed-runtime-c2b-passive-evidence"].allowedConsumers.pop();
+  await assert.rejects(
+    verifyFieldAuthorityManifest({ manifest, rootDirectory: repositoryRoot }),
+    /incomplete retention or consumer classification/u,
+  );
+});
+
+test("rejects an incomplete C2B v2 passive consumer classification", async () => {
+  const manifest = cloneManifest();
+  manifest.profiles["governed-runtime-c2b-v2-passive-evidence"].allowedConsumers.pop();
   await assert.rejects(
     verifyFieldAuthorityManifest({ manifest, rootDirectory: repositoryRoot }),
     /incomplete retention or consumer classification/u,

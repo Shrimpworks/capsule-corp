@@ -236,11 +236,13 @@ file artifacts. OCI plus gVisor remains an independent candidate and contingency
 backend reports mechanisms, unsupported controls, management channels, recovery behavior, and
 retained validation evidence.
 
-The passive C2B binding reconciles unchanged C1/C2A with one fixed-fixture governed build candidate
-and exact draft-head evidence. It is repository conformance data only: no adapter or backend reads
-it, and it creates no runtime/profile selection or admission path. Its only later eligible consumer
-is a separately authorized composed-profile/owned-guest task after both upstream dependency PRs
-merge and every head, tree, and artifact identity is reverified.
+Immutable C2B v1 reconciles unchanged C1/C2A with one historical fixed-fixture governed build
+candidate. Its v2 successor pins reviewed merged no-guest construction evidence for six artifacts,
+an unadmitted runtime-manifest candidate, and a non-final host preflight while preserving exact
+nulls for unresolved runner/profile/resource/guest/admission state. Both are repository conformance
+data only: no adapter or backend reads them, and they create no runtime/profile selection or
+admission path. Their only later eligible consumer is a separately authorized composed-profile/
+owned-guest task after every v2 archive, manifest, and artifact identity is reverified.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.

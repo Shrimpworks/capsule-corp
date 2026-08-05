@@ -53,10 +53,13 @@ This plan selects work order; it does not admit a runtime, backend, profile, or 
   enforcement, remaining governed review/P0 closures, and separate guest authorization.
 - [C2B fixed-fixture passive reconciliation](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
   is `PASSED` only for its 8,221-byte immutable zero-effect binding. It preserves C1/C2A exactly
-  and binds Deno draft PR #2 head `29b71f06...356e`/tree `172e5755...5514`, experiments draft PR
-  #3 head `e016386c...b334`/tree `cc03aca8...ac34`, the fixed known answers, and six exact artifact
-  identities. The two PRs remain merge dependencies; same-host equality is not independent-builder
-  equality. C2B composed-profile/guest execution and admission remain `BLOCKED`.
+  and binds the historical Deno PR #2 head `29b71f06...356e`/tree `172e5755...5514`, experiments PR
+  #3 head `e016386c...b334`/tree `cc03aca8...ac34`, fixed known answers, and six exact artifact
+  identities. Both PRs later merged; v1 remains unchanged. The separate
+  [v2 successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V2.md) pins reviewed experiments PR
+  #4 and the no-guest artifact closure while preserving null runner/profile/resource/guest/admission
+  fields. Same-host equality is not independent-builder equality. C2B composed-profile/guest
+  execution and admission remain `BLOCKED`.
 - Durable lifecycle Slices E1 through E5 are implemented locally and unwired.
 
 ## Priority 1: completed governance bootstrap

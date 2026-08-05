@@ -66,11 +66,12 @@ transferred to `Shrimpworks/rusty_v8` with its branch, PR, and Actions history i
 builder equality, evidence review, governed release publication, and admission remain open. The
 merged experiments handoff reconstructs the eight exact Linux/arm64 runtime/root identities, and
 the passive C1 fixture freezes their intended JSON-in/JSON-out composition without creating a
-guest. Passive C2A and the versioned C2B fixed-fixture binding now retain the refusing profile and
-exact build candidate without execution. The binding's Deno and experiments draft PRs remain merge
-dependencies; their heads, trees, and artifact identities must be reverified before a separately
-authorized owned-guest task may consume it. Same-host equality is not independent-builder equality.
-C2 remains the first composed execution boundary. P0-1 is a
+guest. Passive C2A and immutable C2B v1 retain the refusing profile and historical build candidate
+without execution. The Deno and experiments dependencies later merged. The distinct C2B v2
+successor pins reviewed capsule-experiments PR #4 and closes six no-guest build identities plus an
+unadmitted manifest candidate; it keeps the host runner non-final and every composed-profile,
+resource, guest-evidence, and admission field null. Same-host equality is not independent-builder
+equality. C2 remains the first separately authorized composed execution boundary. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
@@ -357,9 +358,10 @@ Exit evidence:
   and JSON-payload caps plus per-channel role/binding, length/digest, terminal-status, and commit-
   trailer semantics; continuously drain cap-plus-one and fail instead of resizing, depending on
   EOF, or inferring success from runner exit.
-- Treat the passive C2B binding as immutable input only after its two upstream PRs merge and every
-  bound identity is reverified. Any changed head, tree, evidence record, or artifact creates a new
-  binding identity. Consumption belongs to a separately authorized composed-profile/owned-guest
+- Treat C2B v1 and v2 as immutable inputs. The former dependencies are merged; v2 pins their
+  reviewed no-guest successor evidence without rewriting v1. Reverify every v2 archive, manifest,
+  and artifact identity before use. Any changed head, tree, evidence record, or artifact creates a
+  new binding identity. Consumption belongs to a separately authorized composed-profile/owned-guest
   task and does not itself admit a runtime or profile.
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor

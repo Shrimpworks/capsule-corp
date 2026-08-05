@@ -1,7 +1,7 @@
 # Passive field-authority classification
 
 [`field-authority-manifest.json`](field-authority-manifest.json) is the closed, machine-readable
-development invariant for selected current passive targets. Its 462 entries cover 41 objects:
+development invariant for selected current passive targets. Its 570 entries cover 44 objects:
 
 - the `JobProposal` v0 candidate;
 - `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` v0 candidates;
@@ -13,7 +13,9 @@ development invariant for selected current passive targets. Its 462 entries cove
 - the passive Source Validator request, result, engineering-candidate, and artifact-profile
   records, which have no endpoint or authority effect; and
 - the passive macOS installation I0 profile, role/service/entitlement/signing/bootstrap
-  projections, and update/repair/uninstall transition and retention classifiers.
+  projections, and update/repair/uninstall transition and retention classifiers; and
+- the passive I2B1 installation-root public-key projection plus signed Supervisor bootstrap
+  request and record, including every release/I1/epoch/root/owner/store/retention/replay field.
 
 Each field references one complete classification profile that fixes its origin role,
 validator/resolver, authority effect, approval visibility and source, content/guest-control

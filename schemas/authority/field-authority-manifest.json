@@ -739,6 +739,83 @@
       "binding": "passive-macos-installation-i0-retention-exact-json",
       "unknownBehavior": "reject-passive-fixture"
     },
+    "bootstrap-request-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "trust-coordinator",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-request-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-request-authority": {
+      "authorityClass": "installation-authority",
+      "originRole": "trust-coordinator",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "supervisor-bootstrap-request-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-request-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-record-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "trust-coordinator",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "none",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-record-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-record-authority": {
+      "authorityClass": "installation-authority",
+      "originRole": "trust-coordinator",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "supervisor-bootstrap-record-binding-resolver",
+      "authorityEffect": "changes-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-record-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-record-observation": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "execution-supervisor",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "supervisor-bootstrap-record-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-record-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-release-profile": {
+      "authorityClass": "installation-authority",
+      "originRole": "installation-enrollment",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "supervisor-bootstrap-record-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-record-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
+    "bootstrap-public-key-projection": {
+      "authorityClass": "installation-authority",
+      "originRole": "trust-coordinator",
+      "validator": "supervisor-bootstrap-cose-cbor-verifier",
+      "resolver": "supervisor-bootstrap-request-binding-resolver",
+      "authorityEffect": "narrows-authority",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-supervisor-bootstrap-request-v0-signature",
+      "unknownBehavior": "reject-bootstrap"
+    },
     "macos-installation-i0-retention-output": {
       "authorityClass": "evidence-only-observation",
       "originRole": "passive-fixture-generator",
@@ -3497,6 +3574,551 @@
           "path": "/result",
           "sourceField": "Result",
           "profile": "macos-installation-i0-retention-output"
+        }
+      ]
+    },
+    {
+      "object": "capsule.installation-root-public-key",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/bootstrapauthpassive/types.go",
+        "type": "InstallationRootPublicKey"
+      },
+      "fields": [
+        {
+          "path": "/keyType",
+          "sourceField": "KeyType",
+          "profile": "bootstrap-public-key-projection"
+        },
+        {
+          "path": "/algorithm",
+          "sourceField": "Algorithm",
+          "profile": "bootstrap-public-key-projection"
+        },
+        { "path": "/curve", "sourceField": "Curve", "profile": "bootstrap-public-key-projection" },
+        { "path": "/x", "sourceField": "X", "profile": "bootstrap-public-key-projection" },
+        { "path": "/y", "sourceField": "Y", "profile": "bootstrap-public-key-projection" }
+      ]
+    },
+    {
+      "object": "capsule.supervisor-bootstrap-request",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/bootstrapauthpassive/types.go",
+        "type": "Request"
+      },
+      "fields": [
+        {
+          "path": "/objectType",
+          "sourceField": "ObjectType",
+          "profile": "bootstrap-request-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": "ObjectVersion",
+          "profile": "bootstrap-request-discriminator"
+        },
+        { "path": "/purpose", "sourceField": "Purpose", "profile": "bootstrap-request-authority" },
+        {
+          "path": "/audience",
+          "sourceField": "Audience",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/installationRootPublicKey",
+          "sourceField": "InstallationRootPublicKey",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/signerKeyId",
+          "sourceField": "SignerKeyID",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/signerAuthorizationIdentity",
+          "sourceField": "SignerAuthorizationIdentity",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": "SupervisorID",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/expectedEffectiveUid",
+          "sourceField": "ExpectedEffectiveUID",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/containingReleaseDigest",
+          "sourceField": "ContainingReleaseDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/i1ProfileCandidateDigest",
+          "sourceField": "I1ProfileCandidateDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/componentProfileDigest",
+          "sourceField": "ComponentProfileDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/installationManifestCandidateDigest",
+          "sourceField": "InstallationManifestCandidateDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/trustEpochSequence",
+          "sourceField": "TrustEpochSequence",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/trustEpochCandidateDigest",
+          "sourceField": "TrustEpochCandidateDigest",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/stateRootClass",
+          "sourceField": "StateRootClass",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/stateRootName",
+          "sourceField": "StateRootName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/requestEntryName",
+          "sourceField": "RequestEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/recordEntryName",
+          "sourceField": "RecordEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/ownerLockEntryName",
+          "sourceField": "OwnerLockEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/ownerLockMode",
+          "sourceField": "OwnerLockMode",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/ownerLockLinkCount",
+          "sourceField": "OwnerLockLinkCount",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/ownerLockProfile",
+          "sourceField": "OwnerLockProfile",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeEntryName",
+          "sourceField": "StoreEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeFormat",
+          "sourceField": "StoreFormat",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeProfile",
+          "sourceField": "StoreProfile",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/attemptsEnabled",
+          "sourceField": "AttemptsEnabled",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/fakeBackendCreatesGuest",
+          "sourceField": "FakeBackendCreatesGuest",
+          "profile": "bootstrap-release-profile"
+        },
+        { "path": "/nonce", "sourceField": "Nonce", "profile": "bootstrap-request-authority" },
+        {
+          "path": "/issuedAt",
+          "sourceField": "IssuedAt",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/notBefore",
+          "sourceField": "NotBefore",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/expiresAt",
+          "sourceField": "ExpiresAt",
+          "profile": "bootstrap-request-authority"
+        },
+        {
+          "path": "/replayDisposition",
+          "sourceField": "ReplayDisposition",
+          "profile": "bootstrap-request-authority"
+        }
+      ]
+    },
+    {
+      "object": "capsule.supervisor-bootstrap-record",
+      "version": 0,
+      "definition": {
+        "kind": "go-struct",
+        "path": "internal/protocol/bootstrapauthpassive/types.go",
+        "type": "Record"
+      },
+      "fields": [
+        {
+          "path": "/objectType",
+          "sourceField": "ObjectType",
+          "profile": "bootstrap-record-discriminator"
+        },
+        {
+          "path": "/objectVersion",
+          "sourceField": "ObjectVersion",
+          "profile": "bootstrap-record-discriminator"
+        },
+        { "path": "/purpose", "sourceField": "Purpose", "profile": "bootstrap-record-authority" },
+        { "path": "/audience", "sourceField": "Audience", "profile": "bootstrap-record-authority" },
+        {
+          "path": "/requestPayloadDigest",
+          "sourceField": "RequestPayloadDigest",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestEnvelopeDigest",
+          "sourceField": "RequestEnvelopeDigest",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestEnvelopeLength",
+          "sourceField": "RequestEnvelopeLength",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestNonce",
+          "sourceField": "RequestNonce",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/installationId",
+          "sourceField": "InstallationID",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/installationRootPublicKey",
+          "sourceField": "InstallationRootPublicKey",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/signerKeyId",
+          "sourceField": "SignerKeyID",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/signerAuthorizationIdentity",
+          "sourceField": "SignerAuthorizationIdentity",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/supervisorId",
+          "sourceField": "SupervisorID",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/expectedEffectiveUid",
+          "sourceField": "ExpectedEffectiveUID",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/containingReleaseDigest",
+          "sourceField": "ContainingReleaseDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/i1ProfileCandidateDigest",
+          "sourceField": "I1ProfileCandidateDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/componentProfileDigest",
+          "sourceField": "ComponentProfileDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/installationManifestCandidateDigest",
+          "sourceField": "InstallationManifestCandidateDigest",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/trustEpochSequence",
+          "sourceField": "TrustEpochSequence",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/trustEpochCandidateDigest",
+          "sourceField": "TrustEpochCandidateDigest",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/stateRootClass",
+          "sourceField": "StateRootClass",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/stateRootName",
+          "sourceField": "StateRootName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/stateRootDevice",
+          "sourceField": "StateRootDevice",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/stateRootInode",
+          "sourceField": "StateRootInode",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/stateRootType",
+          "sourceField": "StateRootType",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/stateRootUid",
+          "sourceField": "StateRootUID",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/stateRootMode",
+          "sourceField": "StateRootMode",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockEntryName",
+          "sourceField": "OwnerLockEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/ownerLockDevice",
+          "sourceField": "OwnerLockDevice",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockInode",
+          "sourceField": "OwnerLockInode",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockType",
+          "sourceField": "OwnerLockType",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockUid",
+          "sourceField": "OwnerLockUID",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockMode",
+          "sourceField": "OwnerLockMode",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockLinkCount",
+          "sourceField": "OwnerLockLinkCount",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/ownerLockProfile",
+          "sourceField": "OwnerLockProfile",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeEntryName",
+          "sourceField": "StoreEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeDevice",
+          "sourceField": "StoreDevice",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/storeType",
+          "sourceField": "StoreType",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/storeUid",
+          "sourceField": "StoreUID",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/storeMode",
+          "sourceField": "StoreMode",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/storeLinkCount",
+          "sourceField": "StoreLinkCount",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/storeFormat",
+          "sourceField": "StoreFormat",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/storeProfile",
+          "sourceField": "StoreProfile",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/initialStoreByteLength",
+          "sourceField": "InitialStoreByteLength",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/initialStoreDigest",
+          "sourceField": "InitialStoreDigest",
+          "profile": "bootstrap-record-observation"
+        },
+        {
+          "path": "/requestEntryName",
+          "sourceField": "RequestEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/recordEntryName",
+          "sourceField": "RecordEntryName",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/requestRetentionPolicy",
+          "sourceField": "RequestRetentionPolicy",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/recordRetentionPolicy",
+          "sourceField": "RecordRetentionPolicy",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/installationTransition",
+          "sourceField": "InstallationTransition",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/transition",
+          "sourceField": "Transition",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/finalizedAt",
+          "sourceField": "FinalizedAt",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/attemptsEnabled",
+          "sourceField": "AttemptsEnabled",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/runtimeAdmitted",
+          "sourceField": "RuntimeAdmitted",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/backendAdmitted",
+          "sourceField": "BackendAdmitted",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/guestCreated",
+          "sourceField": "GuestCreated",
+          "profile": "bootstrap-release-profile"
+        },
+        {
+          "path": "/oneUseDisposition",
+          "sourceField": "OneUseDisposition",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/replayDisposition",
+          "sourceField": "ReplayDisposition",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestIssuedAt",
+          "sourceField": "RequestIssuedAt",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestNotBefore",
+          "sourceField": "RequestNotBefore",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestExpiresAt",
+          "sourceField": "RequestExpiresAt",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestReplayDisposition",
+          "sourceField": "RequestReplayDisposition",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestObjectType",
+          "sourceField": "RequestObjectType",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestObjectVersion",
+          "sourceField": "RequestObjectVersion",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestPurpose",
+          "sourceField": "RequestPurpose",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/requestAudience",
+          "sourceField": "RequestAudience",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/issuedAt",
+          "sourceField": "IssuedAt",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/notBefore",
+          "sourceField": "NotBefore",
+          "profile": "bootstrap-record-authority"
+        },
+        {
+          "path": "/expiresAt",
+          "sourceField": "ExpiresAt",
+          "profile": "bootstrap-record-authority"
         }
       ]
     }

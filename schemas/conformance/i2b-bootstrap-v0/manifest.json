@@ -1,0 +1,683 @@
+{
+  "manifestVersion": "capsule.i2b-bootstrap-conformance/v0",
+  "generator": "independent-node-rfc6979-p256",
+  "publicKeyCoseKeyHex": "a5010203262001215820984225585d2285c138033d6140e3cef8b91859704e53c313f8b636ba4f9676492258209734144f46fd19a767a545287c4396b97b69dd38faaea8981adc1a4fed9b401e",
+  "keyIdHex": "aefada573a36d4abac6bbc06b0723eb9737c2ae349e299b83ae1000bfd32401d",
+  "authorizationIdentityHex": "41c5f9f7d86347ce61c7fe98c332abc5cc591380b01f96259c5fd2789cf5b669",
+  "maxima": {
+    "request": {
+      "payload": 861,
+      "protected": 98,
+      "envelope": 1033
+    },
+    "record": {
+      "payload": 1527,
+      "protected": 97,
+      "envelope": 1698
+    }
+  },
+  "effects": {
+    "stateMutations": 0,
+    "keyOperations": 0,
+    "keychainOperations": 0,
+    "ipcEndpoints": 0,
+    "processes": 0,
+    "services": 0,
+    "runtimeOperations": 0,
+    "backendOperations": 0,
+    "guestOperations": 0
+  },
+  "cases": [
+    {
+      "id": "request-ordinary",
+      "object": "request",
+      "fixture": "request/ordinary.cose",
+      "expected": "ACCEPT",
+      "decision": "admit-once",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "request-exact-pending-replay",
+      "object": "request",
+      "fixture": "request/ordinary.cose",
+      "expected": "ACCEPT",
+      "decision": "resume-exact",
+      "trustedNow": 2000000001,
+      "replay": "pending-exact",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "record-ordinary",
+      "object": "record",
+      "fixture": "record/ordinary.cose",
+      "expected": "ACCEPT",
+      "decision": "commit-once",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "record-response-loss",
+      "object": "record",
+      "fixture": "record/ordinary.cose",
+      "expected": "ACCEPT",
+      "decision": "return-retained-envelope",
+      "trustedNow": 2000000101,
+      "replay": "completed-exact",
+      "selfExpected": false,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "request-calculated-maximum",
+      "object": "request",
+      "fixture": "request/calculated-maximum.cose",
+      "expected": "ACCEPT",
+      "decision": "admit-once",
+      "trustedNow": 9007199254740691,
+      "replay": "fresh",
+      "selfExpected": true,
+      "requestVariant": "ordinary"
+    },
+    {
+      "id": "record-calculated-maximum",
+      "object": "record",
+      "fixture": "record/calculated-maximum.cose",
+      "expected": "ACCEPT",
+      "decision": "commit-once",
+      "trustedNow": 9007199254740691,
+      "replay": "fresh",
+      "selfExpected": true,
+      "requestVariant": "maximum"
+    },
+    {
+      "id": "request-wrong-domain",
+      "object": "request",
+      "fixture": "request/request-wrong-domain.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-version",
+      "object": "request",
+      "fixture": "request/request-wrong-version.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-purpose",
+      "object": "request",
+      "fixture": "request/request-wrong-purpose.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-audience",
+      "object": "request",
+      "fixture": "request/request-wrong-audience.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-installation",
+      "object": "request",
+      "fixture": "request/request-wrong-installation.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-epoch-sequence",
+      "object": "request",
+      "fixture": "request/request-wrong-epoch-sequence.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-epoch-digest",
+      "object": "request",
+      "fixture": "request/request-wrong-epoch-digest.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-supervisor",
+      "object": "request",
+      "fixture": "request/request-wrong-supervisor.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-release",
+      "object": "request",
+      "fixture": "request/request-wrong-release.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-root",
+      "object": "request",
+      "fixture": "request/request-wrong-root.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-lock",
+      "object": "request",
+      "fixture": "request/request-wrong-lock.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-store",
+      "object": "request",
+      "fixture": "request/request-wrong-store.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-zero-nonce",
+      "object": "request",
+      "fixture": "request/request-zero-nonce.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-unknown-signer-key",
+      "object": "request",
+      "fixture": "request/request-unknown-signer-key.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-unknown-signer-authorization",
+      "object": "request",
+      "fixture": "request/request-unknown-signer-authorization.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "request-future-time",
+      "object": "request",
+      "fixture": "request/request-future-time.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000050,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "request-stale-time",
+      "object": "request",
+      "fixture": "request/request-stale-time.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000300,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "request-expired-time",
+      "object": "request",
+      "fixture": "request/request-expired-time.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000301,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "request-window-over-300",
+      "object": "request",
+      "fixture": "request/request-window-over-300.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "record-wrong-domain",
+      "object": "record",
+      "fixture": "record/record-wrong-domain.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-version",
+      "object": "record",
+      "fixture": "record/record-wrong-version.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-purpose",
+      "object": "record",
+      "fixture": "record/record-wrong-purpose.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-audience",
+      "object": "record",
+      "fixture": "record/record-wrong-audience.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-installation",
+      "object": "record",
+      "fixture": "record/record-wrong-installation.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-epoch",
+      "object": "record",
+      "fixture": "record/record-wrong-epoch.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-supervisor",
+      "object": "record",
+      "fixture": "record/record-wrong-supervisor.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-release",
+      "object": "record",
+      "fixture": "record/record-wrong-release.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-root",
+      "object": "record",
+      "fixture": "record/record-wrong-root.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-lock",
+      "object": "record",
+      "fixture": "record/record-wrong-lock.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-store",
+      "object": "record",
+      "fixture": "record/record-wrong-store.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-zero-nonce",
+      "object": "record",
+      "fixture": "record/record-zero-nonce.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-unknown-signer-key",
+      "object": "record",
+      "fixture": "record/record-unknown-signer-key.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-unknown-signer-authorization",
+      "object": "record",
+      "fixture": "record/record-unknown-signer-authorization.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "record-request-payload-substitution",
+      "object": "record",
+      "fixture": "record/record-request-payload-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-request-envelope-substitution",
+      "object": "record",
+      "fixture": "record/record-request-envelope-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-request-time-projection",
+      "object": "record",
+      "fixture": "record/record-wrong-request-time-projection.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-request-purpose-projection",
+      "object": "record",
+      "fixture": "record/record-wrong-request-purpose-projection.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-future-time",
+      "object": "record",
+      "fixture": "record/record-future-time.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000150,
+      "replay": "fresh",
+      "selfExpected": true
+    },
+    {
+      "id": "record-stale-time",
+      "object": "record",
+      "fixture": "record/ordinary.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000300,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-expired-time",
+      "object": "record",
+      "fixture": "record/ordinary.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000301,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-reused-nonce",
+      "object": "request",
+      "fixture": "request/ordinary.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "pending-other",
+      "selfExpected": false
+    },
+    {
+      "id": "request-completed-replay",
+      "object": "request",
+      "fixture": "request/ordinary.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "completed-exact",
+      "selfExpected": false
+    },
+    {
+      "id": "record-reused-nonce",
+      "object": "record",
+      "fixture": "record/ordinary.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "completed-other",
+      "selfExpected": false
+    },
+    {
+      "id": "request-noncanonical-cbor",
+      "object": "request",
+      "fixture": "request/request-noncanonical-cbor.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-duplicate-field",
+      "object": "request",
+      "fixture": "request/request-duplicate-field.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-unknown-field",
+      "object": "request",
+      "fixture": "request/request-unknown-field.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-payload-trailing",
+      "object": "request",
+      "fixture": "request/request-payload-trailing.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-cross-object-payload",
+      "object": "request",
+      "fixture": "request/request-cross-object-payload.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-noncanonical-cbor",
+      "object": "record",
+      "fixture": "record/record-noncanonical-cbor.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-duplicate-field",
+      "object": "record",
+      "fixture": "record/record-duplicate-field.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-unknown-field",
+      "object": "record",
+      "fixture": "record/record-unknown-field.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-payload-trailing",
+      "object": "record",
+      "fixture": "record/record-payload-trailing.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-cross-object-payload",
+      "object": "record",
+      "fixture": "record/record-cross-object-payload.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-envelope-substitution",
+      "object": "request",
+      "fixture": "request/request-envelope-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-envelope-trailing",
+      "object": "request",
+      "fixture": "request/request-envelope-trailing.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-wrong-signature-shape",
+      "object": "request",
+      "fixture": "request/request-wrong-signature-shape.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-envelope-substitution",
+      "object": "record",
+      "fixture": "record/record-envelope-substitution.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-envelope-trailing",
+      "object": "record",
+      "fixture": "record/record-envelope-trailing.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-wrong-signature-shape",
+      "object": "record",
+      "fixture": "record/record-wrong-signature-shape.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-envelope-cap-plus-one",
+      "object": "request",
+      "fixture": "request/request-envelope-cap-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-envelope-cap-plus-one",
+      "object": "record",
+      "fixture": "record/record-envelope-cap-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-payload-cap-plus-one",
+      "object": "request",
+      "fixture": "request/request-payload-cap-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-payload-cap-plus-one",
+      "object": "record",
+      "fixture": "record/record-payload-cap-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "request-calculated-maximum-plus-one",
+      "object": "request",
+      "fixture": "request/request-calculated-maximum-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000001,
+      "replay": "fresh",
+      "selfExpected": false
+    },
+    {
+      "id": "record-calculated-maximum-plus-one",
+      "object": "record",
+      "fixture": "record/record-calculated-maximum-plus-one.cose",
+      "expected": "REFUSE",
+      "trustedNow": 2000000101,
+      "replay": "fresh",
+      "selfExpected": false
+    }
+  ]
+}

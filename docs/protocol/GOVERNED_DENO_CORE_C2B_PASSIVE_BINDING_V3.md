@@ -142,3 +142,9 @@ Fixed-owned-guest eligibility remains `BLOCKED` on four exact steps:
 4. obtain separate owned-disposable-guest authorization naming that new profile digest.
 
 V3 authorizes none of those actions.
+
+The later [host-runner source contract v1](GOVERNED_DENO_CORE_C2B_HOST_RUNNER_SOURCE_V1.md) is
+`PASSED` only for dependency-free passive C17 call-plan bytes and local mutation verification. It
+does not fill step 2: the accepted header/current-source dylib are not retained locally, no exact
+ABI runner was compiled, and no final runner bytes or digest exist. V3 remains immutable and fixed-
+owned-guest eligibility remains `BLOCKED`.

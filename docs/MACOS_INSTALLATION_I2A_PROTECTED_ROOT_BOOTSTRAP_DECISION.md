@@ -15,14 +15,14 @@ Evidence or reason: current Apple public interfaces support an embedded on-deman
   the only process with Supervisor-container authority while keeping installation-root signing in
   a separate user-presence-gated role. The closed fault plan preserves every I0/I1/G2 no-create,
   no-guest, and repair-required invariant.
-Remaining work: I1B exact Team-3DDR signed placement, passive object fixtures and wrapper review,
-  separately authorized test-only key/service/container mutations, installed denial/fault
+Remaining work: passive object fixtures and wrapper review, exact Team-3DDR Coordinator/bootstrap
+  profiles, separately authorized test-only key/service/container mutations, installed denial/fault
   evidence, and descriptor-relative fixed-v1 composition remain I2B work. Product-store selection,
   product IPC, update/restore, runtime/backend/guest, and attempt activation remain outside I2A.
 Next action: implement I2B1 passive request/record/observation fixtures and field authority without
   signing, Keychain, service, process, or filesystem effects.
-Parent status: installed I2 protected-root composition is BLOCKED on I1B and the named I2B
-  evidence; macOS installation remains IN_PROGRESS — TRENDING_GOOD.
+Parent status: installed I2 protected-root composition is BLOCKED on the named I2B evidence;
+  macOS installation remains IN_PROGRESS — TRENDING_GOOD.
 ```
 
 Decision: [Proposed ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md).
@@ -75,8 +75,10 @@ Exact proposed identities for the I2B installed fixture are:
 | fixed entries below the state root | `supervisor.owner`, `supervisor.store`, `supervisor.bootstrap-request`, `supervisor.bootstrap-record` |
 | fixed transaction entries | `CapsuleSupervisor.bootstrap-pending` below `Application Support`; `supervisor.state.staging.` plus 64 lowercase request-payload-digest hex characters and `supervisor.state.publish-intent` below `CapsuleSupervisor` |
 
-The visible app may render setup state, invoke its private Coordinator, call `SMAppService.register`,
-and relay fixed progress. It is not a member of the bootstrap App Group or installation-root
+The visible app may render setup state, call `SMAppService.register`, and relay fixed progress. It
+must verify the installed bundle, register the Supervisor, and read back an enabled status before
+invoking its private Coordinator. Approval-required or denied status stops without a key, request,
+root, or store. The app is not a member of the bootstrap App Group or installation-root
 Keychain group, never receives a private-key reference, and cannot supply a path, field override,
 record, or generic bytes-to-sign request. The Coordinator and Supervisor are the only bootstrap
 App Group members. No file, defaults domain, socket, key, or durable authority state is placed in
@@ -85,7 +87,9 @@ metadata there; group membership is retained as a real residual IPC, shared-cont
 potential Keychain-group capability and must pass the negative I2B corpus.
 
 The Coordinator executable remains embedded for later explicit trust ceremonies, but its process
-is on-demand and exits after a bounded request. It is not an `SMAppService`, login item, permanent
+is on-demand and exits after a bounded request. Because it needs the interactive user's Keychain
+and LocalAuthentication services, I2B must test `JoinExistingSession=true`; the documented
+`false` default is not assumed to work. It is not an `SMAppService`, login item, permanent
 agent, privileged helper, root service, network client, updater, replacer, or general signing
 oracle. Its private installation-root key is nonexportable where the admitted Security/Secure
 Enclave profile supports the selected algorithm, and every request/record signature requires
@@ -121,8 +125,12 @@ exact Capsule bundle/profile/container result. See Apple's
 [`SMAppService.register()` documentation](https://developer.apple.com/documentation/servicemanagement/smappservice/register%28%29),
 [App Sandbox file-access documentation](https://developer.apple.com/documentation/security/accessing-files-from-the-macos-app-sandbox),
 [App Groups entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups),
-[XPC peer-requirement API](https://developer.apple.com/documentation/xpc/xpc_connection_set_peer_requirement),
+[XPC code-signing-requirement API](https://developer.apple.com/documentation/foundation/nsxpcconnection/setcodesigningrequirement%28_%3A%29),
 and [launch-constraint guide](https://developer.apple.com/documentation/security/applying-launch-environment-and-library-constraints).
+
+The exact distinction between documented substrate and installed evidence, including the
+App-Group residual authority and stale-Coordinator Keychain limit, is retained in the
+[post-I1B platform research](MACOS_INSTALLATION_PLATFORM_RESEARCH.md).
 
 ## Closed bootstrap messages
 

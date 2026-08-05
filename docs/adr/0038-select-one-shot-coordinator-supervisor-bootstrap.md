@@ -28,6 +28,33 @@ exact Capsule composition still requires Apple-signed installed evidence.
 
 ## Proposed decision
 
+### Platform-research reconciliation
+
+The post-I1B
+[Apple-platform semantics research](../MACOS_INSTALLATION_PLATFORM_RESEARCH.md) is `PASSED` in its
+research scope; this ADR remains Proposed and installed I2B remains `BLOCKED`. The visible app
+must first verify the installed bundle, register the Supervisor, and read back an enabled
+`SMAppService` status. If approval is required or denied, it stops without invoking the
+Coordinator or creating a key, request, root, or store. Only after the Supervisor is enabled may
+the app invoke the Coordinator.
+
+The Coordinator needs the interactive user's Keychain and LocalAuthentication services. Its I2B
+candidate therefore tests an embedded XPC service with `JoinExistingSession=true`; the documented
+`false` default is not assumed to work. Peer authentication must use the public
+`NSXPCConnection`/`NSXPCListener` code-signing-requirement APIs available from macOS 13, or the C
+`xpc_connection_set_peer_code_signing_requirement` API available from macOS 12. The unrelated
+typed `xpc_connection_set_peer_requirement` API available only from macOS 26 is not the candidate
+floor.
+
+The bootstrap App Group is the narrow supported direct Coordinator-to-Supervisor route found, but
+the members' shared-container, preferences, IPC, and potential Keychain namespaces cannot be
+structurally removed. They remain residual authority whose Capsule-created contents must be
+tested empty. An older Coordinator with the same admitted Keychain access-group entitlement is
+also not revoked by Keychain policy merely because its release or CDHash is stale. The current
+Supervisor peer requirement can refuse that process, and missing or changed key/ledger state can
+fail to repair-required, but complete stale-signer fencing remains an installed I2B stop
+condition.
+
 ### Authority and process placement
 
 Add one separately signed Trust Coordinator XPC service at
@@ -160,8 +187,8 @@ fenced without authority recovery.
   a new version rather than mutate those known answers.
 - The design keeps the installation-root private key outside the visible app, daemon, Supervisor,
   updater, and replacer while avoiding a permanent agent or privileged helper.
-- Installed I2 remains `BLOCKED` on completed I1B, exact Team-3DDR profiles, passive object/field-
-  authority fixtures, separately authorized test-only signing/Keychain/App Group/SMAppService
+- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, passive
+  object/field-authority fixtures, separately authorized test-only signing/Keychain/App Group/SMAppService
   mutations, same-user/stale/debug/session/update evidence, and descriptor-relative G2 composition.
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.

@@ -124,7 +124,9 @@ those apply. Where it is specific, the specifics here win for this repository.
 ## Security-adjacent Go hygiene
 
 These are code-quality rules, not new security policy — `docs/security/THREAT_MODEL.md` and
-`AGENTS.md` remain the authority on the latter.
+`AGENTS.md` remain the authority on the latter. See
+`docs/security/SECURE_CODING_STANDARDS.md` for the cross-language version of these principles
+shared with the JavaScript/TypeScript and Rust codebases.
 
 - Never build a filesystem path from untrusted input without validation (gosec `G304`). Where a
   path is provably repo-controlled (test fixtures), say so in the surrounding comment, matching the

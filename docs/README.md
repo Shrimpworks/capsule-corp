@@ -31,6 +31,11 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     — canonical Team-ID decision, environment/component matrices, safe setup and verification,
     storage/rotation policy, redacted inventory, and Dylan's next actions
 
+For live per-item status, see the
+[current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs
+below are a reading guide to the underlying decision and evidence documents, not a status
+restatement.
+
 The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and
 the exact pre-user-byte branch point are recorded in
@@ -116,11 +121,19 @@ internal-object candidates are verified separately and are not activated target 
 blocking evidence and contract decisions determine honest semantics before a coordinated
 schema/type/example/API replacement. See [Schema status](../schemas/README.md).
 
-## Go engineering references
+## Engineering and security-coding references
 
+- [Secure coding standards](security/SECURE_CODING_STANDARDS.md) — cross-language engineering
+  practice (closed-world validation, bounded parsing, no ambient authority, provenance over shape,
+  dependency supply chain) that every language in this repository follows; a companion to
+  `AGENTS.md` and the [threat model](security/THREAT_MODEL.md), not a replacement.
 - [Go engineering standards](GO_ENGINEERING_STANDARDS.md) — naming, structure, error handling,
-  testing, and lint hygiene for Go code in this repository; a companion to `AGENTS.md`, not a
-  replacement.
+  testing, and lint hygiene for Go code in this repository.
+- [JavaScript/TypeScript engineering standards](JAVASCRIPT_TYPESCRIPT_ENGINEERING_STANDARDS.md) —
+  the same bar for `packages/*` and `scripts/*`, including the provenance/immutability pattern used
+  throughout the protocol package.
+- [Rust engineering standards](RUST_ENGINEERING_STANDARDS.md) — the bar for the Rust Source
+  Validator artifacts under `artifacts/mjs-source-validator-*`.
 - [Capsule domain primer](CAPSULE_DOMAIN_PRIMER.md) — fast-orientation vocabulary and Go package
   map for a contributor about to write or review Go code here.
 

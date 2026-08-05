@@ -4,32 +4,14 @@ The roadmap is ordered by uncertainty and risk reduction rather than feature cou
 spikes may be built outside the final product shape. Their retained evidence—not prototype code
 quality—is the deliverable.
 
-The concise current ordering and resource decisions are in the
-[Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
-All labels below follow the [canonical work status language](STATUS_LANGUAGE.md). Archive F2 is
-`PASSED` for both the passive missing-lifecycle representation and the exact stateful local
-migration/full-verifier scope; F3's first immutable-segment activation and F4A's read-only retained
-lookup are also `PASSED`. F4B is `BLOCKED` on the retained
-[effect-history representation](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md). Owner-lock G2 is `PASSED` for its
-retained local mechanic, while I1B's exact development-signed disabled composition and I2A's
-protected-root owner/contract decision are `PASSED`. G3/I2B is `BLOCKED` pending its additional
-Coordinator/bootstrap identifiers and profiles, passive signed-object fixtures, installed
-container/handoff evidence, and descriptor-relative store-open composition. ADR-0034's M1 bytes,
-Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
-their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
-R1 passive v1 contracts/fixtures and R2 unsigned role-specific construction are `PASSED`. The
-exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) is `PASSED` and retained with
-Team `3DDR84M4JS`, R2 byte identities, exact profiles, signed installation placement, private-XPC
-reachability, refusal/cleanup matrices, and credential boundaries. The product Source Validator and
-downstream S1/M2 remain `BLOCKED` on R4 confinement/resource/residue evidence and sequential daemon
-then Broker consumers.
-Conditional Source Preparer blocker work remains a later optional track and is no longer on the
-first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker and the
-fork-native bundle reproduction are now closed in their bounded scopes. The passive C1 composition
-contract also passes without effects. Evidence review, governed release publication, C2
-runtime/libkrun guest composition, and runtime/profile admission remain later work. Guest
-composition requires explicit owned-guest authorization. Installed
-signing/distribution and independent-builder matrices remain separate evidence lanes.
+Live per-item status — Archive F2-F4B, owner-lock G2/G3, ADR-0034-0036 Source Validator R0-R4,
+governed `deno_core`, macOS installation (including I1B), and the rest — is tracked in the
+[current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard), the single
+current-status source; this roadmap defines phase order and exit evidence and does not restate live
+item status. The
+[Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md) adds
+the separate evidence-class breakdown (selected design vs. implemented mechanics vs. experiment
+evidence vs. product admission) for the latest task group.
 
 Installation packaging now has its own staged
 [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). The current

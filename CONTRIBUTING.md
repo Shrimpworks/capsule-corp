@@ -9,8 +9,12 @@ between requested authority and granted authority.
 2. Read the [architecture](docs/ARCHITECTURE.md).
 3. Read the [threat model](docs/security/THREAT_MODEL.md).
 4. Check the existing [architecture decisions](docs/adr/README.md).
-5. For Go changes, read the [Go engineering standards](docs/GO_ENGINEERING_STANDARDS.md) and the
-   [Capsule domain primer](docs/CAPSULE_DOMAIN_PRIMER.md).
+5. Read the [secure coding standards](docs/security/SECURE_CODING_STANDARDS.md) — cross-language
+   practice that applies regardless of which language you're changing.
+6. For Go changes, read the [Go engineering standards](docs/GO_ENGINEERING_STANDARDS.md) and the
+   [Capsule domain primer](docs/CAPSULE_DOMAIN_PRIMER.md). For JavaScript/TypeScript changes, read
+   the [JS/TS engineering standards](docs/JAVASCRIPT_TYPESCRIPT_ENGINEERING_STANDARDS.md). For Rust
+   changes, read the [Rust engineering standards](docs/RUST_ENGINEERING_STANDARDS.md).
 
 ## Development workflow
 

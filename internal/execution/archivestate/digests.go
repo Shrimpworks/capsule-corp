@@ -17,6 +17,7 @@ type ArchiveIndexDigest [digestBytes]byte
 type ArchiveDescriptorSetDigest [digestBytes]byte
 type ArchiveCombinedIndexDigest [digestBytes]byte
 type ArchiveEffectSeedDigest [digestBytes]byte
+type EffectTombstoneSetDigest [digestBytes]byte
 
 type digestEncoder struct{ hash hash.Hash }
 
@@ -89,4 +90,33 @@ func DigestRecord(kind RecordKind, exactBytes []byte) (ArchiveRecordDigest, erro
 	encoder.text(string(kind))
 	encoder.bytes(exactBytes)
 	return digestSum[ArchiveRecordDigest](encoder), nil
+}
+
+// DigestEffectTombstoneSet binds the complete sorted Supervisor-owned effect
+// issuance ledger. The ledger is an identity/non-reuse source, not an effect
+// transcript and not proof that an issued effect was applied.
+func DigestEffectTombstoneSet(entries []EffectIndexEntry) (EffectTombstoneSetDigest, error) {
+	view := ArchiveIndexesView{
+		Scope:         ArchiveIndexScopeRetainedGlobal,
+		Registrations: []RegistrationIndexEntry{}, Approvals: []ApprovalIndexEntry{},
+		Attempts: []AttemptIndexEntry{}, Nonces: []NonceIndexEntry{},
+		Effects: append([]EffectIndexEntry{}, entries...), Instances: []InstanceIndexEntry{},
+		ApprovalReplay: []ApprovalReplayIndexEntry{}, AttemptReplay: []AttemptReplayIndexEntry{},
+	}
+	indexes, err := NewArchiveIndexes(view)
+	if err != nil {
+		return EffectTombstoneSetDigest{}, err
+	}
+	encoder := newDigestEncoder("capsule.supervisor.effect-tombstone-set.v0")
+	encoder.uint64(uint64(len(entries)))
+	for _, entry := range indexes.View().Effects {
+		encoder.bytes(entry.EffectID[:])
+		encoder.bytes(entry.AttemptID[:])
+		encoder.uint64(uint64(entry.OperationSequence))
+		encoder.text(string(entry.Operation))
+		encoder.uint64(uint64(entry.IssuanceSnapshotGeneration))
+		encoder.boolean(entry.VisibleV1Seed)
+		encodeRecordLocation(encoder, entry.AttemptLocation)
+	}
+	return digestSum[EffectTombstoneSetDigest](encoder), nil
 }

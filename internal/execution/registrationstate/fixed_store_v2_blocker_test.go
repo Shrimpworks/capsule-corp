@@ -1,12 +1,8 @@
 package registrationstate
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"path/filepath"
-	"sort"
-	"strings"
 	"testing"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
@@ -15,105 +11,62 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// TestFixedStoreV2F4BHistoricalEffectTombstoneCannotSatisfyF4AReconstruction
-// retains the exact F4B stop witness. ADR-0031 requires the visible v1 effect
-// seed and every v2-issued effect tombstone to survive when a later lifecycle
-// operation replaces the record's current EffectID. F4A's full verifier,
-// however, reconstructs exactly one effect from that current field. A closed,
-// sorted two-entry ledger is therefore rejected before lookup can follow it.
-func TestFixedStoreV2F4BHistoricalEffectTombstoneCannotSatisfyF4AReconstruction(t *testing.T) {
-	state, template := stateAndLifecycleRecord(t)
-	current := lifecycleRecordForV2State(t, state, template, lifecyclestate.StateDestroyConfirmed)
-	currentView := current.View()
-	currentView.RecordVersion++
-	currentView.OperationSequence = 2
-	currentView.EffectID = effectIDForF4BBlocker(t, 0x22)
-	current, err := lifecyclestate.NewRecord(currentView, state.TimeHighWaterUnixSeconds)
-	if err != nil {
-		t.Fatalf("construct current post-v2 lifecycle: %v", err)
-	}
-
-	source := loadedV1State{
-		SourceFormatVersion: SupervisorStoreFormatV0,
-		State:               state,
-		LifecycleSetDigest:  lifecycleSetDigest([]lifecyclestate.Record{current}),
-		Lifecycles:          []lifecyclestate.Record{current},
-	}
-	envelope, err := buildEnvelopeV2(source)
-	if err != nil {
-		t.Fatalf("build closed v2 witness: %v", err)
-	}
-	currentIndexes, err := archiveIndexesFromDisk(envelope.Indexes)
+// TestFixedStoreV2F4BIndependentTombstoneSourceResolvesTheF4ABlocker retains
+// the former stop witness as a positive correction oracle. A visible-v1 seed
+// remains an immutable historical tombstone after a v2 intent replaces the
+// lifecycle record's current effect; reconstruction reads both from the
+// independent collection without inventing a historical lifecycle record.
+func TestFixedStoreV2F4BIndependentTombstoneSourceResolvesTheF4ABlocker(t *testing.T) {
+	harness := newLifecycleTransactionHarness(t, 1)
+	record, _, err := harness.store.EnsureLifecycle(context.Background(), harness.attemptIDs[0], harness.backend)
 	if err != nil {
 		t.Fatal(err)
 	}
-	view := currentIndexes.View()
-	if len(view.Effects) != 1 {
-		t.Fatalf("current lifecycle reconstructed %d effects, want 1", len(view.Effects))
-	}
-
-	// This is the required history after a visible-v1 seed was replaced by a
-	// newly issued v2 destroy intent. Both entries are valid tombstone values;
-	// only the newer one can equal the lifecycle record's current effect field.
-	historical := view.Effects[0]
-	historical.EffectID = effectIDForF4BBlocker(t, 0x11)
-	historical.OperationSequence = 1
-	historical.Operation = lifecyclestate.OperationPrepare
-	historical.VisibleV1Seed = true
-	view.Effects[0].VisibleV1Seed = false
-	view.Effects = append(view.Effects, historical)
-	sort.Slice(view.Effects, func(left, right int) bool {
-		return bytes.Compare(view.Effects[left].EffectID[:], view.Effects[right].EffectID[:]) < 0
-	})
-	retainedLedger, err := archivestate.NewArchiveIndexes(view)
-	if err != nil {
-		t.Fatalf("closed append-only effect ledger is not passively representable: %v", err)
-	}
-	if len(retainedLedger.View().Effects) != 2 {
-		t.Fatal("append-only effect ledger lost its historical tombstone")
-	}
-
-	envelope.Indexes = archiveIndexesToDisk(retainedLedger)
-	envelope.IndexDigests = retainedLedger.Digests()
-	envelope.CombinedIndexDigest = retainedLedger.CombinedDigest()
-	envelope.HotCounts.Effects = 2
-	envelope.TotalCounts.Effects = 2
-	seedDigest, err := archivestate.DigestVisibleV1EffectSeed([]lifecyclestate.EffectID{historical.EffectID})
+	seedPermit, err := harness.store.BeginEffect(context.Background(), harness.attemptIDs[0], record.View().RecordVersion, lifecyclestate.OperationPrepare)
 	if err != nil {
 		t.Fatal(err)
 	}
-	envelope.VisibleV1EffectSeedCount = 1
-	envelope.VisibleV1EffectSeedDigest = seedDigest
-
-	path := filepath.Join(t.TempDir(), "supervisor-state.json")
-	writeV2Envelope(t, path, envelope)
-	before := mustReadFile(t, path)
-	if _, err := OpenFixedFileStoreV2(path); err == nil || !strings.Contains(err.Error(), "reconstructed index mismatch") {
-		t.Fatalf("F4A verifier accepted or misclassified retained historical effect ledger: %v", err)
-	}
-	if after := mustReadFile(t, path); !bytes.Equal(after, before) {
-		t.Fatal("F4A refusal rewrote the blocked v2 witness")
-	}
-
-	if current.View().EffectID == historical.EffectID {
-		t.Fatal("historical tombstone unexpectedly equals the current lifecycle effect")
-	}
-}
-
-func effectIDForF4BBlocker(t *testing.T, marker byte) lifecyclestate.EffectID {
-	t.Helper()
-	domain, err := lifecyclestate.NewDomainIdentifier(
-		lifecyclestate.DomainEffectID,
-		bytes.Repeat([]byte{marker}, 16),
+	prepareResult, err := lifecyclestate.NewEffectResult(
+		lifecyclestate.OperationPrepare, lifecyclestate.EffectResultApplied, lifecyclestate.BackendInstanceIdentity{},
 	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	identifier, err := lifecyclestate.NewEffectID(domain)
+	record, err = harness.store.ConfirmEffect(context.Background(), seedPermit, prepareResult)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return identifier
+	if _, err := MigrateFixedFileStoreV1ToV2(context.Background(), harness.path, V1ToV2MigrationOptions{Lock: &migrationLockStub{held: true}}); err != nil {
+		t.Fatal(err)
+	}
+	store, err := OpenFixedFileStoreV2WithOptions(harness.path, FixedFileStoreV1Options{
+		EffectIDs: &lifecycleEffectIDSequence{next: 201}, OwnerSessionID: harness.owner,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	createPermit, err := store.BeginEffect(context.Background(), harness.attemptIDs[0], record.View().RecordVersion, lifecyclestate.OperationCreate)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reopened, err := OpenFixedFileStoreV2(harness.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	historical, err := reopened.ResolveEffect(context.Background(), seedPermit.View().EffectID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if historical.Classification != RetainedEffectSupersededByCurrent || historical.LifecyclePresent || !historical.VisibleV1Seed {
+		t.Fatalf("visible-v1 history was invented or lost: %#v", historical)
+	}
+	current, err := reopened.ResolveEffect(context.Background(), createPermit.View().EffectID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if current.Classification != RetainedEffectCurrent || !current.LifecyclePresent || current.VisibleV1Seed {
+		t.Fatalf("current v2 effect misclassified: %#v", current)
+	}
 }
 
 // TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection retains the
@@ -150,7 +103,7 @@ func TestFixedStoreV1AttemptWithoutLifecycleHasExactV2Projection(t *testing.T) {
 	if err != nil {
 		t.Fatalf("valid v1 reopen: %v", err)
 	}
-	snapshot, err := store.snapshot(context.Background())
+	snapshot, err := store.snapshotV1(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}

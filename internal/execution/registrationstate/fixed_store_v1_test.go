@@ -85,7 +85,7 @@ func TestFixedStoreV0ToV1MigrationAndDowngradeRefusal(t *testing.T) {
 	if lock.checks != 3 {
 		t.Fatalf("migration lock checks = %d, want 3", lock.checks)
 	}
-	snapshot, err := migrated.snapshot(context.Background())
+	snapshot, err := migrated.snapshotV1(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -101,7 +101,7 @@ func TestFixedStoreV0ToV1MigrationAndDowngradeRefusal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("reopen v1: %v", err)
 	}
-	reopenedSnapshot, _ := reopened.snapshot(context.Background())
+	reopenedSnapshot, _ := reopened.snapshotV1(context.Background())
 	if !authorityStatesEqual(snapshot.State, reopenedSnapshot.State) ||
 		reopenedSnapshot.LifecycleSetDigest != snapshot.LifecycleSetDigest {
 		t.Fatal("reopen changed migrated state")
@@ -241,14 +241,14 @@ func TestFixedStoreV1ReopenValidatesLifecycleCrossLinksAndCopies(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open valid lifecycle v1: %v", err)
 	}
-	first, _ := store.snapshot(context.Background())
+	first, _ := store.snapshotV1(context.Background())
 	if len(first.Lifecycles) != 1 || first.LifecycleSetDigest != lifecycleSetDigest(first.Lifecycles) {
 		t.Fatal("valid lifecycle collection did not round trip")
 	}
 	view := first.Lifecycles[0].View()
 	bindingView := view.Bindings.View()
 	bindingView.ProfileReviewAttestationDigests[0][0] ^= 0xff
-	second, _ := store.snapshot(context.Background())
+	second, _ := store.snapshotV1(context.Background())
 	if second.Lifecycles[0].Bindings().View().ProfileReviewAttestationDigests[0] ==
 		bindingView.ProfileReviewAttestationDigests[0] {
 		t.Fatal("snapshot lifecycle projection aliased caller-owned bytes")

@@ -12,6 +12,7 @@ import (
 	"sort"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/archivestate"
 	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
@@ -175,7 +176,7 @@ func (store *FixedFileStoreV1) AdvanceLifecycleTime(
 	}
 	return store.commitLifecycleLocked(
 		ctx, "", "", "", false,
-		func(state *installationState, _ *[]lifecyclestate.Record) error {
+		func(state *installationState, _ *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			state.TimeHighWaterUnixSeconds = observed
 			return nil
 		},
@@ -252,7 +253,7 @@ func (store *FixedFileStoreV1) EnsureLifecycle(
 		FaultLifecycleEnsureIndeterminatePreState,
 		FaultLifecycleEnsureIndeterminate,
 		false,
-		func(_ *installationState, records *[]lifecyclestate.Record) error {
+		func(_ *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			if findLifecycle(*records, attemptID) >= 0 {
 				return errNoStoreMutation
 			}
@@ -314,6 +315,14 @@ func (store *FixedFileStoreV1) BeginEffect(
 			return permit, nil
 		}
 	}
+	if durableIntentSameEffect(view, expected, operation) {
+		permit, err := store.permitForView(view)
+		if err != nil {
+			return lifecyclestate.EffectPermit{}, err
+		}
+		store.issuedPermits[attemptID] = permit
+		return permit, nil
+	}
 	if retryableSameEffect(view, expected, operation) {
 		permit, err := store.permitForView(view)
 		if err != nil {
@@ -336,6 +345,9 @@ func (store *FixedFileStoreV1) BeginEffect(
 		if record.View().EffectID == effectID {
 			return lifecyclestate.EffectPermit{}, classified(ClassificationLocalFailure, "effect-id-collision")
 		}
+	}
+	if _, exists := store.retainedEffects[effectID]; exists {
+		return lifecyclestate.EffectPermit{}, classified(ClassificationLocalFailure, "effect-id-collision")
 	}
 	if uint64(view.OperationSequence) >= v0candidate.MaxSafeInteger {
 		return lifecyclestate.EffectPermit{}, classified(ClassificationCapacity, "operation-sequence")
@@ -362,12 +374,38 @@ func (store *FixedFileStoreV1) BeginEffect(
 		FaultLifecycleIntentIndeterminatePreState,
 		FaultLifecycleIntentIndeterminate,
 		false,
-		func(_ *installationState, records *[]lifecyclestate.Record) error {
+		func(_ *installationState, records *[]lifecyclestate.Record, tombstones *[]archivestate.EffectIndexEntry) error {
 			position := findLifecycle(*records, attemptID)
 			if position < 0 || (*records)[position].View().RecordVersion != expected {
 				return ErrLifecycleVersionConflict
 			}
 			(*records)[position] = updated
+			if tombstones != nil {
+				attempts := append([]approvalattempt.ExecutionAttempt(nil), store.state.Attempts...)
+				sort.Slice(attempts, func(left, right int) bool {
+					return bytes.Compare(attempts[left].AttemptID[:], attempts[right].AttemptID[:]) < 0
+				})
+				attemptPosition := sort.Search(len(attempts), func(index int) bool {
+					return bytes.Compare(attempts[index].AttemptID[:], attemptID[:]) >= 0
+				})
+				if attemptPosition == len(attempts) || attempts[attemptPosition].AttemptID != attemptID {
+					return ErrLifecycleBindingMismatch
+				}
+				// attemptPosition is bounded by the already validated 4,096-entry
+				// attempt collection, so this positive ordinal cannot narrow or wrap.
+				location, locationErr := archivestate.NewHotRecordLocation(archivestate.RecordAttempt, v0candidate.PositiveUInt53(attemptPosition+1)) //nolint:gosec
+				if locationErr != nil {
+					return locationErr
+				}
+				*tombstones = append(*tombstones, archivestate.EffectIndexEntry{
+					EffectID: effectID, AttemptID: attemptID, OperationSequence: updated.View().OperationSequence,
+					Operation: operation, IssuanceSnapshotGeneration: updated.View().SnapshotGeneration,
+					VisibleV1Seed: false, AttemptLocation: location,
+				})
+				sort.Slice(*tombstones, func(left, right int) bool {
+					return bytes.Compare((*tombstones)[left].EffectID[:], (*tombstones)[right].EffectID[:]) < 0
+				})
+			}
 			return nil
 		},
 	)
@@ -435,7 +473,7 @@ func (store *FixedFileStoreV1) ConfirmEffect(
 		FaultLifecycleAfterEffectIndeterminatePreState,
 		FaultLifecycleAfterEffectIndeterminate,
 		true,
-		func(_ *installationState, records *[]lifecyclestate.Record) error {
+		func(_ *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			current := findLifecycle(*records, permit.View().AttemptID)
 			if current < 0 || (*records)[current].View().RecordVersion != permit.View().RecordVersion {
 				return ErrLifecycleVersionConflict
@@ -489,7 +527,7 @@ func (store *FixedFileStoreV1) RecordIndeterminate(
 		FaultLifecycleRecordIndeterminatePreState,
 		FaultLifecycleRecordIndeterminateCommitIndeterminate,
 		true,
-		func(_ *installationState, records *[]lifecyclestate.Record) error {
+		func(_ *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			position := findLifecycle(*records, permit.View().AttemptID)
 			if position < 0 || (*records)[position].View().RecordVersion != permit.View().RecordVersion {
 				return ErrLifecycleVersionConflict
@@ -557,7 +595,7 @@ func (store *FixedFileStoreV1) BeginReconciliation(
 		FaultLifecycleReconciliationEligibilityIndeterminatePreState,
 		FaultLifecycleReconciliationEligibilityIndeterminate,
 		false,
-		func(_ *installationState, records *[]lifecyclestate.Record) error {
+		func(_ *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			current := findLifecycle(*records, attemptID)
 			if current < 0 || (*records)[current].View().RecordVersion != expected {
 				return ErrLifecycleVersionConflict
@@ -631,7 +669,7 @@ func (store *FixedFileStoreV1) CompleteReconciliation(
 		FaultLifecycleReconciliationResultIndeterminatePreState,
 		FaultLifecycleReconciliationResultIndeterminate,
 		true,
-		func(state *installationState, records *[]lifecyclestate.Record) error {
+		func(state *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			current := findLifecycle(*records, attemptID)
 			if current < 0 || (*records)[current].View().RecordVersion != eligibleRecord.View().RecordVersion {
 				return ErrLifecycleVersionConflict
@@ -697,7 +735,7 @@ func (store *FixedFileStoreV1) RecoveryAttemptIDs(ctx context.Context) ([]approv
 	return append([]approvalattempt.AttemptID(nil), result...), nil
 }
 
-type lifecycleMutation func(*installationState, *[]lifecyclestate.Record) error
+type lifecycleMutation func(*installationState, *[]lifecyclestate.Record, *[]archivestate.EffectIndexEntry) error
 
 func (store *FixedFileStoreV1) commitLifecycleLocked(
 	ctx context.Context,
@@ -715,11 +753,22 @@ func (store *FixedFileStoreV1) commitLifecycleLocked(
 	}
 	candidateState := cloneState(store.state)
 	candidateRecords := cloneLifecycleRecords(store.lifecycles, store.state.TimeHighWaterUnixSeconds)
-	if err := mutation(&candidateState, &candidateRecords); err != nil {
+	candidateTombstones := cloneEffectTombstones(store.effectTombstones)
+	if err := mutation(&candidateState, &candidateRecords, &candidateTombstones); err != nil {
 		if errors.Is(err, errNoStoreMutation) {
 			return nil
 		}
 		return err
+	}
+	if store.v2Commit != nil {
+		if err := store.v2Commit(ctx, abortPoint, preIndeterminatePoint, postRenamePoint, fenceOnAbort, &candidateState, &candidateRecords, &candidateTombstones); err != nil {
+			return err
+		}
+		store.state = candidateState
+		store.lifecycles = candidateRecords
+		store.lifecycleSetDigest = lifecycleSetDigest(candidateRecords)
+		store.effectTombstones = candidateTombstones
+		return nil
 	}
 	sortLifecycleRecords(candidateRecords)
 	candidateDigest := lifecycleSetDigest(candidateRecords)
@@ -819,6 +868,14 @@ func (store *FixedFileStoreV1) requireReadableLocked() error {
 		return ErrStoreOwnerFenced
 	}
 	if store.ownerRequired {
+		if store.v2Owner != nil {
+			if err := store.v2Owner.CheckHeld(context.Background()); err != nil || store.v2Owner.OwnerSessionID() != store.ownerSessionID {
+				store.ownerFenced = true
+				store.recoveryRequired = true
+				return ErrStoreOwnerFenced
+			}
+			return nil
+		}
 		if store.owner == nil {
 			store.ownerFenced = true
 			store.recoveryRequired = true
@@ -1001,6 +1058,15 @@ func intentState(operation lifecyclestate.Operation) lifecyclestate.LifecycleSta
 	default:
 		return ""
 	}
+}
+
+func durableIntentSameEffect(view lifecyclestate.RecordView, expected lifecyclestate.RecordVersion, operation lifecyclestate.Operation) bool {
+	if view.Operation != operation || view.EffectID.IsZero() || view.EffectStatus != lifecyclestate.EffectIntent ||
+		view.State != intentState(operation) {
+		return false
+	}
+	return view.RecordVersion == expected ||
+		(uint64(expected) < v0candidate.MaxSafeInteger && uint64(expected)+1 == uint64(view.RecordVersion))
 }
 
 func retryableSameEffect(view lifecyclestate.RecordView, expected lifecyclestate.RecordVersion, operation lifecyclestate.Operation) bool {
@@ -1293,7 +1359,7 @@ func (store *FixedFileStoreV1) commitIdentityQuarantineLocked(
 		FaultLifecycleAfterEffectIndeterminatePreState,
 		FaultLifecycleAfterEffectIndeterminate,
 		true,
-		func(state *installationState, records *[]lifecyclestate.Record) error {
+		func(state *installationState, records *[]lifecyclestate.Record, _ *[]archivestate.EffectIndexEntry) error {
 			current := findLifecycle(*records, attemptID)
 			if current != position {
 				return ErrLifecycleVersionConflict

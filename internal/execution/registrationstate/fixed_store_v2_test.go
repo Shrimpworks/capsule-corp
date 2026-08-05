@@ -47,7 +47,7 @@ func TestFixedStoreV1ToV2MigrationAndDowngradeRefusal(t *testing.T) {
 	if lock.checks != 3 {
 		t.Fatalf("owner checks = %d, want 3", lock.checks)
 	}
-	snapshot, err := store.snapshot(context.Background())
+	snapshot, err := store.snapshotV2(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +111,7 @@ func TestFixedStoreV1ToV2MigrationAndDowngradeRefusal(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	reopenedSnapshot, _ := reopened.snapshot(context.Background())
+	reopenedSnapshot, _ := reopened.snapshotV2(context.Background())
 	if !authorityStatesEqual(state, reopenedSnapshot.State) ||
 		reopenedSnapshot.Active.View().Indexes.View().Attempts[0].AttemptID != state.Attempts[0].AttemptID {
 		t.Fatal("v2 read projection aliased caller-owned memory")
@@ -141,7 +141,7 @@ func TestFixedStoreV2MigrationDeterministicSerializationAndDigests(t *testing.T)
 	if err != nil {
 		t.Fatal(err)
 	}
-	snapshot, _ := store.snapshot(context.Background())
+	snapshot, _ := store.snapshotV2(context.Background())
 	view := snapshot.Active.View()
 	if view.VisibleV1EffectSeedCount != 0 ||
 		view.VisibleV1EffectSeedDigest != snapshot.Genesis.SeedDigest() ||
@@ -794,7 +794,7 @@ func mustMigrateV2(t *testing.T, path string) *FixedFileStoreV2 {
 
 func mustV2Snapshot(t *testing.T, store *FixedFileStoreV2) fixedStoreV2Snapshot {
 	t.Helper()
-	snapshot, err := store.snapshot(context.Background())
+	snapshot, err := store.snapshotV2(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}

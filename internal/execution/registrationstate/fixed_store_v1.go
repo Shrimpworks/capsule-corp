@@ -16,6 +16,7 @@ import (
 	"sync"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
+	"capsule.local/capsule/internal/execution/archivestate"
 	"capsule.local/capsule/internal/execution/installationowner"
 	"capsule.local/capsule/internal/execution/lifecyclestate"
 	"capsule.local/capsule/internal/protocol/v0candidate"
@@ -77,9 +78,13 @@ type FixedFileStoreV1 struct {
 	ownerSessionID      lifecyclestate.OwnerSessionID
 	faults              map[LifecycleStoreFault]error
 	issuedPermits       map[approvalattempt.AttemptID]lifecyclestate.EffectPermit
+	effectTombstones    []archivestate.EffectIndexEntry
+	retainedEffects     map[lifecyclestate.EffectID]struct{}
+	v2Commit            func(context.Context, LifecycleStoreFault, LifecycleStoreFault, LifecycleStoreFault, bool, *installationState, *[]lifecyclestate.Record, *[]archivestate.EffectIndexEntry) error
 	recoveryRequired    bool
 	repairRequired      bool
 	owner               installationowner.InstallationOwner
+	v2Owner             ArchiveOwner
 	ownerRequired       bool
 	ownerFenced         bool
 	closed              bool
@@ -253,7 +258,7 @@ func OpenFixedFileStoreV1WithOwner(
 	return store, nil
 }
 
-func (store *FixedFileStoreV1) snapshot(ctx context.Context) (fixedStoreV1Snapshot, error) {
+func (store *FixedFileStoreV1) snapshotV1(ctx context.Context) (fixedStoreV1Snapshot, error) {
 	if err := ctx.Err(); err != nil {
 		return fixedStoreV1Snapshot{}, err
 	}

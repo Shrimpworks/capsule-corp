@@ -18,7 +18,7 @@
     "generate:conformance": "node scripts/generate-contract-conformance-fixtures.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs",
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
-    "test": "pnpm --recursive test && node --test scripts/verify-contract-conformance.test.mjs scripts/verify-field-authority-manifest.test.mjs scripts/verify-governed-deno-core-c1.test.mjs scripts/verify-governed-deno-core-c2a.test.mjs scripts/verify-governed-runtime-release-candidate.test.mjs scripts/verify-macos-i1a.test.mjs scripts/verify-macos-i1b-r3.test.mjs scripts/verify-macos-i2b2.test.mjs scripts/verify-mjs-source-validator-v1.test.mjs scripts/verify-source-validator-r2.test.mjs && pnpm verify:i2b-bootstrap",
+    "test": "pnpm --recursive test && node --test scripts/setup-codex-links.test.mjs scripts/verify-contract-conformance.test.mjs scripts/verify-field-authority-manifest.test.mjs scripts/verify-governed-deno-core-c1.test.mjs scripts/verify-governed-deno-core-c2a.test.mjs scripts/verify-governed-runtime-release-candidate.test.mjs scripts/verify-macos-i1a.test.mjs scripts/verify-macos-i1b-r3.test.mjs scripts/verify-macos-i2b2.test.mjs scripts/verify-mjs-source-validator-v1.test.mjs scripts/verify-source-validator-r2.test.mjs && pnpm verify:i2b-bootstrap",
     "verify:i2b-bootstrap": "node scripts/generate-i2b-bootstrap-conformance.mjs --check",
     "verify:i2b-bootstrap:swift": "node scripts/generate-i2b-bootstrap-conformance.mjs --check && SWIFT_MODULECACHE_PATH=/tmp/capsule-i2b-swift-module-cache CLANG_MODULE_CACHE_PATH=/tmp/capsule-i2b-clang-module-cache swift scripts/verify-i2b-bootstrap-fixtures.swift",
     "verify:adrs": "node scripts/verify-adr-index.mjs",

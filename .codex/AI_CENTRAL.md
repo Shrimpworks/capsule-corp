@@ -38,3 +38,31 @@ The setup command preserves real repo-owned files, repairs stale or broken manag
 links the full reviewed AI Central catalog. That includes Caveman, Cavecrew, Caveman Stats, and
 Hallmark. Source attribution and licenses remain owned by AI Central because these links are local
 and ignored by Git.
+
+## Provenance pin
+
+`AGENTS.md` requires that generic steering or skill guidance never weaken this repository's
+security posture. Nothing verifies that on its own until a commit is pinned: the linker will link
+whatever `SKILL.md`-containing directories it finds under `AI_CENTRAL_HOME`, with no check that the
+content matches a reviewed revision.
+
+After reviewing a linked `ai-central` checkout, record its exact commit:
+
+```sh
+pnpm codex:links -- --record-pin
+```
+
+This writes `.codex/ai-central-pin.json` (a real, tracked file — it travels with the repository and
+its changes are reviewable in `git diff`, unlike the symlinks themselves). Every later `pnpm
+codex:links` run compares the checkout's current commit against that pin:
+
+- No pin recorded yet: linking proceeds with a warning. This is expected before the first
+  `--record-pin`, and is not a substitute for actually running it.
+- Checkout commit matches the pin: linking proceeds silently.
+- Checkout commit differs from the pin: linking refuses (nonzero exit) until the change is reviewed
+  and either accepted (`--record-pin` again) or reverted.
+- `AI_CENTRAL_HOME` is not a git checkout: linking proceeds with a warning, since there is no commit
+  to compare.
+
+This detects a drifted or substituted `ai-central` source directory; it does not vet AI Central's
+own content, and it does not apply retroactively to content already linked before a pin existed.

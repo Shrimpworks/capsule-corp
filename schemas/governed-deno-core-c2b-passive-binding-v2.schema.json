@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:capsule:schema:governed-deno-core-c2b-passive-binding:v2",
+  "title": "GovernedDenoCoreC2bPassiveBinding v2",
+  "description": "Immutable passive successor binding the reviewed C2B no-guest build-only archive closure. It grants no process, runtime, profile, backend, guest, release, publication, consumer, or admission authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "objectType",
+    "schemaVersion",
+    "domain",
+    "identity",
+    "status",
+    "predecessors",
+    "archiveEvidence",
+    "constructedArtifacts",
+    "runtimeManifestCandidate",
+    "hostPreflightHarness",
+    "unresolved",
+    "workStatus",
+    "nextConsumerGate",
+    "effects"
+  ],
+  "properties": {
+    "objectType": { "const": "capsule.governed-deno-core-c2b-passive-binding" },
+    "schemaVersion": { "const": 2 },
+    "domain": { "const": "capsule.governed-deno-core.c2b.passive-binding/v2" },
+    "identity": {
+      "const": "capsule.governed-deno-core-c2b-passive-binding/c1-c2a-no-guest-build-closure-v2"
+    },
+    "status": { "const": "PASSED-passive-no-guest-build-closure-only" },
+    "predecessors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["c1", "c2a", "c2bV1"],
+      "properties": {
+        "c1": { "$ref": "#/$defs/predecessor" },
+        "c2a": { "$ref": "#/$defs/predecessor" },
+        "c2bV1": { "$ref": "#/$defs/predecessor" }
+      }
+    },
+    "archiveEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "pullRequest",
+        "pullRequestState",
+        "mergeCommit",
+        "reviewedHead",
+        "tree",
+        "baselineParent",
+        "retainedRoot",
+        "runtimeBundleCandidate",
+        "artifactClosureReport",
+        "evidenceDigests",
+        "independentPassiveVerification",
+        "authorityEffect"
+      ],
+      "properties": {
+        "repository": { "const": "Shrimpworks/capsule-experiments" },
+        "pullRequest": { "const": 4 },
+        "pullRequestState": { "const": "merged-reviewed" },
+        "mergeCommit": { "const": "50108417ebf1aa45788a4e9a6b4ca6b4448e9972" },
+        "reviewedHead": { "const": "518eea04e1f81d27e61178b7f4ff164b955dea76" },
+        "tree": { "const": "cfe9865998bdd1ec556a0424ed30abdf51bb89d9" },
+        "baselineParent": { "const": "22b9eb2e92d17398e2844ad122e6c28faaf3a678" },
+        "retainedRoot": { "const": "experiments/gate-c-c2b-no-guest-artifact-closure" },
+        "runtimeBundleCandidate": { "$ref": "#/$defs/retainedManifest" },
+        "artifactClosureReport": { "$ref": "#/$defs/retainedManifest" },
+        "evidenceDigests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "sourceRefs",
+            "verification",
+            "mutations",
+            "sbom",
+            "licenses",
+            "unsignedProvenance"
+          ],
+          "properties": {
+            "sourceRefs": { "$ref": "#/$defs/digest" },
+            "verification": { "$ref": "#/$defs/digest" },
+            "mutations": { "$ref": "#/$defs/digest" },
+            "sbom": { "$ref": "#/$defs/digest" },
+            "licenses": { "$ref": "#/$defs/digest" },
+            "unsignedProvenance": { "$ref": "#/$defs/digest" }
+          }
+        },
+        "independentPassiveVerification": { "const": "PASSED" },
+        "authorityEffect": { "const": "records-evidence-only" }
+      }
+    },
+    "constructedArtifacts": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/artifact" }
+    },
+    "runtimeManifestCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "selectedPath", "bytes", "sha256", "canonicalAuthority", "admitted"],
+      "properties": {
+        "role": { "const": "governed-runtime-bundle-manifest-candidate" },
+        "selectedPath": { "const": "manifests/runtime-bundle-candidate.json" },
+        "bytes": { "const": 8845 },
+        "sha256": { "const": "d37c9311cf21e87cf693594ebb6bbf6c29bcb50d13c3f8a5e8334a0f02d30607" },
+        "canonicalAuthority": { "type": "null" },
+        "admitted": { "const": false }
+      }
+    },
+    "hostPreflightHarness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "selectedPath",
+        "mode",
+        "bytes",
+        "sha256",
+        "usage",
+        "finalHostRunnerIdentity",
+        "final",
+        "callsLibkrun",
+        "admitted"
+      ],
+      "properties": {
+        "role": { "const": "host-runner-build-only-preflight" },
+        "selectedPath": { "const": "artifact-pack/macos/capsule-host-runner-preflight" },
+        "mode": { "const": "0755" },
+        "bytes": { "const": 34864 },
+        "sha256": { "const": "4d56480bec2a34cd2d23f83f199e9eb62951ac66e53319ae45991af7b4000922" },
+        "usage": { "const": "build-only-passive-preflight" },
+        "finalHostRunnerIdentity": { "type": "null" },
+        "final": { "const": false },
+        "callsLibkrun": { "const": false },
+        "admitted": { "const": false }
+      }
+    },
+    "unresolved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "refusal",
+        "finalHostRunnerIdentity",
+        "separateFirmwareIdentity",
+        "composedProfileIdentity",
+        "composedProfileDigest",
+        "cpuTimeLimitMs",
+        "hostVmmMemoryLimitBytes",
+        "scratchMaximumBytes",
+        "guestEvidence",
+        "runtimeManifestAdmission",
+        "runtimeProfileAdmission",
+        "backendAdmission"
+      ],
+      "properties": {
+        "refusal": { "const": "required-null-until-exact-retained-evidence-closes-field" },
+        "finalHostRunnerIdentity": { "type": "null" },
+        "separateFirmwareIdentity": { "type": "null" },
+        "composedProfileIdentity": { "type": "null" },
+        "composedProfileDigest": { "type": "null" },
+        "cpuTimeLimitMs": { "type": "null" },
+        "hostVmmMemoryLimitBytes": { "type": "null" },
+        "scratchMaximumBytes": { "type": "null" },
+        "guestEvidence": { "type": "null" },
+        "runtimeManifestAdmission": { "type": "null" },
+        "runtimeProfileAdmission": { "type": "null" },
+        "backendAdmission": { "type": "null" }
+      }
+    },
+    "workStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "noGuestBuildArtifactClosure",
+        "parentGovernedRuntime",
+        "c2bComposedProfileGuestExecution",
+        "runtimeProfileAdmission",
+        "runtime001",
+        "vmm001"
+      ],
+      "properties": {
+        "noGuestBuildArtifactClosure": { "const": "PASSED" },
+        "parentGovernedRuntime": { "const": "IN_PROGRESS — TRENDING_GOOD" },
+        "c2bComposedProfileGuestExecution": { "const": "BLOCKED" },
+        "runtimeProfileAdmission": { "const": "BLOCKED" },
+        "runtime001": { "const": "unsupported" },
+        "vmm001": { "const": "unsupported" }
+      }
+    },
+    "nextConsumerGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "consumer", "requirements", "implemented", "admissionEffect"],
+      "properties": {
+        "state": { "const": "BLOCKED" },
+        "consumer": { "const": "separately-authorized-composed-profile-owned-guest-task" },
+        "requirements": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "prefixItems": [
+            { "const": "final-host-runner-identity-and-lifecycle-evidence" },
+            { "const": "separate-firmware-role-resolution" },
+            { "const": "supported-resource-mechanisms-and-values" },
+            { "const": "accepted-composed-profile-identity-and-digest" },
+            { "const": "separate-owned-disposable-guest-authorization" }
+          ],
+          "items": false
+        },
+        "implemented": { "const": false },
+        "admissionEffect": { "const": false }
+      }
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process",
+        "runtime",
+        "profile",
+        "consumer",
+        "adapter",
+        "backend",
+        "vm",
+        "guest",
+        "credential",
+        "signing",
+        "publication",
+        "release",
+        "admission"
+      ],
+      "properties": {
+        "process": { "const": false },
+        "runtime": { "const": false },
+        "profile": { "const": false },
+        "consumer": { "const": false },
+        "adapter": { "const": false },
+        "backend": { "const": false },
+        "vm": { "const": false },
+        "guest": { "const": false },
+        "credential": { "const": false },
+        "signing": { "const": false },
+        "publication": { "const": false },
+        "release": { "const": false },
+        "admission": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "fixture", "bytes", "sha256", "consumption", "mutation"],
+      "properties": {
+        "identity": { "type": "string", "minLength": 1 },
+        "fixture": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "consumption": { "const": "exact-byte-read-only" },
+        "mutation": { "const": "forbidden" }
+      }
+    },
+    "retainedManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retainedPath", "bytes", "sha256", "selfDigestOfNullFormSha256"],
+      "properties": {
+        "retainedPath": { "type": "string", "minLength": 1 },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "selfDigestOfNullFormSha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "selectedPath", "mode", "bytes", "sha256", "admitted"],
+      "properties": {
+        "role": {
+          "enum": [
+            "governed-libkrun-dylib",
+            "libkrunfw-dylib",
+            "guest-kernel",
+            "trusted-init",
+            "trusted-launcher",
+            "raw-ext4-runtime-root"
+          ]
+        },
+        "selectedPath": { "type": "string", "minLength": 1 },
+        "mode": { "enum": ["0644", "0755"] },
+        "bytes": { "type": "integer", "minimum": 1, "maximum": 134217728 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "admitted": { "const": false }
+      }
+    }
+  }
+}

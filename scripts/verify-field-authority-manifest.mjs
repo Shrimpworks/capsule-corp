@@ -56,11 +56,18 @@ export async function verifyFieldAuthorityManifest(options = {}) {
       }
       if (target.object === "capsule.governed-deno-core-c2b-passive-binding") {
         const profile = manifest.profiles[field.profile];
-        const expectedConsumers = [
-          "governed-runtime-c2b-passive-go-validator",
-          "governed-runtime-c2b-passive-typescript-validator",
-          "separately-authorized-composed-profile-owned-guest-task-after-gate",
-        ];
+        const expectedConsumers =
+          target.version === 2
+            ? [
+                "governed-runtime-c2b-v2-passive-go-validator",
+                "governed-runtime-c2b-v2-passive-typescript-validator",
+                "separately-authorized-composed-profile-owned-guest-task-after-gate",
+              ]
+            : [
+                "governed-runtime-c2b-passive-go-validator",
+                "governed-runtime-c2b-passive-typescript-validator",
+                "separately-authorized-composed-profile-owned-guest-task-after-gate",
+              ];
         if (
           profile.retainer !== "capsule-repository-conformance-fixture" ||
           JSON.stringify(profile.allowedConsumers) !== JSON.stringify(expectedConsumers)

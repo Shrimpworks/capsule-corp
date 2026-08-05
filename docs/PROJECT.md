@@ -286,12 +286,16 @@ no guest or runtime and is `PASSED` only for passive preparation. Missing final 
 and composed runtime-profile identities, launcher-child and exact scratch contracts, governed
 review/P0 closure, and separate guest authorization keep C2B `BLOCKED`; admission and
 `RUNTIME-001`/`VMM-001` remain unchanged.
-The follow-on [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
-is now `PASSED` only for immutable reconciliation of unchanged C1/C2A with the exact governed-fork
-PR #2 and experiments PR #3 draft heads, fixed workload bytes, build evidence, and six-item artifact
-inventory. Both draft PRs remain merge dependencies; same-host equality is not independent-builder
-equality. C2B composed-profile/guest execution and runtime/profile admission remain `BLOCKED`, and
-`RUNTIME-001`/`VMM-001` remain unsupported.
+The historical [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
+remains `PASSED` only for its immutable v1 reconciliation of unchanged C1/C2A with the exact
+governed-fork PR #2 and experiments PR #3 heads, fixed workload bytes, build evidence, and six-item
+artifact inventory. Both PRs later merged; v1 bytes and their historical dependency state did not
+change. The [C2B v2 successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V2.md) now passively
+binds merged capsule-experiments PR #4, six constructed libkrun/kernel/init/launcher/root identities,
+the unadmitted runtime-manifest candidate, and the explicitly non-final build-only host preflight.
+Final runner, separate firmware, composed profile, unsupported resource limits, guest evidence, and
+all admission fields remain null/refusing. C2B composed-profile/guest execution and runtime/profile
+admission remain `BLOCKED`; `RUNTIME-001`/`VMM-001` remain unsupported.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

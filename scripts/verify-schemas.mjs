@@ -64,6 +64,13 @@ const fixtures = [
     new URL("../schemas/conformance/c2b-governed-deno-core/passive-binding.json", import.meta.url),
   ],
   [
+    "governed-deno-core-c2b-passive-binding-v2.schema.json",
+    new URL(
+      "../schemas/conformance/c2b-governed-deno-core/passive-binding-v2.json",
+      import.meta.url,
+    ),
+  ],
+  [
     "governed-deno-core-release-candidate.schema.json",
     new URL(
       "../schemas/conformance/governed-deno-core-release-candidate/candidate-manifest.json",
@@ -234,6 +241,64 @@ for (const [name, fixture] of invalidC2B) {
     throw new Error(`invalid C2B passive binding was accepted: ${name}`);
   }
   process.stdout.write(`rejected invalid C2B passive binding: ${name}\n`);
+}
+
+const c2bV2Schema = schemas.get("governed-deno-core-c2b-passive-binding-v2.schema.json");
+const validateC2BV2 = ajv.getSchema(c2bV2Schema.$id);
+const validC2BV2 = JSON.parse(
+  await readFile(
+    new URL(
+      "../schemas/conformance/c2b-governed-deno-core/passive-binding-v2.json",
+      import.meta.url,
+    ),
+    "utf8",
+  ),
+);
+const invalidC2BV2 = [
+  [
+    "cross-version substitution",
+    mutate(validC2BV2, (fixture) => {
+      fixture.schemaVersion = 1;
+    }),
+  ],
+  [
+    "unknown archive evidence",
+    mutate(validC2BV2, (fixture) => {
+      fixture.archiveEvidence.mutableTag = "main";
+    }),
+  ],
+  [
+    "invented final host runner",
+    mutate(validC2BV2, (fixture) => {
+      fixture.hostPreflightHarness.finalHostRunnerIdentity = "invented";
+      fixture.hostPreflightHarness.final = true;
+    }),
+  ],
+  [
+    "invented unsupported CPU limit",
+    mutate(validC2BV2, (fixture) => {
+      fixture.unresolved.cpuTimeLimitMs = 1;
+    }),
+  ],
+  [
+    "invented guest evidence",
+    mutate(validC2BV2, (fixture) => {
+      fixture.unresolved.guestEvidence = "invented";
+    }),
+  ],
+  [
+    "invented admission",
+    mutate(validC2BV2, (fixture) => {
+      fixture.effects.admission = true;
+    }),
+  ],
+];
+
+for (const [name, fixture] of invalidC2BV2) {
+  if (validateC2BV2(fixture)) {
+    throw new Error(`invalid C2B v2 passive binding was accepted: ${name}`);
+  }
+  process.stdout.write(`rejected invalid C2B v2 passive binding: ${name}\n`);
 }
 
 function mutate(value, mutation) {

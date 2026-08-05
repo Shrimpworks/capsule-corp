@@ -92,6 +92,7 @@
             "macos-installation-i0-passive-validator",
             "supervisor-bootstrap-cose-cbor-verifier",
             "governed-runtime-c2b-passive-validator",
+            "governed-runtime-c2b-v2-passive-validator",
             "macos-installation-i2b2-unsigned-validator"
           ]
         },
@@ -116,7 +117,8 @@
             "macos-installation-i0-retention-resolver",
             "supervisor-bootstrap-request-binding-resolver",
             "supervisor-bootstrap-record-binding-resolver",
-            "governed-runtime-c2b-passive-binding-resolver"
+            "governed-runtime-c2b-passive-binding-resolver",
+            "governed-runtime-c2b-v2-passive-binding-resolver"
           ]
         },
         "authorityEffect": {
@@ -161,7 +163,8 @@
             "passive-macos-installation-i2b2-profile-exact-json",
             "passive-supervisor-bootstrap-request-v0-signature",
             "passive-supervisor-bootstrap-record-v0-signature",
-            "passive-governed-runtime-c2b-binding-v1-exact-json"
+            "passive-governed-runtime-c2b-binding-v1-exact-json",
+            "passive-governed-runtime-c2b-binding-v2-exact-json"
           ]
         },
         "unknownBehavior": {
@@ -187,6 +190,8 @@
             "enum": [
               "governed-runtime-c2b-passive-go-validator",
               "governed-runtime-c2b-passive-typescript-validator",
+              "governed-runtime-c2b-v2-passive-go-validator",
+              "governed-runtime-c2b-v2-passive-typescript-validator",
               "separately-authorized-composed-profile-owned-guest-task-after-gate"
             ]
           }

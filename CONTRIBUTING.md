@@ -15,6 +15,8 @@ between requested authority and granted authority.
    [Capsule domain primer](docs/CAPSULE_DOMAIN_PRIMER.md). For JavaScript/TypeScript changes, read
    the [JS/TS engineering standards](docs/JAVASCRIPT_TYPESCRIPT_ENGINEERING_STANDARDS.md). For Rust
    changes, read the [Rust engineering standards](docs/RUST_ENGINEERING_STANDARDS.md).
+7. Read the [licensing policy](docs/LICENSING.md). Do not submit third-party or generated material
+   without compatible provenance, licensing, and retained notices.
 
 ## Development workflow
 
@@ -58,3 +60,10 @@ New dependencies require justification. In particular, call out:
 
 Material decisions should be recorded in `docs/adr/` using the existing format. Accepted ADRs are
 append-only; supersede them with a new ADR rather than rewriting history.
+
+## Contribution license
+
+Unless explicitly stated otherwise, contributions intentionally submitted for inclusion in
+Capsule are licensed under Apache-2.0 under Section 5 of the project license. Submitting a change
+does not transfer copyright ownership. No contributor license agreement or copyright assignment
+is currently required.

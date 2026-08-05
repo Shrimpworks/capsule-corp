@@ -8,7 +8,8 @@ before a public preview and review it whenever ownership or release policy chang
 - Choose the permanent GitHub organization and repository name.
 - Replace the provisional `capsule.local/capsule` Go module path before publishing Go modules.
 - Add the repository description, topics, and project URL.
-- Choose a license before accepting external contributions or distributing releases.
+- Apache-2.0 is selected for Capsule-owned material. Preserve `LICENSE`, `NOTICE`, the documented
+  third-party boundary, and release-specific corresponding-source and notice obligations.
 - Adopt a code of conduct and private enforcement contact before accepting external contributions.
 - Keep the canonical `capsule-corp` repository's default branch named `main`.
 
@@ -129,6 +130,7 @@ Before changing repository visibility:
 3. Verify `SECURITY.md` points to an enabled private reporting path.
 4. Confirm the README, support policy, threat model, and security status accurately describe the
    current implementation.
-5. Confirm the selected license and contribution expectations.
+5. Confirm Apache-2.0 metadata, `LICENSE`, `NOTICE`, contribution expectations, and all
+   third-party notices are current.
 6. Confirm local AI Central symlinks are ignored and `pnpm codex:links -- --dry-run` documents how
    contributors recreate them.

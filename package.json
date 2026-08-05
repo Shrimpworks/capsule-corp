@@ -2,6 +2,7 @@
   "name": "capsule-corp",
   "version": "0.0.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "Capability-controlled JS/TS task runtime for AI agents",
   "packageManager": "pnpm@10.28.2",
   "engines": {

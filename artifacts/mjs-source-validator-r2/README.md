@@ -21,6 +21,11 @@ Reproduce and verify locally:
 ./artifacts/mjs-source-validator-r2/scripts/reproduce.sh
 ```
 
+The reproducer's compiled daemon/broker binaries and launcher stubs under `dist/` are gitignored,
+not committed: they reproduce byte-for-byte from the command above, so the repository stays limited
+to source, build scripts, and the evidence/provenance manifests that let a consumer verify a
+published binary against a given commit.
+
 This result is not signing, enrollment, installation, confinement, resource enforcement,
 independent-builder provenance, or product admission. R3 remains a separately authorized signing
 and installation task governed by the

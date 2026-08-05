@@ -1,3 +1,10 @@
 dist/*
 !dist/Capsule.app/
 !dist/Capsule.app/**
+
+# Compiled binaries: reproducible from tracked source; publish as GitHub
+# Release assets instead of committing (see README.md).
+dist/**/Capsule
+dist/**/*Launcher
+dist/**/capsule-mjs-source-validator-daemon
+dist/**/capsule-mjs-source-validator-approval-broker

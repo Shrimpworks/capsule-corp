@@ -40,6 +40,11 @@ node artifacts/macos-i1a-unsigned-app-shell/scripts/verify-bundle.mjs \
 
 The reproducer uses Apple Swift/AppKit and existing repository R2 bytes only. It invokes no
 `codesign` signing operation; the linker-generated ad-hoc CodeDirectory has no TeamIdentifier.
+
+The reproducer's compiled binaries under `dist/` (`Capsule`, the XPC launcher stubs, and the copied
+R2 daemon/broker executables) are gitignored, not committed: they reproduce byte-for-byte from the
+command above, so the repository stays limited to source, build scripts, and the evidence/provenance
+manifests that let a consumer verify a published binary against a given commit.
 Read-only `codesign -d` output is checked solely to refuse an unexpected Apple identity. The app
 is not launched by reproduction or verification.
 

@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
-      content="Capsule is a local-first macOS project building human-approved execution of one bounded main.mjs module in a fresh disposable Linux guest."
+      content="Capsule creates on-demand disposable Linux guests on macOS for running untrusted JavaScript and TypeScript with Deno."
     />
-    <title>Capsule — human-approved local execution for agent-generated code</title>
+    <title>Capsule — disposable guests for untrusted JavaScript</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="./styles.css" />
@@ -25,9 +25,8 @@
       <div class="shell status-band__inner">
         <span class="status-band__mark" aria-hidden="true"></span>
         <p>
-          Pre-alpha warning: Capsule does not yet have an admitted product path for hostile code.
-          Current runtime, lifecycle, and installation results are scoped engineering evidence—not
-          a usable security boundary.
+          Pre-alpha: Capsule is not ready to protect your Mac from hostile code yet. The pieces are
+          being tested, but the complete security boundary is not connected or approved for use.
         </p>
       </div>
     </aside>
@@ -36,11 +35,11 @@
       <section class="hero-marquee" aria-labelledby="hero-title">
         <div class="shell hero-marquee__inner">
           <p class="wordmark" aria-hidden="true">capsule</p>
-          <h1 id="hero-title">Human-approved execution for agent code.</h1>
+          <h1 id="hero-title">A disposable guest for untrusted code.</h1>
           <p class="hero-marquee__summary">
-            Capsule is building a narrow owner-only alpha for macOS: one byte-exact modern
-            <code>main.mjs</code> module, bounded inline JSON input and output, one-use human
-            approval, and one fresh disposable Linux/arm64 guest per attempt.
+            Capsule creates a fresh, locked-down Linux virtual machine on your Mac whenever an
+            agent needs to run JavaScript or TypeScript. Deno runs the code inside that guest,
+            returns a bounded result, and the entire guest is destroyed afterward.
           </p>
         </div>
       </section>
@@ -49,18 +48,17 @@
 
       <section class="overview shell" id="overview" aria-labelledby="overview-title">
         <div class="overview__lead">
-          <h2 id="overview-title">What Capsule is</h2>
+          <h2 id="overview-title">The idea is simple</h2>
           <p>
-            Capsule is intended to provide a small local execution service for bounded, one-shot
-            work—not a general computer. Planning, approval, and execution belong to separate
-            components so the agent-facing service cannot approve its own plan or launch a guest.
+            AI agents can write useful code, but that code can also be wrong, compromised, or
+            deliberately hostile. Capsule is designed to run it somewhere disposable instead of
+            giving it direct access to your Mac.
           </p>
           <p>
-            The first internal alpha is JavaScript-only: exactly one dependency-free
-            <code>main.mjs</code>, at most 262,144 bytes, with bounded inline JSON. TypeScript,
-            package installation, module loading, network access, subprocesses, inherited
-            environment variables, native add-ons, FFI, file artifacts, and live host paths are
-            deliberately deferred or refused.
+            Before a run, Capsule fixes the exact code, input, limits, and runtime into a plan you
+            can review. Your approval is valid for one attempt. The code then runs inside a new
+            Linux/arm64 guest with no normal access to your files, network, processes, environment,
+            or package ecosystem.
           </p>
           <p class="link-row">
             <a class="text-link" href="https://github.com/Shrimpworks/capsule-corp"
@@ -75,78 +73,107 @@
         </div>
 
         <aside class="scope-note" aria-labelledby="scope-note-title">
-          <h3 id="scope-note-title">What Capsule is not</h3>
+          <h3 id="scope-note-title">Why macOS first?</h3>
           <p>
-            Capsule is not a shell, development environment, general-purpose virtual machine, or
-            hosted sandbox. It does not determine whether generated code is correct, and it cannot
-            prevent approved output, metadata, or timing from revealing approved input.
+            Capsule is macOS-native because its security design uses Apple Silicon virtualization,
+            App Sandbox, signed app identities, Keychain and Secure Enclave keys, and native user
+            approval. Other platforms may come later, but the first release is built around those
+            macOS controls rather than pretending every platform offers the same boundary.
           </p>
         </aside>
       </section>
 
       <section class="boundary shell" id="flow" aria-labelledby="flow-title">
         <header class="head-hang">
-          <h2 id="flow-title">How the intended system works</h2>
+          <h2 id="flow-title">What happens during a run</h2>
           <p>
-            The design separates planning, human approval, and execution so the agent-facing
-            service does not control all three.
+            No single agent-facing component gets to propose code, approve it, and execute it by
+            itself.
           </p>
         </header>
 
         <figure class="system-map">
-          <figcaption>Intended flow — not yet a complete product path</figcaption>
-          <pre><code>agent or client
-    │  proposes one bounded main.mjs plus inline JSON
+          <figcaption>Target flow — the complete path is still under construction</figcaption>
+          <pre><code>1. An agent submits code and bounded JSON input
     ▼
-daemon — the agent-facing planning service
-    │  constructs one exact typed plan; cannot approve or execute it
+2. Capsule freezes the exact code, input, limits, and runtime
     ▼
-Execution Supervisor — the trusted execution authority
-    │  validates and registers the exact plan; returns a registration ID
+3. You review that exact plan and approve one attempt
     ▼
-Approval Broker — the trusted native approval interface
-    │  fetches typed plan details and obtains one-use human approval
+4. The Supervisor starts a fresh Linux guest
     ▼
-Execution Supervisor
-    │  creates one approved attempt by registered plan ID only
+5. Deno runs the code without normal host access
     ▼
-external isolation backend
-    │  creates one fresh disposable Linux/arm64 guest for this attempt
+6. Capsule returns a bounded JSON result
     ▼
-bounded JSON result plus independent lifecycle and teardown evidence</code></pre>
+7. The guest is destroyed and its absence is verified</code></pre>
         </figure>
 
         <dl class="foundation">
           <div class="foundation__item">
-            <dt>Daemon</dt>
-            <dd>Agent-facing planning service</dd>
+            <dt>Exact plan</dt>
+            <dd>You approve what will actually run</dd>
             <dd class="foundation__note">
-              Validates proposals, resolves trusted policy, and constructs exact plans. It is not
-              allowed to approve a plan or launch a guest.
+              Code, input, limits, and runtime identities are fixed before approval. They cannot be
+              quietly replaced when execution starts.
             </dd>
           </div>
           <div class="foundation__item">
-            <dt>Approval Broker</dt>
-            <dd>Trusted native approval interface</dd>
+            <dt>Fresh approval</dt>
+            <dd>One human decision allows at most one attempt</dd>
             <dd class="foundation__note">
-              Fetches registered typed plan data, presents it to the user, requires fresh user
-              presence, and signs one-use approval.
+              A native macOS approval app shows information retained by the Supervisor—not text
+              supplied by the agent—and requires fresh user presence.
             </dd>
           </div>
           <div class="foundation__item">
-            <dt>Execution Supervisor</dt>
-            <dd>Trusted execution authority</dd>
+            <dt>Disposable guest</dt>
+            <dd>A new Linux guest is created for every attempt</dd>
             <dd class="foundation__note">
-              Registers exact plan bytes, enforces hard safety rules, creates one approved attempt,
-              and owns backend cleanup and enforcement evidence.
+              Guests are never reused. The workload does not receive live host paths or normal
+              access to macOS files, network services, processes, or environment variables.
             </dd>
           </div>
           <div class="foundation__item">
-            <dt>Isolation backend</dt>
-            <dd>External host boundary</dd>
+            <dt>Verified cleanup</dt>
+            <dd>A result alone does not count as success</dd>
             <dd class="foundation__note">
-              Contains the guest outside the language runtime. Runtime permission systems are only
-              supplemental hardening.
+              Capsule also checks lifecycle and teardown evidence. A guest saying “done,” closing a
+              stream, or exiting with zero is not enough by itself.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="requirements shell" aria-labelledby="runtime-title">
+        <header class="head-hang">
+          <h2 id="runtime-title">JavaScript, TypeScript, and Deno</h2>
+          <p>The broad goal and the first alpha are intentionally not identical.</p>
+        </header>
+
+        <dl class="foundation">
+          <div class="foundation__item">
+            <dt>Product direction</dt>
+            <dd>Modern JavaScript and TypeScript workloads</dd>
+            <dd class="foundation__note">
+              Capsule is being built around a small, governed Deno runtime rather than a general
+              Deno command-line environment.
+            </dd>
+          </div>
+          <div class="foundation__item">
+            <dt>First alpha</dt>
+            <dd>One dependency-free <code>main.mjs</code> file</dd>
+            <dd class="foundation__note">
+              The first release starts with modern JavaScript, bounded inline JSON, no imports, and
+              no packages. TypeScript follows after its source-preparation boundary is proven safe.
+            </dd>
+          </div>
+          <div class="foundation__item">
+            <dt>Deliberately absent</dt>
+            <dd>No package loader or ambient host APIs</dd>
+            <dd class="foundation__note">
+              Network access, subprocesses, host environment variables, native add-ons, FFI, live
+              host paths, and arbitrary file artifacts are outside the first alpha.
             </dd>
           </div>
         </dl>
@@ -154,43 +181,39 @@ bounded JSON result plus independent lifecycle and teardown evidence</code></pre
 
       <section class="status shell" id="status" aria-labelledby="status-title">
         <header class="head-hang">
-          <h2 id="status-title">What is implemented today</h2>
+          <h2 id="status-title">Where the project stands</h2>
           <p>
-            Capsule has moved beyond an initial scaffold, but it is not yet a usable sandbox. Status
-            below separates completed engineering slices from active integration and product
-            blockers.
+            Many difficult pieces now work in controlled tests. The remaining job is to connect
+            them without weakening the boundary.
           </p>
         </header>
 
         <dl class="foundation">
           <div class="foundation__item">
             <dt>PASSED — scoped foundations</dt>
-            <dd>Exact contracts, durable mechanics, and governed build evidence</dd>
+            <dd>The main building blocks have strong local evidence</dd>
             <dd class="foundation__note">
-              Single-<code>main.mjs</code> bytes and manifests; plan and registration codecs;
-              approval/attempt, lifecycle, owner-lock, archive, backup, and recovery mechanics;
-              governed Deno, rusty_v8, and libkrun forks; reproducible Linux/arm64 runtime artifacts;
-              and development-signed inactive macOS topology have passed their stated local scopes.
+              We can reproducibly build the governed Deno/V8 runtime for Linux/arm64; construct the
+              guest root, kernel, launcher, and libkrun pieces; retain exact plans and source bytes;
+              and exercise approval, lifecycle, cleanup, storage, backup, and recovery mechanics.
             </dd>
           </div>
           <div class="foundation__item">
             <dt>IN_PROGRESS — TRENDING_GOOD</dt>
-            <dd>Successor runtime profile and authority-path integration</dd>
+            <dd>Connect the tested pieces into one real run</dd>
             <dd class="foundation__note">
-              Current work is freezing the runnable profile, atomically binding source to registered
-              plans, reviewing the production CBOR/COSE wrapper, hardening governed-fork promotion,
-              and joining the already-tested pieces without widening authority.
+              Current work is closing the final runnable profile, protected installation state,
+              authenticated local communication, native approval, real guest lifecycle adapter,
+              and trustworthy result-and-teardown record.
             </dd>
           </div>
           <div class="foundation__item">
             <dt>BLOCKED — product admission</dt>
-            <dd>No hostile-code alpha or admitted runtime/profile yet</dd>
+            <dd>Do not use Capsule as a security boundary yet</dd>
             <dd class="foundation__note">
-              Capsule still needs one fixed benign guest checkpoint, authenticated local IPC,
-              protected installed Supervisor state, native Broker rendering and fresh user-presence
-              signing, a real adapter with restart reconciliation, composed completion evidence, and
-              the retained hostile/refusal corpus. The fake backend remains hard-coded to create no
-              guest.
+              The complete product path has not run a hostile workload. It must first pass a fixed
+              benign guest checkpoint, then the signed installed path and the retained hostile,
+              crash, timeout, replay, transport, and cleanup tests.
             </dd>
           </div>
         </dl>
@@ -198,10 +221,10 @@ bounded JSON result plus independent lifecycle and teardown evidence</code></pre
 
       <section class="requirements shell" id="security" aria-labelledby="security-title">
         <header class="head-hang">
-          <h2 id="security-title">Security requirements</h2>
+          <h2 id="security-title">What makes this more than a Deno sandbox</h2>
           <p>
-            These are requirements for the intended security model, not claims about the current
-            implementation.
+            Deno’s runtime permissions help, but the real boundary is the disposable virtual
+            machine plus the macOS components that control approval and lifecycle.
           </p>
         </header>
 
@@ -219,16 +242,16 @@ bounded JSON result plus independent lifecycle and teardown evidence</code></pre
             <dd>Human approval is bound to one exact plan and at most one execution attempt</dd>
           </div>
           <div class="foundation__item">
-            <dt>Immutable input</dt>
-            <dd>File inputs become content-addressed snapshots instead of live host paths</dd>
+            <dt>No live host paths</dt>
+            <dd>Approved bytes are copied into immutable, content-addressed inputs</dd>
           </div>
           <div class="foundation__item">
             <dt>External isolation</dt>
             <dd>Every approved attempt gets a fresh disposable guest; guests are never reused</dd>
           </div>
           <div class="foundation__item">
-            <dt>Physical absence</dt>
-            <dd>The alpha runtime must omit module loading and ambient host operations</dd>
+            <dt>Small runtime</dt>
+            <dd>Unneeded loaders and host operations are physically left out</dd>
           </div>
           <div class="foundation__item">
             <dt>Independent completion</dt>

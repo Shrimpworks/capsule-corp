@@ -149,6 +149,33 @@ fi
 gh pr view --json url,isDraft --jq '{url, isDraft}'
 ```
 
+### Governed upstream forks
+
+Before changing an owned fork of an upstream dependency, identify and record three distinct roles:
+
+- the exact immutable upstream source commit;
+- the immutable Capsule baseline or accepted governed head; and
+- the temporary work or upstream-contribution integration branch.
+
+For a fork that primarily carries Capsule-governed bytes, set the GitHub default branch to the
+latest accepted governed line, not the upstream project's `main`. Preserve original patch-queue
+merges and superseded accepted heads under explicit versioned refs, protect them against updates,
+force-pushes, and deletion, and use a fresh versioned target branch for each later governed update.
+After that update is accepted, lock its head before making it the new default.
+
+Treat the fork's upstream-oriented `main` or contribution branch as integration state only. A
+change merged there is not adopted into Capsule. Never merge upstream `main` wholesale into a
+pinned governed line; backport independently reviewable commits through a separate governed pull
+request and rerun that line's exact gates and restoration mutations. Upstream contribution work
+must target an explicitly named upstream baseline or integration branch and must not silently
+retarget the governed default.
+
+Before creating or editing any fork pull request, pass `--base` and `--head` explicitly. Read back
+the repository, base, head, draft state, commit identities, and body after publication. If a branch
+that policy described as immutable has already advanced, do not advance it again: preserve the
+historical commits under locked refs, create a fresh versioned target, and update the verifier and
+canonical branch ledger in the same governed change.
+
 ## Working rules
 
 - Preserve deny-by-default capabilities.

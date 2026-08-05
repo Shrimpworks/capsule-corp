@@ -83,6 +83,43 @@
         </aside>
       </section>
 
+      <section class="concept shell" aria-labelledby="concept-title">
+        <header class="head-hang concept__head">
+          <h2 id="concept-title">Capsule at a glance</h2>
+          <p>
+            The core idea is a short chain: submit bounded code, verify the plan, require approval,
+            run it in a disposable guest, return a bounded result, and prove cleanup.
+          </p>
+        </header>
+
+        <figure class="architecture-plate">
+          <div class="architecture-plate__media">
+            <picture>
+              <source
+                media="(min-width: 40rem)"
+                srcset="./assets/capsule-architecture-landscape.webp"
+                type="image/webp"
+                width="1672"
+                height="941"
+              />
+              <img
+                src="./assets/capsule-architecture-portrait.webp"
+                width="1003"
+                height="1568"
+                loading="lazy"
+                decoding="async"
+                alt="Five-step concept diagram: code is verified, approved, run in a disposable Linux guest, and returned as a bounded JSON result"
+              />
+            </picture>
+          </div>
+          <figcaption>
+            <strong>Target architecture—not current product status.</strong> The first alpha is limited
+            to one dependency-free <code>main.mjs</code> file, human approval is required for the
+            intended product path, and product admission remains blocked.
+          </figcaption>
+        </figure>
+      </section>
+
       <section class="boundary shell" id="flow" aria-labelledby="flow-title">
         <header class="head-hang">
           <h2 id="flow-title">What happens during a run</h2>

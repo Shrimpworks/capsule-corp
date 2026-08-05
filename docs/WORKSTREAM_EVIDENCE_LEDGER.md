@@ -456,12 +456,13 @@ Current dependency and priority view:
    [retained blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) lands. Then resume F4B atomic v2
    mutation/new effect tombstones and F4C bounded second-segment/index growth; keep F5 backup/orphan
    cleanup/reporting and F6 production-engine work separate.
-2. **Source Validator architecture accepted; product blocked:** Accepted ADR-0036 closes R0 with
+2. **Source Validator R3 signed composition passed; product blocked:** Accepted ADR-0036 closes R0 with
    two role-specific private launchers, residual private-container scratch plus mandatory cleanup,
    and an evidence-derived reactive watermark with no hard-peak or host-availability claim. Product
-   R1 passive v1 contracts/field authority and R2 unsigned role-specific construction are `PASSED`;
-   product work remains `BLOCKED`. Continue only with separately authorized R3 signing/install,
-   then the measured corpus and consumers.
+   R1 passive v1 contracts/field authority, R2 unsigned role-specific construction, and the exact
+   Apple Development R3 signed/installed/refusal/cleanup composition are `PASSED`; product work
+   remains `BLOCKED`. Continue with the R4 measured confinement/resource/residue corpus and then
+   consumers.
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
 3. **Installation plan:** start I0's passive app-bundle/role/bootstrap contract and keep the first
@@ -475,14 +476,14 @@ Current dependency and priority view:
 5. **Later composition:** governed runtime plus libkrun requires admitted artifacts, the remaining
    transport/launcher/root/device/teardown work, and explicit authorization for an owned disposable
    development guest. No current task authorizes a guest.
-6. **Credential/environment dependent:** Apple Development identities and provisioning profiles
-   must be deliberately authorized before the existing installed matrices run. Exact G3 discovery
+6. **Credential/environment dependent:** Apple Development identity/profile use was deliberately
+   authorized only for the exact I1B/R3 installed matrix. Exact G3 discovery
    disproved the display-name inference: SHA-1 `1638...61E3` says W4 in its common name, but its
    subject OU and emitted TeamIdentifier are `3DDR84M4JS`. Apple Membership Details confirms 3DDR
-   is the account Team and W4 is a member/display suffix. New Apple Development SHA-1
-   `80A4...D3793` is locally present but not authorized. All three Xcode 26.6-cached profiles are
-   3DDR Gate B/wildcard profiles with nonmatching App IDs. Local signed/provisioned experiments
-   require exact 3DDR role profiles, as well as the selected protected-root bootstrap/signed-record/
+   is the account Team and W4 is a member/display suffix. Apple Development SHA-1
+   `80A4...D3793` and three exact explicit-App-ID profiles were selected for I1B/R3; public metadata
+   and hashes are retained, while raw profiles and credentials are not. I2B requires its additional
+   exact Coordinator/bootstrap identifiers and profiles plus the protected-root signed-record/
    store-open composition. A separate Developer ID Application identity for Team `3DDR84M4JS` is
    later distribution authority requiring explicit authorization and matching-Team package design;
    it does not make Developer ID/notarization work current. Paid owned
@@ -505,9 +506,8 @@ Current dependency and priority view:
    mandatory cleanup, and an evidence-derived reactive watermark with no hard-peak/availability
    claim. Its exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) records Team 3DDR,
    R2 byte identities/placement, profiles/entitlements, refusal/cleanup, and mutation gates. R1
-   passive v1 contracts/field authority and R2 unsigned construction are retained; R3 remains
-   `BLOCKED` on containing fixtures, exact role profiles, finalized signed constraints, and separate
-   authorization. Product work then proceeds sequentially: R4 confinement/
+   passive v1 contracts/field authority, R2 unsigned construction, and R3 exact signed installed
+   composition are `PASSED`. Product work proceeds sequentially: R4 confinement/
    resource/residue evidence; R5D daemon consumer; R5B Broker consumer; then M2/S1 checkpoint.
    Threshold/cadence/overshoot values remain unset until R4. No S1 fixture or product endpoint is
    authorized.

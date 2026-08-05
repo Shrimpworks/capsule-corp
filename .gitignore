@@ -20,6 +20,8 @@ artifacts/*
 !artifacts/mjs-source-validator-r2/**
 !artifacts/macos-i1a-unsigned-app-shell/
 !artifacts/macos-i1a-unsigned-app-shell/**
+!artifacts/macos-i1b-r3-signed-development-composition/
+!artifacts/macos-i1b-r3-signed-development-composition/**
 tmp/
 *.log
 

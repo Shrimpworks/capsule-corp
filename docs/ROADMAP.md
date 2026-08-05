@@ -11,19 +11,18 @@ All labels below follow the [canonical work status language](STATUS_LANGUAGE.md)
 migration/full-verifier scope; F3's first immutable-segment activation and F4A's read-only retained
 lookup are also `PASSED`. F4B is `BLOCKED` on the retained
 [effect-history representation](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md). Owner-lock G2 is `PASSED` for its
-retained local mechanic, while I2A's protected-root owner/contract decision is `PASSED`. G3/I2B is
-`BLOCKED` pending exact Team-3DDR role profiles, passive signed-object fixtures, installed
+retained local mechanic, while I1B's exact development-signed disabled composition and I2A's
+protected-root owner/contract decision are `PASSED`. G3/I2B is `BLOCKED` pending its additional
+Coordinator/bootstrap identifiers and profiles, passive signed-object fixtures, installed
 container/handoff evidence, and descriptor-relative store-open composition. ADR-0034's M1 bytes,
 Accepted ADR-0035's passive V0 fixed frames, and the bounded unwired V1 artifact are `PASSED` in
 their exact scopes. Accepted ADR-0036 records the `PASSED` R0 architecture/resource decision, and
 R1 passive v1 contracts/fixtures and R2 unsigned role-specific construction are `PASSED`. The
-exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) is retained with Team
-`3DDR84M4JS`, R2 byte identities, installation placement, refusal/cleanup matrices, and credential
-mutation boundaries; R3 is `BLOCKED` on containing fixtures, exact role profiles, finalized signed
-constraints, and separate authorization. The
-product Source Validator and downstream S1/M2 remain `BLOCKED` on separately authorized
-signing/install, confinement/resource/residue evidence, and sequential daemon then Broker
-consumers.
+exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) is `PASSED` and retained with
+Team `3DDR84M4JS`, R2 byte identities, exact profiles, signed installation placement, private-XPC
+reachability, refusal/cleanup matrices, and credential boundaries. The product Source Validator and
+downstream S1/M2 remain `BLOCKED` on R4 confinement/resource/residue evidence and sequential daemon
+then Broker consumers.
 Conditional Source Preparer blocker work remains a later optional track and is no longer on the
 first-release critical path. The governed `rusty_v8` Linux/arm64 construction blocker and the
 fork-native bundle reproduction are now closed in their bounded scopes. The passive C1 composition

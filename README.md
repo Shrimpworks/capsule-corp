@@ -1,6 +1,6 @@
 # Capsule
 
-Capsule is an experimental trusted execution platform for bounded JavaScript and TypeScript jobs
+Capsule is an experimental trusted execution platform for bounded modern JavaScript jobs
 proposed by AI agents.
 
 [Project site](https://shrimpworks.github.io/capsule-corp/) ·
@@ -31,10 +31,10 @@ agent-facing Go daemon
 Execution Supervisor ◄──── trusted native Broker
         │                   approval + scoped content handles
         ▼
-native libkrun/HVF candidate
+governed libkrun/HVF candidate
         │
         ▼
-disposable Bun / TypeScript guest
+fresh disposable governed `deno_core` guest per attempt
 ```
 
 - The daemon has no approval key, user-only content, backend launch path, or grant-reset authority.
@@ -53,7 +53,7 @@ disposable Bun / TypeScript guest
 
 The initial product slice is deliberately narrow:
 
-- dependency-free Bun/TypeScript;
+- exactly one dependency-free, byte-exact `main.mjs` up to 262,144 bytes;
 - inline JSON input and bounded JSON output;
 - explicit plan registration and one-attempt user approval;
 - no network, subprocess, environment inheritance, native addons, FFI, macros, inspector, package
@@ -74,9 +74,9 @@ Work now proceeds on two lanes:
 
 1. Freeze and implement backend-independent contracts, registered-plan/one-use approval state,
    fake-backend recovery/evidence, and bounded inline JSON.
-2. Before libkrun handles user bytes, close stock-Bun runtime authority, immutable runtime-root
-   custody, the `NullFs` surface, typed port transport/completion, and complete installed-bundle
-   admission.
+2. Close the exact governed `deno_core`/libkrun successor profile, immutable runtime-root custody,
+   physical loader/host-authority omission, typed port transport/completion, and complete installed-
+   bundle admission before hostile source enters a guest.
 
 Filesystem-image parsing is deferred until file artifacts, not removed. Prototype code may be
 thrown away; reproducible fixtures, observations, limitations, and ADR decisions are retained. See
@@ -107,12 +107,13 @@ prototype implementations.
 - Go for the agent-facing daemon and orchestration.
 - Swift/native macOS for the Trusted Host Broker.
 - Supervisor language and privilege model selected by feasibility evidence; no host-root assumption.
-- TypeScript for the protocol package, clients, adapters, and initial guest programs.
+- TypeScript for current protocol/client scaffolding; the first guest workload is modern `.mjs`.
 - JSON Schema Draft 2020-12 for wire contracts after replacement/freeze.
 - Proposed SHA-256 + bounded deterministic CBOR/COSE Sign1 profile, gated by object-specific
   cross-language fixtures and review.
 - Secure Enclave/Keychain and XPC code requirements for compatible macOS authority boundaries.
-- Bun as the intended first dependency-free guest runtime, contingent on the P0 authority corpus.
+- Governed minimal `deno_core` as the first guest runtime candidate, contingent on the composed P0
+  authority corpus and exact profile admission.
 - Native libkrun/HVF as the lead Apple candidate under evaluation, Apple Containerization as
   development-only, and OCI plus gVisor as an independent comparison/contingency.
 - TUF-style release/profile trust with compact verified local trust snapshots.
@@ -131,12 +132,15 @@ v0 protocol; see [Schema status](schemas/README.md).
 The ordered path is now:
 
 1. Reconcile the completed spike evidence and freeze backend-independent contracts.
-2. Prove registered-plan/approval/recovery with a fake backend.
-3. Add inline JSON content separation and fixed agent summaries.
-4. Close the five fail-fast P0 gates before connecting user bytes to libkrun.
-5. Run one dependency-free Bun inline-JSON slice in development posture.
-6. Add file snapshots and disposable bounded artifact parsing.
-7. Compare and validate exact backends before strengthening posture.
+2. Prove registered-plan/approval/recovery with a fake backend and close one fixed benign owned
+   guest as a separate engineering checkpoint.
+3. Compose the exact developer-signed owner-only alpha: authenticated CLI, native Broker, atomic
+   source custody, one fresh guest per attempt, and fixed Supervisor-derived summaries.
+4. Run the composed hostile `.mjs`, authority-denial, transport, root, lifecycle, teardown, and
+   restoration corpus before calling the owner-only profile an internal alpha.
+5. Add file snapshots and disposable bounded artifact parsing only after the inline-only alpha.
+6. Complete production storage, distribution, replacement, and multi-host evidence before an
+   external alpha.
 
 See [Documentation](docs/README.md) for the complete design set.
 

@@ -70,5 +70,6 @@ its core conclusion.
 - [ADR-0038: Select a one-shot Trust Coordinator to authorize Supervisor-created protected state](0038-select-one-shot-coordinator-supervisor-bootstrap.md)
   — Proposed
 - [ADR-0039: License Capsule-owned material under Apache-2.0](0039-license-capsule-under-apache-2.0.md)
+- [ADR-0040: Freeze the owner-only internal alpha posture](0040-freeze-owner-only-internal-alpha-posture.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

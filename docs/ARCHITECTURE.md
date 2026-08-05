@@ -25,8 +25,8 @@ is implemented or validated.
 │  ├── proposal handling and plan construction                        │
 │  ├── policy resolution and immutable planning                       │
 │  └── no approval key, backend launch, or user-only content          │
-│             ├── accepted role-separated `.mjs` validator design     │
-│             │   └── two private launchers; fresh parse-only child    │
+│             ├── later role-separated `.mjs` validator design        │
+│             │   └── post-alpha defense-in-depth                      │
 │             ├── exact first-release `main.mjs` pass-through source   │
 │             │   └── atomic plan/source registration and readback     │
 │             ├── future conditional TypeScript Source Preparer       │
@@ -68,7 +68,7 @@ or execution authority:
 | Component | May do | Must not do |
 | --- | --- | --- |
 | Agent-facing daemon | Authenticate agents, validate proposals, resolve policy, construct plans, register plans, request attempts, expose fixed status | Use approval/evidence keys, launch a backend, replace registered plan bytes, retrieve user-only content, clear quarantine or grant state |
-| Accepted `.mjs` Source Validator design | Through one role-private launcher, parse one copied bounded `main.mjs` in a fresh child and return fixed typed digest/length/grammar-node facts to the matching parent | Execute source, keep persistent Capsule product state/cache/log/result, cross roles, use keys or network, escape its private container, accept paths/packages/loaders, approve/register plans, launch a backend |
+| Accepted `.mjs` Source Validator design | After the internal alpha, optionally parse one copied bounded `main.mjs` through a role-private lower-authority service and return fixed typed facts | Become an internal-alpha isolation boundary, execute source, keep product state/cache/log/result, cross roles, use keys or network, accept paths/packages/loaders, approve/register plans, launch a backend |
 | Proposed TypeScript Source Preparer | Transform copied untrusted source before planning, own exact original/emitted/profile/options/record bytes, return fixed plan projections and registered executable copies | Approve or register plans, access user-only Broker content, expose a generic parser/path API, launch a backend, transform after registration |
 | Trusted Host Broker | Render registered plans, require user presence, sign one-use approvals, select files, own user content, release fixed summaries | Expose agent endpoints, launch a guest, accept daemon display prose as authoritative, make enforcement claims |
 | Execution Supervisor | Independently validate registered plans, enforce hard safety, consume approvals, create attempts, manage backend lifecycle, sign enforcement transcripts | Parse the public agent protocol, author general policy, select files, perform rich parsing, fetch network trust data |
@@ -94,22 +94,28 @@ Accepted ADR-0034 assigns the first release one byte-exact pass-through `main.mj
 existing plan-v0 source role. Registration atomically validates and retains exact plan, bindings,
 canonical source manifest, and source bytes; Broker fetch reads defensive Supervisor-retained
 copies. The passive source-byte/SourceManifest foundation and bounded Oxc parser/process selection
-and passive R1 role-separated contracts are `PASSED`. Product Source Validator R2-R5B is
-`BLOCKED`; JobProposal
-narrowing, plan construction, source custody, authenticated transport, consumer, runtime, backend,
-and guest remain unimplemented.
+are `PASSED`. Accepted ADR-0040 moves Product Source Validator R4/R5 off the internal-alpha
+critical path after exact R4-v1 candidates became `NO_GO`; the validator remains `BLOCKED` as later
+defense-in-depth. JobProposal narrowing, plan construction, atomic source custody, authenticated
+transport, runtime, backend, and guest remain unimplemented.
 Proposed ADR-0032's separately enrolled
 Source Preparer is now only a conditional later TypeScript topology and is `BLOCKED` outside the
 first-release critical path.
 
-### Accepted `.mjs` Source Validator architecture; blocked product control
+### Accepted `.mjs` Source Validator architecture; post-alpha product control
 
-Accepted ADR-0035 places the first-release grammar check in a new one-shot process, not
+Accepted ADR-0035 places a grammar check in a new one-shot process, not
 inside the daemon, Approval Broker, or Execution Supervisor. The daemon supplies an exact copied
 source before planning; the Broker later supplies a fresh exact copy fetched from Supervisor
 registration state before rendering or any Approval-key operation. Each invocation binds a fixed
 typed result to recomputed digest and length. Crash, timeout, diagnostics, malformed output,
 artifact mismatch, or any forbidden AST node refuses.
+
+Accepted ADR-0040 does not use this control as an internal-alpha gate. The alpha Broker approves
+exact Supervisor-retained bytes and the admitted guest must refuse invalid syntax, module requests,
+and generated loader paths without host authority. ADR-0035/0036 remain the selected later defense-
+in-depth design, but R4/R5 cannot activate until their child-lifetime and residue contract is
+supportable and internally consistent.
 
 The retained V1 artifact packages that exact parse/visitor/semantic mode behind the V0 frames and
 has no product consumer. Its actual executable, build manifest, and assessment are bound by a V0

@@ -48,6 +48,11 @@ This ADR defines the next local conformance boundary. It does not activate a con
 production database, implement a platform owner lock, authorize deletion of retained authority
 history, compose evidence, admit a runtime/backend, or create a guest.
 
+Accepted ADR-0040 later refines this prohibition for one deliberately disposable, owner-only
+internal-alpha profile. That exception has hard operational stop thresholds, no restore or
+continuity claim, and retires the installation on live-store loss/corruption. It does not select the
+fixed oracle as the general product engine or weaken F6's external-alpha requirement.
+
 ## Proposed decision
 
 ### Boundary, authority, and status

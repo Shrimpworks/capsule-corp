@@ -243,8 +243,9 @@ remains R4 after R3 installation evidence. No product consumer or Apple credenti
 - Verify each XPC service's actual distinct sandbox/container, responsible process, role-local
   private reach, no cross-role reach, and `JoinExistingSession=false` behavior.
 - Follow the exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md). Team identity is
-  reconciled to `3DDR84M4JS`, but R3 remains `BLOCKED` on its containing fixtures, exact role
-  profiles, finalized signed constraints, and separate mutation authorization.
+  reconciled to `3DDR84M4JS`. R3 later `PASSED` its exact signed, installed, inactive-policy scope;
+  that result did not activate a parser or product consumer. Exact R4-v1 candidates are `NO_GO`,
+  R4-v2 is unexecuted, and ADR-0040 moves the validator to post-alpha defense-in-depth.
 
 ### R4 — confinement, reactive-resource, and residue corpus
 

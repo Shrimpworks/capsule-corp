@@ -219,6 +219,14 @@ func (c *SourceManifestCodec) Decode(received []byte, mediaType string, sourceBy
 	if err := v0candidate.ValidateSourceManifestMediaType(mediaType); err != nil {
 		return nil, err
 	}
+	// Reject an out-of-bounds length before cloning so an oversized received
+	// slice cannot force a full-size allocation ahead of rejection.
+	if len(received) < v0candidate.SourceManifestMinCBORBytes {
+		return nil, malformed("SourceManifest is shorter than its minimum canonical encoding")
+	}
+	if len(received) > v0candidate.SourceManifestMaxCBORBytes {
+		return nil, malformed("CBOR raw-byte limit exceeded")
+	}
 	exact := bytes.Clone(received)
 	if err := v0candidate.PredecodeSourceManifestCBOR(exact); err != nil {
 		return nil, err

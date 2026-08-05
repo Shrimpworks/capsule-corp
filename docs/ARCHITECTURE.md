@@ -212,10 +212,14 @@ the internal opaque Go/Darwin acquisition capability. G2 now requires it before 
 store opener and sorted no-guest recovery, binds the store and coordinator to its one session,
 fences on post-open ownership failure, and closes the store before releasing the descriptor.
 Proposed ADR-0038 now selects a separately enrolled on-demand Trust Coordinator to installation-
-root-sign the request/record while the Supervisor creates the private root and lock. The passive
-objects, installed handoff/container/session/update matrix, and descriptor-relative store
-composition remain open, so this is still an unwired local mechanic rather than a product
-authority boundary.
+root-sign the request/record while the Supervisor creates the private root and lock. Passive
+objects and exact Team-3DDR profile/signing preflight passed, but the required I2B3 stale-profile
+test proved that the archived I1B Supervisor profile could rewrite current-profile state in the
+stable App Sandbox container. The run stopped before keys, services, installation, or root
+creation. A versioned signing/container epoch and the installed handoff/session/update and
+descriptor-relative store matrices remain open, so this is still an unwired local mechanic rather
+than a product authority boundary. See the
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 

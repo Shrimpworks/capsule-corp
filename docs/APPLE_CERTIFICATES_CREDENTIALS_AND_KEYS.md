@@ -195,8 +195,8 @@ substituted for the other.
 
 | Material | System | Custodian | Purpose | Private/exportable? | Current state |
 | --- | --- | --- | --- | --- | --- |
-| Apple Development identity | Apple | Authorized developer/signing host | Development signing for installed tests | Private key is normally Keychain-held and may be exportable | SHA-1 `80A4...D3793` passed exact readback/use for I1B/R3 only; later use requires separate authorization |
-| Mac App Development profile | Apple | Build/Xcode; public signed metadata | Authorize App ID, device, certificate, entitlements | No private key | Three exact Broker/daemon/Supervisor profiles passed I1B/R3; I2B3 Coordinator/bootstrap profiles remain absent and `BLOCKED` |
+| Apple Development identity | Apple | Authorized developer/signing host | Development signing for installed tests | Private key is normally Keychain-held and may be exportable | SHA-1 `80A4...D3793` passed exact readback/use for I1B/R3 and the separately authorized I2B3 signing preflight; later use still requires exact authorization |
+| Mac App Development profile | Apple | Build/Xcode; public signed metadata | Authorize App ID, device, certificate, entitlements | No private key | Three exact I1B/R3 profiles passed; I2B3 exact Coordinator/Supervisor profiles and signed entitlements also passed, but the old Supervisor profile retained write access to the stable private container, blocking root execution |
 | Developer ID Application identity | Apple | Release custodian | Sign direct-distribution code | High-value exportable private key unless separately hardware-backed | Team-3DDR identity present; use/distribution admission deferred and unauthorized |
 | Developer ID Installer identity | Apple | Package release custodian | Sign selected `.pkg` outer package | High-value private key | Unnecessary unless `.pkg` selected |
 | Notarization API key or app-specific password | Apple/App Store Connect | Release/notarization operator | Authenticate uploads and status/log reads | Secret; API `.p8` is downloadable once | Deferred |
@@ -578,10 +578,13 @@ The completed I1B/R3 work is an input, not a task to repeat. Current actions and
    inventory when a second maintainer, production signing, or CI notarization requires it; do not
    combine personal Apple-account recovery, restricted release secrets, nonexportable Capsule
    keys, and offline TUF custody into one shared credential set.
-5. **Separately authorize I2B3 before any new portal or installed mutation.** It requires exact
-   Team-3DDR Coordinator/bootstrap profiles, caller/key authorization, the bootstrap App Group and
-   service/container handoff, fresh disposable test groups/keys, and descriptor-relative fault
-   evidence. Do not reuse I1B profiles as generic Team authority.
+5. **Resolve the I2B3 stale-profile blocker before another mutation run.** The exact Team-3DDR
+   Coordinator/Supervisor profiles and signed entitlements passed, but the archived I1B Supervisor
+   profile rewrote current-profile state in the stable private container. Select a versioned
+   signing/container epoch in an ADR, provision it exactly, and separately authorize the remaining
+   caller/key, App Group/service, protected-root, and descriptor-relative corpus. Do not reuse I1B
+   profiles as generic Team authority. See the
+   [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 6. **Rehearse machine-loss recovery deliberately.** Use the
    [recovery runbook](DEV_MACHINE_SETUP_AND_RECOVERY.md#part-c--machine-loss--reconstruction-drill)
    on a spare/replacement Mac or perform a supervised non-mutating portal walkthrough; retain the
@@ -669,7 +672,9 @@ The task handoff must retain only redacted evidence and answer each item:
 
 Proposed ADR-0038 now resolves the Supervisor protected-root bootstrap owner in design: an
 on-demand Trust Coordinator signs and the Supervisor creates. This guide does not make that path
-installed evidence. ADR-0037 selects the containing-app identity. The I2B3 bootstrap App Group and
-Coordinator profiles, ordinary Supervisor IPC App Group/private-service topology, update verifier,
-Bundle Replacer, TUF operations, distribution location, minimum macOS version, and `.pkg` path
-remain explicit decision points.
+installed evidence. ADR-0037 selects the containing-app identity. I2B3 exact Coordinator/
+Supervisor profiles and signed entitlements passed, but the stable Supervisor container remained
+writable by the archived I1B profile; a signing/container epoch decision now blocks the remaining
+bootstrap App Group/service/key/root work. Ordinary Supervisor IPC App Group/private-service
+topology, update verifier, Bundle Replacer, TUF operations, distribution location, minimum macOS
+version, and `.pkg` path remain explicit decision points.

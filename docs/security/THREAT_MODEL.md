@@ -273,6 +273,16 @@ container entry or shared Keychain item and treats both namespaces as residual c
 peer/code identity authenticates the handoff but never substitutes for the Capsule installation-
 root signature.
 
+The I2B3 exact Team-3DDR profile/signing preflight later passed, but the mandatory stale-profile
+test found an unresolved boundary: a Supervisor signed with the still-valid archived I1B profile
+could rewrite a current-profile sentinel because both stable signing identifiers resolve the same
+App Sandbox private container. New CDHash, profile, App Group, and role-private Keychain-group
+projections did not version that filesystem authority. The run stopped and cleaned the exact
+sentinel before any key, service, installation, or root existed. Installed I2 is therefore
+`BLOCKED` on an ADR-selected signing/container epoch; peer requirements alone do not close
+separately launched stale-code write authority. See the
+[I2B3 blocker result](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+
 The proposed Source Preparer's sole role-namespaced store is an ownership topology, not a security
 boundary by itself. TypeScript P1 requires an exact OS-enforced protected container with the Source
 Preparer as its single enrolled member and negative open/link/replace/map/rename/handle-retention
@@ -424,7 +434,8 @@ enters `repair-required` rather than accepting whichever components start.
 - Trusted IPC checks code identity, effective user/session, exact enrolled build, relevant
   entitlements, and common epoch using supported OS mechanisms.
 - Debugged, dynamically invalid, mismatched, stale, or partially updated components cannot claim
-  validated posture.
+  validated posture. Stable App Sandbox container identity is not treated as a stale-binary write
+  fence; I2B3 proved an archived Supervisor profile could reach current-profile container state.
 - The daemon cannot clear degraded/quarantined/repair-required/compromised state.
 - Trust epochs are sequence-ordered and never described as rollback-proof without an additional
   anchor/witness.

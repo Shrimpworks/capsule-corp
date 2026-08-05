@@ -230,12 +230,12 @@ Tracked here until closed, so this audit is not lost to chat history:
 4. **No rehearsed machine-loss drill.** Part C above is written but has never been executed against
    a real replacement Mac. Treat it as a script to test, not proven recovery evidence, until someone
    runs it (ideally deliberately, not during an actual loss) and records the result.
-5. **Later I2B3 provisioning remains unexecuted.** I1B/R3 `PASSED` its exact development-only scope
-   using Apple Development SHA-1 `80A4...D3793` and three explicit profiles for the Broker, daemon,
-   and Supervisor. Do not repeat that completed matrix as though its inputs were absent. Installed
-   I2B remains `BLOCKED` on separately authorized exact Coordinator/bootstrap profiles,
-   caller/key authorization, App Group/service/container handoff, and descriptor-relative fault
-   evidence; see the [I2B2 gate](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md#exact-i2b3-gate).
+5. **I2B3 profile/signing preflight passed, then the stale-profile stop fired.** Exact Team-3DDR
+   Coordinator/Supervisor profiles and frozen effective entitlements passed. Before Keychain,
+   service, installation, or root work, the archived I1B Supervisor profile rewrote a
+   current-profile sentinel in the stable private container. Installed I2B remains `BLOCKED` on an
+   ADR-selected signing/container epoch and a separately authorized rerun; see the
+   [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 6. **Individual-membership single point of failure.** Only Dylan, as Account Holder, can create
    Developer ID certificates or manage Apple Developer team resources
    ([role limits](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#account-membership-team-and-roles)). If

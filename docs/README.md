@@ -27,13 +27,16 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 14. [macOS I2A protected-root bootstrap decision](MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md)
     — selected Coordinator/Supervisor authority split, signed request/record contract,
     descriptor-relative ordering, fault oracles, and exact I2B slices
-15. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
+15. [macOS I2B3 signing preflight and stale-profile blocker](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md)
+    — exact Team-3DDR profile/signing readback, mandatory stale-profile mutation stop, cleanup,
+    and the architecture decision required before protected-root execution may resume
+16. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
     — canonical Team-ID decision, environment/component matrices, safe setup and verification,
     storage/rotation policy, redacted inventory, and Dylan's next actions
-16. [Internal-alpha architecture and release audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) — the
+17. [Internal-alpha architecture and release audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) — the
     reconciled owner-only alpha scope, ranked blockers, risks, minimum hostile corpus, and external-
     alpha boundary
-17. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
+18. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
     contracts/mechanics, missing consumers, corrected authority boundaries, and ordered product
     closure
 18. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
@@ -138,6 +141,7 @@ a transformer, endpoint, runtime, or execution path and is not a first-release d
 - [Update and recovery](UPDATE_AND_RECOVERY.md)
 - [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md)
 - [macOS I2A protected-root bootstrap decision](MACOS_INSTALLATION_I2A_PROTECTED_ROOT_BOOTSTRAP_DECISION.md)
+- [macOS I2B3 signing preflight and stale-profile blocker](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md)
 - [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
 - [Protocol object model](protocol/OBJECT_MODEL.md)
 

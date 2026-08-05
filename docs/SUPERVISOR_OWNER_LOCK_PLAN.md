@@ -2,9 +2,12 @@
 
 Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. I2A now
 `PASSED` the protected-root owner/contract decision through Proposed ADR-0038. Installed G3/I2B is
-still `BLOCKED`; I2B2 unsigned construction is `PASSED`, while production signed-object wrapper
-review, separately authorized I2B3 installed mutations, protected-container evidence, and
-descriptor-relative store composition remain; the path remains intended. The historical discovery
+still `BLOCKED`; I2B2 unsigned construction, the production-shaped wrapper review, and I2B3 exact
+profile/signing preflight are `PASSED` in their narrow scopes. The required stale-profile test
+proved that the archived I1B Supervisor profile can rewrite current-profile state in the stable
+private container. An ADR-selected signing/container epoch, separately authorized installed
+mutations, protected-container evidence, and descriptor-relative store composition remain; the
+path remains intended. The historical discovery
 result is retained as evidence, not as a current
 `NO_GO` work status.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal

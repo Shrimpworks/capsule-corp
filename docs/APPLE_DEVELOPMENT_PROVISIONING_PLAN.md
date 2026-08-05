@@ -90,7 +90,11 @@ Per S5 and `WORKSTREAM_EVIDENCE_LEDGER.md`:
 - A separate Developer ID Application identity SHA-1 `AD70...F750` also belongs to Team
   `3DDR84M4JS`. It is later distribution authority and does not authorize Developer ID signing or
   make notarization current.
-- No exact I2B3 Trust Coordinator/bootstrap provisioning profile is confirmed.
+- The separately authorized I2B3 preflight created and cryptographically reconciled exact
+  Coordinator profile `c0446281-ba4b-451b-8c73-9ee9d8ef97a2` and Supervisor bootstrap profile
+  `c45a058b-ffdd-4a6b-bd8c-d746772a2702` under the selected Team-3DDR certificate. Signed effective
+  entitlement readback passed, but the required stale-profile test then blocked I2B3 before keys,
+  service registration, installation, or root creation.
 - No paid owned clean-host / minimum-OS validation hardware is currently planned.
 
 Any later App ID/profile capacity and portal availability must be observed under Team
@@ -129,7 +133,7 @@ separately enrolled daemon and Supervisor roles. Neither historical option autho
 | Broker-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Nested signed identity passed inactive-policy R3 without an independent portal profile |
 | Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
 | Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
-| Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Proposed ADR-0038/I2B2 candidate; exact App ID/profile remains an I2B3 blocker |
+| Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Exact App ID/profile and signed-entitlement preflight passed I2B3; process/key/service/root work did not begin after the stale-Supervisor stop |
 | Native front-end (Supervisor's C/Obj-C shim) | N/A — not a separate bundle | Shares `com.capsulecorp.capsule.supervisor`'s code identity |
 | Guest launcher/runner (flagged for completeness, outside this provisioning plan) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
 
@@ -157,12 +161,15 @@ not Developer ID/Distribution:
 | --- | --- | --- | --- |
 | `com.capsulecorp.capsule.broker` | App Sandbox | macOS App Development | Exact profile passed I1B/R3 |
 | `com.capsulecorp.capsule.daemon` | App Sandbox | macOS App Development | Exact profile passed I1B/R3 |
-| `com.capsulecorp.capsule.supervisor` | App Sandbox | macOS App Development | Exact profile passed I1B/R3; I2B3 requires a new exact bootstrap entitlement/profile set |
-| `com.capsulecorp.capsule.trust-bootstrap.v1` | App Sandbox plus candidate bootstrap App Group and Coordinator-only Keychain group | macOS App Development | Not created or authorized; exact I2B3 blocker |
+| `com.capsulecorp.capsule.supervisor` | App Sandbox | macOS App Development | Exact I1B/R3 profile passed; new I2B3 bootstrap profile/signing preflight also passed, but the old profile retained write access to the stable private container |
+| `com.capsulecorp.capsule.trust-bootstrap.v1` | App Sandbox plus candidate bootstrap App Group and Coordinator-only Keychain group | macOS App Development | Exact App ID/profile and signed-entitlement preflight passed; Coordinator was not launched and no key/container state was created |
 
 For each newly authorized App ID: use one macOS App Development provisioning profile scoped to the
 exact App ID, matching authorized Apple Development certificate after exact verification, and the
-owned test Mac's device UDID. Do not reuse I1B profiles for a changed I2B3 entitlement set.
+owned test Mac's device UDID. Do not reuse I1B profiles for a changed I2B3 entitlement set. The
+[I2B3 stale-profile result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md)
+additionally proves that merely issuing a new profile for the same Supervisor signing identifier
+does not version its App Sandbox private container.
 Development profiles are inherently single-Team, non-notarizable, and Gatekeeper-rejecting by
 design — P0-4A's `spctl --assess` already returned status 3 against ad-hoc-signed bytes, and this
 plan should not chase a Gatekeeper-pass result with a Development profile.
@@ -343,11 +350,11 @@ Per this plan's explicit scope (no authorized Developer ID/notarization use):
 3. **Keep the central operational inventory deferred for the current one-maintainer stage.** The
    pinned R3 archive and evidence ledger retain current redacted metadata. Create a shared location
    when a second maintainer, production signing, or CI notarization requires it.
-4. **Before I2B3, obtain explicit authorization for its exact mutations.** Use the selected Team
-   and create only the exact Coordinator/bootstrap profiles and candidate groups required by the
-   [I2B2 gate](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md#exact-i2b3-gate). Include
-   caller/key authorization, App Group/service/container handoff, fresh disposable test keys, and
-   descriptor-relative fault evidence; keep runtime, backend, guest, and attempts absent.
+4. **Resolve and reauthorize I2B3 after the stale-profile stop.** Exact profiles and signed
+   entitlements passed, but the stable Supervisor private container remained writable by the
+   archived I1B profile. Select an ADR-governed signing/container epoch, provision only its exact
+   replacement identifiers/profiles, and separately authorize caller/key, App Group/service/root,
+   and descriptor-relative evidence; keep runtime, backend, guest, and attempts absent.
 5. **Retain any later credentialed evidence outside chat.** Archive the exact public metadata and
    results in `capsule-experiments`, pin its immutable commit here, and update the evidence ledger.
    Raw profiles, private keys, and credentials remain excluded.

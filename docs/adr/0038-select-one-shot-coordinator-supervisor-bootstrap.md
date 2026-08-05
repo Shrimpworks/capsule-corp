@@ -200,9 +200,17 @@ fenced without authority recovery.
 - The narrow production-shaped I2B1 wrapper review is `PASSED` for passive checked-in vectors. It
   adds no live key, signing, authenticated caller/key registry, durable replay, installed consumer,
   or product admission.
-- Installed I2 remains `BLOCKED` on exact Team-3DDR Coordinator/bootstrap profiles, separately
-  authorized test-only signing/Keychain/App Group/SMAppService mutations, caller/key authorization,
-  same-user/stale/debug/session/update evidence, and descriptor-relative G2 composition.
+- The I2B3 exact Team-3DDR Coordinator/Supervisor profiles and signed-entitlement preflight are
+  `PASSED` in their narrow scope. The mandatory stale-profile stop test then proved that the
+  still-valid I1B Supervisor profile can rewrite current-profile state in the stable Supervisor App
+  Sandbox container even though its CDHash, profile, App Group, and Keychain-group projection
+  differ. XPC peer requirements do not fence a separately launched stale Supervisor from its own
+  container.
+- Installed I2 remains `BLOCKED` before key/service/root creation. This Proposed ADR or a successor
+  must select a versioned signing/container epoch and its stale-write/repair semantics before the
+  separately authorized caller/key, SMAppService, protected-root, session, and descriptor-relative
+  corpus can resume. See the
+  [I2B3 blocker result](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.
 - Product-store selection, production signed corpus, archive F4B+, ordinary authenticated IPC,

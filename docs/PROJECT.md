@@ -49,9 +49,14 @@ Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. I
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
 bootstrap-only Supervisor descriptor, inactive entitlement/constraint inputs, exact I1/I2B1
 cross-links, closed inventory, and no-create activation refusal. The narrow production-shaped
-I2B1 CBOR/COSE wrapper review is `PASSED` for passive checked-in vectors only. Installed I2B remains
-`BLOCKED` on separately authorized I2B3 signing/key authorization/App Group/service/container
-handoff and descriptor-relative store-open evidence; no installed security-control claim follows.
+I2B1 CBOR/COSE wrapper review is `PASSED` for passive checked-in vectors only. I2B3 created and
+signed the exact Team-3DDR Coordinator/Supervisor development profiles, then stopped before keys,
+services, installation, or protected-root creation because the required stale-profile test proved
+that the archived I1B Supervisor profile could rewrite current-profile state in the stable App
+Sandbox container. Installed I2B remains `BLOCKED` on an ADR-selected signing/container epoch
+followed by separately authorized key/service/root and descriptor-relative evidence; no installed
+security-control claim follows. See the
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).

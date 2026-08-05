@@ -15,15 +15,18 @@ Evidence or reason: current Apple public interfaces support an embedded on-deman
   the only process with Supervisor-container authority while keeping installation-root signing in
   a separate user-presence-gated role. The closed fault plan preserves every I0/I1/G2 no-create,
   no-guest, and repair-required invariant.
-Remaining work: I2B2 unsigned construction is passed; production wrapper review, separately
-  authorized I2B3 test-only signing/key/App Group/service/container mutations, installed
-  denial/fault evidence, and descriptor-relative fixed-v1 composition remain I2B work.
+Remaining work: I2B2 unsigned construction, production-shaped wrapper review, and I2B3 exact
+  profile/signing preflight are passed. The I2B3 stale-profile stop test proved that the archived
+  I1B Supervisor profile can rewrite current-profile state in the stable private container.
+  An ADR-selected signing/container epoch, then separately authorized key/service/root,
+  denial/fault, and descriptor-relative fixed-v1 evidence remain I2B work.
   Product-store selection, product IPC, update/restore, runtime/backend/guest, and attempt
   activation remain outside I2A.
-Next action: review the production signed-object wrapper, then separately authorize I2B3 with exact
-  Team-3DDR profiles and fresh disposable test signing/key/App Group/service/container inputs.
+Next action: select and review the Supervisor signing/container epoch that fences or safely
+  composes stale-profile write authority, provision its exact profiles, and separately authorize
+  the remaining I2B3-I2B5 mutations.
 Parent status: installed I2 protected-root composition is BLOCKED on the named I2B3-I2B5 evidence;
-  macOS installation remains IN_PROGRESS — TRENDING_GOOD.
+  macOS installation is IN_PROGRESS — TRENDING_BAD after the stale-profile result.
 ```
 
 Decision: [Proposed ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md).
@@ -425,6 +428,9 @@ use only owned disposable fixtures and never an existing Capsule or unrelated co
 
 ### I2B3: separately authorized Apple Development bootstrap handoff
 
+- Current result: `BLOCKED` after the exact profile/signing preflight `PASSED` and the required
+  stale-profile mutation stop fired. See the
+  [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 - Requires completed I1B, exact Team-`3DDR84M4JS` profiles, explicit authorization for fresh
   test-only Coordinator/Supervisor Keychain groups and keys, App Group, `SMAppService`, installed
   container, and local process mutations.

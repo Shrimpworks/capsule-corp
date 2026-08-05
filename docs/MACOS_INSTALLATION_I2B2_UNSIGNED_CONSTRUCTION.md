@@ -17,6 +17,12 @@ Next action: review the production request/record wrapper, then authorize I2B3 o
 Parent status: installed I2B is BLOCKED; macOS installation remains IN_PROGRESS — TRENDING_GOOD
 ```
 
+Current successor status: the production-shaped wrapper review and I2B3 exact Team-3DDR
+profile/signing preflight later `PASSED` in their narrow scopes. I2B3 then became `BLOCKED` when the
+required stale-profile test proved that the archived I1B Supervisor profile could rewrite
+current-profile state in the stable App Sandbox container. See the
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+
 ## Defensive scope
 
 I2B2 constructs files from repository fixtures only. It does not inspect or use Apple identities,

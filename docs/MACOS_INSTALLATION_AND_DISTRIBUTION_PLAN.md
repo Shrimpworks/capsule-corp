@@ -14,8 +14,8 @@ Evidence or reason: the review supplied a coherent one-application distribution 
   those recommendations with current Source Validator, owner-lock, archive, IPC, and trust work.
 Remaining work: every installed mechanism and authority-bearing helper below remains subject to
   its named ADR, implementation, signed installed corpus, and product-admission gate.
-Next action: continue from passed passive I0 into the execution-disabled developer-signed I1 app
-  shell, then run the protected Supervisor-root I2 composition before automatic updates.
+Next action: continue from passed execution-disabled developer-signed I1B into the protected
+  Supervisor-root I2B composition before automatic updates.
 Parent status: macOS product installation and distribution are IN_PROGRESS — TRENDING_GOOD.
 ```
 
@@ -246,10 +246,10 @@ service-registration evidence exists.
 | --- | --- | --- |
 | I0 | Passive application bundle, role, entitlement, service, bootstrap, update, repair, and uninstall contract | `PASSED`; exact inactive profile, generated cases/digests, field authority, and pure missing/mixed/extra/transition/retention validators retained; no installed behavior |
 | I1A | Unsigned app shell and exact seven-role byte/layout construction, execution permanently disabled | `PASSED`; deterministic Swift/AppKit status shell, inert daemon/Supervisor placeholders, exact R2 identities, closed readback and refusal evidence; no signed or installed behavior |
-| I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `BLOCKED` on separate credentialed authorization, matching Team-`3DDR84M4JS` profiles, and proof of the exact supported signed bundle/service composition |
+| I1B | Developer-signed app shell, exact effective entitlements and installed daemon/Supervisor/private-XPC placement, execution always disabled | `PASSED`; exact Team-`3DDR84M4JS` profiles, inside-out signing/readback, private-service reachability, eight refusal cases, per-user registration, and cleanup are retained in [`artifacts/macos-i1b-r3-signed-development-composition`](../artifacts/macos-i1b-r3-signed-development-composition); Apple Development only, no product admission |
 | I2A | Protected-root/bootstrap-owner architecture and passive contract | `PASSED`; Proposed ADR-0038 selects one-shot Coordinator authorization plus Supervisor creation and retains the exact I2B object/order/fault plan without installed behavior |
-| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | `BLOCKED` on I1B, passive object/wrapper fixtures, separately authorized test-only key/service/container mutations, and matching signed identities/profiles; product-store selection remains separate |
-| I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R1-R4 contract/construction/signed evidence; the Source Validator architecture/resource decision itself is `PASSED` |
+| I2B | Protected Supervisor container, one-time signed bootstrap, ADR-0033 owner-lock/descriptor-relative fixed-v1 open, same-user mutation and restart corpus | `BLOCKED` on passive object/wrapper fixtures, separately authorized test-only key/service/container mutations, exact Coordinator/bootstrap identifiers and profiles, and installed evidence; product-store selection remains separate |
+| I3 | Pairwise authenticated daemon/Broker IPC plus two role-specific Source Validator launchers | `BLOCKED` on I2, ADR-0029's Supervisor App Group/private-service decision, and ADR-0036 R4 confinement/resource/residue evidence plus later consumers; R1-R3 are `PASSED` in their exact scopes |
 | I4 | Manual whole-bundle replacement, service re-registration, mixed-version refusal, forward repair, retained-state recovery | `BLOCKED` on I2/I3 and replacement-authority decision |
 | I5 | User-triggered TUF verification and reviewed mechanical replacement | later `IN_PROGRESS` only after I4; not an MVP dependency |
 | I6 | Developer ID/notarized beta, support-floor matrix, backup/restore/uninstall and distribution admission | deferred; paid clean-host coverage is not currently planned |

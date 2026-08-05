@@ -2,9 +2,12 @@
 
 Date: 2026-08-04
 
-Status: `BLOCKED`. Team identity is reconciled, but the exact containing-role fixtures,
-role-matching provisioning profiles, and finalized signed constraint/entitlement bytes do not yet
-exist. This packet authorizes nothing by itself.
+Status: `PASSED` for the exact Apple Development installed experiment retained at
+[`artifacts/macos-i1b-r3-signed-development-composition`](../artifacts/macos-i1b-r3-signed-development-composition).
+The containing fixtures, exact profiles, signed constraints/entitlements, installed reachability,
+refusal matrix, and cleanup evidence passed with execution disabled. This packet authorizes nothing
+by itself; the experiment ran under the later explicit user authorization recorded by its scope and
+evidence.
 
 ## Defensive scope and credential boundary
 
@@ -28,8 +31,8 @@ R3 starts only from a fresh successful R2 reproduction whose unsigned file diges
 
 | Role | Containing bundle | Private service/signing identifier | R2 launcher SHA-256 | Parser signing identifier and R2 SHA-256 | Required installed placement |
 | --- | --- | --- | --- | --- | --- |
-| daemon | `com.capsulecorp.capsule.daemon` | `com.capsulecorp.capsule.source-validator.daemon.v1` | `4bc270c84f166dfb077d84458940411073f3c70a7f70db2e4af48601500b36cc` | `com.capsulecorp.capsule.source-validator-parser.daemon.v1`; `f54c349e3a61b06e0b4d482bc1ed28924ffe712a7ff2531f504e7b57917defc7` | `/Applications/CapsuleR3DaemonFixture.app/Contents/XPCServices/CapsuleSourceValidatorDaemon.xpc`; parser remains at `Contents/Resources/capsule-mjs-source-validator-daemon` inside that XPC bundle |
-| Approval Broker | `com.capsulecorp.capsule.broker` | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | `81284de5ba54e2288602bee4e9aca4e4513211b560bacfd1286b7ab57c922613` | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1`; `7abac7da99f4b9edef77bb5ecfff135e8b752e5ed656664632272079b5408577` | `/Applications/CapsuleR3BrokerFixture.app/Contents/XPCServices/CapsuleSourceValidatorBroker.xpc`; parser remains at `Contents/Resources/capsule-mjs-source-validator-approval-broker` inside that XPC bundle |
+| daemon | `com.capsulecorp.capsule.daemon` | `com.capsulecorp.capsule.source-validator.daemon.v1` | `4bc270c84f166dfb077d84458940411073f3c70a7f70db2e4af48601500b36cc` | `com.capsulecorp.capsule.source-validator-parser.daemon.v1`; `f54c349e3a61b06e0b4d482bc1ed28924ffe712a7ff2531f504e7b57917defc7` | `/Users/dsteele/Applications/Capsule.app/Contents/Library/Helpers/CapsuleDaemon.app/Contents/XPCServices/CapsuleSourceValidatorDaemon.xpc`; parser remains at `Contents/Resources/capsule-mjs-source-validator-daemon` inside that XPC bundle |
+| Approval Broker | `com.capsulecorp.capsule.broker` | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | `81284de5ba54e2288602bee4e9aca4e4513211b560bacfd1286b7ab57c922613` | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1`; `7abac7da99f4b9edef77bb5ecfff135e8b752e5ed656664632272079b5408577` | `/Users/dsteele/Applications/Capsule.app/Contents/XPCServices/CapsuleSourceValidatorBroker.xpc`; parser remains at `Contents/Resources/capsule-mjs-source-validator-approval-broker` inside that XPC bundle |
 
 The launcher paths are respectively
 `Contents/MacOS/CapsuleSourceValidatorDaemonLauncher` and
@@ -103,15 +106,15 @@ zero parser spawn; and OS/Xcode/SDK identity. Pin the resulting archive commit b
 repository. Do not retain private keys, profile secrets, authentication material, or user source.
 
 On any failure: stop both containing fixtures, unregister only services registered by this exact
-experiment, remove only `/Applications/CapsuleR3DaemonFixture.app`,
-`/Applications/CapsuleR3BrokerFixture.app`, and proven role-private test
+experiment, remove only `/Users/dsteele/Applications/Capsule.app` and proven role-private test
 container residue, restore the pre-run process/service inventory, and retain refusal/cleanup
 evidence. Never delete unrelated profiles, certificates, Keychain items, containers, or product
 state. A mixed or ambiguous install stays `repair-required`; do not make it look fresh.
 
-## Exact authorization still required
+## Exact authorization applied by the retained experiment
 
-A later request must separately authorize every intended mutation:
+The later explicit user request authorized these mutations only for the exact owned-Mac experiment,
+and the retained evidence records their completion:
 
 1. read the selected certificate/profile metadata needed for exact matching;
 2. create/register the two containing-role App IDs, this Mac device record, and only any

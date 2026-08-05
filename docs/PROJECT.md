@@ -30,6 +30,13 @@ requires every earlier v2 effect tombstone to survive replacement of that field.
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.
 
+Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
+unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
+bootstrap-only Supervisor descriptor, inactive entitlement/constraint inputs, exact I1/I2B1
+cross-links, closed inventory, and no-create activation refusal. Installed I2B remains `BLOCKED`
+on production wrapper review and separately authorized I2B3 signing/key/App Group/service/container
+handoff evidence; no installed security-control claim follows.
+
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 This section summarizes durable repository state; the linked checkpoint separates selected design,
@@ -42,7 +49,8 @@ not installed-product evidence. A developer-signed MVP deliberately starts with 
 replacement; automatic TUF updates, a custom Bundle Replacer, Developer ID/notarized distribution,
 minimum-OS support, and complete uninstall semantics remain later work. Proposed ADR-0038 now
 selects the protected Supervisor-container bootstrap owner and on-demand Trust Coordinator
-contract; its I2B App Group/XPC/container/key evidence remains blocked. Ordinary product
+contract; I2B2's unsigned construction is passed, while installed App Group/XPC/container/key
+evidence remains blocked. Ordinary product
 Supervisor App Group/private-XPC authority and Bundle Replacer authority still require decisions;
 the already-selected role-specific Source Validator launchers still require signed installed
 evidence.
@@ -59,8 +67,8 @@ The follow-on [I1A unsigned construction](MACOS_INSTALLATION_I1A_UNSIGNED_CONSTR
 shell, the exact seven-role I0 tree, inert non-executable daemon/Supervisor placeholders, unchanged
 R2 launcher/parser identities, deterministic two-directory construction, closed metadata, and
 missing/mixed/extra/substitution refusal evidence. It does not sign, install, register, bootstrap,
-launch, or enable execution. Developer-signed installed I1 remains `BLOCKED` pending a separately
-authorized I1B/R3 task with exact Team-`3DDR84M4JS` profiles and supported placement evidence.
+launch, or enable execution. The later I1B development-signed execution-disabled composition is
+also `PASSED` in its exact scope; see the installation plan for its evidence and limitations.
 
 The current JSON Schemas and TypeScript `Job` interfaces are pre-freeze scaffolding. They describe
 the repository's current API surface, but they intentionally do not define the target v0 protocol.

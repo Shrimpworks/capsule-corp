@@ -1,0 +1,23 @@
+{
+  "schema": "capsule.macos-installation.i2b2-fixture-manifest/v0",
+  "status": "unsigned-inactive-no-side-effects",
+  "profileId": "capsule.macos-installation.unsigned-installation-only/i2b2",
+  "cases": 14,
+  "files": [
+    {
+      "path": "schemas/conformance/macos-i2b2-unsigned-installation/profile.json",
+      "bytes": 15226,
+      "sha256": "a061291fe76d3bb460673adf25a322b0aa6d87d43619503eacaf3889eef4144b"
+    },
+    {
+      "path": "schemas/conformance/macos-i2b2-unsigned-installation/profile.schema.json",
+      "bytes": 16492,
+      "sha256": "5835c3d344b169457f252225a47ec086dd004b9de6c90a6c8abe9d61a26758ac"
+    },
+    {
+      "path": "schemas/conformance/macos-i2b2-unsigned-installation/mutation-corpus.json",
+      "bytes": 1122,
+      "sha256": "4e41cbfd2b3773680f8ffbde6cfa933db61c5aacaf2986f1e79aaa9b13c1375f"
+    }
+  ]
+}

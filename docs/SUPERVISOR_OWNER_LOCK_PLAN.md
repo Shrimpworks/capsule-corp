@@ -2,9 +2,10 @@
 
 Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. I2A now
 `PASSED` the protected-root owner/contract decision through Proposed ADR-0038. Installed G3/I2B is
-still `BLOCKED` by I2B2 unsigned construction, production signed-object wrapper review, authorized
-installed mutations, protected-container evidence, and descriptor-relative store composition;
-the path remains intended. The historical discovery result is retained as evidence, not as a current
+still `BLOCKED`; I2B2 unsigned construction is `PASSED`, while production signed-object wrapper
+review, separately authorized I2B3 installed mutations, protected-container evidence, and
+descriptor-relative store composition remain; the path remains intended. The historical discovery
+result is retained as evidence, not as a current
 `NO_GO` work status.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,
@@ -226,9 +227,10 @@ Retained checkpoint:
 
 ## Remaining blockers
 
-The retained local semantics and passed I2A decision do not close protected installed storage,
-exact Team-3DDR role profiles, passive/installed authenticated bootstrap creation/signing,
-session/reboot/update behavior, support floor, real power loss, production engine, coherent
+The retained local semantics, passed I2A decision, and passed I2B2 unsigned construction do not
+close protected installed storage, exact Team-3DDR role profiles, installed authenticated
+bootstrap creation/signing, session/reboot/update behavior, support floor, real power loss,
+production engine, coherent
 restore/rollback, authenticated IPC, production approvals, content/evidence, runtime/backend, or
 guest gates. `flock` remains advisory and supplies no same-UID containment without the installed
 protected-directory property. It also supplies no Source Preparer store protection or worker

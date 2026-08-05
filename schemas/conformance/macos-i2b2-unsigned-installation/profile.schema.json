@@ -1,0 +1,710 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://capsule.local/schemas/macos-i2b2-unsigned-installation-profile:v0",
+  "title": "MacosI2b2UnsignedInstallationProfile v0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "checkpoint",
+    "status",
+    "profileId",
+    "intendedDevelopmentTeamId",
+    "containingRelease",
+    "roles",
+    "executableInputs",
+    "services",
+    "entitlements",
+    "entitlementInputs",
+    "constraints",
+    "bootstrapObjects",
+    "protectedState",
+    "stateProjection",
+    "cleanupRepair",
+    "readbackCaps"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string"
+    },
+    "checkpoint": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "profileId": {
+      "type": "string"
+    },
+    "intendedDevelopmentTeamId": {
+      "type": "string"
+    },
+    "containingRelease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "baseProfileId",
+        "i1aBundleManifest",
+        "i1aConstructionEvidence",
+        "i1bSignedDevelopmentEnrollment",
+        "signedI2B3ReleaseDigestState",
+        "signedI2B3ComponentProfileDigestState"
+      ],
+      "properties": {
+        "identity": {
+          "type": "string"
+        },
+        "baseProfileId": {
+          "type": "string"
+        },
+        "i1aBundleManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string"
+            }
+          }
+        },
+        "i1aConstructionEvidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string"
+            }
+          }
+        },
+        "i1bSignedDevelopmentEnrollment": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string"
+            }
+          }
+        },
+        "signedI2B3ReleaseDigestState": {
+          "type": "string"
+        },
+        "signedI2B3ComponentProfileDigestState": {
+          "type": "string"
+        }
+      }
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roleId",
+          "containingRoleId",
+          "bundlePath",
+          "executablePath",
+          "bundleIdentifier",
+          "signingIdentifier",
+          "required",
+          "sourceProfile"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string"
+          },
+          "containingRoleId": {
+            "type": "string"
+          },
+          "bundlePath": {
+            "type": "string"
+          },
+          "executablePath": {
+            "type": "string"
+          },
+          "bundleIdentifier": {
+            "type": "string"
+          },
+          "signingIdentifier": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "sourceProfile": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "executableInputs": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roleId",
+          "identityClass",
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string"
+          },
+          "identityClass": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "serviceId",
+          "serviceName",
+          "ownerRoleId",
+          "peerRoleId",
+          "protocolIdentity",
+          "methodSet",
+          "activationState"
+        ],
+        "properties": {
+          "serviceId": {
+            "type": "string"
+          },
+          "serviceName": {
+            "type": "string"
+          },
+          "ownerRoleId": {
+            "type": "string"
+          },
+          "peerRoleId": {
+            "type": "string"
+          },
+          "protocolIdentity": {
+            "type": "string"
+          },
+          "methodSet": {
+            "type": "string"
+          },
+          "activationState": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entitlements": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "roleId",
+          "key",
+          "disposition",
+          "valueIdentity",
+          "activationState"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "valueIdentity": {
+            "type": "string"
+          },
+          "activationState": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "entitlementInputs": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "projection",
+        "teamIdentifier",
+        "coordinatorSigningIdentifier",
+        "supervisorSigningIdentifier",
+        "activeCodeDirectoryHashSetState",
+        "activeEffectiveEntitlementDigestSetState",
+        "activationDecision"
+      ],
+      "properties": {
+        "projection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string"
+            }
+          }
+        },
+        "teamIdentifier": {
+          "type": "string"
+        },
+        "coordinatorSigningIdentifier": {
+          "type": "string"
+        },
+        "supervisorSigningIdentifier": {
+          "type": "string"
+        },
+        "activeCodeDirectoryHashSetState": {
+          "type": "string"
+        },
+        "activeEffectiveEntitlementDigestSetState": {
+          "type": "string"
+        },
+        "activationDecision": {
+          "type": "string"
+        }
+      }
+    },
+    "bootstrapObjects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixtureManifest",
+        "request",
+        "record"
+      ],
+      "properties": {
+        "fixtureManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "sha256": {
+              "type": "string"
+            }
+          }
+        },
+        "request": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "objectType",
+            "version",
+            "purpose",
+            "audience",
+            "mediaType",
+            "containingReleaseBinding",
+            "i1ProfileBinding",
+            "componentProfileBinding",
+            "signingState"
+          ],
+          "properties": {
+            "objectType": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "purpose": {
+              "type": "string"
+            },
+            "audience": {
+              "type": "string"
+            },
+            "mediaType": {
+              "type": "string"
+            },
+            "containingReleaseBinding": {
+              "type": "string"
+            },
+            "i1ProfileBinding": {
+              "type": "string"
+            },
+            "componentProfileBinding": {
+              "type": "string"
+            },
+            "signingState": {
+              "type": "string"
+            }
+          }
+        },
+        "record": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "objectType",
+            "version",
+            "purpose",
+            "audience",
+            "mediaType",
+            "containingReleaseBinding",
+            "i1ProfileBinding",
+            "componentProfileBinding",
+            "signingState"
+          ],
+          "properties": {
+            "objectType": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "purpose": {
+              "type": "string"
+            },
+            "audience": {
+              "type": "string"
+            },
+            "mediaType": {
+              "type": "string"
+            },
+            "containingReleaseBinding": {
+              "type": "string"
+            },
+            "i1ProfileBinding": {
+              "type": "string"
+            },
+            "componentProfileBinding": {
+              "type": "string"
+            },
+            "signingState": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "protectedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stateRootClass",
+        "privateParentName",
+        "stateRootName",
+        "pendingJournalName",
+        "stagingRootPrefix",
+        "publishIntentName",
+        "ownerEntryName",
+        "ownerMode",
+        "ownerLinkCount",
+        "ownerProfile",
+        "storeEntryName",
+        "storeFormat",
+        "storeProfile",
+        "requestEntryName",
+        "recordEntryName",
+        "ordinaryStartupOperation"
+      ],
+      "properties": {
+        "stateRootClass": {
+          "type": "string"
+        },
+        "privateParentName": {
+          "type": "string"
+        },
+        "stateRootName": {
+          "type": "string"
+        },
+        "pendingJournalName": {
+          "type": "string"
+        },
+        "stagingRootPrefix": {
+          "type": "string"
+        },
+        "publishIntentName": {
+          "type": "string"
+        },
+        "ownerEntryName": {
+          "type": "string"
+        },
+        "ownerMode": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerLinkCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "ownerProfile": {
+          "type": "string"
+        },
+        "storeEntryName": {
+          "type": "string"
+        },
+        "storeFormat": {
+          "type": "string"
+        },
+        "storeProfile": {
+          "type": "string"
+        },
+        "requestEntryName": {
+          "type": "string"
+        },
+        "recordEntryName": {
+          "type": "string"
+        },
+        "ordinaryStartupOperation": {
+          "type": "string"
+        }
+      }
+    },
+    "stateProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "signingState",
+        "provisioningProfileState",
+        "coordinatorExecutableState",
+        "supervisorExecutableState",
+        "serviceRegistrationState",
+        "serviceLaunchState",
+        "coordinatorSigningState",
+        "installationRootKeyState",
+        "bootstrapRequestState",
+        "bootstrapRecordState",
+        "protectedRootState",
+        "ownerState",
+        "storeState",
+        "attemptsEnabled",
+        "runtimePresent",
+        "backendPresent",
+        "guestPresent",
+        "activationDecision",
+        "activationReason"
+      ],
+      "properties": {
+        "signingState": {
+          "type": "string"
+        },
+        "provisioningProfileState": {
+          "type": "string"
+        },
+        "coordinatorExecutableState": {
+          "type": "string"
+        },
+        "supervisorExecutableState": {
+          "type": "string"
+        },
+        "serviceRegistrationState": {
+          "type": "string"
+        },
+        "serviceLaunchState": {
+          "type": "string"
+        },
+        "coordinatorSigningState": {
+          "type": "string"
+        },
+        "installationRootKeyState": {
+          "type": "string"
+        },
+        "bootstrapRequestState": {
+          "type": "string"
+        },
+        "bootstrapRecordState": {
+          "type": "string"
+        },
+        "protectedRootState": {
+          "type": "string"
+        },
+        "ownerState": {
+          "type": "string"
+        },
+        "storeState": {
+          "type": "string"
+        },
+        "attemptsEnabled": {
+          "type": "boolean"
+        },
+        "runtimePresent": {
+          "type": "boolean"
+        },
+        "backendPresent": {
+          "type": "boolean"
+        },
+        "guestPresent": {
+          "type": "boolean"
+        },
+        "activationDecision": {
+          "type": "string"
+        },
+        "activationReason": {
+          "type": "string"
+        }
+      }
+    },
+    "cleanupRepair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cleanupProjection",
+        "protectedStateMutation",
+        "appGroupMutation",
+        "keychainMutation",
+        "serviceMutation",
+        "repairProjection",
+        "nextGate"
+      ],
+      "properties": {
+        "cleanupProjection": {
+          "type": "string"
+        },
+        "protectedStateMutation": {
+          "type": "string"
+        },
+        "appGroupMutation": {
+          "type": "string"
+        },
+        "keychainMutation": {
+          "type": "string"
+        },
+        "serviceMutation": {
+          "type": "string"
+        },
+        "repairProjection": {
+          "type": "string"
+        },
+        "nextGate": {
+          "type": "string"
+        }
+      }
+    },
+    "readbackCaps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileRawBytes",
+        "bundleManifestRawBytes",
+        "bundleFileCount",
+        "bundlePathUtf8Bytes"
+      ],
+      "properties": {
+        "profileRawBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bundleManifestRawBytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bundleFileCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bundlePathUtf8Bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

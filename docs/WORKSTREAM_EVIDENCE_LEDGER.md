@@ -240,6 +240,15 @@ same-user/stale/debug/session/update/rollback oracles, and I2B1-I2B5. It created
 signature, key, service, container, file, process, runtime, backend, or guest. Installed I2 remains
 `BLOCKED`; product store selection and attempt activation remain outside I2A.
 
+I2B2 is `PASSED` for unsigned installation-only bytes and layout. Two clean repository-local
+constructions retain an exact 31-file/eight-role bundle, profile SHA-256
+`a061291fe76d3bb460673adf25a322b0aa6d87d43619503eacaf3889eef4144b`, bundle-manifest SHA-256
+`f706e3597958a6f694de7fb7c57f3e66d9cd5cd6a7f99e389de40018923c5c5d`, exact I1A/I1B/I2B1
+cross-links, inactive service/entitlement/constraint inputs, and no-create refusal. No identity,
+profile, signing, key, service, process, container, protected state, runtime, backend, or guest was
+used. Installed I2B remains `BLOCKED` on production wrapper review and separately authorized I2B3
+signing/key/App Group/service/container handoff evidence.
+
 Source Preparer P0 remains `BLOCKED` as a separate conditional later feature merged in PR #72 from head
 `a12041c36d90815474598f0929c595b32dc68e11` as
 `2e268b01d4174fe90397c00abc5973a3dd785606`: no single-member source-store container, exact worker
@@ -475,10 +484,10 @@ Current dependency and priority view:
    consumers.
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
-3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, and the post-I1B
-   platform-semantics research are `PASSED` in their exact scopes. Continue with I2B2 unsigned
-   construction, then only separately authorized I2B signed Coordinator/bootstrap,
-   protected-container, and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
+3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, I2B2 unsigned
+   construction, and the post-I1B platform-semantics research are `PASSED` in their exact scopes.
+   Continue only after production wrapper review with separately authorized I2B3 signed
+   Coordinator/bootstrap, protected-container, and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
    remains I4 and `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
    and complete uninstall remain I5-I6.
 4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original

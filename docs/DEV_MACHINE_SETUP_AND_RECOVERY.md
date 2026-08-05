@@ -14,11 +14,11 @@ changes no product behavior, signing state, credential, key, or portal resource.
 Capsule's setup knowledge is otherwise scattered across [Development](DEVELOPMENT.md) (language
 toolchains), [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
 (Apple identity/credential inventory and policy), and
-[Apple Development provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md) (App ID/profile
-proposal). Each is correct and remains canonical for its subject. None of them is sequenced as "do
-this, then this" for a fresh machine, a new contributor, or a lost/replaced Mac. This document is
-that sequence. It does not restate policy or rationale already covered by the linked docs — follow
-the links for the *why*.
+[Apple Development provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md) (historical App
+ID/profile proposal and current I1B/R3 reconciliation). Each remains canonical for its subject.
+None of them is sequenced as "do this, then this" for a fresh machine, a new contributor, or a
+lost/replaced Mac. This document is that sequence. It does not restate policy or rationale already
+covered by the linked docs — follow the links for the *why*.
 
 Two audiences:
 
@@ -35,7 +35,8 @@ Do this on any Mac before touching the repository.
    Apple-identity work in Part B, which needs the full Xcode app (Settings > Accounts, Certificates
    pane). No Xcode version is currently pinned anywhere in this repository or its CI — record the
    exact version you install (`xcodebuild -version`) in your own notes; there is no product Xcode
-   project yet to pin a version against (see [Open gaps](#open-gaps) below).
+   project yet to pin a version against (see
+   [Deferred and trigger-based gaps](#deferred-and-trigger-based-gaps) below).
 2. Install Go, matching `go.mod` (currently 1.23 or newer).
 3. Install Node.js, matching `.node-version` (currently 22.22.1).
 4. Enable pnpm via Corepack, matching `package.json`'s `packageManager` pin (currently 10.28.2):
@@ -75,23 +76,23 @@ Nothing in Part A touches an Apple account, certificate, or Keychain identity.
 
 ## Part B — Apple identity and credential setup
 
-Only needed for work that requires a signed, installed, or provisioned build (installed-test rows
-in the [provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md), Source Validator R3, or any
-Developer ID/notarization task). This section is a checklist that sequences existing canonical
-content — every step links to the doc that defines it in full; do not skip to a step without
-reading its linked section first.
+Only needed for work that requires a signed, installed, or provisioned build (a deliberate I1B/R3
+reproduction, I2B3 or another later installed slice, or any Developer ID/notarization task). This
+section is a checklist that sequences existing canonical content — every step links to the doc
+that defines it in full; do not skip to a step without reading its linked section first.
 
 1. Confirm Apple Developer Program membership and Team ID via
    [§1 "Confirm membership and team in the portal"](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#1-confirm-membership-and-team-in-the-portal).
    Current selected team: `3DDR84M4JS` (Individual). Do not trust a certificate's parenthesized
    display suffix as the Team ID — see the
-   [Team ID reconciliation](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#team-id-reconciled-exact-role-inputs-still-stop-credentialed-work).
-2. Freeze bundle topology and identifiers before creating anything in the portal — follow
+   [Team ID reconciliation](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#team-id-and-signed-development-inputs-reconciled-later-credentialed-work-remains-gated).
+2. Confirm the selected bundle topology and identifiers before creating anything in the portal —
+   follow
    [§2 "Freeze identifiers and capabilities"](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#2-freeze-identifiers-and-capabilities)
-   together with the
-   [component/bundle-ID proposal](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md#component-inventory-and-bundle-identifier-proposal).
-   Option A vs. Option B (single main app vs. separate installer) must be decided here, not later —
-   it changes how many App IDs you register.
+   together with [Accepted ADR-0037](adr/0037-freeze-passive-macos-installation-i0-contract.md).
+   ADR-0037 selects the visible Broker `Capsule.app` with separately enrolled embedded daemon and
+   Supervisor identities; the earlier Option A/Option B proposal is historical. Do not register
+   speculative duplicate App IDs.
 3. Obtain or verify the Apple Development signing identity —
    [§3 "Obtain the Apple Development identity"](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#3-obtain-the-apple-development-identity).
    Verify subject OU and signed `TeamIdentifier` both equal the selected Team ID before using any
@@ -99,9 +100,11 @@ reading its linked section first.
 4. Register the test Mac and create per-App-ID development profiles —
    [§4 "Register the test Mac and create development profiles"](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#4-register-the-test-mac-and-create-development-profiles).
    Inspect every downloaded profile's metadata with the documented read-only commands before use.
-5. Configure Xcode targets and author entitlements per role — Part A's Xcode install plus
+5. Configure Xcode targets and author the exact entitlements only after real product targets and a
+   separately authorized slice exist — Part A's Xcode install plus
    [§5 "Configure Xcode targets"](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#5-configure-xcode-targets)
-   and the [minimum/prohibited entitlements tables](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md#minimum-entitlements-per-role).
+   and the [role invariants](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#entitlement-invariants-by-role).
+   The provisioning plan's historical entitlement table is context, not an active entitlement set.
 6. Only when distribution work actually begins: Developer ID identity
    ([§6](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#6-obtain-developer-id-only-when-distribution-begins))
    and notarization credentials
@@ -140,7 +143,7 @@ as an execution sequence; that section remains the authority on *why* each rule 
    rotate notarization credentials independently — do not simply reissue and continue.
 3. Check whether an encrypted backup of the old login Keychain exists under the documented custody
    procedure. If none exists (expected under the current per-machine setup — see
-   [Open gaps](#open-gaps)), skip straight to reissue.
+   [Deferred and trigger-based gaps](#deferred-and-trigger-based-gaps)), skip straight to reissue.
 
 ### Step 1 — Rebuild the toolchain
 
@@ -192,24 +195,31 @@ rehearsed) start from known state instead of rediscovering it.
 
 The [Apple certificates doc](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#redacted-public-metadata-inventory-template)
 defines the exact table shape (public metadata only — fingerprints, serials, UUIDs, expirations;
-never private keys, `.p12`/`.p8` contents, or passwords) but does not name where the filled table
-lives. **That location is not yet decided.** Until it is, the inventory does not exist anywhere
-outside ad hoc chat/terminal history, which is not retained evidence. Pick one and record the
-decision here:
+never private keys, `.p12`/`.p8` contents, or passwords). Current I1B/R3 public metadata and hashes
+are retained in the
+[pinned R3 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1b-r3-signed-development-composition)
+and summarized in the [evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 
-- [ ] Password manager (e.g., a 1Password vault/note dedicated to Capsule Apple credentials)
-- [ ] The private `Shrimpworks/capsule-experiments` archive already used for spike/evidence custody
-- [ ] A new dedicated private repository
-- [ ] Something else
+Dylan has deliberately deferred a separate central operational inventory while Capsule has one
+maintainer and production signing/CI notarization remain deferred. Create one when a second
+maintainer, production signing, or CI notarization makes shared custody necessary. At that point,
+record the exact vault or repository pointer here and preserve the
+[storage and access policy](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#storage-and-access-policy):
+shared public metadata and custody pointers are distinct from personal Apple-account recovery,
+restricted release secrets, nonexportable Capsule operational keys, and offline TUF custody.
 
-This is the single highest-priority open item in this document — every other step in Part B and
-Part C assumes the inventory has somewhere to go.
+## Deferred and trigger-based gaps
 
-## Open gaps
+None of the items below blocks the current single-maintainer documentation state. They remain
+explicit triggers for later product, continuity, or credentialed work rather than unfinished work
+in this runbook.
 
 Tracked here until closed, so this audit is not lost to chat history:
 
-1. **Inventory location undecided** — see [above](#redacted-credential-inventory).
+1. **Central inventory intentionally deferred** — current redacted I1B/R3 evidence is retained in
+   the pinned archive and ledger. Create the shared operational location when a second maintainer,
+   production signing, or CI notarization makes it necessary; see
+   [above](#redacted-credential-inventory).
 2. **No Xcode/Swift toolchain pin** anywhere in the repository (no `.xcode-version`, no CI job that
    builds native/Swift code — CI currently runs only `ubuntu-latest` jobs). There is also no product
    Xcode project yet to pin a version against; add the pin when one exists.
@@ -220,10 +230,12 @@ Tracked here until closed, so this audit is not lost to chat history:
 4. **No rehearsed machine-loss drill.** Part C above is written but has never been executed against
    a real replacement Mac. Treat it as a script to test, not proven recovery evidence, until someone
    runs it (ideally deliberately, not during an actual loss) and records the result.
-5. **App IDs/profiles proposed, not created.** The [provisioning plan](APPLE_DEVELOPMENT_PROVISIONING_PLAN.md)
-   is still a proposal — none of its explicit App IDs exist in the Apple portal yet. Part B above is
-   therefore unexercised as a full sequence; the first person to run it end to end should correct
-   this document with what actually happened, not just what was planned.
+5. **Later I2B3 provisioning remains unexecuted.** I1B/R3 `PASSED` its exact development-only scope
+   using Apple Development SHA-1 `80A4...D3793` and three explicit profiles for the Broker, daemon,
+   and Supervisor. Do not repeat that completed matrix as though its inputs were absent. Installed
+   I2B remains `BLOCKED` on separately authorized exact Coordinator/bootstrap profiles,
+   caller/key authorization, App Group/service/container handoff, and descriptor-relative fault
+   evidence; see the [I2B2 gate](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md#exact-i2b3-gate).
 6. **Individual-membership single point of failure.** Only Dylan, as Account Holder, can create
    Developer ID certificates or manage Apple Developer team resources
    ([role limits](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md#account-membership-team-and-roles)). If

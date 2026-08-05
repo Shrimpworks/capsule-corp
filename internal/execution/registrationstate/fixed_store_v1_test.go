@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 
 	"capsule.local/capsule/internal/execution/approvalattempt"
@@ -82,8 +83,8 @@ func TestFixedStoreV0ToV1MigrationAndDowngradeRefusal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("migrate v0 to v1: %v", err)
 	}
-	if lock.checks != 3 {
-		t.Fatalf("migration lock checks = %d, want 3", lock.checks)
+	if lock.checks != 4 {
+		t.Fatalf("migration lock checks = %d, want 4", lock.checks)
 	}
 	snapshot, err := migrated.snapshotV1(context.Background())
 	if err != nil {
@@ -123,6 +124,42 @@ func TestFixedStoreV0ToV1MigrationAndDowngradeRefusal(t *testing.T) {
 	}
 	if got := mustReadFile(t, harness.path); !bytes.Equal(got, v1Bytes) {
 		t.Fatal("repeat migration rewrote v1")
+	}
+}
+
+// TestFixedStoreV0ToV1MigrationRechecksLockImmediatelyBeforeRename proves
+// issue #146's fix: the offline migration lock is rechecked immediately
+// before persistEnvelopeV1's os.Rename, not just at the three earlier
+// discrete points, and losing the lock at that exact check leaves the
+// original v0 file untouched.
+func TestFixedStoreV0ToV1MigrationRechecksLockImmediatelyBeforeRename(t *testing.T) {
+	path := newV0StorePath(t)
+	before := mustReadFile(t, path)
+
+	const preRenameCheck = 3
+	lock := &stagedMigrationLock{failAt: preRenameCheck}
+	lock.onCheck = func(check int) {
+		if check != preRenameCheck {
+			return
+		}
+		matches, globErr := filepath.Glob(filepath.Join(filepath.Dir(path), ".capsule-supervisor-v1-migration-*.tmp"))
+		if globErr != nil || len(matches) != 1 {
+			t.Fatalf("lock recheck immediately before rename saw %d temporary files: %v", len(matches), globErr)
+		}
+	}
+
+	_, err := MigrateFixedFileStoreV0ToV1(context.Background(), path, V0ToV1MigrationOptions{Lock: lock})
+	if err == nil || !errors.Is(err, ErrMigrationLockRequired) || lock.checks != preRenameCheck {
+		t.Fatalf("pre-rename lock loss result = %v after %d checks", err, lock.checks)
+	}
+	if got := mustReadFile(t, path); !bytes.Equal(got, before) {
+		t.Fatal("pre-rename lock loss rewrote v0")
+	}
+	if _, err := OpenFixedFileStoreV1(path); err == nil {
+		t.Fatal("pre-rename lock loss produced v1")
+	}
+	if _, err := NewFixedFileStore(path, InitialState{}); err != nil {
+		t.Fatalf("pre-rename lock loss did not preserve v0: %v", err)
 	}
 }
 
@@ -167,6 +204,44 @@ func TestFixedStoreV1MigrationFaultOracles(t *testing.T) {
 				t.Fatal("old opener accepted post-rename v1")
 			}
 		})
+	}
+}
+
+// TestFixedStoreV0ToV1MigrationSerializesConcurrentCallers proves issue #143's
+// fix: fixedStoreV1MigrationMu serializes concurrent MigrateFixedFileStoreV0ToV1
+// callers on the same path exactly like fixedStoreV2MigrationMu already does
+// for the v1-to-v2 step, so at most one of several simultaneous callers
+// commits an envelope.
+func TestFixedStoreV0ToV1MigrationSerializesConcurrentCallers(t *testing.T) {
+	path := newV0StorePath(t)
+
+	const contenders = 8
+	var wait sync.WaitGroup
+	results := make(chan error, contenders)
+	for range contenders {
+		wait.Add(1)
+		go func() {
+			defer wait.Done()
+			_, err := MigrateFixedFileStoreV0ToV1(
+				context.Background(), path,
+				V0ToV1MigrationOptions{Lock: &migrationLockStub{held: true}},
+			)
+			results <- err
+		}()
+	}
+	wait.Wait()
+	close(results)
+	successes := 0
+	for err := range results {
+		if err == nil {
+			successes++
+		}
+	}
+	if successes != 1 {
+		t.Fatalf("concurrent v0-to-v1 migration successes = %d, want 1", successes)
+	}
+	if _, err := OpenFixedFileStoreV1(path); err != nil {
+		t.Fatalf("concurrent result is not a complete v1 store: %v", err)
 	}
 }
 

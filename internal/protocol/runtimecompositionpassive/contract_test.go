@@ -80,6 +80,7 @@ func TestC1ValidateRefusesEveryMutationClass(t *testing.T) {
 		{"fork-rustyv8-upstream", func(c *Contract) { c.Forks.RustyV8.Upstream = zeroCommit }},
 		{"effects-process-true", func(c *Contract) { c.Effects.Process = true }},
 		{"effects-runtime-true", func(c *Contract) { c.Effects.Runtime = true }},
+		{"effects-backend-true", func(c *Contract) { c.Effects.Backend = true }},
 		{"effects-guest-true", func(c *Contract) { c.Effects.Guest = true }},
 		{"effects-admission-true", func(c *Contract) { c.Effects.Admission = true }},
 		{"effects-signing-true", func(c *Contract) { c.Effects.Signing = true }},
@@ -96,6 +97,25 @@ func TestC1ValidateRefusesEveryMutationClass(t *testing.T) {
 			// (and, if it did not exist, the overlap check) must both refuse.
 			c.RuntimeSurface.PermittedGlobals = append(
 				append([]string(nil), c.RuntimeSurface.PermittedGlobals...), "eval")
+		}},
+		{"contract-identity-mismatch", func(c *Contract) { c.Contract = "invented" }},
+		{"contract-version-mismatch", func(c *Contract) { c.Version = ContractVersion + 1 }},
+		{"contract-status-mismatch", func(c *Contract) { c.Status = "admitted" }},
+		{"artifacts-count-mismatch", func(c *Contract) { c.Artifacts["invented"] = Artifact{} }},
+		{"source-mismatch", func(c *Contract) { c.Application.Source.Path = "other.mjs" }},
+		{"input-mismatch", func(c *Contract) { c.Application.Input.Slot = "other-slot" }},
+		{"main-binding-invalid", func(c *Contract) { c.Application.Main.Invocations = 2 }},
+		{"result-invalid", func(c *Contract) { c.Application.Completion.WorkloadOwnsEndpoint = true }},
+		{"op-surface-mismatch", func(c *Contract) {
+			c.RuntimeSurface.BuiltinOps = append(
+				append([]string(nil), c.RuntimeSurface.BuiltinOps...), "op_invented")
+		}},
+		{"workload-files-mismatch", func(c *Contract) {
+			c.RuntimeSurface.WorkloadFiles.RuntimeRootEntries = RuntimeRootEntries + 1
+		}},
+		{"descriptors-mismatch", func(c *Contract) { c.Descriptors.NumericAssignment = "invented" }},
+		{"resources-transport-profile-mismatch", func(c *Contract) {
+			c.Resources.TransportProfileRef = "invented"
 		}},
 	}
 

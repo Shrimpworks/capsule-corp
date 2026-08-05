@@ -439,11 +439,26 @@ func EncodeEngineeringCandidate(candidate EngineeringCandidate) ([]byte, error) 
 	return frame, nil
 }
 
+// defaultEngineeringCandidateBytes encodes DefaultEngineeringCandidate(). This
+// can never fail: EncodeEngineeringCandidate only rejects a candidate that
+// differs from DefaultEngineeringCandidate(), and every caller here passes
+// that exact value. Panicking instead of discarding the error means a future
+// change that breaks this invariant (e.g. one of the two functions edited
+// without the other) fails loudly at the call site instead of silently
+// proceeding with an empty candidateBytes.
+func defaultEngineeringCandidateBytes() []byte {
+	encoded, err := EncodeEngineeringCandidate(DefaultEngineeringCandidate())
+	if err != nil {
+		panic(fmt.Sprintf("default engineering candidate no longer encodes: %v", err))
+	}
+	return encoded
+}
+
 func DecodeEngineeringCandidate(received []byte) (EngineeringCandidate, error) {
 	if err := validateFrame(received, candidateMagic, CandidateFrameBytes, CandidateFrameBytes); err != nil {
 		return EngineeringCandidate{}, err
 	}
-	want, _ := EncodeEngineeringCandidate(DefaultEngineeringCandidate())
+	want := defaultEngineeringCandidateBytes()
 	if !bytes.Equal(received, want) {
 		return EngineeringCandidate{}, reject(ClassificationUnsupported, "engineering-candidate-identity")
 	}
@@ -458,7 +473,7 @@ func NewEnrolledArtifactProfile(executable ExecutableDigest, build BuildManifest
 	if executable == (ExecutableDigest{}) || build == (BuildManifestDigest{}) || assessment == (AssessmentDigest{}) {
 		return EnrolledArtifactProfile{}, reject(ClassificationSchema, "zero-artifact-profile-digest")
 	}
-	candidateBytes, _ := EncodeEngineeringCandidate(DefaultEngineeringCandidate())
+	candidateBytes := defaultEngineeringCandidateBytes()
 	return EnrolledArtifactProfile{
 		RecordVersion: 0, ProtocolVersion: ProtocolVersion, Method: MethodIdentity,
 		ValidatorProfile: ValidatorProfileIdentity, SourceProfile: SourceProfileIdentity,
@@ -601,7 +616,7 @@ func validateArtifactProfile(profile EnrolledArtifactProfile) error {
 		profile.SourceMediaType != SourceMediaTypeIdentity {
 		return reject(ClassificationUnsupported, "artifact-profile")
 	}
-	candidateBytes, _ := EncodeEngineeringCandidate(DefaultEngineeringCandidate())
+	candidateBytes := defaultEngineeringCandidateBytes()
 	if profile.EngineeringCandidateDigest != EngineeringCandidateIdentityDigest(candidateBytes) {
 		return reject(ClassificationBinding, "engineering-candidate")
 	}

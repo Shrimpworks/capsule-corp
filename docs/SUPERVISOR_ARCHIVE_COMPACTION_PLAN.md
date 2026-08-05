@@ -735,6 +735,13 @@ started.
 
 ### Slice F6: production-engine experiment and decision
 
+Accepted ADR-0040 permits a narrower exception before F6 only for the owner-only disposable
+internal alpha. That consumer must enforce one owner/installation/Supervisor, local APFS,
+concurrency one, full verification before every attempt, no restore, installation retirement on
+live-store loss/corruption, and the ADR's exact 128-attempt/8-MiB/16-segment/latency stop thresholds.
+This is not production-store selection and makes no continuity, rollback, hostile-same-UID,
+secure-deletion, or restore claim. F6 remains mandatory before external alpha or any such claim.
+
 - Instantiate the same logical schema/oracles in one exact SQLite build and configuration, or name
   another candidate with equivalent evidence scope.
 - Run `BUSY`/`LOCKED`/`FULL`/`IOERR`/`CORRUPT`, WAL/journal/checkpoint, multi-process, backup,

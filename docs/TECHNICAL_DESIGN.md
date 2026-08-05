@@ -136,13 +136,10 @@ The first complete workflow is intentionally narrow:
 1. An agent proposes one dependency-free, byte-exact `main.mjs` module with inline JSON input and
    bounded JSON output. Static/dynamic dependency requests, `import.meta`, CommonJS, packages, and
    loader fallbacks must refuse under accepted ADR-0034. The M1 passive foundation and bounded
-   parser/process selection, passive R1 contracts, and unsigned R2 construction are `PASSED`;
-   product Source Validator R3-R5B is `BLOCKED`, and plan construction remains `BLOCKED` until its
-   required gates pass.
-2. The Go daemon strictly decodes the proposal and, under Accepted ADR-0035/0036, sends an exact
-   copied source through its private role-specific Source Validator launcher before planning. The
-   launcher owns a fresh parser child; the validator parses but never
-   executes source and returns only digest/length and fixed grammar-node facts. The daemon then
+   parser/process selection, passive R1 contracts, unsigned R2 construction, and signed inactive R3
+   composition are `PASSED`; exact R4-v1 candidates are `NO_GO` and later product R4/R5 remains
+   `BLOCKED` outside the internal-alpha critical path under ADR-0040.
+2. The Go daemon strictly decodes the proposal, binds exact source bytes/digest/length, and then
    resolves trusted policy and constructs canonical `ExecutionPlan` v0 bytes plus
    the canonical single-member source manifest. Registration atomically validates and retains the
    exact plan, complete bindings, manifest, and pass-through source bytes. Proposed ADR-0032's
@@ -153,11 +150,10 @@ The first complete workflow is intentionally narrow:
    validates them, applies non-overridable hard-safety rules, stores them durably, and returns a
    `PlanRegistration`.
 4. The Trusted Host Broker fetches the registered bytes directly from the Supervisor, independently
-   validates them, invokes its separate Broker-private launcher/fresh child over the exact copied
-   source, binds
-   the fixed result to digest and length, renders a bounded human-readable view, requires fresh
-   user presence, and signs one attempt-bound `ApprovalGrant`. Any validator failure refuses before
-   an Approval-key operation.
+   validates their exact custody bindings, renders a bounded human-readable view of the source,
+   digest, length, limits, input, and runtime/profile, requires fresh user presence, and signs one
+   attempt-bound `ApprovalGrant`. A later Source Validator may add typed grammar facts but is not
+   approval authority for the internal alpha.
 5. The Supervisor performs runtime-integrity preflight, atomically consumes the grant, and creates
    one `ExecutionAttempt` before any hostile side effect.
 6. The selected runtime executes in a disposable development backend with no network, ambient
@@ -281,9 +277,10 @@ construction evidence, not an installed service or active process-boundary resul
 
 The [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) fixes Team `3DDR84M4JS`, exact
 R2 byte identities and placements, entitlement/profile requirements, the reachability/mixed-update
-matrix, cleanup, and credentialed mutation boundaries. R3 remains `BLOCKED` until its containing
-fixtures, exact role profiles, and finalized signed constraint bytes exist and those mutations are
-separately authorized.
+matrix, cleanup, and credentialed mutation boundaries. R3 is `PASSED` for its exact signed,
+installed, inactive-policy composition. Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and
+`BLOCKED`. ADR-0040 therefore retains the validator as post-alpha defense-in-depth rather than an
+internal-alpha gate.
 
 The exact V2 local macOS checkpoint does not advance that boundary. Its strict bootstrap refuses
 before `exec` because `RLIMIT_AS` cannot be lowered; its explicitly unbounded diagnostic mutation
@@ -898,31 +895,28 @@ implemented.
 ## Ordered implementation plan
 
 1. Retain the completed architecture, claim baseline, feasibility results, and pivot decisions.
-2. Continue from the completed ADR-0031/F1, stateful
+2. Retain the completed ADR-0031/F1, stateful
    [F2 migration/full verifier](SUPERVISOR_ARCHIVE_F2_MIGRATION_RESULT.md), and
    [F3 first-segment activation](SUPERVISOR_ARCHIVE_F3_ACTIVATION_RESULT.md),
    [F4A retained lookup](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md), and the completed
    [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md),
    [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), and
    [F5 backup/offline-report result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md). Continue only with a
-   separately authorized F6 bounded SQLite comparison. Keep the fixed snapshot as the logical
-   oracle; do not promote it into the product store or infer restore activation.
-3. Continue the Source Validator replacement after accepted R0/ADR-0036 in this strict order:
-   completed passive role-specific v1 contracts/fixtures, field authority, and unsigned
-   two-launcher/parser construction; separately authorized signing/install and private
-   reachability; confinement,
-   reactive-resource, and residue corpus; daemon consumer; Broker consumer; then the M2/S1
-   checkpoint. V0/V1/V2 bytes remain historical and unchanged. No threshold, sample cadence, or
-   overshoot is chosen before the signed corpus, and no direct parent inheritance, shared service,
-   deprecated custom profile, private API, or unbounded diagnostic mutation is a fallback.
+   separately authorized F6 bounded SQLite comparison. ADR-0040 permits the fixed snapshot only for
+   the narrow owner-only disposable alpha with exact fail-closed thresholds and no restore/
+   continuity claim; do not infer general product-store selection.
+3. Close the successor runnable profile and one fixed benign owned guest, then implement the
+   ADR-0040 authority path: one authenticated CLI adapter, exact single-`main.mjs` proposal, atomic
+   plan/bindings/manifest/source custody, Broker fetch/render/approval, protected installed state,
+   real adapter/recovery, and completion composition.
 4. Freeze the applicable signed-object set and independently review the narrow production CBOR
    wrapper. Use pinned `fxamacker/cbor` only for object-specific deterministic encoding and typed
    field decoding; retain Capsule predecode, caps, canonical-on-wire comparison, bindings, and
    replay checks. Keep `go-cose` test-only.
-5. After both role-specific Source Validator consumers pass, hold the M2/S1 checkpoint: narrow
-   JobProposal and generate plan-v0 registration/fetch fixtures from complete field authority.
-   Only then decide whether to implement the authenticated native-to-Go Supervisor IPC bridge;
-   ADR-0036 adds no Supervisor call and does not widen ADR-0029's four-call surface.
+5. Hold the M2/S1 checkpoint without preserving broad legacy acceptance: narrow JobProposal and
+   generate plan-v0 registration/fetch/source-custody fixtures from complete field authority. The
+   internal alpha does not wait on Source Validator R4/R5; a later consumer remains bound by
+   ADR-0035/0036 and adds no Supervisor call beyond ADR-0029's closed surface.
 6. Connect that product path to the already-passed no-guest registration, approval/attempt, durable
    lifecycle, owner-lock G2, and archive oracle. Add composed evidence only from retained Supervisor
    state; keep `FakeBackend.CreatesGuest() == false` until runtime/backend admission.

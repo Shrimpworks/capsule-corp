@@ -30,9 +30,12 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 15. [Apple certificates, credentials, identifiers, entitlements, and Capsule keys](APPLE_CERTIFICATES_CREDENTIALS_AND_KEYS.md)
     — canonical Team-ID decision, environment/component matrices, safe setup and verification,
     storage/rotation policy, redacted inventory, and Dylan's next actions
-16. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
-    contracts/mechanics, missing consumers, corrected replay/authority boundaries, and the ordered
-    fake-backend alpha closure
+16. [Internal-alpha architecture and release audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) — the
+    reconciled owner-only alpha scope, ranked blockers, risks, minimum hostile corpus, and external-
+    alpha boundary
+17. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
+    contracts/mechanics, missing consumers, corrected authority boundaries, and ordered product
+    closure
 
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs

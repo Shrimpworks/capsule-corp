@@ -4,6 +4,7 @@
 - Date: 2026-08-04
 - Supported macOS profile replacement reviewed: 2026-08-04
 - R0 launcher/resource refinement accepted: ADR-0036 on 2026-08-04
+- Internal-alpha gating refined: ADR-0040 on 2026-08-05
 - Refines: ADR-0010, ADR-0018, ADR-0029, and ADR-0034
 
 ## Context
@@ -15,6 +16,10 @@ boundary. M1 correctly stopped a hand-written scanner after the valid program
 Scanner guesses also risk confusing ordinary `obj.import.meta`, the valid object
 method `({ import() {} })`, template interpolation, comments, strings, and regular
 expressions with ECMAScript grammar.
+
+ADR-0040 later removes this host parser from the owner-only internal-alpha admission path while
+preserving this decision as post-alpha defense-in-depth. The internal alpha approves exact bytes
+and relies on the admitted guest's physical no-loader and host-authority omission.
 
 The parser cannot simply move into an existing authority component. The daemon is
 public-facing and can skip its own check if compromised. The Approval Broker owns

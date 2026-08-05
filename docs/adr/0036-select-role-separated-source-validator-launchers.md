@@ -4,6 +4,7 @@
 - Date: 2026-08-04
 - Refines: ADR-0018, ADR-0029, and ADR-0035
 - Decision scope: Source Validator R0 architecture and resource-policy boundary only
+- Internal-alpha gating refined: ADR-0040 on 2026-08-05
 
 ## Context
 

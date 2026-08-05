@@ -130,5 +130,7 @@ and the retained evidence records their completion:
    containers/processes/logs; and
 8. unregister, stop, and remove only those experiment-owned installed copies and residue.
 
-Until the containing fixtures, exact profiles, and signed constraints exist and all eight actions
-are explicitly authorized, R3 remains `BLOCKED`. The topology must not be weakened to make it run.
+This was the pre-execution gate. The later authorized task completed these actions and R3 is
+`PASSED` in its exact signed, installed, inactive-policy scope. It did not activate a parser or
+product consumer. Exact R4-v1 candidates are `NO_GO`, R4-v2 is unexecuted, and ADR-0040 moves active
+host validation to post-alpha defense-in-depth. The topology must not be weakened to resume it.

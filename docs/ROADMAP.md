@@ -4,7 +4,7 @@ The roadmap is ordered by uncertainty and risk reduction rather than feature cou
 spikes may be built outside the final product shape. Their retained evidence—not prototype code
 quality—is the deliverable.
 
-Live per-item status — Archive F2-F4C, owner-lock G2/G3, ADR-0034-0036 Source Validator R0-R4,
+Live per-item status — Archive F2-F6, owner-lock G2/G3, ADR-0034-0036 Source Validator R0-R5,
 governed `deno_core`, macOS installation (including I1B), and the rest — is tracked in the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard), the single
 current-status source; this roadmap defines phase order and exit evidence and does not restate live
@@ -26,6 +26,25 @@ Every phase must consult the
 custom primitive. The task records the matching row and closed recommendation and completes the
 dependency-policy checklist. `ADOPT-PLATFORM`, `ADOPT-PINNED`, or `GOVERN/FORK` is a planning
 direction, not product admission or evidence closure.
+
+## Internal-alpha critical path
+
+Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and the
+[full audit synthesis](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) now define the release path:
+
+1. harden governed promotion before consuming another promoted fork head;
+2. close one successor runnable profile and run one fixed benign owned guest;
+3. implement one bounded authenticated CLI adapter, the exact single-`main.mjs` proposal, atomic
+   plan/bindings/manifest/source custody, and Broker fetch/render/approval;
+4. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
+   adapter/recovery, and completion evidence; and
+5. run the minimum hostile `.mjs` and restoration corpus with one fresh guest per attempt.
+
+Host Source Validator R4/R5 is later defense-in-depth rather than an internal-alpha gate. Exact
+R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and `BLOCKED`. F6 is also deferred only for the
+strict owner-only disposable fixed-store posture. TypeScript, automatic update, Developer ID
+distribution, clean-host/minimum-OS coverage, restore, and production storage are external-alpha
+work.
 
 ## Phase 0: architecture and claim baseline
 

@@ -15,6 +15,22 @@ The consolidated outcomes, exact known answers, application status, combined ver
 next dependency boundary for the latest group are recorded in the
 [Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
 
+## 2026-08-05 internal-alpha architecture audit synthesis
+
+Five defensive read-only audits independently reviewed the complete architecture/critical path,
+governed runtime/guest composition, installed macOS and Source Validator topology,
+protocol/approval/client flow, and persistence/recovery posture at default-branch commit
+`23e48e242765eea219cdd80724b865638fc02200`. Each audit is `PASSED` for its exact decision question;
+the internal-alpha parent is `IN_PROGRESS — TRENDING_GOOD` and product admission remains `BLOCKED`.
+
+Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and the retained
+[synthesis](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) record the reconciled outcome: one exact
+`main.mjs`, bounded inline JSON, a native human Broker, one fresh governed guest per `AttemptID`, a
+fixed benign guest checkpoint before product alpha, runtime no-loader/host-authority enforcement,
+Source Validator deferred as post-alpha defense-in-depth, and a narrowly bounded owner-only fixed-
+store exception before F6. No audit created a guest, signing/install action, product key, service,
+store consumer, runtime/profile admission, or external mutation.
+
 The first product implementation follow-up, including task provenance, executable language
 coverage, the corrected PlanRegistration depth fixture, verification, and next interfaces, is
 recorded in the [Phase 2 unwired decoder checkpoint](PHASE_2_UNWIRED_DECODER_CHECKPOINT.md).
@@ -485,14 +501,16 @@ Current dependency and priority view:
    [F4B atomic mutation result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md), and
    [F4C bounded-growth result](SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md), and
    [F5 backup result](SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) are `PASSED` in their exact local
-   scopes. Keep F6 production-engine work separate and do not infer restore activation.
-2. **Source Validator R3 signed composition passed; product blocked:** Accepted ADR-0036 closes R0 with
+   scopes. ADR-0040 permits only its bounded owner-only internal-alpha exception; keep F6
+   production-engine work separate and do not infer restore activation or continuity.
+2. **Source Validator R3 signed composition passed; product blocked and post-alpha:** Accepted ADR-0036 closes R0 with
    two role-specific private launchers, residual private-container scratch plus mandatory cleanup,
    and an evidence-derived reactive watermark with no hard-peak or host-availability claim. Product
    R1 passive v1 contracts/field authority, R2 unsigned role-specific construction, and the exact
    Apple Development R3 signed/installed/refusal/cleanup composition are `PASSED`; product work
-   remains `BLOCKED`. Continue with the R4 measured confinement/resource/residue corpus and then
-   consumers.
+   remains `BLOCKED`; exact R4-v1 candidates are `NO_GO` and R4-v2 was not executed. ADR-0040 moves
+   R4/R5 off the internal-alpha critical path. Resume only with a supportable child-lifetime and
+   residual-container contract, then consumers.
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
 3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, I2B2 unsigned
@@ -532,17 +550,17 @@ Current dependency and priority view:
    A genuinely independent
    Linux/arm64 builder is viable but not currently planned; same-host/GitHub-CI equality remains
    limited and independent-builder equality is deferred.
-7. **Next Source Validator path:** accepted ADR-0034's M1 bytes, Accepted ADR-0035's passive V0
+7. **Later Source Validator path:** accepted ADR-0034's M1 bytes, Accepted ADR-0035's passive V0
    frames, and the bounded V1/V2 evidence checkpoints are retained unchanged. Accepted ADR-0036
    closes R0 with two role-specific private launchers, residual private-container scratch plus
    mandatory cleanup, and an evidence-derived reactive watermark with no hard-peak/availability
    claim. Its exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) records Team 3DDR,
    R2 byte identities/placement, profiles/entitlements, refusal/cleanup, and mutation gates. R1
    passive v1 contracts/field authority, R2 unsigned construction, and R3 exact signed installed
-   composition are `PASSED`. Product work proceeds sequentially: R4 confinement/
-   resource/residue evidence; R5D daemon consumer; R5B Broker consumer; then M2/S1 checkpoint.
-   Threshold/cadence/overshoot values remain unset until R4. No S1 fixture or product endpoint is
-   authorized.
+   composition are `PASSED`. Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted. Product work
+   remains `BLOCKED` outside the internal-alpha critical path and may resume only with a revised
+   supportable lifetime/residue contract. M2/S1 no longer waits on R5 under ADR-0040. No product
+   validator endpoint is authorized.
 8. **Next passive contract path:** accepted ADR-0034 removes Source Preparer/plan-v1 from the
    first-release critical path. M1 narrows the proposal/source/manifest to one byte-exact
    `main.mjs`; S1/M2 then generates the revised `RegisterPlanV0`/fetch projections and exact caps

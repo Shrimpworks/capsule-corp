@@ -185,8 +185,10 @@ reachability stops; it never widens to a shared/global service or app group.
 
 The exact [R3 execution packet](SOURCE_VALIDATOR_R3_EXECUTION_PACKET.md) records Team
 `3DDR84M4JS`, the R2 byte digests and placement, entitlement/profile requirements, refusal matrix,
-cleanup, and every mutation that still needs separate authorization. R3 is `BLOCKED` until its
-containing fixtures, exact role profiles, and finalized signed constraint bytes exist.
+cleanup, and every mutation. R3 is `PASSED` in its exact signed, installed, inactive-policy scope.
+It proves role-private routing, identity/entitlement readback, cross-role refusal, no-spawn inactive
+behavior, and bounded cleanup; it does not prove active parser confinement, resource behavior,
+launcher-death reconciliation, or product consumers.
 
 ### R4 — confinement, reactive-resource, and residue corpus
 
@@ -197,6 +199,14 @@ sampling cadence, maximum observed overshoot, kill latency, and host-pressure be
 review may select values only from this signed corpus and must state host-availability limitations.
 Every request, crash, launcher restart, update, and startup requires cleanup/empty-inventory
 evidence; cleanup is not confidentiality or secure-erasure proof.
+
+The exact R4-v1 candidates are `NO_GO`: they stopped before parser spawn after exposing reply,
+container-root, signed-byte-binding, and undifferentiated-refusal defects. R4-v2 was not executed.
+Accepted ADR-0040 moves R4/R5 off the internal-alpha critical path. If resumed, the new contract
+must accept the entire private App Sandbox container as residual scratch authority, distinguish
+every pre-spawn/child/reap/cleanup stage, and prove a supported launcher-death reconciliation
+mechanism. A write outside per-request scratch but inside that private container is not by itself a
+sandbox escape or `NO_GO` condition.
 
 ### R5D — daemon consumer
 
@@ -213,9 +223,11 @@ refusal.
 
 ### M2/S1 checkpoint
 
-Only after R5B passes may the project reconcile JobProposal narrowing and the plan-v0
-registration/fetch field-authority/fixture slice. This checkpoint does not waive V6 runtime
-no-loader evidence or any independent Supervisor IPC/product-admission gate.
+ADR-0040 removes this ordering dependency for the internal alpha. M2/S1 may reconcile JobProposal
+narrowing and plan-v0 registration/fetch field authority without R5B, provided no Source Validator
+fact becomes approval authority and the admitted runtime proves no-loader/host-authority refusal.
+If the validator later returns to the active product path, R5D and R5B must still pass before those
+facts are consumed.
 
 ### V3 / R5D — daemon pre-plan integration
 

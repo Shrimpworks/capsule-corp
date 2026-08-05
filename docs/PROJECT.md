@@ -2,7 +2,7 @@
 
 ## Summary
 
-Capsule is a local-first trusted execution platform for bounded JavaScript and TypeScript jobs
+Capsule is a local-first trusted execution platform for bounded modern JavaScript jobs
 proposed by AI agents. It separates untrusted planning, trusted human authorization, user-content
 custody, and hostile-guest execution so that compromising the agent-facing service does not also
 grant approval, content, or launch authority.
@@ -25,19 +25,22 @@ scopes. Product Source Validator work, installed owner-lock G3, and runtime/prof
 `IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
 only in their passive zero-effect scopes, while C2B composed-profile/guest execution remains
 `BLOCKED`. Archive F5 coherent backup, read-only restore admission, explicit known-orphan cleanup,
-and offline reporting are `PASSED` in their owner-held local fixed-store scope. F6 production-engine
-selection and every production durability/restore/consumer claim remain `BLOCKED`.
+and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
+strictly bounded owner-only fixed-store alpha exception; F6 production-engine selection and every
+external-alpha durability/restore/continuity claim remain `BLOCKED`.
 None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.
 
-The [alpha vertical-flow readiness map](ALPHA_VERTICAL_FLOW_READINESS.md) separates the many
+The [internal-alpha architecture audit](ALPHA_ARCHITECTURE_AND_RELEASE_AUDIT.md) and
+[vertical-flow readiness map](ALPHA_VERTICAL_FLOW_READINESS.md) separate the many
 already-passed passive/local mechanics from the still-blocked product composition. There is no
-current product path from submitted `main.mjs` through the two Source Validator consumers,
-planning, authenticated registration, Broker rendering/signing, approval verification, attempt
-creation, fake lifecycle drive, and a fixed completion summary. That map also records why the
-diagnostic HTTP server, fresh-registration semantics, retained-vector-only `FixtureVerifier`, and
-rejected inherited-helper validator design must not be silently repurposed to close the gap.
+current product path from submitted `main.mjs` through planning, atomic source custody,
+authenticated registration, Broker rendering/signing, approval verification, attempt creation,
+real lifecycle drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per
+attempt and moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and physical
+authority omission remain mandatory. The diagnostic HTTP server, fresh-registration semantics,
+and retained-vector-only `FixtureVerifier` must not be repurposed to close the gap.
 
 Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
@@ -105,15 +108,13 @@ not installation-signed or enrolled: independent-builder, vulnerability-owner, V
 V3/V4 consumer, and V6 runtime evidence remain blockers. No product endpoint, runtime no-loader
 boundary, runtime, backend, or guest is implemented or admitted.
 
-The retained V2 macOS checkpoint now makes that process-profile blocker exact. A strict test-only
+The retained V2 macOS checkpoint makes its process-profile blocker exact. A strict test-only
 bootstrap fixes copied I/O, argv, empty environment, cwd, descriptor closure, CPU/file/FD/child/
 wall limits, kill/reap, and fault refusal, but `RLIMIT_AS` returns `EINVAL` before the artifact
 executes. An explicitly unbounded diagnostic mutation proves file reads, IPv4/Unix socket creation,
 cwd metadata writes, and a 512 MiB mapping remain possible. Apple's supported embedded-tool App
 Sandbox entitlement shape changes the fixed V1 bytes, while deprecated custom sandbox profiles are
-not acceptable evidence. V2 and the product work are therefore `BLOCKED`, not `NO_GO`. V0/V1/V2
-bytes and status remain unchanged; the supported replacement proceeds only through R1-R5B under
-ADR-0036.
+not acceptable evidence. V0/V1/V2 bytes and status remain unchanged.
 
 The supported-profile replacement research and R0 architecture-decision slices are `PASSED` in
 their exact scopes and keep the product parent blocked. Direct App Sandbox helper inheritance is
@@ -137,8 +138,10 @@ directories. Complete source/lock/notice/SBOM/unsigned-provenance inventories an
 `libSystem`-only dynamic closure are retained. The exact R1 policies remain inactive, so each
 launcher predecodes and refuses without spawning rather than inventing R4 values. No Apple
 identity, installation, enrollment, reachable service, product consumer, or active resource
-measurement was used. The product remains `BLOCKED`; continue sequentially with separately
-authorized R3, then R4-R5B.
+measurement was used in R2. R3 later `PASSED` its exact signed, installed, inactive-policy scope.
+Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and the product validator remains
+`BLOCKED`. ADR-0040 moves R4/R5 off the internal-alpha critical path while preserving ADR-0035/0036
+as later defense-in-depth.
 
 Phase 2B now retains a closed 100-rule, 510-case, 631-fixture conformance corpus for raw decoding,
 proposal/source/input semantics, exact plan and registration bytes, registration-state transitions,

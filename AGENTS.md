@@ -170,6 +170,15 @@ request and rerun that line's exact gates and restoration mutations. Upstream co
 must target an explicitly named upstream baseline or integration branch and must not silently
 retarget the governed default.
 
+When an owned fork has only one qualified maintainer, its mutable default and governed review
+targets still require pull requests, green required checks, resolved conversations, evidence and
+settings readback, administrator enforcement, and maintainer self-review. GitHub protection must
+set the required approval count to zero and must not require approval of the most recent push or a
+CODEOWNER approval, because the sole author cannot satisfy those gates. Enable external approval
+enforcement only after a second qualified maintainer is available. This merge-mechanics exception
+does not satisfy or weaken a separate DCO, upstream-submission, product-admission, or independent
+security-review requirement.
+
 Before creating or editing any fork pull request, pass `--base` and `--head` explicitly. Read back
 the repository, base, head, draft state, commit identities, and body after publication. If a branch
 that policy described as immutable has already advanced, do not advance it again: preserve the

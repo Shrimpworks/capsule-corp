@@ -15,13 +15,13 @@ Evidence or reason: current Apple public interfaces support an embedded on-deman
   the only process with Supervisor-container authority while keeping installation-root signing in
   a separate user-presence-gated role. The closed fault plan preserves every I0/I1/G2 no-create,
   no-guest, and repair-required invariant.
-Remaining work: passive object fixtures and wrapper review, exact Team-3DDR Coordinator/bootstrap
-  profiles, separately authorized test-only key/service/container mutations, installed denial/fault
+Remaining work: production wrapper review,
+  separately authorized test-only key/service/container mutations, installed denial/fault
   evidence, and descriptor-relative fixed-v1 composition remain I2B work. Product-store selection,
   product IPC, update/restore, runtime/backend/guest, and attempt activation remain outside I2A.
-Next action: implement I2B1 passive request/record/observation fixtures and field authority without
-  signing, Keychain, service, process, or filesystem effects.
-Parent status: installed I2 protected-root composition is BLOCKED on the named I2B evidence;
+Next action: implement I2B2 unsigned installation-only construction; I2B1 request/record fixtures
+  and field authority are retained in the passive contract, and I1B is already complete.
+Parent status: installed I2 protected-root composition is BLOCKED on the named I2B2-I2B5 evidence;
   macOS installation remains IN_PROGRESS — TRENDING_GOOD.
 ```
 
@@ -198,7 +198,7 @@ The record contains exactly:
 | Supervisor/container binding | Supervisor ID, expected UID, Supervisor-private App Sandbox class, fixed root name, state-root device/inode, type directory, and mode exactly `0700` |
 | ADR-0033 owner binding | fixed `supervisor.owner`, same device as root, observed inode, regular-file type, expected UID, mode `0600`, link count one, and owner mechanism identity |
 | fixed-store genesis binding | fixed `supervisor.store`, regular-file type, expected UID, mode `0600`, link count one, same device as root, selected I2B conformance-store format, exact initial byte length/digest, and explicit non-product/no-guest label; the mutable store inode is deliberately not enrolled |
-| retained bootstrap bytes | fixed request/record entry names, request envelope length/digest, record payload digest, and exact record-envelope retention policy |
+| retained bootstrap bytes | fixed request/record entry names, request envelope length/digest, derived record-payload digest retained outside the payload, and exact record-envelope retention policy |
 | transition | `protected-root-validated-disabled`, finalization Unix second, no attempt activation, no runtime/backend/guest admission |
 
 The Coordinator exclusively encodes and signs the record using the installation-root private key.
@@ -399,12 +399,16 @@ use only owned disposable fixtures and never an existing Capsule or unrelated co
 
 ### I2B1: passive objects and field authority
 
-- Add closed request, observation, and record types/CDDL, exact bounds, media/purpose/audience
-  profiles, generated known answers, cap-plus-one/cross-object/replay/time fixtures, and recursive
+- Status: `PASSED` for the request/record scope in the
+  [passive I2B1 contract](protocol/MACOS_INSTALLATION_I2B_PASSIVE_BOOTSTRAP_CONTRACT.md). The
+  observation remains a future authenticated-XPC method shape and was deliberately not added to
+  this request/record-only slice.
+- Retains closed request and record types/CDDL, exact bounds, media/purpose/audience profiles,
+  generated known answers, cap-plus-one/cross-object/replay/time fixtures, and recursive
   field-authority entries.
 - Use deterministic test keys only. Do not call Security, Keychain, LocalAuthentication,
   ServiceManagement, XPC, filesystem creation, or a process.
-- Exit: independent Go/Swift-readable fixtures agree on exact bytes and refusals; ADR-0019 remains
+- Exit evidence: independent Go and real Swift fixtures agree on all 71 cases; ADR-0019 remains
   Proposed and no production wrapper is claimed.
 
 ### I2B2: unsigned installation-only bundle construction

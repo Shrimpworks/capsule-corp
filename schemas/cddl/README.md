@@ -9,6 +9,12 @@ the tested map labels, field types, sizes, COSE protected headers, empty unprote
 ES256 signature shape. It is **not yet a production-frozen contract**: ADR-0019 remains Proposed,
 and the final approval/session bindings and identifier formats still need Phase 2 review.
 
+[`supervisor-bootstrap-v0.cddl`](supervisor-bootstrap-v0.cddl) freezes the passive I2B1
+`SupervisorBootstrapRequestV0` and `SupervisorBootstrapRecordV0` payloads and their exact
+Sign1-only envelopes. Its independently generated corpus has real Go/Swift verification, but the
+objects are unwired and no production signer, key, Keychain, IPC, protected-root, or store path is
+implemented.
+
 [`candidates/`](candidates/) contains the passive Phase 2A `ExecutionPlan` and `PlanRegistration`
 payload candidates plus their shared scalar definitions. Their byte-exact fixtures are under
 [`../fixtures/`](../fixtures/). The corresponding Go and TypeScript types are decoded views only;

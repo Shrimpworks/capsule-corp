@@ -1,0 +1,154 @@
+; Capsule passive I2B1 Supervisor bootstrap signed-object contracts.
+;
+; These are closed, zero-effect conformance objects. They do not define a
+; production signer, Keychain item, IPC message, protected-root operation, or
+; installed profile. Both envelopes use the ADR-0019 Sign1-only profile.
+
+capsule-supervisor-bootstrap-request-envelope-v0 = #6.18([
+  protected: bstr .cbor capsule-supervisor-bootstrap-request-protected-v0,
+  unprotected: {},
+  payload: bstr .cbor capsule-supervisor-bootstrap-request-v0,
+  signature: bstr .size 64,
+])
+
+capsule-supervisor-bootstrap-request-protected-v0 = {
+  1: -7,
+  3: "application/capsule.supervisor-bootstrap-request+cbor;v=0",
+  4: capsule-bootstrap-key-id,
+}
+
+capsule-supervisor-bootstrap-request-v0 = {
+  1: "capsule.supervisor-bootstrap-request", ; objectType
+  2: 0, ; objectVersion
+  3: "capsule.installation.bootstrap.request", ; purpose
+  4: "capsule.execution-supervisor.bootstrap", ; audience
+  5: capsule-bootstrap-installation-id, ; installationId
+  6: capsule-installation-root-public-cose-key-v0, ; installationRootPublicKey
+  7: capsule-bootstrap-key-id, ; signerKeyId
+  8: capsule-bootstrap-authorization-identity, ; signerAuthorizationIdentity
+  9: capsule-bootstrap-supervisor-id, ; supervisorId
+  10: capsule-bootstrap-uid, ; expectedEffectiveUid
+  11: capsule-sha256, ; containingReleaseDigest
+  12: capsule-sha256, ; i1ProfileCandidateDigest
+  13: capsule-sha256, ; componentProfileDigest
+  14: capsule-sha256, ; installationManifestCandidateDigest
+  15: 1, ; trustEpochSequence
+  16: capsule-sha256, ; trustEpochCandidateDigest
+  17: "supervisor-private-app-sandbox", ; stateRootClass
+  18: "supervisor.state", ; stateRootName
+  19: "supervisor.bootstrap-request", ; requestEntryName
+  20: "supervisor.bootstrap-record", ; recordEntryName
+  21: "supervisor.owner", ; ownerLockEntryName
+  22: 384, ; ownerLockMode (0600)
+  23: 1, ; ownerLockLinkCount
+  24: "darwin-openat-flock-v0", ; ownerLockProfile
+  25: "supervisor.store", ; storeEntryName
+  26: "capsule.supervisor-store/fixed-v1", ; storeFormat
+  27: "conformance-non-product-no-guest", ; storeProfile
+  28: false, ; attemptsEnabled
+  29: false, ; fakeBackendCreatesGuest
+  30: capsule-bootstrap-nonce, ; nonce
+  31: capsule-unix-seconds, ; issuedAt
+  32: capsule-unix-seconds, ; notBefore
+  33: capsule-unix-seconds, ; expiresAt
+  34: "one-shot-exact-envelope-replay-only", ; replayDisposition
+}
+
+capsule-supervisor-bootstrap-record-envelope-v0 = #6.18([
+  protected: bstr .cbor capsule-supervisor-bootstrap-record-protected-v0,
+  unprotected: {},
+  payload: bstr .cbor capsule-supervisor-bootstrap-record-v0,
+  signature: bstr .size 64,
+])
+
+capsule-supervisor-bootstrap-record-protected-v0 = {
+  1: -7,
+  3: "application/capsule.supervisor-bootstrap-record+cbor;v=0",
+  4: capsule-bootstrap-key-id,
+}
+
+capsule-supervisor-bootstrap-record-v0 = {
+  1: "capsule.supervisor-bootstrap-record", ; objectType
+  2: 0, ; objectVersion
+  3: "capsule.installation.bootstrap.record", ; purpose
+  4: "capsule.execution-supervisor", ; audience
+  5: capsule-sha256, ; requestPayloadDigest
+  6: capsule-sha256, ; requestEnvelopeDigest
+  7: 1..4096, ; requestEnvelopeLength
+  8: capsule-bootstrap-nonce, ; requestNonce
+  9: capsule-bootstrap-installation-id, ; installationId
+  10: capsule-installation-root-public-cose-key-v0, ; installationRootPublicKey
+  11: capsule-bootstrap-key-id, ; signerKeyId
+  12: capsule-bootstrap-authorization-identity, ; signerAuthorizationIdentity
+  13: capsule-bootstrap-supervisor-id, ; supervisorId
+  14: capsule-bootstrap-uid, ; expectedEffectiveUid
+  15: capsule-sha256, ; containingReleaseDigest
+  16: capsule-sha256, ; i1ProfileCandidateDigest
+  17: capsule-sha256, ; componentProfileDigest
+  18: capsule-sha256, ; installationManifestCandidateDigest
+  19: 1, ; trustEpochSequence
+  20: capsule-sha256, ; trustEpochCandidateDigest
+  21: "supervisor-private-app-sandbox", ; stateRootClass
+  22: "supervisor.state", ; stateRootName
+  23: capsule-uint53-positive, ; stateRootDevice
+  24: capsule-uint53-positive, ; stateRootInode
+  25: "directory", ; stateRootType
+  26: capsule-bootstrap-uid, ; stateRootUid
+  27: 448, ; stateRootMode (0700)
+  28: "supervisor.owner", ; ownerLockEntryName
+  29: capsule-uint53-positive, ; ownerLockDevice
+  30: capsule-uint53-positive, ; ownerLockInode
+  31: "regular-file", ; ownerLockType
+  32: capsule-bootstrap-uid, ; ownerLockUid
+  33: 384, ; ownerLockMode (0600)
+  34: 1, ; ownerLockLinkCount
+  35: "darwin-openat-flock-v0", ; ownerLockProfile
+  36: "supervisor.store", ; storeEntryName
+  37: capsule-uint53-positive, ; storeDevice
+  38: "regular-file", ; storeType
+  39: capsule-bootstrap-uid, ; storeUid
+  40: 384, ; storeMode (0600)
+  41: 1, ; storeLinkCount
+  42: "capsule.supervisor-store/fixed-v1", ; storeFormat
+  43: "conformance-non-product-no-guest", ; storeProfile
+  44: capsule-uint53, ; initialStoreByteLength
+  45: capsule-sha256, ; initialStoreDigest
+  46: "supervisor.bootstrap-request", ; requestEntryName
+  47: "supervisor.bootstrap-record", ; recordEntryName
+  48: "retain-exact-envelope-mode-0400-single-link", ; requestRetentionPolicy
+  49: "retain-exact-envelope-file-and-epoch-anchor", ; recordRetentionPolicy
+  50: "installation-candidate-to-protected-root-disabled", ; installationTransition
+  51: "protected-root-validated-disabled", ; transition
+  52: capsule-unix-seconds, ; finalizedAt
+  53: false, ; attemptsEnabled
+  54: false, ; runtimeAdmitted
+  55: false, ; backendAdmitted
+  56: false, ; guestCreated
+  57: "commit-once", ; oneUseDisposition
+  58: "exact-retained-envelope-response-replay-only", ; replayDisposition
+  59: capsule-unix-seconds, ; requestIssuedAt
+  60: capsule-unix-seconds, ; requestNotBefore
+  61: capsule-unix-seconds, ; requestExpiresAt
+  62: "one-shot-exact-envelope-replay-only", ; requestReplayDisposition
+  63: "capsule.supervisor-bootstrap-request", ; requestObjectType
+  64: 0, ; requestObjectVersion
+  65: "capsule.installation.bootstrap.request", ; requestPurpose
+  66: "capsule.execution-supervisor.bootstrap", ; requestAudience
+  67: capsule-unix-seconds, ; issuedAt
+  68: capsule-unix-seconds, ; notBefore
+  69: capsule-unix-seconds, ; expiresAt
+}
+
+; Exact canonical encoding is a 77-byte COSE_Key map:
+; {1: 2, 3: -7, -1: 1, -2: bstr .size 32, -3: bstr .size 32}.
+capsule-installation-root-public-cose-key-v0 = bstr .size 77
+capsule-bootstrap-key-id = bstr .size 32
+capsule-bootstrap-authorization-identity = bstr .size 32
+capsule-bootstrap-installation-id = bstr .size 16
+capsule-bootstrap-supervisor-id = bstr .size 16
+capsule-bootstrap-nonce = bstr .size 32
+capsule-sha256 = bstr .size 32
+capsule-bootstrap-uid = 1..4294967295
+capsule-uint53 = 0..9007199254740991
+capsule-uint53-positive = 1..9007199254740991
+capsule-unix-seconds = 0..9007199254740991

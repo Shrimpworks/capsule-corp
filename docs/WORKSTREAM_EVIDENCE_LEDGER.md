@@ -475,11 +475,11 @@ Current dependency and priority view:
    consumers.
    Independently freeze the signed-object set, narrow `fxamacker/cbor` wrapper responsibilities,
    and maintain exact documentation plus field authority.
-3. **Installation plan:** I0, I1A, I1B, I2A, and the post-I1B platform-semantics research are
-   `PASSED` in their exact scopes. Continue with I2B1 passive signed-object fixtures, then only
-   separately authorized I2B signed Coordinator/bootstrap, protected-container, and
-   descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement remains I4 and
-   `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
+3. **Installation plan:** I0, I1A, I1B, I2A, I2B1 passive request/record objects, and the post-I1B
+   platform-semantics research are `PASSED` in their exact scopes. Continue with I2B2 unsigned
+   construction, then only separately authorized I2B signed Coordinator/bootstrap,
+   protected-container, and descriptor-relative fixed-v1 evidence. Manual whole-bundle replacement
+   remains I4 and `BLOCKED`; automatic TUF/update-replacer, Developer ID distribution, a support-floor matrix,
    and complete uninstall remain I5-I6.
 4. **Governed runtime:** the `rusty_v8` fork's bounded Linux/arm64 build is merged and the original
    construction blocker is closed. Next consume only an independently reviewed exact fork artifact

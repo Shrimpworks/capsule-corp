@@ -2,9 +2,9 @@
 
 Status: G1 and bounded G2 current-v1/no-guest composition are `PASSED` local mechanics. I2A now
 `PASSED` the protected-root owner/contract decision through Proposed ADR-0038. Installed G3/I2B is
-still `BLOCKED` by I1B exact profiles, passive signed-object/wrapper fixtures, authorized installed
-mutations, protected-container evidence, and descriptor-relative store composition; the path
-remains intended. The historical discovery result is retained as evidence, not as a current
+still `BLOCKED` by I2B2 unsigned construction, production signed-object wrapper review, authorized
+installed mutations, protected-container evidence, and descriptor-relative store composition;
+the path remains intended. The historical discovery result is retained as evidence, not as a current
 `NO_GO` work status.
 The retained development-only experiment selected BSD `flock`, and G1 now retains the internal
 Go/Darwin capability and owned-temporary-root tests. No product startup, service, protected store,

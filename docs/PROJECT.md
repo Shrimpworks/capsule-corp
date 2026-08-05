@@ -156,9 +156,11 @@ member/display suffix. Installed G3 remains **BLOCKED**, not abandoned. The reta
 fixes test-only role/state/bootstrap fields and reruns the noncredential G1/G2 corpus, but no
 3DDR-enrolled app, service, protected root, signed per-installation record, session, or update case
 ran. I2A now passes the exact design/contract scope by selecting a one-shot Coordinator-authorized,
-Supervisor-created protected root plus bounded request/record, ordering, and fault rules. Exact
-Capsule role profiles, passive signed-object fixtures, installed container/handoff evidence, and
-descriptor-relative store open remain I2B blockers. There is no
+Supervisor-created protected root plus bounded request/record, ordering, and fault rules. Passive
+I2B1 now freezes the exact 34-field request and 69-field record, 71 independently generated
+known-answer/refusal cases, agreeing Go/Swift verification, and 570 field classifications across
+44 targets. Exact Capsule role profiles, production wrapper review, installed container/handoff
+evidence, and descriptor-relative store open remain I2B blockers. There is no
 consumer, authenticated IPC, production approval, evidence, real backend, runtime, or guest.
 [Proposed ADR-0025](adr/0025-colocate-durable-attempt-lifecycle-state.md) selects a colocated
 lifecycle record/effect-checkpoint extension to the same Supervisor snapshot, with a separate

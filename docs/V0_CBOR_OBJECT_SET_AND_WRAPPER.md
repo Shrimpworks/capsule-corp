@@ -5,23 +5,27 @@ Work item: applicable v0 CBOR object-set freeze and narrow Go wrapper
 Status: `PASSED`
 
 Scope: defensively freeze the exact first-release object subset that may use the pinned Go CBOR
-dependency, retain the pre-freeze signed and conditional objects outside that subset, and implement
-one unwired object-specific `SourceManifest` codec. The work uses only repository fixtures, public
-fixture material, cached exact module sources, and local tests. It creates no signing, IPC, store,
-runtime, backend, or guest authority.
+dependency, retain the pre-freeze signed and conditional objects outside that subset, implement
+one unwired object-specific `SourceManifest` codec, and admit the passive I2B1 Supervisor bootstrap
+request/record payloads to the same narrow typed-decode dependency boundary. The work uses only
+repository fixtures, public fixture material, cached exact module sources, and local tests. It
+creates no production signing, IPC, store, runtime, backend, or guest authority.
 
 Evidence or reason: accepted ADR-0034 makes the five-field, single-member `SourceManifest` v0
-shape exact. Every other current CBOR or signed candidate still has an explicit schema, authority,
-consumer, or ADR gate. The new `internal/protocol/v0cbor` package imports exact
+shape exact. I2B1 now separately freezes the 34-field request and 69-field record with closed CDDL,
+field authority, actual-shape maxima, 71 independently generated cases, and agreeing Go/Swift
+verification. Every other current CBOR or signed candidate still has an explicit schema,
+authority, consumer, or ADR gate. The `internal/protocol/v0cbor` package imports exact
 `fxamacker/cbor/v2` v2.9.2 only for deterministic encoding and typed field decoding after the
 retained Capsule predecoder. Its tests replay all 19 applicable Go/TypeScript manifest cases,
 three known answers, 10,000 deterministic round trips, the handwritten oracle, cap-plus-one and
 restoration cases, defensive ownership, and a 30-second fuzz run with 673,967 executions and no
 failed invariant. The focused race run also passes.
 
-Remaining work: the signed-object family, production Swift wrapper, Supervisor/Broker same-byte
-path, production key authorization and COSE, and any `ExecutionPlan`/`PlanRegistration` dependency
-cutover remain separate coordinated work. ADR-0019 remains Proposed.
+Remaining work: production wrapper review/fuzzing, the installed Coordinator/Supervisor same-byte
+path, production key authorization and COSE, the rest of the signed-object family, and any
+`ExecutionPlan`/`PlanRegistration` dependency cutover remain separate coordinated work. ADR-0019
+remains Proposed.
 
 Next action: keep the wrapper unwired. Revisit its object set only in the same reviewed change that
 freezes another object's CDDL, authority manifest, caps, known answers, consumers, and failure
@@ -40,6 +44,8 @@ consumer or authority path is admitted.
 | Object/profile | Current owner and intended consumers | Exact retained bounds and known answers | Decision |
 | --- | --- | --- | --- |
 | `SourceManifest` v0 | Daemon derives it from exact `main.mjs`; Supervisor and Broker will independently validate retained bytes; current consumers are passive Go/TypeScript tests only | CBOR 87..95 bytes; depth 4; 15 items; one map up to 5 pairs; arrays up to 3 elements; separately bound source 0..262,144 bytes. Known answers: minimum 87 bytes / `b29a880488898dbac54c5890ec56b97a8aca461cbf6585af60fa3a56bc9e9044`, ordinary 89 / `052dce0c353e1efeb70f93405a8757ef6fa4d29f91a4d6bcaa67d00c45abc0d6`, maximum 95 / `21b9b521ed0ab6973be563b14f1eae4591097423e17d4d00ba0025c3fe4298d8` | **FROZEN FOR THIS WRAPPER / ELIGIBLE.** ADR-0034 fixes all five fields, one member, media, source binding, and limits. |
+| `SupervisorBootstrapRequest` v0 | Future Trust Coordinator producer and Supervisor consumer; current consumers are passive Go and independent Swift verification only | Payload raw/calculated 2,048/861 bytes; protected 256/98; envelope 4,096/1,033; payload depth 2, 69 items, 34 map pairs, no arrays. | **PASSIVE I2B1 FROZEN / ELIGIBLE FOR TYPED DECODE ONLY.** The closed wrapper retains predecode, canonical-byte, signature, authorization, time, replay, and copy protections. No production signer or installed consumer exists. |
+| `SupervisorBootstrapRecord` v0 | Future Trust Coordinator producer and Supervisor consumer; current consumers are passive Go and independent Swift verification only | Payload raw/calculated 4,096/1,527 bytes; protected 256/97; envelope 6,144/1,698; payload depth 2, 139 items, 69 map pairs, no arrays. | **PASSIVE I2B1 FROZEN / ELIGIBLE FOR TYPED DECODE ONLY.** Exact request, observed root/owner/store, record time, transition, retention, one-use, and response-loss bindings are closed. Installed enrollment remains blocked. |
 | `ExecutionPlan` v0 | Future daemon producer; future Supervisor/Broker consumers; current unwired registration tests decode it | CBOR up to 65,536 bytes; depth 8; 256 items; map 64; array 8. Ordinary fixture 530 bytes / `627f9524479000dab6f3cee1d70c0428c63285bcadbc2cb3c6e8018b2dea008c` | **PRE-FREEZE / EXCLUDED.** ADR-0023 remains Proposed; the candidate omits unresolved authority/transport values and cannot authorize execution. |
 | `PlanRegistration` v0 | Future Supervisor producer; future daemon/Broker consumers; current unwired registration state emits and decodes it | CBOR up to 4,096 bytes; depth 4; 33 items; map 16; arrays forbidden. Ordinary fixture 165 bytes / `f3569d37ad6d787c2cdd575ef9ec6c369bbe495157c43110fc9e9d610a277614` | **PRE-FREEZE / EXCLUDED.** The typed IPC method, final consumer contract, and ADR-0023 acceptance remain open. It is not independently signed portable authority. |
 | `ApprovalGrant` v0 payload, protected headers, and tagged COSE_Sign1 envelope | Future Approval Broker signer and Supervisor verifier; current `approvalattempt.FixtureVerifier` is retained-vector-only | Provisional raw copy budgets 512/256/128 bytes; calculated candidate maxima 431/242/116. Ordinary envelope/payload/protected are 375/234/68 bytes with SHA-256 `fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd`, `8ed203acb49409cf2c787bcb04e5e40aaed7139e8bc5b599bd53a49fb3c0e6ea`, and `b79d430399eb9d3f3690735f03a021a80a24f1ea76821303cf90fd010033ecbf` | **SIGNED PRE-FREEZE / EXCLUDED.** ADR-0019 and ADR-0024 remain Proposed; final session/key authorization and production COSE/Swift paths are open. The active fixture work is untouched. |
@@ -68,7 +74,7 @@ task does not silently treat the object-model list as a signed wire set.
 | Preserve exact-byte manifest identity and defensive typed projection | `RETAIN-CAPSULE` | Happens only after every structural, canonical, and binding check succeeds |
 | Handwritten Go encoder/decoder and TypeScript known answers | `TEST-ORACLE` | Remain independent; no production path is switched in this task |
 | Generic `cbor.Marshal`, `cbor.Unmarshal`, `UnmarshalFirst`, `any`, maps, tags, streams, diagnostics, and custom marshalers | `TEST-ORACLE` when used to prove a restoration hazard; otherwise unavailable | No exported wrapper route |
-| COSE envelope parsing, Sig_structure, ES256, key authorization, equivalent-signature identity, and replay | `RETAIN-CAPSULE` for the future signed wrapper; `go-cose` is `TEST-ORACLE` only | Not implemented here; payload bytes and durable state, never signature bytes, will own replay identity |
+| I2B1 COSE envelope framing, Sig_structure, ES256 verification, key authorization, exact-byte identity, and passive replay decision | `RETAIN-CAPSULE` in the object-specific passive bootstrap verifier; `go-cose` remains product `NO_GO` and absent | Implemented only for checked-in passive verification. Payload/envelope digests and typed replay state, never signature bytes, own identity; no durable ledger or production signer is present. |
 
 The wrapper deliberately maps fxamacker's private typed-decode failures into Capsule's bounded
 classification vocabulary and never returns library diagnostics containing decoded input.
@@ -157,11 +163,11 @@ a later coordinated schema freeze and cutover review explicitly removes it.
 
 ## Limitations and explicit non-claims
 
-- This freezes only the Go-wrapper-eligible object subset, not the complete future signed-object
-  family and not ADR-0019.
+- This freezes only the Go-wrapper-eligible `SourceManifest` plus the passive I2B1 bootstrap
+  request/record subset, not the complete future signed-object family and not ADR-0019.
 - The package is unwired and has no product consumer, authenticated IPC, store, Broker, Supervisor
   same-byte path, key, signature, replay ledger, runtime, backend, or guest.
-- Swift still has no production-shaped wrapper for this set.
+- Swift has an independent executable I2B1 fixture verifier, not a production wrapper or signer.
 - The dependency's release is identified by exact public source/module evidence but is not signed
   or attested upstream.
 - The corpus and bounded fuzzing support this wrapper result only; they do not establish a

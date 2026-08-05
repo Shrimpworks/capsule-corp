@@ -63,13 +63,16 @@ Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and
 installation-root-authorized, Supervisor-created, pre-created sibling object, acquire nonblocking
 BSD `flock`, and retain the opaque `CLOEXEC` descriptor for the Supervisor lifetime. Proposed
 ADR-0038 selects the one-shot Coordinator/Supervisor authorization and creation ceremony. The
+passive I2B1 contract now freezes its exact request/record CDDL, raw and calculated maxima,
+independently generated signed fixtures, strict Go verifier, independent Swift verifier, and field
+authority without activating a signer or installed handoff. The
 bounded owner harness observed
 process/descriptor semantics and refusal-before-store ordering only. Passive G1 adds the internal
 Go/Darwin owner package using the selected descriptor-relative syscalls. G2 now composes it before
 the existing v1 store and sorted no-guest recovery, uses its one owner-session ID for both store
 and coordinator, permanently fences lifecycle reads/mutations after a failed held-owner check, and
 closes lifecycle/store state before the descriptor. The owned-temporary-root fault/process corpus
-does not wire product startup or provide the I2B signed handoff and installed protected-root
+does not wire product startup or provide the I2B installed signed handoff and protected-root
 evidence.
 
 Proposed ADR-0031 defines the next archive boundary. A complete expired

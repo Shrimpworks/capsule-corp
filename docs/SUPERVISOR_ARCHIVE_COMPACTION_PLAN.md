@@ -23,11 +23,10 @@ all visible identities/tombstones, publishes before reference, atomically instal
 two checkpoint, reports valid orphans without deleting them, and fully reopens either the complete
 predecessor or successor under the owner assertion. The follow-on
 [F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md) now implements only read-only retained-global
-lookup, replay, passive collision routing, and hot-only `AttemptID` recovery. F4B authority/
-lifecycle mutation is now
-[`BLOCKED` on the retained effect-history representation](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md):
-F4A reconstructs and resolves only the lifecycle record's single current effect, while ADR-0031
-requires every earlier v2 effect tombstone to survive replacement of that field. F4C second-
+lookup, replay, passive collision routing, and hot-only `AttemptID` recovery. The retained
+[F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former effect-history gap;
+the [F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) now passes atomic authority/lifecycle
+mutation and the independent append-only effect source in the fixed-store scope. F4C second-
 segment/bounded-growth activation and production admission remain outside the passed scope.
 
 Normative proposal:
@@ -651,14 +650,12 @@ Observed result: `PASSED` in this exact read-only scope. The exact APIs, routing
 race/corruption/reopen/cap/copy/restoration evidence, and limitations are retained in the
 [F4A result](SUPERVISOR_ARCHIVE_F4A_LOOKUP_RESULT.md).
 
-### Slice F4B: atomic v2 authority/lifecycle mutation and effect tombstones — blocked
+### Slice F4B: atomic v2 authority/lifecycle mutation and effect tombstones — complete
 
-The first implementation review stopped before adding mutation. The retained
-[F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) proves that F4A full reconstruction and
-`ResolveEffect` can represent only the lifecycle record's current effect, while this slice requires
-an append-only ledger whose older entries no longer equal that current record. Dropping the older
-entry violates ADR-0031; retaining it makes full reopen refuse. A passive versioned effect-history,
-lookup, segment, count, and checkpoint correction must land before this slice resumes.
+The retained [F4B blocker](SUPERVISOR_ARCHIVE_F4B_MUTATION_BLOCKER.md) records the former
+current-effect contradiction and ADR-0031's independent-source correction. The resumed
+[F4B result](SUPERVISOR_ARCHIVE_F4B_MUTATION_RESULT.md) implements that correction and atomic v2
+mutation in the exact fixed-store local-conformance scope.
 
 - Add ordinary v2 registration, approval, attempt, and lifecycle mutations without routing any
   mutation from caller-selected archive bytes or locations.
@@ -670,6 +667,8 @@ lookup, segment, count, and checkpoint correction must land before this slice re
 Acceptance: existing Slice B/E5 mutation, replay, response-loss, fault, and recovery tests pass on
 v2 with archived collision equivalents. No second segment, new tombstone-only commit, consumer,
 adapter call, runtime, backend, or guest is added.
+
+Observed result: `PASSED` in this exact scope. F4C-F6 and product admission remain open.
 
 ### Slice F4C: second-segment activation and bounded growth — pending
 

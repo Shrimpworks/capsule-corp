@@ -41,17 +41,17 @@ type V1ToV2MigrationOptions struct {
 
 // FixedFileStoreV2 is the completely verified fixed-oracle v2 view. F2 adds
 // migration genesis, F3 adds exactly one sealed immutable-segment activation,
-// and F4A adds read-only retained-global lookup and collision routing. No slice
-// through F4A authorizes v2 authority mutation, adapter invocation, a consumer,
-// or a guest.
+// F4A adds read-only retained-global lookup/collision routing, and F4B adds
+// atomic authority/lifecycle mutation plus the independent append-only effect-
+// tombstone source. No completed slice here authorizes adapter invocation, a
+// consumer, a runtime/backend, or a guest.
 type FixedFileStoreV2 struct {
-	path       string
-	state      installationState
-	lifecycles []lifecyclestate.Record
-	active     archivestate.ActiveStateV2
-	genesis    archivestate.MigrationGenesisCheckpoint
-	segments   []loadedArchiveSegmentV0
-	orphans    uint16
+	*FixedFileStoreV1
+	active          archivestate.ActiveStateV2
+	genesis         archivestate.MigrationGenesisCheckpoint
+	segments        []loadedArchiveSegmentV0
+	orphans         uint16
+	authorityFaults map[StoreFault]error
 }
 
 // FixedFileStoreV2VerificationReport is the bounded, content-free F2/F3 full
@@ -87,6 +87,12 @@ type diskEnvelopeV2 struct {
 	State              installationState     `json:"state"`
 	LifecycleSetDigest LifecycleSetDigest    `json:"lifecycleSetDigest"`
 	Lifecycles         []lifecycleRecordDisk `json:"lifecycles"`
+	// EffectTombstones is omitted only in the exact retained F2/F3 predecessor
+	// bytes. Once any F4B mutation commits, the pointer is non-nil even for an
+	// empty collection, so omission can never be interpreted as an empty F4B
+	// ledger.
+	EffectTombstones         *[]effectIndexEntryDisk                `json:"effectTombstones,omitempty"`
+	EffectTombstoneSetDigest *archivestate.EffectTombstoneSetDigest `json:"effectTombstoneSetDigest,omitempty"`
 
 	Descriptors         []archivestate.ArchiveDescriptorView    `json:"descriptors"`
 	DescriptorSetDigest archivestate.ArchiveDescriptorSetDigest `json:"descriptorSetDigest"`
@@ -98,10 +104,11 @@ type diskEnvelopeV2 struct {
 	VisibleV1EffectSeedCount  uint64                               `json:"visibleV1EffectSeedCount"`
 	VisibleV1EffectSeedDigest archivestate.ArchiveEffectSeedDigest `json:"visibleV1EffectSeedDigest"`
 
-	PreviousCheckpoint   archivestate.ArchiveCheckpointReference `json:"previousCheckpoint"`
-	CurrentCheckpoint    archivestate.ArchiveCheckpointReference `json:"currentCheckpoint"`
-	MigrationGenesis     migrationGenesisDisk                    `json:"migrationGenesis"`
-	ActivationCheckpoint *archiveCheckpointDisk                  `json:"activationCheckpoint,omitempty"`
+	PreviousCheckpoint      archivestate.ArchiveCheckpointReference `json:"previousCheckpoint"`
+	CurrentCheckpoint       archivestate.ArchiveCheckpointReference `json:"currentCheckpoint"`
+	MigrationGenesis        migrationGenesisDisk                    `json:"migrationGenesis"`
+	MigrationGenesisIndexes *archiveIndexesDisk                     `json:"migrationGenesisIndexes,omitempty"`
+	ActivationCheckpoint    *archiveCheckpointDisk                  `json:"activationCheckpoint,omitempty"`
 
 	HotCounts      archivestate.ArchiveCounts `json:"hotCounts"`
 	ArchivedCounts archivestate.ArchiveCounts `json:"archivedCounts"`
@@ -228,13 +235,14 @@ type archiveIndexesDisk struct {
 }
 
 type loadedV2State struct {
-	Envelope   diskEnvelopeV2
-	State      installationState
-	Lifecycles []lifecyclestate.Record
-	Active     archivestate.ActiveStateV2
-	Genesis    archivestate.MigrationGenesisCheckpoint
-	Segments   []loadedArchiveSegmentV0
-	Orphans    uint16
+	Envelope         diskEnvelopeV2
+	State            installationState
+	Lifecycles       []lifecyclestate.Record
+	EffectTombstones []archivestate.EffectIndexEntry
+	Active           archivestate.ActiveStateV2
+	Genesis          archivestate.MigrationGenesisCheckpoint
+	Segments         []loadedArchiveSegmentV0
+	Orphans          uint16
 }
 
 var fixedStoreV2MigrationMu sync.Mutex
@@ -243,6 +251,12 @@ var fixedStoreV2MigrationMu sync.Mutex
 // world and runs the full fixed-oracle verifier. It never creates, migrates,
 // downgrades, normalizes, repairs, or rewrites a store or segment.
 func OpenFixedFileStoreV2(path string) (*FixedFileStoreV2, error) {
+	return OpenFixedFileStoreV2WithOptions(path, FixedFileStoreV1Options{})
+}
+
+// OpenFixedFileStoreV2WithOptions installs only Supervisor-owned identifier
+// and owner-session sources for deterministic local conformance tests.
+func OpenFixedFileStoreV2WithOptions(path string, options FixedFileStoreV1Options) (*FixedFileStoreV2, error) {
 	if path == "" {
 		return nil, errors.New("fixed supervisor v2 store path is required")
 	}
@@ -253,13 +267,68 @@ func OpenFixedFileStoreV2(path string) (*FixedFileStoreV2, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrStoreRepairRequired, err)
 	}
-	return &FixedFileStoreV2{
-		path:       path,
-		state:      cloneState(loaded.State),
+	resolved, err := resolveFixedFileStoreV1Options(options)
+	if err != nil {
+		return nil, err
+	}
+	inner := &FixedFileStoreV1{
+		path: path, sourceFormatVersion: archivestate.MigrationSourceFormatV1,
+		state: cloneState(loaded.State), lifecycleSetDigest: lifecycleSetDigest(loaded.Lifecycles),
 		lifecycles: cloneLifecycleRecords(loaded.Lifecycles, loaded.State.TimeHighWaterUnixSeconds),
-		active:     loaded.Active, genesis: loaded.Genesis,
+		effectIDs:  resolved.EffectIDs, ownerSessionID: resolved.OwnerSessionID,
+		faults: make(map[LifecycleStoreFault]error), issuedPermits: make(map[approvalattempt.AttemptID]lifecyclestate.EffectPermit),
+		effectTombstones: cloneEffectTombstones(loaded.EffectTombstones),
+		retainedEffects:  make(map[lifecyclestate.EffectID]struct{}),
+	}
+	for _, entry := range loaded.Active.View().Indexes.View().Effects {
+		inner.retainedEffects[entry.EffectID] = struct{}{}
+	}
+	store := &FixedFileStoreV2{
+		FixedFileStoreV1: inner, active: loaded.Active, genesis: loaded.Genesis,
 		segments: cloneLoadedArchiveSegments(loaded.Segments), orphans: loaded.Orphans,
-	}, nil
+		authorityFaults: make(map[StoreFault]error),
+	}
+	inner.v2Commit = store.commitV2LifecycleCandidateLocked
+	return store, nil
+}
+
+// OpenFixedFileStoreV2WithOwner binds all F4B authority/lifecycle mutations to
+// the same held installation owner and owner-session fencing used by G2.
+func OpenFixedFileStoreV2WithOwner(
+	ctx context.Context,
+	path string,
+	owner ArchiveOwner,
+	options FixedFileStoreV1Options,
+) (*FixedFileStoreV2, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if owner == nil {
+		return nil, ErrStoreOwnerRequired
+	}
+	if err := owner.CheckHeld(ctx); err != nil {
+		return nil, fmt.Errorf("%w: initial v2 owner check: %v", ErrStoreOwnerFenced, err)
+	}
+	if !options.OwnerSessionID.IsZero() && options.OwnerSessionID != owner.OwnerSessionID() {
+		return nil, ErrStoreOwnerSessionMismatch
+	}
+	options.OwnerSessionID = owner.OwnerSessionID()
+	store, err := OpenFixedFileStoreV2WithOptions(path, options)
+	if err != nil {
+		return nil, err
+	}
+	// ArchiveOwner is the exact narrow interface needed here; the shared v1
+	// owner field uses the stronger installationowner interface, so F4B keeps
+	// its own closure through these two fields.
+	store.ownerRequired = true
+	store.ownerSessionID = owner.OwnerSessionID()
+	store.v2Owner = owner
+	if err := owner.CheckHeld(ctx); err != nil || owner.OwnerSessionID() != store.ownerSessionID {
+		store.ownerFenced = true
+		store.recoveryRequired = true
+		return nil, ErrStoreOwnerFenced
+	}
+	return store, nil
 }
 
 // VerifyFixedFileStoreV2 runs the same complete read-only validation as the v2
@@ -280,7 +349,7 @@ func VerifyFixedFileStoreV2(path string) (FixedFileStoreV2VerificationReport, er
 	}, nil
 }
 
-func (store *FixedFileStoreV2) snapshot(ctx context.Context) (fixedStoreV2Snapshot, error) {
+func (store *FixedFileStoreV2) snapshotV2(ctx context.Context) (fixedStoreV2Snapshot, error) {
 	if err := ctx.Err(); err != nil {
 		return fixedStoreV2Snapshot{}, err
 	}
@@ -345,7 +414,11 @@ func buildEnvelopeV2(source loadedV1State) (diskEnvelopeV2, error) {
 	if err := validateV2RegistrationSetDigest(source.State); err != nil {
 		return diskEnvelopeV2{}, err
 	}
-	indexes, err := reconstructV2Indexes(source.State, source.Lifecycles)
+	seedTombstones, err := visibleV1EffectTombstones(source.State, source.Lifecycles)
+	if err != nil {
+		return diskEnvelopeV2{}, err
+	}
+	indexes, err := reconstructV2Indexes(source.State, source.Lifecycles, seedTombstones)
 	if err != nil {
 		return diskEnvelopeV2{}, err
 	}
@@ -579,7 +652,14 @@ func loadV2State(path string) (loadedV2State, error) {
 	if err != nil {
 		return loadedV2State{}, err
 	}
-	reconstructed, err := reconstructV2IndexesForWorld(envelope.State, records, segments)
+	hotTombstones, tombstoneDigest, materializedTombstones, err := effectTombstonesFromEnvelope(envelope, storedIndexes)
+	if err != nil {
+		return loadedV2State{}, err
+	}
+	if materializedTombstones != (envelope.MigrationGenesisIndexes != nil) {
+		return loadedV2State{}, errors.New("fixed supervisor F4B migration-genesis indexes are missing or unexpected")
+	}
+	reconstructed, err := reconstructV2IndexesForWorld(envelope.State, records, hotTombstones, segments)
 	if err != nil {
 		return loadedV2State{}, err
 	}
@@ -590,11 +670,17 @@ func loadV2State(path string) (loadedV2State, error) {
 		storedIndexes.CombinedDigest() != envelope.CombinedIndexDigest {
 		return loadedV2State{}, errors.New("fixed supervisor v2 index digest mismatch")
 	}
-	genesisIndexes, err := reconstructMigrationGenesisIndexes(envelope.State, records, segments)
-	if err != nil {
-		return loadedV2State{}, err
+	var genesisIndexes archivestate.ArchiveIndexes
+	var genesisHotDigests archivestate.HotSetDigests
+	if envelope.MigrationGenesisIndexes != nil {
+		genesisIndexes, err = archiveIndexesFromDisk(*envelope.MigrationGenesisIndexes)
+		genesisHotDigests = envelope.MigrationGenesis.HotSetDigests
+	} else {
+		genesisIndexes, err = reconstructMigrationGenesisIndexes(envelope.State, records, segments)
+		if err == nil {
+			genesisHotDigests, err = reconstructMigrationGenesisHotSetDigests(envelope.State, records, segments)
+		}
 	}
-	genesisHotDigests, err := reconstructMigrationGenesisHotSetDigests(envelope.State, records, segments)
 	if err != nil {
 		return loadedV2State{}, err
 	}
@@ -619,7 +705,12 @@ func loadV2State(path string) (loadedV2State, error) {
 		DurableTimeHighWater: envelope.State.TimeHighWaterUnixSeconds,
 		Descriptors:          descriptors, DescriptorSetDigest: envelope.DescriptorSetDigest,
 		Indexes: storedIndexes, IndexDigests: envelope.IndexDigests,
-		CombinedIndexDigest:       envelope.CombinedIndexDigest,
+		CombinedIndexDigest: envelope.CombinedIndexDigest,
+		HotSetDigests: archivestate.HotSetDigests{
+			Registrations: envelope.State.RegistrationSetDigest, Approvals: envelope.State.ApprovalSetDigest,
+			Attempts: envelope.State.AttemptSetDigest, Lifecycles: [32]byte(envelope.LifecycleSetDigest),
+			EffectTombstones: tombstoneDigest,
+		},
 		EffectTombstoneCoverage:   envelope.EffectTombstoneCoverage,
 		VisibleV1EffectSeedCount:  envelope.VisibleV1EffectSeedCount,
 		VisibleV1EffectSeedDigest: envelope.VisibleV1EffectSeedDigest,
@@ -631,7 +722,7 @@ func loadV2State(path string) (loadedV2State, error) {
 	}
 	switch envelope.CurrentCheckpoint.Kind {
 	case archivestate.ArchiveCheckpointMigrationGenesis:
-		if envelope.SnapshotGeneration != 1 || envelope.ArchiveGeneration != 1 ||
+		if envelope.SnapshotGeneration < 1 || envelope.ArchiveGeneration != 1 ||
 			envelope.ArchivedCounts != (archivestate.ArchiveCounts{}) || len(segments) != 0 ||
 			envelope.CurrentCheckpoint != genesis.Reference() ||
 			envelope.PreviousCheckpoint != archivestate.NoArchiveCheckpointReference() ||
@@ -639,7 +730,7 @@ func loadV2State(path string) (loadedV2State, error) {
 			return loadedV2State{}, errors.New("fixed supervisor v2 genesis world mismatch")
 		}
 	case archivestate.ArchiveCheckpointActivation:
-		if len(segments) != 1 || envelope.SnapshotGeneration != 2 || envelope.ArchiveGeneration != 2 ||
+		if len(segments) != 1 || envelope.SnapshotGeneration < 2 || envelope.ArchiveGeneration != 2 ||
 			envelope.PreviousCheckpoint != genesis.Reference() || envelope.ActivationCheckpoint == nil {
 			return loadedV2State{}, errors.New("fixed supervisor F3 v2 activation world mismatch")
 		}
@@ -651,9 +742,55 @@ func loadV2State(path string) (loadedV2State, error) {
 	}
 	return loadedV2State{
 		Envelope: envelope, State: cloneState(envelope.State),
-		Lifecycles: cloneLifecycleRecords(records, envelope.State.TimeHighWaterUnixSeconds),
-		Active:     active, Genesis: genesis, Segments: cloneLoadedArchiveSegments(segments), Orphans: orphans,
+		Lifecycles:       cloneLifecycleRecords(records, envelope.State.TimeHighWaterUnixSeconds),
+		EffectTombstones: cloneEffectTombstones(hotTombstones),
+		Active:           active, Genesis: genesis, Segments: cloneLoadedArchiveSegments(segments), Orphans: orphans,
 	}, nil
+}
+
+func effectTombstonesFromEnvelope(
+	envelope diskEnvelopeV2,
+	stored archivestate.ArchiveIndexes,
+) ([]archivestate.EffectIndexEntry, archivestate.EffectTombstoneSetDigest, bool, error) {
+	if (envelope.EffectTombstones == nil) != (envelope.EffectTombstoneSetDigest == nil) {
+		return nil, archivestate.EffectTombstoneSetDigest{}, false, errors.New("fixed supervisor v2 effect-tombstone collection is partial")
+	}
+	if envelope.EffectTombstones == nil {
+		// Compatibility is exact and closed: only the pinned F2 migration genesis
+		// and F3 first-activation worlds may omit the collection. Their serialized
+		// effect projection is the retained migration seed/segment source, never an
+		// inference that missing history is empty.
+		legacyGenesis := envelope.SnapshotGeneration == 1 && envelope.ArchiveGeneration == 1 &&
+			envelope.CurrentCheckpoint.Kind == archivestate.ArchiveCheckpointMigrationGenesis &&
+			len(envelope.Descriptors) == 0
+		legacyActivation := envelope.SnapshotGeneration == 2 && envelope.ArchiveGeneration == 2 &&
+			envelope.CurrentCheckpoint.Kind == archivestate.ArchiveCheckpointActivation &&
+			len(envelope.Descriptors) == 1
+		if !legacyGenesis && !legacyActivation {
+			return nil, archivestate.EffectTombstoneSetDigest{}, false, errors.New("fixed supervisor F4B effect-tombstone collection is missing")
+		}
+		entries := make([]archivestate.EffectIndexEntry, 0)
+		for _, entry := range stored.View().Effects {
+			if entry.AttemptLocation.View().Kind == archivestate.RecordLocationHot {
+				entries = append(entries, entry)
+			}
+		}
+		digest, err := archivestate.DigestEffectTombstoneSet(entries)
+		return entries, digest, false, err
+	}
+	entries, err := effectTombstonesFromDisk(*envelope.EffectTombstones)
+	if err != nil {
+		return nil, archivestate.EffectTombstoneSetDigest{}, true, err
+	}
+	digest, err := archivestate.DigestEffectTombstoneSet(entries)
+	if err != nil || digest != *envelope.EffectTombstoneSetDigest {
+		return nil, archivestate.EffectTombstoneSetDigest{}, true, errors.New("fixed supervisor v2 effect-tombstone set digest mismatch")
+	}
+	return entries, digest, true, nil
+}
+
+func cloneEffectTombstones(entries []archivestate.EffectIndexEntry) []archivestate.EffectIndexEntry {
+	return append([]archivestate.EffectIndexEntry{}, entries...)
 }
 
 func validateMigrationGenesisDisk(
@@ -671,7 +808,8 @@ func validateMigrationGenesisDisk(
 		disk.DescriptorSetDigest != emptyDescriptors || disk.HotCounts != countsForIndexView(indexes.View()) ||
 		disk.InstallationID != envelope.State.InstallationID ||
 		disk.SupervisorID != envelope.State.SupervisorID || disk.EpochSequence != envelope.State.EpochSequence ||
-		disk.EpochDigest != envelope.State.EpochDigest || disk.DurableTimeHighWater != envelope.State.TimeHighWaterUnixSeconds {
+		disk.EpochDigest != envelope.State.EpochDigest || disk.DurableTimeHighWater > envelope.State.TimeHighWaterUnixSeconds ||
+		(envelope.MigrationGenesisIndexes == nil && disk.DurableTimeHighWater != envelope.State.TimeHighWaterUnixSeconds) {
 		return archivestate.MigrationGenesisCheckpoint{}, errors.New("fixed supervisor v2 migration genesis cross-link mismatch")
 	}
 	if disk.HotSetDigests != hotSetDigests {
@@ -702,6 +840,7 @@ func validateMigrationGenesisDisk(
 func reconstructV2Indexes(
 	state installationState,
 	records []lifecyclestate.Record,
+	effectTombstones []archivestate.EffectIndexEntry,
 ) (archivestate.ArchiveIndexes, error) {
 	view := archivestate.ArchiveIndexesView{
 		Scope:          archivestate.ArchiveIndexScopeRetainedGlobal,
@@ -709,7 +848,7 @@ func reconstructV2Indexes(
 		Approvals:      make([]archivestate.ApprovalIndexEntry, 0, len(state.Approvals)),
 		Attempts:       make([]archivestate.AttemptIndexEntry, 0, len(state.Attempts)),
 		Nonces:         make([]archivestate.NonceIndexEntry, 0, len(state.Approvals)),
-		Effects:        make([]archivestate.EffectIndexEntry, 0, len(records)),
+		Effects:        cloneEffectTombstones(effectTombstones),
 		Instances:      make([]archivestate.InstanceIndexEntry, 0, len(records)),
 		ApprovalReplay: make([]archivestate.ApprovalReplayIndexEntry, 0, len(state.Approvals)),
 		AttemptReplay:  make([]archivestate.AttemptReplayIndexEntry, 0, len(state.Attempts)),
@@ -814,14 +953,6 @@ func reconstructV2Indexes(
 				return archivestate.ArchiveIndexes{}, err
 			}
 			recordView := joined.record.View()
-			if !recordView.EffectID.IsZero() {
-				view.Effects = append(view.Effects, archivestate.EffectIndexEntry{
-					EffectID: recordView.EffectID, AttemptID: attempt.AttemptID,
-					OperationSequence: recordView.OperationSequence, Operation: recordView.Operation,
-					IssuanceSnapshotGeneration: recordView.SnapshotGeneration,
-					VisibleV1Seed:              true, AttemptLocation: location,
-				})
-			}
 			if recordView.Instance.Present() {
 				view.Instances = append(view.Instances, archivestate.InstanceIndexEntry{
 					InstanceDigest: recordView.Instance.Digest(), AttemptID: attempt.AttemptID,
@@ -838,6 +969,23 @@ func reconstructV2Indexes(
 			RegistrationID: attempt.RegistrationID, ApprovalID: attempt.ApprovalID,
 			AttemptID: attempt.AttemptID, State: attempt.State, Location: location,
 		})
+	}
+	for _, tombstone := range view.Effects {
+		attemptPosition := sort.Search(len(view.Attempts), func(index int) bool {
+			return bytes.Compare(view.Attempts[index].AttemptID[:], tombstone.AttemptID[:]) >= 0
+		})
+		if attemptPosition == len(view.Attempts) || view.Attempts[attemptPosition].AttemptID != tombstone.AttemptID ||
+			view.Attempts[attemptPosition].Lifecycle.View().Presence != archivestate.AttemptLifecyclePresent ||
+			view.Attempts[attemptPosition].Location.View() != tombstone.AttemptLocation.View() {
+			return archivestate.ArchiveIndexes{}, errors.New("effect tombstone attempt cross-link mismatch")
+		}
+		current := lifecycleByAttempt[tombstone.AttemptID].record.View()
+		if tombstone.OperationSequence > current.OperationSequence ||
+			tombstone.IssuanceSnapshotGeneration > current.SnapshotGeneration ||
+			(tombstone.EffectID == current.EffectID &&
+				(tombstone.OperationSequence != current.OperationSequence || tombstone.Operation != current.Operation)) {
+			return archivestate.ArchiveIndexes{}, errors.New("effect tombstone lifecycle cross-link mismatch")
+		}
 	}
 
 	sort.Slice(view.Nonces, func(left, right int) bool {
@@ -864,6 +1012,45 @@ func reconstructV2Indexes(
 		return bytes.Compare(view.AttemptReplay[left].ApprovalID[:], view.AttemptReplay[right].ApprovalID[:]) < 0
 	})
 	return archivestate.NewArchiveIndexes(view)
+}
+
+func visibleV1EffectTombstones(
+	state installationState,
+	records []lifecyclestate.Record,
+) ([]archivestate.EffectIndexEntry, error) {
+	attempts := append([]approvalattempt.ExecutionAttempt(nil), state.Attempts...)
+	sort.Slice(attempts, func(left, right int) bool {
+		return bytes.Compare(attempts[left].AttemptID[:], attempts[right].AttemptID[:]) < 0
+	})
+	locations := make(map[approvalattempt.AttemptID]archivestate.RecordLocation, len(attempts))
+	for index, attempt := range attempts {
+		location, err := archivestate.NewHotRecordLocation(archivestate.RecordAttempt, v0candidate.PositiveUInt53(index+1))
+		if err != nil {
+			return nil, err
+		}
+		locations[attempt.AttemptID] = location
+	}
+	result := make([]archivestate.EffectIndexEntry, 0, len(records))
+	for _, record := range records {
+		view := record.View()
+		if view.EffectID.IsZero() {
+			continue
+		}
+		attemptID := record.Bindings().View().AttemptID
+		location, ok := locations[attemptID]
+		if !ok {
+			return nil, errors.New("visible-v1 effect seed attempt is missing")
+		}
+		result = append(result, archivestate.EffectIndexEntry{
+			EffectID: view.EffectID, AttemptID: attemptID, OperationSequence: view.OperationSequence,
+			Operation: view.Operation, IssuanceSnapshotGeneration: view.SnapshotGeneration,
+			VisibleV1Seed: true, AttemptLocation: location,
+		})
+	}
+	sort.Slice(result, func(left, right int) bool {
+		return bytes.Compare(result[left].EffectID[:], result[right].EffectID[:]) < 0
+	})
+	return result, nil
 }
 
 func digestV2Record(kind archivestate.RecordKind, record any) (archivestate.ArchiveRecordDigest, error) {
@@ -1092,6 +1279,44 @@ func archiveIndexesFromDisk(disk archiveIndexesDisk) (archivestate.ArchiveIndexe
 		}
 	}
 	return archivestate.NewArchiveIndexes(view)
+}
+
+func effectTombstonesToDisk(entries []archivestate.EffectIndexEntry) []effectIndexEntryDisk {
+	result := make([]effectIndexEntryDisk, len(entries))
+	for index, entry := range entries {
+		result[index] = effectIndexEntryDisk{
+			EffectID: entry.EffectID, AttemptID: entry.AttemptID,
+			OperationSequence: entry.OperationSequence, Operation: entry.Operation,
+			IssuanceSnapshotGeneration: entry.IssuanceSnapshotGeneration,
+			VisibleV1Seed:              entry.VisibleV1Seed, AttemptLocation: recordLocationToDisk(entry.AttemptLocation),
+		}
+	}
+	return result
+}
+
+func effectTombstonesFromDisk(disk []effectIndexEntryDisk) ([]archivestate.EffectIndexEntry, error) {
+	if disk == nil {
+		return nil, errors.New("fixed supervisor v2 effect-tombstone collection is missing")
+	}
+	result := make([]archivestate.EffectIndexEntry, len(disk))
+	for index, entry := range disk {
+		location, err := recordLocationFromDisk(entry.AttemptLocation)
+		if err != nil {
+			return nil, err
+		}
+		result[index] = archivestate.EffectIndexEntry{
+			EffectID: entry.EffectID, AttemptID: entry.AttemptID,
+			OperationSequence: entry.OperationSequence, Operation: entry.Operation,
+			IssuanceSnapshotGeneration: entry.IssuanceSnapshotGeneration,
+			VisibleV1Seed:              entry.VisibleV1Seed, AttemptLocation: location,
+		}
+	}
+	// Reuse the closed index validator for sort, collision, field, and cap
+	// enforcement without inventing a second tombstone schema.
+	if _, err := archivestate.DigestEffectTombstoneSet(result); err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func recordLocationToDisk(location archivestate.RecordLocation) recordLocationDisk {

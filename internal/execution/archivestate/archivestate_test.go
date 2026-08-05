@@ -630,6 +630,31 @@ func TestArchiveRecordLocationsAreKindedDiscriminatedAndBoundIntoIndexes(t *test
 	}
 }
 
+func TestEffectTombstoneSetDigestIsClosedOrderedAndBounded(t *testing.T) {
+	empty, err := DigestEffectTombstoneSet([]EffectIndexEntry{})
+	if err != nil || empty == (EffectTombstoneSetDigest{}) {
+		t.Fatalf("empty effect-tombstone digest = %x, %v", empty, err)
+	}
+	entries := completeHotRetainedIndexes(t, true).View().Effects
+	first, err := DigestEffectTombstoneSet(entries)
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries[0].VisibleV1Seed = false
+	second, err := DigestEffectTombstoneSet(entries)
+	if err != nil || second == first {
+		t.Fatalf("visible-v1 discriminator not bound: %x %x, %v", first, second, err)
+	}
+	duplicate := append(append([]EffectIndexEntry{}, entries...), entries[0])
+	if _, err := DigestEffectTombstoneSet(duplicate); classification(t, err) != ClassificationBinding {
+		t.Fatalf("duplicate effect tombstone = %v", err)
+	}
+	capPlusOne := make([]EffectIndexEntry, MaxArchiveIndexEntries+1)
+	if _, err := DigestEffectTombstoneSet(capPlusOne); classification(t, err) != ClassificationCapacity {
+		t.Fatalf("effect-tombstone cap plus one = %v", err)
+	}
+}
+
 func TestAttemptLifecyclePresenceUnionKeepsExactIndependentCounts(t *testing.T) {
 	hotAttempt := hotRecordLocation(t, RecordAttempt, 1)
 	base := AttemptIndexEntry{

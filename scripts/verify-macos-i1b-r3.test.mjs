@@ -8,7 +8,9 @@ import { fileURLToPath } from "node:url";
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const artifactRoot = join(repositoryRoot, "artifacts/macos-i1b-r3-signed-development-composition");
 
-test("I1B/R3 constructs only the exact execution-disabled unsigned source topology", async () => {
+test("I1B/R3 constructs only the exact execution-disabled unsigned source topology", {
+  skip: process.platform !== "darwin",
+}, async () => {
   const temporaryRoot = await mkdtemp("/private/tmp/capsule-i1b-r3-test-");
   const bundle = join(temporaryRoot, "Capsule.app");
   try {
@@ -77,14 +79,16 @@ test("I1B/R3 constructs only the exact execution-disabled unsigned source topolo
 
 test("I1B/R3 retained signed, refusal, installed, and cleanup evidence remains closed", async () => {
   const evidenceRoot = join(artifactRoot, "evidence");
-  const [signed, refusal, installed, cleanup] = await Promise.all(
-    [
-      "signed-enrollment.json",
-      "refusal-matrix.json",
-      "installed-composition.json",
-      "cleanup-platform-observation.json",
-    ].map(async (name) => JSON.parse(await readFile(join(evidenceRoot, name), "utf8"))),
-  );
+  const evidencePromises = [
+    "signed-enrollment.json",
+    "refusal-matrix.json",
+    "installed-composition.json",
+    "cleanup-platform-observation.json",
+  ].map(async (name) => JSON.parse(await readFile(join(evidenceRoot, name), "utf8")));
+  const [signed, refusal, installed, cleanup, profileMetadataSource] = await Promise.all([
+    ...evidencePromises,
+    readFile(join(artifactRoot, "scripts/profile-metadata.mjs"), "utf8"),
+  ]);
   assert.equal(signed.status, "PASSED");
   assert.equal(signed.certificateSha1, "80A4969BCD1B3926020888094B9D812A283D3793");
   assert.equal(signed.developerIdUsed, false);
@@ -97,9 +101,17 @@ test("I1B/R3 retained signed, refusal, installed, and cleanup evidence remains c
   assert.equal(cleanup.status, "PASSED");
   assert.equal(cleanup.fullDiskAccessUsed, false);
   assert.equal(cleanup.fixedPrivateScratchSelfTest.residualNonPlatformScratch, false);
+  assert.match(profileMetadataSource, /createHash\("sha256"\)/);
+  assert.doesNotMatch(profileMetadataSource, /createHash\("sha1"\)/);
+  assert.match(
+    profileMetadataSource,
+    /D3E9FBDDBC342F747C3649B5A6FFB307A575827404E02D638C11B6B795A09629/,
+  );
 });
 
-test("I1B/R3 constraint and entitlement inputs remain exact and parseable", async () => {
+test("I1B/R3 constraint and entitlement inputs remain exact and parseable", {
+  skip: process.platform !== "darwin",
+}, async () => {
   const constraintNames = [
     "broker-launcher-self.coderequirement",
     "broker-parser-self.coderequirement",

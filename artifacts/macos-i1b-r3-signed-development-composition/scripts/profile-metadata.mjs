@@ -9,6 +9,7 @@ import { join, resolve } from "node:path";
 
 const TEAM = "3DDR84M4JS";
 const CERTIFICATE_SHA1 = "80A4969BCD1B3926020888094B9D812A283D3793";
+const CERTIFICATE_SHA256 = "D3E9FBDDBC342F747C3649B5A6FFB307A575827404E02D638C11B6B795A09629";
 const ALLOWED_PROFILE_ENTITLEMENTS = [
   "com.apple.application-identifier",
   "com.apple.developer.team-identifier",
@@ -117,11 +118,12 @@ export async function readExactProfile(pathValue, bundleIdentifier) {
     "profile application identifier mismatch",
   );
   assert.equal(profile.developerCertificates.length, 1, "profile must select one certificate");
-  const certificateSha1 = createHash("sha1")
+  const certificateSha256 = createHash("sha256")
     .update(Buffer.from(profile.developerCertificates[0], "base64"))
     .digest("hex")
     .toUpperCase();
-  assert.equal(certificateSha1, CERTIFICATE_SHA1, "profile certificate fingerprint mismatch");
+  assert.equal(certificateSha256, CERTIFICATE_SHA256, "profile certificate fingerprint mismatch");
+  const certificateSha1 = CERTIFICATE_SHA1;
   assert.ok(
     profile.provisionedDevices.includes(provisioningUDID()),
     "profile does not contain this Mac",

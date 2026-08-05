@@ -919,6 +919,74 @@
         "separately-authorized-composed-profile-owned-guest-task-after-gate"
       ]
     },
+    "governed-runtime-c2b-v3-passive-discriminator": {
+      "authorityClass": "protocol-discriminator",
+      "originRole": "passive-fixture-generator",
+      "validator": "governed-runtime-c2b-v3-passive-validator",
+      "resolver": "governed-runtime-c2b-v3-passive-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-governed-runtime-c2b-binding-v3-exact-json",
+      "unknownBehavior": "reject-passive-fixture",
+      "retainer": "capsule-repository-conformance-fixture",
+      "allowedConsumers": [
+        "governed-runtime-c2b-v3-passive-go-validator",
+        "governed-runtime-c2b-v3-passive-typescript-validator",
+        "separately-authorized-fixed-owned-guest-task-after-gate"
+      ]
+    },
+    "governed-runtime-c2b-v3-passive-evidence": {
+      "authorityClass": "evidence-only-observation",
+      "originRole": "passive-fixture-generator",
+      "validator": "governed-runtime-c2b-v3-passive-validator",
+      "resolver": "governed-runtime-c2b-v3-passive-binding-resolver",
+      "authorityEffect": "records-evidence",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-governed-runtime-c2b-binding-v3-exact-json",
+      "unknownBehavior": "reject-passive-fixture",
+      "retainer": "capsule-repository-conformance-fixture",
+      "allowedConsumers": [
+        "governed-runtime-c2b-v3-passive-go-validator",
+        "governed-runtime-c2b-v3-passive-typescript-validator",
+        "separately-authorized-fixed-owned-guest-task-after-gate"
+      ]
+    },
+    "governed-runtime-c2b-v3-passive-runtime-fact": {
+      "authorityClass": "runtime-authority",
+      "originRole": "passive-fixture-generator",
+      "validator": "governed-runtime-c2b-v3-passive-validator",
+      "resolver": "governed-runtime-c2b-v3-passive-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-governed-runtime-c2b-binding-v3-exact-json",
+      "unknownBehavior": "reject-passive-fixture",
+      "retainer": "capsule-repository-conformance-fixture",
+      "allowedConsumers": [
+        "governed-runtime-c2b-v3-passive-go-validator",
+        "governed-runtime-c2b-v3-passive-typescript-validator",
+        "separately-authorized-fixed-owned-guest-task-after-gate"
+      ]
+    },
+    "governed-runtime-c2b-v3-passive-gate": {
+      "authorityClass": "non-authoritative-metadata",
+      "originRole": "passive-fixture-generator",
+      "validator": "governed-runtime-c2b-v3-passive-validator",
+      "resolver": "governed-runtime-c2b-v3-passive-binding-resolver",
+      "authorityEffect": "none",
+      "approvalVisibility": { "mode": "not-rendered", "source": "none" },
+      "contentStatus": { "userContent": "none", "guestControl": "none" },
+      "binding": "passive-governed-runtime-c2b-binding-v3-exact-json",
+      "unknownBehavior": "reject-passive-fixture",
+      "retainer": "capsule-repository-conformance-fixture",
+      "allowedConsumers": [
+        "governed-runtime-c2b-v3-passive-go-validator",
+        "governed-runtime-c2b-v3-passive-typescript-validator",
+        "separately-authorized-fixed-owned-guest-task-after-gate"
+      ]
+    },
     "governed-runtime-c2b-passive-discriminator": {
       "authorityClass": "protocol-discriminator",
       "originRole": "passive-fixture-generator",
@@ -6346,6 +6414,656 @@
           "path": "/effects/admission",
           "sourceField": "/effects/admission",
           "profile": "governed-runtime-c2b-v2-passive-gate"
+        }
+      ]
+    },
+    {
+      "object": "capsule.governed-deno-core-c2b-passive-binding",
+      "version": 3,
+      "definition": {
+        "kind": "json-schema",
+        "path": "schemas/governed-deno-core-c2b-passive-binding-v3.schema.json"
+      },
+      "fields": [
+        {
+          "path": "/objectType",
+          "sourceField": "/objectType",
+          "profile": "governed-runtime-c2b-v3-passive-discriminator"
+        },
+        {
+          "path": "/schemaVersion",
+          "sourceField": "/schemaVersion",
+          "profile": "governed-runtime-c2b-v3-passive-discriminator"
+        },
+        {
+          "path": "/domain",
+          "sourceField": "/domain",
+          "profile": "governed-runtime-c2b-v3-passive-discriminator"
+        },
+        {
+          "path": "/identity",
+          "sourceField": "/identity",
+          "profile": "governed-runtime-c2b-v3-passive-discriminator"
+        },
+        {
+          "path": "/status",
+          "sourceField": "/status",
+          "profile": "governed-runtime-c2b-v3-passive-discriminator"
+        },
+        {
+          "path": "/predecessors",
+          "sourceField": "/predecessors",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1",
+          "sourceField": "/predecessors/c1",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1/fixture",
+          "sourceField": "/predecessors/c1/fixture",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1/bytes",
+          "sourceField": "/predecessors/c1/bytes",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1/sha256",
+          "sourceField": "/predecessors/c1/sha256",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1/consumption",
+          "sourceField": "/predecessors/c1/consumption",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c1/mutation",
+          "sourceField": "/predecessors/c1/mutation",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a",
+          "sourceField": "/predecessors/c2a",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a/fixture",
+          "sourceField": "/predecessors/c2a/fixture",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a/bytes",
+          "sourceField": "/predecessors/c2a/bytes",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a/sha256",
+          "sourceField": "/predecessors/c2a/sha256",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a/consumption",
+          "sourceField": "/predecessors/c2a/consumption",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2a/mutation",
+          "sourceField": "/predecessors/c2a/mutation",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1",
+          "sourceField": "/predecessors/c2bV1",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1/fixture",
+          "sourceField": "/predecessors/c2bV1/fixture",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1/bytes",
+          "sourceField": "/predecessors/c2bV1/bytes",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1/sha256",
+          "sourceField": "/predecessors/c2bV1/sha256",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1/consumption",
+          "sourceField": "/predecessors/c2bV1/consumption",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV1/mutation",
+          "sourceField": "/predecessors/c2bV1/mutation",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2",
+          "sourceField": "/predecessors/c2bV2",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2/fixture",
+          "sourceField": "/predecessors/c2bV2/fixture",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2/bytes",
+          "sourceField": "/predecessors/c2bV2/bytes",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2/sha256",
+          "sourceField": "/predecessors/c2bV2/sha256",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2/consumption",
+          "sourceField": "/predecessors/c2bV2/consumption",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/predecessors/c2bV2/mutation",
+          "sourceField": "/predecessors/c2bV2/mutation",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/governedInputs",
+          "sourceField": "/governedInputs",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/governedInputs/deno",
+          "sourceField": "/governedInputs/deno",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/governedInputs/rustyV8",
+          "sourceField": "/governedInputs/rustyV8",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/governedInputs/libkrun",
+          "sourceField": "/governedInputs/libkrun",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/governedInputs/archiveEvidence",
+          "sourceField": "/governedInputs/archiveEvidence",
+          "profile": "governed-runtime-c2b-v3-passive-evidence"
+        },
+        {
+          "path": "/artifactRoles",
+          "sourceField": "/artifactRoles",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/denoCoreRuntime",
+          "sourceField": "/artifactRoles/denoCoreRuntime",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/startupSnapshot",
+          "sourceField": "/artifactRoles/startupSnapshot",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/rustyV8",
+          "sourceField": "/artifactRoles/rustyV8",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/libkrun",
+          "sourceField": "/artifactRoles/libkrun",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/libkrunfw",
+          "sourceField": "/artifactRoles/libkrunfw",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/derivedKernelEvidence",
+          "sourceField": "/artifactRoles/derivedKernelEvidence",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/separateFirmware",
+          "sourceField": "/artifactRoles/separateFirmware",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/trustedInit",
+          "sourceField": "/artifactRoles/trustedInit",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/trustedLauncher",
+          "sourceField": "/artifactRoles/trustedLauncher",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/artifactRoles/runtimeRoot",
+          "sourceField": "/artifactRoles/runtimeRoot",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract",
+          "sourceField": "/hostRunnerContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/role",
+          "sourceField": "/hostRunnerContract/role",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/owner",
+          "sourceField": "/hostRunnerContract/owner",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/service",
+          "sourceField": "/hostRunnerContract/service",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/privilegedHelper",
+          "sourceField": "/hostRunnerContract/privilegedHelper",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/callerArguments",
+          "sourceField": "/hostRunnerContract/callerArguments",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/callerEnvironment",
+          "sourceField": "/hostRunnerContract/callerEnvironment",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/artifactState",
+          "sourceField": "/hostRunnerContract/artifactState",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/preflightEvidence",
+          "sourceField": "/hostRunnerContract/preflightEvidence",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/configurationSequence",
+          "sourceField": "/hostRunnerContract/configurationSequence",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/guestExec",
+          "sourceField": "/hostRunnerContract/guestExec",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/forbiddenCalls",
+          "sourceField": "/hostRunnerContract/forbiddenCalls",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/hostRunnerContract/completionInterpretation",
+          "sourceField": "/hostRunnerContract/completionInterpretation",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract",
+          "sourceField": "/descriptorAndDeviceContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostDescriptors",
+          "sourceField": "/descriptorAndDeviceContract/hostDescriptors",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostDescriptors/*/fd",
+          "sourceField": "/descriptorAndDeviceContract/hostDescriptors/*/fd",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostDescriptors/*/role",
+          "sourceField": "/descriptorAndDeviceContract/hostDescriptors/*/role",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostDescriptors/*/accessMode",
+          "sourceField": "/descriptorAndDeviceContract/hostDescriptors/*/accessMode",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostCloseFromInclusive",
+          "sourceField": "/descriptorAndDeviceContract/hostCloseFromInclusive",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild",
+          "sourceField": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/fd",
+          "sourceField": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/fd",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/role",
+          "sourceField": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/role",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/accessMode",
+          "sourceField": "/descriptorAndDeviceContract/guestDescriptorsBeforeRuntimeChild/*/accessMode",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/guestCloseFromInclusive",
+          "sourceField": "/descriptorAndDeviceContract/guestCloseFromInclusive",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/runtimeChildDescriptors",
+          "sourceField": "/descriptorAndDeviceContract/runtimeChildDescriptors",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/fd",
+          "sourceField": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/fd",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/role",
+          "sourceField": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/role",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/accessMode",
+          "sourceField": "/descriptorAndDeviceContract/runtimeChildDescriptors/*/accessMode",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/ports",
+          "sourceField": "/descriptorAndDeviceContract/ports",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/virtioDevices",
+          "sourceField": "/descriptorAndDeviceContract/virtioDevices",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/implicitConsole",
+          "sourceField": "/descriptorAndDeviceContract/implicitConsole",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/implicitInit",
+          "sourceField": "/descriptorAndDeviceContract/implicitInit",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/implicitVsock",
+          "sourceField": "/descriptorAndDeviceContract/implicitVsock",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/tsi",
+          "sourceField": "/descriptorAndDeviceContract/tsi",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/forbiddenDevices",
+          "sourceField": "/descriptorAndDeviceContract/forbiddenDevices",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/hostSockets",
+          "sourceField": "/descriptorAndDeviceContract/hostSockets",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/descriptorAndDeviceContract/liveHostPaths",
+          "sourceField": "/descriptorAndDeviceContract/liveHostPaths",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/runtimeContract",
+          "sourceField": "/runtimeContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract",
+          "sourceField": "/resourceContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/vcpus",
+          "sourceField": "/resourceContract/vcpus",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/guestRamMiB",
+          "sourceField": "/resourceContract/guestRamMiB",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/wallTimeMs",
+          "sourceField": "/resourceContract/wallTimeMs",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/concurrency",
+          "sourceField": "/resourceContract/concurrency",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/selection",
+          "sourceField": "/resourceContract/selection",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/scratchDevice",
+          "sourceField": "/resourceContract/scratchDevice",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/resourceContract/unknownOrAdditionalResourceField",
+          "sourceField": "/resourceContract/unknownOrAdditionalResourceField",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/transportContract",
+          "sourceField": "/transportContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/teardownContract",
+          "sourceField": "/teardownContract",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile",
+          "sourceField": "/composedProfile",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/identity",
+          "sourceField": "/composedProfile/identity",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/digestAlgorithm",
+          "sourceField": "/composedProfile/digestAlgorithm",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/contractDigestSha256",
+          "sourceField": "/composedProfile/contractDigestSha256",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/state",
+          "sourceField": "/composedProfile/state",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/authorityEffect",
+          "sourceField": "/composedProfile/authorityEffect",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/composedProfile/admitted",
+          "sourceField": "/composedProfile/admitted",
+          "profile": "governed-runtime-c2b-v3-passive-runtime-fact"
+        },
+        {
+          "path": "/workStatus",
+          "sourceField": "/workStatus",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/passiveSuccessorContract",
+          "sourceField": "/workStatus/passiveSuccessorContract",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/parentGovernedRuntime",
+          "sourceField": "/workStatus/parentGovernedRuntime",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/fixedOwnedGuestEligibility",
+          "sourceField": "/workStatus/fixedOwnedGuestEligibility",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/runtimeProfileAdmission",
+          "sourceField": "/workStatus/runtimeProfileAdmission",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/runtime001",
+          "sourceField": "/workStatus/runtime001",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/workStatus/vmm001",
+          "sourceField": "/workStatus/vmm001",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate",
+          "sourceField": "/nextGuestGate",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate/state",
+          "sourceField": "/nextGuestGate/state",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate/requirements",
+          "sourceField": "/nextGuestGate/requirements",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate/guestAuthorization",
+          "sourceField": "/nextGuestGate/guestAuthorization",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate/consumerImplemented",
+          "sourceField": "/nextGuestGate/consumerImplemented",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/nextGuestGate/admissionEffect",
+          "sourceField": "/nextGuestGate/admissionEffect",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects",
+          "sourceField": "/effects",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/process",
+          "sourceField": "/effects/process",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/runtime",
+          "sourceField": "/effects/runtime",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/profile",
+          "sourceField": "/effects/profile",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/consumer",
+          "sourceField": "/effects/consumer",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/adapter",
+          "sourceField": "/effects/adapter",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/backend",
+          "sourceField": "/effects/backend",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/vm",
+          "sourceField": "/effects/vm",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/guest",
+          "sourceField": "/effects/guest",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/credential",
+          "sourceField": "/effects/credential",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/signing",
+          "sourceField": "/effects/signing",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/publication",
+          "sourceField": "/effects/publication",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/release",
+          "sourceField": "/effects/release",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
+        },
+        {
+          "path": "/effects/admission",
+          "sourceField": "/effects/admission",
+          "profile": "governed-runtime-c2b-v3-passive-gate"
         }
       ]
     }

@@ -90,7 +90,12 @@ without execution. The Deno and experiments dependencies later merged. The disti
 successor pins reviewed capsule-experiments PR #4 and closes six no-guest build identities plus an
 unadmitted manifest candidate; it keeps the host runner non-final and every composed-profile,
 resource, guest-evidence, and admission field null. Same-host equality is not independent-builder
-equality. C2 remains the first separately authorized composed execution boundary. P0-1 is a
+equality. The v3 passive successor binds current accepted governed source heads/trees, preserves
+the stale libkrun dylib as evidence only, resolves boot/runner/device/runtime/resource/teardown
+semantics, and supplies an immutable passive-contract digest without adding a consumer. One fixed
+owned guest remains `BLOCKED` on current-source libkrun bytes, final runner bytes, a new materialized
+profile, and separate authorization. C2 remains the first separately authorized composed execution
+boundary. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,

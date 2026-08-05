@@ -71,5 +71,6 @@ its core conclusion.
   — Proposed
 - [ADR-0039: License Capsule-owned material under Apache-2.0](0039-license-capsule-under-apache-2.0.md)
 - [ADR-0040: Freeze the owner-only internal alpha posture](0040-freeze-owner-only-internal-alpha-posture.md)
+- [ADR-0041: Freeze the passive fixed-owned-guest successor contract](0041-freeze-passive-fixed-owned-guest-successor.md)
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

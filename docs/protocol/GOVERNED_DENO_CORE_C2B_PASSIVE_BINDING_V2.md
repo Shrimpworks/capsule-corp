@@ -90,3 +90,8 @@ composed-profile identity/digest, and one separately authorized owned disposable
 future authorization must name the exact v2/profile/artifact identities and retained evidence
 location. It is the only dependency allowed to produce the guest-only device, transport, root,
 child, trace, lifecycle, teardown, and restoration evidence; this passive successor does not.
+
+The immutable [v3 successor](GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V3.md) later resolves the
+firmware, runner, device, runtime, resource-field, teardown, and passive composed-digest semantics
+without changing these v2 bytes. V3 still authorizes no guest and keeps missing current-source
+libkrun and final-runner artifacts as typed blockers.

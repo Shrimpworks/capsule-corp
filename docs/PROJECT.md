@@ -304,7 +304,13 @@ binds merged capsule-experiments PR #4, six constructed libkrun/kernel/init/laun
 the unadmitted runtime-manifest candidate, and the explicitly non-final build-only host preflight.
 Final runner, separate firmware, composed profile, unsupported resource limits, guest evidence, and
 all admission fields remain null/refusing. C2B composed-profile/guest execution and runtime/profile
-admission remain `BLOCKED`; `RUNTIME-001`/`VMM-001` remain unsupported.
+admission remain `BLOCKED`; `RUNTIME-001`/`VMM-001` remain unsupported. The immutable
+[C2B v3 passive successor](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING_V3.md) now resolves those
+roles without rewriting v1/v2: no separate firmware input exists; libkrunfw is the sole boot-kernel
+carrier; the Supervisor-owned per-attempt runner, exact descriptors/devices, loader/string-codegen
+controls, supported resources, teardown/absence rules, and composed passive-contract digest are
+fixed. Unsupported resource fields are absent. A current-source libkrun dylib and final runner
+artifact are still missing, so fixed-owned-guest eligibility and admission remain `BLOCKED`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

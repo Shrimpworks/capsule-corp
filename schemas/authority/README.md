@@ -1,7 +1,7 @@
 # Passive field-authority classification
 
 [`field-authority-manifest.json`](field-authority-manifest.json) is the closed, machine-readable
-development invariant for selected current passive targets. Its 854 entries cover 46 objects:
+development invariant for selected current passive targets. Its 1,102 entries cover 48 objects:
 
 - the `JobProposal` v0 candidate;
 - `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` v0 candidates;
@@ -18,6 +18,9 @@ development invariant for selected current passive targets. Its 854 entries cove
   request and record, including every release/I1/epoch/root/owner/store/retention/replay field; and
 - the passive governed-runtime C2B fixed-fixture binding, including every predecessor, upstream
   evidence, known-answer, artifact, dependency gate, status, limitation, and zero-effect field; and
+- the passive governed-runtime C2B v3 successor contract, including current accepted source
+  identities, artifact dispositions, runner/device/runtime/resource/teardown sections, digest,
+  blockers, and zero effects; and
 - the passive I2B2 unsigned installation-only profile, including its containing-release links,
   inactive role/service/entitlement/constraint declarations, protected-state bindings, readback
   caps, and cleanup/repair projections.

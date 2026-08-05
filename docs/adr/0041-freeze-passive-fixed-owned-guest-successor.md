@@ -68,3 +68,13 @@ authorization can be requested.
   authorized, local, fixed-fixture-only, credential-free, and network-free.
 - Any different resource, device, loader, firmware, root, runner, or teardown mechanism requires a
   new version and the applicable validation or ADR evidence.
+
+## Later materialization
+
+The immutable
+[C2B v4 materialized successor](../protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md)
+later closed the exact build/static blockers without changing this decision or v3 bytes. It retains
+the accepted header, twice-reproduced current-source unsigned libkrun dylib, independent ABI audit,
+byte-equal unsigned final runner, and a new composed digest. Neither artifact was loaded or
+executed. The fixed benign owned guest remains `BLOCKED` on separate authorization naming that
+digest, and runtime/profile admission remains `BLOCKED`.

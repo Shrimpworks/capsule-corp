@@ -22,9 +22,10 @@ retained lookup/replay/uniqueness routing, F4B's atomic authority/lifecycle muta
 bounded second/later immutable-segment growth are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
-`IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A and the C2B fixed-fixture binding are `PASSED`
-only in their passive zero-effect scopes, while C2B composed-profile/guest execution remains
-`BLOCKED`. Archive F5 coherent backup, read-only restore admission, explicit known-orphan cleanup,
+`IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A, immutable C2B passive contracts, and the C2B
+v4 build/static materialization are `PASSED` only in their exact no-guest scopes, while fixed guest
+execution remains separately authorized and `BLOCKED`. Archive F5 coherent backup, read-only
+restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
 strictly bounded owner-only fixed-store alpha exception; F6 production-engine selection and every
 external-alpha durability/restore/continuity claim remain `BLOCKED`.
@@ -316,6 +317,16 @@ three console ports, explicit implicit-device disable calls, ordering, forbidden
 external teardown without compiling or calling libkrun. Accepted ABI header/current-source dylib
 inputs, final runner build bytes/digest, a new materialized profile, guest authorization, and
 admission remain `BLOCKED`.
+The immutable [C2B v4 materialized profile](protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md)
+then closes only those build/static blockers. It retains the exact accepted libkrun header and a
+two-clean-build current-source unsigned dylib, independently audits the ABI, resolves libkrunfw as
+the sole boot-kernel carrier with no separate firmware identity, and retains byte-equal unsigned
+final-runner bytes plus a new composed-profile digest. The verifier freezes FDs 0–7, close-from 8,
+three console ports, implicit-device disablement, fixed call/import order, no replacement
+authority, and Supervisor-owned teardown. Neither runner nor libkrun was loaded or executed; no
+HVF call, VM, guest, signing, installation, product wiring, release, or admission occurred. The
+fixed benign owned guest remains `BLOCKED` on separate authorization naming the exact v4 digest;
+runtime/profile admission remains `BLOCKED`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

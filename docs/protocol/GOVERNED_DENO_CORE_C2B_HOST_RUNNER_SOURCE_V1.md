@@ -93,3 +93,11 @@ Accepted libkrun identity stays upstream `728df812...c015`, accepted commit
 `7432eda5...d632`, tree `7671440c...e346`. Those source identities do not supply a locally retained
 header, current-source dylib, final ABI runner bytes, review, signature, or admission. A later slice
 must create a new versioned materialization; it must not mutate this source contract or C2B v3.
+
+## Immutable successor
+
+The later [v4 materialized profile](GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md) is `PASSED`
+for its exact build/static scope. It retains the accepted header, twice-reproduced current-source
+unsigned libkrun dylib, independent ABI audit, byte-equal unsigned final runner, and composed
+digest. It preserves this source contract without changing its 3,996 bytes. Neither runner nor
+libkrun was executed or loaded; fixed-owned-guest eligibility and admission remain `BLOCKED`.

@@ -938,6 +938,13 @@ implemented.
    and mutation verification only. It does not copy or guess the unavailable accepted ABI, compile
    or link a runner, call libkrun/HVF, or fill v3's final-artifact blocker. Retain the exact accepted
    header/current-source dylib locally before final ABI implementation and materialization.
+   The immutable v4 build/static successor now retains that exact header, a twice-reproduced
+   current-source unsigned dylib, independent ABI audit, byte-equal unsigned final runner, and
+   composed digest without loading libkrun or executing the runner. It preserves FDs 0–7,
+   close-from 8, the three ordered console ports, explicit implicit-device disablement, no
+   replacement authority, and Supervisor-owned teardown. Stop there: a fixed benign owned guest
+   remains `BLOCKED` on separate authorization naming v4's exact digest, and admission remains
+   `BLOCKED`.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

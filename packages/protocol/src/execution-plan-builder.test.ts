@@ -409,7 +409,7 @@ test("TypeScript exact-plan output reaches Go registrationstate through the loca
   });
 });
 
-async function ordinaryPlanInputs(): Promise<ResolvedJobProposalPlanInputs> {
+function ordinaryPlanInputs(): Promise<ResolvedJobProposalPlanInputs> {
   return resolvedPlanInputs("job-proposal/ordinary.json");
 }
 

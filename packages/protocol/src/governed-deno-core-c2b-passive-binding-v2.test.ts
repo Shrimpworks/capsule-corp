@@ -138,7 +138,7 @@ test("has no TypeScript product consumer call site", async () => {
   assert.deepEqual(calls, []);
 });
 
-async function read(path: string): Promise<Buffer> {
+function read(path: string): Promise<Buffer> {
   return readFile(new URL(path, root));
 }
 

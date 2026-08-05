@@ -2,12 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  asCandidateDigest,
-  asCandidateInstallationId,
-  asCandidatePositiveUInt53,
-  asCandidateRegistrationId,
-  asCandidateSupervisorId,
-  asCandidateUInt53,
   asPositiveSafeInteger,
   asRuntimeProfileAlias,
   asSafeJsonInteger,
@@ -17,10 +11,22 @@ import {
   JOB_PROPOSAL_API_VERSION,
   JOB_PROPOSAL_KIND,
   type JobProposal,
-  type PlanRegistrationCandidate,
   PRIMARY_DATA_INPUT_SLOT,
   TRANSFORMED_JSON_OUTPUT_SLOT,
 } from "./index.js";
+// These candidate helpers/types are intentionally not part of the public
+// barrel (see internal-contract-candidates.ts's header): no product
+// component consumes them yet, so this test imports the internal module
+// directly rather than reopening it as public surface.
+import {
+  asCandidateDigest,
+  asCandidateInstallationId,
+  asCandidatePositiveUInt53,
+  asCandidateRegistrationId,
+  asCandidateSupervisorId,
+  asCandidateUInt53,
+  type PlanRegistrationCandidate,
+} from "./internal-contract-candidates.js";
 
 test("deny-by-default capabilities grant no ambient authority", () => {
   assert.deepEqual(createDenyByDefaultCapabilities(), {

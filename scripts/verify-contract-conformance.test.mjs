@@ -884,7 +884,7 @@ async function fixtureJson(name) {
   return JSON.parse(await fixtureBytes(name));
 }
 
-async function fixtureBytes(name) {
+function fixtureBytes(name) {
   return corpusBytes(`shared/${name}`);
 }
 
@@ -892,7 +892,7 @@ async function corpusJson(path) {
   return JSON.parse(await corpusBytes(path));
 }
 
-async function corpusBytes(path) {
+function corpusBytes(path) {
   return readFile(new URL(`../schemas/conformance/v0/${path}`, import.meta.url));
 }
 

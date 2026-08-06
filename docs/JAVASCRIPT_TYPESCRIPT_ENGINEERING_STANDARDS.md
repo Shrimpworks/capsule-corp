@@ -103,11 +103,14 @@ This pattern is the strongest thing in this codebase and is not optional style �
 
 ## Lint and CI wiring
 
-- `biome check .` (`pnpm lint`) is mandatory. It currently runs only the `"recommended"` rule
-  preset in `biome.json` — tightening this is tracked separately. Until it's tightened, treat
-  avoiding `any`, non-null assertions, and unawaited promises as unwritten team convention this
-  codebase already follows throughout `packages/protocol`, `packages/sdk`, and `packages/mcp-server`
-  — do not introduce the first violation.
+- `biome check .` (`pnpm lint`) is mandatory. `biome.json` runs the `"recommended"` preset
+  repository-wide, plus a focused `overrides` tightening for `packages/**` and `scripts/**`
+  (`noShadow`, `useAwait`, `noParameterAssign`, `noFloatingPromises`, `noMisusedPromises`, and
+  `noConsole` for `packages/**`) added in PR #193. `artifacts/**` byte-frozen evidence bundles stay
+  on the untightened preset deliberately — see `AGENTS.md`. Beyond that override set, treat
+  avoiding `any` and non-null assertions as unwritten team convention this codebase already follows
+  throughout `packages/protocol`, `packages/sdk`, and `packages/mcp-server` — do not introduce the
+  first violation.
 - `tsc --noEmit` (`pnpm check`) against the shared `tsconfig.base.json`: `strict`,
   `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, and `forceConsistentCasingInFileNames` all
   stay on. Don't loosen a package's own `tsconfig.json` to work around a type error — fix the type,

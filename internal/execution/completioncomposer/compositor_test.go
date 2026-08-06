@@ -18,6 +18,17 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
+// TestCompositorErrorFormatsClassificationAndCode covers compositorError's
+// Error() method directly: every other test in this package checks errors
+// through classification()/ErrorClassification, not by formatting them, so
+// Error() itself otherwise has no test coverage at all.
+func TestCompositorErrorFormatsClassificationAndCode(t *testing.T) {
+	err := classified(ClassificationSchema, "completion-json-empty")
+	if got, want := err.Error(), "SCHEMA: completion-json-empty"; got != want {
+		t.Fatalf("Error() = %q, want %q", got, want)
+	}
+}
+
 type knownAnswerFixture struct {
 	ResultJSON        string `json:"resultJson"`
 	TranscriptJSON    string `json:"transcriptJson"`

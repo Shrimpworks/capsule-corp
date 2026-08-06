@@ -15,8 +15,10 @@
 | Controlled denial-test v21 diagnostic materialization | `PASSED` | A fixed source/build-only successor added bounded pre-ready stage labels and early-stderr persistence without adding authority. |
 | Controlled denial-test v21 execution | `BLOCKED` | The ready pipe reached EOF before `R`; no start authorization or guest launch occurred. Controller selection returned before stderr drain and authoritative waitpid evidence persisted. |
 | Controlled denial-test v22 convergence materialization | `PASSED` | A fixed source/build-only successor converges every non-`R` result through bounded wait, stderr persistence, waitpid evidence, and canary verification. No v22 runner or guest was executed. |
-| Controlled denial-test v22 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v22's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_BAD` | The first real composition worked, but the v20/v21 pre-ready refusals exposed diagnostic and controller-convergence proof gaps; typed transport, installed profile, hostile corpus, and admission also remain incomplete. |
+| Controlled denial-test v22 execution | `BLOCKED` | Exact retained stderr localized exit 125 to `preflight-root-sha256`; no ready byte, authorization, libkrun configuration, HVF call, or guest launch occurred. Host-only hashing matches the expected root, so the inherited-FD/hash-state cause remains unresolved. |
+| Controlled denial-test v23 hash-diagnostic materialization | `PASSED` | A fixed source/build-only successor adds staged-path/open-FD hashing and bounded runner hash-stage/mismatch evidence without adding authority. No v23 runner or guest was executed. |
+| Controlled denial-test v23 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v23's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_BAD` | V22 localized the repeated pre-ready refusal but did not explain why the runner's inherited-root hash disagrees while host-only hashing matches; typed transport, installed profile, hostile corpus, and admission also remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -208,7 +210,9 @@ The next slice is intentionally adversarial but still fixed, local, bounded, cre
 non-networking. Its v20 no-launch materialization is `PASSED`, but the exact v20 runtime attempt is
 `BLOCKED` after a pre-ready refusal. V21 diagnostic materialization also `PASSED`, but its exact
 attempt exposed a controller-convergence evidence gap. A build-only v22 successor now `PASSED`;
-its dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
+its exact attempt localized the refusal to root hashing without resolving the cause. A build-only
+v23 hash-diagnostic successor now `PASSED`; its dynamic execution is separately `BLOCKED` on fresh
+exact one-use authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -284,12 +288,37 @@ tests/vet, two clean controller builds, and false/blocked authority assertions p
 | Signed experimental runner SHA-256 | `6288ebca25d664ee9d244045cdcb9fc75894e396d46ec0b02ea01793070055bf` |
 | Controller SHA-256 | `e4ffe3758f21337d18e8297a33b1cd3a3f54dcfde5124d43572b4d14659c84a0` |
 
-No v22 runner, libkrun/HVF process, or guest was executed. The v20-v22 reports and receipts remain
-in the disposable local experiment workspace, so they are not durable release or admission
-evidence. Exact v22 execution must refuse any changed attempt, digest, path, binary, or authority
-and must not launch until a fresh authorization names the values above.
+The later exact v22 attempt retained `C2B_RUNNER_REFUSED:preflight-root-sha256` and exit 125. The
+controller observed waitpid, did not force-kill, confirmed the root unlinked at link count zero, and
+verified the host canary unchanged. There was no ready byte, attempt record, authorization byte,
+libkrun configuration, HVF call, guest launch, network activity, or credential authority. Separate
+host-only CommonCrypto hashing of both the source root and a fresh copy matched the expected
+SHA-256 `06b18229...08ab`; the underlying inherited-descriptor/hash-state cause therefore remains
+unresolved.
 
-Even a passing v22 experiment will remain a controlled denial checkpoint, not the owner-only
+V23 preserves v22 and adds only fail-closed observability. Before runner start, the Supervisor now
+hashes the staged path and the same open descriptor after unlink. The runner splits hashing into
+init/read/update/final/mismatch stages and emits one bounded 64-hex computed digest only on
+mismatch. Four independent signed C17 runner builds matched byte-for-byte, and A/B root/profile,
+strict signing/entitlements, independent profile-digest calculation, Go test/vet, and three clean
+controller builds passed.
+
+| Field | Exact v23 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v23-hostile-preflight-diagnostic-owned-guest-20260806-01` |
+| Composed-profile digest | `edf89c87de7753d66509a5a1c7b25e4d3fddb2d677db69fa5c9d0a41a48421b9` |
+| Materialized profile SHA-256 / bytes | `04dfd578637fa462460b3f4ea536f1dc3cc623fe3232ecfef724d074029368e5` / 30,137 |
+| Signed experimental runner SHA-256 / bytes | `d7b872cb869d4d4582fc5ece6bd56e1594cbc316b6129a50e60294b30989cbb8` / 70,048 |
+| Controller SHA-256 / bytes | `fac06a01d59dbeb8f3f331e0ac27ea37b9b58de0dc50691b3ef0c541bb5cf3d4` / 3,434,770 |
+| Guest root SHA-256 | `06b18229ca215282c7aa405dc6b2d942291cecf613a111f21c03bd7a750808ab` |
+
+No v23 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
+The v20-v23 reports and receipts remain in the disposable local experiment workspace, so they are
+not durable release or admission evidence. Exact v23 execution must refuse any changed attempt,
+digest, path, binary, or authority and must not launch until a fresh authorization names the
+values above.
+
+Even a passing v23 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

@@ -995,11 +995,13 @@ implemented.
    passed one separately authorized fixed benign guest with immutable in-root inputs, a bounded
    diagnostic console proof, normal reap, and unlinked-root teardown. Preserve that result without
    substituting it for final typed transport, installed composition, or admission, which remain
-   `BLOCKED`. The v20 and v21 denial-test runners later refused before readiness without a start
-   authorization or guest launch, but the controller still returned without authoritative stderr/
-   waitpid evidence. Preserve both unchanged; v22 adds only bounded non-ready exact-child wait,
-   stderr persistence, waitpid recording, and canary verification, is reproducibly materialized
-   without execution, and requires fresh exact one-use authorization before its diagnostic attempt.
+   `BLOCKED`. The v20-v22 denial-test runners later refused before readiness without a start
+   authorization or guest launch. V22 retained bounded child/stderr/waitpid/canary evidence and
+   localized the refusal to inherited-root SHA-256 before libkrun configuration, while host-only
+   hashing matches the expected root. Preserve those attempts unchanged; v23 adds only Supervisor
+   staged-path/open-FD hashes and bounded runner hash-stage/mismatch evidence, is reproducibly
+   materialized without execution, and requires fresh exact one-use authorization before its
+   diagnostic attempt.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

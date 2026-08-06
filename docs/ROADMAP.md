@@ -38,9 +38,9 @@ Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and th
    [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) as a controlled
    experiment without treating its diagnostic console proof as the final typed transport;
 3. preserve the passed v20 no-launch denial-test materialization and its fail-closed pre-ready
-   runtime refusal plus v21's fail-closed ready-EOF result, then use the passed v22 controller-
-   convergence materialization to retain the exact child/stderr/waitpid/canary evidence under
-   fresh exact one-use authorization;
+   runtime refusal, v21's fail-closed ready-EOF result, and v22's exact
+   `preflight-root-sha256` refusal; then use the passed v23 staged-path/open-FD/runner-stage hashing
+   materialization to identify the inherited-root mismatch under fresh exact one-use authorization;
 4. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
    passive atomic plan/bindings/manifest/source custody, then implement Broker fetch/render/approval;
 5. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
@@ -51,9 +51,10 @@ Host Source Validator R4/R5 is later defense-in-depth rather than an internal-al
 R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and `BLOCKED`. F6 is also deferred only for the
 strict owner-only disposable fixed-store posture. TypeScript, automatic update, Developer ID
 distribution, clean-host/minimum-OS coverage, restore, and production storage are external-alpha
-work. The fixed guest is not product alpha. V20 and v21 refused before readiness without launching
-a guest; the v22 convergence successor is materialized but unexecuted. The hostile owner-only
-internal alpha is the next product checkpoint, and external alpha remains a later distinct gate.
+work. The fixed guest is not product alpha. V20-v22 refused before readiness without launching a
+guest; v22 localized the stop to root hashing, and the v23 hash-diagnostic successor is materialized
+but unexecuted. The hostile owner-only internal alpha is the next product checkpoint, and external
+alpha remains a later distinct gate.
 
 ## Phase 0: architecture and claim baseline
 

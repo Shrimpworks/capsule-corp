@@ -49,7 +49,9 @@ governance promotions PASSED
   -> fixed denial-test v22 convergence materialization PASSED
   -> fixed denial-test v22 execution BLOCKED at preflight-root-sha256
   -> fixed denial-test v23 hash-diagnostic materialization PASSED
-  -> fixed denial-test v23 execution BLOCKED on fresh exact authorization
+  -> fixed denial-test v23 root-digest localization PASSED / hostile execution BLOCKED
+  -> fixed denial-test v24 corrected materialization PASSED
+  -> fixed denial-test v24 execution BLOCKED on fresh exact authorization
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter

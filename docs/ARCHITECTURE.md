@@ -278,11 +278,11 @@ later separately authorized
 [v19 experimental successor](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) booted one fixed benign
 owned guest, matched its bounded console digest proof, exited normally, was reaped, and completed
 unlinked-root teardown. That exact checkpoint is `PASSED` without reclassifying v4 as executed.
-Later v20-v22 runners refused before readiness without issuing start authorization or launching a
-guest. V22 retained authoritative stderr/waitpid evidence and localized the refusal to inherited-
-root SHA-256 before libkrun configuration; host-only hashing still matches the expected root. The
-v23 hash-diagnostic successor is reproducibly materialized but unexecuted. The final typed
-transport, hostile workload corpus, installed composition, and admission remain `BLOCKED`.
+Later v20-v23 runners refused before readiness without issuing start authorization or launching a
+guest. V23 retained authoritative staged-path/open-FD/runner hash evidence and proved the actual
+root was correct while the embedded expected digest bytes were malformed. The v24 literal-digest
+correction is reproducibly materialized but unexecuted. The final typed transport, hostile workload
+corpus, installed composition, and admission remain `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.

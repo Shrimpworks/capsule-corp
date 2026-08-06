@@ -357,13 +357,12 @@ identity is invented. The v4 runner and libkrun were never loaded or executed in
 scope. A later separately authorized
 [v19 fixed-owned-guest experiment](../FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) loaded its exact
 experimental successor bytes and passed one fixed benign boot/runtime/console-proof/reap/teardown
-attempt. It did not use the final typed transport or hostile source. The next exact v20-v22 runners
-refused before readiness; the Supervisor issued no start authorization and no guest launched. V22
-retained authoritative child/stderr/waitpid/teardown/canary evidence and localized the stop to
-inherited-root SHA-256 before libkrun configuration, while host-only hashes match the expected root.
-V23 adds only staged-path/open-FD and bounded runner hash-stage/mismatch observability and remains
-unexecuted. Hostile-guest transport validation, installed confinement, and runtime/profile
-admission therefore remain `BLOCKED`.
+attempt. It did not use the final typed transport or hostile source. The next exact v20-v23 runners
+refused before readiness; the Supervisor issued no start authorization and no guest launched. V23
+retained authoritative staged-path/open-FD/runner hash evidence and proved the actual root was
+correct while the embedded expected digest bytes were malformed. V24 replaces them with an exact
+literal plus static length assertion and remains unexecuted. Hostile-guest transport validation,
+installed confinement, and runtime/profile admission therefore remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

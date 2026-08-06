@@ -22,13 +22,13 @@ retained lookup/replay/uniqueness routing, F4B's atomic authority/lifecycle muta
 bounded second/later immutable-segment growth are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
-`IN_PROGRESS — TRENDING_BAD` after the v20-v22 pre-ready refusals; v22 localized the stop to
-inherited-root SHA-256 but host-only hashing did not reproduce it. Governed-runtime
+`IN_PROGRESS — TRENDING_GOOD` after v23 proved the v20-v22 pre-ready refusals came from a malformed
+embedded expected-digest fixture and v24 corrected it reproducibly. Governed-runtime
 C2A, immutable C2B passive contracts, and the C2B
 v4 build/static materialization are `PASSED` only in their exact no-guest scopes. The first
 separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is now
 `PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
-runtime/profile admission remain `BLOCKED`. V23 hash-diagnostic materialization is `PASSED` without
+runtime/profile admission remain `BLOCKED`. V24 corrected materialization is `PASSED` without
 execution or new authority, and its dynamic attempt remains separately authorization-bound.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,

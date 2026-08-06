@@ -36,8 +36,10 @@ const (
 	InternalAlphaStoreStopDurableCommitP95    InternalAlphaStoreStopReason = "durable-commit-p95"
 )
 
-// InternalAlphaStartupVerification is a sealed observation issued only after
-// an owner-held full verification. The zero value is unknown and refuses.
+// InternalAlphaStartupVerification is a sealed, re-evaluated observation issued
+// only after an owner-held full verification. It is not a persistent
+// installation trip latch; a later owner session performs and times a new full
+// verification. The zero value is unknown and refuses.
 type InternalAlphaStartupVerification struct {
 	observed       bool
 	duration       time.Duration
@@ -48,9 +50,10 @@ type InternalAlphaStartupVerification struct {
 	epochDigest    v0candidate.TrustEpochDigest
 }
 
-// InternalAlphaDurableCommitP95 is a sealed policy input. This slice checks
-// the ADR-0040 threshold but deliberately does not choose the future product
-// instrumentation's sample window or aggregation lifetime.
+// InternalAlphaDurableCommitP95 is a sealed, re-evaluated policy input. This
+// passive slice compares the supplied observation with ADR-0040's threshold but
+// does not select or authenticate its source, sample window, aggregation
+// lifetime, or persistence. It is not a persistent installation trip latch.
 type InternalAlphaDurableCommitP95 struct {
 	observed bool
 	duration time.Duration
@@ -63,8 +66,9 @@ func ObserveInternalAlphaDurableCommitP95(duration time.Duration) (InternalAlpha
 	return InternalAlphaDurableCommitP95{observed: true, duration: duration}, nil
 }
 
-// InternalAlphaStoreAdmissionReport is a fixed, content-free policy result.
-// Values are observed, never clamped or rewritten.
+// InternalAlphaStoreAdmissionReport is a fixed, content-free passive checker
+// result. Values are observed, never clamped or rewritten. The report is not an
+// authority-bearing permit or evidence of a persistent installation trip.
 type InternalAlphaStoreAdmissionReport struct {
 	Posture             string
 	Allowed             bool
@@ -159,10 +163,11 @@ func verifyInternalAlphaFixedStoreStartupWithClock(
 	return startup, report, nil
 }
 
-// CheckInternalAlphaFixedStoreAttemptAdmission is the exact logical guard for
-// a future owner-only attempt transaction: full verification and all policy
-// checks occur before that transaction. This passive slice does not wire or
-// invoke RequestAttempt and returns no authority-bearing permit.
+// CheckInternalAlphaFixedStoreAttemptAdmission is the passive, re-evaluated
+// logical checker for a future owner-only attempt transaction: full verification
+// and all comparisons occur before that transaction. This slice does not wire or
+// invoke RequestAttempt, persist an installation trip, or return an
+// authority-bearing permit.
 func CheckInternalAlphaFixedStoreAttemptAdmission(
 	ctx context.Context,
 	root StoreRoot,

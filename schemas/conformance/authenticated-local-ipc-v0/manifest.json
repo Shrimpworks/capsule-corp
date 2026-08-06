@@ -66,13 +66,13 @@
   "refusalCaseCount": 37,
   "maximumCaseCount": 12,
   "nativeXPCEnvelopeCount": 9,
-  "nativeXPCCaseCount": 25,
+  "nativeXPCCaseCount": 39,
   "nativeXPCRefusalReplyCount": 13,
   "knownAnswers": {
     "native-xpc-v0.contract.json": {
       "path": "native-xpc-v0.contract.json",
-      "byteLength": 36798,
-      "sha256": "15b0621573bd2fd21f543730fb0eec5dd2904a5bb870a90a4f23c854fd77fb30"
+      "byteLength": 47686,
+      "sha256": "c35c4a2d077602a19fc754de0e79a7b9158aa5c9ea50a8aa2256c966405bba4c"
     },
     "submit-main-mjs-v0.method.json": {
       "path": "submit-main-mjs-v0.method.json",
@@ -121,8 +121,8 @@
     },
     "oracles.json": {
       "path": "oracles.json",
-      "byteLength": 31872,
-      "sha256": "a3266b4374708a9b873d403615f0a6d3895261ef4fd4373b7944a0a26f8d9977"
+      "byteLength": 32779,
+      "sha256": "1b520bfce0d343b2d2bbc7d7ff5a473b74b0a25b510da7c62ab881ef4ddec14a"
     }
   },
   "bodyFixtures": {

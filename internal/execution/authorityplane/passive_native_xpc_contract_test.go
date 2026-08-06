@@ -59,6 +59,19 @@ type nativeXPCFixtureMethodBinding struct {
 	MethodVersion             uint64              `json:"methodVersion"`
 }
 
+type nativeXPCFixtureResponseLoss struct {
+	Method      string `json:"method"`
+	Disposition string `json:"disposition"`
+}
+
+type nativeXPCFixtureFutureHarnessOracle struct {
+	ID              string `json:"id"`
+	Scope           string `json:"scope"`
+	Expected        string `json:"expected"`
+	CurrentEvidence bool   `json:"currentEvidence"`
+	InBandRefusal   bool   `json:"inBandRefusal"`
+}
+
 func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 	bytes, err := os.ReadFile(filepath.Join("..", "..", "..", "schemas", "conformance", "authenticated-local-ipc-v0", "native-xpc-v0.contract.json"))
 	if err != nil {
@@ -76,9 +89,12 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		ClassificationToStatus   map[string]uint64                        `json:"classificationToStatus"`
 		StructuralReasonToStatus map[string]uint64                        `json:"structuralReasonToStatus"`
 		MethodBindings           map[string]nativeXPCFixtureMethodBinding `json:"methodBindings"`
+		ValidationPrecedence     []string                                 `json:"validationPrecedence"`
 		Envelopes                map[string]nativeXPCFixtureMethod        `json:"envelopes"`
 		Cases                    []nativeXPCFixtureCase                   `json:"cases"`
 		RefusalReplies           []nativeXPCFixtureRefusalReply           `json:"refusalReplies"`
+		ResponseLoss             []nativeXPCFixtureResponseLoss           `json:"responseLoss"`
+		FutureHarnessOracles     []nativeXPCFixtureFutureHarnessOracle    `json:"futureNativeHarnessOracles"`
 		PeerAuthentication       any                                      `json:"peerAuthenticationEvidence"`
 		ListenerActivated        bool                                     `json:"listenerActivated"`
 		ServiceRegistered        bool                                     `json:"serviceRegistered"`
@@ -94,6 +110,15 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 	}
 	if fixture.PeerAuthentication != nil || fixture.ListenerActivated || fixture.ServiceRegistered {
 		t.Fatal("passive native contract must not claim peer authentication, listener activation, or service registration")
+	}
+	wantPrecedence := []string{
+		"protocol-version", "method-version",
+		"service-entry-point-role-message-tag-audience-purpose",
+		"installation-epoch-current-state", "application-data-copy",
+		"embedded-record-version-and-core-validation",
+	}
+	if !reflect.DeepEqual(fixture.ValidationPrecedence, wantPrecedence) {
+		t.Fatalf("native validation precedence mismatch: got %#v want %#v", fixture.ValidationPrecedence, wantPrecedence)
 	}
 	wantTags := map[string]uint64{
 		"invalid":                 0,
@@ -179,19 +204,33 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 			assertNativeXPCEnvelope(t, goEnvelopes[index], fixtureEnvelopes[index])
 		}
 	}
-	requiredCases := map[string]bool{
-		"submit.body-cap-plus-one": false, "register.body-cap-plus-one": false,
-		"get.body-cap-plus-one": false, "all.missing-key": false, "all.extra-key": false,
-		"all.wrong-type": false, "all.cross-method-tag": false, "all.wrong-audience": false,
-		"all.wrong-service": false, "all.wrong-role": false,
-		"all.wrong-installation": false, "all.refusal-reply-extra-body": false,
-		"all.success-reply-extra-key": false, "all.success-reply-request-id-mismatch": false,
-		"all.local-integrity-output-fault": false,
+	wantCaseIDs := []string{
+		"all.exact-key-and-type-sets", "submit.body-cap-plus-one",
+		"register.body-cap-plus-one", "get.body-cap-plus-one", "all.missing-key",
+		"all.extra-key", "all.wrong-type", "all.nested-container", "all.zero-request-id",
+		"all.unknown-protocol-version", "all.unknown-method-version",
+		"register.joint-protocol-method-record-version-mismatch",
+		"register.joint-method-record-version-mismatch", "register.embedded-record-version-mismatch",
+		"cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
+		"cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
+		"cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
+		"cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
+		"cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
+		"cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
+		"all.wrong-service", "all.wrong-role", "all.wrong-audience", "all.wrong-purpose",
+		"all.local-audience-replaced-by-signed-object-audience",
+		"all.local-purpose-replaced-by-signed-object-purpose",
+		"all.request-id-replaced-by-installation-id-bytes",
+		"all.installation-id-replaced-by-request-id-bytes",
+		"get.registration-id-replaced-by-request-id-bytes", "all.wrong-installation",
+		"all.wrong-epoch-digest", "all.epoch-uint53-cap-plus-one",
+		"all.extra-file-descriptor", "all.extra-endpoint", "all.extra-mach-send-right",
+		"all.success-reply-extra-key", "all.success-reply-request-id-mismatch",
+		"all.refusal-reply-extra-body", "all.local-integrity-output-fault",
 	}
-	for _, candidate := range fixture.Cases {
-		if _, required := requiredCases[candidate.ID]; required {
-			requiredCases[candidate.ID] = true
-		}
+	gotCaseIDs := make([]string, len(fixture.Cases))
+	for index, candidate := range fixture.Cases {
+		gotCaseIDs[index] = candidate.ID
 		if len(candidate.Expected) == 0 || candidate.Expected[0] == '"' {
 			continue
 		}
@@ -210,10 +249,24 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 			t.Fatalf("native case %s uses unknown reason %d", candidate.ID, expected.ReasonTag)
 		}
 	}
-	for id, found := range requiredCases {
-		if !found {
-			t.Fatalf("missing native refusal case %s", id)
-		}
+	if !reflect.DeepEqual(gotCaseIDs, wantCaseIDs) {
+		t.Fatalf("native case order/set mismatch:\n got %#v\nwant %#v", gotCaseIDs, wantCaseIDs)
+	}
+	wantResponseLoss := []nativeXPCFixtureResponseLoss{
+		{Method: SubmitMainMJSV0Method, Disposition: SubmitMainMJSV0ResponseLossDisposition},
+		{Method: RegisterPlanV0Method, Disposition: RegisterPlanV0ResponseLossDisposition},
+		{Method: GetRegisteredPlanV0Method, Disposition: GetRegisteredPlanV0ResponseLossDisposition},
+	}
+	if !reflect.DeepEqual(fixture.ResponseLoss, wantResponseLoss) {
+		t.Fatalf("native response-loss table mismatch: got %#v want %#v", fixture.ResponseLoss, wantResponseLoss)
+	}
+	wantFutureOracles := []nativeXPCFixtureFutureHarnessOracle{{
+		ID: "os-peer-requirement-mismatch", Scope: "future-external-native-harness-only",
+		Expected: "no-message-delivery-and-no-application-reply", CurrentEvidence: false,
+		InBandRefusal: false,
+	}}
+	if !reflect.DeepEqual(fixture.FutureHarnessOracles, wantFutureOracles) {
+		t.Fatalf("native future-harness oracle mismatch: got %#v want %#v", fixture.FutureHarnessOracles, wantFutureOracles)
 	}
 	if len(fixture.RefusalReplies) != len(NativeXPCErrorMappings()) {
 		t.Fatalf("native refusal reply count: got %d want %d", len(fixture.RefusalReplies), len(NativeXPCErrorMappings()))

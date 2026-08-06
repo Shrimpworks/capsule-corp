@@ -43,8 +43,8 @@ a fresh registration; fetch remains repeatable by `RegistrationID`.
 The diagnostic HTTP server still exposes only `GET /healthz`, `GET /v1/version`, and
 `GET /v1/runtimes`; focused tests reject candidate submission/mutation paths.
 
-Remaining work: exact native XPC keys/tags/status encoding, actual peer requirement and
-message-derived identity checks, Apple Development signing/profile enrollment, versioned installed
+Remaining work: the one-time native XPC harness, actual peer requirement and message-derived
+identity checks, Apple Development signing/profile enrollment, versioned installed
 CLI inventory, daemon planner consumer, protected Supervisor state, Broker rendering/signing,
 production approval verification, attempt/lifecycle integration, runtime/backend admission, and
 completion composition.
@@ -53,8 +53,9 @@ Blocker and owner: installed authenticated product use is blocked on the macOS i
 Supervisor/Broker owners supplying the versioned signed profile and S3-S5 evidence; runtime and
 backend owners separately own product admission.
 
-Next action: implement a separately authorized native passive/ad-hoc transport harness from these
-exact logical records without activating a product service.
+Next action: run a separately authorized one-time native passive/ad-hoc transport harness in
+`Shrimpworks/capsule-experiments` from the now-frozen exact dictionary records without activating a
+product service.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`.

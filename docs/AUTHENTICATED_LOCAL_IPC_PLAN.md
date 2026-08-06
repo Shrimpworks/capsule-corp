@@ -71,7 +71,7 @@ Existing independent blockers that S0-S6 do not close:
 ADR-0040 makes Source Validator R2-R5B future defense-in-depth rather than a first-release ordering
 gate. The passive M2/S1 fixture/facade contract, follow-on two-method passive S1 records/logical
 envelopes, and ADR-0044's exact CLI submission method plus aggregate flow contract are `PASSED`.
-The other two logical methods and native/authenticated S3 remain `BLOCKED`. S5 requires S4 and
+The other two logical methods and authenticated/native-harness S3 remain `BLOCKED`. S5 requires S4 and
 valid Apple Development identities. S6 requires final intended package bytes, Developer ID/
 notarization authority, and clean disposable hosts.
 
@@ -141,8 +141,9 @@ carries only a Supervisor-issued `RegistrationID`. Generated fixtures and the un
 in-process harness freeze cap/cap-plus-one, method-derived bindings, correlation-only request IDs,
 zero-queue aggregate flow, deadline/cancellation/stall, zero-state refusal, and response-loss
 semantics across submission and the existing registration/fetch plane. This is passive evidence:
-the XPC encoding, listener, peer check, signing, installed inventory, daemon consumer, and protected
-state remain `BLOCKED`, and diagnostic HTTP gains no mutation route.
+the XPC listener, peer check, signing, installed inventory, daemon consumer, and protected state
+remain `BLOCKED`; the passive exact XPC dictionary encoding for the three frozen methods is now
+`PASSED`, and diagnostic HTTP gains no mutation route.
 
 There is one active plan-v0/source shape, no optional transform field, generic fallback, field
 inference, or dual active v0/v1 acceptance. No fixture may import experiment code into product

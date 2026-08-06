@@ -138,6 +138,14 @@
   "machRightsAllowed": 0,
   "nestedContainersAllowed": 0,
   "messageTagDisposition": "method-specific-cross-check-not-dispatch-opcode",
+  "validationPrecedence": [
+    "protocol-version",
+    "method-version",
+    "service-entry-point-role-message-tag-audience-purpose",
+    "installation-epoch-current-state",
+    "application-data-copy",
+    "embedded-record-version-and-core-validation"
+  ],
   "requestIdDisposition": "correlation-only",
   "copyDisposition": "body-copy-only-after-peer-flow-shape-current-state-binding",
   "localIntegrityDisposition": "oversize-output-short-write-pointer-length-or-bridge-version-fault-terminates-process-without-reply",
@@ -946,10 +954,211 @@
       }
     },
     {
-      "id": "all.cross-method-tag",
-      "method": "all",
+      "id": "register.joint-protocol-method-record-version-mismatch",
+      "method": "RegisterPlanV0",
       "direction": "request",
-      "mutation": "message-tag=other-frozen-method",
+      "mutation": "protocol-version=1;method-version=1;role-bindings[0]=1",
+      "mismatchSet": "protocol-version,method-version,role-binding-record-version",
+      "selectedFailure": "protocol-version",
+      "validationPrecedence": [
+        "protocol-version",
+        "method-version",
+        "service-entry-point-role-message-tag-audience-purpose",
+        "installation-epoch-current-state",
+        "application-data-copy",
+        "embedded-record-version-and-core-validation"
+      ],
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 7,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "register.joint-method-record-version-mismatch",
+      "method": "RegisterPlanV0",
+      "direction": "request",
+      "mutation": "method-version=1;role-bindings[0]=1",
+      "mismatchSet": "method-version,role-binding-record-version",
+      "selectedFailure": "method-version",
+      "validationPrecedence": [
+        "protocol-version",
+        "method-version",
+        "service-entry-point-role-message-tag-audience-purpose",
+        "installation-epoch-current-state",
+        "application-data-copy",
+        "embedded-record-version-and-core-validation"
+      ],
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 8,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "register.embedded-record-version-mismatch",
+      "method": "RegisterPlanV0",
+      "direction": "request",
+      "mutation": "role-bindings[0]=1",
+      "expected": {
+        "decision": "core-refusal-after-bounded-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 13,
+        "bodyCopied": true,
+        "coreCalls": 1
+      }
+    },
+    {
+      "id": "cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
+      "method": "SubmitMainMJSV0",
+      "direction": "request",
+      "mutation": "entry-point=SubmitMainMJSV0;message-tag=RegisterPlanV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 9,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
+      "method": "SubmitMainMJSV0",
+      "direction": "request",
+      "mutation": "entry-point=SubmitMainMJSV0;message-tag=GetRegisteredPlanV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 9,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
+      "method": "RegisterPlanV0",
+      "direction": "request",
+      "mutation": "entry-point=RegisterPlanV0;message-tag=SubmitMainMJSV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 9,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
+      "method": "RegisterPlanV0",
+      "direction": "request",
+      "mutation": "entry-point=RegisterPlanV0;message-tag=GetRegisteredPlanV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 9,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
+      "method": "GetRegisteredPlanV0",
+      "direction": "request",
+      "mutation": "entry-point=GetRegisteredPlanV0;message-tag=SubmitMainMJSV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "UNSUPPORTED",
+        "statusTag": 2,
+        "reasonTag": 9,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
+      "method": "GetRegisteredPlanV0",
+      "direction": "request",
+      "mutation": "entry-point=GetRegisteredPlanV0;message-tag=RegisterPlanV0",
+      "dispatchIdentity": "service-entry-point-and-role-derived-before-tag-cross-check",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "UNSUPPORTED",
@@ -972,7 +1181,9 @@
       "id": "all.wrong-service",
       "method": "all",
       "direction": "request",
-      "mutation": "delivered-on-other-role-service",
+      "mutation": "selected-method-invoked-with-receiving-service=other-role-service",
+      "deliveryPrecondition": "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
+      "replyDisposition": "delivered-in-band-refusal",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "AUTHENTICATION",
@@ -996,6 +1207,8 @@
       "method": "all",
       "direction": "request",
       "mutation": "message-derived-role=other",
+      "deliveryPrecondition": "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
+      "replyDisposition": "delivered-in-band-refusal",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "AUTHENTICATION",
@@ -1058,6 +1271,96 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
+      }
+    },
+    {
+      "id": "all.local-audience-replaced-by-signed-object-audience",
+      "method": "all",
+      "direction": "request",
+      "mutation": "audience=capsule.execution-supervisor",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "AUTHENTICATION",
+        "statusTag": 5,
+        "reasonTag": 10,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "all.local-purpose-replaced-by-signed-object-purpose",
+      "method": "all",
+      "direction": "request",
+      "mutation": "purpose=capsule.plan.approve",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "AUTHENTICATION",
+        "statusTag": 5,
+        "reasonTag": 10,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "all.request-id-replaced-by-installation-id-bytes",
+      "method": "all",
+      "direction": "request",
+      "mutation": "request-id=installation-id-bytes",
+      "expected": {
+        "decision": "accept-correlation-field-only",
+        "authorityGrantedByRequestId": false,
+        "requestIdIsIdempotencyKey": false
+      }
+    },
+    {
+      "id": "all.installation-id-replaced-by-request-id-bytes",
+      "method": "all",
+      "direction": "request",
+      "mutation": "installation-id=request-id-bytes",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "BINDING",
+        "statusTag": 4,
+        "reasonTag": 11,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "get.registration-id-replaced-by-request-id-bytes",
+      "method": "GetRegisteredPlanV0",
+      "direction": "request",
+      "mutation": "registration-id=request-id-bytes",
+      "expected": {
+        "decision": "continue-to-registration-lookup-without-transport-authority",
+        "registrationAuthorityGrantedByWidth": false
       }
     },
     {
@@ -1133,7 +1436,7 @@
       "id": "all.extra-file-descriptor",
       "method": "all",
       "direction": "request",
-      "mutation": "one-XPC_TYPE_FD",
+      "mutation": "add-capsule.smuggled-fd=XPC_TYPE_FD",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "MALFORMED",
@@ -1156,7 +1459,30 @@
       "id": "all.extra-endpoint",
       "method": "all",
       "direction": "request",
-      "mutation": "one-XPC_TYPE_ENDPOINT",
+      "mutation": "add-capsule.smuggled-endpoint=XPC_TYPE_ENDPOINT",
+      "expected": {
+        "decision": "reject-before-body-copy",
+        "classification": "MALFORMED",
+        "statusTag": 1,
+        "reasonTag": 1,
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "all.extra-mach-send-right",
+      "method": "all",
+      "direction": "request",
+      "mutation": "add-capsule.smuggled-mach-send-right=XPC_TYPE_MACH_SEND",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "MALFORMED",
@@ -1328,6 +1654,15 @@
     {
       "method": "GetRegisteredPlanV0",
       "disposition": "repeatable-read-by-registration-id"
+    }
+  ],
+  "futureNativeHarnessOracles": [
+    {
+      "id": "os-peer-requirement-mismatch",
+      "scope": "future-external-native-harness-only",
+      "expected": "no-message-delivery-and-no-application-reply",
+      "currentEvidence": false,
+      "inBandRefusal": false
     }
   ],
   "peerAuthenticationEvidence": null,

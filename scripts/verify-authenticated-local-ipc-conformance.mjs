@@ -8,13 +8,37 @@ const manifest = await json("manifest.json");
 
 assert.equal(manifest.objectType, "capsule.authenticated-local-ipc-passive-conformance");
 assert.equal(manifest.objectVersion, 0);
-assert.equal(manifest.status, "passive-unwired-no-transport");
+assert.equal(manifest.status, "passive-unwired-native-contract-no-listener");
 assert.equal(manifest.protocolVersion, 0);
 assert.equal(manifest.audience, "capsule.execution-supervisor.local.v0");
 assert.equal(manifest.submissionAudience, "capsule.daemon.local.v0");
 assert.equal(manifest.roleBindingRecordVersion, 0);
-assert.equal(manifest.transportEncoding, null);
-assert.equal(manifest.numericMessageTags, null);
+assert.equal(manifest.transportEncoding, "xpc-dictionary-v0");
+assert.equal(manifest.transportEncodingVersion, 0);
+assert.deepEqual(manifest.numericMessageTags, {
+  invalid: 0,
+  SubmitMainMJSV0: 1,
+  RegisterPlanV0: 2,
+  GetRegisteredPlanV0: 3,
+});
+assert.deepEqual(manifest.numericStatusTags, {
+  OK: 0,
+  MALFORMED: 1,
+  UNSUPPORTED: 2,
+  SCHEMA: 3,
+  BINDING: 4,
+  AUTHENTICATION: 5,
+  STALE: 6,
+  REPLAY: 7,
+  CAPACITY: 8,
+  TRUST_STATE: 9,
+  LOCAL_FAILURE: 10,
+  RECOVERY_REQUIRED: 11,
+  SEMANTIC: 12,
+  DOMAIN: 13,
+});
+assert.equal(manifest.numericReasonTags.none, 0);
+assert.equal(manifest.numericReasonTags.localIntegrityFault, 14);
 assert.equal(manifest.peerAuthenticationEvidence, null);
 assert.deepEqual(manifest.caps, {
   jobProposal: 2_097_152,
@@ -78,6 +102,137 @@ for (const method of [submitMethod, registerMethod, getMethod]) {
   assert.equal(method.connectionMaxInFlight, 1);
   assert.equal(method.applicationQueueCapacity, 0);
 }
+
+const nativeXPC = await json("native-xpc-v0.contract.json");
+assert.equal(nativeXPC.objectType, "capsule.authenticated-local-ipc-native-xpc-contract");
+assert.equal(nativeXPC.status, "passive-unwired-no-listener");
+assert.equal(nativeXPC.transportEncoding, "xpc-dictionary-v0");
+assert.equal(nativeXPC.transportEncodingVersion, 0);
+assert.equal(nativeXPC.topLevelObjectType, "XPC_TYPE_DICTIONARY");
+assert.deepEqual(nativeXPC.messageTags, manifest.numericMessageTags);
+assert.deepEqual(nativeXPC.statusTags, manifest.numericStatusTags);
+assert.deepEqual(nativeXPC.reasonTags, manifest.numericReasonTags);
+assert.equal(nativeXPC.extraObjectsAllowed, 0);
+assert.equal(nativeXPC.fileDescriptorsAllowed, 0);
+assert.equal(nativeXPC.endpointsAllowed, 0);
+assert.equal(nativeXPC.machRightsAllowed, 0);
+assert.equal(nativeXPC.nestedContainersAllowed, 0);
+assert.equal(nativeXPC.listenerActivated, false);
+assert.equal(nativeXPC.serviceRegistered, false);
+assert.equal(nativeXPC.peerAuthenticationEvidence, null);
+assert.equal(nativeXPC.messageTagDisposition, "method-specific-cross-check-not-dispatch-opcode");
+assert.equal(nativeXPC.requestIdDisposition, "correlation-only");
+assert.deepEqual(Object.keys(nativeXPC.envelopes), [
+  "SubmitMainMJSV0",
+  "RegisterPlanV0",
+  "GetRegisteredPlanV0",
+]);
+assert.deepEqual(nativeXPC.methodBindings.SubmitMainMJSV0, {
+  service: submitMethod.service,
+  expectedRole: submitMethod.expectedRole,
+  expectedSigningIdentifier: submitMethod.expectedSigningIdentifier,
+  audience: submitMethod.audience,
+  purpose: submitMethod.purpose,
+  messageTag: nativeXPC.messageTags.SubmitMainMJSV0,
+  methodVersion: 0,
+});
+assert.deepEqual(nativeXPC.methodBindings.RegisterPlanV0, {
+  service: registerMethod.service,
+  expectedRole: registerMethod.expectedRole,
+  expectedSigningIdentifier: null,
+  audience: registerMethod.audience,
+  purpose: registerMethod.purpose,
+  messageTag: nativeXPC.messageTags.RegisterPlanV0,
+  methodVersion: 0,
+});
+assert.deepEqual(nativeXPC.methodBindings.GetRegisteredPlanV0, {
+  service: getMethod.service,
+  expectedRole: getMethod.expectedRole,
+  expectedSigningIdentifier: null,
+  audience: getMethod.audience,
+  purpose: getMethod.purpose,
+  messageTag: nativeXPC.messageTags.GetRegisteredPlanV0,
+  methodVersion: 0,
+});
+for (const [method, envelopes] of Object.entries(nativeXPC.envelopes)) {
+  for (const envelope of Object.values(envelopes)) {
+    assert.equal(envelope.method, method);
+    assert.equal(envelope.fields.length, envelope.exactKeyCount);
+    assert.equal(new Set(envelope.fields.map((field) => field.key)).size, envelope.exactKeyCount);
+    for (const field of envelope.fields) {
+      assert.ok(Object.values(nativeXPC.keys).includes(field.key), `${method} ${field.key}`);
+      assert.ok(
+        Object.values(nativeXPC.valueTypes).includes(field.valueType),
+        `${method} ${field.valueType}`,
+      );
+    }
+  }
+  assert.equal(envelopes.request.fields[0].key, nativeXPC.keys.protocolVersion);
+  assert.equal(envelopes.request.fields[8].key, nativeXPC.keys.purpose);
+  assert.equal(envelopes.successReply.fields[4].fixedUInt64, nativeXPC.statusTags.OK);
+  assert.equal(envelopes.successReply.fields[5].fixedUInt64, nativeXPC.reasonTags.none);
+  assert.equal(envelopes.refusalReply.exactKeyCount, 6);
+  assert.equal(envelopes.refusalReply.applicationDataMaxBytes, 0);
+}
+assert.equal(nativeXPC.envelopes.SubmitMainMJSV0.request.exactKeyCount, 10);
+assert.equal(nativeXPC.envelopes.RegisterPlanV0.request.exactKeyCount, 13);
+assert.equal(nativeXPC.envelopes.GetRegisteredPlanV0.request.exactKeyCount, 10);
+assert.equal(nativeXPC.envelopes.SubmitMainMJSV0.successReply.exactKeyCount, 7);
+assert.equal(nativeXPC.envelopes.RegisterPlanV0.successReply.exactKeyCount, 7);
+assert.equal(nativeXPC.envelopes.GetRegisteredPlanV0.successReply.exactKeyCount, 11);
+assert.equal(manifest.nativeXPCEnvelopeCount, 9);
+assert.equal(manifest.nativeXPCCaseCount, nativeXPC.cases.length);
+assert.equal(manifest.nativeXPCRefusalReplyCount, nativeXPC.refusalReplies.length);
+for (const [classification, statusTag] of Object.entries(nativeXPC.classificationToStatus)) {
+  assert.equal(statusTag, nativeXPC.statusTags[classification]);
+  assert.notEqual(statusTag, nativeXPC.statusTags.OK);
+}
+assert.deepEqual(nativeXPC.structuralReasonToStatus, {
+  keySet: nativeXPC.statusTags.MALFORMED,
+  valueType: nativeXPC.statusTags.MALFORMED,
+  dataWidth: nativeXPC.statusTags.SCHEMA,
+  dataCap: nativeXPC.statusTags.MALFORMED,
+  zeroIdentifier: nativeXPC.statusTags.SCHEMA,
+  epochSequence: nativeXPC.statusTags.SCHEMA,
+  protocolVersion: nativeXPC.statusTags.UNSUPPORTED,
+  methodVersion: nativeXPC.statusTags.UNSUPPORTED,
+  messageTag: nativeXPC.statusTags.UNSUPPORTED,
+  methodBinding: nativeXPC.statusTags.AUTHENTICATION,
+  currentState: nativeXPC.statusTags.BINDING,
+  capacity: nativeXPC.statusTags.CAPACITY,
+});
+assert.equal(nativeXPC.coreRefusalMapping, "classification-selects-status;reason=coreRefusal");
+assert.equal(
+  nativeXPC.localIntegrityMapping,
+  "terminate-without-reply;reason-tag-is-fixture-diagnostic-only",
+);
+assert.equal(nativeXPC.refusalReplies.length, 13);
+for (const refusalReply of nativeXPC.refusalReplies) {
+  assert.equal(refusalReply.statusTag, nativeXPC.statusTags[refusalReply.classification]);
+  assert.equal(refusalReply.reasonTag, nativeXPC.reasonTags.coreRefusal);
+  assert.equal(refusalReply.bodyKeysAllowed, 0);
+  assert.equal(refusalReply.exactKeyCount, 6);
+}
+for (const candidate of nativeXPC.cases.filter((entry) => entry.noState)) {
+  assertZeroState(candidate.noState, candidate.id);
+  assert.equal(candidate.expected.bodyCopied, false, candidate.id);
+  assert.equal(candidate.expected.coreCalls, 0, candidate.id);
+}
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "submit.body-cap-plus-one"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "register.body-cap-plus-one"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "get.body-cap-plus-one"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.missing-key"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.extra-key"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-type"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-audience"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-service"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-role"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-installation"));
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.success-reply-extra-key"));
+assert.ok(
+  nativeXPC.cases.some((candidate) => candidate.id === "all.success-reply-request-id-mismatch"),
+);
+assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.refusal-reply-extra-body"));
 
 const submitRequest = await json("submit-main-mjs-v0.request.json");
 const submitReply = await json("submit-main-mjs-v0.reply.json");

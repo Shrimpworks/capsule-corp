@@ -83,3 +83,10 @@ explicitly authorized local harness can test authentication-before-body-copy, me
 identity, session checks, flow control, interruption, and deadline behavior. Installed/product IPC
 also remains blocked on protected state, identity/update evidence, signing/key authorization,
 Broker consumer work, and the independent runtime/backend/content/evidence gates.
+
+## Successor prerequisite
+
+The later [S3 native-contract prerequisite](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) is now
+`PASSED` for exact keys, types, versions, numeric method/status/reason tags, envelope key counts,
+and passive refusal fixtures for the three frozen methods. This does not revise S1's historical
+scope or supply the still-missing local native harness, listener, or peer-authentication evidence.

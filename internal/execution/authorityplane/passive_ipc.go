@@ -7,10 +7,10 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
-// This file freezes only the passive application contract between a future
-// native front end and the existing unwired Go facade. It defines no XPC key
-// spelling, numeric message tag, transport encoding, endpoint, or peer-auth
-// evidence. Those values remain owned by a later native-transport slice.
+// This file freezes the passive logical contract between a future native
+// front end and the existing unwired Go facade. The separate passive native
+// contract fixes XPC keys and numeric tags without creating an endpoint or
+// supplying peer-authentication evidence.
 const (
 	PassiveIPCProtocolVersion = uint64(0)
 	// #nosec G101 -- fixed local audience discriminator, not a credential.
@@ -249,7 +249,8 @@ func (r PassiveGetRegisteredPlanV0Reply) ApplicationDataBytes() int {
 
 // field-authority-object: capsule.authenticated-local-ipc-refusal-reply v0
 // PassiveRefusalReply is a logical fixed-code oracle, not an XPC or C ABI
-// serialization. Numeric status values remain intentionally unselected.
+// serialization. The passive native contract maps its classification to the
+// fixed numeric status and uses the fixed core-refusal reason tag.
 type PassiveRefusalReply struct {
 	RequestID      PassiveRequestID
 	Classification Classification

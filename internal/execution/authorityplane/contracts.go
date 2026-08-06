@@ -1,5 +1,6 @@
-// Package authorityplane implements the passive, unwired RegisterPlanV0 and
-// GetRegisteredPlanV0 contract. It exposes no service or execution path.
+// Package authorityplane implements passive, unwired authenticated-local-IPC
+// contracts and the RegisterPlanV0/GetRegisteredPlanV0 authority facade. It
+// exposes no service or execution path.
 package authorityplane
 
 import (
@@ -28,13 +29,19 @@ var (
 type Classification string
 
 const (
-	Malformed      Classification = "MALFORMED"
-	Unsupported    Classification = "UNSUPPORTED"
-	Schema         Classification = "SCHEMA"
-	Binding        Classification = "BINDING"
-	Authentication Classification = "AUTHENTICATION"
-	Capacity       Classification = "CAPACITY"
-	LocalFailure   Classification = "LOCAL_FAILURE"
+	Malformed        Classification = "MALFORMED"
+	Unsupported      Classification = "UNSUPPORTED"
+	Schema           Classification = "SCHEMA"
+	Semantic         Classification = "SEMANTIC"
+	Domain           Classification = "DOMAIN"
+	Binding          Classification = "BINDING"
+	Authentication   Classification = "AUTHENTICATION"
+	Stale            Classification = "STALE"
+	Replay           Classification = "REPLAY"
+	Capacity         Classification = "CAPACITY"
+	TrustState       Classification = "TRUST_STATE"
+	LocalFailure     Classification = "LOCAL_FAILURE"
+	RecoveryRequired Classification = "RECOVERY_REQUIRED"
 )
 
 type contractError struct {

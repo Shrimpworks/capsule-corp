@@ -121,3 +121,10 @@ and daemon peer records, prove the authentication-before-delivery and update/ses
 retain no-state overload/deadline/cancellation/response-loss evidence. If supported private-XPC
 reachability requires a different component placement, shared App Group, helper, or listener
 topology, this exact candidate stops and a new ADR is required.
+
+The later passive
+[S3 native-contract prerequisite](../AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) freezes the
+exact dictionary keys/types, numeric method/status/reason tags, versions, key counts, and passive
+refusal mappings for this method plus `RegisterPlanV0` and `GetRegisteredPlanV0`. It does not
+change this decision's topology and supplies no listener, peer-authentication, signing, installed,
+or product evidence.

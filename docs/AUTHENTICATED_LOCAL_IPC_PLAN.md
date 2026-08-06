@@ -124,11 +124,14 @@ reason and state/time/trust/core/store/adapter oracles; copy-ownership mutations
 idempotency classifications; structural missing/extra/wrong-type and cross-object refusals; and
 byte equality across implementations.
 
-The follow-on [passive S1 contract](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md) now freezes only
+The follow-on [passive S1 contract](AUTHENTICATED_LOCAL_IPC_S1_PASSIVE_CONTRACT.md) freezes only
 the two facade-backed method records and logical request/reply projections. It retains exact caps,
 cap-plus-one, current installation/epoch, fixed refusal/no-state, copy-ownership, and response-loss
-oracles with independent Go/Node agreement. It deliberately leaves XPC key spellings, numeric
-message/status tags, transport encoding, and peer-authentication evidence unset.
+oracles with independent Go/Node agreement. At that slice it deliberately left XPC key spellings,
+numeric message/status tags, transport encoding, and peer-authentication evidence unset. The later
+[S3 native-contract prerequisite](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) now freezes the
+first three items for exactly the three passive methods while leaving peer-authentication evidence
+unset.
 
 Accepted [ADR-0044](adr/0044-select-private-xpc-internal-alpha-cli-adapter.md) and the
 [passive product-adapter result](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md) select exactly
@@ -204,12 +207,13 @@ store, and conformance tests. No XPC or product consumer exists.
 
 ## S3: native authentication and cap harness
 
-Status: `BLOCKED` on the remaining two logical method records, a reviewed exact native XPC
-key/tag/status contract for the three frozen passive methods, and a separately authorized local
-harness. Source Validator R2-R5B is not
-a first-release dependency under ADR-0040. Native parsing must consume the completed Register/fetch
-fixtures and must not reinterpret them as raw XPC framing or invent a conflicting method/record
-version.
+Status: `BLOCKED` on a separately authorized local harness. The exact passive native XPC
+key/type/version/tag/status/reason contract for `SubmitMainMJSV0`, `RegisterPlanV0`, and
+`GetRegisteredPlanV0` is `PASSED` as the
+[S3 native-contract prerequisite](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md). Source Validator
+R2-R5B is not a first-release dependency under ADR-0040. Native parsing must consume that generated
+contract and the completed logical Register/fetch fixtures; it must not reinterpret fixture JSON as
+raw XPC framing or invent a conflicting method/record version.
 
 Build a strictly local, no-product C/Objective-C XPC harness from fixed identities/messages. It may
 use only ad-hoc signing unless the explicit S5 credentialed environment is active. It creates no

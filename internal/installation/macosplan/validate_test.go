@@ -116,6 +116,26 @@ func TestInventoryRefusesMissingMixedExtraBeforeInactiveSigning(t *testing.T) {
 	}
 }
 
+// TestNonCanonicalProfileIsRefusedAtEveryEntryPoint covers ValidateProfile's
+// own refuse branch and its delegation through EvaluateInventory and
+// EvaluateActivation. Every other test in this file evaluates the exact
+// CanonicalProfile(), which never exercises this path.
+func TestNonCanonicalProfileIsRefusedAtEveryEntryPoint(t *testing.T) {
+	tampered := CanonicalProfile()
+	tampered.ProfileID = tampered.ProfileID + "-tampered"
+	observed := InventoryObservation{ProfileID: tampered.ProfileID, Roles: append([]RoleProjection(nil), tampered.Roles...)}
+
+	if result := ValidateProfile(tampered); result.Decision != DecisionRefuse || result.Reason != "profile-not-canonical-i0" {
+		t.Fatalf("ValidateProfile = %+v", result)
+	}
+	if result := EvaluateInventory(tampered, observed); result.Decision != DecisionRefuse || result.Reason != "profile-not-canonical-i0" {
+		t.Fatalf("EvaluateInventory = %+v", result)
+	}
+	if result := EvaluateActivation(tampered, observed); result.Decision != DecisionRefuse || result.Reason != "profile-not-canonical-i0" {
+		t.Fatalf("EvaluateActivation = %+v", result)
+	}
+}
+
 func TestBootstrapKeepsAttemptsDisabledAndRefusesInventedActiveProfile(t *testing.T) {
 	begin := BootstrapInput{RecordVersion: 0, ProfileID: ProfileIdentity, State: BootstrapAbsent, Event: BootstrapBegin, InventoryDecision: DecisionAccept}
 	if output := EvaluateBootstrap(begin); output.State != BootstrapJournaledDisabled || output.AttemptsEnabled || output.Result.Decision != DecisionAccept {
@@ -168,6 +188,110 @@ func TestUpdateIdentityAndInactiveReplacementRefusal(t *testing.T) {
 	}
 }
 
+// TestEvaluateBootstrapCoversEveryReachableRefusalAndTheReadyTransition covers
+// the EvaluateBootstrap branches TestBootstrapKeepsAttemptsDisabledAndRefusesInventedActiveProfile
+// does not reach: every event-specific and structural refusal, plus the one
+// path that actually lands on BootstrapReady with attempts enabled. (The
+// i0-active-bootstrap-profile-unsupported guard blocks nothing here, since
+// none of these fixtures assert an active signing/bootstrap-authority
+// profile — that posture-guard case is already covered separately.)
+func TestEvaluateBootstrapCoversEveryReachableRefusalAndTheReadyTransition(t *testing.T) {
+	base := BootstrapInput{
+		RecordVersion: 0, ProfileID: ProfileIdentity, InventoryDecision: DecisionAccept,
+		SigningState: ProfileInactiveRefusing, BootstrapAuthorityState: ProfileInactiveRefusing,
+	}
+
+	wrongVersion := base
+	wrongVersion.RecordVersion = 1
+	wrongVersion.State, wrongVersion.Event = BootstrapAbsent, BootstrapBegin
+	if output := EvaluateBootstrap(wrongVersion); output.State != BootstrapRepairRequired || output.Result.Reason != "bootstrap-input-profile" {
+		t.Fatalf("wrong record version = %+v", output)
+	}
+
+	wrongProfile := base
+	wrongProfile.ProfileID = ProfileIdentity + "-mismatch"
+	wrongProfile.State, wrongProfile.Event = BootstrapAbsent, BootstrapBegin
+	if output := EvaluateBootstrap(wrongProfile); output.State != BootstrapRepairRequired || output.Result.Reason != "bootstrap-input-profile" {
+		t.Fatalf("wrong profile id = %+v", output)
+	}
+
+	inventoryRefused := base
+	inventoryRefused.State, inventoryRefused.Event = BootstrapAbsent, BootstrapBegin
+	inventoryRefused.InventoryDecision = DecisionRefuse
+	if output := EvaluateBootstrap(inventoryRefused); output.State != BootstrapRepairRequired || output.Result.Reason != "bootstrap-component-inventory-refused" {
+		t.Fatalf("refused inventory = %+v", output)
+	}
+
+	invalidTransition := base
+	invalidTransition.State, invalidTransition.Event = BootstrapReady, BootstrapBegin
+	if output := EvaluateBootstrap(invalidTransition); output.State != BootstrapRepairRequired || output.Result.Reason != "bootstrap-transition-invalid" {
+		t.Fatalf("invalid transition = %+v", output)
+	}
+
+	authorityInactive := base
+	authorityInactive.State, authorityInactive.Event = BootstrapJournaledDisabled, BootstrapRecordIdentity
+	if output := EvaluateBootstrap(authorityInactive); output.State != BootstrapRepairRequired || output.Result.Reason != "bootstrap-authority-inactive" {
+		t.Fatalf("inactive bootstrap authority = %+v", output)
+	}
+
+	signingInactive := base
+	signingInactive.State, signingInactive.Event = BootstrapIdentityPreparedDisabled, BootstrapRegisterServices
+	if output := EvaluateBootstrap(signingInactive); output.State != BootstrapRepairRequired || output.Result.Reason != "signing-profile-inactive" {
+		t.Fatalf("inactive signing for register-services = %+v", output)
+	}
+
+	rootNotExact := base
+	rootNotExact.State, rootNotExact.Event = BootstrapServicesPreparedDisabled, BootstrapEnrollProtectedRoot
+	if output := EvaluateBootstrap(rootNotExact); output.State != BootstrapRepairRequired || output.Result.Reason != "protected-root-owner-store-not-exact" {
+		t.Fatalf("protected root not exact = %+v", output)
+	}
+
+	epochNotExact := base
+	epochNotExact.State, epochNotExact.Event = BootstrapComponentsVerifiedDisabled, BootstrapCommitEpoch
+	if output := EvaluateBootstrap(epochNotExact); output.State != BootstrapRepairRequired || output.Result.Reason != "epoch-one-not-exact" {
+		t.Fatalf("epoch not exact = %+v", output)
+	}
+
+	recoveryNotClean := base
+	recoveryNotClean.State, recoveryNotClean.Event = BootstrapEpochCommittedRecovering, BootstrapCompleteRecovery
+	if output := EvaluateBootstrap(recoveryNotClean); output.State != BootstrapRepairRequired || output.Result.Reason != "owner-store-recovery-not-clean" {
+		t.Fatalf("recovery not clean = %+v", output)
+	}
+
+	ready := base
+	ready.State, ready.Event = BootstrapEpochCommittedRecovering, BootstrapCompleteRecovery
+	ready.RecoveryState = "owner-store-recovery-clean"
+	output := EvaluateBootstrap(ready)
+	if output.State != BootstrapReady || !output.AttemptsEnabled || output.Result != accept("bootstrap-transition-exact") {
+		t.Fatalf("clean recovery should reach ready = %+v", output)
+	}
+}
+
+// TestEvaluateUpdateCoversInputAndInventoryRefusalsBeforeTheIdentityGate
+// covers the three EvaluateUpdate refusals that precede its
+// Predecessor/Successor-vs-canonical comparison. Every branch after that
+// comparison requires an active signing profile to be reached, which is
+// mutually exclusive with matching CanonicalProfile()'s permanently
+// inactive I0 posture — those branches are exercised, along with this
+// package's own i0-active-update-profile-unsupported guard, by
+// TestUpdateIdentityAndInactiveReplacementRefusal instead.
+func TestEvaluateUpdateCoversInputAndInventoryRefusalsBeforeTheIdentityGate(t *testing.T) {
+	wrongVersion := UpdateInput{RecordVersion: 1}
+	if output := EvaluateUpdate(wrongVersion); output.Result.Reason != "update-input-version" || output.Compatibility != "refused" {
+		t.Fatalf("wrong record version = %+v", output)
+	}
+
+	inventoryRefused := UpdateInput{RecordVersion: 0, ComponentInventoryResult: refuse(ClassificationBinding, "component-mixed")}
+	if output := EvaluateUpdate(inventoryRefused); output.Result.Reason != "update-component-inventory-refused" {
+		t.Fatalf("refused inventory = %+v", output)
+	}
+
+	incomplete := UpdateInput{RecordVersion: 0, ComponentInventoryResult: accept("component-inventory-exact")}
+	if output := EvaluateUpdate(incomplete); output.Result.Reason != "update-incomplete-or-mixed" {
+		t.Fatalf("incomplete bundle = %+v", output)
+	}
+}
+
 func TestRepairClassificationsNeverRewriteSecurityHistory(t *testing.T) {
 	for _, fixture := range repairFixtureCases() {
 		output := ClassifyRepair(fixture.Input)
@@ -181,6 +305,69 @@ func TestRepairClassificationsNeverRewriteSecurityHistory(t *testing.T) {
 	})
 	if refusal.Class != RepairRefuseAutomatic || refusal.Result.Reason != "history-or-cleanup-unresolved" {
 		t.Fatalf("history refusal = %+v", refusal)
+	}
+
+	wrongVersion := ClassifyRepair(RepairInput{RecordVersion: 1})
+	if wrongVersion.Class != RepairRefuseAutomatic || wrongVersion.Result.Reason != "repair-input-version" {
+		t.Fatalf("wrong record version = %+v", wrongVersion)
+	}
+
+	epochMismatch := ClassifyRepair(RepairInput{
+		RecordVersion: 0, InstallationRootAvailable: true, StateRootContinuityProven: true,
+		OwnerLockContinuityProven: true, StoreAndHistoryComplete: true, CleanupObligationsResolved: true,
+	})
+	if epochMismatch.Class != RepairRefuseAutomatic || epochMismatch.Result.Reason != "epoch-mismatch-without-forward-authority" {
+		t.Fatalf("epoch mismatch without forward authority = %+v", epochMismatch)
+	}
+
+	restoreFiles := ClassifyRepair(RepairInput{
+		RecordVersion: 0, InstallationRootAvailable: true, StateRootContinuityProven: true,
+		OwnerLockContinuityProven: true, StoreAndHistoryComplete: true, CleanupObligationsResolved: true,
+		CurrentEpochExact: true,
+	})
+	if restoreFiles.Class != RepairRestoreApplicationFiles || restoreFiles.Result != accept("restore-current-release-preserve-state") {
+		t.Fatalf("restore application files = %+v", restoreFiles)
+	}
+}
+
+// TestDigestJSONPanicsOnUnmarshalableInput guards digestJSON's deliberate
+// panic instead of silently swallowing an encoding error: every current
+// caller passes it a package-controlled struct/slice that always marshals,
+// so if that ever stops holding, this should fail loudly, not return a
+// digest of the empty string.
+func TestDigestJSONPanicsOnUnmarshalableInput(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal("digestJSON did not panic on unmarshalable input")
+		}
+	}()
+	digestJSON(make(chan int))
+}
+
+// TestResultValidateAcceptsWellFormedTuplesAndRejectsMalformedOnes covers
+// Result.Validate, the invariant checker every accept/refuse tuple in this
+// package is meant to satisfy: an accept must carry ClassificationNone and a
+// reason, a refuse must carry a non-none classification and a reason, and
+// every other combination is malformed.
+func TestResultValidateAcceptsWellFormedTuplesAndRejectsMalformedOnes(t *testing.T) {
+	if err := accept("component-inventory-exact").Validate(); err != nil {
+		t.Fatalf("well-formed accept rejected: %v", err)
+	}
+	if err := refuse(ClassificationBinding, "component-missing").Validate(); err != nil {
+		t.Fatalf("well-formed refuse rejected: %v", err)
+	}
+
+	malformed := []Result{
+		{Decision: DecisionAccept, Classification: ClassificationBinding, Reason: "component-missing"},
+		{Decision: DecisionAccept, Classification: ClassificationNone, Reason: ""},
+		{Decision: DecisionRefuse, Classification: ClassificationNone, Reason: "component-missing"},
+		{Decision: DecisionRefuse, Classification: ClassificationBinding, Reason: ""},
+		{Decision: "invented-decision", Classification: ClassificationNone, Reason: "x"},
+	}
+	for index, result := range malformed {
+		if err := result.Validate(); err == nil {
+			t.Fatalf("malformed[%d] %+v accepted", index, result)
+		}
 	}
 }
 
@@ -200,6 +387,9 @@ func TestUninstallKeepsRequiredHistoryAndExternalEvidenceOutOfScope(t *testing.T
 			dispositions["exported-receipts-external-witnesses-and-backups"] != DispositionOutsideScope {
 			t.Fatalf("%s dispositions = %+v", mode, dispositions)
 		}
+	}
+	if output := ClassifyUninstall(UninstallMode("invented-mode")); output.Result.Reason != "uninstall-mode" || len(output.Dispositions) != 0 {
+		t.Fatalf("invalid mode = %+v", output)
 	}
 }
 

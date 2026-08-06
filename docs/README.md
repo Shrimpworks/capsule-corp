@@ -39,10 +39,13 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 18. [Alpha vertical-flow readiness](ALPHA_VERTICAL_FLOW_READINESS.md) — exact existing
     contracts/mechanics, missing consumers, corrected authority boundaries, and ordered product
     closure
-18. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
+19. [First owned guest execution checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) — the first
+    real fixed governed-runtime/libkrun guest, exact lifecycle evidence, evidence-led iteration,
+    claim boundary, and next controlled denial test
+20. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
     Supervisor-owned projection, public-key-only COSE verification, exact claim boundary, and
     installed-product blockers
-19. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
+21. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
     unwired public-fixture verification, durable one-attempt creation, response-loss/restart
     convergence, and `AttemptID`-only no-guest fake lifecycle evidence
 
@@ -80,8 +83,10 @@ It fixes the intended `.mjs` JSON-in/JSON-out surface and exact governed constru
 without creating a guest or admitting a runtime. The follow-on passive
 [C2A execution-profile contract](protocol/GOVERNED_DENO_CORE_C2A_EXECUTION_PROFILE.md) freezes the
 refusing descriptor, candidate machine, transport, teardown, artifact-blocker, known-answer, and
-C2B evidence profile without executing it. C2B owns the first separately authorized composed
-execution evidence and remains blocked.
+C2B evidence profile without executing it. C2B owns separately authorized composed execution
+evidence. The first fixed benign [owned-guest checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
+now passes only for its exact v19 experiment; typed transport and runtime/profile admission remain
+blocked.
 The follow-on
 [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md) freezes the
 unchanged C1/C2A relationship to one exact historical governed build candidate. Its immutable
@@ -95,7 +100,10 @@ and final runner artifacts. The immutable
 [v4 materialized successor](protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md) closes only
 those build/static blockers with exact accepted header/current-source libkrun, independent ABI
 review, unsigned final runner bytes, and a new composed digest. It also wires no consumer,
-executes no runner or guest, and authorizes no guest.
+executes no runner or guest, and authorizes no guest. A later exact v19 experimental successor
+created one separately authorized fixed guest without changing v4's immutable no-guest evidence.
+See the [execution checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) for the mechanism,
+limitations, and raw-evidence archival blocker.
 
 Accepted [ADR-0034](adr/0034-freeze-mjs-first-release-contract.md) puts the first-release
 authenticated local IPC S1 fixture slice on the single-member `.mjs` plan-v0 path. M1 source/

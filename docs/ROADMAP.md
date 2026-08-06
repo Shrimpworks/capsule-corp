@@ -34,20 +34,24 @@ Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and th
 
 1. preserve the passed governed fork promotions, passive C2B v3 successor, and v4 build/static
    materialization;
-2. run one separately authorized fixed benign owned guest naming the exact v4 composed digest as a
-   controlled experiment;
-3. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
+2. preserve the passed separately authorized
+   [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) as a controlled
+   experiment without treating its diagnostic console proof as the final typed transport;
+3. preserve the passed v20 no-launch denial-test materialization and require fresh exact one-use
+   authorization before its separately bounded dynamic execution;
+4. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
    passive atomic plan/bindings/manifest/source custody, then implement Broker fetch/render/approval;
-4. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
+5. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
    adapter/recovery, and completion evidence; and
-5. run the minimum hostile `.mjs` and restoration corpus with one fresh guest per attempt.
+6. run the minimum hostile `.mjs` and restoration corpus with one fresh guest per attempt.
 
 Host Source Validator R4/R5 is later defense-in-depth rather than an internal-alpha gate. Exact
 R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted and `BLOCKED`. F6 is also deferred only for the
 strict owner-only disposable fixed-store posture. TypeScript, automatic update, Developer ID
 distribution, clean-host/minimum-OS coverage, restore, and production storage are external-alpha
-work. The fixed guest is not product alpha; the hostile owner-only internal alpha is the next
-product checkpoint, and external alpha remains a later distinct gate.
+work. The fixed guest is not product alpha. The fixed denial-test successor is materialized but has
+not executed; the hostile owner-only internal alpha is the next product checkpoint, and external
+alpha remains a later distinct gate.
 
 ## Phase 0: architecture and claim baseline
 
@@ -97,10 +101,10 @@ equality. The v3 passive successor binds current accepted governed source heads/
 the stale libkrun dylib as evidence only, resolves boot/runner/device/runtime/resource/teardown
 semantics, and supplies an immutable passive-contract digest without adding a consumer. The v4
 successor retains exact accepted header/current-source libkrun and final-runner bytes, independently
-audits their ABI, and supplies a new immutable composed digest without execution or a consumer. One
-fixed owned guest remains `BLOCKED` on separate authorization naming that digest. C2 remains the
-first separately authorized composed execution
-boundary. P0-1 is a
+audits their ABI, and supplies a new immutable composed digest without execution or a consumer. A
+later separately authorized [v19 experimental successor](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
+passed one fixed benign owned guest without mutating v4 or closing the intended typed transport.
+C2 remains the separately authorized composed execution boundary. P0-1 is a
 `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,

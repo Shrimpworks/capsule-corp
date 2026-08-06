@@ -23,8 +23,10 @@ bounded second/later immutable-segment growth are also `PASSED` in their narrow 
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
 `IN_PROGRESS — TRENDING_GOOD`; governed-runtime C2A, immutable C2B passive contracts, and the C2B
-v4 build/static materialization are `PASSED` only in their exact no-guest scopes, while fixed guest
-execution remains separately authorized and `BLOCKED`. Archive F5 coherent backup, read-only
+v4 build/static materialization are `PASSED` only in their exact no-guest scopes. The first
+separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is now
+`PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
+runtime/profile admission remain `BLOCKED`. Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
 strictly bounded owner-only fixed-store alpha exception; F6 production-engine selection and every
@@ -368,10 +370,13 @@ two-clean-build current-source unsigned dylib, independently audits the ABI, res
 the sole boot-kernel carrier with no separate firmware identity, and retains byte-equal unsigned
 final-runner bytes plus a new composed-profile digest. The verifier freezes FDs 0–7, close-from 8,
 three console ports, implicit-device disablement, fixed call/import order, no replacement
-authority, and Supervisor-owned teardown. Neither runner nor libkrun was loaded or executed; no
-HVF call, VM, guest, signing, installation, product wiring, release, or admission occurred. The
-fixed benign owned guest remains `BLOCKED` on separate authorization naming the exact v4 digest;
-runtime/profile admission remains `BLOCKED`.
+authority, and Supervisor-owned teardown. Neither runner nor libkrun was loaded or executed by v4;
+no HVF call, VM, guest, signing, installation, product wiring, release, or admission occurred in
+that immutable scope. A later separately authorized
+[v19 fixed-owned-guest experiment](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) booted and completed
+one fixed governed-runtime fixture through an evidence-led experimental successor without
+rewriting v4. That checkpoint is `PASSED`; hostile-source execution, the final typed transport,
+installed composition, and runtime/profile admission remain `BLOCKED`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

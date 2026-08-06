@@ -950,7 +950,8 @@ implemented.
    separately authorized F6 bounded SQLite comparison. ADR-0040 permits the fixed snapshot only for
    the narrow owner-only disposable alpha with exact fail-closed thresholds and no restore/
    continuity claim; do not infer general product-store selection.
-3. Close the successor runnable profile and one fixed benign owned guest, then implement the
+3. Preserve the exact passed
+   [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md), then implement the
    ADR-0040 authority path: one authenticated CLI adapter, exact single-`main.mjs` proposal, atomic
    plan/bindings/manifest/source custody, Broker fetch/render/approval, protected installed state,
    real adapter/recovery, and completion composition.
@@ -990,8 +991,10 @@ implemented.
    current-source unsigned dylib, independent ABI audit, byte-equal unsigned final runner, and
    composed digest without loading libkrun or executing the runner. It preserves FDs 0–7,
    close-from 8, the three ordered console ports, explicit implicit-device disablement, no
-   replacement authority, and Supervisor-owned teardown. Stop there: a fixed benign owned guest
-   remains `BLOCKED` on separate authorization naming v4's exact digest, and admission remains
+   replacement authority, and Supervisor-owned teardown. A later exact v19 experimental successor
+   passed one separately authorized fixed benign guest with immutable in-root inputs, a bounded
+   diagnostic console proof, normal reap, and unlinked-root teardown. Preserve that result without
+   substituting it for final typed transport, installed composition, or admission, which remain
    `BLOCKED`.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF

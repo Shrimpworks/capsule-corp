@@ -273,8 +273,12 @@ and byte-equal unsigned runner bytes, and composed-profile digest
 `e390085caaaba73ebc19f95bc9871305e4f9268c2283d7394133fa4491f4ba82`. The runner accepts only the
 sealed FD topology, closes from 8, disables implicit devices, uses the fixed three-port call order,
 and has no execute-time replacement authority. Libkrunfw remains the sole non-EFI boot-kernel
-carrier; no separate firmware identity exists. V4 has no product consumer and was not executed.
-One fixed benign owned guest remains `BLOCKED` on separate authorization; admission remains
+carrier; no separate firmware identity exists. V4 has no product consumer and was not executed. A
+later separately authorized
+[v19 experimental successor](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) booted one fixed benign
+owned guest, matched its bounded console digest proof, exited normally, was reaped, and completed
+unlinked-root teardown. That exact checkpoint is `PASSED` without reclassifying v4 as executed.
+The final typed transport, hostile workload corpus, installed composition, and admission remain
 `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state

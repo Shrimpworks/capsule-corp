@@ -353,9 +353,12 @@ the boundary. Its retained unsigned runner imports only the reviewed fixed calls
 FDs 0–7, closes from 8, disables implicit console/init/vsock, creates the three ports in fixed
 order, and accepts no path, plan, profile, image, mount, backend flag, or replacement configuration.
 Exact source confirms libkrunfw is the sole non-EFI boot-kernel carrier; no separate firmware
-identity is invented. The runner and libkrun were never loaded or executed. Guest authorization,
-hostile-guest transport validation, installed confinement, and runtime/profile admission remain
-`BLOCKED`.
+identity is invented. The v4 runner and libkrun were never loaded or executed in that immutable
+scope. A later separately authorized
+[v19 fixed-owned-guest experiment](../FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) loaded its exact
+experimental successor bytes and passed one fixed benign boot/runtime/console-proof/reap/teardown
+attempt. It did not use the final typed transport or hostile source. Hostile-guest transport
+validation, installed confinement, and runtime/profile admission therefore remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

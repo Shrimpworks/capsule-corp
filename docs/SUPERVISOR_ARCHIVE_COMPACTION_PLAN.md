@@ -743,16 +743,25 @@ This is not production-store selection and makes no continuity, rollback, hostil
 secure-deletion, or restore claim. F6 remains mandatory before external alpha or any such claim.
 The [passive threshold-checker result](INTERNAL_ALPHA_FIXED_STORE_STOP_POLICY.md) implements only the
 owner-held, read-only, re-evaluated observation/admission oracle for those exact comparisons. It
-persists no installation trip latch, remains unwired from `RequestAttempt`, and selects no p95
-source/window/lifetime, product consumer, or engine. Full five-threshold product enforcement remains
-`BLOCKED`.
+persists no installation trip latch, remains unwired from `RequestAttempt` and response-loss
+handling, and selects no p95 source/window/lifetime/persistence, product consumer, or engine. Full
+five-threshold product enforcement remains `BLOCKED`.
 
-- Instantiate the same logical schema/oracles in one exact SQLite build and configuration, or name
-  another candidate with equivalent evidence scope.
-- Run `BUSY`/`LOCKED`/`FULL`/`IOERR`/`CORRUPT`, WAL/journal/checkpoint, multi-process, backup,
-  migration, APFS, process-death, and real power-interruption campaigns.
-- Measure bounded startup, mutation, archive, lookup, backup, and verification resource costs.
-- Record a separate ADR selecting or rejecting the engine and exact configuration.
+The documentation-only
+[F6 SQLite research and execution checkpoint](SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md)
+is `PASSED` in its exact planning scope. It confirms the official SQLite 3.53.4 amalgamation,
+recommends a narrow Capsule-owned cgo shim only for the experiment, compares exact maintained cgo
+and pure-Go alternatives, freezes F6-A rollback-journal and F6-B WAL profiles, preserves split
+mutable active plus content-addressed immutable segment databases, and maps the F2-F5 corpus to
+native VFS/result-code and real macOS/APFS/power-loss gates. It adds and selects no dependency.
+
+- Obtain separate defensive authorization for the exact `capsule-experiments` fixture, owned
+  disposable Apple-silicon host/volume, and power-interruption method.
+- Execute both packet configurations without broadening the fixed binding/SQL/open/limit surface,
+  running SQLite here, or replacing the fixed-store semantic oracle.
+- Retain exact source/build/SBOM/configuration/readback/fault/quantitative evidence at an immutable
+  experiment commit.
+- Record a separate Proposed ADR selecting or rejecting the exact engine and configuration.
 
 Acceptance: evidence and ADR only. Do not replace the fixed oracle or activate a consumer in the
 same slice.

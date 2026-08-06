@@ -59,7 +59,8 @@ its core conclusion.
   — Proposed
 - [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
 - [ADR-0031: Checkpoint closed Supervisor cohorts into immutable retained archives](0031-checkpoint-closed-supervisor-cohorts.md)
-  — Proposed; F1-F5 fixed-store oracle `PASSED`, F6 production-engine and restore activation remain `BLOCKED`
+  — Proposed; F1-F5 fixed-store oracle and F6 documentation-only checkpoint `PASSED` in their exact
+  scopes; F6 execution/selection and restore activation remain `BLOCKED`
 - [ADR-0032: Select an enrolled TypeScript Source Preparer and immutable source store](0032-select-enrolled-typescript-source-preparer.md)
   — Proposed
 - [ADR-0033: Select an enrolled BSD `flock` object for Supervisor ownership](0033-select-enrolled-flock-supervisor-owner.md)

@@ -56,6 +56,31 @@ func TestProductionShapedVerifierAcceptsPublicKnownAnswerAndComplementaryS(t *te
 	}
 }
 
+func TestProductionShapedVerifierCandidateDerivesSignerAndNonceWithoutCallerBindings(t *testing.T) {
+	verifier, authorization, bindings, envelope := approvalPublicVector(t)
+	verified, err := verifier.VerifyCandidate(context.Background(), envelope)
+	if err != nil {
+		t.Fatal(err)
+	}
+	view := verified.View()
+	if view.AttemptNonce != bindings.AttemptNonce ||
+		!bytes.Equal(verified.ProtectedKeyID(), authorization.KeyID[:]) ||
+		verified.AuthorizationIdentity() != authorization.AuthorizationIdentity ||
+		verified.ResolvedEpochSequence() != authorization.EpochSequence {
+		t.Fatal("candidate verification did not derive signed nonce and trusted signer authorization")
+	}
+
+	wrongInstallation := authorization
+	wrongInstallation.InstallationID[0] ^= 0xff
+	wrongInstallation.AuthorizationIdentity = approvalAuthorizationIdentity(wrongInstallation)
+	wrongVerifier, err := NewProductionShapedVerifier([]ApprovalKeyAuthorization{wrongInstallation})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = wrongVerifier.VerifyCandidate(context.Background(), envelope)
+	assertApprovalClassification(t, err, ClassificationBinding)
+}
+
 func TestProductionShapedVerifierBindsEveryAuthorityFieldAndTime(t *testing.T) {
 	verifier, _, bindings, envelope := approvalPublicVector(t)
 	tests := []struct {

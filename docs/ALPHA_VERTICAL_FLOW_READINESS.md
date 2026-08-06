@@ -26,8 +26,8 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 | Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Connect only the selected method-specific adapter and bind admitted limits plus exact runtime/profile identity. |
 | Register source and plan | Atomic passive fixed-store registration/fetch facade | `PASSED` for the unwired oracle | Expose it only through method-specific authenticated product registration/fetch backed by protected production state. |
 | Fetch and render approval | Accepted ADR-0043 read-only projection over passive Supervisor readback | `PASSED` for the unwired projection | Authenticated product fetch, native UI, installed spoof/focus/cancel evidence, and Supervisor custody of inline-input content if it must be shown. |
-| Sign, verify, and retain approval | ADR-0043 public-key-only strict verifier plus local consume/create/replay mechanics | `PASSED` for unwired crypto/store mechanics | Fresh live `LAContext`, Secure Enclave key operation, installed key authorization and same-byte Broker/Supervisor integration. |
-| Create and drive attempt | Durable attempt/lifecycle/FakeBackend mechanics | `PASSED` for no-guest local mechanics | Authenticated product call, protected owner/store, real sealed adapter, stable backend identity, restart reconciliation, and one fresh guest. |
+| Sign, verify, and retain approval | ADR-0043 public-key-only strict verifier connected to local consume/create/replay mechanics by one exact-plan public fixture | `PASSED` for the unwired public-key/store integration | Fresh live `LAContext`, Secure Enclave key operation, installed key authorization and same-byte Broker/Supervisor product integration. |
+| Create and drive attempt | [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) plus durable attempt/lifecycle mechanics | `PASSED` for the no-guest local integration | Authenticated product call, protected owner/store, real sealed adapter, stable backend identity and reconciliation, and one fresh guest. |
 | Compose completion | [Unwired fixed FakeBackend compositor foundation](COMPLETION_COMPOSITOR_FOUNDATION.md) | `PASSED` for the read-only no-guest foundation | No durable completion producer/store transaction, guest port, integrity/result producer, real teardown/absence proof, authenticated consumer, signing, receipt, or installed composition. |
 
 The Oxc Source Validator's passive, artifact, and R3 signed inactive evidence remains retained.
@@ -50,6 +50,7 @@ passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> passive atomic custody/fetch PASSED
   -> authenticated product registration/fetch
   -> passive fixed rendering + public-key verification PASSED
+  -> public-key grant + one-use AttemptID + no-guest FakeBackend PASSED
   -> authenticated Broker fetch + installed fixed rendering
   -> fresh user-presence signing + installed verification
   -> one-use AttemptID creation
@@ -89,8 +90,8 @@ separate authorization; neither path alone is product alpha.
 3. Preserve ADR-0043's passive projection/verifier and implement the frozen authenticated
    role-specific IPC, protected Supervisor state, native Broker UI, live signing, installed
    verification, and the bounded fixed-store policy.
-4. Connect approval to attempt/lifecycle first against FakeBackend, then through the admitted sealed
-   real adapter.
+4. Preserve the passed public-key approval/attempt/FakeBackend integration and connect the same
+   ordering only through the admitted sealed real adapter.
 5. Implement the completion/transcript/fixed-summary compositor.
 6. Connect the unwired completion/transcript/fixed-summary compositor only after implementing the
    Supervisor-owned durable completion producer and the real integrity, teardown, and absence

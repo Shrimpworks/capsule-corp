@@ -22,9 +22,11 @@ type Verifier interface {
 	Verify(context.Context, []byte, ApprovalGrantRoleBindings) (*VerifiedApproval, error)
 }
 
-// CandidateVerifier is the existing Slice B fixture injection seam. It
-// resolves retained test metadata before the store applies registration and
-// active-state bindings; ProductionShapedVerifier is intentionally not wired here.
+// CandidateVerifier is the method-specific approval-submission seam. It
+// verifies exact candidate bytes and resolves signer authorization without
+// accepting caller-supplied candidate fields. The Supervisor store then
+// applies registration, active-state, effective-time, nonce-uniqueness, and
+// replay bindings before a new approval can commit.
 type CandidateVerifier interface {
 	VerifyCandidate(context.Context, []byte) (*VerifiedApproval, error)
 }

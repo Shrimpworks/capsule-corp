@@ -636,6 +636,11 @@ P1 stop conditions are retained in the
 
 The current repository implements schema/tooling plus named unwired local mechanics for exact
 registration, atomic approval consumption/attempt creation, and a durable no-guest fake lifecycle.
+The [public-key approval integration](../APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) now connects those
+mechanics for one public-only signed exact-plan fixture: plan A cannot authorize plan B, equivalent
+signatures share canonical-payload replay identity, the attempt commits before fake effects, and
+response-loss/restart recovery does not redrive an effect. This adds no live signer, authenticated
+IPC, installed authorization, real adapter/backend, runtime, guest, or product control.
 The E5 fixed-store corpus proves exact lifecycle ceilings, no eviction, destroyed-only active
 capacity release, and bounded repeated startup. G2 now composes that no-guest path with the local
 Darwin owner-required v1 opener and same-session coordinator. It implements no runtime security

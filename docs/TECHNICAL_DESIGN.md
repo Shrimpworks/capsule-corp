@@ -73,6 +73,13 @@ the exact native dictionary contract and cross-language fixtures for three metho
 harness/bridge execution, product XPC service, production owner lock, consumer, runtime, backend
 effect, or guest is connected.
 
+The [public-key approval integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) now connects one
+public-only exact-plan ApprovalGrant fixture through the production-shaped verifier, durable
+approval replay and atomic consume/create, then explicit `Drive(AttemptID)` and restart recovery.
+Candidate-owned nonce and signer identity are verifier-derived; registration, plan, active state,
+effective time, replay, and nonce uniqueness remain store-owned. The harness creates no live key,
+IPC endpoint, real adapter/backend, runtime, process, or guest.
+
 The follow-on [passive durable completion-last contract](DURABLE_COMPLETION_CONTRACT.md) now adds a
 separate bounded fixed-file producer/store oracle. It revalidates retained attempt, plan, source,
 runtime/profile, lifecycle, teardown, and fake absence facts before atomically publishing one
@@ -950,8 +957,8 @@ implemented.
    generate plan-v0 registration/fetch/source-custody fixtures from complete field authority. The
    internal alpha does not wait on Source Validator R4/R5; a later consumer remains bound by
    ADR-0035/0036 and adds no Supervisor call beyond ADR-0029's closed surface.
-6. Connect that product path to the already-passed no-guest registration, approval/attempt, durable
-   lifecycle, owner-lock G2, archive oracle, and passive durable completion-last transaction. Add
+6. Connect that product path to the already-passed public-key approval/FakeBackend integration,
+   owner-lock G2, archive oracle, and passive durable completion-last transaction. Add
    composed evidence only from retained Supervisor state; keep `FakeBackend.CreatesGuest() == false`
    until runtime/backend admission, and do not treat the separate completion file as the product
    engine.

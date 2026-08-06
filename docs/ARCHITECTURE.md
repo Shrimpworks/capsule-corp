@@ -1,8 +1,8 @@
 # Architecture
 
-Status: intended architecture. The repository implements only unwired local contract and
-FakeBackend lifecycle mechanics; no connected authority boundary, real runtime/backend, or guest
-is implemented or validated.
+Status: intended architecture. The repository implements unwired local contracts plus one
+public-key ApprovalGrant-to-durable-attempt-to-FakeBackend integration. No product authority
+boundary, real runtime/backend, or guest is implemented or validated.
 
 ## System context
 
@@ -276,6 +276,13 @@ One fixed benign owned guest remains `BLOCKED` on separate authorization; admiss
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.
+
+The [public-key approval integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) now passes one
+public-only signed exact-plan fixture through Capsule-owned signature verification, payload replay,
+durable approval consumption/attempt creation, and the existing `AttemptID`-only lifecycle. It
+rejects plan substitution, commits the attempt before fake effects, and converges across response
+loss and restart without redriving effects. This is an unwired local harness, not an authenticated
+Broker/Supervisor service or product execution path.
 
 The current unwired E5/G2 checkpoint exercises this fake through a fixed colocated Supervisor
 snapshot. It retains durable intents, stable effect IDs, cleanup/reconciliation state, exact

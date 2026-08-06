@@ -209,6 +209,16 @@ not consumer activation or backend admission.
 | B: fixed authority store | `registrationstate.FixedFileStore` colocates registration, effective-time high-water, approval, and immutable created-attempt state; payload-digest idempotency, retained nonce uniqueness, atomic consume/create, exact replay/concurrency, capacity, recovery fencing, reopen validation, and corruption refusal are implemented locally. | Twelve manifest state-transition cases plus focused component tests retain the exact behavior. The fixed no-eviction file-snapshot store has no production archive/compaction, multi-process locking, backup/restore, or rollback-resistant uniqueness and remains unwired. |
 | C: attempt-keyed fake lifecycle | `ApprovalAttemptComponent` supplies `ResolveCreated` and created-attempt enumeration; `registeredlifecycle` accepts only `AttemptID`, revalidates every copied binding and exact plan before fake prepare, keeps attempts for one registration distinct, and keys replay/fault/recovery state by attempt. | The original twelve top-level focused tests cover binding refusal, exact/concurrent replay, startup enumeration, all fake fault moments, and post-effect restart recovery. E4/E5 now preserve those oracles through the colocated v1 store and stable fake effect/instance IDs. `FakeBackend.CreatesGuest() == false`; no real adapter or guest exists. |
 
+The follow-on [public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md)
+is `PASSED` in its exact unwired local scope. `ProductionShapedVerifier` now satisfies the frozen
+method-specific candidate-verification seam, while the fixed Supervisor store continues to own
+registration, effective time, replay, nonce uniqueness, approval consumption, and one-`AttemptID`
+creation. A public-only signed fixture and repository plan bytes prove plan A/B refusal,
+equivalent-signature convergence, approval/attempt response-loss convergence across reopen, no
+fake effect before attempt commit, and exact fake recovery by Supervisor-issued `AttemptID`. The
+fixture-generation private key was ephemeral and is not retained. No live signer, product IPC,
+installed key authorization, protected store, runtime, real backend, or guest participated.
+
 ## Phase 2B durable lifecycle Slice E1-E5 reconciliation
 
 The local durable-lifecycle checkpoint implements Proposed ADR-0025 without accepting it or

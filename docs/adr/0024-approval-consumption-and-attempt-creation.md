@@ -118,10 +118,13 @@ envelope bytes only for evidence/integrity; it never uses signature bytes or an 
 approval identity. Equivalent low-S/high-S signatures over the same payload therefore address the
 same approval record.
 
-Production `KeyAuthorization` identity and the production COSE wrapper remain blocked on the
-relevant ADR-0019 acceptance conditions. The unwired implementation must inject a fixed verifier
-port and fixture-only authorized-key binding; it must not import the Gate A2 experiment or claim
-Keychain, user-presence, or production signature validation.
+Accepted ADR-0043 supersedes this ADR's earlier production-wrapper blocker only for its exact
+public-key verification contract. The binding table above remains authoritative for durable
+Supervisor admission; ADR-0043 is authoritative for the additional trusted Team, Broker role,
+epoch-scoped access group, P-256 public key, protection/access-control/context policy, active
+status, validity, and no-fallback authorization scope. Those are cumulative checks, not alternate
+sources from which an implementation may choose. The unwired implementation must keep
+`FixtureVerifier` test-only and must not claim live Keychain, user-presence, or product signing.
 
 The first unwired wrapper applies these inclusive raw-copy/predecoder budgets before ordinary
 allocation:

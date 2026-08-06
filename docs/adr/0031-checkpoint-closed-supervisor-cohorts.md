@@ -91,11 +91,14 @@ bounded second/later-segment growth, and the
 [F5 result](../SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) implements owner-held manifest-last coherent
 backup, read-only restore admission, bounded offline inventory/reporting, and explicit sealed
 known-unreferenced orphan removal. F5 activates no restore and deletes no referenced or unknown
-history. The fixed oracle is not selected as the production engine; F6 remains unimplemented.
-SQLite remains the leading production-engine candidate, but its exact locking, journal/WAL,
-checkpoint, sync, backup, migration, corruption, and real power-loss behavior require a separate
-evidence-backed selection. Convenience, familiarity, or avoiding a migration is not a selection
-criterion.
+history. The fixed oracle is not selected as the production engine. The documentation-only
+[F6 research and execution checkpoint](../SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md) is
+`PASSED` in its exact planning scope; F6 execution remains `BLOCKED`. It records official SQLite
+3.53.4 plus a narrow experiment-only Capsule-owned cgo shim as the research recommendation and
+freezes rollback-journal/WAL comparators without selecting either SQLite or a binding. Exact
+locking, sync, backup, migration, corruption, native VFS/APFS, and real power-loss behavior still
+require separately authorized evidence. Convenience, familiarity, or avoiding a migration is not
+a selection criterion.
 
 `FakeBackend.CreatesGuest() == false` remains mandatory throughout this boundary. Archive work has
 no adapter call and does not change `Drive(AttemptID)`, `Recover(AttemptID)`, or consume/create-
@@ -582,10 +585,13 @@ Security and operational costs:
 
 ### SQLite production candidate
 
-SQLite could place hot records, closed cohorts, tombstones, indexes, generations, and checkpoint
-metadata in one transactional database. Foreign keys, uniqueness constraints, `WITHOUT ROWID`
-tables, and the backup API may reduce custom split-file state. WAL or rollback-journal behavior can
-also avoid rewriting the complete active population for each ordinary transaction.
+SQLite could place hot records, tombstones, global indexes, generations, and checkpoint metadata
+in one mutable active database. F6 must keep closed cohorts in separately finalized immutable
+content-addressed segment databases; a monolithic database is ineligible because it erases F3's
+publish-before-reference and valid-orphan semantics. Foreign keys, uniqueness constraints,
+`WITHOUT ROWID` tables, and the backup API may reduce custom state inside each file. WAL or
+rollback-journal behavior can also avoid rewriting the complete active population for each
+ordinary transaction.
 
 Those are hypotheses, not selection evidence. A production choice must pin and test:
 
@@ -610,6 +616,13 @@ Keep the archive model and lookup semantics engine-neutral. Defer production eng
 the fixed oracle exists and SQLite (or another named candidate) runs the same logical corpus plus
 real locking, backup, corruption, APFS, and power-loss tests. No consumer may activate on the fixed
 archive oracle.
+
+The [F6 checkpoint](../SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md) is the canonical
+execution input. Its official-amalgamation/cgo recommendation is research, not selection. It
+excludes `database/sql`, generic DSNs, ORMs, and dynamic system SQLite from the first comparator;
+requires one owner with no hidden pool/retry, fixed SQL/open/configuration/limit surfaces, F6-A
+rollback journal and F6-B WAL profiles, and exact F2-F5/native fault replay; and keeps the fixed
+store as semantic oracle with no simultaneous cutover.
 
 ## Consequences
 
@@ -710,9 +723,11 @@ same-transaction append-only collection, direct reconstruction/lookup, fifth `Ho
 member, and fault/replay/collision corpus. The
 [F4C result](../SUPERVISOR_ARCHIVE_F4C_GROWTH_RESULT.md) and
 [F5 result](../SUPERVISOR_ARCHIVE_F5_BACKUP_RESULT.md) complete their exact local fixed-store
-conformance scopes. This ADR remains Proposed: F6 production-engine selection, installed owner/
-storage evidence, real power-loss and restore activation, a production latest-checkpoint posture,
-a product consumer, and every other listed blocker remain open.
+conformance scopes. The documentation-only
+[F6 checkpoint](../SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md) is `PASSED` only for research
+and executable planning. This ADR remains Proposed: F6 execution and production-engine selection,
+installed owner/storage evidence, real power-loss and restore activation, a production latest-
+checkpoint posture, a product consumer, and every other listed blocker remain open.
 
 ## Acceptance blockers
 

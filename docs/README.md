@@ -64,7 +64,10 @@ The proposed exact validator and registration rules for the next slice are in
 [Phase 2B boundary decisions](PHASE_2B_BOUNDARY_DECISIONS.md).
 The next Supervisor retention boundary is defined in
 [Proposed ADR-0031](adr/0031-checkpoint-closed-supervisor-cohorts.md) and its
-[archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md).
+[archive/compaction conformance plan](SUPERVISOR_ARCHIVE_COMPACTION_PLAN.md). The documentation-only
+[F6 SQLite research and execution checkpoint](SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md)
+freezes one separately authorized comparator packet without selecting a dependency or changing
+F6/product-admission status.
 
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).

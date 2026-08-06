@@ -23,9 +23,8 @@
 | Controlled denial-test v25 runtime candidate | `NO_GO` | Pre-launch semantic review showed socket creation alone is not usable vsock/network authority, so v25 tested the wrong property. It was not authorized or launched. |
 | Controlled denial-test v26 failure localization | `PASSED` | One exact guest passed active local-CID vsock-unavailable and raw-block write-open denial, then reported the fixed reason `non-loopback guest network interface is present`. |
 | Controlled denial-test v26 complete corpus | `BLOCKED` | The probe rejected expected down/unbacked `dummy0` by name before evaluating flags, backing, or routes. This is a probe-policy mismatch, not network-access evidence; v26 must not be rerun. |
-| Controlled denial-test v27 passive-network correction | `PASSED` | A fixed source/build-only successor accepts only `lo` plus optional down/unbacked `dummy0`, rejects virtio network backing and non-loopback/default routes, and retains no-connect/no-send behavior. No v27 runner or guest was executed. |
-| Controlled denial-test v27 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v27's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V26 passed through active vsock and raw-block denial controls and localized the next stop to an over-strict passive-interface policy. V27 corrects that policy reproducibly. Later controls, typed transport, installed composition, and admission remain incomplete. |
+| Exact v27 fixed hostile-denial attempt | `PASSED` | One exact authorized owned guest completed all 30 expected markers, exact completion and console proofs, every fixed denial control, normal reap, unlinked-root teardown, and unchanged canary with zero network/credential authority or traffic. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V27 closes the exact fixed hostile-denial experiment. Final typed transport, installed composition/recovery, broader lifecycle and platform matrices, independent admission review, and product wiring remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -223,8 +222,7 @@ corrected successor and one exact invocation then passed the early denial contro
 in the vsock family. Pre-launch review then marked v25 `NO_GO` because socket creation is not the
 authority the control meant to test. A build-only v26 consolidated successor now `PASSED`; its
 exact invocation localized the next stop to passive network inventory. A build-only v27 corrected
-successor now `PASSED`; its dynamic execution is separately `BLOCKED` on fresh exact one-use
-authorization.
+successor and one exact authorized invocation now `PASSED` the complete fixed denial corpus.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -455,14 +453,37 @@ active local-CID semantics and fixed failure detail and contains no `connect`, `
 
 Network-disabled A/B roots, primary/independent runners and signatures, A/B profiles, independent
 composed hashing, three controller builds, Go test/vet, and no-connect/no-send policy assertions
-passed. No v27 runner, libkrun/HVF process, or guest was executed, and its evidence directory is
-absent. The v20-v27 reports and receipts remain in the disposable local experiment workspace, so
-they are not durable release or admission evidence. Exact v27 execution must refuse any changed
-attempt, digest, path, binary, or authority and must not launch until a fresh authorization names
-the values above. One-use authorization remains per actual launch; no standing or batch authority
-exists.
+passed before launch. The later exact v27 attempt then reached ready, verified runner identity,
+consumed one-use authorization, and launched one owned disposable guest. All 30 expected console
+lines matched, ending in `C2BHOSTILE20:complete`; `completionExact` and `consoleProofExact` were
+both true. The 986-byte console had SHA-256
+`b0a593750065500c99a193bff62de43992324d47508dc4daadf0a827e7181f74`.
 
-Even a passing v27 experiment will remain a controlled denial checkpoint, not the owner-only
+The exact run passed:
+
+- the benign governed-runtime known answer;
+- non-root PID 1, no-new-privileges, zero effective capabilities, and sealed descriptors;
+- root-write denial with `EROFS`, absent host-only paths, mount denial, and root-regain denial with
+  `EPERM`;
+- active local-CID vsock transport-unavailable without any connect/send;
+- raw-block write-open denial;
+- no virtio-net, no up non-loopback interface, and no non-loopback IPv4/IPv6 route;
+- absent virtiofs and an empty ambient environment; and
+- exact completion, process, root-custody, teardown, and canary proofs.
+
+The exact runner exited 0, waitpid was observed, no force-kill occurred, authorization-to-result was
+208 ms, and teardown was 5 ms. The root was unlinked with final link count zero; both staged and
+open-descriptor hashes matched `002524fb...119d`. The host canary remained unchanged at
+`e8d0671f...9c7d`. Preflight retained `networkAuthorized: false`,
+`credentialsAuthorized: false`, `externalConnectionAttempted: false`,
+`networkBytesSent: false`, and `maximumGuests: 1`. The exact runner PID and staged root pathname
+were absent afterward. The consumed authorization must not be reused.
+
+The v20-v27 reports and receipts remain in the disposable local experiment workspace, so they are
+not yet durable release or admission evidence. V27 is `PASSED` only for this exact materialized
+profile and single local owned-disposable guest reproduction.
+
+This passing v27 experiment remains a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.
@@ -475,7 +496,8 @@ the experiment deliberately used a fixed known answer and a diagnostic completio
 
 The practical consequence is still substantial: Capsule no longer has to ask whether a governed
 `deno_core` fixture, a direct read-only root, a narrow libkrun/HVF runner, and Supervisor-owned
-lifecycle can work together at all on the owned development Mac. They did. The next questions are
-whether the boundary refuses the fixed denial corpus, whether the intended typed transport can be
-closed, and whether the same ordering survives the real installed approval, attempt, recovery, and
-completion path.
+lifecycle can work together at all on the owned development Mac, or whether this exact fixed guest
+refuses the selected identity/capability/descriptor/root/host-path/mount/privilege/vsock/block/
+network/virtiofs/environment denial corpus. They did. The next questions are whether the intended
+typed transport can be closed and whether the same ordering survives the real installed approval,
+attempt, recovery, lifecycle, pressure, sleep/wake, upgrade, and completion paths.

@@ -1006,8 +1006,10 @@ implemented.
    reason plus bounded console progress. Its exact invocation passes active local-CID/raw-block
    denials and localizes the next stop to expected down/unbacked `dummy0`; do not rerun v26. V27
    accepts only loopback plus that bounded passive inventory, rejects virtio backing and non-
-   loopback/default routes, is reproducibly materialized without execution, and requires fresh
-   exact one-use authorization before its corrected attempt.
+   loopback/default routes, and passes the exact complete 30-marker fixed-denial corpus in one
+   attempt-bound owned guest with exact completion/console/lifecycle/root/canary and zero-network
+   evidence. Preserve the consumed authorization as spent and do not infer product admission,
+   broader kernel/platform/lifecycle coverage, or installed recovery from the result.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

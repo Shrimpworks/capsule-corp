@@ -57,7 +57,7 @@ governance promotions PASSED
   -> fixed denial-test v26 consolidated materialization PASSED
   -> fixed denial-test v26 localization PASSED / full corpus BLOCKED at passive inventory
   -> fixed denial-test v27 passive-network correction PASSED
-  -> fixed denial-test v27 execution BLOCKED on fresh exact authorization
+  -> exact fixed denial-test v27 execution PASSED
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter

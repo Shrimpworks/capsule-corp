@@ -285,9 +285,11 @@ correction then launched one exact guest and passed the known answer plus early 
 before stopping in the vsock-check family without connecting or sending. Pre-launch semantic review
 marked v25 `NO_GO` because socket creation alone is not usable authority. The v26 local-CID/failure-
 detail diagnostic then passed active local-CID and raw-block denials before identifying expected
-down/unbacked `dummy0` as an over-strict probe-policy stop. The v27 passive-network correction is
-reproducibly materialized but unexecuted. The final typed transport, later hostile workload corpus,
-installed composition, and admission remain `BLOCKED`.
+down/unbacked `dummy0` as an over-strict probe-policy stop. V27 corrected the passive-network policy
+and then passed all 30 fixed denial markers, exact completion/console proofs, normal reap,
+unlinked-root teardown, unchanged canary, and zero network/credential authority or traffic in one
+exact owned guest. The final typed transport, broader hostile/platform/lifecycle corpus, installed
+composition/recovery, and admission remain `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.

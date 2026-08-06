@@ -368,9 +368,12 @@ property as non-authoritative. V26 instead tests local-CID ioctl capability, sti
 connect/send path, and retains fixed failure detail plus bounded console progress. Its exact
 invocation passed active local-CID/raw-block denials and then reported expected down/unbacked
 `dummy0`. V27 accepts only loopback plus that bounded passive inventory and rejects virtio backing
-and non-loopback/default routes without connecting or sending; it remains unexecuted. Later
-hostile-guest transport validation, installed confinement, and runtime/profile admission therefore
-remain `BLOCKED`.
+and non-loopback/default routes without connecting or sending. Its exact authorized guest completed
+that control plus the entire fixed 30-marker denial corpus, exact completion/console proofs, normal
+reap, unlinked-root teardown, unchanged canary, and zero network/credential authority or traffic.
+This one local reproduction does not cover every kernel/hypervisor path. Broader hostile-guest
+transport, pressure/lifecycle/platform validation, installed confinement/recovery, and runtime/
+profile admission therefore remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

@@ -41,7 +41,7 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     closure
 19. [First owned guest execution checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) — the first
     real fixed governed-runtime/libkrun guest, exact lifecycle evidence, evidence-led iteration,
-    claim boundary, and next controlled denial test
+    and the later exact 30-marker fixed hostile-denial checkpoint and claim boundary
 20. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
     Supervisor-owned projection, public-key-only COSE verification, exact claim boundary, and
     installed-product blockers
@@ -85,8 +85,9 @@ without creating a guest or admitting a runtime. The follow-on passive
 refusing descriptor, candidate machine, transport, teardown, artifact-blocker, known-answer, and
 C2B evidence profile without executing it. C2B owns separately authorized composed execution
 evidence. The first fixed benign [owned-guest checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
-now passes only for its exact v19 experiment; typed transport and runtime/profile admission remain
-blocked.
+passes only for its exact v19 experiment, and its exact v27 successor passes the fixed 30-marker
+hostile-denial corpus with zero network/credential authority or traffic. Typed transport, broader
+installed/platform/lifecycle evidence, and runtime/profile admission remain blocked.
 The follow-on
 [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md) freezes the
 unchanged C1/C2A relationship to one exact historical governed build candidate. Its immutable

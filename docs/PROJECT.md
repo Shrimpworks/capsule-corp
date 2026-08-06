@@ -23,13 +23,15 @@ bounded second/later immutable-segment growth are also `PASSED` in their narrow 
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
 `IN_PROGRESS — TRENDING_GOOD` after v23 proved the v20-v22 pre-ready refusals came from a malformed
-embedded expected-digest fixture and v24 corrected it reproducibly. Governed-runtime
+embedded expected-digest fixture, and v24 corrected it, launched, and passed the known answer plus
+early denial controls before stopping in the vsock-check family. Governed-runtime
 C2A, immutable C2B passive contracts, and the C2B
 v4 build/static materialization are `PASSED` only in their exact no-guest scopes. The first
 separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is now
 `PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
-runtime/profile admission remain `BLOCKED`. V24 corrected materialization is `PASSED` without
-execution or new authority, and its dynamic attempt remains separately authorization-bound.
+runtime/profile admission remain `BLOCKED`. V25 no-connect/no-send vsock-diagnostic materialization
+is `PASSED` without execution or new authority, and its dynamic attempt remains separately
+authorization-bound.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a

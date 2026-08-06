@@ -51,7 +51,9 @@ governance promotions PASSED
   -> fixed denial-test v23 hash-diagnostic materialization PASSED
   -> fixed denial-test v23 root-digest localization PASSED / hostile execution BLOCKED
   -> fixed denial-test v24 corrected materialization PASSED
-  -> fixed denial-test v24 execution BLOCKED on fresh exact authorization
+  -> fixed denial-test v24 early controls PASSED / full corpus BLOCKED at vsock
+  -> fixed denial-test v25 vsock-diagnostic materialization PASSED
+  -> fixed denial-test v25 execution BLOCKED on fresh exact authorization
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter

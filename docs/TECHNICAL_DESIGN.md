@@ -999,8 +999,10 @@ implemented.
    authorization or guest launch. V23 retained bounded staged-path/open-FD/runner hash evidence and
    proved the actual root was correct while the embedded expected digest bytes were malformed.
    Preserve those attempts unchanged; v24 replaces the byte array with the exact lowercase digest
-   literal plus a C17 static length assertion, is reproducibly materialized without execution, and
-   requires fresh exact one-use authorization before its corrected attempt.
+   literal plus a C17 static length assertion, then passes the corrected preflight, known answer,
+   and early denial controls before stopping in the vsock-check family without connecting or
+   sending. V25 adds only distinct fixed socket/refusal/device markers, is reproducibly materialized
+   without execution, and requires fresh exact one-use authorization before its diagnostic attempt.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

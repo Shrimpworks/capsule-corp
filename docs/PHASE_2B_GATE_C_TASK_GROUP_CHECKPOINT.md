@@ -10,8 +10,9 @@ The exact [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.
 `IN_PROGRESS — TRENDING_GOOD`; connected product authority, typed hostile transport, installed
 runtime/profile admission, and external alpha remain `BLOCKED`. The narrower governed
 runtime/libkrun substream returned to `IN_PROGRESS — TRENDING_GOOD` after v23 proved the actual root
-digest was correct and the embedded expected bytes were malformed; v24 corrected materialization
-passed without execution. This
+digest was correct and the embedded expected bytes were malformed. V24 then passed corrected
+preflight/known-answer/early denial controls before stopping in the vsock family; v25 diagnostic
+materialization passed without execution. This
 checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 

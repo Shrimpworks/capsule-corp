@@ -361,8 +361,11 @@ attempt. It did not use the final typed transport or hostile source. The next ex
 refused before readiness; the Supervisor issued no start authorization and no guest launched. V23
 retained authoritative staged-path/open-FD/runner hash evidence and proved the actual root was
 correct while the embedded expected digest bytes were malformed. V24 replaces them with an exact
-literal plus static length assertion and remains unexecuted. Hostile-guest transport validation,
-installed confinement, and runtime/profile admission therefore remain `BLOCKED`.
+literal plus static length assertion, then passes one exact known answer and the early non-root/
+capability/descriptor/root/host-path/mount/root-regain denial controls in a real guest. It stops in
+the vsock-check family without connecting or sending. V25 adds only fixed socket/refusal/device
+observability and remains unexecuted. Later hostile-guest transport validation, installed
+confinement, and runtime/profile admission therefore remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

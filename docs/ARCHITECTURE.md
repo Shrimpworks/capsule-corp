@@ -281,7 +281,9 @@ unlinked-root teardown. That exact checkpoint is `PASSED` without reclassifying 
 Later v20-v23 runners refused before readiness without issuing start authorization or launching a
 guest. V23 retained authoritative staged-path/open-FD/runner hash evidence and proved the actual
 root was correct while the embedded expected digest bytes were malformed. The v24 literal-digest
-correction is reproducibly materialized but unexecuted. The final typed transport, hostile workload
+correction then launched one exact guest and passed the known answer plus early denial controls
+before stopping in the vsock-check family without connecting or sending. The v25 vsock diagnostic
+is reproducibly materialized but unexecuted. The final typed transport, later hostile workload
 corpus, installed composition, and admission remain `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state

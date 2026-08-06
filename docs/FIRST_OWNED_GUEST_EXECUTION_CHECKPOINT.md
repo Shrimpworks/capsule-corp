@@ -18,9 +18,11 @@
 | Controlled denial-test v22 execution | `BLOCKED` | Exact retained stderr localized exit 125 to `preflight-root-sha256`; no ready byte, authorization, libkrun configuration, HVF call, or guest launch occurred. Host-only hashing matches the expected root, so the inherited-FD/hash-state cause remains unresolved. |
 | Controlled denial-test v23 root-digest localization | `PASSED` | One exact authorized invocation proved the staged path, unlinked open FD, runner-computed digest, and actual root all agree. The embedded expected byte array was malformed beginning at zero-based byte 18. |
 | Controlled denial-test v23 hostile execution | `BLOCKED` | The runner refused before ready/authorization/libkrun/HVF/guest activity, so no denial-control result exists. |
-| Controlled denial-test v24 corrected materialization | `PASSED` | A fixed source/build-only successor replaces the byte array with the exact lowercase digest literal plus a C17 static length assertion. No v24 runner or guest was executed. |
-| Controlled denial-test v24 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v24's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V23 confirmed and corrected the pre-ready refusal's exact fixture bug. Typed transport, installed profile, the actual hostile denial corpus, and admission remain incomplete. |
+| Controlled denial-test v24 early denial controls | `PASSED` | One exact authorized guest reproduced the known answer and proved non-root/no-new-privileges/zero capabilities, sealed descriptors, read-only-root refusal, absent host paths, mount refusal, and root-regain refusal. |
+| Controlled denial-test v24 complete corpus | `BLOCKED` | The probe stopped generically in the vsock-check family before its expected marker. No connection or send occurred, but the exact socket/device sub-branch and all later controls remain unknown. |
+| Controlled denial-test v25 vsock-diagnostic materialization | `PASSED` | A fixed source/build-only successor adds distinct no-connect/no-send socket-open/refusal and device-visibility markers while preserving later controls. No v25 runner or guest was executed. |
+| Controlled denial-test v25 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v25's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V24 passed the corrected preflight, known answer, and early denial controls in a real guest and localized the remaining stop to vsock checks. Typed transport, the rest of the hostile corpus, installed composition, and admission remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -214,8 +216,9 @@ non-networking. Its v20 no-launch materialization is `PASSED`, but the exact v20
 attempt exposed a controller-convergence evidence gap. A build-only v22 successor now `PASSED`;
 its exact attempt localized the refusal to root hashing without resolving the cause. A build-only
 v23 hash-diagnostic successor and one exact invocation then confirmed the cause. A build-only v24
-corrected successor now `PASSED`; its dynamic execution is separately `BLOCKED` on fresh exact
-one-use authorization.
+corrected successor and one exact invocation then passed the early denial controls before stopping
+in the vsock family. A build-only v25 vsock-diagnostic successor now `PASSED`; its dynamic execution
+is separately `BLOCKED` on fresh exact one-use authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -343,13 +346,51 @@ passed.
 | Controller SHA-256 / bytes | `d177bc1e809dc53a6c8fcff736f6bb2ae40c0136cbe82a9b49ec01ef71f3c44c` / 3,434,770 |
 | Guest root SHA-256 | `06b18229ca215282c7aa405dc6b2d942291cecf613a111f21c03bd7a750808ab` |
 
-No v24 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
-The v20-v24 reports and receipts remain in the disposable local experiment workspace, so they are
-not durable release or admission evidence. Exact v24 execution must refuse any changed attempt,
+The later exact v24 invocation reached ready, created the exact attempt record, bound runner
+identity, consumed one start authorization, and launched the owned disposable guest. Both
+Supervisor root digests remained `06b18229...08ab`, and the governed-runtime known-answer hash
+matched `544d3d32...3542`. The guest then emitted exact markers proving:
+
+- PID 1 changed to the non-root identity with no-new-privileges and zero effective capabilities;
+- descriptors remained sealed;
+- root mutation failed with `EROFS`;
+- fixed host-only paths were absent;
+- mount failed with `EPERM`; and
+- regaining root failed with `EPERM`.
+
+The probe then failed generically before its expected `vsock=unavailable` marker. It emitted no
+later block-device, network, virtiofs, environment, or completion markers. Because probe stderr is
+intentionally not exported, v24 cannot distinguish socket-open success, an unrecognized refusal
+errno, or `/dev/vsock` visibility. It made no `connect` or send call, and preflight retained
+`externalConnectionAttempted: false` and `networkBytesSent: false`. The runner exited 0 and was
+reaped without force-kill; authorization-to-result was 218 ms, teardown was 4 ms, the root reached
+link count zero, the canary was unchanged, runner stdout was exact `R`, and runner stderr was empty.
+
+V25 preserves the vsock requirement and later denial corpus while adding distinct fixed markers
+for socket opened, expected refusal, unrecognized refusal, device visible, device absent, and
+unrecognized device probe. Its source contains no `connect`, `send`, `sendto`, or `sendmsg`. Two
+network-disabled A/B root builds were byte-identical, as were four signed runner builds, A/B
+profiles, and three controller builds; strict entitlement/signature, independent composed-digest,
+Go test/vet, and authority checks passed.
+
+| Field | Exact v25 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v25-hostile-vsock-diagnostic-owned-guest-20260806-01` |
+| Composed-profile digest | `7104377db3bd8f10e66e54101f31456a7e8bc50876306ac9109849f21ac7ee68` |
+| Materialized profile SHA-256 / bytes | `5fa632774f3c73dac312ce7dc0188d9311412182aaf67021cf9cfa38b3ec072e` / 31,497 |
+| Signed experimental runner SHA-256 / bytes | `8cf0515ad54d67c28bb177728557b5a505629983f82e2217dacc77e2758a0789` / 70,080 |
+| Controller SHA-256 / bytes | `b30c95aa0a570d324668084ff1a1a574f185f042f00f4544e6cd1d05e04d704f` / 3,434,770 |
+| Guest root SHA-256 | `c7da51d52c4d4a746076e404d7afb25ce1f5db178d3a0a1016ae07474fc0f82b` |
+| Fixed probe SHA-256 | `20118c9cf4f49a7781fab9a143d6b19e34e128421c2a6f440c8a739635d717af` |
+| Probe source SHA-256 | `ac15f3b2004b5e09fd8a9814f67221927db34e1d8a86fa7c2cf23249edeb363c` |
+
+No v25 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
+The v20-v25 reports and receipts remain in the disposable local experiment workspace, so they are
+not durable release or admission evidence. Exact v25 execution must refuse any changed attempt,
 digest, path, binary, or authority and must not launch until a fresh authorization names the
 values above.
 
-Even a passing v24 experiment will remain a controlled denial checkpoint, not the owner-only
+Even a passing v25 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

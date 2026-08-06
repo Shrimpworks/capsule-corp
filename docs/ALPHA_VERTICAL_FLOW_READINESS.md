@@ -43,7 +43,9 @@ governance promotions PASSED
   -> C2B v4 build/static materialization PASSED
   -> fixed benign owned guest v19 PASSED
   -> fixed denial-test v20 no-launch materialization PASSED
-  -> fixed denial-test v20 execution BLOCKED on fresh exact authorization
+  -> fixed denial-test v20 execution BLOCKED pre-ready with exact stage unknown
+  -> fixed denial-test v21 diagnostic materialization PASSED
+  -> fixed denial-test v21 execution BLOCKED on fresh exact authorization
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter

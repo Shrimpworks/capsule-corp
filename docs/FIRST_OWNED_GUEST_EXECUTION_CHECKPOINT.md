@@ -11,8 +11,10 @@
 | --- | --- | --- |
 | Exact v19 fixed-owned-guest attempt | `PASSED` | The registered fixed fixture booted, ran, produced its exact bounded proof, exited, was reaped, and had its unlinked root torn down. |
 | Controlled denial-test v20 no-launch materialization | `PASSED` | Two independent builds reproduced the exact network-disabled root, signed runner, profile, and controller; static validation found only the named local denial probes. No guest was launched. |
-| Controlled denial-test v20 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v20's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | The first real composition worked, but the intended typed transport, installed profile, hostile corpus, and final admission evidence remain incomplete. |
+| Controlled denial-test v20 execution | `BLOCKED` | The exact runner refused with exit 125 before readiness. No start authorization or guest launch occurred, and missing persisted early stderr leaves the failing pre-ready stage unknown. |
+| Controlled denial-test v21 diagnostic materialization | `PASSED` | A fixed source/build-only successor adds bounded pre-ready stage labels and early-stderr persistence without adding authority. No v21 runner or guest was executed. |
+| Controlled denial-test v21 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v21's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_BAD` | The first real composition worked, but the v20 pre-ready refusal exposed a diagnostic proof gap; typed transport, installed profile, hostile corpus, and admission also remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -201,8 +203,9 @@ at an exact immutable archive commit.
 ## The next controlled experiment
 
 The next slice is intentionally adversarial but still fixed, local, bounded, credential-free, and
-non-networking. Its no-launch materialization is `PASSED`; dynamic execution is `BLOCKED` on a
-fresh exact one-use authorization.
+non-networking. Its v20 no-launch materialization is `PASSED`, but the exact v20 runtime attempt is
+`BLOCKED` after a pre-ready refusal. A build-only v21 diagnostic successor is now `PASSED`; its
+dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -234,13 +237,35 @@ source/control/sink validation found no `connect`, `send`, `sendto`, `sendmsg`, 
 | Fixed denial probe SHA-256 | `d71c62cbc149f684ddbf836b57981f834f02ea6ee04344282e5cfd12864dbb52` |
 | Controller SHA-256 | `427508912de0968f881c3cf46a48c852467139b14972079b5d9cd2eaee6bdbdf` |
 
-No runner, libkrun/HVF process, or v20 guest was executed during materialization, and no v20
-evidence directory exists. The validation report and receipt currently remain in the disposable
-local experiment workspace, so they are not durable release or admission evidence. Exact v20
-execution must refuse any changed attempt, digest, path, binary, or authority and must not launch
-until a fresh authorization names the values above.
+The later exact v20 attempt passed every artifact preflight digest, then the signed runner exited
+125 before it reported ready. The controller therefore issued no guest start authorization, no
+`krun_start_enter` was observed, `guestAuthorized` remained false, and no attempt record was
+created. The controller reaped the runner without force-kill and completed unlinked-root teardown;
+kernel-console and completion output were both zero bytes. No network or credential authority or
+traffic existed. This is a fail-closed no-launch result, but not a fully diagnosed pass: the runner
+emitted only a generic refusal and the controller returned without persisting early stderr, so the
+exact pre-ready check or libkrun stage remains unknown.
 
-Even a passing v20 experiment will remain a controlled denial checkpoint, not the owner-only
+V21 preserves v20's probe and authority boundary while adding fixed bounded pre-ready stage labels
+and early-stderr persistence. Independent A/B construction reproduced its runner, profile, and
+controller; both runner signatures, independent composed-digest calculation, C17 warning-as-error
+builds, Go tests/vet, clean controller builds, and false/blocked authority assertions passed.
+
+| Field | Exact v21 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v21-hostile-preflight-diagnostic-owned-guest-20260806-01` |
+| Composed-profile digest | `bfe1481b7bf0cdcd8512f75cbd5f32642a3585fb27311363650ec1e49815b5b3` |
+| Materialized profile SHA-256 | `47de6320c780362c5cf04e3a884e6a8351574cf4f6977de877fe55f134aa2216` |
+| Signed experimental runner SHA-256 | `b9f22877f22731340e3b4a242e517bbc787e93b59058ee8b944c43caea061653` |
+| Controller SHA-256 | `ceee9b00e3ba12ee89f1f8b4b0f8e5af6148fa2ffa4b890a3a215b3a430adb6f` |
+
+No v21 runner, libkrun/HVF process, or guest was executed, and no v21 evidence directory exists.
+The v20/v21 reports and receipts remain in the disposable local experiment workspace, so they are
+not durable release or admission evidence. Exact v21 execution must refuse any changed attempt,
+digest, path, binary, or authority and must not launch until a fresh authorization names the
+values above.
+
+Even a passing v21 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

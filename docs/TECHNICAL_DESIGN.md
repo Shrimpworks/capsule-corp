@@ -995,7 +995,11 @@ implemented.
    passed one separately authorized fixed benign guest with immutable in-root inputs, a bounded
    diagnostic console proof, normal reap, and unlinked-root teardown. Preserve that result without
    substituting it for final typed transport, installed composition, or admission, which remain
-   `BLOCKED`.
+   `BLOCKED`. The v20 denial-test runner later refused before readiness without a start
+   authorization or guest launch, but missing early stderr prevented exact stage attribution.
+   Preserve v20 unchanged; v21 adds only bounded pre-ready stage labels and early-stderr
+   persistence, is reproducibly materialized without execution, and requires fresh exact one-use
+   authorization before its diagnostic attempt.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

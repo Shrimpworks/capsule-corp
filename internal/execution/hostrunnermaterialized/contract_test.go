@@ -27,6 +27,15 @@ func TestRetainedMaterializedProfile(t *testing.T) {
 	if verified.Profile().Runner.Ports[0].Name == "mutated" {
 		t.Fatal("profile accessor leaked retained slice")
 	}
+	profile.Predecessors[0] = 'X'
+	profile.BootRole.Libkrunfw[0] = 'X'
+	profile.Runner.Source[0] = 'X'
+	profile.ComposedProfile.Runtime[0] = 'X'
+	again := verified.Profile()
+	if again.Predecessors[0] == 'X' || again.BootRole.Libkrunfw[0] == 'X' ||
+		again.Runner.Source[0] == 'X' || again.ComposedProfile.Runtime[0] == 'X' {
+		t.Fatal("profile accessor leaked aliased json.RawMessage bytes")
+	}
 }
 
 func TestKnownAnswerMutationsRefuse(t *testing.T) {

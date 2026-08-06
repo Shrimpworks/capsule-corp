@@ -22,13 +22,13 @@ retained lookup/replay/uniqueness routing, F4B's atomic authority/lifecycle muta
 bounded second/later immutable-segment growth are also `PASSED` in their narrow local-conformance
 scopes. Product Source Validator work, installed owner-lock G3, and runtime/profile admission are
 `BLOCKED` on the named dependencies below. Governed `deno_core` and governed libkrun remain
-`IN_PROGRESS — TRENDING_BAD` after the v20 runner's undiagnosed pre-ready refusal; governed-runtime
+`IN_PROGRESS — TRENDING_BAD` after the v20/v21 undiagnosed pre-ready refusals; governed-runtime
 C2A, immutable C2B passive contracts, and the C2B
 v4 build/static materialization are `PASSED` only in their exact no-guest scopes. The first
 separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is now
 `PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
-runtime/profile admission remain `BLOCKED`. V21 diagnostic materialization is `PASSED` without
-execution or new authority, and its dynamic attempt remains separately authorization-bound.
+runtime/profile admission remain `BLOCKED`. V22 controller-convergence materialization is `PASSED`
+without execution or new authority, and its dynamic attempt remains separately authorization-bound.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a

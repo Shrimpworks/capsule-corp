@@ -9,9 +9,9 @@ The exact [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.
 `PASSED` only in its controlled experiment scope. The hostile owner-only internal-alpha parent is
 `IN_PROGRESS — TRENDING_GOOD`; connected product authority, typed hostile transport, installed
 runtime/profile admission, and external alpha remain `BLOCKED`. The narrower governed
-runtime/libkrun substream is `IN_PROGRESS — TRENDING_BAD` after v20 refused before readiness without
-enough persisted evidence to identify the exact stage; v21 diagnostic materialization passed
-without execution. This
+runtime/libkrun substream is `IN_PROGRESS — TRENDING_BAD` after v20 and v21 refused before readiness
+without enough persisted evidence to identify the exact stage; v22 controller-convergence
+materialization passed without execution. This
 checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 

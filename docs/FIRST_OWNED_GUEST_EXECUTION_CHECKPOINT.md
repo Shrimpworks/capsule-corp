@@ -12,9 +12,11 @@
 | Exact v19 fixed-owned-guest attempt | `PASSED` | The registered fixed fixture booted, ran, produced its exact bounded proof, exited, was reaped, and had its unlinked root torn down. |
 | Controlled denial-test v20 no-launch materialization | `PASSED` | Two independent builds reproduced the exact network-disabled root, signed runner, profile, and controller; static validation found only the named local denial probes. No guest was launched. |
 | Controlled denial-test v20 execution | `BLOCKED` | The exact runner refused with exit 125 before readiness. No start authorization or guest launch occurred, and missing persisted early stderr leaves the failing pre-ready stage unknown. |
-| Controlled denial-test v21 diagnostic materialization | `PASSED` | A fixed source/build-only successor adds bounded pre-ready stage labels and early-stderr persistence without adding authority. No v21 runner or guest was executed. |
-| Controlled denial-test v21 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v21's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_BAD` | The first real composition worked, but the v20 pre-ready refusal exposed a diagnostic proof gap; typed transport, installed profile, hostile corpus, and admission also remain incomplete. |
+| Controlled denial-test v21 diagnostic materialization | `PASSED` | A fixed source/build-only successor added bounded pre-ready stage labels and early-stderr persistence without adding authority. |
+| Controlled denial-test v21 execution | `BLOCKED` | The ready pipe reached EOF before `R`; no start authorization or guest launch occurred. Controller selection returned before stderr drain and authoritative waitpid evidence persisted. |
+| Controlled denial-test v22 convergence materialization | `PASSED` | A fixed source/build-only successor converges every non-`R` result through bounded wait, stderr persistence, waitpid evidence, and canary verification. No v22 runner or guest was executed. |
+| Controlled denial-test v22 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v22's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_BAD` | The first real composition worked, but the v20/v21 pre-ready refusals exposed diagnostic and controller-convergence proof gaps; typed transport, installed profile, hostile corpus, and admission also remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -204,8 +206,9 @@ at an exact immutable archive commit.
 
 The next slice is intentionally adversarial but still fixed, local, bounded, credential-free, and
 non-networking. Its v20 no-launch materialization is `PASSED`, but the exact v20 runtime attempt is
-`BLOCKED` after a pre-ready refusal. A build-only v21 diagnostic successor is now `PASSED`; its
-dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
+`BLOCKED` after a pre-ready refusal. V21 diagnostic materialization also `PASSED`, but its exact
+attempt exposed a controller-convergence evidence gap. A build-only v22 successor now `PASSED`;
+its dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -259,13 +262,34 @@ builds, Go tests/vet, clean controller builds, and false/blocked authority asser
 | Signed experimental runner SHA-256 | `b9f22877f22731340e3b4a242e517bbc787e93b59058ee8b944c43caea061653` |
 | Controller SHA-256 | `ceee9b00e3ba12ee89f1f8b4b0f8e5af6148fa2ffa4b890a3a215b3a430adb6f` |
 
-No v21 runner, libkrun/HVF process, or guest was executed, and no v21 evidence directory exists.
-The v20/v21 reports and receipts remain in the disposable local experiment workspace, so they are
-not durable release or admission evidence. Exact v21 execution must refuse any changed attempt,
-digest, path, binary, or authority and must not launch until a fresh authorization names the
-values above.
+The later exact v21 attempt also passed every artifact preflight hash, then the ready pipe returned
+EOF before the required `R`. No guest start authorization or network activity occurred,
+`guestAuthorized` remained false, the attempt record was absent, kernel-console and completion
+output were empty, and unlinked-root teardown reached link count zero. However, the controller
+selected ready-EOF before process wait, so it again returned without persisting drained stage stderr
+or authoritative waitpid evidence. V21 therefore remains `BLOCKED`: it narrowed the controller
+failure mode but still did not reveal the runner's exact pre-ready stage.
 
-Even a passing v21 experiment will remain a controlled denial checkpoint, not the owner-only
+V22 preserves v21 and changes only fresh identities plus controller convergence. Every non-`R`
+ready result now boundedly waits for the exact child result, persists bounded stderr, records
+waitpid, and verifies canary bytes before returning. Independent A/B construction reproduced its
+runner, profile, and controller; strict signatures, independent composed-digest calculation, Go
+tests/vet, two clean controller builds, and false/blocked authority assertions passed.
+
+| Field | Exact v22 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v22-hostile-preflight-diagnostic-owned-guest-20260806-01` |
+| Composed-profile digest | `e1b2057f8ab61597364445b59c5252bcd553ed8a477552e786528552e7abe550` |
+| Materialized profile SHA-256 | `2c76a24992d7e86786b8b0a8ee3f249128d5a6054680f209d51f8b597038a714` |
+| Signed experimental runner SHA-256 | `6288ebca25d664ee9d244045cdcb9fc75894e396d46ec0b02ea01793070055bf` |
+| Controller SHA-256 | `e4ffe3758f21337d18e8297a33b1cd3a3f54dcfde5124d43572b4d14659c84a0` |
+
+No v22 runner, libkrun/HVF process, or guest was executed. The v20-v22 reports and receipts remain
+in the disposable local experiment workspace, so they are not durable release or admission
+evidence. Exact v22 execution must refuse any changed attempt, digest, path, binary, or authority
+and must not launch until a fresh authorization names the values above.
+
+Even a passing v22 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

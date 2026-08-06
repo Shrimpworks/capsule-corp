@@ -357,12 +357,12 @@ identity is invented. The v4 runner and libkrun were never loaded or executed in
 scope. A later separately authorized
 [v19 fixed-owned-guest experiment](../FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) loaded its exact
 experimental successor bytes and passed one fixed benign boot/runtime/console-proof/reap/teardown
-attempt. It did not use the final typed transport or hostile source. The next exact v20 runner
-refused before readiness; the Supervisor issued no start authorization, no guest launched, and
-unlinked-root teardown completed. That fail-closed outcome does not close the diagnostic gap caused
-by missing persisted early stderr. V21 adds only fixed pre-ready labels and early-stderr custody and
-remains unexecuted. Hostile-guest transport validation, installed confinement, and runtime/profile
-admission therefore remain `BLOCKED`.
+attempt. It did not use the final typed transport or hostile source. The next exact v20 and v21
+runners refused before readiness; the Supervisor issued no start authorization and no guest
+launched. Those fail-closed outcomes do not close the diagnostic gap because the controller still
+returned without authoritative stderr/waitpid evidence. V22 adds only bounded non-ready child/
+stderr/waitpid/canary convergence and remains unexecuted. Hostile-guest transport validation,
+installed confinement, and runtime/profile admission therefore remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

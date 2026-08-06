@@ -215,11 +215,14 @@ Proposed ADR-0038 now selects a separately enrolled on-demand Trust Coordinator 
 root-sign the request/record while the Supervisor creates the private root and lock. Passive
 objects and exact Team-3DDR profile/signing preflight passed, but the required I2B3 stale-profile
 test proved that the archived I1B Supervisor profile could rewrite current-profile state in the
-stable App Sandbox container. The run stopped before keys, services, installation, or root
-creation. A versioned signing/container epoch and the installed handoff/session/update and
-descriptor-relative store matrices remain open, so this is still an unwired local mechanic rather
-than a product authority boundary. See the
-[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+stable App Sandbox container. Proposed ADR-0045 now selects a distinct versioned Supervisor-
+authority-epoch candidate across application identity, private container, LaunchAgent, bootstrap
+group/service, Keychain groups, descriptor, and state engine; the stable identity is legacy
+residue. The decision and inert matrix are passive only. Exact Apple Development identity-
+separation, handoff/session/update, and descriptor-relative store matrices remain open, so this is
+still an unwired local mechanic rather than a product authority boundary. See the
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md) and
+[authority-epoch packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).
 
 See [Execution Supervisor](EXECUTION_SUPERVISOR.md).
 

@@ -4,6 +4,7 @@
 - Date: 2026-08-03
 - Refines if accepted: ADR-0012, ADR-0018, ADR-0025, ADR-0029, and ADR-0031
 - Bootstrap responsibility refined by: ADR-0038
+- Authority identity and container epoch refined by: Proposed ADR-0045
 
 ## Context
 

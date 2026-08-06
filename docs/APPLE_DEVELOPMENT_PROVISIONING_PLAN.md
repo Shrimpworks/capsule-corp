@@ -7,8 +7,10 @@ documentation slice did not mutate the Apple Developer portal, Keychain, profile
 or installed services. Accepted ADR-0037 later selected the containing topology, and the exact
 Apple Development I1B/Source Validator R3 installed experiment is `PASSED` using three explicit
 Team-`3DDR84M4JS` profiles. Sections that describe the earlier Option A/Option B choice or the S5
-matrix are retained planning history, not current instructions. Installed I2B remains `BLOCKED` on
-separately authorized I2B3 Coordinator/bootstrap provisioning and its named evidence gates.
+matrix are retained planning history, not current instructions. Proposed ADR-0045 now selects a
+versioned Supervisor-authority-epoch candidate and inert experiment packet. Installed I2B remains
+`BLOCKED` on separately authorized epoch-one App IDs/profiles, signing, disposable-container
+nonmembership, and the later Coordinator/bootstrap evidence gates.
 The completed experiment's public evidence is retained in the
 [pinned R3 archive](https://github.com/Shrimpworks/capsule-experiments/tree/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/macos-i1b-r3-signed-development-composition).
 
@@ -128,12 +130,14 @@ separately enrolled daemon and Supervisor roles. Neither historical option autho
 | --- | --- | --- |
 | Visible Approval Broker app | `com.capsulecorp.capsule.broker` | Selected by ADR-0037; exact development profile passed I1B/R3 |
 | Agent-facing daemon | `com.capsulecorp.capsule.daemon` | Selected by ADR-0037; exact development profile passed I1B/R3 |
-| Execution Supervisor | `com.capsulecorp.capsule.supervisor` | Selected by ADR-0037; exact development profile passed I1B/R3; embeds the in-process native front end |
+| Execution Supervisor | `com.capsulecorp.capsule.supervisor` | Historical stable identity; I1B/R3 and I2B3 preflight evidence retained, but Proposed ADR-0045 classifies it as legacy residue rather than an admitted authority epoch |
 | Daemon-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.daemon.v1` | Nested signed identity passed inactive-policy R3 without an independent portal profile |
 | Broker-private Source Validator XPC service | `com.capsulecorp.capsule.source-validator.approval-broker.v1` | Nested signed identity passed inactive-policy R3 without an independent portal profile |
 | Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
 | Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
-| Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Exact App ID/profile and signed-entitlement preflight passed I2B3; process/key/service/root work did not begin after the stale-Supervisor stop |
+| Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Historical unlaunched I2B3 preflight identity and legacy residue; epoch one uses a fresh versioned identity only after separate authorization |
+| Authority-epoch-one Supervisor candidate | `com.capsulecorp.capsule.supervisor.authority-e1` | Selected only by Proposed ADR-0045; inert construction and authorized Apple Development profile/signing/container evidence remain `BLOCKED` |
+| Authority-epoch-one Coordinator candidate | `com.capsulecorp.capsule.trust-bootstrap.authority-e1` | Selected only by Proposed ADR-0045; inert construction and authorized Apple Development profile/signing evidence remain `BLOCKED` |
 | Native front-end (Supervisor's C/Obj-C shim) | N/A — not a separate bundle | Shares `com.capsulecorp.capsule.supervisor`'s code identity |
 | Guest launcher/runner (flagged for completeness, outside this provisioning plan) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
 
@@ -350,11 +354,11 @@ Per this plan's explicit scope (no authorized Developer ID/notarization use):
 3. **Keep the central operational inventory deferred for the current one-maintainer stage.** The
    pinned R3 archive and evidence ledger retain current redacted metadata. Create a shared location
    when a second maintainer, production signing, or CI notarization requires it.
-4. **Resolve and reauthorize I2B3 after the stale-profile stop.** Exact profiles and signed
-   entitlements passed, but the stable Supervisor private container remained writable by the
-   archived I1B profile. Select an ADR-governed signing/container epoch, provision only its exact
-   replacement identifiers/profiles, and separately authorize caller/key, App Group/service/root,
-   and descriptor-relative evidence; keep runtime, backend, guest, and attempts absent.
+4. **Execute the ADR-0045 gates in order.** First retain and review the inert epoch-one packet.
+   Then separately authorize only its exact versioned App IDs/profiles, signing/readback, and
+   disposable-container nonmembership matrix. If that passes, separately authorize caller/key,
+   App Group/service/root, and descriptor-relative evidence; keep runtime, backend, guest, and
+   attempts absent.
 5. **Retain any later credentialed evidence outside chat.** Archive the exact public metadata and
    results in `capsule-experiments`, pin its immutable commit here, and update the evidence ledger.
    Raw profiles, private keys, and credentials remain excluded.

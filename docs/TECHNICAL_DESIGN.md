@@ -34,10 +34,12 @@ projections while requiring `unsigned-profile-inactive` refusal. This is `PASSED
 evidence only. The production-shaped wrapper review and I2B3 exact Team-3DDR profile/signing
 preflight are also `PASSED` in their narrow scopes. I2B3 then stopped before Keychain, service,
 installation, Coordinator, or root work because the archived I1B Supervisor profile could rewrite
-current-profile state in the stable private container. A versioned signing/container identity
-decision now blocks the remaining handoff. See the
+current-profile state in the stable private container. Proposed ADR-0045 now selects a separate
+versioned Supervisor-authority-epoch candidate and inert experiment packet, but no installed OS
+separation evidence exists. See the
 [I2B2 construction result](MACOS_INSTALLATION_I2B2_UNSIGNED_CONSTRUCTION.md) and
-[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md) and
+[authority-epoch packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).
 
 ## Current versus intended state
 
@@ -91,7 +93,10 @@ store or completion path.
 Proposed ADR-0033 now selects the owner-lock mechanism at design level: open and validate one
 installation-root-authorized, Supervisor-created, pre-created sibling object, acquire nonblocking
 BSD `flock`, and retain the opaque `CLOEXEC` descriptor for the Supervisor lifetime. Proposed
-ADR-0038 selects the one-shot Coordinator/Supervisor authorization and creation ceremony. The
+ADR-0038 selects the one-shot Coordinator/Supervisor authorization and creation ceremony.
+Proposed ADR-0045 separately selects the versioned authority identity/container/LaunchAgent/group/
+key-group/descriptor/state-engine tuple and forward-only retirement rules; it does not merge that
+tuple with release or installation-trust metadata. The
 passive I2B1 contract now freezes its exact request/record CDDL, raw and calculated maxima,
 independently generated signed fixtures, strict Go verifier, independent Swift verifier, and field
 authority without activating a signer or installed handoff. The

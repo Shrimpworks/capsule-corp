@@ -278,10 +278,21 @@ test found an unresolved boundary: a Supervisor signed with the still-valid arch
 could rewrite a current-profile sentinel because both stable signing identifiers resolve the same
 App Sandbox private container. New CDHash, profile, App Group, and role-private Keychain-group
 projections did not version that filesystem authority. The run stopped and cleaned the exact
-sentinel before any key, service, installation, or root existed. Installed I2 is therefore
-`BLOCKED` on an ADR-selected signing/container epoch; peer requirements alone do not close
-separately launched stale-code write authority. See the
+sentinel before any key, service, installation, or root existed. Proposed ADR-0045 now selects a
+versioned signing/container authority epoch, but installed I2 remains `BLOCKED` on its exact
+Apple Development evidence; peer requirements alone do not close separately launched stale-code
+write authority. See the
 [I2B3 blocker result](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+
+Proposed ADR-0045 selects a fresh explicit Supervisor and Coordinator application identity,
+private-container association, LaunchAgent label, bootstrap App Group/Mach service, role-specific
+Keychain groups, descriptor digest, and state schema/engine binding for each independent
+`SupervisorAuthorityEpoch`. The stable Supervisor identity is legacy residue and is never epoch
+zero. OS nonmembership must deny stale access to the new private container and groups without a
+consent override; exact peer requirements and signed epoch objects only detect stale protocol
+traffic and cannot substitute for that denial. A foreign-container prompt or granted consent moves
+the case to the elevated user-granted tier and keeps attempts disabled. The passive decision and
+inert mutation matrix supply no installed control evidence; I2B remains `BLOCKED`.
 
 The proposed Source Preparer's sole role-namespaced store is an ownership topology, not a security
 boundary by itself. TypeScript P1 requires an exact OS-enforced protected container with the Source
@@ -433,6 +444,9 @@ enters `repair-required` rather than accepting whichever components start.
 
 - Trusted IPC checks code identity, effective user/session, exact enrolled build, relevant
   entitlements, and common epoch using supported OS mechanisms.
+- Supervisor state additionally binds a distinct versioned `SupervisorAuthorityEpoch`; release and
+  installation-trust epochs reference its digest but do not replace its application/container/
+  group/key/state-engine identity.
 - Debugged, dynamically invalid, mismatched, stale, or partially updated components cannot claim
   validated posture. Stable App Sandbox container identity is not treated as a stale-binary write
   fence; I2B3 proved an archived Supervisor profile could reach current-profile container state.

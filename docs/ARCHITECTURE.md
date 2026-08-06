@@ -282,9 +282,10 @@ Later v20-v23 runners refused before readiness without issuing start authorizati
 guest. V23 retained authoritative staged-path/open-FD/runner hash evidence and proved the actual
 root was correct while the embedded expected digest bytes were malformed. The v24 literal-digest
 correction then launched one exact guest and passed the known answer plus early denial controls
-before stopping in the vsock-check family without connecting or sending. The v25 vsock diagnostic
-is reproducibly materialized but unexecuted. The final typed transport, later hostile workload
-corpus, installed composition, and admission remain `BLOCKED`.
+before stopping in the vsock-check family without connecting or sending. Pre-launch semantic review
+marked v25 `NO_GO` because socket creation alone is not usable authority. The v26 local-CID/failure-
+detail diagnostic is reproducibly materialized but unexecuted. The final typed transport, later
+hostile workload corpus, installed composition, and admission remain `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
 transitions, fault recovery, and evidence composition.

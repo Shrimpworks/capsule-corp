@@ -20,9 +20,10 @@
 | Controlled denial-test v23 hostile execution | `BLOCKED` | The runner refused before ready/authorization/libkrun/HVF/guest activity, so no denial-control result exists. |
 | Controlled denial-test v24 early denial controls | `PASSED` | One exact authorized guest reproduced the known answer and proved non-root/no-new-privileges/zero capabilities, sealed descriptors, read-only-root refusal, absent host paths, mount refusal, and root-regain refusal. |
 | Controlled denial-test v24 complete corpus | `BLOCKED` | The probe stopped generically in the vsock-check family before its expected marker. No connection or send occurred, but the exact socket/device sub-branch and all later controls remain unknown. |
-| Controlled denial-test v25 vsock-diagnostic materialization | `PASSED` | A fixed source/build-only successor adds distinct no-connect/no-send socket-open/refusal and device-visibility markers while preserving later controls. No v25 runner or guest was executed. |
-| Controlled denial-test v25 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v25's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V24 passed the corrected preflight, known answer, and early denial controls in a real guest and localized the remaining stop to vsock checks. Typed transport, the rest of the hostile corpus, installed composition, and admission remain incomplete. |
+| Controlled denial-test v25 runtime candidate | `NO_GO` | Pre-launch semantic review showed socket creation alone is not usable vsock/network authority, so v25 tested the wrong property. It was not authorized or launched. |
+| Controlled denial-test v26 consolidated materialization | `PASSED` | A fixed source/build-only successor checks `VM_SOCKETS_GET_LOCAL_CID`, retains no-connect/no-send behavior, and reports one fixed failure reason plus bounded console progress. No v26 runner or guest was executed. |
+| Controlled denial-test v26 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v26's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V24 passed corrected preflight, known answer, and early denial controls; semantic review corrected the vsock property before another launch, and v26 consolidates the remaining diagnostics. Typed transport, the rest of the hostile corpus, installed composition, and admission remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -217,8 +218,9 @@ attempt exposed a controller-convergence evidence gap. A build-only v22 successo
 its exact attempt localized the refusal to root hashing without resolving the cause. A build-only
 v23 hash-diagnostic successor and one exact invocation then confirmed the cause. A build-only v24
 corrected successor and one exact invocation then passed the early denial controls before stopping
-in the vsock family. A build-only v25 vsock-diagnostic successor now `PASSED`; its dynamic execution
-is separately `BLOCKED` on fresh exact one-use authorization.
+in the vsock family. Pre-launch review then marked v25 `NO_GO` because socket creation is not the
+authority the control meant to test. A build-only v26 consolidated successor now `PASSED`; its
+dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -384,13 +386,43 @@ Go test/vet, and authority checks passed.
 | Fixed probe SHA-256 | `20118c9cf4f49a7781fab9a143d6b19e34e128421c2a6f440c8a739635d717af` |
 | Probe source SHA-256 | `ac15f3b2004b5e09fd8a9814f67221927db34e1d8a86fa7c2cf23249edeb363c` |
 
-No v25 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
-The v20-v25 reports and receipts remain in the disposable local experiment workspace, so they are
-not durable release or admission evidence. Exact v25 execution must refuse any changed attempt,
-digest, path, binary, or authority and must not launch until a fresh authorization names the
-values above.
+No v25 runner, libkrun/HVF process, or guest was executed, and no authorization was consumed. A
+retained semantic review showed that Capsule's own Source Validator policy treats socket creation
+alone as non-authoritative, while the retained libkrun/HVF evidence uses `AF_VSOCK` plus
+`VM_SOCKETS_GET_LOCAL_CID` and observes that socket creation may succeed even when the ioctl fails
+and no transport exists. V25 therefore tested the wrong property and is `NO_GO` before launch.
 
-Even a passing v25 experiment will remain a controlled denial checkpoint, not the owner-only
+V26 keeps `AF_VSOCK` only as a prerequisite and evaluates ioctl `0x80047bb9`. Socket
+`EPERM`/`ENODEV`/`EAFNOSUPPORT` and ioctl `ENODEV`/`ENOTTY` are bounded unavailable outcomes;
+ioctl success fails the control. Pathname visibility remains non-authoritative, and the probe has
+no `connect`, `send`, `sendto`, or `sendmsg` call. Every failure first emits a fixed-source
+`C2BHOSTILE26:failure-detail=...` line. The Supervisor records console line count, matched-prefix
+line count, last marker, and failure detail so a future mismatch can be localized without another
+marker-only guest revision.
+
+Two network-disabled A/B roots were byte-identical. Independent runner/signature/profile/digest/
+controller reproduction plus Go test/vet and policy/source assertions passed.
+
+| Field | Exact v26 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v26-hostile-consolidated-owned-guest-20260806-01` |
+| Composed-profile digest | `5f460f8955d1cccd5140e01ac32007edc44974935bbbb408e49078f1acceff7a` |
+| Materialized profile SHA-256 | `d3851c76f4077f9dfbfaee6458e6f73c34f61aa6dfdabda7d77e5dda915b3d44` |
+| Guest root SHA-256 | `aec0bdd98025cfc9f0b74dba9da72c8351723b755d001808b010fc1ed1fd0357` |
+| Fixed probe SHA-256 | `bcd52e26c512eb249ec723f72e96c4308c468b69364765995f32cd8728fd3ebf` |
+| Runner source SHA-256 | `a7a1dfd50c1b44aaa72099acf7b989122b016207765a8c235ec7e3a834b3707d` |
+| Signed experimental runner SHA-256 | `8197b43b0e009aa5236ce2c8d6372f0b412bc6c6b3bb8eb2df240febd173b8f1` |
+| Controller source SHA-256 | `a2058ddbb257fc8e9754b89a6d374310e99ee751997680775b87c94510a0d5be` |
+| Controller binary SHA-256 | `d52ffe731c8b935c25beae993700fc5840697d8423f7eb1739df24e52da4608c` |
+
+No v26 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
+The v20-v26 reports and receipts remain in the disposable local experiment workspace, so they are
+not durable release or admission evidence. Exact v26 execution must refuse any changed attempt,
+digest, path, binary, or authority and must not launch until a fresh authorization names the
+values above. The one-use safeguard remains per actual launch; consolidated diagnostics do not
+create standing or batch authority.
+
+Even a passing v26 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

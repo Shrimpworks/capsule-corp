@@ -11,8 +11,9 @@ The exact [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.
 runtime/profile admission, and external alpha remain `BLOCKED`. The narrower governed
 runtime/libkrun substream returned to `IN_PROGRESS — TRENDING_GOOD` after v23 proved the actual root
 digest was correct and the embedded expected bytes were malformed. V24 then passed corrected
-preflight/known-answer/early denial controls before stopping in the vsock family; v25 diagnostic
-materialization passed without execution. This
+preflight/known-answer/early denial controls before stopping in the vsock family. Semantic review
+marked v25 `NO_GO`, and v26 consolidated local-CID/failure-detail materialization passed without
+execution. This
 checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 

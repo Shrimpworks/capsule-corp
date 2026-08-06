@@ -1001,8 +1001,10 @@ implemented.
    Preserve those attempts unchanged; v24 replaces the byte array with the exact lowercase digest
    literal plus a C17 static length assertion, then passes the corrected preflight, known answer,
    and early denial controls before stopping in the vsock-check family without connecting or
-   sending. V25 adds only distinct fixed socket/refusal/device markers, is reproducibly materialized
-   without execution, and requires fresh exact one-use authorization before its diagnostic attempt.
+   sending. Mark v25 `NO_GO`: socket creation alone is not usable transport authority. V26 instead
+   tests `VM_SOCKETS_GET_LOCAL_CID`, retains no-connect/no-send behavior, and adds one fixed failure
+   reason plus bounded console progress. It is reproducibly materialized without execution and
+   requires fresh exact one-use authorization before its consolidated diagnostic attempt.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

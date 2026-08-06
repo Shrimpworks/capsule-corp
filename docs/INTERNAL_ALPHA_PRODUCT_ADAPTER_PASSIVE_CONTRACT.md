@@ -58,3 +58,9 @@ exact logical records without activating a product service.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`.
+
+Successor prerequisite: the later
+[S3 native contract](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) is `PASSED` for exact passive
+XPC dictionary keys/types, numeric method/status/reason tags, versions, key counts, and refusal
+fixtures for all three methods. The one-time native harness, peer-authentication evidence, installed
+profile, consumers, and product admission remain `BLOCKED`.

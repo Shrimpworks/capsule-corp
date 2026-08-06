@@ -105,6 +105,13 @@ projection, the exact 87..95-byte canonical source manifest, and 0..262,144 sour
 authenticated bridge, endpoint, Broker consumer, approval, attempt, runtime, backend, or guest is
 created, and the fixed-store oracle is not product admission.
 
+The passive S3 prerequisite now also freezes exact XPC dictionary keys/types, numeric method/
+status/reason tags, versions, key counts, method-derived service/role/purpose/audience bindings,
+and Go/Node cap-plus-one/malformed/extra/wrong-binding/refusal fixtures for `SubmitMainMJSV0`,
+`RegisterPlanV0`, and `GetRegisteredPlanV0`. It creates no listener or service and supplies no
+peer-authentication evidence. The separately authorized native harness and installed identity/
+update matrix remain `BLOCKED`.
+
 PR #72 retained the Source Preparer as **BLOCKED**. A separately enrolled unprivileged Source
 Preparer remains only a conditional later TypeScript design. P1 passive
 contracts have not begun. Its entry blockers remain:

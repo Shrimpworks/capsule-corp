@@ -39,9 +39,11 @@ already-passed passive/local mechanics from the still-blocked product compositio
 authority-plane cutover now atomically retains the exact plan, complete bindings, manifest, and
 source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
 path. Accepted ADR-0044 now selects exactly one bounded private-XPC internal-alpha CLI submission
-candidate and its passive logical envelope/aggregate-flow contract is `PASSED`; no listener,
-signing, peer-authentication, installed inventory, protected state, or consumer is active. No
-connected product path yet carries submitted `main.mjs` through authenticated
+candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. The follow-on S3
+prerequisite now also freezes exact XPC dictionary keys/types, numeric method/status/reason tags,
+versions, envelope key counts, and generated cross-language refusal fixtures for the three passive
+methods. No listener, signing, peer-authentication, installed inventory, protected state, or
+consumer is active. No connected product path yet carries submitted `main.mjs` through authenticated
 registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle
 drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per attempt and
 moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and physical authority

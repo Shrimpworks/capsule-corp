@@ -68,8 +68,10 @@ The same Go authority path now includes the unwired E1-E5 durable lifecycle chec
 colocated fixed snapshot retains attempts, lifecycle intents, stable fake effect/instance
 identities, reconciliation, exact active/retained ceilings, and repeated-startup behavior while
 `FakeBackend.CreatesGuest() == false`. Proposed ADR-0029 selects a native-fronted, in-process Go
-Supervisor topology for the future authenticated boundary. No native bridge fixture, product XPC
-service, production owner lock, consumer, runtime, backend effect, or guest is connected.
+Supervisor topology for the future authenticated boundary. The passive S3 prerequisite now freezes
+the exact native dictionary contract and cross-language fixtures for three methods, but no native
+harness/bridge execution, product XPC service, production owner lock, consumer, runtime, backend
+effect, or guest is connected.
 
 The follow-on [passive durable completion-last contract](DURABLE_COMPLETION_CONTRACT.md) now adds a
 separate bounded fixed-file producer/store oracle. It revalidates retained attempt, plan, source,

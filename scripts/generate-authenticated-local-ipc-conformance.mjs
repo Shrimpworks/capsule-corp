@@ -10,6 +10,72 @@ const submissionAudience = "capsule.daemon.local.v0";
 const roleBindingRecordVersion = 0;
 const authorityDisposition = "service-role-purpose-audience-derived";
 const requestIdDisposition = "correlation-only";
+const nativeXPCEncoding = "xpc-dictionary-v0";
+const nativeXPCEncodingVersion = 0;
+const nativeXPCTypes = Object.freeze({
+  uint64: "XPC_TYPE_UINT64",
+  data: "XPC_TYPE_DATA",
+  string: "XPC_TYPE_STRING",
+});
+const nativeXPCKeys = Object.freeze({
+  protocolVersion: "capsule.protocol-version",
+  methodVersion: "capsule.method-version",
+  messageTag: "capsule.message-tag",
+  requestId: "capsule.request-id",
+  installationId: "capsule.installation-id",
+  epochSequence: "capsule.epoch-sequence",
+  epochDigest: "capsule.epoch-digest",
+  audience: "capsule.audience",
+  purpose: "capsule.purpose",
+  status: "capsule.status",
+  reason: "capsule.reason",
+  jobProposal: "capsule.job-proposal",
+  executionPlan: "capsule.execution-plan",
+  roleBindings: "capsule.role-bindings",
+  sourceManifest: "capsule.source-manifest",
+  source: "capsule.source",
+  registrationId: "capsule.registration-id",
+  planRegistration: "capsule.plan-registration",
+});
+const nativeXPCMessageTags = Object.freeze({
+  invalid: 0,
+  SubmitMainMJSV0: 1,
+  RegisterPlanV0: 2,
+  GetRegisteredPlanV0: 3,
+});
+const nativeXPCStatusTags = Object.freeze({
+  OK: 0,
+  MALFORMED: 1,
+  UNSUPPORTED: 2,
+  SCHEMA: 3,
+  BINDING: 4,
+  AUTHENTICATION: 5,
+  STALE: 6,
+  REPLAY: 7,
+  CAPACITY: 8,
+  TRUST_STATE: 9,
+  LOCAL_FAILURE: 10,
+  RECOVERY_REQUIRED: 11,
+  SEMANTIC: 12,
+  DOMAIN: 13,
+});
+const nativeXPCReasonTags = Object.freeze({
+  none: 0,
+  keySet: 1,
+  valueType: 2,
+  dataWidth: 3,
+  dataCap: 4,
+  zeroIdentifier: 5,
+  epochSequence: 6,
+  protocolVersion: 7,
+  methodVersion: 8,
+  messageTag: 9,
+  methodBinding: 10,
+  currentState: 11,
+  capacity: 12,
+  coreRefusal: 13,
+  localIntegrityFault: 14,
+});
 const supervisorFlow = Object.freeze({
   peerRequirementBeforeDeliveryRequired: true,
   methodAuthorityDisposition: authorityDisposition,
@@ -103,6 +169,42 @@ const methods = {
     ...supervisorFlow,
   },
 };
+
+const nativeXPCEnvelopes = Object.fromEntries(
+  Object.values(methods).map((method) => {
+    const tag = nativeXPCMessageTags[method.method];
+    const body = nativeXPCBodyFields(method.method);
+    return [
+      method.method,
+      {
+        request: nativeXPCEnvelope(
+          method,
+          "request",
+          tag,
+          9 + body.request.length,
+          method.requestDataMaxBytes,
+          [...nativeXPCRequestHeader(method, tag), ...body.request],
+        ),
+        successReply: nativeXPCEnvelope(
+          method,
+          "success-reply",
+          tag,
+          6 + body.reply.length,
+          method.replyDataMaxBytes,
+          [...nativeXPCReplyHeader(method, tag, true), ...body.reply],
+        ),
+        refusalReply: nativeXPCEnvelope(
+          method,
+          "refusal-reply",
+          tag,
+          6,
+          0,
+          nativeXPCReplyHeader(method, tag, false),
+        ),
+      },
+    ];
+  }),
+);
 
 const proposal = await repositoryFixture("schemas/conformance/v0/job-proposal/ordinary.json");
 const plan = await repositoryFixture("schemas/conformance/authority-plane-v0/execution-plan.cbor");
@@ -236,6 +338,88 @@ const zeroEffects = Object.freeze({
   backendCreated: false,
   guestCreated: false,
 });
+
+const nativeXPCContract = {
+  objectType: "capsule.authenticated-local-ipc-native-xpc-contract",
+  objectVersion: 0,
+  status: "passive-unwired-no-listener",
+  transportEncoding: nativeXPCEncoding,
+  transportEncodingVersion: nativeXPCEncodingVersion,
+  fixtureSerialization: "exact-json-description-of-xpc-dictionaries",
+  topLevelObjectType: "XPC_TYPE_DICTIONARY",
+  valueTypes: nativeXPCTypes,
+  keys: nativeXPCKeys,
+  messageTags: nativeXPCMessageTags,
+  statusTags: nativeXPCStatusTags,
+  reasonTags: nativeXPCReasonTags,
+  classificationToStatus: Object.fromEntries(
+    Object.entries(nativeXPCStatusTags).filter(([classification]) => classification !== "OK"),
+  ),
+  structuralReasonToStatus: {
+    keySet: nativeXPCStatusTags.MALFORMED,
+    valueType: nativeXPCStatusTags.MALFORMED,
+    dataWidth: nativeXPCStatusTags.SCHEMA,
+    dataCap: nativeXPCStatusTags.MALFORMED,
+    zeroIdentifier: nativeXPCStatusTags.SCHEMA,
+    epochSequence: nativeXPCStatusTags.SCHEMA,
+    protocolVersion: nativeXPCStatusTags.UNSUPPORTED,
+    methodVersion: nativeXPCStatusTags.UNSUPPORTED,
+    messageTag: nativeXPCStatusTags.UNSUPPORTED,
+    methodBinding: nativeXPCStatusTags.AUTHENTICATION,
+    currentState: nativeXPCStatusTags.BINDING,
+    capacity: nativeXPCStatusTags.CAPACITY,
+  },
+  coreRefusalMapping: "classification-selects-status;reason=coreRefusal",
+  localIntegrityMapping: "terminate-without-reply;reason-tag-is-fixture-diagnostic-only",
+  methodBindings: Object.fromEntries(
+    Object.values(methods).map((method) => [
+      method.method,
+      {
+        service: method.service,
+        expectedRole: method.expectedRole,
+        expectedSigningIdentifier: method.expectedSigningIdentifier ?? null,
+        audience: method.audience,
+        purpose: method.purpose,
+        messageTag: nativeXPCMessageTags[method.method],
+        methodVersion: method.methodVersion,
+      },
+    ]),
+  ),
+  requestCommonKeyCount: 9,
+  replyCommonKeyCount: 6,
+  extraObjectsAllowed: 0,
+  fileDescriptorsAllowed: 0,
+  endpointsAllowed: 0,
+  machRightsAllowed: 0,
+  nestedContainersAllowed: 0,
+  messageTagDisposition: "method-specific-cross-check-not-dispatch-opcode",
+  requestIdDisposition,
+  copyDisposition: "body-copy-only-after-peer-flow-shape-current-state-binding",
+  localIntegrityDisposition:
+    "oversize-output-short-write-pointer-length-or-bridge-version-fault-terminates-process-without-reply",
+  envelopes: nativeXPCEnvelopes,
+  cases: nativeXPCCases(),
+  refusalReplies: Object.entries(nativeXPCStatusTags)
+    .filter(([classification]) => classification !== "OK")
+    .map(([classification, statusTag]) => ({
+      classification,
+      statusTag,
+      reasonTag: nativeXPCReasonTags.coreRefusal,
+      bodyKeysAllowed: 0,
+      exactKeyCount: 6,
+    })),
+  responseLoss: [
+    { method: "SubmitMainMJSV0", disposition: methods.submitMainMJSV0.responseLossDisposition },
+    { method: "RegisterPlanV0", disposition: methods.registerPlanV0.responseLossDisposition },
+    {
+      method: "GetRegisteredPlanV0",
+      disposition: methods.getRegisteredPlanV0.responseLossDisposition,
+    },
+  ],
+  peerAuthenticationEvidence: null,
+  listenerActivated: false,
+  serviceRegistered: false,
+};
 
 const oracles = {
   objectType: "capsule.authenticated-local-ipc-passive-oracles",
@@ -728,6 +912,7 @@ const oracles = {
 };
 
 const expected = new Map([
+  ["native-xpc-v0.contract.json", jsonBytes(nativeXPCContract)],
   ["submit-main-mjs-v0.method.json", jsonBytes(methods.submitMainMJSV0)],
   ["submit-main-mjs-v0.request.json", jsonBytes(submitRequest)],
   ["submit-main-mjs-v0.reply.json", jsonBytes(submitReply)],
@@ -743,18 +928,24 @@ const expected = new Map([
 const manifest = {
   objectType: "capsule.authenticated-local-ipc-passive-conformance",
   objectVersion: 0,
-  status: "passive-unwired-no-transport",
+  status: "passive-unwired-native-contract-no-listener",
   protocolVersion,
   audience,
   submissionAudience,
   roleBindingRecordVersion,
-  transportEncoding: null,
-  numericMessageTags: null,
+  transportEncoding: nativeXPCEncoding,
+  transportEncodingVersion: nativeXPCEncodingVersion,
+  numericMessageTags: nativeXPCMessageTags,
+  numericStatusTags: nativeXPCStatusTags,
+  numericReasonTags: nativeXPCReasonTags,
   peerAuthenticationEvidence: null,
   caps,
   methodCount: 3,
   refusalCaseCount: oracles.refusals.length,
   maximumCaseCount: oracles.maxima.length,
+  nativeXPCEnvelopeCount: Object.values(nativeXPCEnvelopes).length * 3,
+  nativeXPCCaseCount: nativeXPCContract.cases.length,
+  nativeXPCRefusalReplyCount: nativeXPCContract.refusalReplies.length,
   knownAnswers: Object.fromEntries(
     [...expected].map(([path, bytes]) => [path, reference(path, bytes)]),
   ),
@@ -814,6 +1005,312 @@ function refusal(id, method, mutation, classification, reason) {
     expected: { decision: "reject", classification, reason },
     noState: zeroState,
   };
+}
+
+function nativeXPCEnvelope(
+  method,
+  direction,
+  messageTag,
+  exactKeyCount,
+  applicationDataMaxBytes,
+  fields,
+) {
+  if (fields.length !== exactKeyCount) throw new Error(`${method.method} ${direction} key drift`);
+  return {
+    method: method.method,
+    direction,
+    protocolVersion,
+    methodVersion: method.methodVersion,
+    messageTag,
+    exactKeyCount,
+    applicationDataMaxBytes,
+    fields,
+  };
+}
+
+function nativeXPCRequestHeader(method, tag) {
+  return [
+    fixedUInt64Field(nativeXPCKeys.protocolVersion, protocolVersion),
+    fixedUInt64Field(nativeXPCKeys.methodVersion, method.methodVersion),
+    fixedUInt64Field(nativeXPCKeys.messageTag, tag),
+    dataField(nativeXPCKeys.requestId, 16, 16, false, true),
+    dataField(nativeXPCKeys.installationId, 16, 16, false, false),
+    { key: nativeXPCKeys.epochSequence, valueType: nativeXPCTypes.uint64 },
+    dataField(nativeXPCKeys.epochDigest, 32, 32, false, false),
+    fixedStringField(nativeXPCKeys.audience, method.audience),
+    fixedStringField(nativeXPCKeys.purpose, method.purpose),
+  ];
+}
+
+function nativeXPCReplyHeader(method, tag, success) {
+  return [
+    fixedUInt64Field(nativeXPCKeys.protocolVersion, protocolVersion),
+    fixedUInt64Field(nativeXPCKeys.methodVersion, method.methodVersion),
+    fixedUInt64Field(nativeXPCKeys.messageTag, tag),
+    dataField(nativeXPCKeys.requestId, 16, 16, false, true),
+    {
+      key: nativeXPCKeys.status,
+      valueType: nativeXPCTypes.uint64,
+      fixedUInt64: success ? nativeXPCStatusTags.OK : null,
+    },
+    {
+      key: nativeXPCKeys.reason,
+      valueType: nativeXPCTypes.uint64,
+      fixedUInt64: success ? nativeXPCReasonTags.none : null,
+    },
+  ];
+}
+
+function nativeXPCBodyFields(method) {
+  switch (method) {
+    case "SubmitMainMJSV0":
+      return {
+        request: [dataField(nativeXPCKeys.jobProposal, 1, caps.jobProposal, true, false)],
+        reply: [dataField(nativeXPCKeys.registrationId, 16, 16, true, true)],
+      };
+    case "RegisterPlanV0":
+      return {
+        request: [
+          dataField(nativeXPCKeys.executionPlan, 1, caps.executionPlan, true, false),
+          dataField(nativeXPCKeys.roleBindings, caps.roleBindings, caps.roleBindings, true, false),
+          dataField(nativeXPCKeys.sourceManifest, 87, caps.sourceManifest, true, false),
+          dataField(nativeXPCKeys.source, 0, caps.source, true, false),
+        ],
+        reply: [dataField(nativeXPCKeys.planRegistration, 1, caps.planRegistration, true, false)],
+      };
+    case "GetRegisteredPlanV0":
+      return {
+        request: [dataField(nativeXPCKeys.registrationId, 16, 16, true, true)],
+        reply: [
+          dataField(nativeXPCKeys.executionPlan, 1, caps.executionPlan, true, false),
+          dataField(nativeXPCKeys.roleBindings, caps.roleBindings, caps.roleBindings, true, false),
+          dataField(nativeXPCKeys.planRegistration, 1, caps.planRegistration, true, false),
+          dataField(nativeXPCKeys.sourceManifest, 87, caps.sourceManifest, true, false),
+          dataField(nativeXPCKeys.source, 0, caps.source, true, false),
+        ],
+      };
+    default:
+      throw new Error(`unknown native XPC method ${method}`);
+  }
+}
+
+function dataField(key, minimum, maximum, applicationData, nonZeroData) {
+  return {
+    key,
+    valueType: nativeXPCTypes.data,
+    minDataBytes: minimum,
+    maxDataBytes: maximum,
+    applicationData,
+    nonZeroData,
+  };
+}
+
+function fixedUInt64Field(key, value) {
+  return { key, valueType: nativeXPCTypes.uint64, fixedUInt64: value };
+}
+
+function fixedStringField(key, value) {
+  return { key, valueType: nativeXPCTypes.string, fixedString: value };
+}
+
+function nativeXPCCases() {
+  const reject = (id, method, mutation, classification, reasonTag) => ({
+    id,
+    method,
+    direction: "request",
+    mutation,
+    expected: {
+      decision: "reject-before-body-copy",
+      classification,
+      statusTag: nativeXPCStatusTags[classification],
+      reasonTag,
+      bodyCopied: false,
+      coreCalls: 0,
+    },
+    noState: zeroState,
+  });
+  return [
+    {
+      id: "all.exact-key-and-type-sets",
+      methods: "all-frozen-methods",
+      expected: "accept-outer-shape-only",
+    },
+    reject(
+      "submit.body-cap-plus-one",
+      "SubmitMainMJSV0",
+      "job-proposal=2097153-bytes",
+      "MALFORMED",
+      nativeXPCReasonTags.dataCap,
+    ),
+    reject(
+      "register.body-cap-plus-one",
+      "RegisterPlanV0",
+      "source=262145-bytes",
+      "MALFORMED",
+      nativeXPCReasonTags.dataCap,
+    ),
+    reject(
+      "get.body-cap-plus-one",
+      "GetRegisteredPlanV0",
+      "registration-id=17-bytes",
+      "SCHEMA",
+      nativeXPCReasonTags.dataWidth,
+    ),
+    reject("all.missing-key", "all", "remove-purpose", "MALFORMED", nativeXPCReasonTags.keySet),
+    reject("all.extra-key", "all", "add-capsule.extra", "MALFORMED", nativeXPCReasonTags.keySet),
+    reject(
+      "all.wrong-type",
+      "all",
+      "request-id=XPC_TYPE_STRING",
+      "MALFORMED",
+      nativeXPCReasonTags.valueType,
+    ),
+    reject(
+      "all.nested-container",
+      "all",
+      "body=XPC_TYPE_DICTIONARY",
+      "MALFORMED",
+      nativeXPCReasonTags.valueType,
+    ),
+    reject(
+      "all.zero-request-id",
+      "all",
+      "request-id=16-zero-bytes",
+      "SCHEMA",
+      nativeXPCReasonTags.zeroIdentifier,
+    ),
+    reject(
+      "all.unknown-protocol-version",
+      "all",
+      "protocol-version=1",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.protocolVersion,
+    ),
+    reject(
+      "all.unknown-method-version",
+      "all",
+      "method-version=1",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.methodVersion,
+    ),
+    reject(
+      "all.cross-method-tag",
+      "all",
+      "message-tag=other-frozen-method",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.messageTag,
+    ),
+    reject(
+      "all.wrong-service",
+      "all",
+      "delivered-on-other-role-service",
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    reject(
+      "all.wrong-role",
+      "all",
+      "message-derived-role=other",
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    reject(
+      "all.wrong-audience",
+      "all",
+      "audience=other",
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    reject(
+      "all.wrong-purpose",
+      "all",
+      "purpose=other",
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    reject(
+      "all.wrong-installation",
+      "all",
+      "installation-id=other",
+      "BINDING",
+      nativeXPCReasonTags.currentState,
+    ),
+    reject(
+      "all.wrong-epoch-digest",
+      "all",
+      "epoch-digest=other",
+      "BINDING",
+      nativeXPCReasonTags.currentState,
+    ),
+    reject(
+      "all.epoch-uint53-cap-plus-one",
+      "all",
+      "epoch-sequence=9007199254740992",
+      "SCHEMA",
+      nativeXPCReasonTags.epochSequence,
+    ),
+    reject(
+      "all.extra-file-descriptor",
+      "all",
+      "one-XPC_TYPE_FD",
+      "MALFORMED",
+      nativeXPCReasonTags.keySet,
+    ),
+    reject(
+      "all.extra-endpoint",
+      "all",
+      "one-XPC_TYPE_ENDPOINT",
+      "MALFORMED",
+      nativeXPCReasonTags.keySet,
+    ),
+    {
+      id: "all.success-reply-extra-key",
+      methods: "all-frozen-methods",
+      direction: "success-reply",
+      mutation: "add-any-unknown-key",
+      expected: {
+        decision: "reject-reply",
+        classification: "MALFORMED",
+        statusTag: nativeXPCStatusTags.MALFORMED,
+        reasonTag: nativeXPCReasonTags.keySet,
+      },
+    },
+    {
+      id: "all.success-reply-request-id-mismatch",
+      methods: "all-frozen-methods",
+      direction: "success-reply",
+      mutation: "request-id=other-live-call",
+      expected: {
+        decision: "reject-reply",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.currentState,
+      },
+    },
+    {
+      id: "all.refusal-reply-extra-body",
+      methods: "all-frozen-methods",
+      direction: "refusal-reply",
+      mutation: "add-any-method-body-key",
+      expected: {
+        decision: "reject-reply",
+        classification: "MALFORMED",
+        statusTag: nativeXPCStatusTags.MALFORMED,
+        reasonTag: nativeXPCReasonTags.keySet,
+      },
+    },
+    {
+      id: "all.local-integrity-output-fault",
+      methods: "all-frozen-methods",
+      direction: "success-reply",
+      mutation: "oversize-short-write-pointer-length-or-bridge-version-mismatch",
+      expected: {
+        decision: "terminate-without-reply",
+        statusTag: null,
+        reasonTag: nativeXPCReasonTags.localIntegrityFault,
+      },
+    },
+  ];
 }
 
 async function repositoryFixture(path) {

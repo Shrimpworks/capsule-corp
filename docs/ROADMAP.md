@@ -208,8 +208,9 @@ profiles still have the wrong App IDs. The exact test-only identifiers/bootstrap
 noncredential mismatch/update model are retained, but they do not advance installed or
 protected-root evidence.
 Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
-surface, but its passive bridge fixtures, installed endpoints, production identities, consumers,
-and platform evidence remain unimplemented. Production approval signing/verification, archive
+surface. Passive logical fixtures and the exact native dictionary prerequisite now cover three
+methods without activating transport; the native harness, fourth method, installed endpoints,
+production identities, consumers, and platform evidence remain unimplemented. Production approval signing/verification, archive
 implementation and production-engine selection, evidence composition, consumers, and atomic public
 migration remain separate decisions.
 

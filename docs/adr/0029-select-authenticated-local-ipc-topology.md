@@ -408,6 +408,11 @@ production IPC.
 
 The dependency-ordered slices, exact fixtures, fault matrix, evidence boundaries, and activation
 gates are in [the authenticated local IPC implementation and conformance plan](../AUTHENTICATED_LOCAL_IPC_PLAN.md).
+The passive
+[S3 native-contract prerequisite](../AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) now freezes
+exact XPC dictionary keys/types and numeric method/status/reason tags for the three already-frozen
+passive methods without activating a listener or changing this proposed topology. Actual native
+authentication/cap evidence remains a later separately authorized harness.
 
 ## Evidence
 

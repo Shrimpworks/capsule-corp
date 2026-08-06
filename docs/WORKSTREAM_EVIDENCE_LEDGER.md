@@ -20,6 +20,7 @@ next dependency boundary for the latest group are recorded in the
 | Slice | Scoped result | Parent boundary |
 | --- | --- | --- |
 | Passive authority-plane atomic cutover | `PASSED`: exact-one-`main.mjs` plan, bindings, manifest, source, registration, and defensive fetch publish atomically in the fixed-store oracle. | Authenticated product facades, Broker/approval, attempt, runtime, backend, and guest remain `BLOCKED`. |
+| Authenticated-local-IPC S3 native-contract prerequisite | `PASSED`: exact XPC dictionary keys/types, method/status/reason tags, versions, key counts, caps, method-derived bindings, and Go/Node refusal fixtures are frozen for the three passive methods. | The separately authorized native harness, listener, peer authentication, installed identity/update matrix, consumers, and product IPC remain `BLOCKED`. |
 | Broker rendering and approval conformance v0 | `PASSED`: Accepted ADR-0043 freezes a read-only ASCII-safe projection over bound Supervisor bytes, the exact Secure Enclave/user-presence/no-fallback key contract, and a Capsule-owned public-key-only ApprovalGrant Sign1 verifier with canonical/header/payload/signature/key/role/time/refusal tests. | Inline-input content is not present or shown. Installed UI, Keychain/LocalAuthentication, private key/signing, authenticated IPC, verifier/store wiring, activation, runtime, backend, guest, and product admission remain `BLOCKED`. |
 | C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | Current-source libkrun dylib, final runner, fixed-owned-guest eligibility, and admission remain `BLOCKED`. |
 | C2B v4 build/static materialization | `PASSED`: exact accepted header, twice-reproduced current-source unsigned libkrun dylib, independent ABI audit, byte-equal unsigned final runner, and composed digest are retained with no execution. | Fixed-owned-guest eligibility is `BLOCKED` on separate authorization naming the exact v4 digest; admission remains `BLOCKED`. |
@@ -31,7 +32,7 @@ next dependency boundary for the latest group are recorded in the
 | Archive F5 | `PASSED`: owner-held coherent backup, complete-copy verification, read-only exact-anchor restore admission, known-orphan cleanup, and offline reporting. | F6, restore activation, production-engine, power-loss/rollback, and external-alpha continuity remain `BLOCKED`. |
 
 The current generated conformance totals are 95 rules, 502 cases, and 624 fixtures. The current
-field-authority manifest has 1,159 fields across 91 profiles and 57 targets. These whole-repository
+field-authority manifest has 1,203 fields across 95 profiles and 60 targets. These whole-repository
 totals supersede older checkpoint counts without rewriting their historical evidence.
 
 ## 2026-08-05 internal-alpha architecture audit synthesis

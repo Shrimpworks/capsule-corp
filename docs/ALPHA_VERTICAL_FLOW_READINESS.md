@@ -22,7 +22,7 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 
 | Stage | Retained contract or mechanic | Scoped status | Missing product boundary |
 | --- | --- | --- | --- |
-| Submit one `main.mjs` | Exact-one proposal plus [selected passive private-XPC CLI adapter](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md), bounded envelope, flow, refusal, and response-loss fixtures | `PASSED` for the passive/unwired contract | Implement native peer authentication, the versioned signed CLI inventory, and the daemon consumer. Diagnostic HTTP remains read-only. |
+| Submit one `main.mjs` | Exact-one proposal plus [selected passive private-XPC CLI adapter](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md), bounded logical flow, and the [exact passive native dictionary prerequisite](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) | `PASSED` for the passive/unwired contract | Run the separately authorized native harness, then implement peer authentication, the versioned signed CLI inventory, and the daemon consumer. Diagnostic HTTP remains read-only. |
 | Build the plan | Exact-one-`main.mjs` proposal, `ExecutionPlan`, strict wrappers, pure resolver/builder | `PASSED` for passive/unwired mechanics | Connect only the selected method-specific adapter and bind admitted limits plus exact runtime/profile identity. |
 | Register source and plan | Atomic passive fixed-store registration/fetch facade | `PASSED` for the unwired oracle | Expose it only through method-specific authenticated product registration/fetch backed by protected production state. |
 | Fetch and render approval | Accepted ADR-0043 read-only projection over passive Supervisor readback | `PASSED` for the unwired projection | Authenticated product fetch, native UI, installed spoof/focus/cancel evidence, and Supervisor custody of inline-input content if it must be shown. |
@@ -43,7 +43,7 @@ governance promotions PASSED
   -> C2B v4 build/static materialization PASSED
   -> fixed benign owned guest checkpoint
 
-passive bounded CLI adapter contract PASSED
+passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter
   -> exact main.mjs + SourceManifest
   -> narrow plan construction

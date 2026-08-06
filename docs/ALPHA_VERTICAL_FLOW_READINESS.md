@@ -55,7 +55,9 @@ governance promotions PASSED
   -> fixed denial-test v25 vsock-diagnostic materialization PASSED
   -> fixed denial-test v25 runtime candidate NO_GO before launch
   -> fixed denial-test v26 consolidated materialization PASSED
-  -> fixed denial-test v26 execution BLOCKED on fresh exact authorization
+  -> fixed denial-test v26 localization PASSED / full corpus BLOCKED at passive inventory
+  -> fixed denial-test v27 passive-network correction PASSED
+  -> fixed denial-test v27 execution BLOCKED on fresh exact authorization
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter

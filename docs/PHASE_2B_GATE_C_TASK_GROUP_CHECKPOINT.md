@@ -13,7 +13,8 @@ runtime/libkrun substream returned to `IN_PROGRESS — TRENDING_GOOD` after v23 
 digest was correct and the embedded expected bytes were malformed. V24 then passed corrected
 preflight/known-answer/early denial controls before stopping in the vsock family. Semantic review
 marked v25 `NO_GO`, and v26 consolidated local-CID/failure-detail materialization passed without
-execution. This
+execution. Its exact invocation then passed active local-CID/raw-block denials and localized the
+next stop to expected `dummy0`; v27 passive-network correction passed without execution. This
 checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 

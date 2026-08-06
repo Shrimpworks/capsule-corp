@@ -31,8 +31,9 @@ separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHE
 `PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
 runtime/profile admission remain `BLOCKED`. V25 no-connect/no-send vsock-diagnostic materialization
 is retained but its runtime path is `NO_GO` because socket creation is non-authoritative. V26
-consolidated materialization is `PASSED` without execution or new authority, and its dynamic attempt
-remains separately authorization-bound.
+then passed active local-CID/raw-block denial controls and localized the next stop to expected down
+`dummy0`. V27 passive-network correction is `PASSED` without execution or new authority, and its
+dynamic attempt remains separately authorization-bound.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a

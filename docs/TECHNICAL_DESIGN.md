@@ -1003,8 +1003,11 @@ implemented.
    and early denial controls before stopping in the vsock-check family without connecting or
    sending. Mark v25 `NO_GO`: socket creation alone is not usable transport authority. V26 instead
    tests `VM_SOCKETS_GET_LOCAL_CID`, retains no-connect/no-send behavior, and adds one fixed failure
-   reason plus bounded console progress. It is reproducibly materialized without execution and
-   requires fresh exact one-use authorization before its consolidated diagnostic attempt.
+   reason plus bounded console progress. Its exact invocation passes active local-CID/raw-block
+   denials and localizes the next stop to expected down/unbacked `dummy0`; do not rerun v26. V27
+   accepts only loopback plus that bounded passive inventory, rejects virtio backing and non-
+   loopback/default routes, is reproducibly materialized without execution, and requires fresh
+   exact one-use authorization before its corrected attempt.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

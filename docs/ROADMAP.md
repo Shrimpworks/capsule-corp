@@ -41,8 +41,9 @@ Accepted [ADR-0040](adr/0040-freeze-owner-only-internal-alpha-posture.md) and th
    runtime refusal, v21's fail-closed ready-EOF result, and v22's exact
    `preflight-root-sha256` refusal; preserve v23's confirmed malformed embedded-digest diagnosis,
    v24's passed corrected preflight/known-answer/early denials, and its vsock-family stop; then use
-   semantic review to preserve v25 as `NO_GO` before launch and use the passed v26 consolidated
-   ioctl/failure-detail diagnostic under fresh exact one-use authorization;
+   semantic review to preserve v25 as `NO_GO`, retain v26's passed consolidated localization and
+   passive-interface-policy stop, then use the passed v27 down/unbacked-`dummy0` and route correction
+   under fresh exact one-use authorization;
 4. connect one bounded authenticated CLI adapter to the passed exact single-`main.mjs` proposal and
    passive atomic plan/bindings/manifest/source custody, then implement Broker fetch/render/approval;
 5. compose protected installed Supervisor state, the bounded fixed-store alpha exception, real
@@ -56,8 +57,10 @@ distribution, clean-host/minimum-OS coverage, restore, and production storage ar
 work. The fixed guest is not product alpha. V20-v23 refused before readiness without launching a
 guest; v24 then launched, passed the known answer and early denials, and stopped in the vsock family.
 V25 was abandoned before launch because it tested socket creation rather than usable vsock
-capability. The v26 consolidated diagnostic is materialized but unexecuted. The hostile owner-only
-internal alpha is the next product checkpoint, and external alpha remains a later distinct gate.
+capability. V26 then passed the active vsock/raw-block controls and stopped on an over-strict
+interface-name policy. The v27 passive-network correction is materialized but unexecuted. The
+hostile owner-only internal alpha is the next product checkpoint, and external alpha remains a
+later distinct gate.
 
 ## Phase 0: architecture and claim baseline
 

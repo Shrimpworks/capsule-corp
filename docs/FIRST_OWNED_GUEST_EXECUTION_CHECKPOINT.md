@@ -21,9 +21,11 @@
 | Controlled denial-test v24 early denial controls | `PASSED` | One exact authorized guest reproduced the known answer and proved non-root/no-new-privileges/zero capabilities, sealed descriptors, read-only-root refusal, absent host paths, mount refusal, and root-regain refusal. |
 | Controlled denial-test v24 complete corpus | `BLOCKED` | The probe stopped generically in the vsock-check family before its expected marker. No connection or send occurred, but the exact socket/device sub-branch and all later controls remain unknown. |
 | Controlled denial-test v25 runtime candidate | `NO_GO` | Pre-launch semantic review showed socket creation alone is not usable vsock/network authority, so v25 tested the wrong property. It was not authorized or launched. |
-| Controlled denial-test v26 consolidated materialization | `PASSED` | A fixed source/build-only successor checks `VM_SOCKETS_GET_LOCAL_CID`, retains no-connect/no-send behavior, and reports one fixed failure reason plus bounded console progress. No v26 runner or guest was executed. |
-| Controlled denial-test v26 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v26's attempt and composed-profile digest. |
-| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V24 passed corrected preflight, known answer, and early denial controls; semantic review corrected the vsock property before another launch, and v26 consolidates the remaining diagnostics. Typed transport, the rest of the hostile corpus, installed composition, and admission remain incomplete. |
+| Controlled denial-test v26 failure localization | `PASSED` | One exact guest passed active local-CID vsock-unavailable and raw-block write-open denial, then reported the fixed reason `non-loopback guest network interface is present`. |
+| Controlled denial-test v26 complete corpus | `BLOCKED` | The probe rejected expected down/unbacked `dummy0` by name before evaluating flags, backing, or routes. This is a probe-policy mismatch, not network-access evidence; v26 must not be rerun. |
+| Controlled denial-test v27 passive-network correction | `PASSED` | A fixed source/build-only successor accepts only `lo` plus optional down/unbacked `dummy0`, rejects virtio network backing and non-loopback/default routes, and retains no-connect/no-send behavior. No v27 runner or guest was executed. |
+| Controlled denial-test v27 execution | `BLOCKED` | Dynamic execution requires a fresh exact one-use authorization naming v27's attempt and composed-profile digest. |
+| Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V26 passed through active vsock and raw-block denial controls and localized the next stop to an over-strict passive-interface policy. V27 corrects that policy reproducibly. Later controls, typed transport, installed composition, and admission remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
 
@@ -220,7 +222,9 @@ v23 hash-diagnostic successor and one exact invocation then confirmed the cause.
 corrected successor and one exact invocation then passed the early denial controls before stopping
 in the vsock family. Pre-launch review then marked v25 `NO_GO` because socket creation is not the
 authority the control meant to test. A build-only v26 consolidated successor now `PASSED`; its
-dynamic execution is separately `BLOCKED` on fresh exact one-use authorization.
+exact invocation localized the next stop to passive network inventory. A build-only v27 corrected
+successor now `PASSED`; its dynamic execution is separately `BLOCKED` on fresh exact one-use
+authorization.
 
 The v20 candidate first repeats the exact passing Deno known answer. It then irreversibly changes
 the guest process to uid/gid 65534 with no-new-privileges and zero effective capabilities before
@@ -415,14 +419,50 @@ controller reproduction plus Go test/vet and policy/source assertions passed.
 | Controller source SHA-256 | `a2058ddbb257fc8e9754b89a6d374310e99ee751997680775b87c94510a0d5be` |
 | Controller binary SHA-256 | `d52ffe731c8b935c25beae993700fc5840697d8423f7eb1739df24e52da4608c` |
 
-No v26 runner, libkrun/HVF process, or guest was executed, and its evidence directory is absent.
-The v20-v26 reports and receipts remain in the disposable local experiment workspace, so they are
-not durable release or admission evidence. Exact v26 execution must refuse any changed attempt,
-digest, path, binary, or authority and must not launch until a fresh authorization names the
-values above. The one-use safeguard remains per actual launch; consolidated diagnostics do not
-create standing or batch authority.
+The later exact v26 invocation reached ready, verified runner identity, consumed one-use
+authorization, and launched one owned guest. It passed the known answer and hostile markers through
+active local-CID vsock transport-unavailable and raw-block write-open denial. It then emitted the
+exact fixed failure detail `non-loopback guest network interface is present`: 28 console lines, 26
+exact prefix lines, then the generic failure marker. The runner exited 0, was reaped without
+force-kill, and completed unlinked-root teardown in 5 ms after a 212 ms authorization-to-result
+interval. Both root digests matched `aec0bdd9...0357`, the canary was unchanged, and preflight
+retained network/credential authorization false plus external-connection/network-bytes false.
 
-Even a passing v26 experiment will remain a controlled denial checkpoint, not the owner-only
+Retained platform evidence explicitly records loopback plus a down `dummy0` in the governed
+no-network build and a network-unreachable TCP probe. V26 rejected every name other than `lo`
+before evaluating flags, backing, or routes. Its consolidated localization objective is therefore
+`PASSED`, but its complete run remains `BLOCKED` on a probe-policy mismatch rather than evidence of
+network access. Do not rerun v26.
+
+V27 accepts only `lo` or `dummy0` plus `lo`. If `dummy0` exists, `IFF_UP` must be clear and
+`/sys/class/net/dummy0/device` must be absent. It rejects virtio network modalias `d00000001`, every
+non-loopback IPv4 route, any IPv4 default route, and every non-loopback IPv6 route. It retains v26's
+active local-CID semantics and fixed failure detail and contains no `connect`, `send`, `sendto`, or
+`sendmsg` call.
+
+| Field | Exact v27 value |
+| --- | --- |
+| Attempt ID | `capsule-c2b-v27-hostile-network-corrected-owned-guest-20260806-01` |
+| Composed-profile digest | `52f38c8f964a59dbf7e7ed98576ee95aae0470cba2462749551e7b335ca6073e` |
+| Materialized profile SHA-256 / bytes | `149ac570846e98ff7276ab82e55978830f4057e4a7d6d4594cadcbcfa4c2410a` / 33,890 |
+| Guest root SHA-256 | `002524fb0cf1b03df110bbb8c243751cf259f50e19dd85bf84f52ce30d80119d` |
+| Fixed probe SHA-256 | `1db60c02554921c4fd92a98df185062f50ac7f18013b121bed977120a1218e31` |
+| Probe source SHA-256 | `b7e812429641b3d4f3d64703f687661fd86f2a615ccd479d2b3ab732905a1cd3` |
+| Runner source SHA-256 | `4f86a2ed7a6eec3a597f56efbd2902a4a80fe09daf7b8a95e1207aa321315ee0` |
+| Signed experimental runner SHA-256 | `49127899025f1216cfdafd54079557967d8a5c677fddbbe23c5d6bef0230f86b` |
+| Controller source SHA-256 | `41655580a9e52fbe042b31de75a7d84568a70e1b52d5085acfe17864e8862e37` |
+| Controller binary SHA-256 | `b811e87b50122623e970dba4bf68ff188137e6242c8d35f6a4450d087c44a99a` |
+
+Network-disabled A/B roots, primary/independent runners and signatures, A/B profiles, independent
+composed hashing, three controller builds, Go test/vet, and no-connect/no-send policy assertions
+passed. No v27 runner, libkrun/HVF process, or guest was executed, and its evidence directory is
+absent. The v20-v27 reports and receipts remain in the disposable local experiment workspace, so
+they are not durable release or admission evidence. Exact v27 execution must refuse any changed
+attempt, digest, path, binary, or authority and must not launch until a fresh authorization names
+the values above. One-use authorization remains per actual launch; no standing or batch authority
+exists.
+
+Even a passing v27 experiment will remain a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the
 minimum hostile source, transport, lifecycle, recovery, response-loss, and restoration corpus in
 the exact admitted profile.

@@ -365,9 +365,12 @@ literal plus static length assertion, then passes one exact known answer and the
 capability/descriptor/root/host-path/mount/root-regain denial controls in a real guest. It stops in
 the vsock-check family without connecting or sending. Semantic review rejects v25's socket-open
 property as non-authoritative. V26 instead tests local-CID ioctl capability, still without any
-connect/send path, and retains fixed failure detail plus bounded console progress. It remains
-unexecuted. Later hostile-guest transport validation, installed confinement, and runtime/profile
-admission therefore remain `BLOCKED`.
+connect/send path, and retains fixed failure detail plus bounded console progress. Its exact
+invocation passed active local-CID/raw-block denials and then reported expected down/unbacked
+`dummy0`. V27 accepts only loopback plus that bounded passive inventory and rejects virtio backing
+and non-loopback/default routes without connecting or sending; it remains unexecuted. Later
+hostile-guest transport validation, installed confinement, and runtime/profile admission therefore
+remain `BLOCKED`.
 
 The virtio-console implementation is part of the hostile-guest-to-VMM attack surface. Application
 framing does not validate guest-controlled control IDs/events, queues, descriptor chains, reset/

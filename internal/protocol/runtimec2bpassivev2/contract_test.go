@@ -108,6 +108,93 @@ func TestSubstitutionNullOrderAndAdmissionMutationsRefuse(t *testing.T) {
 	}
 }
 
+// TestDecodeRefusesTruncatedAndDigestMutatedInput covers checkExact's own
+// two checks through the public Decode entry point. The existing mutation
+// tests in TestUnknownMissingDuplicateAndTrailingRefuse also get refused
+// here -- checkExact's digest check runs before decoder.Decode ever sees
+// them -- but this exercises the length-mismatch and digest-mismatch
+// checks directly instead of incidentally.
+func TestDecodeRefusesTruncatedAndDigestMutatedInput(t *testing.T) {
+	exact := readFixture(t, "passive-binding-v2.json")
+
+	truncated := exact[:len(exact)-1]
+	if _, err := Decode(truncated); err == nil || !strings.Contains(err.Error(), "LENGTH") {
+		t.Fatalf("truncated input = %v", err)
+	}
+
+	tampered := append([]byte(nil), exact...)
+	tampered[100] ^= 0xff
+	if len(tampered) != len(exact) {
+		t.Fatal("test setup changed the byte length")
+	}
+	if _, err := Decode(tampered); err == nil || !strings.Contains(err.Error(), "DIGEST") {
+		t.Fatalf("digest-mutated input = %v", err)
+	}
+}
+
+// TestValidateRefusesNilBinding covers Validate's own nil guard; every
+// other Validate test in this file passes a real decoded/cloned Binding.
+func TestValidateRefusesNilBinding(t *testing.T) {
+	if err := Validate(nil); err == nil {
+		t.Fatal("nil binding accepted")
+	}
+}
+
+// TestRequireEOFAcceptsOnlyExactlyOneTrailingAbsence covers requireEOF
+// directly: Decode's checkExact gate means it only ever calls requireEOF
+// with content matching the one pinned fixture, so requireEOF's own
+// branches are otherwise unreachable through Decode.
+func TestRequireEOFAcceptsOnlyExactlyOneTrailingAbsence(t *testing.T) {
+	cases := []struct {
+		name    string
+		body    string
+		wantErr bool
+	}{
+		{"nothing-after-eof", "", false},
+		{"only-whitespace-after-eof", "   \n", false},
+		{"trailing-json-value", "1", true},
+		{"trailing-malformed-syntax", "}", true},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			decoder := json.NewDecoder(strings.NewReader(testCase.body))
+			err := requireEOF(decoder)
+			if (err != nil) != testCase.wantErr {
+				t.Fatalf("requireEOF(%q) error = %v, want error = %v", testCase.body, err, testCase.wantErr)
+			}
+		})
+	}
+}
+
+// TestRejectDuplicateJSONDirectly covers rejectDuplicateJSON/readJSONValue
+// directly, for the same reason requireEOF needs a direct test: Decode's
+// checkExact gate means rejectDuplicateJSON is otherwise only ever called
+// with the one pinned fixture's bytes, which by construction has no
+// duplicate keys.
+func TestRejectDuplicateJSONDirectly(t *testing.T) {
+	cases := []struct {
+		name    string
+		exact   string
+		wantErr bool
+	}{
+		{"no-duplicates", `{"a":1,"b":[1,2,{"c":3}]}`, false},
+		{"top-level-duplicate", `{"a":1,"a":2}`, true},
+		{"nested-duplicate", `{"a":{"b":1,"b":2}}`, true},
+		{"duplicate-inside-array-element", `{"a":[{"b":1,"b":2}]}`, true},
+		{"array-no-object", `[1,2,3]`, false},
+		{"scalar", `1`, false},
+		{"malformed-syntax", `{`, true},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			err := rejectDuplicateJSON([]byte(testCase.exact))
+			if (err != nil) != testCase.wantErr {
+				t.Fatalf("rejectDuplicateJSON(%q) = %v, want error = %v", testCase.exact, err, testCase.wantErr)
+			}
+		})
+	}
+}
+
 func TestDecodedBindingsOwnDefensiveCopies(t *testing.T) {
 	first, err := Decode(readFixture(t, "passive-binding-v2.json"))
 	if err != nil {

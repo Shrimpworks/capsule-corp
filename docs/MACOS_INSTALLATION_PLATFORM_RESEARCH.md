@@ -15,9 +15,9 @@ Evidence or reason: the seven questions in the installation-plan research brief 
 Remaining work: exact Apple-signed Coordinator/Supervisor profiles and session behavior,
   user-presence Keychain use, stale-signer fencing, installed bootstrap, replacement interruption,
   Developer ID/notarized distribution, and cross-version/clean-host evidence remain blocked
-Next action: implement passive I2B1 request/record/observation fixtures; authorize the exact
-  developer-signed I2B2 platform mutations separately before creating a key, App Group-enabled
-  profile, service, protected root, or installed replacement fixture
+Next action: construct Proposed ADR-0045's inert authority-epoch packet, then separately authorize
+  the exact Apple Development identity-separation mutation before creating a key, service,
+  protected root, or installed replacement fixture
 Parent status: macOS product installation and distribution are IN_PROGRESS — TRENDING_GOOD;
   installed I2B, replacement I4, and distribution I6 remain BLOCKED
 ```
@@ -47,7 +47,7 @@ root daemon, or automatic state recreation is proposed.
 | Question | Research result | Product consequence |
 | --- | --- | --- |
 | 1. One-bundle `SMAppService` layout and lifecycle | `PASSED` for the documented substrate. macOS 13+ supports signed apps embedding LaunchAgent plists under `Contents/Library/LaunchAgents` and executable bytes addressed by bundle-relative `BundleProgram`. Registration bootstraps the agent immediately and at later logins. Changed agent plist or executable bytes require re-registration; Apple recommends unregistering first. The asynchronous unregister completion is the only documented point after which re-registration is safe. | Replacement must stop callers, asynchronously unregister and await termination, replace the whole bundle, verify the new bundle, then re-register and re-check status. Approval persistence, coherent replacement, and crash recovery are not guaranteed by `SMAppService`; I4 stays `BLOCKED`. |
-| 2. ADR-0038 Coordinator-to-Supervisor bootstrap | `IN_PROGRESS — TRENDING_BAD`. The direct embedded Coordinator XPC service, per-user Supervisor LaunchAgent, App-Group-named Mach service, and OS-enforced peer code requirement all have public mechanisms. I2B3 exact profile/signing preflight passed, but the mandatory stale-profile test proved that the archived I1B Supervisor profile could rewrite current-profile state in the stable App Sandbox container. | Preserve Supervisor-enabled-before-Coordinator ordering and `JoinExistingSession=true`, but do not proceed to keys/services/root until an ADR selects a signing/container epoch. Peer requirements authenticate connections; they do not fence a separately launched stale Supervisor from its own stable container. I2B stays `BLOCKED`. |
+| 2. ADR-0038 Coordinator-to-Supervisor bootstrap | `IN_PROGRESS — TRENDING_GOOD`. The direct embedded Coordinator XPC service, per-user Supervisor LaunchAgent, App-Group-named Mach service, and OS-enforced peer code requirement all have public mechanisms. Proposed ADR-0045 now selects a separately versioned authority identity/container/group candidate after the I2B3 stable-container mutation. | Preserve Supervisor-enabled-before-Coordinator ordering and `JoinExistingSession=true`, but do not proceed to keys/services/root until the separately authorized Apple Development identity-separation matrix passes. Peer requirements authenticate connections; only OS nonmembership may support the new-container denial claim. I2B stays `BLOCKED`. |
 | 3. App Group requirement and residual authority | `PASSED` for the architecture choice and limitation. Apple directs sandboxed apps to use an App-Group-prefixed name for Mach/XPC IPC. A private embedded XPC service is only directly reachable by its containing main app; an anonymous listener endpoint itself needs an already authenticated transport. | The bootstrap-only App Group is the narrow supported direct route found. It necessarily grants both members a shared container, IPC namespaces, shared preferences capability, and a potential Keychain access-group namespace. Nonmembers are structurally excluded by entitlements; member nonuse can only be tested, not structurally removed. |
 | 4. `NSUpdateSecurityPolicy` | `PASSED` for a bounded negative claim. The macOS Ventura behavior narrows which Team/signing identifiers or package Teams may modify an app bundle; the default otherwise permits same-Team writers. | It is an additional app-bundle writer policy, not filesystem authority, App Sandbox authority, peer authentication, container/Keychain protection, version or CDHash binding, coherent update, rollback, or stale-binary revocation. It cannot close I2B or I4 by itself. |
 | 5. `/Applications` and `~/Applications` replacement | `IN_PROGRESS — TRENDING_GOOD`. `NSWorkspace.AuthorizationType.replaceFile` plus its authorized `FileManager.replaceItem` is a public user-authorized replacement mechanism on macOS 10.14+. `FileManager.replaceItem` requires source and destination on one volume. Current-host observations show both candidate directories on one APFS data volume, but that is not a support-matrix guarantee. | A small on-demand replacer remains the narrowest candidate. It must run from staged verified bytes, obtain user authorization before shutdown, replace only after all old-bundle processes and registrations are gone, and relaunch the new app for verification/re-registration. Crash durability, rollback, translocation, quarantine, Gatekeeper, and notarization remain `BLOCKED`. |
@@ -80,6 +80,25 @@ make any incomplete installed path `PASSED`.
 
 Quoted text is deliberately short. The linked documents and SDK headers, not the quotations, are
 the authority.
+
+### Supervisor-authority-epoch source reconciliation
+
+Primary sources were checked again on 2026-08-05 for Proposed ADR-0045. Apple pages do not expose a
+stable publication date, so the exact source date retained here is the retrieval date; observed
+host behavior remains dated separately.
+
+| Source | Documented mechanism | Limitation and design consequence |
+| --- | --- | --- |
+| [Accessing files from the macOS App Sandbox](https://developer.apple.com/documentation/security/accessing-files-from-the-macos-app-sandbox) | A sandbox container is created and associated with the app; macOS 14+ uses code signature for the association, tracks launch agents, and can ask for user authorization to enter another app's container. | Different explicit identities are a candidate, not proof. The no-consent denial must be observed. A prompt/grant is elevated user-granted posture, never a repair path. |
+| [Migrating files to an App Sandbox container](https://developer.apple.com/documentation/security/migrating-your-app-s-files-to-its-app-sandbox-container) and [TN3127](https://developer.apple.com/documentation/technotes/tn3127-inside-code-signing-requirements) | Apple's migration variables and test path use bundle ID; bundled code-signing ID is typically bundle ID and designated requirements express code identity. | A versioned App ID/bundle/signing ID should separate association, but Apple does not document Capsule's exact two-probe oracle. |
+| [App Groups entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups) | Membership grants shared container/IPC and can grant Keychain-group access; macOS Mach/XPC services use a group-prefixed name. | The bootstrap group must also rotate, remain IPC-only, and never hold authority state. |
+| [Keychain access groups](https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps) and [`kSecAttrAccessGroup`](https://developer.apple.com/documentation/security/ksecattraccessgroup) | An item belongs to one group; callers outside the group cannot create in it; omitted group queries search all caller groups. | Rotate role groups and name the exact group on every operation. This does not revoke an old group's old key or prove live Secure Enclave behavior. |
+| [`SMAppService`](https://developer.apple.com/documentation/servicemanagement/smappservice) | macOS 13+ registers and controls in-bundle LaunchAgents. | A versioned label avoids treating a retired job as current; registration itself supplies no Capsule transition, migration, or rollback guarantee. |
+
+The design conclusion is retained in
+[Proposed ADR-0045](adr/0045-select-versioned-supervisor-authority-epochs.md). Its
+[inert packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md) freezes the exact
+Apple Development test. No Developer ID/notarized shipping inference is made.
 
 ## Current-host public SDK observation
 
@@ -292,7 +311,8 @@ next.
 Current P2 successor result: exact Coordinator/Supervisor profile creation and no-launch signed
 entitlement readback `PASSED`. Before service registration or Coordinator launch, its required
 stale-profile fault probe found the stable-private-container mutation blocker and cleaned the exact
-sentinel. P2/P3/P4 remain `BLOCKED` on an ADR-selected signing/container epoch. See the
+sentinel. Proposed ADR-0045 now selects the candidate, while P2/P3/P4 remain `BLOCKED` on its
+separately authorized identity-separation evidence. See the
 [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 
 ## One-host evidence matrix

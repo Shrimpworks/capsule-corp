@@ -3,6 +3,7 @@
 - Status: Proposed
 - Date: 2026-08-04
 - Refines if accepted: ADR-0012, ADR-0018, ADR-0021, ADR-0029, ADR-0033, and ADR-0037
+- Supervisor authority identity and transition refined by: Proposed ADR-0045
 
 ## Context
 
@@ -206,10 +207,11 @@ fenced without authority recovery.
   Sandbox container even though its CDHash, profile, App Group, and Keychain-group projection
   differ. XPC peer requirements do not fence a separately launched stale Supervisor from its own
   container.
-- Installed I2 remains `BLOCKED` before key/service/root creation. This Proposed ADR or a successor
-  must select a versioned signing/container epoch and its stale-write/repair semantics before the
-  separately authorized caller/key, SMAppService, protected-root, session, and descriptor-relative
-  corpus can resume. See the
+- Installed I2 remains `BLOCKED` before key/service/root creation. This Proposed ADR now composes
+  with Proposed ADR-0045's versioned Supervisor-authority-epoch candidate and stale-write/repair
+  rules. The passive decision and inert packet do not prove the OS boundary; separately authorized
+  identity-separation, caller/key, SMAppService, protected-root, session, and descriptor-relative
+  evidence must pass before the corpus can resume. See the
   [I2B3 blocker result](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.

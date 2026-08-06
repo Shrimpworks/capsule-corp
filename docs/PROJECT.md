@@ -72,10 +72,13 @@ I2B1 CBOR/COSE wrapper review is `PASSED` for passive checked-in vectors only. I
 signed the exact Team-3DDR Coordinator/Supervisor development profiles, then stopped before keys,
 services, installation, or protected-root creation because the required stale-profile test proved
 that the archived I1B Supervisor profile could rewrite current-profile state in the stable App
-Sandbox container. Installed I2B remains `BLOCKED` on an ADR-selected signing/container epoch
-followed by separately authorized key/service/root and descriptor-relative evidence; no installed
+Sandbox container. Proposed ADR-0045 now selects a separate versioned Supervisor-authority-epoch
+candidate and freezes its inert identity-separation matrix. That passive work is `PASSED`, while
+installed I2B remains `BLOCKED` on separately authorized Apple Development identity-separation
+mutations followed by key/service/root and descriptor-relative evidence; no installed
 security-control claim follows. See the
-[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+[I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md) and
+[authority-epoch packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).
 
 The concise current dependency and claim checkpoint is
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).

@@ -14,10 +14,12 @@ Remaining work: select and review a version/epoch boundary that prevents or safe
   Supervisor private-container mutation before any installation-root key, service, or root exists
 Blocker and owner: installation architecture; Proposed ADR-0038 and the I2B plan do not yet close
   stale-profile write authority over the stable Supervisor container identity
-Next action: decide the container/signing-identity epoch strategy in an ADR, provision its exact
-  profiles, and separately authorize a rerun from a residue-free preflight
-Parent status: installed owner-lock G3/I2B remains BLOCKED; macOS installation remains
-  IN_PROGRESS — TRENDING_BAD until the stale-profile boundary has a selected replacement
+Next action: review Proposed ADR-0045 and its inert packet, then separately authorize the exact
+  versioned Apple Development identities/profiles and disposable-container mutation matrix; only
+  after that passes authorize Keychain/service/root work
+Parent status: installed owner-lock G3/I2B remains BLOCKED; macOS installation is
+  IN_PROGRESS — TRENDING_GOOD because Proposed ADR-0045 selects the replacement design while its
+  installed evidence remains pending
 ```
 
 ## Defensive and authorized scope
@@ -141,3 +143,10 @@ fresh user presence, explicit access group on every Keychain operation, exact re
 agreement, create-once descriptor-relative no-follow behavior, repair-required fencing, complete
 cleanup, and the remaining I2B4-I2B5 session/update matrix. This result advances no installed
 control, product-store, runtime, backend, or guest claim.
+
+Proposed [ADR-0045](adr/0045-select-versioned-supervisor-authority-epochs.md) now selects the
+versioned-identity approach at design level and classifies the stable identity/container as legacy
+residue. Its [inert experiment packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md)
+separates no-side-effect construction from a later explicitly authorized disposable-container
+mutation. Neither passive document advances this blocker's installed evidence or authorizes the
+later run.

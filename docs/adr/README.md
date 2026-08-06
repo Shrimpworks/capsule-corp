@@ -81,5 +81,8 @@ its core conclusion.
   — Accepted; passive projection and public-key-only COSE verification `PASSED`, installed UI, key use, IPC, and product activation remain `BLOCKED`
 - [ADR-0044: Select one private-XPC internal-alpha CLI submission adapter](0044-select-private-xpc-internal-alpha-cli-adapter.md)
   — Accepted; passive logical contract `PASSED`, installed authenticated adapter remains `BLOCKED`
+- [ADR-0045: Select versioned Supervisor authority epochs](0045-select-versioned-supervisor-authority-epochs.md)
+  — Proposed; passive decision and inert I2B3 packet `PASSED`, installed identity-separation and
+  protected-root evidence remain `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

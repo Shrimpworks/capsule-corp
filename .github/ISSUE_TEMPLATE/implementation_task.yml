@@ -1,0 +1,80 @@
+name: Scoped implementation task
+description: Define an accepted, bounded repository implementation slice
+title: "task: "
+labels: [implementation, "needs:triage"]
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Exact outcome
+      description: Describe the smallest user-visible or retained repository result this task must deliver.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Primary component
+      options:
+        - Agent-facing daemon
+        - Approval Broker
+        - Execution Supervisor
+        - Runtime
+        - Isolation backend or guest
+        - Protocol or schema
+        - Storage, recovery, or evidence
+        - Installation or update
+        - Documentation or tooling
+        - Cross-component
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority
+    attributes:
+      label: Authorized defensive scope
+      description: Name the control, repository fixtures, local harnesses, owned disposable guests, and authorized environment. State what must not be accessed or activated.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List exact functional, adversarial, no-side-effect, and retained-evidence conditions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification plan
+      description: List focused and full commands, fixtures, race/fault cases, and readbacks.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and decisions
+      description: Link governing ADRs, roadmap rows, prerequisite commits, and external experiment artifacts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: deferred
+    attributes:
+      label: Explicitly deferred work
+      description: Separate this slice from incomplete parent work, product admission, installation, and later activation.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safeguards
+    attributes:
+      label: Safeguards
+      options:
+        - label: The task preserves deny-by-default authority and does not broaden access merely to make a test pass.
+          required: true
+        - label: The task will report its exact status separately from ADR lifecycle, control evidence, and product admission.
+          required: true

@@ -1,2 +1,5 @@
-blank_issues_enabled: true
-contact_links: []
+blank_issues_enabled: false
+contact_links:
+  - name: Privately report a security vulnerability
+    url: https://github.com/Shrimpworks/capsule-corp/security/advisories/new
+    about: Do not disclose suspected security vulnerabilities in a public issue.

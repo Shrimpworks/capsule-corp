@@ -1,0 +1,64 @@
+name: Blocked work
+description: Record an intended path waiting on a named dependency, decision, artifact, credential, or owner
+title: "blocked: "
+labels: ["status:blocked", "needs:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: BLOCKED means the path remains intended. Use a proposal or architecture issue when deciding whether to abandon a candidate as NO_GO.
+
+  - type: textarea
+    id: work_item
+    attributes:
+      label: Exact work item and scope
+      description: Name the smallest work item being judged and its authorized scope.
+    validations:
+      required: true
+
+  - type: textarea
+    id: blocker
+    attributes:
+      label: Blocker
+      description: Name the unavailable dependency, decision, artifact, credential, contract, or external state.
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Unblock owner or source
+      description: Who or what can make this work runnable again?
+    validations:
+      required: true
+
+  - type: textarea
+    id: resume
+    attributes:
+      label: Resumption condition and next action
+      description: State the exact observable condition that resumes work and the first action afterward.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence retained so far
+      description: Link immutable commits, fixtures, logs, reports, ADRs, and canonical documents. Chat history alone is not retained evidence.
+    validations:
+      required: true
+
+  - type: textarea
+    id: parent
+    attributes:
+      label: Parent and admission status
+      description: Report the parent workstream separately, then state ADR lifecycle, control-evidence state, and product admission without combining them.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: intended
+    attributes:
+      label: Status check
+      options:
+        - label: This exact path is still intended; it is not an abandoned candidate and BLOCKED is not being used as shorthand for unfinished or not admitted.
+          required: true

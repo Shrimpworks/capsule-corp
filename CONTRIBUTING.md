@@ -30,6 +30,29 @@ make ci
 Every behavior change should include tests. Security-boundary changes should also add or update an
 adversarial test case once that harness exists.
 
+## Opening issues
+
+Use the narrowest issue form:
+
+- **Bug report** for reproducible non-security incorrect behavior.
+- **Capability proposal** for a new authority, runtime, backend, or workflow that still needs review.
+- **Architecture or ADR change** for consequential trust-boundary, topology, or authority decisions.
+- **Scoped implementation task** for accepted work with exact acceptance and verification criteria.
+- **Research or experiment** for one falsifiable, defensively authorized question and retained evidence.
+- **Blocked work** for an intended path waiting on a named unblock owner or source.
+
+Suspected vulnerabilities must use
+[private vulnerability reporting](https://github.com/Shrimpworks/capsule-corp/security/advisories/new),
+not a public issue.
+
+Issue labels use independent dimensions. Apply one primary work-type label (`bug`, `proposal`,
+`implementation`, `research`, or `architecture`), the narrowest `component:...` label, and a
+`status:...` label only when tracking the canonical status from
+[`docs/STATUS_LANGUAGE.md`](docs/STATUS_LANGUAGE.md). `security-boundary` identifies public design,
+hardening, or verification work; it is not an invitation to disclose a vulnerability publicly.
+Use `proposal` while a change still needs a decision and `enhancement` only after its direction has
+been accepted for implementation. See the complete [issue label taxonomy](.github/LABELS.md).
+
 ## Pull requests
 
 Keep pull requests small and describe:

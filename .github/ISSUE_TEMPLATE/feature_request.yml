@@ -1,13 +1,35 @@
-name: Feature request
-description: Propose a capability, runtime, backend, or workflow
+name: Capability proposal
+description: Propose a capability, runtime, backend, or workflow for review
 title: "proposal: "
-labels: [proposal]
+labels: [proposal, "needs:decision"]
 body:
+  - type: markdown
+    attributes:
+      value: A proposal requests review. It does not establish architecture acceptance, implemented control evidence, or product admission.
+
   - type: textarea
     id: problem
     attributes:
       label: Problem
       description: Which bounded agent task cannot be expressed today?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Primary component
+      options:
+        - Agent-facing daemon
+        - Approval Broker
+        - Execution Supervisor
+        - Runtime
+        - Isolation backend or guest
+        - Protocol or schema
+        - Storage, recovery, or evidence
+        - Installation or update
+        - Documentation or tooling
+        - Cross-component or undecided
     validations:
       required: true
 
@@ -28,7 +50,43 @@ body:
       required: true
 
   - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and refusal criteria
+      description: What exact evidence would accept the proposal, and what result should reject or stop it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: admission
+    attributes:
+      label: Product-admission effect
+      description: State whether this is passive design, a local mechanic, an experiment, or a proposed product path. Name all later admission gates.
+    validations:
+      required: true
+
+  - type: textarea
     id: alternatives
     attributes:
       label: Alternatives
       description: Could the task be expressed using a narrower existing capability?
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: ADR or dependency impact
+      description: Identify relevant ADRs, roadmap rows, dependencies, and any new privileged responsibility or topology change.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary acknowledgements
+      options:
+        - label: This proposal does not treat a device identifier, display label, or caller-supplied bytes as authority.
+          required: true
+        - label: This proposal does not claim implementation, validation, security, continuity, or product readiness without exact retained evidence.
+          required: true

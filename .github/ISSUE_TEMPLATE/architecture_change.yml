@@ -1,0 +1,74 @@
+name: Architecture or ADR change
+description: Propose a consequential trust-boundary, topology, or authority decision
+title: "architecture: "
+labels: [architecture, security-boundary, "needs:decision"]
+body:
+  - type: markdown
+    attributes:
+      value: Use this form for decisions that may require a new or superseding ADR. Accepted ADRs are append-only.
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision to make
+      description: State the exact decision, not only the implementation you prefer.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and blocker
+      description: What evidence, limitation, or dependency makes this decision necessary now?
+    validations:
+      required: true
+
+  - type: textarea
+    id: authority
+    attributes:
+      label: Authority and topology impact
+      description: Identify authority owners, callers, consumers, processes, services, keys, stores, endpoints, and lifecycle changes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: invariants
+    attributes:
+      label: Security invariants
+      description: List the deny-by-default properties that every viable option must preserve.
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: Options and tradeoffs
+      description: Include the narrowest option, rejection conditions, and rollback or supersession path.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence required before acceptance
+      description: Name experiments, adversarial cases, exact artifacts, and independent checks needed to decide.
+    validations:
+      required: true
+
+  - type: textarea
+    id: admission
+    attributes:
+      label: Product-admission boundary
+      description: Explain what remains unimplemented, unvalidated, or blocked even if this decision is accepted.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: governance
+    attributes:
+      label: Governance checks
+      options:
+        - label: I reviewed the relevant existing ADRs and will supersede rather than rewrite an Accepted ADR.
+          required: true
+        - label: I identified any new Supervisor responsibility, privileged helper, dependency, or external authority.
+          required: true

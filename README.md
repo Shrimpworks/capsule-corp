@@ -21,21 +21,7 @@ proposed by AI agents.
 
 ## Intended architecture
 
-<picture>
-  <source
-    media="(min-width: 640px)"
-    srcset="site/assets/capsule-architecture-landscape.webp"
-    type="image/webp"
-    width="1672"
-    height="941"
-  />
-  <img
-    src="site/assets/capsule-architecture-portrait.webp"
-    width="1003"
-    height="1568"
-    alt="Five-step concept diagram: code is verified, approved, run in a disposable Linux guest, and returned as a bounded JSON result"
-  />
-</picture>
+![Flow InfoGraph](site/assets/capsule-architecture-landscape.webp)
 
 > **Target architecture—not current product status.** Capsule remains an early scaffold and does
 > not yet run hostile jobs.

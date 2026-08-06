@@ -62,9 +62,10 @@ submission, runtime adapter, backend, VM, or guest. It does not show that a huma
 the bytes, that focus was trustworthy, that synthetic input was contained, or that any product
 path can accept or execute source.
 
-The existing fixed approval/attempt store remains an unwired local mechanic. It demonstrates
-one-use attempt-bound state transitions but is not newly connected to this verifier. Rendering and
-key use are intentionally separate.
+The follow-on [public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md)
+now connects this verifier to the fixed approval/attempt store and `AttemptID`-only no-guest
+lifecycle in one unwired repository harness. That later slice retains only a public test key and
+signed fixture; rendering and live key use remain separate, and no product approval path exists.
 
 ## Reproduction
 

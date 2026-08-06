@@ -42,6 +42,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 18. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
     Supervisor-owned projection, public-key-only COSE verification, exact claim boundary, and
     installed-product blockers
+19. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
+    unwired public-fixture verification, durable one-attempt creation, response-loss/restart
+    convergence, and `AttemptID`-only no-guest fake lifecycle evidence
 
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs

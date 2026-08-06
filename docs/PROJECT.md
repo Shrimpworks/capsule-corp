@@ -48,6 +48,14 @@ moves host Oxc validation to post-alpha defense-in-depth; runtime no-loader and 
 omission remain mandatory. The diagnostic HTTP server, fresh-registration semantics, and
 retained-vector-only `FixtureVerifier` must not be repurposed to close the gap.
 
+The [public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) now
+passes one narrower unwired boundary: the Capsule-owned public-key verifier submits signed bytes
+to the existing durable approval/attempt component, which commits one `AttemptID` before the
+existing no-guest fake lifecycle is driven by that identifier alone. Public fixture bytes prove
+plan A/B refusal, equivalent-signature convergence, response-loss/restart convergence, and no fake
+effect before attempt commit. This adds no product endpoint, live signer, installed state, runtime,
+real backend, or guest and does not change the connected-product-path blocker above.
+
 Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
 bootstrap-only Supervisor descriptor, inactive entitlement/constraint inputs, exact I1/I2B1

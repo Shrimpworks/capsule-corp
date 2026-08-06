@@ -114,6 +114,7 @@ type ProductionShapedVerifier struct {
 }
 
 var _ Verifier = (*ProductionShapedVerifier)(nil)
+var _ CandidateVerifier = (*ProductionShapedVerifier)(nil)
 
 func NewProductionShapedVerifier(authorizations []ApprovalKeyAuthorization) (*ProductionShapedVerifier, error) {
 	if len(authorizations) == 0 || len(authorizations) > ApprovalKeyAuthorizationMaxEntries {
@@ -171,21 +172,56 @@ type approvalPayloadWire struct {
 	ExpiresAt      uint64 `cbor:"12,keyasint"`
 }
 
+// VerifyCandidate is the production-shaped approval-submission verification
+// seam. It derives the nonce, protected key ID, and authorization identity
+// only from the signed envelope and the verifier's trusted authorization set.
+// It deliberately does not accept Supervisor state from the caller: the
+// durable approval component applies registration, active-state, effective-
+// time, replay, and nonce-uniqueness rules after this method returns.
+func (verifier *ProductionShapedVerifier) VerifyCandidate(
+	ctx context.Context,
+	received []byte,
+) (*VerifiedApproval, error) {
+	verified, _, err := verifier.verifyCandidate(ctx, received)
+	return verified, err
+}
+
 func (verifier *ProductionShapedVerifier) Verify(ctx context.Context, received []byte, bindings ApprovalGrantRoleBindings) (*VerifiedApproval, error) {
+	verified, authorization, err := verifier.verifyCandidate(ctx, received)
+	if err != nil {
+		return nil, err
+	}
+	view := verified.View()
+	if err := bindApprovalAuthorization(authorization, view, bindings); err != nil {
+		return nil, err
+	}
+	if err := validateProductionApprovalTime(view, authorization, bindings); err != nil {
+		return nil, err
+	}
+	if err := bindGrant(view, authorization.EpochSequence, verified.ProtectedKeyID(), authorization.AuthorizationIdentity, bindings); err != nil {
+		return nil, err
+	}
+	return verified, nil
+}
+
+func (verifier *ProductionShapedVerifier) verifyCandidate(
+	ctx context.Context,
+	received []byte,
+) (*VerifiedApproval, ApprovalKeyAuthorization, error) {
 	if verifier == nil {
-		return nil, classified(ClassificationLocalFailure, "production-verifier-required")
+		return nil, ApprovalKeyAuthorization{}, classified(ClassificationLocalFailure, "production-verifier-required")
 	}
 	if err := ctx.Err(); err != nil {
-		return nil, classified(ClassificationLocalFailure, "verification-cancelled")
+		return nil, ApprovalKeyAuthorization{}, classified(ClassificationLocalFailure, "verification-cancelled")
 	}
 	parts, err := frameApprovalEnvelope(received)
 	if err != nil {
-		return nil, err
+		return nil, ApprovalKeyAuthorization{}, err
 	}
 	if len(received) > ApprovalProductionEnvelopeCalculatedMaxBytes ||
 		parts.payloadEnd-parts.payloadStart > ApprovalProductionPayloadCalculatedMaxBytes ||
 		parts.protectedEnd-parts.protectedStart > ApprovalProductionProtectedCalculatedMaxBytes {
-		return nil, classified(ClassificationSchema, "production-calculated-maximum")
+		return nil, ApprovalKeyAuthorization{}, classified(ClassificationSchema, "production-calculated-maximum")
 	}
 	exact := bytes.Clone(received)
 	protected := exact[parts.protectedStart:parts.protectedEnd]
@@ -193,34 +229,31 @@ func (verifier *ProductionShapedVerifier) Verify(ctx context.Context, received [
 	signature := exact[parts.signatureStart:parts.signatureEnd]
 	header, err := verifier.decodeProtected(protected)
 	if err != nil {
-		return nil, err
+		return nil, ApprovalKeyAuthorization{}, err
 	}
 	view, err := verifier.decodePayload(payload)
 	if err != nil {
-		return nil, err
+		return nil, ApprovalKeyAuthorization{}, err
 	}
 	authorization, ok := verifier.authorizations[header.KeyID]
 	if !ok {
-		return nil, classified(ClassificationBinding, "approval-key-not-authorized")
+		return nil, ApprovalKeyAuthorization{}, classified(ClassificationBinding, "approval-key-not-authorized")
 	}
 	if err := verifyApprovalSignature(verifier.encode, authorization.PublicKey, protected, payload, signature); err != nil {
-		return nil, err
+		return nil, ApprovalKeyAuthorization{}, err
 	}
-	if err := bindApprovalAuthorization(authorization, view, bindings); err != nil {
-		return nil, err
+	if err := bindCandidateApprovalAuthorization(authorization, view); err != nil {
+		return nil, ApprovalKeyAuthorization{}, err
 	}
-	if err := validateProductionApprovalTime(view, authorization, bindings); err != nil {
-		return nil, err
-	}
-	if err := bindGrant(view, authorization.EpochSequence, header.KeyID[:], authorization.AuthorizationIdentity, bindings); err != nil {
-		return nil, err
+	if err := validateCandidateApprovalAuthorizationTime(view, authorization); err != nil {
+		return nil, ApprovalKeyAuthorization{}, err
 	}
 	return &VerifiedApproval{
 		envelopeBytes: exact, payloadBytes: bytes.Clone(payload), protectedHeaderBytes: bytes.Clone(protected),
 		protectedKeyID: bytes.Clone(header.KeyID[:]), view: view,
 		resolvedEpochSequence: authorization.EpochSequence,
 		authorizationIdentity: authorization.AuthorizationIdentity,
-	}, nil
+	}, authorization, nil
 }
 
 type approvalProtectedView struct {
@@ -328,6 +361,28 @@ func validateProductionApprovalTime(view ApprovalGrant, authorization ApprovalKe
 	if view.IssuedAt < authorization.NotBefore || view.ExpiresAt > authorization.ExpiresAt ||
 		bindings.EffectiveNow < authorization.NotBefore || bindings.EffectiveNow >= authorization.ExpiresAt {
 		return classified(ClassificationStale, "approval-key-validity")
+	}
+	return nil
+}
+
+func validateCandidateApprovalAuthorizationTime(view ApprovalGrant, authorization ApprovalKeyAuthorization) error {
+	if view.ExpiresAt-view.IssuedAt > 300 || view.IssuedAt < authorization.NotBefore ||
+		view.ExpiresAt > authorization.ExpiresAt {
+		return classified(ClassificationStale, "approval-key-validity")
+	}
+	return nil
+}
+
+func bindCandidateApprovalAuthorization(authorization ApprovalKeyAuthorization, view ApprovalGrant) error {
+	if authorization.TeamID != ApprovalKeyTeamID || authorization.RoleID != ApprovalBrokerRoleID ||
+		authorization.AccessGroup != ApprovalAccessGroup(authorization.EpochSequence) ||
+		authorization.Protection != ApprovalKeyProtection || authorization.AccessControl != ApprovalKeyAccessControl ||
+		authorization.ContextPolicy != ApprovalKeyContextPolicy || authorization.SoftwareFallback ||
+		authorization.Status != ApprovalKeyStatusActive || authorization.Purpose != view.Purpose ||
+		authorization.Audience != view.Audience || authorization.InstallationID != view.InstallationID ||
+		authorization.EpochDigest != view.EpochDigest ||
+		authorization.AuthorizationIdentity == (ApprovalKeyAuthorizationIdentity{}) {
+		return classified(ClassificationBinding, "approval-key-authorization-binding")
 	}
 	return nil
 }

@@ -1,0 +1,70 @@
+name: Research or experiment
+description: Define a bounded research question or controlled defensive experiment
+title: "research: "
+labels: [research, evidence, "needs:evidence"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question tested
+      description: State one falsifiable question and the decision it will inform.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Defensive and authorized scope
+      description: Name the Capsule control, exact fixture, local harness or owned disposable guest, and authorized environment. Exclude every other system, identity, credential, and dataset.
+    validations:
+      required: true
+
+  - type: textarea
+    id: method
+    attributes:
+      label: Method
+      description: Describe the bounded procedure, mutations, measurements, and cleanup.
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Decision criteria
+      description: Define pass, blocker, and exact-candidate NO_GO conditions before running the experiment.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Retained evidence destination
+      description: Name repository or capsule-experiments artifact paths, immutable commits, logs, fixtures, and canonical documents that will retain the conclusion.
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification and independent checks
+      description: List exact commands, expected readbacks, reproduction count, and any independent oracle.
+    validations:
+      required: true
+
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Known limitations and parent boundary
+      description: State what the result cannot prove and which parent workstream or product-admission gate remains incomplete.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: containment
+    attributes:
+      label: Containment
+      options:
+        - label: The experiment is controlled, reproducible, minimal, and confined to the authorized scope above.
+          required: true
+        - label: The final handoff will record exact status, method, evidence paths, verification, confidence, limitations, and recommendation.
+          required: true

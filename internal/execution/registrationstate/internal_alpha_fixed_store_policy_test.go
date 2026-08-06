@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -84,6 +85,21 @@ func TestInternalAlphaFixedStorePolicyExactBoundariesAndCapPlusOne(t *testing.T)
 	}
 }
 
+func TestInternalAlphaFixedStorePolicyUnknownStatePrecedesNumericStops(t *testing.T) {
+	facts := allowedInternalAlphaFacts()
+	facts.known = false
+	facts.cumulativeAttempts = InternalAlphaMaxCumulativeAttempts + 1
+	facts.activeStoreBytes = InternalAlphaMaxActiveStoreBytes + 1
+	facts.archiveSegments = InternalAlphaMaxArchiveSegments + 1
+	facts.startupVerification = InternalAlphaMaxStartupVerification + time.Nanosecond
+	facts.durableCommitP95 = InternalAlphaMaxDurableCommitP95 + time.Nanosecond
+
+	report := evaluateInternalAlphaFixedStoreFacts(facts)
+	if report.Allowed || report.StopReason != InternalAlphaStoreStopUnknownState {
+		t.Fatalf("combined unknown/numeric result = %#v", report)
+	}
+}
+
 func TestInternalAlphaFixedStorePolicyUnknownStateAndCorruptionRefuseWithoutRewrite(t *testing.T) {
 	path := newV1PathFromState(t, ordinaryInitialStateForV1(), nil)
 	mustMigrateV2(t, path)
@@ -124,7 +140,7 @@ func TestInternalAlphaFixedStorePolicyUnknownStateAndCorruptionRefuseWithoutRewr
 			t.Fatal(err)
 		}
 		before := mustReadFile(t, corruptPath)
-		p95, err := ObserveInternalAlphaDurableCommitP95(200 * time.Millisecond)
+		p95, err := ObserveInternalAlphaDurableCommitP95(InternalAlphaMaxDurableCommitP95 + time.Nanosecond)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -139,6 +155,63 @@ func TestInternalAlphaFixedStorePolicyUnknownStateAndCorruptionRefuseWithoutRewr
 			t.Fatal("corruption refusal rewrote evidence")
 		}
 	})
+}
+
+func TestInternalAlphaFixedStorePolicyCountsOnlyPrimaryActiveEncodedBytes(t *testing.T) {
+	path, store, owner := newEligibleFixedStoreV2(t)
+	keys := lookupKeysForStore(t, store)
+	verified := mustPreparedArchive(t, store, owner)
+	reopened, err := store.ActivateArchive(context.Background(), owner, verified, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	segmentBytes := mustReadFile(t, archiveSegmentPath(path, verified.SegmentDigest()))
+	if len(segmentBytes) == 0 {
+		t.Fatal("segment-bearing fixture persisted empty referenced segment bytes")
+	}
+	approvalBefore, err := reopened.ResolveApproval(context.Background(), keys.approvalID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	before := inventoryDigest(t, path)
+	activeBytes := uint64(len(mustReadFile(t, path)))
+
+	root, err := OpenStoreRoot(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	startup, _, err := verifyInternalAlphaFixedStoreStartupWithClock(
+		context.Background(), root, owner, internalAlphaTestClock(time.Second),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p95, err := ObserveInternalAlphaDurableCommitP95(200 * time.Millisecond)
+	if err != nil {
+		t.Fatal(err)
+	}
+	report, err := CheckInternalAlphaFixedStoreAttemptAdmission(
+		context.Background(), root, owner, startup, p95,
+	)
+	if err != nil || !report.Allowed || report.ArchiveSegments != 1 {
+		t.Fatalf("segment-bearing admission = %#v, %v", report, err)
+	}
+	if report.ActiveStoreBytes != activeBytes {
+		t.Fatalf("active encoded bytes = %d, want primary file length %d", report.ActiveStoreBytes, activeBytes)
+	}
+	if report.ActiveStoreBytes >= activeBytes+uint64(len(segmentBytes)) {
+		t.Fatal("active encoded bytes did not exclude referenced archive segment bytes")
+	}
+	if after := inventoryDigest(t, path); after != before {
+		t.Fatal("segment-bearing policy check rewrote active or archive bytes")
+	}
+	approvalAfter, err := reopened.ResolveApproval(context.Background(), keys.approvalID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(approvalAfter, approvalBefore) {
+		t.Fatalf("passive policy changed retained approval:\nbefore=%#v\nafter=%#v", approvalBefore, approvalAfter)
+	}
 }
 
 func TestInternalAlphaFixedStorePolicyRestartAndAdmissionAreReadOnly(t *testing.T) {

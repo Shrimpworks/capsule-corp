@@ -1,16 +1,16 @@
-# Owner-only internal-alpha fixed-store stop policy
+# Owner-only internal-alpha fixed-store passive observation checker
 
-Work item: ADR-0040 fixed-store stop-threshold policy
+Work item: ADR-0040 fixed-store threshold observation/admission checker
 Status: `PASSED`
-Scope: passive, owner-held, read-only admission policy over the local fixed-store v2 oracle
-Evidence or reason: focused exact-boundary, cap-plus-one, corruption, orphan, restart, no-rewrite, and race tests plus every `AGENTS.md` repository gate pass
-Remaining work: outside this passed slice, product p95 instrumentation and authenticated attempt-transaction wiring remain unimplemented
-Next action: a future separately authorized product-consumer slice must select p95 sampling and place this guard immediately before attempt creation
-Parent status: owner-only hostile-`.mjs` internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; product admission remains blocked
+Scope: passive, owner-held, read-only, re-evaluated checker over the local fixed-store v2 oracle
+Evidence or reason: focused exact-boundary, cap-plus-one, combined-precedence, corruption, segment-bearing, orphan, restart, no-rewrite, unchanged-approval, and race tests plus every `AGENTS.md` repository gate pass
+Remaining work: no persistent installation trip latch exists; product p95 source/window/lifetime, authenticated `RequestAttempt` wiring, and full five-threshold product enforcement remain `BLOCKED`
+Next action: a future separately authorized product-consumer slice must resolve trip/reset semantics, select p95 instrumentation, and place an admitted guard immediately before attempt creation
+Parent status: owner-only hostile-`.mjs` internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`
 
 ## Defensive and authorized scope
 
-This slice defensively validates ADR-0040's fixed-store operational stop policy using only
+This slice defensively validates passive comparisons for ADR-0040's fixed-store thresholds using only
 `internal/execution/registrationstate` fixtures, fake authority records, and owned temporary roots.
 It accesses no runtime, backend, guest, product endpoint, service, Apple identity, credential,
 installed state, restore path, or user data.
@@ -38,9 +38,17 @@ observation. Missing timing evidence, owner loss, a mismatched session, repair/q
 state, disabled attempts, a known unreferenced orphan, unknown extra data, missing data, or corrupt
 data refuses as `unknown-state` without rewrite.
 
+These timing observations are re-evaluated inputs, not durable installation state. The checker
+persists no first-trip latch: startup verification may be measured again in a later owner session,
+and a later caller may supply a newly measured p95 observation. ADR-0040 does not yet select the
+trip/reset semantics required for a product consumer, so this slice makes no sticky-stop claim.
+
 ## Exact threshold semantics
 
-The policy preserves observed values and never clamps them:
+ADR-0040 selects stops at the stated attempt, active-byte, and segment capacities, while it names
+timing observations only when they exceed their stated durations. The checker therefore compares
+count/size/segment observations with `>=` and timing observations with `>`. It preserves observed
+values and never clamps them:
 
 | Dimension | Last admitted observation | First refusal |
 | --- | ---: | ---: |
@@ -54,10 +62,10 @@ The first matching refusal is reported in ADR-0040 order: attempts, active bytes
 startup verification, then durable-commit p95. Integrity or unknown-state refusal precedes every
 numeric threshold.
 
-This slice enforces the p95 threshold over a sealed observed value but deliberately does not select
-the future product instrumentation's sample window, aggregation lifetime, or durable storage.
-Those mechanics belong to the later product consumer and quantitative campaign; inventing them here
-would exceed the passive fixed-store scope.
+This slice compares the p95 threshold with a sealed caller-supplied observed value but deliberately
+does not select or authenticate the future product instrumentation's source, sample window,
+aggregation lifetime, or durable storage. Those mechanics belong to the later product consumer and
+quantitative campaign; inventing them here would exceed the passive fixed-store scope.
 
 ## Retained tests
 
@@ -65,21 +73,30 @@ would exceed the passive fixed-store scope.
 
 - every exact boundary and cap-plus-one outcome;
 - exact two-second and 250-millisecond acceptance plus one-nanosecond refusal;
+- combined unknown state taking precedence over every over-threshold numeric observation;
 - missing timing, corrupt active bytes, and known-unreferenced-orphan refusal;
+- a referenced-segment world proving active encoded bytes equal only the primary v2 file length and
+  exclude segment bytes;
 - two startup/reopen cycles over identical bytes;
 - unchanged active/archive inventory across every live policy check; and
-- unchanged attempt count and `AttemptsDisabled` authority state after read-only evaluation.
+- unchanged retained approval, attempt count, and `AttemptsDisabled` authority state after read-only
+  evaluation.
 
 ## Limitations and deferred work
 
 - No product attempt call consumes this oracle yet; wiring requires the future authenticated
   owner-only alpha consumer and its own integration/fault corpus.
-- Durable-commit sampling and p95 aggregation are not implemented or selected here.
-- The startup duration is local monotonic elapsed-time evidence, not a service-level guarantee.
+- No persistent installation trip latch is implemented. Startup and p95 observations can be
+  remeasured; the checker evaluates the observation supplied to the current call.
+- Durable-commit source instrumentation, sampling window, aggregation lifetime, and persistence are
+  not implemented or selected here.
+- The startup duration is local monotonic elapsed-time evidence, not a service-level guarantee or a
+  durable historical trip record.
 - The fixed store remains finite and disposable. Threshold or integrity refusal may permanently
   stop the installation under ADR-0040.
 - F6 production-engine selection, installed protected state, real power-loss evidence, restore,
-  continuity, automatic update, external alpha, and product admission remain blocked.
+  continuity, automatic update, external alpha, full five-threshold product enforcement, and
+  product admission remain `BLOCKED`.
 
 ## Verification
 

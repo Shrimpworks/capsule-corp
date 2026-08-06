@@ -32,6 +32,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # Full history so golangci-lint's only-new-issues (below) can diff
+          # against the PR base commit.
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
@@ -49,6 +53,13 @@ jobs:
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9
         with:
           version: v2.12.2
+          # revive's exported/package-comments rules (issue #217) have a
+          # repository-wide backlog (~825 pre-existing findings) that is
+          # tracked and remediated separately, not blocked on here.
+          # only-new-issues restricts every enabled linter's gate to lines
+          # touched by the current change; for the other linters, which
+          # already have zero repository-wide findings, this is a no-op.
+          only-new-issues: true
 
       - name: Vulnerability scan
         env:
@@ -72,6 +83,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # Full history so the exported-JSDoc gate below can diff against
+          # the PR base commit; the other steps in this job don't need it.
+          fetch-depth: 0
 
       - name: Set up pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
@@ -100,6 +115,24 @@ jobs:
 
       - name: Check formatting and lint
         run: pnpm lint
+
+      - name: Verify exported JSDoc on changed files
+        # New-code-only gate (issue #217): the existing repository-wide
+        # backlog is tracked separately, not blocked on here. Only runs on
+        # pull_request, where a stable base commit is available to diff
+        # against.
+        if: github.event_name == 'pull_request'
+        run: |
+          changed=()
+          while IFS= read -r path; do
+            changed+=("$path")
+          done < <(git diff --name-only --diff-filter=d "${{ github.event.pull_request.base.sha }}"...HEAD -- 'packages/**/*.ts' 'packages/**/*.tsx' | grep -v '\.test\.tsx\?$' || true)
+          if [ ${#changed[@]} -eq 0 ]; then
+            echo "no changed TypeScript source files"
+            exit 0
+          fi
+          printf '%s\n' "${changed[@]}"
+          node scripts/verify-exported-jsdoc.mjs "${changed[@]}"
 
       - name: Test
         run: pnpm test

@@ -7,6 +7,17 @@ linters:
   default: standard
   enable:
     - gosec
+    - revive
+  settings:
+    revive:
+      # Exported-contract documentation only (see docs/GO_ENGINEERING_STANDARDS.md
+      # and issue #217). Deliberately not revive's full recommended rule set:
+      # this gate exists to enforce doc coverage, not to introduce an
+      # unrelated style-linter migration in the same change.
+      enable-all-rules: false
+      rules:
+        - name: exported
+        - name: package-comments
   exclusions:
     paths:
       # Spike/experiment code is explicitly non-production (see AGENTS.md)

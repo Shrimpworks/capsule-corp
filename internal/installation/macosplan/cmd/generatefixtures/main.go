@@ -1,3 +1,8 @@
+// Command generatefixtures regenerates the passive macOS installation I0
+// conformance fixtures under macosplan.GenerateFixtures and writes them to
+// their repository-relative paths. It is a local development/CI generator,
+// not a daemon, service, or installed component; it holds no bootstrap,
+// signing, or protected-root authority.
 package main
 
 import (

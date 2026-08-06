@@ -29,6 +29,10 @@ restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
 strictly bounded owner-only fixed-store alpha exception; F6 production-engine selection and every
 external-alpha durability/restore/continuity claim remain `BLOCKED`.
+The passive [fixed-store stop-policy slice](INTERNAL_ALPHA_FIXED_STORE_STOP_POLICY.md) now evaluates
+ADR-0040's exact attempt, active-byte, segment, startup-verification, and durable-commit-p95
+thresholds over an owner-held fully verified v2 world without wiring an attempt consumer or
+changing authority state.
 None of those
 blocked or incomplete parent items is `NO_GO`. Product admission and control-evidence maturity
 remain separate from work status.

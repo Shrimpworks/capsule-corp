@@ -270,14 +270,15 @@ type archiveIndexesDisk struct {
 }
 
 type loadedV2State struct {
-	Envelope         diskEnvelopeV2
-	State            installationState
-	Lifecycles       []lifecyclestate.Record
-	EffectTombstones []archivestate.EffectIndexEntry
-	Active           archivestate.ActiveStateV2
-	Genesis          archivestate.MigrationGenesisCheckpoint
-	Segments         []loadedArchiveSegmentV0
-	Orphans          uint16
+	Envelope           diskEnvelopeV2
+	ActiveEncodedBytes uint64
+	State              installationState
+	Lifecycles         []lifecyclestate.Record
+	EffectTombstones   []archivestate.EffectIndexEntry
+	Active             archivestate.ActiveStateV2
+	Genesis            archivestate.MigrationGenesisCheckpoint
+	Segments           []loadedArchiveSegmentV0
+	Orphans            uint16
 }
 
 var fixedStoreV2MigrationMu sync.Mutex
@@ -763,7 +764,7 @@ func loadV2State(path string) (loadedV2State, error) {
 		return loadedV2State{}, errors.New("fixed supervisor v2 checkpoint kind is unsupported")
 	}
 	return loadedV2State{
-		Envelope: envelope, State: cloneState(envelope.State),
+		Envelope: envelope, ActiveEncodedBytes: uint64(len(data)), State: cloneState(envelope.State),
 		Lifecycles:       cloneLifecycleRecords(records, envelope.State.TimeHighWaterUnixSeconds),
 		EffectTombstones: cloneEffectTombstones(hotTombstones),
 		Active:           active, Genesis: genesis, Segments: cloneLoadedArchiveSegments(segments), Orphans: orphans,

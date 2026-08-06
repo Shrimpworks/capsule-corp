@@ -299,6 +299,36 @@ func TestPassiveFlowControllerRefusesConnectionServiceProcessAndBytesWithoutQueu
 	for _, release := range append(registerReleases, fetchReleases...) {
 		release()
 	}
+
+	byteLimits := supervisorLimits
+	byteLimits.inFlightRequestDataMaxBytes =
+		RegisterPlanV0RequestDataMaxBytes + GetRegisteredPlanV0RequestDataMaxBytes
+	registerRelease, err := pool.acquire(
+		passiveSupervisorProcess, DaemonServiceV0, repeatedID[PassiveConnectionID](0x31),
+		RegisterPlanV0RequestDataMaxBytes, byteLimits,
+	)
+	if err != nil {
+		t.Fatalf("admit mixed register bytes: %v", err)
+	}
+	getRelease, err := pool.acquire(
+		passiveSupervisorProcess, BrokerServiceV0, repeatedID[PassiveConnectionID](0x32),
+		GetRegisteredPlanV0RequestDataMaxBytes, byteLimits,
+	)
+	if err != nil {
+		t.Fatalf("admit mixed get bytes: %v", err)
+	}
+	if _, err := pool.acquire(passiveSupervisorProcess, BrokerServiceV0, repeatedID[PassiveConnectionID](0x33), 1, byteLimits); errorCodeOf(err) != "ipc-process-in-flight-bytes" {
+		t.Fatalf("mixed aggregate byte cap plus one = %v", err)
+	}
+	getRelease()
+	postRelease, err := pool.acquire(
+		passiveSupervisorProcess, BrokerServiceV0, repeatedID[PassiveConnectionID](0x34), 1, byteLimits,
+	)
+	if err != nil {
+		t.Fatalf("post-release byte re-admission: %v", err)
+	}
+	postRelease()
+	registerRelease()
 }
 
 func TestPassiveProductAdapterRoutesOnlyMethodSpecificSupervisorCalls(t *testing.T) {

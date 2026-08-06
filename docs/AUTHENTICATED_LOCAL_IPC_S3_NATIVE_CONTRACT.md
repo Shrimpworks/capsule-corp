@@ -2,6 +2,8 @@
 
 Date: 2026-08-05
 
+Conformance amendment: 2026-08-06
+
 Work item: exact native XPC dictionary contract for `SubmitMainMJSV0`, `RegisterPlanV0`, and
 `GetRegisteredPlanV0`.
 
@@ -23,12 +25,15 @@ No new dependency or custom platform primitive is introduced. The applicable eco
 roles, dictionaries, caps, and replay policy. This slice freezes only that Capsule-owned policy and
 does not call the platform.
 
-An external experiment or new ADR was not required for this prerequisite. ADR-0029 already selects
-the two role-specific Supervisor services, authentication-before-body-copy ordering, fixed common
-fields, copy ownership, refusal classes, and method-specific bridge topology; ADR-0044 selects the
-single CLI-to-daemon method and its flow contract. Assigning exact keys and numeric encodings does
-not change a component responsibility, listener topology, authority path, or privileged helper.
-The later harness remains responsible for proving that the selected XPC APIs enforce the contract.
+An external experiment or new ADR was not required for this prerequisite. Proposed ADR-0029
+already selects the two role-specific Supervisor services, authentication-before-body-copy
+ordering, fixed common fields, copy ownership, refusal classes, and method-specific bridge
+topology; Accepted ADR-0044 selects the single CLI-to-daemon method and its flow contract. The S3
+plan expressly calls for the exact native dictionary and numeric mapping prerequisite before the
+external harness. Assigning exact keys and numeric encodings therefore implements an already-scoped
+prerequisite; it changes no component responsibility, listener topology, authority path, or
+privileged helper and needs no ADR addendum. The later harness remains responsible for proving that
+the selected XPC APIs enforce the contract.
 
 ## Frozen dictionary profile
 
@@ -64,6 +69,12 @@ The numeric message tags are `1` for `SubmitMainMJSV0`, `2` for `RegisterPlanV0`
 `GetRegisteredPlanV0`; `0` is invalid. A tag only cross-checks the method already selected by the
 role-specific service and entry point. No generic dispatcher or opcode bus exists.
 
+The generated case set covers all six ordered collisions between one selected service/entry point
+and either other frozen method's tag. Each refuses as `UNSUPPORTED/messageTag`; no foreign tag can
+retarget dispatch. The binding identity remains the selected service + entry point + admitted peer
+role, then the numeric tag is cross-checked. It is never tag-only, including where two services
+reuse the same numeric namespace.
+
 The method binding also retains the existing exact service, expected role, audience, and purpose:
 `com.capsulecorp.capsule.daemon.cli.v0` / `internal-alpha-cli` /
 `capsule.daemon.local.v0` / `capsule.ipc.submit-main-mjs.v0`;
@@ -83,6 +94,13 @@ daemon/Broker code identities remain S5 profile inputs rather than invented valu
 All request application-data maxima, the Supervisor aggregate 2,626,696-byte limit, the daemon
 aggregate 8,388,608-byte limit, zero application queue, and 10,000/5,000/2,000-millisecond method
 deadlines remain unchanged. XPC framing bytes are not counted or claimed.
+
+The flow corpus additionally isolates mixed-method byte bookkeeping at a smaller test limit:
+one maximum `RegisterPlanV0` request plus one maximum `GetRegisteredPlanV0` request fills 328,353
+bytes, the next byte refuses as `CAPACITY/ipc-process-in-flight-bytes`, and releasing the Get slot
+admits one byte again. This exercises aggregate accounting and release without changing or claiming
+that the production 2,626,696-byte cap is reachable independently of the existing connection and
+request-count caps.
 
 ## Fixed status and refusal mapping
 
@@ -105,8 +123,18 @@ For a recognized core refusal, the core classification selects the status and re
 `coreRefusal`. A local integrity fault has no reply; reason tag 14 is retained only as a fixture
 diagnostic.
 
-Wrong OS peer requirements still receive no application reply. The contract cannot be used to
-infer that a peer was authenticated merely because a dictionary validates.
+Validation precedence is fixed as protocol version, method version, method binding, current-state
+binding, bounded application-data copy, then embedded-record/core validation. Joint
+protocol/method/562-byte role-binding-record version mutations therefore select protocol first;
+with protocol corrected, method version wins; with both outer versions correct, record version `1`
+reaches the existing bounded Go decoder and returns `UNSUPPORTED/coreRefusal`.
+
+Wrong-service and wrong-role fixture cases are delivered in-band refusals only under the explicit
+precondition that the future receiving service's peer requirement and session gate admitted the
+connection and the message reached the method-binding recheck. They are not OS peer-drop evidence.
+A distinct future-harness oracle says an OS peer-requirement mismatch must produce no message
+delivery and no application reply, while recording `currentEvidence=false`. A validating
+dictionary cannot be used to infer peer authentication.
 
 ## Ownership, replay, and response loss
 
@@ -123,6 +151,15 @@ call and creates no deduplication authority. Response-loss semantics remain meth
   and
 - `GetRegisteredPlanV0`: retry is a repeatable exact-byte read by `RegistrationID`.
 
+The same-width identifier substitutions make the domains explicit without claiming bytes carry a
+hidden type tag: request-ID bytes copied from an installation ID remain correlation-only and grant
+no authority; installation-ID substitution fails current-state binding; registration-ID bytes
+copied from a request ID proceed only to the method-specific registration lookup and gain no
+authority from their width. Local channel fields substituted with the signed ApprovalGrant values
+`capsule.execution-supervisor` / `capsule.plan.approve` fail method binding. The inverse signed-
+object substitutions cannot occur in these three envelopes because none carries an ApprovalGrant;
+`SubmitApprovalV0` and `RequestAttemptV0` remain blocked and receive no invented encoding.
+
 ## Retained evidence and limitations
 
 [`passive_native_xpc_contract.go`](../internal/execution/authorityplane/passive_native_xpc_contract.go)
@@ -132,11 +169,13 @@ It imports no XPC API and exposes no dispatcher or endpoint.
 [`native-xpc-v0.contract.json`](../schemas/conformance/authenticated-local-ipc-v0/native-xpc-v0.contract.json)
 is generated from the Node oracle. It retains exact keys, types, versions, tags, statuses, reasons,
 key counts, caps, all three method envelopes, classification mappings, refusal-only replies,
-cap-plus-one, missing/extra/wrong-type/nested, cross-method tag, zero-ID, wrong audience/purpose,
-wrong installation/epoch, extra-right, reply-correlation/extra-key, response-loss, and local-
-integrity cases. The Go verifier
-independently compares those fixtures with the production-side specifications and rejects generic
-command/service/role/backend/path/image/mount fields.
+cap-plus-one, missing/extra/wrong-type/nested, six ordered cross-service/tag collisions, joint
+version precedence, same-width identifier substitutions, local/signed purpose-audience swaps,
+wrong installation/epoch, explicitly keyed FD/endpoint/Mach-send-right smuggling,
+reply-correlation/extra-key, response-loss, and local-integrity cases. The Go and Node verifiers
+require the complete ordered native case set and deep-compare the exact three-entry response-loss
+table. The Go verifier independently compares those fixtures with the production-side
+specifications and rejects generic command/service/role/backend/path/image/mount fields.
 
 Focused verification:
 
@@ -153,6 +192,9 @@ deadline, response-loss, and process-fault behavior. Capsule must retain only it
 generated product conformance fixtures, and non-activating production-side contract. S5 installed
 identity/update evidence, daemon/Broker consumers, protected state, approval, runtime/backend, and
 product admission remain separate blockers.
+
+Exactly three methods are frozen here. Both `SubmitApprovalV0` and `RequestAttemptV0` remain
+`BLOCKED`; neither has a native message tag, envelope, case-derived deadline, or activated caller.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`.

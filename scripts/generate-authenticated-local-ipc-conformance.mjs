@@ -7,11 +7,21 @@ const outputRoot = new URL("schemas/conformance/authenticated-local-ipc-v0/", re
 const protocolVersion = 0;
 const audience = "capsule.execution-supervisor.local.v0";
 const submissionAudience = "capsule.daemon.local.v0";
+const signedApprovalAudience = "capsule.execution-supervisor";
+const signedApprovalPurpose = "capsule.plan.approve";
 const roleBindingRecordVersion = 0;
 const authorityDisposition = "service-role-purpose-audience-derived";
 const requestIdDisposition = "correlation-only";
 const nativeXPCEncoding = "xpc-dictionary-v0";
 const nativeXPCEncodingVersion = 0;
+const nativeXPCValidationPrecedence = Object.freeze([
+  "protocol-version",
+  "method-version",
+  "service-entry-point-role-message-tag-audience-purpose",
+  "installation-epoch-current-state",
+  "application-data-copy",
+  "embedded-record-version-and-core-validation",
+]);
 const nativeXPCTypes = Object.freeze({
   uint64: "XPC_TYPE_UINT64",
   data: "XPC_TYPE_DATA",
@@ -393,6 +403,7 @@ const nativeXPCContract = {
   machRightsAllowed: 0,
   nestedContainersAllowed: 0,
   messageTagDisposition: "method-specific-cross-check-not-dispatch-opcode",
+  validationPrecedence: nativeXPCValidationPrecedence,
   requestIdDisposition,
   copyDisposition: "body-copy-only-after-peer-flow-shape-current-state-binding",
   localIntegrityDisposition:
@@ -414,6 +425,15 @@ const nativeXPCContract = {
     {
       method: "GetRegisteredPlanV0",
       disposition: methods.getRegisteredPlanV0.responseLossDisposition,
+    },
+  ],
+  futureNativeHarnessOracles: [
+    {
+      id: "os-peer-requirement-mismatch",
+      scope: "future-external-native-harness-only",
+      expected: "no-message-delivery-and-no-application-reply",
+      currentEvidence: false,
+      inBandRefusal: false,
     },
   ],
   peerAuthenticationEvidence: null,
@@ -865,6 +885,23 @@ const oracles = {
       queueDepth: 0,
       noState: zeroState,
     },
+    {
+      id: "supervisor.mixed-register-get-aggregate-byte-cap-plus-one",
+      methods: [
+        { method: "RegisterPlanV0", admittedBytes: caps.registerPlanV0Request },
+        { method: "GetRegisteredPlanV0", admittedBytes: caps.getRegisteredPlanV0Request },
+      ],
+      isolatedAccountingCapBytes: caps.registerPlanV0Request + caps.getRegisteredPlanV0Request,
+      attemptedAdditionalBytes: 1,
+      classification: "CAPACITY",
+      reason: "ipc-process-in-flight-bytes",
+      releasedMethod: "GetRegisteredPlanV0",
+      postReleaseReadmissionBytes: 1,
+      postReleaseReadmission: "admitted",
+      productionAggregateCapBytes: 2_626_696,
+      queueDepth: 0,
+      noState: zeroState,
+    },
   ],
   cancellationAndDeadline: [
     {
@@ -1114,11 +1151,12 @@ function fixedStringField(key, value) {
 }
 
 function nativeXPCCases() {
-  const reject = (id, method, mutation, classification, reasonTag) => ({
+  const reject = (id, method, mutation, classification, reasonTag, context = {}) => ({
     id,
     method,
     direction: "request",
     mutation,
+    ...context,
     expected: {
       decision: "reject-before-body-copy",
       classification,
@@ -1129,6 +1167,17 @@ function nativeXPCCases() {
     },
     noState: zeroState,
   });
+  const crossServiceTag = (selectedMethod, receivedTag) =>
+    reject(
+      `cross-service.${selectedMethod}.tag-${receivedTag}`,
+      selectedMethod,
+      `entry-point=${selectedMethod};message-tag=${receivedTag}`,
+      "UNSUPPORTED",
+      nativeXPCReasonTags.messageTag,
+      {
+        dispatchIdentity: "service-entry-point-and-role-derived-before-tag-cross-check",
+      },
+    );
   return [
     {
       id: "all.exact-key-and-type-sets",
@@ -1194,18 +1243,60 @@ function nativeXPCCases() {
       nativeXPCReasonTags.methodVersion,
     ),
     reject(
-      "all.cross-method-tag",
-      "all",
-      "message-tag=other-frozen-method",
+      "register.joint-protocol-method-record-version-mismatch",
+      "RegisterPlanV0",
+      "protocol-version=1;method-version=1;role-bindings[0]=1",
       "UNSUPPORTED",
-      nativeXPCReasonTags.messageTag,
+      nativeXPCReasonTags.protocolVersion,
+      {
+        mismatchSet: "protocol-version,method-version,role-binding-record-version",
+        selectedFailure: "protocol-version",
+        validationPrecedence: nativeXPCValidationPrecedence,
+      },
     ),
+    reject(
+      "register.joint-method-record-version-mismatch",
+      "RegisterPlanV0",
+      "method-version=1;role-bindings[0]=1",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.methodVersion,
+      {
+        mismatchSet: "method-version,role-binding-record-version",
+        selectedFailure: "method-version",
+        validationPrecedence: nativeXPCValidationPrecedence,
+      },
+    ),
+    {
+      id: "register.embedded-record-version-mismatch",
+      method: "RegisterPlanV0",
+      direction: "request",
+      mutation: "role-bindings[0]=1",
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "UNSUPPORTED",
+        statusTag: nativeXPCStatusTags.UNSUPPORTED,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    crossServiceTag("SubmitMainMJSV0", "RegisterPlanV0"),
+    crossServiceTag("SubmitMainMJSV0", "GetRegisteredPlanV0"),
+    crossServiceTag("RegisterPlanV0", "SubmitMainMJSV0"),
+    crossServiceTag("RegisterPlanV0", "GetRegisteredPlanV0"),
+    crossServiceTag("GetRegisteredPlanV0", "SubmitMainMJSV0"),
+    crossServiceTag("GetRegisteredPlanV0", "RegisterPlanV0"),
     reject(
       "all.wrong-service",
       "all",
-      "delivered-on-other-role-service",
+      "selected-method-invoked-with-receiving-service=other-role-service",
       "AUTHENTICATION",
       nativeXPCReasonTags.methodBinding,
+      {
+        deliveryPrecondition:
+          "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
+        replyDisposition: "delivered-in-band-refusal",
+      },
     ),
     reject(
       "all.wrong-role",
@@ -1213,6 +1304,11 @@ function nativeXPCCases() {
       "message-derived-role=other",
       "AUTHENTICATION",
       nativeXPCReasonTags.methodBinding,
+      {
+        deliveryPrecondition:
+          "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
+        replyDisposition: "delivered-in-band-refusal",
+      },
     ),
     reject(
       "all.wrong-audience",
@@ -1228,6 +1324,48 @@ function nativeXPCCases() {
       "AUTHENTICATION",
       nativeXPCReasonTags.methodBinding,
     ),
+    reject(
+      "all.local-audience-replaced-by-signed-object-audience",
+      "all",
+      `audience=${signedApprovalAudience}`,
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    reject(
+      "all.local-purpose-replaced-by-signed-object-purpose",
+      "all",
+      `purpose=${signedApprovalPurpose}`,
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+    ),
+    {
+      id: "all.request-id-replaced-by-installation-id-bytes",
+      method: "all",
+      direction: "request",
+      mutation: "request-id=installation-id-bytes",
+      expected: {
+        decision: "accept-correlation-field-only",
+        authorityGrantedByRequestId: false,
+        requestIdIsIdempotencyKey: false,
+      },
+    },
+    reject(
+      "all.installation-id-replaced-by-request-id-bytes",
+      "all",
+      "installation-id=request-id-bytes",
+      "BINDING",
+      nativeXPCReasonTags.currentState,
+    ),
+    {
+      id: "get.registration-id-replaced-by-request-id-bytes",
+      method: "GetRegisteredPlanV0",
+      direction: "request",
+      mutation: "registration-id=request-id-bytes",
+      expected: {
+        decision: "continue-to-registration-lookup-without-transport-authority",
+        registrationAuthorityGrantedByWidth: false,
+      },
+    },
     reject(
       "all.wrong-installation",
       "all",
@@ -1252,14 +1390,21 @@ function nativeXPCCases() {
     reject(
       "all.extra-file-descriptor",
       "all",
-      "one-XPC_TYPE_FD",
+      "add-capsule.smuggled-fd=XPC_TYPE_FD",
       "MALFORMED",
       nativeXPCReasonTags.keySet,
     ),
     reject(
       "all.extra-endpoint",
       "all",
-      "one-XPC_TYPE_ENDPOINT",
+      "add-capsule.smuggled-endpoint=XPC_TYPE_ENDPOINT",
+      "MALFORMED",
+      nativeXPCReasonTags.keySet,
+    ),
+    reject(
+      "all.extra-mach-send-right",
+      "all",
+      "add-capsule.smuggled-mach-send-right=XPC_TYPE_MACH_SEND",
       "MALFORMED",
       nativeXPCReasonTags.keySet,
     ),

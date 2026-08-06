@@ -15,6 +15,7 @@ assert.equal(manifest.submissionAudience, "capsule.daemon.local.v0");
 assert.equal(manifest.roleBindingRecordVersion, 0);
 assert.equal(manifest.transportEncoding, "xpc-dictionary-v0");
 assert.equal(manifest.transportEncodingVersion, 0);
+assert.equal(manifest.methodCount, 3);
 assert.deepEqual(manifest.numericMessageTags, {
   invalid: 0,
   SubmitMainMJSV0: 1,
@@ -122,6 +123,14 @@ assert.equal(nativeXPC.serviceRegistered, false);
 assert.equal(nativeXPC.peerAuthenticationEvidence, null);
 assert.equal(nativeXPC.messageTagDisposition, "method-specific-cross-check-not-dispatch-opcode");
 assert.equal(nativeXPC.requestIdDisposition, "correlation-only");
+assert.deepEqual(nativeXPC.validationPrecedence, [
+  "protocol-version",
+  "method-version",
+  "service-entry-point-role-message-tag-audience-purpose",
+  "installation-epoch-current-state",
+  "application-data-copy",
+  "embedded-record-version-and-core-validation",
+]);
 assert.deepEqual(Object.keys(nativeXPC.envelopes), [
   "SubmitMainMJSV0",
   "RegisterPlanV0",
@@ -218,21 +227,73 @@ for (const candidate of nativeXPC.cases.filter((entry) => entry.noState)) {
   assert.equal(candidate.expected.bodyCopied, false, candidate.id);
   assert.equal(candidate.expected.coreCalls, 0, candidate.id);
 }
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "submit.body-cap-plus-one"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "register.body-cap-plus-one"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "get.body-cap-plus-one"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.missing-key"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.extra-key"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-type"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-audience"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-service"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-role"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.wrong-installation"));
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.success-reply-extra-key"));
-assert.ok(
-  nativeXPC.cases.some((candidate) => candidate.id === "all.success-reply-request-id-mismatch"),
+assert.deepEqual(
+  nativeXPC.cases.map((candidate) => candidate.id),
+  [
+    "all.exact-key-and-type-sets",
+    "submit.body-cap-plus-one",
+    "register.body-cap-plus-one",
+    "get.body-cap-plus-one",
+    "all.missing-key",
+    "all.extra-key",
+    "all.wrong-type",
+    "all.nested-container",
+    "all.zero-request-id",
+    "all.unknown-protocol-version",
+    "all.unknown-method-version",
+    "register.joint-protocol-method-record-version-mismatch",
+    "register.joint-method-record-version-mismatch",
+    "register.embedded-record-version-mismatch",
+    "cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
+    "cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
+    "cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
+    "cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
+    "cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
+    "cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
+    "all.wrong-service",
+    "all.wrong-role",
+    "all.wrong-audience",
+    "all.wrong-purpose",
+    "all.local-audience-replaced-by-signed-object-audience",
+    "all.local-purpose-replaced-by-signed-object-purpose",
+    "all.request-id-replaced-by-installation-id-bytes",
+    "all.installation-id-replaced-by-request-id-bytes",
+    "get.registration-id-replaced-by-request-id-bytes",
+    "all.wrong-installation",
+    "all.wrong-epoch-digest",
+    "all.epoch-uint53-cap-plus-one",
+    "all.extra-file-descriptor",
+    "all.extra-endpoint",
+    "all.extra-mach-send-right",
+    "all.success-reply-extra-key",
+    "all.success-reply-request-id-mismatch",
+    "all.refusal-reply-extra-body",
+    "all.local-integrity-output-fault",
+  ],
 );
-assert.ok(nativeXPC.cases.some((candidate) => candidate.id === "all.refusal-reply-extra-body"));
+assert.deepEqual(nativeXPC.responseLoss, [
+  {
+    method: "SubmitMainMJSV0",
+    disposition: "committed-retry-may-create-fresh-registration",
+  },
+  {
+    method: "RegisterPlanV0",
+    disposition: "committed-retry-creates-fresh-registration",
+  },
+  {
+    method: "GetRegisteredPlanV0",
+    disposition: "repeatable-read-by-registration-id",
+  },
+]);
+assert.deepEqual(nativeXPC.futureNativeHarnessOracles, [
+  {
+    id: "os-peer-requirement-mismatch",
+    scope: "future-external-native-harness-only",
+    expected: "no-message-delivery-and-no-application-reply",
+    currentEvidence: false,
+    inBandRefusal: false,
+  },
+]);
 
 const submitRequest = await json("submit-main-mjs-v0.request.json");
 const submitReply = await json("submit-main-mjs-v0.reply.json");
@@ -281,6 +342,36 @@ for (const candidate of oracles.maxima) {
 }
 for (const candidate of oracles.refusals) assertZeroState(candidate.noState, candidate.id);
 for (const candidate of oracles.flowControl) assertZeroState(candidate.noState, candidate.id);
+assert.deepEqual(
+  oracles.flowControl.find(
+    (candidate) => candidate.id === "supervisor.mixed-register-get-aggregate-byte-cap-plus-one",
+  ),
+  {
+    id: "supervisor.mixed-register-get-aggregate-byte-cap-plus-one",
+    methods: [
+      { method: "RegisterPlanV0", admittedBytes: 328_337 },
+      { method: "GetRegisteredPlanV0", admittedBytes: 16 },
+    ],
+    isolatedAccountingCapBytes: 328_353,
+    attemptedAdditionalBytes: 1,
+    classification: "CAPACITY",
+    reason: "ipc-process-in-flight-bytes",
+    releasedMethod: "GetRegisteredPlanV0",
+    postReleaseReadmissionBytes: 1,
+    postReleaseReadmission: "admitted",
+    productionAggregateCapBytes: 2_626_696,
+    queueDepth: 0,
+    noState: {
+      authorityStateChanged: false,
+      coreCalls: 0,
+      registrationsCreated: 0,
+      approvalsConsumed: 0,
+      attemptsCreated: 0,
+      lifecycleCalls: 0,
+      backendCalls: 0,
+    },
+  },
+);
 assertZeroState(oracles.cancellationAndDeadline[0].noState, "cancel.before-dispatch");
 assert.equal(oracles.cancellationAndDeadline[1].admittedSlotHeldUntilCoreReturns, true);
 assert.equal(oracles.cancellationAndDeadline[2].admittedSlotHeldUntilCoreReturns, true);

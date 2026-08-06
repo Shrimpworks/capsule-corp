@@ -1056,6 +1056,37 @@
         "lifecycleCalls": 0,
         "backendCalls": 0
       }
+    },
+    {
+      "id": "supervisor.mixed-register-get-aggregate-byte-cap-plus-one",
+      "methods": [
+        {
+          "method": "RegisterPlanV0",
+          "admittedBytes": 328337
+        },
+        {
+          "method": "GetRegisteredPlanV0",
+          "admittedBytes": 16
+        }
+      ],
+      "isolatedAccountingCapBytes": 328353,
+      "attemptedAdditionalBytes": 1,
+      "classification": "CAPACITY",
+      "reason": "ipc-process-in-flight-bytes",
+      "releasedMethod": "GetRegisteredPlanV0",
+      "postReleaseReadmissionBytes": 1,
+      "postReleaseReadmission": "admitted",
+      "productionAggregateCapBytes": 2626696,
+      "queueDepth": 0,
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
     }
   ],
   "cancellationAndDeadline": [

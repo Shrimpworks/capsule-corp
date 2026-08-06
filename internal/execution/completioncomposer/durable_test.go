@@ -248,6 +248,83 @@ func TestDurableCompletionDefensiveCopies(t *testing.T) {
 	}
 }
 
+func TestDurableStoreCreateIsAtomicAndExclusive(t *testing.T) {
+	source := newRetainedTruthSource(t, []byte("null"))
+	directory := t.TempDir()
+	path := filepath.Join(directory, "store.json")
+	if _, err := CreateFixedFileCompletionStore(path, source.created.Attempt.InstallationID, nil); err != nil {
+		t.Fatal(err)
+	}
+	before := readSnapshotForTest(t, path)
+
+	// A second create at the same path must not silently replace the first
+	// store's committed content (ADR-0042's atomic-publish invariant applies
+	// to creation too, not only later commits).
+	if _, err := CreateFixedFileCompletionStore(path, source.created.Attempt.InstallationID, nil); err == nil {
+		t.Fatal("create did not refuse an already-occupied path")
+	}
+	if after := readSnapshotForTest(t, path); after.InstallationID != before.InstallationID {
+		t.Fatal("refused create mutated the existing store")
+	}
+
+	// No leftover temporary file survives a successful create.
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, entry := range entries {
+		if entry.Name() != filepath.Base(path) {
+			t.Fatalf("create left a stray file behind: %s", entry.Name())
+		}
+	}
+
+	// A create whose write fails before the atomic link must not leave a
+	// partial file at the final path: a retry at the same path must still
+	// succeed as a fresh creation.
+	failingPath := filepath.Join(directory, "unwritable", "store.json")
+	if err := os.MkdirAll(filepath.Dir(failingPath), 0o500); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(filepath.Dir(failingPath), 0o700) })
+	if _, err := CreateFixedFileCompletionStore(failingPath, source.created.Attempt.InstallationID, nil); err == nil {
+		t.Fatal("create in a read-only directory unexpectedly succeeded")
+	}
+	if _, err := os.Lstat(failingPath); !os.IsNotExist(err) {
+		t.Fatalf("failed create left a partial file: %v", err)
+	}
+}
+
+func TestDurableStoreRefusesDuplicateObjectName(t *testing.T) {
+	source := newRetainedTruthSource(t, []byte("null"))
+	path := filepath.Join(t.TempDir(), "store.json")
+	store, err := CreateFixedFileCompletionStore(path, source.created.Attempt.InstallationID, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mustProducer(t, source, store).Complete(context.Background(), commitRequest(source, []byte("null"))); err != nil {
+		t.Fatal(err)
+	}
+
+	exact, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Insert an earlier conflicting objectType member. Go's json.Decoder
+	// otherwise accepts this with last-value-wins behavior; the store must
+	// treat it as malformed recovery state instead of silently reopening.
+	tampered := bytes.Replace(exact, []byte(`"objectType"`),
+		[]byte(`"objectType":"forged","objectType"`), 1)
+	if bytes.Equal(tampered, exact) {
+		t.Fatal("test setup did not tamper the snapshot")
+	}
+	if err := os.WriteFile(path, tampered, 0o600); err != nil { //nolint:gosec // G703: path is the t.TempDir() store file created earlier in this test.
+		t.Fatal(err)
+	}
+	if _, err := OpenFixedFileCompletionStore(path, nil); classification(t, err) != ClassificationRecoveryRequired {
+		t.Fatalf("duplicate object name = %v", err)
+	}
+}
+
 func commitRequest(source *retainedTruthSource, exact []byte) CommitRequest {
 	return CommitRequest{ObjectVersion: DurableCompletionObjectVersion, AttemptID: source.created.Attempt.AttemptID,
 		ResultJSON: exact, ResultIntegrity: ResultIntegrityTypedJSONSHA256}

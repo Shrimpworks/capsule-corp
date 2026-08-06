@@ -53,7 +53,10 @@ func run() int {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
+	shutdownDone := make(chan struct{})
 	go func() {
+		defer close(shutdownDone)
+
 		<-ctx.Done()
 
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -66,8 +69,23 @@ func run() int {
 
 	logger.Info("starting capsule daemon", "address", server.Addr, "version", version)
 
-	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		logger.Error("daemon stopped unexpectedly", "error", err)
+	serveErr := server.ListenAndServe()
+
+	// ListenAndServe can also return for a reason other than a caught signal
+	// (for example a listen failure). Cancel ctx unconditionally so the
+	// shutdown goroutine is never left blocked on <-ctx.Done() waiting for a
+	// signal that will not arrive; stop is idempotent, so the deferred call
+	// above stays safe.
+	stop()
+
+	// server.Shutdown causes ListenAndServe to return promptly, but active
+	// handlers keep draining in the background goroutine above until its
+	// five-second window elapses or every connection finishes. Wait for that
+	// goroutine so main does not os.Exit while requests are still in flight.
+	<-shutdownDone
+
+	if serveErr != nil && !errors.Is(serveErr, http.ErrServerClosed) {
+		logger.Error("daemon stopped unexpectedly", "error", serveErr)
 		return 1
 	}
 	return 0

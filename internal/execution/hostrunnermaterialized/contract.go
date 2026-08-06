@@ -197,12 +197,26 @@ type Verified struct {
 
 func (verified *Verified) Profile() Profile {
 	value := verified.profile
+	value.Predecessors = bytes.Clone(value.Predecessors)
+	value.GovernedSources = bytes.Clone(value.GovernedSources)
+	value.AcceptedHeader = bytes.Clone(value.AcceptedHeader)
+	value.LibkrunBuild = bytes.Clone(value.LibkrunBuild)
+	value.ABIReview = bytes.Clone(value.ABIReview)
 	value.BootRole.LibkrunFeatures = slices.Clone(value.BootRole.LibkrunFeatures)
+	value.BootRole.Libkrunfw = bytes.Clone(value.BootRole.Libkrunfw)
+	value.BootRole.Kernel = bytes.Clone(value.BootRole.Kernel)
+	value.Runner.Source = bytes.Clone(value.Runner.Source)
+	value.Runner.Artifact = bytes.Clone(value.Runner.Artifact)
 	value.Runner.Preflight.Argv = slices.Clone(value.Runner.Preflight.Argv)
 	value.Runner.Preflight.AllowedFDs = slices.Clone(value.Runner.Preflight.AllowedFDs)
 	value.Runner.Ports = slices.Clone(value.Runner.Ports)
 	value.Runner.OrderedCalls = slices.Clone(value.Runner.OrderedCalls)
 	value.Runner.ForbiddenImports = slices.Clone(value.Runner.ForbiddenImports)
+	value.ComposedProfile.Runtime = bytes.Clone(value.ComposedProfile.Runtime)
+	value.ComposedProfile.TrustedInit = bytes.Clone(value.ComposedProfile.TrustedInit)
+	value.ComposedProfile.TrustedLauncher = bytes.Clone(value.ComposedProfile.TrustedLauncher)
+	value.ComposedProfile.Resources = bytes.Clone(value.ComposedProfile.Resources)
+	value.ComposedProfile.Teardown = bytes.Clone(value.ComposedProfile.Teardown)
 	value.ComposedProfile.Devices = slices.Clone(value.ComposedProfile.Devices)
 	return value
 }

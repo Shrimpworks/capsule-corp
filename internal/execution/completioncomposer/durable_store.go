@@ -20,8 +20,10 @@ import (
 type StoreCommitCheckpoint string
 
 const (
-	CheckpointBeforeCompletionRename StoreCommitCheckpoint = "before-completion-rename"
-	CheckpointAfterCompletionRename  StoreCommitCheckpoint = "after-completion-rename"
+	CheckpointBeforeCompletionRename    StoreCommitCheckpoint = "before-completion-rename"
+	CheckpointAfterCompletionRename     StoreCommitCheckpoint = "after-completion-rename"
+	CheckpointBeforeCompletionStoreLink StoreCommitCheckpoint = "before-completion-store-link"
+	CheckpointAfterCompletionStoreLink  StoreCommitCheckpoint = "after-completion-store-link"
 )
 
 type StoreFaultHook func(StoreCommitCheckpoint) error
@@ -104,24 +106,65 @@ func CreateFixedFileCompletionStore(
 	if err != nil {
 		return nil, err
 	}
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o600) //nolint:gosec // unwired store receives one Supervisor-owned fixed local path
-	if err != nil {
+	if err := createSnapshotFile(path, exact, fault); err != nil {
 		return nil, err
 	}
-	if _, err = file.Write(exact); err == nil {
-		err = file.Sync()
+	return &FixedFileCompletionStore{path: path, snapshot: snapshot, fault: fault}, nil
+}
+
+// createSnapshotFile writes exact to a new file at path, following the same
+// write-temp/sync/atomically-publish/sync-directory invariant as publish
+// (ADR-0042). Unlike publish's rename, it must not silently replace an
+// existing store, so it links the synced temporary file into path instead:
+// os.Link fails closed with an existing-file error if path is already
+// occupied, and — like O_EXCL — never leaves a partial file at path, because
+// a failed link touches only the temporary name that the deferred cleanup
+// then removes.
+func createSnapshotFile(path string, exact []byte, fault StoreFaultHook) error {
+	directory := filepath.Dir(path)
+	temporary, err := os.CreateTemp(directory, ".completion-init-*")
+	if err != nil {
+		return err
 	}
-	closeErr := file.Close()
+	temporaryPath := temporary.Name()
+	defer func() { _ = os.Remove(temporaryPath) }()
+
+	if err := temporary.Chmod(0o600); err != nil {
+		_ = temporary.Close()
+		return err
+	}
+	if _, err = temporary.Write(exact); err == nil {
+		err = temporary.Sync()
+	}
+	closeErr := temporary.Close()
 	if err == nil {
 		err = closeErr
 	}
 	if err != nil {
-		return nil, err
+		return err
 	}
-	if err := syncDirectory(filepath.Dir(path)); err != nil {
-		return nil, err
+
+	if fault != nil {
+		if err := fault(CheckpointBeforeCompletionStoreLink); err != nil {
+			return err
+		}
 	}
-	return &FixedFileCompletionStore{path: path, snapshot: snapshot, fault: fault}, nil
+	if err := os.Link(temporaryPath, path); err != nil {
+		return err
+	}
+	if fault != nil {
+		if err := fault(CheckpointAfterCompletionStoreLink); err != nil {
+			// The link already landed a complete, synced snapshot at path;
+			// only its directory-entry durability is now uncertain. Leave
+			// the file in place — a caller can inspect or reopen it — but
+			// do not report success for this call.
+			return classified(ClassificationRecoveryRequired, "completion-store-create-indeterminate")
+		}
+	}
+	if err := syncDirectory(directory); err != nil {
+		return classified(ClassificationRecoveryRequired, "completion-store-create-indeterminate")
+	}
+	return nil
 }
 
 func OpenFixedFileCompletionStore(path string, fault StoreFaultHook) (*FixedFileCompletionStore, error) {
@@ -353,6 +396,13 @@ func encodeStoreSnapshot(snapshot durableStoreSnapshot) ([]byte, error) {
 }
 
 func decodeStoreSnapshot(exact []byte) (durableStoreSnapshot, error) {
+	// encoding/json's Decoder accepts syntactically ambiguous duplicate
+	// object member names with last-value-wins behavior; reject them before
+	// struct-decoding so a corrupted/tampered snapshot with a conflicting
+	// earlier member cannot silently reopen as if it were unambiguous.
+	if err := rejectDuplicateJSONNames(exact); err != nil {
+		return durableStoreSnapshot{}, classified(ClassificationRecoveryRequired, "completion-store-duplicate-name")
+	}
 	decoder := json.NewDecoder(bytes.NewReader(exact))
 	decoder.DisallowUnknownFields()
 	var snapshot durableStoreSnapshot
@@ -366,6 +416,71 @@ func decodeStoreSnapshot(exact []byte) (durableStoreSnapshot, error) {
 		return durableStoreSnapshot{}, err
 	}
 	return snapshot, nil
+}
+
+// rejectDuplicateJSONNames walks exact and fails if any JSON object in it
+// (at any depth) repeats a member name. It mirrors
+// registrationstate.rejectDuplicateJSONNames for this package's own strict
+// decode boundary.
+func rejectDuplicateJSONNames(exact []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(exact))
+	var readValue func() error
+	readValue = func() error {
+		token, err := decoder.Token()
+		if err != nil {
+			return err
+		}
+		delimiter, ok := token.(json.Delim)
+		if !ok {
+			return nil
+		}
+		switch delimiter {
+		case '{':
+			seen := make(map[string]struct{})
+			for decoder.More() {
+				nameToken, err := decoder.Token()
+				if err != nil {
+					return err
+				}
+				name, ok := nameToken.(string)
+				if !ok {
+					return errors.New("completion store has a non-string object name")
+				}
+				if _, exists := seen[name]; exists {
+					return errors.New("completion store has a duplicate object name")
+				}
+				seen[name] = struct{}{}
+				if err := readValue(); err != nil {
+					return err
+				}
+			}
+			closing, err := decoder.Token()
+			if err != nil || closing != json.Delim('}') {
+				return errors.New("completion store has an incomplete object")
+			}
+			return nil
+		case '[':
+			for decoder.More() {
+				if err := readValue(); err != nil {
+					return err
+				}
+			}
+			closing, err := decoder.Token()
+			if err != nil || closing != json.Delim(']') {
+				return errors.New("completion store has an incomplete array")
+			}
+			return nil
+		default:
+			return errors.New("completion store has an unexpected delimiter")
+		}
+	}
+	if err := readValue(); err != nil {
+		return err
+	}
+	if _, err := decoder.Token(); !errors.Is(err, io.EOF) {
+		return errors.New("completion store has trailing data")
+	}
+	return nil
 }
 
 func validateStoreSnapshot(snapshot durableStoreSnapshot) error {

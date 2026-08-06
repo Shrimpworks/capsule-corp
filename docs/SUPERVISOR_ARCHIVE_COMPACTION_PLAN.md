@@ -741,9 +741,11 @@ concurrency one, full verification before every attempt, no restore, installatio
 live-store loss/corruption, and the ADR's exact 128-attempt/8-MiB/16-segment/latency stop thresholds.
 This is not production-store selection and makes no continuity, rollback, hostile-same-UID,
 secure-deletion, or restore claim. F6 remains mandatory before external alpha or any such claim.
-The [passive stop-policy result](INTERNAL_ALPHA_FIXED_STORE_STOP_POLICY.md) implements only the
-owner-held read-only admission oracle for those exact thresholds. It remains unwired from attempt
-creation and selects no p95 sampling window, product consumer, or engine.
+The [passive threshold-checker result](INTERNAL_ALPHA_FIXED_STORE_STOP_POLICY.md) implements only the
+owner-held, read-only, re-evaluated observation/admission oracle for those exact comparisons. It
+persists no installation trip latch, remains unwired from `RequestAttempt`, and selects no p95
+source/window/lifetime, product consumer, or engine. Full five-threshold product enforcement remains
+`BLOCKED`.
 
 - Instantiate the same logical schema/oracles in one exact SQLite build and configuration, or name
   another candidate with equivalent evidence scope.

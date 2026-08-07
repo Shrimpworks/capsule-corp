@@ -25,7 +25,7 @@
     "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/generate-contract-conformance-fixtures.mjs --check && node scripts/generate-authority-plane-conformance.mjs --check && node scripts/verify-authority-plane-conformance.mjs && node scripts/generate-authenticated-local-ipc-conformance.mjs --check && node scripts/verify-authenticated-local-ipc-conformance.mjs && node scripts/verify-contract-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs --check && node scripts/generate-i2b-bootstrap-conformance.mjs --check && node scripts/generate-macos-i2b2-profile.mjs --check && node scripts/verify-field-authority-manifest.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0",
+    "@biomejs/biome": "^2.5.7",
     "@types/node": "^22.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",

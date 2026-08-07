@@ -39,7 +39,7 @@ Keep these evidence classes separate:
 ## Durable repository state
 
 The current closed conformance corpus has 95 rules, 502 cases, and 624 fixtures. The current
-field-authority manifest classifies 1,111 fields across 81 profiles and 50 targets. The generated
+field-authority manifest classifies 1,203 fields across 95 profiles and 60 targets. The generated
 verifiers are canonical for detailed language and object coverage. Product Source Validator work
 is `BLOCKED`, but R1/R2 and exact Apple Development signed, installed, inactive-policy R3 are
 `PASSED`; exact R4-v1 candidates are `NO_GO`, and R4-v2 was not executed. The archive migration
@@ -143,11 +143,12 @@ The governed promotion slice is `PASSED`: fork defaults are locked at Deno
 `capsule/accepted-v2.9.4-r3`, `rusty_v8` `capsule/accepted-v150.2.0-r5`, and libkrun
 `capsule/upstream-v1.19.4-r3` with historical accepted heads protected and each `main` retained only
 as mutable integration state. C2B v3 passively binds those accepted identities and resolves the
-fixed-owned-guest contract. The retained libkrun dylib predates the accepted source and the
-build-only preflight is not a runner, so current-source dylib and final runner materialization,
-fixed-owned-guest eligibility, and runtime/profile admission remain `BLOCKED`. Governance and
-passive binding admit no artifact, runtime, backend, profile, or guest. The paragraphs below retain
-the earlier transfer and merge evidence as historical provenance.
+fixed-owned-guest contract. V4 later retained current-source libkrun, the final runner, and exact
+build/static identities; v19 and v27 then ran their separately authorized fixed guest scopes.
+Final typed transport, installed composition/recovery, broader lifecycle/platform matrices, and
+runtime/profile admission remain `BLOCKED`. Governance, passive binding, and controlled experiment
+evidence do not admit an artifact, runtime, backend, profile, or product guest. The paragraphs below
+retain the earlier transfer and merge evidence as historical provenance.
 
 The current governed integration destination is
 [`Shrimpworks/libkrun`](https://github.com/Shrimpworks/libkrun), transferred from the historical
@@ -191,7 +192,7 @@ remains `BLOCKED`.
 
 | Priority | Work | Dependency boundary |
 | --- | --- | --- |
-| F2-F5 `PASSED` local conformance / F6 `BLOCKED` | Archive F2-F6 | F2 migration/full verification, F3 activation, F4A retained lookup, F4B mutation/tombstones, F4C bounded growth, and F5 coherent backup/read-only restore admission/known-orphan cleanup/offline reporting pass only in the owner-held fixed-store oracle. F6 production-engine, installed APFS/power-loss, restore activation, rollback, and external-alpha continuity remain blocked. |
+| F2-F5 `PASSED` local conformance / F6 execution `BLOCKED` | Archive F2-F6 | F2 migration/full verification, F3 activation, F4A retained lookup, F4B mutation/tombstones, F4C bounded growth, and F5 coherent backup/read-only restore admission/known-orphan cleanup/offline reporting pass only in the owner-held fixed-store oracle. The documentation-only [F6 packet](SUPERVISOR_ARCHIVE_F6_SQLITE_EXPERIMENT_PACKET.md) is `PASSED`; production-engine selection, installed APFS/power-loss, restore activation, rollback, and external-alpha continuity remain blocked. |
 | `PASSED` local mechanic / `BLOCKED` installed lane | Owner-lock G2/G3 | G2 passed the exact current-v1/no-guest local composition. Apple Membership Details confirms emitted Team `3DDR84M4JS` is the account Team and W4 is only a certificate display suffix. G3 remains blocked on exact 3DDR role profiles and protected-root bootstrap/signed-record/descriptor-relative store composition. |
 | `PASSED` passive S1/M2 cutover / product integration `BLOCKED` | `.mjs` authority plane | Exact-one-`main.mjs` planning and atomic registration/fetch pass as unwired fixed-store mechanics. Authenticated product facades, Broker rendering/signing, production verification, protected state, and connected attempt/runtime consumers remain blocked. |
 | R1/R2/R3 `PASSED`; product `BLOCKED` | Source Validator R1-R5B | Passive contracts and unsigned construction retain role-distinct known answers, inactive policy, caps, and independent decoding. R3 passes the exact Apple Development signed, installed, inactive-policy composition. Exact R4-v1 candidates are `NO_GO`; R4-v2 is unexecuted. Product R4/R5 remains later defense-in-depth and is not an alpha prerequisite. |
@@ -200,7 +201,7 @@ remains `BLOCKED`.
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | `PASSED` bounded construction and passive contract | Fork-native bundle and C1 composition | The merged handoff reconstructs the exact Linux/arm64 binary/snapshot/root identities; C1 fixes the no-effect app/runtime/logical-descriptor/resource contract. Neither result releases or admits bytes. |
 | C2B v3/v4 passive/static scopes and v19 fixed guest `PASSED` / product admission `BLOCKED` | Governed runtime plus libkrun | V3 binds accepted governed heads and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics. V4 retains current-source libkrun, independent ABI audit, unsigned final runner, and a new composed digest without execution. A separately authorized v19 experimental successor then passed one fixed benign guest through a diagnostic console proof and exact teardown. No hostile owner source, final typed transport, installed composition, or product admission belongs to that result. |
-| Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference, and Apple Membership Details confirms Team `3DDR84M4JS`. New Apple Development SHA-1 `80A4...D3793` is locally present but not authorized. Exact 3DDR role profiles and separate credentialed authorization remain required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
+| Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference, and Apple Membership Details confirms Team `3DDR84M4JS`. I2B3's exact profile/signing preflight was separately authorized and `PASSED`; ADR-0045's E1 identity-separation mutations are not authorized. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 
 ## Maintainer decisions and resources that can unblock work
@@ -208,9 +209,10 @@ remains `BLOCKED`.
 - TypeScript remains conditional and off the first-release critical path. Follow accepted ADR-0034
   for `.mjs`; do not implement around Source Preparer P0A or widen the runtime contract.
 - The Team is `3DDR84M4JS`; Apple Membership Details confirms the value already emitted by exact
-  G3 readback. `W4QUR9FUL4` is a certificate common-name/member display suffix. New Apple
-  Development SHA-1 `80A4...D3793` is locally present but not authorized. Local signed/provisioned
-  experiments require exact 3DDR role profiles. The three profiles Xcode 26.6 cached through
+  G3 readback. `W4QUR9FUL4` is a certificate common-name/member display suffix. I2B3's narrow
+  profile/signing preflight was authorized and passed; the next ADR-0045 E1 identity-separation
+  mutations require new explicit authorization. Local signed/provisioned experiments require exact
+  3DDR role profiles. The three profiles Xcode 26.6 cached through
   Download Manual Profiles are 3DDR Gate B Broker/Supervisor/wildcard profiles with nonmatching App
   IDs and are not reusable. A separate Developer ID Application identity for Team `3DDR84M4JS` is
   later distribution authority only: its use requires explicit authorization and matching-Team
@@ -240,4 +242,5 @@ later merge narrows their interpretation.
 
 The repository still contains no job-submission endpoint, production Broker approval/signature
 flow, authenticated product IPC, protected production authority/source store, admitted runtime,
-real execution adapter, hostile guest, or composed production evidence chain.
+real execution adapter, user-supplied hostile-`.mjs` product guest path, or composed production
+evidence chain. The exact v27 fixed hostile-denial guest is controlled experiment evidence only.

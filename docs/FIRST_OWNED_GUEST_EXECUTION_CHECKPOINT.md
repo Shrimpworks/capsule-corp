@@ -202,7 +202,7 @@ This result must not be shortened to “Capsule is secure” or “the alpha is 
 - hostile guest-kernel containment, VM escape resistance, microarchitectural noninterference, or
   repeated/concurrent/soak behavior;
 - runtime or backend admission, a release artifact, product wiring, or an alpha release; or
-- durable archive publication of the raw v10-v19 experiment harness and evidence.
+- durable archive publication of the raw v10-v27 experiment harness and evidence.
 
 The final item is an evidence-retention blocker, not a reason to erase the checkpoint. Raw local
 evidence remains in the owner-controlled disposable experiment workspace. Before this result is

@@ -1,0 +1,136 @@
+# Current work plan
+
+Date: 2026-08-06
+
+Work item: reconcile the merged repository state and define the next dependency-ordered work.
+
+Status: `PASSED` for this planning and documentation scope.
+
+Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
+
+Product admission and the installed security boundary: `BLOCKED`.
+
+This is the current execution index. Detailed security claims remain in the linked ADRs, readiness
+map, experiment checkpoints, and evidence ledger. A completed passive contract or controlled
+experiment is not an activated product path.
+
+## Reconciled baseline
+
+The plan is based on `main` commit `942c19a0ab7ace605768e699218448ce60a40bae`. PRs #227 through
+#239 are merged and there are no open pull requests at this checkpoint. Current `main` CI and
+CodeQL are green. Historical PR checks were not uniformly green, so this plan relies on the merged
+commits and current-main readback rather than former draft state.
+
+Today closed or retained these exact slices:
+
+- the passive fixed-store threshold checker and its narrowed re-evaluated scope;
+- the passive three-method native-XPC contract and adversarial fixture expansion;
+- the proposed Supervisor authority-epoch decision and inert experiment packet;
+- the documentation-only F6 SQLite research and executable experiment packet;
+- issue labels, issue forms, and pull-request categorization;
+- four correctness defects in daemon shutdown, completion-store creation/decoding, and passive
+  host-runner defensive copying;
+- a new-code exported-contract documentation gate;
+- focused coverage increases and one behavior-preserving archive-state refactor; and
+- the exact v19 benign guest and v27 30-marker fixed hostile-denial experiment checkpoints.
+
+The generated repository totals are 95 rules, 502 cases, 624 fixtures, and 1,203 classified fields
+across 95 profiles and 60 targets.
+
+## Product-critical dependency graph
+
+```text
+raw v10-v27 evidence publication ------------------------------┐
+                                                               │
+ADR-0029 decision review + native XPC research -> S3 harness --+-> installed authenticated IPC
+                                                               │
+ADR-0045 E1 identity separation -> key/service/root corpus -----+
+                                                               │
+remaining approval/attempt methods + signing research ----------+-> Broker live signing
+                                                                  -> protected one-attempt path
+                                                               │
+typed transport design -> passive contract -> controlled harness ┐
+installed service/identity evidence ------------------------------+-> pre-admission profile matrix
+                                                                  -> admission review
+                                                                  -> sealed real adapter
+                                                               │
+existing durable completion-last oracle ------------------------+-> real completion/absence proof
+                                                                  -> installed hostile corpus
+                                                                  -> internal alpha PASSED
+
+F6 experiment -> engine decision -> restore/continuity -----------> external alpha only
+```
+
+The three top evidence lanes may run in parallel. Installed composition begins only after the
+relevant lane passes. Product completion may reuse the existing completion-last semantics only
+after real runner identity, result integrity, teardown, and authoritative absence exist.
+
+## Next work owned by Codex
+
+These are implementation or integration tasks. Each retained task uses its own `codex/<topic>`
+branch and pull request unless the orchestrator explicitly groups it before work begins.
+
+| Order | Work item | Current status | Start condition and acceptance boundary |
+| --- | --- | --- | --- |
+| C1 | Publish the raw v10-v27 harness, reports, manifests, and receipts to `Shrimpworks/capsule-experiments` | `BLOCKED` | Requires access to the owner-controlled disposable experiment workspace. Publish one verified immutable archive commit, then replace local-only evidence pointers with exact links. No new execution or broader claim. |
+| C2 | Run the one-time native XPC S3 harness | `BLOCKED` | Requires passed CL1 and R1 plus explicit authorization naming `Shrimpworks/capsule-experiments`, the owned Mac, exact fixture digest, and defensive no-product scope. Retain OS pre-delivery peer refusal, message-derived identity, EUID/session, copy, cap, deadline, interruption, response-loss, and process-fault evidence. |
+| C3 | Run ADR-0045 E1 Supervisor-authority-epoch identity separation | `BLOCKED` | Requires explicit Apple Development authorization for the named Team-`3DDR84M4JS` profiles and owned disposable containers. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. |
+| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `BLOCKED` | Start after the ADR-0029 decision review. Add passive method-specific tags, envelopes, caps, refusal precedence, copy, replay, and response-loss fixtures without activating a listener, signer, store, process, or guest. |
+| C5a | Freeze the final typed source/input/completion transport | `BLOCKED` | Start after the transport research packet. Bind exact framing, ownership, caps, drain/reset/cancel behavior, descriptor substitutions, and completion-last inputs without running libkrun or a guest. |
+| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5a and separate authorization naming the exact runtime/profile successor and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, and restoration evidence without making an admission decision. |
+| C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the three already-frozen consumers. |
+| C6b | Connect the installed Broker and approval/attempt methods | `BLOCKED` | Requires C4, R3, and C6a. Implement native rendering/UI, fresh user-presence signing, installed public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. |
+| C6c | Wire attempt admission and the fixed-store stop policy | `BLOCKED` | Requires C6b and an explicit decision for p95 provenance/window/lifetime and any persistent timing-trip semantics. Apply the re-evaluated guard transaction-locally after owner/full verification and before a new consume/create mutation; replay of an existing `AttemptID` converges first. |
+| C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
+| C7 | Review one exact runtime/profile candidate for admission | `BLOCKED` | Requires C6d. Produce an explicit admit-or-refuse result over the exact candidate and retained evidence; controlled v19/v27 experiments alone cannot admit it. |
+| C8 | Connect the sealed real adapter and completion-last path | `BLOCKED` | Requires C6c, C7, and a separately authorized owned guest. Execute only by committed `AttemptID`; consume real result-integrity, runner, teardown, and absence facts. |
+| C9 | Run the installed hostile-`.mjs` admission corpus | `BLOCKED` | Requires C8. Response loss, restart, recovery, restoration, pressure, sleep/wake, update, and the minimum hostile source/authority/transport/root/lifecycle cases must converge in the exact signed-installed profile. |
+
+Independent repository-quality work may continue without changing security claims: issue #217 in
+one-package documentation batches; issue #219 as sequential behavior-preserving archive refactors;
+and issue #216 only after its threshold/exemption policy is frozen. Issue #218 package/API
+reduction follows the high-churn #219 work.
+
+## Focused tasks for Claude
+
+These are deliberately small reviews, tests, or documentation batches. They must not activate a
+service, use credentials, run a guest, or turn a review into an architecture decision.
+
+| Task | Packet and execution status | Deliverable |
+| --- | --- | --- |
+| CL1 — ADR-0029 S0 decision review | Packet `PASSED`; execution `BLOCKED` on assignment | An explicit accept-or-revise review of the two Supervisor services/four calls plus ADR-0044's separate CLI call; authentication-before-copy; no opcode bus; Go authority ownership; and `AttemptID`-only recovery. Retain any changed conclusion in the ADR/index/status docs. |
+| CL2 — Issue #216 ratchet packet | Packet `PASSED`; execution `BLOCKED` on assignment | Fixed complexity thresholds, narrow function/path-specific exemptions, owner/removal conditions, and preservation rules for intentionally linear protocol validators. |
+| CL3 — Issue #217 package documentation batch | Packet `PASSED`; execution `BLOCKED` on assignment | One package at a time, starting with authority-bearing `registrationstate` exports. Document purpose, provenance/authority, caller obligations, and passive/product limitations without API changes. |
+| CL4 — IPC refusal-matrix review | Packet `PASSED`; execution `BLOCKED` on C4 | After C4 exists, independently verify cross-service/tag, role/session, purpose/audience, identifier-domain, caps, response-loss, and no-reply cases. |
+
+## Deep research tasks for ChatGPT
+
+Research must prefer primary sources, separate documented behavior from inference and observation,
+and return a canonical repository artifact before its conclusion drives implementation.
+
+| Task | Packet and execution status | Research question and stop boundary |
+| --- | --- | --- |
+| R1 — Native XPC enforcement brief | Packet `PASSED`; execution `BLOCKED` on assignment | Identify the supported API and ordering for listener peer requirements, message-derived code identity, audit token/session, interruption, deadline, and no-reply behavior from official Apple documentation and SDK declarations. No portal, credential, service, or process mutation. |
+| R2 — Typed transport design | Packet `PASSED`; execution `BLOCKED` on assignment | Derive the exact source/input/completion state machine, ownership/drain rules, cancellation/reset taxonomy, completion-last proof inputs, and restoration matrix from C2A/C2B v4, v27, and the durable completion contract. No guest or artifact mutation. |
+| R3 — Broker live-signing evidence brief | Packet `PASSED`; execution `BLOCKED` on CL1 and assignment | Map fresh `LAContext`, Secure Enclave/Keychain key use, AppKit focus/spoof/cancel, process death, and update behavior from official Apple sources. No live key or credential. Start after the ADR-0029 review fixes the consuming method boundary. |
+| R4 — F6 schema and VFS fault map | Packet `PASSED`; execution `BLOCKED` as external-alpha work | External-alpha only. Map the split active/immutable schema, fixed statements, transactions, SQLite result codes, and VFS injections to every F2-F5 known answer without generic SQL, DSN, pool, retry, or extension authority. |
+
+## Explicitly deferred work
+
+- F6 execution needs a separately authorized `capsule-experiments` task naming an owned disposable
+  Apple-silicon host, APFS root/volume, and interruption owner. The experiment selects nothing.
+  Any later engine/configuration selection or rejection requires a new Proposed ADR.
+- Source Validator R4/R5 remains post-alpha defense-in-depth. Exact R4-v1 candidates are `NO_GO`;
+  R4-v2 is unexecuted and `BLOCKED`.
+- TypeScript Source Preparer, automatic TUF updates, Developer ID/notarized distribution,
+  clean-host/minimum-OS coverage, independent-builder equality, restore activation, continuity,
+  and external-alpha distribution are not on the owner-only internal-alpha critical path.
+
+## Next checkpoint
+
+The next orchestration checkpoint should collect CL1, R1, and R2 first. The owner may authorize C1
+and C3 independently when their exact workspace, identity, and host boundaries are available. C2
+must wait for CL1 and R1, then receive its exact fixture/host authorization. After those handoffs,
+update this file and the evidence ledger before starting installed composition. No task may promote
+internal alpha or product admission from a passive contract, ad-hoc harness, or fixed guest
+experiment alone.

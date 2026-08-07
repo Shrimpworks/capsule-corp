@@ -950,7 +950,8 @@ implemented.
    separately authorized F6 bounded SQLite comparison. ADR-0040 permits the fixed snapshot only for
    the narrow owner-only disposable alpha with exact fail-closed thresholds and no restore/
    continuity claim; do not infer general product-store selection.
-3. Close the successor runnable profile and one fixed benign owned guest, then implement the
+3. Preserve the exact passed
+   [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md), then implement the
    ADR-0040 authority path: one authenticated CLI adapter, exact single-`main.mjs` proposal, atomic
    plan/bindings/manifest/source custody, Broker fetch/render/approval, protected installed state,
    real adapter/recovery, and completion composition.
@@ -990,9 +991,25 @@ implemented.
    current-source unsigned dylib, independent ABI audit, byte-equal unsigned final runner, and
    composed digest without loading libkrun or executing the runner. It preserves FDs 0–7,
    close-from 8, the three ordered console ports, explicit implicit-device disablement, no
-   replacement authority, and Supervisor-owned teardown. Stop there: a fixed benign owned guest
-   remains `BLOCKED` on separate authorization naming v4's exact digest, and admission remains
-   `BLOCKED`.
+   replacement authority, and Supervisor-owned teardown. A later exact v19 experimental successor
+   passed one separately authorized fixed benign guest with immutable in-root inputs, a bounded
+   diagnostic console proof, normal reap, and unlinked-root teardown. Preserve that result without
+   substituting it for final typed transport, installed composition, or admission, which remain
+   `BLOCKED`. The v20-v23 denial-test runners later refused before readiness without a start
+   authorization or guest launch. V23 retained bounded staged-path/open-FD/runner hash evidence and
+   proved the actual root was correct while the embedded expected digest bytes were malformed.
+   Preserve those attempts unchanged; v24 replaces the byte array with the exact lowercase digest
+   literal plus a C17 static length assertion, then passes the corrected preflight, known answer,
+   and early denial controls before stopping in the vsock-check family without connecting or
+   sending. Mark v25 `NO_GO`: socket creation alone is not usable transport authority. V26 instead
+   tests `VM_SOCKETS_GET_LOCAL_CID`, retains no-connect/no-send behavior, and adds one fixed failure
+   reason plus bounded console progress. Its exact invocation passes active local-CID/raw-block
+   denials and localizes the next stop to expected down/unbacked `dummy0`; do not rerun v26. V27
+   accepts only loopback plus that bounded passive inventory, rejects virtio backing and non-
+   loopback/default routes, and passes the exact complete 30-marker fixed-denial corpus in one
+   attempt-bound owned guest with exact completion/console/lifecycle/root/canary and zero-network
+   evidence. Preserve the consumed authorization as spent and do not infer product admission,
+   broader kernel/platform/lifecycle coverage, or installed recovery from the result.
 9. After the ADR-0028 governed `deno_core` candidate passes a separate runtime/profile admission
    ADR, add one dependency-free inline-JSON vertical slice through the admitted libkrun/HVF
    development profile, preserving Apple Containerization only as a regression fixture.

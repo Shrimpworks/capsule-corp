@@ -1,12 +1,21 @@
 # Phase 2B and Gate C current maintainer checkpoint
 
-Date: 2026-08-05
+Date: 2026-08-06
 
 Status: current merged-state dependency index. Passive authority-plane cutover, C2B v3 successor,
 the narrow production-shaped wrapper review, compiled-artifact archive migration, governed fork
 promotions, Source Validator R3, and archive F5 are `PASSED` only in their exact retained scopes.
-The hostile owner-only internal-alpha parent is `IN_PROGRESS — TRENDING_GOOD`; connected product
-authority, fixed-owned-guest eligibility/admission, and external alpha remain `BLOCKED`. This
+The exact [v19 fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is also
+`PASSED` only in its controlled experiment scope. The hostile owner-only internal-alpha parent is
+`IN_PROGRESS — TRENDING_GOOD`; connected product authority, typed hostile transport, installed
+runtime/profile admission, and external alpha remain `BLOCKED`. The narrower governed
+runtime/libkrun substream returned to `IN_PROGRESS — TRENDING_GOOD` after v23 proved the actual root
+digest was correct and the embedded expected bytes were malformed. V24 then passed corrected
+preflight/known-answer/early denial controls before stopping in the vsock family. Semantic review
+marked v25 `NO_GO`, and v26 consolidated local-CID/failure-detail materialization passed without
+execution. Its exact invocation then passed active local-CID/raw-block denials and localized the
+next stop to expected `dummy0`; v27 corrected that policy and passed the complete exact 30-marker
+fixed-denial corpus with exact completion/lifecycle/root/canary and zero-network evidence. This
 checkpoint does not accept a Proposed ADR, activate a consumer or endpoint, admit a runtime or
 backend, authorize user bytes, or authorize a guest.
 
@@ -190,7 +199,7 @@ remains `BLOCKED`.
 | Future conditional | Source Preparer blockers | If TypeScript is reselected, run bounded protected-container and worker-confinement feasibility/design work, close genesis/update and retention authority, and revise the ADR if a stop condition fires. Do not start P1 bytes. |
 | Independently actionable now | Documentation and field authority | Keep exact identities, counts, recursive-authority requirements, and refusal boundaries synchronized; do not classify nonexistent P1/plan-v1 fields as implemented. |
 | `PASSED` bounded construction and passive contract | Fork-native bundle and C1 composition | The merged handoff reconstructs the exact Linux/arm64 binary/snapshot/root identities; C1 fixes the no-effect app/runtime/logical-descriptor/resource contract. Neither result releases or admits bytes. |
-| C2B v3 and v4 `PASSED` in exact passive/build-static scopes / fixed guest `BLOCKED` | Governed runtime plus libkrun | V3 binds accepted governed heads and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics. V4 retains current-source libkrun, independent ABI audit, unsigned final runner, and a new composed digest without execution. Separate authorization naming that digest remains required before the fixed benign owned guest. No hostile owner source or product admission belongs to that experiment. |
+| C2B v3/v4 passive/static scopes and v19 fixed guest `PASSED` / product admission `BLOCKED` | Governed runtime plus libkrun | V3 binds accepted governed heads and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics. V4 retains current-source libkrun, independent ABI audit, unsigned final runner, and a new composed digest without execution. A separately authorized v19 experimental successor then passed one fixed benign guest through a diagnostic console proof and exact teardown. No hostile owner source, final typed transport, installed composition, or product admission belongs to that result. |
 | Credential/environment dependent | Apple Development/provisioning and installed matrices | Exact G3 discovery disproved the W4 display-name inference, and Apple Membership Details confirms Team `3DDR84M4JS`. New Apple Development SHA-1 `80A4...D3793` is locally present but not authorized. Exact 3DDR role profiles and separate credentialed authorization remain required before signed/provisioned work. Paid owned clean-host/minimum-OS and final Developer ID/notarized matrices remain deferred and do not block unrelated local mechanics. |
 | Environment dependent | Independent Linux/arm64 reconstruction | A genuinely independent builder is viable but not currently planned. Same-host and GitHub-CI evidence remains limited; independent-builder equality stays deferred. |
 

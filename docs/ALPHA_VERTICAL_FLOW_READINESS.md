@@ -14,7 +14,7 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 
 | Checkpoint | Status | Boundary |
 | --- | --- | --- |
-| First fixed benign owned guest | `BLOCKED` | Controlled sealed-fixture experiment only. V4 closes build/static materialization; execution still needs separate authorization naming the exact v4 digest. It is not product alpha and accepts no user source. |
+| First fixed benign owned guest | `PASSED` | One separately authorized [v19 experimental successor](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) booted and ran the fixed known answer, matched its bounded console proof, exited/reaped normally, and completed unlinked-root teardown. It is not product alpha, accepts no user source, and does not close typed transport or admission. |
 | Hostile owner-only internal alpha | `IN_PROGRESS — TRENDING_GOOD` | One named owner Mac, manual Apple Development installation, exact `main.mjs` plus bounded inline JSON, and one fresh guest per attempt. Product admission remains `BLOCKED`. |
 | Later external alpha | `BLOCKED` | Developer ID/notarization/update, clean-host/minimum-OS, F6/restore/continuity, and public-distribution evidence are absent. |
 
@@ -41,7 +41,23 @@ refusal and physical absence of host authority.
 governance promotions PASSED
   -> C2B v3 passive successor PASSED
   -> C2B v4 build/static materialization PASSED
-  -> fixed benign owned guest checkpoint
+  -> fixed benign owned guest v19 PASSED
+  -> fixed denial-test v20 no-launch materialization PASSED
+  -> fixed denial-test v20 execution BLOCKED pre-ready with exact stage unknown
+  -> fixed denial-test v21 diagnostic materialization PASSED
+  -> fixed denial-test v21 execution BLOCKED on ready-EOF evidence convergence
+  -> fixed denial-test v22 convergence materialization PASSED
+  -> fixed denial-test v22 execution BLOCKED at preflight-root-sha256
+  -> fixed denial-test v23 hash-diagnostic materialization PASSED
+  -> fixed denial-test v23 root-digest localization PASSED / hostile execution BLOCKED
+  -> fixed denial-test v24 corrected materialization PASSED
+  -> fixed denial-test v24 early controls PASSED / full corpus BLOCKED at vsock
+  -> fixed denial-test v25 vsock-diagnostic materialization PASSED
+  -> fixed denial-test v25 runtime candidate NO_GO before launch
+  -> fixed denial-test v26 consolidated materialization PASSED
+  -> fixed denial-test v26 localization PASSED / full corpus BLOCKED at passive inventory
+  -> fixed denial-test v27 passive-network correction PASSED
+  -> exact fixed denial-test v27 execution PASSED
 
 passive bounded CLI adapter + native dictionary prerequisite PASSED
   -> native authenticated CLI adapter
@@ -60,8 +76,8 @@ passive bounded CLI adapter + native dictionary prerequisite PASSED
 ```
 
 The authority path may be integrated through `FakeBackend.CreatesGuest() == false` before the real
-adapter is connected. The fixed guest may be tested earlier only with the sealed known answer and
-separate authorization; neither path alone is product alpha.
+adapter is connected. The fixed guest was tested separately with a sealed known answer and exact
+one-use authorization; neither path alone is product alpha.
 
 ## Corrections every slice must preserve
 
@@ -83,8 +99,9 @@ separate authorization; neither path alone is product alpha.
 
 ## Ordered closure
 
-1. Preserve the passed governed fork promotions, C2B v3 passive successor, and v4 build/static
-   materialization; require separate authorization naming v4's exact digest before the fixed guest.
+1. Preserve the passed governed fork promotions, C2B v3/v4 passive/static successors, and exact
+   v19 fixed-owned-guest checkpoint without reclassifying its diagnostic transport as product
+   evidence.
 2. Preserve the passed exact-one-`main.mjs` proposal, selected passive CLI adapter, and atomic
    custody/fetch oracle without restoring broad legacy acceptance.
 3. Preserve ADR-0043's passive projection/verifier and implement the frozen authenticated

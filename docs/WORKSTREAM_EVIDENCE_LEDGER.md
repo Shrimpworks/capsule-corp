@@ -22,7 +22,7 @@ next dependency boundary for the latest group are recorded in the
 | Passive authority-plane atomic cutover | `PASSED`: exact-one-`main.mjs` plan, bindings, manifest, source, registration, and defensive fetch publish atomically in the fixed-store oracle. | Authenticated product facades, Broker/approval, attempt, runtime, backend, and guest remain `BLOCKED`. |
 | Authenticated-local-IPC S3 native-contract prerequisite | `PASSED`: exact XPC dictionary keys/types, method/status/reason tags, versions, key counts, caps, method-derived bindings, and Go/Node refusal fixtures are frozen for the three passive methods. | The separately authorized native harness, listener, peer authentication, installed identity/update matrix, consumers, and product IPC remain `BLOCKED`. |
 | Broker rendering and approval conformance v0 | `PASSED`: Accepted ADR-0043 freezes a read-only ASCII-safe projection over bound Supervisor bytes, the exact Secure Enclave/user-presence/no-fallback key contract, and a Capsule-owned public-key-only ApprovalGrant Sign1 verifier with canonical/header/payload/signature/key/role/time/refusal tests. | Inline-input content is not present or shown. Installed UI, Keychain/LocalAuthentication, private key/signing, authenticated IPC, verifier/store wiring, activation, runtime, backend, guest, and product admission remain `BLOCKED`. |
-| C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | Current-source libkrun dylib, final runner, fixed-owned-guest eligibility, and admission remain `BLOCKED`. |
+| C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | At that immutable checkpoint, current-source libkrun, the final runner, and guest eligibility were blocked. V4 and v19/v27 later closed exact build/static and controlled-guest slices; final typed transport, installed composition, and admission remain `BLOCKED`. |
 | C2B v4 build/static materialization | `PASSED`: exact accepted header, twice-reproduced current-source unsigned libkrun dylib, independent ABI audit, byte-equal unsigned final runner, and composed digest are retained with no execution. | Fixed-owned-guest eligibility is `BLOCKED` on separate authorization naming the exact v4 digest; admission remains `BLOCKED`. |
 | First fixed benign owned guest v19 | `PASSED`: one separately authorized experimental successor booted the fixed governed-`deno_core` known answer, matched its full bounded console proof, exited/reaped normally without force-kill, and completed unlinked-root teardown. | The result accepts no user source and does not close typed transport, hostile containment, installed composition, or admission. Raw evidence archive publication remains `BLOCKED` pending an exact verified `capsule-experiments` commit. |
 | Fixed denial-test v20 no-launch materialization and runtime stop | Materialization `PASSED`: independent A/B construction reproduced the network-disabled root, guest binary, signed runner, profile, and controller; signatures, digests, profile assertions, and the fixed local-only probe surface passed static validation. Exact runtime attempt `BLOCKED`: the signed runner exited 125 before readiness, with no start authorization or guest launch. | V23 later confirmed the exact fixture cause. V24 dynamic execution and durable archive publication remain `BLOCKED`; the parent workstream is now `IN_PROGRESS — TRENDING_GOOD`. |
@@ -44,6 +44,28 @@ next dependency boundary for the latest group are recorded in the
 The current generated conformance totals are 95 rules, 502 cases, and 624 fixtures. The current
 field-authority manifest has 1,203 fields across 95 profiles and 60 targets. These whole-repository
 totals supersede older checkpoint counts without rewriting their historical evidence.
+
+## 2026-08-06 recent integration readback
+
+The following merge commits, not former draft-PR state or chat handoffs, are the current
+integration checkpoints. Current `main` at `942c19a0ab7ace605768e699218448ce60a40bae` has passing CI
+and CodeQL; historical PR checks were not uniformly green.
+
+| PR | Merge commit | Retained scope |
+| --- | --- | --- |
+| #227 | `e780a5cb` | Passive fixed-store threshold-checker scope correction and regressions |
+| #228 | `03e64735` | Documentation image asset |
+| #229 | `8317463f` | Proposed ADR-0045 and inert Supervisor-authority-epoch experiment packet |
+| #230 | `018edb2e` | Passive S3 three-method native-XPC contract amendment |
+| #231 | `3f2395a9` | Documentation-only F6 SQLite research and experiment packet |
+| #232 | `f06c1bf1` | GitHub labels, issue forms, and pull-request categorization |
+| #233 | `2c836f5f` | Correctness fixes for issues #220-#223 |
+| #234 | `2c530ade` | New-code exported-contract documentation gate; issue #217 remains open |
+| #235 | `d846ecd6` | Focused low-coverage package tests |
+| #236 | `1cb5d2dd` | First behavior-preserving issue #219 archive refactor batch |
+| #237 | `74389598` | Focused completion-composer coverage increase |
+| #238 | `5f45d9c4` | Canonical v19 benign and v27 fixed hostile-denial checkpoints |
+| #239 | `942c19a0` | Focused runtime-C2B passive decoder/validator coverage increase |
 
 ## 2026-08-05 internal-alpha architecture audit synthesis
 
@@ -519,7 +541,7 @@ Completed and retained:
   and validation, colocated transactions, the no-guest fake driver, exact 256-active/4,096-retained
   ceilings, destroyed-only capacity release, and repeated-startup/exhaustion evidence. No consumer,
   real adapter, runtime, backend process, or guest is present; and
-- passive field-authority verification now covering 1,111 fields across 81 profiles and 50 targets,
+- passive field-authority verification now covering 1,203 fields across 95 profiles and 60 targets,
   without claiming coverage for future Source Preparer or plan-v1 objects; and
 - archive Slice F1 passive projections and eligibility selection; F2 owner-asserted all-hot
   migration/full verification; F3 immutable-segment publication/activation; F4A retained lookup;
@@ -529,9 +551,10 @@ Completed and retained:
   absent; and
 - Proposed ADR-0033's local owner-lock mechanism selection, passive G1 Go/Darwin acquisition, and
   bounded G2 current-v1/no-guest startup composition, plus I2A's passed owner/contract decision;
-  signed-object fixtures and installed protected-root evidence remain unimplemented, and installed
-  G3/I2B is blocked by exact Team profiles, the protected-container/handoff corpus, and descriptor-
-  relative store composition; and
+  signed-object fixtures, I2B2 unsigned construction, I2B3 profile/signing preflight, and the inert
+  ADR-0045 authority-epoch packet are retained. Installed G3/I2B remains blocked on separately
+  authorized E1 identity-separation mutations, then the protected-container/handoff, Keychain,
+  service/root, and descriptor-relative store corpus; and
 - governed `deno_core` physical omission, same-host package reproduction, the abandoned official
   V8 asset-publication route,
   standalone dynamic-root evidence, and the now-closed fork Linux/arm64 construction blocker.
@@ -639,19 +662,21 @@ security-control evidence, profile validation, or product admission. Integration
 exact commits and digests and verify ancestry rather than trust a branch name.
 
 Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
-installed endpoints, peer identities, or production transport. This checkpoint also does not decide
-retained archive mutation/growth or production-engine archive/compaction beyond the F1-F4A local oracle,
-production COSE/Keychain/user-presence signing, consumer
-ownership, evidence composition, or public cutover. The authority/lifecycle snapshot lacks real
+installed endpoints, peer identities, or production transport. Passive S3 freezes three methods;
+`SubmitApprovalV0` and `RequestAttemptV0` remain blocked. Archive mutation/growth through F5 is
+`PASSED` in the fixed-store oracle; F6 execution, production-engine selection, production
+COSE/Keychain/user-presence signing, consumer ownership, evidence composition, and public cutover
+remain separate. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot
 is durable for controlled local tests, but ownership remains in-process and no production
 persistence claim follows. Content, evidence, runtime, real backend, and guest remain absent from
 the unwired path.
 
-In parallel, libkrun remains barred from user bytes until the five reconciled P0 campaigns close:
-runtime-authority closure, immutable runtime-root custody, `NullFs` disposition, typed port
-transport/completion, and an admissible complete installed development bundle. File-artifact
-parsing and stronger validation campaigns remain later gates as documented in the roadmap.
+In parallel, the exact v27 fixed hostile-denial experiment closes its selected 30-marker corpus but
+does not admit libkrun or user bytes. Final typed port transport/completion, the installed
+authority/recovery composition, broader platform/lifecycle matrices, and an admissible complete
+development profile remain blocked. File-artifact parsing and stronger validation campaigns remain
+later gates as documented in the roadmap and [current work plan](CURRENT_WORK_PLAN.md).
 
 ## Maintenance rule
 

@@ -50,8 +50,8 @@ Parent status: owner-only hostile-`.mjs` internal alpha remains
 ## Adjacent dependency ordering
 
 The passive ADR-0040 fixed-store stop-policy slice at commit
-`54c56c38cef2e33062c8d9f1ff05f312f0a69025` and draft PR #224 is dependency awareness only; no
-file or behavior from that branch is integrated here. It is a passive, re-evaluated
+`54c56c38cef2e33062c8d9f1ff05f312f0a69025`, merged in PR #224, and its scope-correction successor
+merged in PR #227 are dependency awareness only. They are passive, re-evaluated
 observation/admission checker, not complete operational enforcement: it has no persistent trip
 latch, selected durable-commit-p95 instrumentation/window/lifetime, `RequestAttempt` wiring, or
 response-loss transaction evidence. Full enforcement of ADR-0040's five thresholds remains
@@ -68,7 +68,8 @@ named insertion point. It must not be a caller-carried permit or an out-of-trans
 can race the attempt commit. This slice does not invent that interface.
 
 The passive native XPC v0 prerequisite at commit
-`f929dfbc96a9dd4b6e303820a4e97848f6da8497` and draft PR #225 is also dependency awareness only.
+`f929dfbc96a9dd4b6e303820a4e97848f6da8497`, merged in PR #225, and its adversarial-coverage
+successor merged in PR #230 are also dependency awareness only.
 It freezes submission, registration, and registered-plan lookup encodings but defines no approval,
 attempt, execute, or lifecycle method. A later method-specific adapter can therefore preserve this
 slice's ordering: the Broker signs Supervisor-fetched registered data; approval submission carries

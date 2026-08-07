@@ -12,6 +12,8 @@ item status. The
 [Phase 2B and Gate C current maintainer checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md) adds
 the separate evidence-class breakdown (selected design vs. implemented mechanics vs. experiment
 evidence vs. product admission) for the latest task group.
+The [current work plan](CURRENT_WORK_PLAN.md) is the dependency-ordered execution index and owns the
+Codex, focused-Claude, and deep-research task split.
 
 Installation packaging now has its own staged
 [macOS installation and distribution plan](MACOS_INSTALLATION_AND_DISTRIBUTION_PLAN.md). The current
@@ -175,14 +177,17 @@ See [Feasibility Spikes](FEASIBILITY_SPIKES.md).
 Status: Phase 2A has implemented a passive, backend-independent foundation: a deliberately narrow
 `JobProposal` candidate, minimum `ExecutionPlan` and `PlanRegistration` CDDL candidates,
 byte-exact fixtures, and Go/TypeScript decoded views. Phase 2B now provides the closed conformance
-manifest, integrity runner, and 82-rule/262-case/368-fixture corpus, including proposal/source/input,
+manifest, integrity runner, and 95-rule/502-case/624-fixture corpus, including proposal/source/input,
 exact plan/registration-state, passive approval/attempt Slice A, and unwired fixed-store Slice B
 oracles. Slice C adds an `AttemptID`-keyed no-guest fake-lifecycle seam and 12 top-level focused Go
-tests without changing the manifest counts. These slices are not frozen or activated;
+tests without changing the manifest counts. The applicable passive contracts are frozen but not
+activated;
 the unwired slices now implement strict TypeScript raw/schema proposal decoding, all 18 retained
 TypeScript semantic-resolution cases, exact TypeScript minimum-plan construction/encoding, strict
 Go exact-byte plan/registration wrappers, all 40 retained Go registration-state cases, 44 passive
-Go approval/attempt contract cases, and 12 fixed-store transition cases. Swift remains pending.
+Go approval/attempt contract cases, and 12 fixed-store transition cases. The I2B1 checked-in-vector
+wrapper also has an independently agreeing Go/Swift conformance scope; product Swift consumers
+remain pending.
 The fixed store now colocates registrations, approval/attempt authority, durable time high-water,
 and lifecycle/effect checkpoints; it remains unwired. The fake lifecycle accepts only committed
 created attempts through `AttemptResolver`, drives and recovers by `AttemptID`, and hard-codes
@@ -212,8 +217,10 @@ descriptor/process corpus. Passive owner-lock G1 supplies the internal Go/Darwin
 now supplies the owner-required current v1/no-guest startup composition, same-session
 store/coordinator, sorted recovery, post-open fencing, and ordered close under owned temporary
 roots. Proposed ADR-0038 now selects the one-shot Coordinator-authorized/Supervisor-created
-bootstrap and its signed-object contract, but passive fixtures and the installed protected-state-
-root/session/update matrix remain unimplemented. The first bounded G3 discovery stopped before installed build: certificate SHA-1
+bootstrap and its signed-object contract. Passive fixtures, I2B2 unsigned construction, I2B3
+profile/signing preflight, and Proposed ADR-0045's inert authority-epoch packet are retained; the
+installed protected-state-root/session/update matrix remains blocked. The first bounded G3
+discovery stopped before installed build: certificate SHA-1
 `1638CFBD9250A00B4DBD81AE8FD1C790B42F61E3` has display suffix `W4QUR9FUL4` but X.509 subject OU
 and signed-byte TeamIdentifier `3DDR84M4JS`, and every cached profile is also 3DDR. Apple Membership
 Details later confirmed 3DDR is the account Team and W4 is a member/display suffix. The cached
@@ -225,9 +232,10 @@ surface. Passive logical fixtures and the exact native dictionary prerequisite n
 methods without activating transport. Both remaining methods, `SubmitApprovalV0` and
 `RequestAttemptV0`, remain `BLOCKED`; this slice assigns neither a native tag nor a deadline to
 either method. The native harness, installed endpoints, production identities, consumers, and
-platform evidence remain unimplemented. Production approval signing/verification, archive
-implementation and production-engine selection, evidence composition, consumers, and atomic public
-migration remain separate decisions.
+platform evidence remain unimplemented. The public-key approval verifier, fixed-store F2-F5
+archive oracle, and passive durable completion-last transaction are retained; live approval
+signing, production-engine selection, evidence composition, consumers, and atomic public migration
+remain separate work.
 
 Proposed ADR-0031 defines the reviewed archive/compaction semantics and conformance plan. Complete
 expired registration cohorts may move to immutable retained segments
@@ -346,21 +354,24 @@ diagnostic HTTP server is not already the selected submission boundary, `Registe
 fresh-registration behavior, and `FixtureVerifier` remains a retained-vector test oracle rather
 than a production approval verifier.
 
-- Implement daemon plan generation and Supervisor plan registration.
+- Preserve the passed passive daemon-plan and atomic Supervisor registration/fetch mechanics;
+  implement only their selected authenticated product consumers.
 - Before activating the candidate agent endpoint, define and enforce the daemon's aggregate
   connection, concurrency, in-flight-byte, queue, deadline, cancellation, downstream-stall, and
   overload envelope; retain maximum-size concurrency and slow/partial-client evidence for
   `DAEMON-001`.
-- Implement direct Broker fetch/render/user-presence approval.
+- Connect the passed passive Broker fetch/render projection to an installed native UI and fresh
+  user-presence approval operation.
 - Prove that UI activation or synthetic input alone cannot sign a grant without the configured
   LocalAuthentication/Keychain user-presence operation. Exercise Accessibility, overlay/focus, and
   stale-session cases under their explicit elevated-adversary limitations for `UI-001`.
 - Implement a locally seeded, signed development `TrustSnapshot`; production TUF service remains
   later work.
-- Implement a durable atomic grant ledger and one-attempt semantics.
-- Build a fault-injectable fake backend that never runs guest code.
+- Preserve the passed durable atomic grant/one-attempt and fault-injectable no-guest FakeBackend
+  mechanics; connect them only through the selected method-specific product boundary.
 - Implement multi-store saga/reconciliation states and crash injection at every side-effect edge.
-- Produce a Supervisor enforcement transcript and composed receipt without guest content.
+- Preserve the passed fixed-file/FakeBackend completion-last transcript and summary; connect the
+  product version only after real integrity, runner, teardown, and absence facts exist.
 
 Exit evidence:
 
@@ -394,7 +405,7 @@ Exit evidence:
 
 ## Phase 5: dependency-free runtime development execution
 
-- Close the five reconciled P0 Gate C campaigns. Follow accepted ADR-0028 and bootstrap the real
+- Preserve the completed P0 evidence and follow accepted ADR-0028 for the real
   `Shrimpworks/deno` and `Shrimpworks/rusty_v8` governed branches from their exact retained upstream
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
@@ -412,9 +423,10 @@ Exit evidence:
   runner/libkrunfw/kernel, descriptor, device, resource, and teardown semantics without rewriting
   earlier evidence. V4 binds the exact accepted header, current-source unsigned libkrun dylib,
   independently reviewed ABI, unsigned final runner, and new composed digest without execution.
-  Reverify every archive, manifest, and artifact identity before use. Any fixed-owned-guest task
-  requires separate authorization naming the v4 digest; neither passive consumption nor that
-  experiment admits a runtime or profile.
+  Reverify every archive, manifest, and artifact identity before use. The separately authorized
+  v19 and v27 fixed-owned-guest experiments passed their exact scopes; every later guest task still
+  requires separate authorization naming the exact successor digest, and none admits a runtime or
+  profile.
 - Patch or close the pinned virtio-console control/queue/descriptor and transmit hazards; define a
   distinct trusted launcher with a fixed child manifest and a host runner with an exact descriptor
   allowlist before any real-backend implementation.
@@ -429,9 +441,9 @@ Exit evidence:
   and retain deliberate restoration tests, while continuing to require containment of a fully
   hostile guest kernel under `KERNEL-001`.
 - Build one exact package-free runtime bundle.
-- Execute one JSON-in/JSON-out job through the libkrun/HVF candidate in explicit development
-  posture, including its durable-record-before-start lifecycle, inherited read-only root custody,
-  and bounded console-port data path.
+- Replace the v19/v27 diagnostic console mechanism with the final typed source/input/completion
+  transport, then execute the approved hostile-`.mjs` corpus through the installed authority path
+  in explicit development posture.
 - Deny network and all ambient host resources using the proven mechanisms.
 - Bind source, input, runtime, backend, controls, output, integrity evidence, and teardown into the
   attempt transcript.
@@ -451,7 +463,9 @@ display-name inference: certificate SHA-1 `1638CFBD9250A00B4DBD81AE8FD1C790B42F6
 `Apple Development: Dylan Steele (W4QUR9FUL4)`, but its subject OU and emitted code-signing
 TeamIdentifier are `3DDR84M4JS`. Apple Membership Details now confirms 3DDR is the account Team;
 W4 is the common-name/member display suffix. A new Apple Development identity SHA-1
-`80A4...D3793` is locally present but not authorized for use. All three Xcode 26.6-cached profiles
+`80A4...D3793` is locally present. Its exact I2B3 profile/signing preflight use was separately
+authorized and passed; ADR-0045 E1 identity-separation mutations require new authorization. All
+three Xcode 26.6-cached profiles
 share Team 3DDR but have the wrong Gate B/wildcard App IDs and are not reusable. Local
 signed/provisioned experiments require exact 3DDR role profiles, identifiers, and entitlements. A
 separate Developer ID Application identity for Team `3DDR84M4JS` is later distribution authority

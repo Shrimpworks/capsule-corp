@@ -346,9 +346,9 @@ The passive [C2A execution-profile contract](protocol/GOVERNED_DENO_CORE_C2A_EXE
 now consumes those exact unchanged C1 bytes and freezes numeric host/guest descriptors, one vCPU,
 256 MiB guest RAM, a 1,000 ms wall candidate, concurrency one, transport/drain caps, teardown,
 fixed known-answer bytes, artifact blockers, and the complete C2B/restoration matrix. C2A creates
-no guest or runtime and is `PASSED` only for passive preparation. Missing final runnable artifact
-and composed runtime-profile identities, launcher-child and exact scratch contracts, governed
-review/P0 closure, and separate guest authorization keep C2B `BLOCKED`; admission and
+no guest or runtime and is `PASSED` only for passive preparation. Later C2B v4 and v19/v27 evidence
+closed exact build/static and controlled-guest slices; final typed transport, installed
+composition/recovery, broader lifecycle/platform evidence, and admission remain `BLOCKED`.
 `RUNTIME-001`/`VMM-001` remain unchanged.
 The historical [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
 remains `PASSED` only for its immutable v1 reconciliation of unchanged C1/C2A with the exact
@@ -364,15 +364,15 @@ admission remain `BLOCKED`; `RUNTIME-001`/`VMM-001` remain unsupported. The immu
 roles without rewriting v1/v2: no separate firmware input exists; libkrunfw is the sole boot-kernel
 carrier; the Supervisor-owned per-attempt runner, exact descriptors/devices, loader/string-codegen
 controls, supported resources, teardown/absence rules, and composed passive-contract digest are
-fixed. Unsupported resource fields are absent. A current-source libkrun dylib and final runner
-artifact are still missing, so fixed-owned-guest eligibility and admission remain `BLOCKED`.
+fixed. Unsupported resource fields are absent. V3's immutable historical record correctly retains
+its then-missing current-source libkrun and final-runner blockers; v4 later closes only those
+build/static inputs without rewriting v3.
 The follow-on [host-runner source contract v1](protocol/GOVERNED_DENO_CORE_C2B_HOST_RUNNER_SOURCE_V1.md)
 is `PASSED` only for exact passive C17 call-plan bytes and a dependency-free local mutation
 verifier. It freezes Supervisor ownership, one runner per AttemptID, FDs 0–7, raw-root FD 4,
 three console ports, explicit implicit-device disable calls, ordering, forbidden authority, and
-external teardown without compiling or calling libkrun. Accepted ABI header/current-source dylib
-inputs, final runner build bytes/digest, a new materialized profile, guest authorization, and
-admission remain `BLOCKED`.
+external teardown without compiling or calling libkrun. Its historical missing build inputs were
+closed by v4, while guest authorization and admission remain separate boundaries.
 The immutable [C2B v4 materialized profile](protocol/GOVERNED_DENO_CORE_C2B_MATERIALIZED_PROFILE_V4.md)
 then closes only those build/static blockers. It retains the exact accepted libkrun header and a
 two-clean-build current-source unsigned dylib, independently audits the ABI, resolves libkrunfw as
@@ -384,8 +384,9 @@ no HVF call, VM, guest, signing, installation, product wiring, release, or admis
 that immutable scope. A later separately authorized
 [v19 fixed-owned-guest experiment](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) booted and completed
 one fixed governed-runtime fixture through an evidence-led experimental successor without
-rewriting v4. That checkpoint is `PASSED`; hostile-source execution, the final typed transport,
-installed composition, and runtime/profile admission remain `BLOCKED`.
+rewriting v4. The later exact v27 successor passed its 30-marker fixed hostile-denial corpus. Both
+checkpoints are `PASSED` only in their controlled scopes; user-supplied hostile-source execution,
+the final typed transport, installed composition, and runtime/profile admission remain `BLOCKED`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The
@@ -410,9 +411,11 @@ one byte-exact pass-through `main.mjs` member under the existing plan-v0 source 
 static/dynamic dependency request, CommonJS, package resolution, legacy Node module surface, or
 module-loader fallback. The exact source-byte and deterministic-CBOR SourceManifest foundation is
 implemented passively, but the module-request/source-language validator is on the retained
-[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). JobProposal narrowing,
-plan construction, IPC registration/fetch, Supervisor source custody, Broker rendering, runtime
-no-loader evidence, and every consumer remain unimplemented. The bounded TypeScript approved-byte follow-up passed only the pre-approval
+[grammar-counterexample hold](MJS_MODULE_REQUEST_VALIDATOR_HOLD.md). Exact proposal narrowing,
+plan construction, passive registration/fetch and Supervisor source custody, passive Broker
+rendering/public-key verification, and no-guest attempt creation are `PASSED` in their unwired
+scopes. Authenticated product consumers and an admitted installed runtime no-loader boundary remain
+`BLOCKED`. The bounded TypeScript approved-byte follow-up passed only the pre-approval
 byte-ownership question: exact Node 22.22.1/Amaro 1.1.5 strip-only emission was deterministic for the fixed
 fixtures and Proposed ADR-0026 binds original and emitted roles before registration. That
 experiment did not make the later ADR-0028 selection, choose a production transformer owner,

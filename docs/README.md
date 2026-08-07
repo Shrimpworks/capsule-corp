@@ -48,6 +48,8 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 21. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
     unwired public-fixture verification, durable one-attempt creation, response-loss/restart
     convergence, and `AttemptID`-only no-guest fake lifecycle evidence
+22. [Current work plan](CURRENT_WORK_PLAN.md) — reconciled merged baseline, dependency graph,
+    Codex/Claude/ChatGPT task groups, blockers, and the next orchestration checkpoint
 
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs
@@ -58,6 +60,11 @@ The completed Gate C tracks are synthesized in
 [Gate C implementation readiness](GATE_C_READINESS_CHECKPOINT.md). Their independent review and
 the exact pre-user-byte branch point are recorded in
 [Gate C P0 reconciliation](GATE_C_P0_RECONCILIATION.md).
+
+The installed-owner lane's current decision input is the
+[Supervisor authority-epoch experiment packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).
+Its inert matrix is `PASSED`; ADR-0045 E1 identity-separation mutations and later Keychain,
+service, protected-root, and store evidence remain separately authorized blockers.
 
 The first backend-independent implementation record is
 [Phase 2A contract foundation](PHASE_2A_CONTRACT_FOUNDATION.md). Its three independent contract,
@@ -74,6 +81,8 @@ F6/product-admission status.
 
 The cross-phase provenance, task-to-evidence mapping, merged integration checkpoints, and current
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
+The dependency-ordered actions are maintained separately in the
+[current work plan](CURRENT_WORK_PLAN.md).
 
 The governed runtime's first composed-profile slice is the passive
 [C1 controlled-development composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md).
@@ -132,16 +141,18 @@ signature; it is not installation-signed, enrolled, wired, or confined. The
 [V2 process-profile checkpoint](https://github.com/Shrimpworks/capsule-experiments/blob/0944ffd8cfd01ec23e4ae99138b0931d56804077/experiments/completed-compiled-artifact-payloads/payloads/capsule-corp/artifacts/mjs-source-validator-v2/README.md) retains fixed local
 launch/fault mechanics and the exact macOS stop: unsupported `RLIMIT_AS`, ambient authority without
 a sandbox, and supported App Sandbox child entitlements changing the fixed V1 bytes. V2 and the
-parent product work are `BLOCKED`; no product validator or runtime no-loader boundary is implemented.
+parent product work are `BLOCKED`; v19/v27 provide scoped runtime no-loader experiment evidence,
+but no admitted installed product boundary exists.
 The [supported macOS replacement review](MJS_SOURCE_VALIDATOR_MACOS_PROFILE_REPLACEMENT.md) and
 [Accepted ADR-0036](adr/0036-select-role-separated-source-validator-launchers.md) pass R0's
 architecture scope. Direct inherited helpers are rejected. The selected replacement uses two
 role-specific private App-Sandboxed launchers, accepts each private container only as residual
 scratch with mandatory cleanup, and uses a later evidence-derived reactive footprint watermark
-without a hard-peak or host-availability claim. The next work is the
-[passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), followed by unsigned
-construction, separately authorized signing/install, confinement/resource/residue evidence,
-daemon consumer, Broker consumer, then M2/S1 checkpoint. No service or product consumer exists.
+without a hard-peak or host-availability claim. The
+[passive v1 boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md), unsigned construction,
+and separately authorized signed/installed inactive-policy R3 composition are `PASSED` in their
+exact scopes. Exact R4-v1 candidates are `NO_GO`; R4-v2 and later R5 consumers remain `BLOCKED`
+post-alpha. No product validator service or consumer exists.
 
 The proposed TypeScript approved-byte cutover is split between the
 [atomic cutover plan](TYPESCRIPT_APPROVED_BYTE_CUTOVER_PLAN.md) and the selected, not-yet-

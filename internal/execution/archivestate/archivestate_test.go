@@ -455,6 +455,211 @@ func TestArchiveSelectorAgreesWithRecoveryAttemptIDs(t *testing.T) {
 	}
 }
 
+// TestArchiveSelectorRejectsEveryDistinctCandidateCohortMismatch covers
+// validateCandidateCohort's decomposed stages (validateCohortRegistrationRecord,
+// validateCohortApprovals, validateCohortAttempts, validateApprovalConsumedLinks,
+// validateCohortLifecycles), one mutation per independent check, through the
+// public NewValidatedV1OrV2State entry point. Every case uses a fresh
+// two-attempt closedCohort so order/binding checks have a second entry to
+// compare against.
+//
+// selector-*-collision (approval/attempt) is exercised separately in
+// TestArchiveSelectorRefusesCrossCohortCollisionsAndOrder: those seen-sets
+// are threaded across cohorts by validateCohorts, so a same-cohort adjacent
+// duplicate always hits the strict-ascending-order check first. The
+// equivalent selector-lifecycle-collision case is unreachable by
+// construction: unlike the approval/attempt/registration seen-sets,
+// validateCohortLifecycles' seenLifecycle map is local to one cohort's own
+// call, so the same intra-cohort strict-order check that runs first for
+// every other collision case is the *only* way to reach a duplicate here --
+// this was true before decomposition too, not something the refactor
+// introduced.
+func TestArchiveSelectorRejectsEveryDistinctCandidateCohortMismatch(t *testing.T) {
+	registrationExpiry := uint64(90)
+
+	cases := []struct {
+		name      string
+		mutate    func(*RegistrationCohortCandidate)
+		wantClass Classification
+	}{
+		{"registration-id-zero", func(c *RegistrationCohortCandidate) {
+			c.Registration.RegistrationID = v0candidate.RegistrationID{}
+		}, ClassificationSchema},
+		{"registration-sequence-invalid", func(c *RegistrationCohortCandidate) {
+			c.Registration.RegistrationSequence = 0
+		}, ClassificationSchema},
+		{"registration-expiry-overflow", func(c *RegistrationCohortCandidate) {
+			c.Registration.ExpiresAt = v0candidate.UInt53(v0candidate.MaxSafeInteger + 1)
+		}, ClassificationSchema},
+		{"registration-collections-nil", func(c *RegistrationCohortCandidate) {
+			c.Approvals = nil
+		}, ClassificationRepairNeeded},
+		{"registration-bytes-zero", func(c *RegistrationCohortCandidate) {
+			c.EncodedByteLength = 0
+		}, ClassificationSchema},
+		{"registration-bytes-over-cap", func(c *RegistrationCohortCandidate) {
+			c.EncodedByteLength = uint64(MaxSupervisorArchiveBytes) + 1
+		}, ClassificationSchema},
+		{"registration-digest-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Registration.ExactRecordBytes = append(c.Registration.ExactRecordBytes, 'X')
+		}, ClassificationBinding},
+		{"cohort-record-count-cap", func(c *RegistrationCohortCandidate) {
+			c.Approvals = make([]ApprovalCandidate, MaxArchiveApprovalsPerSegment+1)
+		}, ClassificationCapacity},
+
+		{"approval-binding-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Approvals[0].RegistrationID = registrationID(999)
+		}, ClassificationBinding},
+		{"approval-order", func(c *RegistrationCohortCandidate) {
+			c.Approvals[0], c.Approvals[1] = c.Approvals[1], c.Approvals[0]
+		}, ClassificationBinding},
+		{"approval-consumed-link-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Approvals[0].ConsumedAttemptID = approvalattempt.AttemptID{}
+		}, ClassificationBinding},
+		{"approval-digest-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Approvals[0].ExactRecordBytes = append(c.Approvals[0].ExactRecordBytes, 'X')
+		}, ClassificationBinding},
+
+		{"attempt-binding-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Attempts[0].RegistrationID = registrationID(999)
+		}, ClassificationBinding},
+		{"attempt-order", func(c *RegistrationCohortCandidate) {
+			c.Attempts[0], c.Attempts[1] = c.Attempts[1], c.Attempts[0]
+		}, ClassificationBinding},
+		{"attempt-approval-half", func(c *RegistrationCohortCandidate) {
+			c.Attempts[0].ApprovalID = c.Approvals[1].ApprovalID
+		}, ClassificationRepairNeeded},
+		{"attempt-digest-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Attempts[0].ExactRecordBytes = append(c.Attempts[0].ExactRecordBytes, 'X')
+		}, ClassificationBinding},
+
+		{"approval-attempt-half-reverse-link", func(c *RegistrationCohortCandidate) {
+			// A third, Consumed approval whose declared consumer does not
+			// exist in this cohort's Attempts. It is not referenced by any
+			// attempt's forward link, so it only fails
+			// validateApprovalConsumedLinks' reverse check, not
+			// validateCohortAttempts' forward one.
+			dangling := approvalCandidate(t, c.Registration, 3*32+1, approvalattempt.ApprovalConsumed, registrationExpiry)
+			dangling.ConsumedAttemptID = attemptID(9_999)
+			dangling.ExactRecordBytes = recordBytes("approval", 3*32+1, dangling.State[0])
+			dangling.RecordDigest = mustRecordDigest(t, RecordApproval, dangling.ExactRecordBytes)
+			c.Approvals = append(c.Approvals, dangling)
+		}, ClassificationRepairNeeded},
+
+		{"lifecycle-count-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles = c.Lifecycles[:1]
+		}, ClassificationRepairNeeded},
+		{"lifecycle-binding-invalid", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles[0].State = lifecyclestate.LifecycleState("invented-state")
+		}, ClassificationBinding},
+		{"lifecycle-order", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles[0], c.Lifecycles[1] = c.Lifecycles[1], c.Lifecycles[0]
+		}, ClassificationBinding},
+		{"lifecycle-attempt-half", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles[1].AttemptID = attemptID(9_999)
+		}, ClassificationRepairNeeded},
+		{"destroyed-disposition-invalid", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles[0].CleanupRequired = true
+		}, ClassificationRepairNeeded},
+		{"lifecycle-digest-mismatch", func(c *RegistrationCohortCandidate) {
+			c.Lifecycles[0].ExactRecordBytes = append(c.Lifecycles[0].ExactRecordBytes, 'X')
+		}, ClassificationBinding},
+
+		{"cohort-byte-underflow", func(c *RegistrationCohortCandidate) {
+			c.EncodedByteLength = 1
+		}, ClassificationBinding},
+	}
+
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			cohort := cloneCandidateCohort(closedCohort(t, 1, registrationExpiry, 2))
+			testCase.mutate(&cohort)
+			view := validStateView(t, []RegistrationCohortCandidate{cohort})
+			_, err := NewValidatedV1OrV2State(view)
+			if err == nil {
+				t.Fatalf("%s was accepted", testCase.name)
+			}
+			if got := classification(t, err); got != testCase.wantClass {
+				t.Fatalf("%s classification = %s, want %s (%v)", testCase.name, got, testCase.wantClass, err)
+			}
+		})
+	}
+}
+
+// TestArchiveSelectorRejectsActiveLifecycleDispositionMismatch covers the
+// non-destroyed half of validateCohortLifecycles' disposition check.
+// closedCohort only ever builds destroyed lifecycles, so this needs
+// activeCohort instead of the mutation table above.
+func TestArchiveSelectorRejectsActiveLifecycleDispositionMismatch(t *testing.T) {
+	cohort := activeCohort(t, 1, 90, lifecyclestate.StateObserved)
+	cohort.Lifecycles[0].CleanupRequired = false
+	cohort.EncodedByteLength = minimumCohortBytes(cohort)
+	view := validStateView(t, []RegistrationCohortCandidate{cohort})
+	if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationRepairNeeded {
+		t.Fatalf("active disposition mismatch = %v", err)
+	}
+}
+
+// TestArchiveSelectorRefusesCrossCohortCollisionsAndOrder covers the
+// seen-set collision checks that only trigger across cohorts (see the
+// TestArchiveSelectorRejectsEveryDistinctCandidateCohortMismatch doc comment
+// for why they can't trigger within one cohort), plus validateCohorts' own
+// strict cohort-ordering check.
+func TestArchiveSelectorRefusesCrossCohortCollisionsAndOrder(t *testing.T) {
+	t.Run("registration-collision", func(t *testing.T) {
+		first := closedCohort(t, 1, 90, 1)
+		second := closedCohort(t, 2, 90, 1)
+		second.Registration.RegistrationID = first.Registration.RegistrationID
+		view := validStateView(t, []RegistrationCohortCandidate{first, second})
+		if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationBinding {
+			t.Fatalf("registration collision = %v", err)
+		}
+	})
+
+	t.Run("approval-collision", func(t *testing.T) {
+		first := closedCohort(t, 1, 90, 1)
+		second := closedCohort(t, 2, 90, 1)
+		second.Approvals[0].ApprovalID = first.Approvals[0].ApprovalID
+		view := validStateView(t, []RegistrationCohortCandidate{first, second})
+		if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationBinding {
+			t.Fatalf("approval collision = %v", err)
+		}
+	})
+
+	t.Run("nonce-collision", func(t *testing.T) {
+		first := closedCohort(t, 1, 90, 1)
+		second := closedCohort(t, 2, 90, 1)
+		second.Approvals[0].AttemptNonce = first.Approvals[0].AttemptNonce
+		view := validStateView(t, []RegistrationCohortCandidate{first, second})
+		if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationBinding {
+			t.Fatalf("nonce collision = %v", err)
+		}
+	})
+
+	t.Run("attempt-collision", func(t *testing.T) {
+		first := closedCohort(t, 1, 90, 1)
+		second := closedCohort(t, 2, 90, 1)
+		// Keep second's own approval-to-attempt forward link internally
+		// consistent under the collided ID, so this hits the seenAttempts
+		// collision check rather than an unrelated approval-half refusal.
+		second.Approvals[0].ConsumedAttemptID = first.Attempts[0].AttemptID
+		second.Attempts[0].AttemptID = first.Attempts[0].AttemptID
+		view := validStateView(t, []RegistrationCohortCandidate{first, second})
+		if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationBinding {
+			t.Fatalf("attempt collision = %v", err)
+		}
+	})
+
+	t.Run("cohort-order", func(t *testing.T) {
+		first := closedCohort(t, 2, 90, 1)
+		second := closedCohort(t, 1, 90, 1)
+		view := validStateView(t, []RegistrationCohortCandidate{first, second})
+		if _, err := NewValidatedV1OrV2State(view); classification(t, err) != ClassificationBinding {
+			t.Fatalf("descending cohort order = %v", err)
+		}
+	})
+}
+
 func TestArchiveExactBoundsCapPlusOneOrderingAndCollisions(t *testing.T) {
 	if _, err := NewArchiveLimits(MaxArchiveCohortsPerSegment, uint64(MaxSupervisorArchiveBytes)); err != nil {
 		t.Fatal(err)

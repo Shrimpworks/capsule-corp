@@ -177,12 +177,64 @@ func compareRegistrationCandidate(left, right RegistrationCandidate) int {
 	return bytes.Compare(left.RegistrationID[:], right.RegistrationID[:])
 }
 
+// validateCandidateCohort validates one indivisible registration cohort in
+// six ordered stages, threading the running minimum-byte total and the
+// approval/attempt lookup maps each later stage needs between them. Stage
+// order is load-bearing: it is also the refusal-priority order a
+// simultaneously-invalid cohort is classified under, so a change here that
+// reorders stages (not just splits them out) needs the same scrutiny as a
+// change to the checks themselves.
 func validateCandidateCohort(
 	cohort RegistrationCohortCandidate,
 	seenRegistrations map[v0candidate.RegistrationID]struct{},
 	seenApprovals map[approvalattempt.ApprovalID]struct{},
 	seenNonces map[approvalattempt.AttemptNonce]struct{},
 	seenAttempts map[approvalattempt.AttemptID]struct{},
+) error {
+	registration := cohort.Registration
+
+	if err := validateCohortRegistrationRecord(cohort, seenRegistrations); err != nil {
+		return err
+	}
+	minimumBytes := uint64(len(registration.ExactRecordBytes))
+
+	approvalsByID, approvalBytes, err := validateCohortApprovals(cohort, seenApprovals, seenNonces)
+	if err != nil {
+		return err
+	}
+	minimumBytes += approvalBytes
+
+	attemptsByID, attemptBytes, err := validateCohortAttempts(cohort, approvalsByID, seenAttempts)
+	if err != nil {
+		return err
+	}
+	minimumBytes += attemptBytes
+
+	if err := validateApprovalConsumedLinks(cohort.Approvals, attemptsByID); err != nil {
+		return err
+	}
+
+	lifecycleBytes, err := validateCohortLifecycles(cohort, attemptsByID)
+	if err != nil {
+		return err
+	}
+	minimumBytes += lifecycleBytes
+
+	if minimumBytes > cohort.EncodedByteLength {
+		return classified(ClassificationBinding, "selector-cohort-byte-underflow")
+	}
+	return nil
+}
+
+// validateCohortRegistrationRecord validates the cohort's registration
+// record and cohort-shape fields (collection presence, byte-length bound,
+// per-collection record-count caps), and records the registration's
+// cross-cohort collision membership in seenRegistrations. It must run
+// before every other stage: they all assume registration is well-formed and
+// use fields (RegistrationID, RegistrationSequence, ExpiresAt) it validates.
+func validateCohortRegistrationRecord(
+	cohort RegistrationCohortCandidate,
+	seenRegistrations map[v0candidate.RegistrationID]struct{},
 ) error {
 	registration := cohort.Registration
 	if registration.RegistrationID == (v0candidate.RegistrationID{}) {
@@ -211,7 +263,22 @@ func validateCandidateCohort(
 		len(cohort.Attempts) > MaxArchiveAttemptsPerSegment || len(cohort.Lifecycles) > MaxArchiveLifecyclesPerSegment {
 		return classified(ClassificationCapacity, "selector-cohort-record-count")
 	}
-	minimumBytes := uint64(len(registration.ExactRecordBytes))
+	return nil
+}
+
+// validateCohortApprovals validates every approval's binding to the
+// cohort's registration, its internal disposition, and its exact-record
+// digest; records cross-cohort ApprovalID/AttemptNonce collision membership
+// in seenApprovals/seenNonces; and returns the by-ID lookup
+// validateCohortAttempts and validateApprovalConsumedLinks need plus the
+// approvals' combined exact-record byte length.
+func validateCohortApprovals(
+	cohort RegistrationCohortCandidate,
+	seenApprovals map[approvalattempt.ApprovalID]struct{},
+	seenNonces map[approvalattempt.AttemptNonce]struct{},
+) (map[approvalattempt.ApprovalID]ApprovalCandidate, uint64, error) {
+	registration := cohort.Registration
+	var approvalBytes uint64
 	approvalsByID := make(map[approvalattempt.ApprovalID]ApprovalCandidate, len(cohort.Approvals))
 	for index, approval := range cohort.Approvals {
 		if approval.ApprovalID == (approvalattempt.ApprovalID{}) ||
@@ -220,54 +287,82 @@ func validateCandidateCohort(
 			approval.RegistrationSequence != registration.RegistrationSequence ||
 			uint64(approval.ExpiresAt) > v0candidate.MaxSafeInteger || approval.ExpiresAt > registration.ExpiresAt ||
 			!validApprovalState(approval.State) {
-			return classified(ClassificationBinding, "selector-approval")
+			return nil, 0, classified(ClassificationBinding, "selector-approval")
 		}
 		if index > 0 && bytes.Compare(cohort.Approvals[index-1].ApprovalID[:], approval.ApprovalID[:]) >= 0 {
-			return classified(ClassificationBinding, "selector-approval-order")
+			return nil, 0, classified(ClassificationBinding, "selector-approval-order")
 		}
 		if (approval.State == approvalattempt.ApprovalConsumed) !=
 			(approval.ConsumedAttemptID != (approvalattempt.AttemptID{})) {
-			return classified(ClassificationBinding, "selector-approval-consumed-link")
+			return nil, 0, classified(ClassificationBinding, "selector-approval-consumed-link")
 		}
 		if _, exists := seenApprovals[approval.ApprovalID]; exists {
-			return classified(ClassificationBinding, "selector-approval-collision")
+			return nil, 0, classified(ClassificationBinding, "selector-approval-collision")
 		}
 		if _, exists := seenNonces[approval.AttemptNonce]; exists {
-			return classified(ClassificationBinding, "selector-nonce-collision")
+			return nil, 0, classified(ClassificationBinding, "selector-nonce-collision")
 		}
 		seenApprovals[approval.ApprovalID] = struct{}{}
 		seenNonces[approval.AttemptNonce] = struct{}{}
 		if err := validateExactRecord(RecordApproval, approval.ExactRecordBytes, approval.RecordDigest); err != nil {
-			return err
+			return nil, 0, err
 		}
-		minimumBytes += uint64(len(approval.ExactRecordBytes))
+		approvalBytes += uint64(len(approval.ExactRecordBytes))
 		approvalsByID[approval.ApprovalID] = approval
 	}
+	return approvalsByID, approvalBytes, nil
+}
+
+// validateCohortAttempts validates every attempt's binding to the cohort's
+// registration, its forward link to a consumed approval in approvalsByID,
+// and its exact-record digest; records cross-cohort AttemptID collision
+// membership in seenAttempts; and returns the by-ID lookup
+// validateApprovalConsumedLinks and validateCohortLifecycles need plus the
+// attempts' combined exact-record byte length.
+func validateCohortAttempts(
+	cohort RegistrationCohortCandidate,
+	approvalsByID map[approvalattempt.ApprovalID]ApprovalCandidate,
+	seenAttempts map[approvalattempt.AttemptID]struct{},
+) (map[approvalattempt.AttemptID]AttemptCandidate, uint64, error) {
+	registration := cohort.Registration
+	var attemptBytes uint64
 	attemptsByID := make(map[approvalattempt.AttemptID]AttemptCandidate, len(cohort.Attempts))
 	for index, attempt := range cohort.Attempts {
 		if attempt.AttemptID == (approvalattempt.AttemptID{}) || attempt.ApprovalID == (approvalattempt.ApprovalID{}) ||
 			attempt.RegistrationID != registration.RegistrationID ||
 			attempt.RegistrationSequence != registration.RegistrationSequence {
-			return classified(ClassificationBinding, "selector-attempt")
+			return nil, 0, classified(ClassificationBinding, "selector-attempt")
 		}
 		if index > 0 && bytes.Compare(cohort.Attempts[index-1].AttemptID[:], attempt.AttemptID[:]) >= 0 {
-			return classified(ClassificationBinding, "selector-attempt-order")
+			return nil, 0, classified(ClassificationBinding, "selector-attempt-order")
 		}
 		approval, exists := approvalsByID[attempt.ApprovalID]
 		if !exists || approval.State != approvalattempt.ApprovalConsumed || approval.ConsumedAttemptID != attempt.AttemptID {
-			return classified(ClassificationRepairNeeded, "selector-attempt-approval-half")
+			return nil, 0, classified(ClassificationRepairNeeded, "selector-attempt-approval-half")
 		}
 		if _, exists := seenAttempts[attempt.AttemptID]; exists {
-			return classified(ClassificationBinding, "selector-attempt-collision")
+			return nil, 0, classified(ClassificationBinding, "selector-attempt-collision")
 		}
 		seenAttempts[attempt.AttemptID] = struct{}{}
 		if err := validateExactRecord(RecordAttempt, attempt.ExactRecordBytes, attempt.RecordDigest); err != nil {
-			return err
+			return nil, 0, err
 		}
-		minimumBytes += uint64(len(attempt.ExactRecordBytes))
+		attemptBytes += uint64(len(attempt.ExactRecordBytes))
 		attemptsByID[attempt.AttemptID] = attempt
 	}
-	for _, approval := range cohort.Approvals {
+	return attemptsByID, attemptBytes, nil
+}
+
+// validateApprovalConsumedLinks confirms the reverse of the link
+// validateCohortAttempts already checked forward: every consumed approval's
+// ConsumedAttemptID names an attempt in attemptsByID that points back at it.
+// It must run after both validateCohortApprovals and validateCohortAttempts
+// populate their maps.
+func validateApprovalConsumedLinks(
+	approvals []ApprovalCandidate,
+	attemptsByID map[approvalattempt.AttemptID]AttemptCandidate,
+) error {
+	for _, approval := range approvals {
 		if approval.State == approvalattempt.ApprovalConsumed {
 			attempt, exists := attemptsByID[approval.ConsumedAttemptID]
 			if !exists || attempt.ApprovalID != approval.ApprovalID {
@@ -275,43 +370,53 @@ func validateCandidateCohort(
 			}
 		}
 	}
+	return nil
+}
+
+// validateCohortLifecycles validates the lifecycles-to-attempts count match,
+// every lifecycle's binding to an attempt in attemptsByID, its intra-cohort
+// AttemptID collision freedom, its state/disposition consistency, and its
+// exact-record digest; and returns the lifecycles' combined exact-record
+// byte length.
+func validateCohortLifecycles(
+	cohort RegistrationCohortCandidate,
+	attemptsByID map[approvalattempt.AttemptID]AttemptCandidate,
+) (uint64, error) {
 	if len(cohort.Lifecycles) != len(cohort.Attempts) {
-		return classified(ClassificationRepairNeeded, "selector-lifecycle-count")
+		return 0, classified(ClassificationRepairNeeded, "selector-lifecycle-count")
 	}
+	var lifecycleBytes uint64
 	seenLifecycle := make(map[approvalattempt.AttemptID]struct{}, len(cohort.Lifecycles))
 	for index, lifecycle := range cohort.Lifecycles {
 		if lifecycle.AttemptID == (approvalattempt.AttemptID{}) || !validLifecycleState(lifecycle.State) ||
 			!validRecoveryFence(lifecycle.RecoveryFence) || !validReconciliation(lifecycle.LastReconciliation) {
-			return classified(ClassificationBinding, "selector-lifecycle")
+			return 0, classified(ClassificationBinding, "selector-lifecycle")
 		}
 		if index > 0 && bytes.Compare(cohort.Lifecycles[index-1].AttemptID[:], lifecycle.AttemptID[:]) >= 0 {
-			return classified(ClassificationBinding, "selector-lifecycle-order")
+			return 0, classified(ClassificationBinding, "selector-lifecycle-order")
 		}
 		if _, exists := attemptsByID[lifecycle.AttemptID]; !exists {
-			return classified(ClassificationRepairNeeded, "selector-lifecycle-attempt-half")
+			return 0, classified(ClassificationRepairNeeded, "selector-lifecycle-attempt-half")
 		}
 		if _, exists := seenLifecycle[lifecycle.AttemptID]; exists {
-			return classified(ClassificationBinding, "selector-lifecycle-collision")
+			return 0, classified(ClassificationBinding, "selector-lifecycle-collision")
 		}
 		seenLifecycle[lifecycle.AttemptID] = struct{}{}
 		if lifecycle.State == lifecyclestate.StateDestroyed {
 			if lifecycle.CleanupRequired || !lifecycle.TerminalAt.Present ||
 				lifecycle.LastReconciliation != lifecyclestate.ReconciliationAuthoritativelyAbsent ||
 				lifecycle.AutomaticRecoveryExhausted {
-				return classified(ClassificationRepairNeeded, "selector-destroyed-disposition")
+				return 0, classified(ClassificationRepairNeeded, "selector-destroyed-disposition")
 			}
 		} else if !lifecycle.CleanupRequired || lifecycle.TerminalAt.Present {
-			return classified(ClassificationRepairNeeded, "selector-active-disposition")
+			return 0, classified(ClassificationRepairNeeded, "selector-active-disposition")
 		}
 		if err := validateExactRecord(RecordLifecycle, lifecycle.ExactRecordBytes, lifecycle.RecordDigest); err != nil {
-			return err
+			return 0, err
 		}
-		minimumBytes += uint64(len(lifecycle.ExactRecordBytes))
+		lifecycleBytes += uint64(len(lifecycle.ExactRecordBytes))
 	}
-	if minimumBytes > cohort.EncodedByteLength {
-		return classified(ClassificationBinding, "selector-cohort-byte-underflow")
-	}
-	return nil
+	return lifecycleBytes, nil
 }
 
 func validateExactRecord(kind RecordKind, exact []byte, digest ArchiveRecordDigest) error {

@@ -288,7 +288,7 @@ bounded transcript, and fixed summary only after exact terminal lifecycle and fa
 absence; response loss and restart converge, while EOF, exit zero, stale replay, forged records,
 and unresolved teardown refuse. FakeBackend has no real runner, so runner identity remains explicit
 `unresolved` and product completion/store integration remains `BLOCKED`.
-[Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
+[Accepted ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
 calls, but no bridge fixture, installed authenticated endpoint, product consumer, or production

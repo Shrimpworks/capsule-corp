@@ -203,7 +203,7 @@ It owns exact registered plan bytes, approval consumption, attempt state, runtim
 backend capability matching, backend handles, cleanup leases, staged-digest verification, safe
 filesystem collection, and a hash-linked enforcement transcript.
 
-Proposed ADR-0029 selects one unprivileged per-user Supervisor process: a small native
+Accepted ADR-0029 selects one unprivileged per-user Supervisor process: a small native
 C/Objective-C XPC/Security front end linked in-process with the existing Go authority/lifecycle
 core. It adds no Swift Supervisor service, root LaunchDaemon, or privileged helper. The exact
 installed identity/session evidence remains open. Proposed ADR-0033 selects a pre-created enrolled

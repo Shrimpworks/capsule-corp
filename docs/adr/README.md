@@ -56,7 +56,9 @@ its core conclusion.
 - [ADR-0027: Retire the SupervisorCore in-memory scaffold](0027-retire-supervisorcore-scaffold.md)
 - [ADR-0028: Select governed deno_core as the first runtime candidate](0028-select-governed-deno-core-first.md)
 - [ADR-0029: Select one native-fronted Go Supervisor process for authenticated local IPC](0029-select-authenticated-local-ipc-topology.md)
-  — Proposed
+  — Accepted; S0 review retains the one-process/two-service/four-call topology, while native
+  enforcement, two approval/attempt method contracts, installed consumers, and product IPC remain
+  `BLOCKED`
 - [ADR-0030: Define the passive TypeScript approved-byte migration boundary](0030-define-typescript-approved-byte-migration-boundary.md)
 - [ADR-0031: Checkpoint closed Supervisor cohorts into immutable retained archives](0031-checkpoint-closed-supervisor-cohorts.md)
   — Proposed; F1-F5 fixed-store oracle and F6 documentation-only checkpoint `PASSED` in their exact

@@ -69,7 +69,7 @@ consumer, Broker, approval, real backend, or guest is connected.
 The same Go authority path now includes the unwired E1-E5 durable lifecycle checkpoint: one
 colocated fixed snapshot retains attempts, lifecycle intents, stable fake effect/instance
 identities, reconciliation, exact active/retained ceilings, and repeated-startup behavior while
-`FakeBackend.CreatesGuest() == false`. Proposed ADR-0029 selects a native-fronted, in-process Go
+`FakeBackend.CreatesGuest() == false`. Accepted ADR-0029 selects a native-fronted, in-process Go
 Supervisor topology for the future authenticated boundary. The passive S3 prerequisite now freezes
 the exact native dictionary contract and cross-language fixtures for three methods, but no native
 harness/bridge execution, product XPC service, production owner lock, consumer, runtime, backend
@@ -405,7 +405,7 @@ unless a documented narrow capability requires it.
 Go remains the initial daemon language. Swift/native is preferred for the Broker because the Broker
 is primarily a macOS UI, Keychain, LocalAuthentication, XPC, and file-selection component.
 
-Proposed ADR-0029 selects one unprivileged per-user Supervisor process with a small native
+Accepted ADR-0029 selects one unprivileged per-user Supervisor process with a small native
 C/Objective-C XPC/Security front end and the existing Go authority/lifecycle core linked in-process
 through a synchronous method-specific copy-only C ABI. No Swift Supervisor service, host-root
 process, or privileged helper is selected. Installed signing/session/owner-lock evidence remains

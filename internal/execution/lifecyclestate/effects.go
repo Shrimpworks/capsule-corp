@@ -19,10 +19,14 @@ type EffectPermitView struct {
 	Instance               BackendInstanceIdentity
 }
 
+// EffectPermit is an immutable validated projection of one future
+// store-sealed effect authorization. Constructing it performs no effect.
 type EffectPermit struct {
 	view EffectPermitView
 }
 
+// NewEffectPermit validates the attempt, sequence, operation, owner session,
+// immutable binding, and operation-specific instance-presence shape.
 func NewEffectPermit(view EffectPermitView) (EffectPermit, error) {
 	if view.AttemptID == (approvalattempt.AttemptID{}) ||
 		view.RecordVersion == 0 || uint64(view.RecordVersion) > v0candidate.MaxSafeInteger ||
@@ -40,6 +44,7 @@ func NewEffectPermit(view EffectPermitView) (EffectPermit, error) {
 	return EffectPermit{view: cloneEffectPermitView(view)}, nil
 }
 
+// View returns a defensive projection of the passive permit.
 func (permit EffectPermit) View() EffectPermitView { return cloneEffectPermitView(permit.view) }
 
 func cloneEffectPermitView(view EffectPermitView) EffectPermitView {
@@ -71,6 +76,8 @@ type EffectResult struct {
 	instance  BackendInstanceIdentity
 }
 
+// NewEffectResult validates one closed adapter-result observation. Only an
+// applied create result may introduce an instance identity.
 func NewEffectResult(
 	operation Operation,
 	status EffectResultStatus,
@@ -86,10 +93,13 @@ func NewEffectResult(
 	return EffectResult{operation: operation, status: status, instance: cloneInstance(instance)}, nil
 }
 
+// Operation returns the operation this result answers.
 func (result EffectResult) Operation() Operation { return result.operation }
 
+// Status returns the closed effect-result status.
 func (result EffectResult) Status() EffectResultStatus { return result.status }
 
+// Instance returns a defensive instance identity when the result has one.
 func (result EffectResult) Instance() BackendInstanceIdentity { return cloneInstance(result.instance) }
 
 func validEffectResultStatus(status EffectResultStatus) bool {
@@ -110,6 +120,8 @@ type ReconcileResult struct {
 	instance  BackendInstanceIdentity
 }
 
+// NewReconcileResult validates one observation-only reconciliation result and
+// its status-specific instance-identity shape. It authorizes no effect.
 func NewReconcileResult(
 	operation Operation,
 	status ReconciliationStatus,
@@ -130,10 +142,13 @@ func NewReconcileResult(
 	}, nil
 }
 
+// Operation returns the operation whose retained state was reconciled.
 func (result ReconcileResult) Operation() Operation { return result.operation }
 
+// Status returns the closed reconciliation observation.
 func (result ReconcileResult) Status() ReconciliationStatus { return result.status }
 
+// Instance returns a defensive instance identity when the status requires one.
 func (result ReconcileResult) Instance() BackendInstanceIdentity {
 	return cloneInstance(result.instance)
 }

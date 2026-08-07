@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-06
+Date: 2026-08-07
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -33,6 +33,8 @@ next dependency boundary for the latest group are recorded in the
 | Fixed denial-test v25 runtime candidate | `NO_GO`: pre-launch semantic review showed socket creation alone is not usable vsock/network authority and may succeed when the local-CID ioctl fails. | V25 tested the wrong property and was neither authorized nor launched. Its exact materialization remains historical diagnostic evidence only. |
 | Fixed denial-test v26 consolidated execution | Failure-localization objective `PASSED`: one exact guest passed active local-CID transport-unavailable and raw-block write-open denial before fixed detail identified the next stop. | Complete corpus `BLOCKED` because the probe rejected expected down/unbacked `dummy0` by name before flags/backing/routes. No connect/send/traffic occurred. V26 is not to be rerun. |
 | Exact fixed denial-test v27 execution | `PASSED`: one exact authorized owned guest completed all 30 fixed markers with exact completion/console proofs across known-answer, identity/capability/descriptor/root/host-path/mount/privilege/vsock/block/network/virtiofs/environment controls plus normal reap, unlinked-root teardown, and unchanged canary. | Zero network/credential authority or traffic was retained. This exact local experiment is not product/runtime admission; broader kernel/platform/lifecycle, installed composition/recovery, pressure/sleep/wake/upgrade, and durable archive publication remain `BLOCKED`. |
+| R2 typed guest transport research | `PASSED`: the read-only reconciliation selects three role-distinct attempt-bound streams, C2A's narrowed single-`main.mjs` caps, cap-plus-one completion draining, launcher-only commit-last authority, a monotonic cancellation/reset taxonomy, and a separate durable terminal-proof join. | C5a passive contract, C5b controlled guest harness, installed composition, and admission remain `BLOCKED`; v27's diagnostic console proof is not reclassified as final typed transport. |
+| Post-checkpoint stabilization review | `PASSED`: one reproduced approval-verifier guard defect and the matching lint-discovery boundary now exclude unrelated nested agent worktrees; 20-run targeted suites and ordinary full verification pass; `lifecyclestate` exported contracts now document purpose and passive authority limits. | Full legacy exported-comment lint remains `BLOCKED` on issue #217. The combined race run reported no race but timed out in the exact 64-segment backup boundary; that ordinary test passes in about 52 seconds and the scalability limitation is retained explicitly. |
 | Production-shaped I2B1 CBOR/COSE wrapper review | `PASSED`: 95 Go/Swift checked-in-vector cases close pairing, repeated-field binding, payload-owned replay, caps, mutations, and fuzz targets. | Live signing, caller/key authorization, durable replay, installed consumers, and product admission remain `BLOCKED`. |
 | I2B3 Team-3DDR signing preflight and stale-profile stop | Exact Coordinator/Supervisor profile creation and signed-entitlement readback `PASSED`. The required stale-profile fault probe also `PASSED` as a decisive test: the archived I1B Supervisor profile rewrote a current-profile sentinel in the stable private container, cleanup removed the exact test state, and the workflow stopped before keys, services, installation, or root creation. | Exact I2B3 is `BLOCKED` on an ADR-selected signing/container epoch; installed owner-lock/product admission do not advance. See the [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md). |
 | Compiled-artifact archive migration | `PASSED`: 210 completed payload/evidence files are pinned to capsule-experiments commit `0944ffd8cfd01ec23e4ae99138b0931d56804077`; Capsule retains compact conformance metadata and six deterministic I2B2 source inputs. | No product, signing, installation, runtime, or admission status changes. |
@@ -661,7 +663,7 @@ Capsule adoption. This is repository governance only, not source/build independe
 security-control evidence, profile validation, or product admission. Integration must still pin
 exact commits and digests and verify ancestry rather than trust a branch name.
 
-Proposed ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
+Accepted ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
 installed endpoints, peer identities, or production transport. Passive S3 freezes three methods;
 `SubmitApprovalV0` and `RequestAttemptV0` remain blocked. Archive mutation/growth through F5 is
 `PASSED` in the fixed-store oracle; F6 execution, production-engine selection, production

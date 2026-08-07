@@ -1,11 +1,12 @@
 # ADR-0029: Select one native-fronted Go Supervisor process for authenticated local IPC
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-08-03
+- Decision review: 2026-08-07
 - First-release source-contract refinement: ADR-0034 on 2026-08-03
 - Source Validator launcher refinement: ADR-0036 on 2026-08-04
 - Protected-root bootstrap refinement: ADR-0038 on 2026-08-04
-- Refines if accepted: ADR-0005, ADR-0011, ADR-0012, ADR-0013, ADR-0018, ADR-0019,
+- Refines: ADR-0005, ADR-0011, ADR-0012, ADR-0013, ADR-0018, ADR-0019,
   ADR-0023, ADR-0024, and ADR-0025
 
 ## Context
@@ -50,7 +51,7 @@ closed protected-root bootstrap messages. That service is not an ordinary daemon
 call, carries no plan/approval/backend/store operation, and becomes a fixed already-enrolled
 refusal after genesis. It does not change the two ordinary services or four product calls below.
 
-## Proposed decision
+## Decision
 
 ### One process and one crash/recovery boundary
 
@@ -174,7 +175,10 @@ required only for that live call. Reuse after completion or reconnect is treated
 transport call and follows the method's semantic replay rules below; no bounded or durable request
 ID history is consulted.
 
-Method bodies and successful replies are exactly:
+The logical method bodies and successful replies are selected below. `RegisterPlanV0` and
+`GetRegisteredPlanV0` have exact passive fixtures. `SubmitApprovalV0` and `RequestAttemptV0`
+retain these logical shapes, but their native tags, dictionaries, case-derived caps, deadlines,
+and refusal fixtures remain `BLOCKED` on the passive C4 slice:
 
 | Call | Request body owned by caller, copied before Go decode | Successful reply |
 | --- | --- | --- |
@@ -216,8 +220,9 @@ short write, bridge version disagreement, or pointer/length inconsistency termin
 a local integrity fault.
 
 The exact application-visible aggregate request-data caps are 328,337 bytes for
-`RegisterPlanV0`, 16 for `GetRegisteredPlanV0`, 528 for `SubmitApprovalV0`, and 32 for
-`RequestAttemptV0`, excluding the fixed common header whose fields have the widths above. The
+`RegisterPlanV0` and 16 for `GetRegisteredPlanV0`, excluding the fixed common header whose fields
+have the widths above. The 528-byte `SubmitApprovalV0` and 32-byte `RequestAttemptV0` arithmetic
+remains a candidate until C4 derives and verifies the complete native envelopes. The
 `GetRegisteredPlanV0` successful reply-data cap is 332,433 bytes. The revised registration/fetch
 caps come from the complete ADR-0034 field-authority projection: 65,536 plan bytes, 562 binding
 bytes, at most 95 canonical manifest bytes, 262,144 source bytes, and—on fetch—at most 4,096
@@ -235,7 +240,9 @@ returns `CAPACITY` after authentication and outer-header validation and before b
 state change.
 
 Supervisor-owned method deadlines start at admission: two seconds for `GetRegisteredPlanV0` and
-five seconds for each stateful call. Clients cannot extend them. Disconnect or cancellation before
+five seconds for `RegisterPlanV0`. The five-second values for `SubmitApprovalV0` and
+`RequestAttemptV0` remain candidates until C4 freezes their case-derived deadlines. Clients cannot
+extend a frozen deadline. Disconnect or cancellation before
 bridge dispatch makes no Go call. After dispatch, client cancellation is only response
 cancellation: it cannot decide whether a durable operation committed. The Supervisor completes the
 current determinate store operation or enters the existing recovery fence for an indeterminate
@@ -294,8 +301,12 @@ path, or caller-selected recovery action. A missing lifecycle record remains wor
 
 ### Refusal classes and no-state rule
 
-Wrong OS peer requirements are dropped by XPC and receive no application reply. Delivered calls use
-only the current fixed internal classifications:
+Wrong OS peer requirements are dropped by XPC and receive no application reply. For the three
+currently frozen native methods, the S3 native contract owns the exact numeric status/reason tags,
+validation precedence, cross-service/tag handling, and no-reply integrity faults. C4 must extend
+that model for `SubmitApprovalV0` and `RequestAttemptV0` without renumbering or reinterpreting the
+existing methods. The table below remains the logical core-classification guide rather than a
+competing transport mapping:
 
 | First refusal boundary | Classification |
 | --- | --- |
@@ -383,14 +394,19 @@ for safe response-loss recovery.
 - Registration response loss may leave an expired retained registration; solving that operational
   cost requires changing ADR-0023 rather than hiding a deduplication key in transport.
 
-This ADR remains Proposed until the implementation/conformance plan retains passive bridge
-fixtures and fault oracles, an ad-hoc no-product two-service harness proves the ordering and
-no-state refusals, and an Apple-signed installed package proves the exact identity/session/update
-matrix. Consumer activation additionally remains blocked on production Supervisor
-archive/compaction, implementation and installed evidence for the selected multi-process owner
-lock, production approval verification and
-key authorization, protected storage, update/repair integration, and all existing runtime/backend/
+The [S0 decision review](../AUTHENTICATED_LOCAL_IPC_ADR_0029_S0_REVIEW.md) accepts this topology
+without claiming platform enforcement or product activation. The existing three-method S3 native
+contract may proceed to its separately authorized controlled harness after the native-XPC research
+brief. `SubmitApprovalV0` and `RequestAttemptV0` still require the passive C4 contract before
+installed use. Consumer activation remains blocked on the applicable harness and installed
+identity/session/update evidence, the selected owner lock and protected state, production approval
+verification and key authorization, update/repair integration, and all existing runtime/backend/
 content/evidence gates.
+
+Accepted ADR-0040 replaces the older unconditional production archive/compaction prerequisite for
+the owner-only internal alpha with its exact bounded fixed-store exception. F6 or another reviewed
+production engine remains mandatory before restore, continuity, multiple users, multiple
+state-opening processes, retained non-disposable user data, or external alpha.
 
 [Proposed ADR-0031](0031-checkpoint-closed-supervisor-cohorts.md) defines the archive/compaction and
 replay-retention semantics, but implements no storage behavior and deliberately does not select a
@@ -411,7 +427,7 @@ gates are in [the authenticated local IPC implementation and conformance plan](.
 The passive
 [S3 native-contract prerequisite](../AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) now freezes
 exact XPC dictionary keys/types and numeric method/status/reason tags for the three already-frozen
-passive methods without activating a listener or changing this proposed topology. Actual native
+passive methods without activating a listener or changing this accepted topology. Actual native
 authentication/cap evidence remains a later separately authorized harness.
 
 ## Evidence

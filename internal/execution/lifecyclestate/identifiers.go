@@ -9,6 +9,7 @@ const identifierBytes = 16
 type IdentifierDomain string
 
 const (
+	// DomainEffectID labels bytes intended for the lifecycle effect namespace.
 	DomainEffectID       IdentifierDomain = "lifecycle-effect"
 	DomainOwnerSessionID IdentifierDomain = "lifecycle-owner-session"
 )
@@ -20,6 +21,8 @@ type DomainIdentifier struct {
 	bytes  [identifierBytes]byte
 }
 
+// NewDomainIdentifier validates a trusted identifier role and copies one
+// exact nonzero 16-byte value into that role's namespace.
 func NewDomainIdentifier(domain IdentifierDomain, value []byte) (DomainIdentifier, error) {
 	if domain != DomainEffectID && domain != DomainOwnerSessionID {
 		return DomainIdentifier{}, classified(ClassificationDomain, "unknown-identifier-domain")
@@ -36,8 +39,10 @@ func NewDomainIdentifier(domain IdentifierDomain, value []byte) (DomainIdentifie
 	return identifier, nil
 }
 
+// Domain returns the trusted semantic namespace attached at construction.
 func (identifier DomainIdentifier) Domain() IdentifierDomain { return identifier.domain }
 
+// Bytes returns a defensive copy of the exact identifier bytes.
 func (identifier DomainIdentifier) Bytes() []byte { return bytes.Clone(identifier.bytes[:]) }
 
 // EffectID is a distinct nonzero 16-byte Supervisor-issued namespace. It is
@@ -45,6 +50,7 @@ func (identifier DomainIdentifier) Bytes() []byte { return bytes.Clone(identifie
 // session, or backend instance identity.
 type EffectID [identifierBytes]byte
 
+// NewEffectID converts only a domain-checked lifecycle-effect identifier.
 func NewEffectID(identifier DomainIdentifier) (EffectID, error) {
 	if identifier.domain != DomainEffectID {
 		return EffectID{}, classified(ClassificationDomain, "effect-id-domain")
@@ -52,12 +58,14 @@ func NewEffectID(identifier DomainIdentifier) (EffectID, error) {
 	return EffectID(identifier.bytes), nil
 }
 
+// IsZero reports whether the effect identifier is absent.
 func (identifier EffectID) IsZero() bool { return identifier == (EffectID{}) }
 
 // OwnerSessionID seals a permit to one future in-process lifecycle owner. E1
 // defines only the nominal value; it establishes no ownership mechanism.
 type OwnerSessionID [identifierBytes]byte
 
+// NewOwnerSessionID converts only a domain-checked lifecycle-owner identifier.
 func NewOwnerSessionID(identifier DomainIdentifier) (OwnerSessionID, error) {
 	if identifier.domain != DomainOwnerSessionID {
 		return OwnerSessionID{}, classified(ClassificationDomain, "owner-session-id-domain")
@@ -65,4 +73,5 @@ func NewOwnerSessionID(identifier DomainIdentifier) (OwnerSessionID, error) {
 	return OwnerSessionID(identifier.bytes), nil
 }
 
+// IsZero reports whether the owner-session identifier is absent.
 func (identifier OwnerSessionID) IsZero() bool { return identifier == (OwnerSessionID{}) }

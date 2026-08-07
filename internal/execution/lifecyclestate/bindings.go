@@ -9,12 +9,19 @@ import (
 )
 
 const (
+	// MaxProfileReviewAttestationDigests bounds the ordered profile-review
+	// evidence copied into one immutable lifecycle binding.
 	MaxProfileReviewAttestationDigests = 8
-	MaxBackendInstanceIdentityBytes    = 64
-	FakeBackendProtocolVersion         = v0candidate.PositiveUInt53(1)
-	SliceBRegistrationStorageVersion   = uint64(0)
-	SliceBApprovalStorageVersion       = uint64(0)
-	SliceBAttemptStorageVersion        = uint64(0)
+	// MaxBackendInstanceIdentityBytes bounds the opaque fake-backend identity.
+	MaxBackendInstanceIdentityBytes = 64
+	// FakeBackendProtocolVersion is the only passive no-guest backend version.
+	FakeBackendProtocolVersion = v0candidate.PositiveUInt53(1)
+	// SliceBRegistrationStorageVersion is the required retained registration version.
+	SliceBRegistrationStorageVersion = uint64(0)
+	// SliceBApprovalStorageVersion is the required retained approval version.
+	SliceBApprovalStorageVersion = uint64(0)
+	// SliceBAttemptStorageVersion is the required retained attempt version.
+	SliceBAttemptStorageVersion = uint64(0)
 )
 
 // BackendBindingView is the closed fake-only backend projection retained by
@@ -33,6 +40,8 @@ type BackendBinding struct {
 	view BackendBindingView
 }
 
+// NewBackendBinding validates and copies the closed fake/no-guest backend
+// projection. It does not select, create, or authorize a backend.
 func NewBackendBinding(view BackendBindingView) (BackendBinding, error) {
 	if view.Kind != BackendFakeNoGuest {
 		return BackendBinding{}, classified(ClassificationUnsupported, "backend-kind")
@@ -51,6 +60,7 @@ func NewBackendBinding(view BackendBindingView) (BackendBinding, error) {
 	return BackendBinding{view: view}, nil
 }
 
+// View returns the immutable backend projection by value.
 func (binding BackendBinding) View() BackendBindingView { return binding.view }
 
 func (binding BackendBinding) valid() bool {
@@ -73,6 +83,8 @@ type BackendInstanceIdentity struct {
 	digest BackendInstanceDigest
 }
 
+// NewBackendInstanceIdentity validates and defensively copies a bounded
+// fake-backend instance identity, then derives its domain-separated digest.
 func NewBackendInstanceIdentity(
 	kind BackendInstanceKind,
 	value []byte,
@@ -91,6 +103,8 @@ func NewBackendInstanceIdentity(
 	return BackendInstanceIdentity{kind: kind, value: copied, digest: digest}, nil
 }
 
+// RestoreBackendInstanceIdentity reconstructs an identity only when the
+// supplied value recomputes to the retained digest.
 func RestoreBackendInstanceIdentity(view BackendInstanceIdentityView) (BackendInstanceIdentity, error) {
 	identity, err := NewBackendInstanceIdentity(view.Kind, view.Value)
 	if err != nil {
@@ -102,16 +116,21 @@ func RestoreBackendInstanceIdentity(view BackendInstanceIdentityView) (BackendIn
 	return identity, nil
 }
 
+// Present reports whether this value contains an instance identity.
 func (identity BackendInstanceIdentity) Present() bool {
 	return identity.kind != "" || len(identity.value) != 0 || identity.digest != (BackendInstanceDigest{})
 }
 
+// Kind returns the identity's closed backend-instance kind.
 func (identity BackendInstanceIdentity) Kind() BackendInstanceKind { return identity.kind }
 
+// Value returns a defensive copy of the opaque identity bytes.
 func (identity BackendInstanceIdentity) Value() []byte { return bytes.Clone(identity.value) }
 
+// Digest returns the domain-separated digest of the kind and exact value.
 func (identity BackendInstanceIdentity) Digest() BackendInstanceDigest { return identity.digest }
 
+// View returns a defensive serializable projection of the identity.
 func (identity BackendInstanceIdentity) View() BackendInstanceIdentityView {
 	return BackendInstanceIdentityView{
 		Kind: identity.kind, Value: bytes.Clone(identity.value), Digest: identity.digest,
@@ -169,6 +188,9 @@ type ImmutableBindings struct {
 	digest ImmutableBindingDigest
 }
 
+// NewImmutableBindings validates the complete passive authority/runtime
+// cross-links, defensively copies the review digest list, and derives one
+// deterministic binding digest. It grants no execution authority.
 func NewImmutableBindings(view ImmutableBindingsView) (ImmutableBindings, error) {
 	view.ProfileReviewAttestationDigests = append(
 		[]v0candidate.ProfileReviewAttestationDigest(nil),
@@ -182,6 +204,8 @@ func NewImmutableBindings(view ImmutableBindingsView) (ImmutableBindings, error)
 	return binding, nil
 }
 
+// RestoreImmutableBindings reconstructs bindings only when their complete
+// projection recomputes to the supplied digest.
 func RestoreImmutableBindings(
 	view ImmutableBindingsView,
 	digest ImmutableBindingDigest,
@@ -196,6 +220,7 @@ func RestoreImmutableBindings(
 	return binding, nil
 }
 
+// View returns a defensive projection, including a fresh review-digest slice.
 func (binding ImmutableBindings) View() ImmutableBindingsView {
 	view := binding.view
 	view.ProfileReviewAttestationDigests = append(
@@ -205,8 +230,10 @@ func (binding ImmutableBindings) View() ImmutableBindingsView {
 	return view
 }
 
+// Digest returns the deterministic digest of the complete immutable binding.
 func (binding ImmutableBindings) Digest() ImmutableBindingDigest { return binding.digest }
 
+// Equal reports exact projection and digest equality between validated bindings.
 func (binding ImmutableBindings) Equal(other ImmutableBindings) bool {
 	return binding.digest == other.digest && reflect.DeepEqual(binding.View(), other.View())
 }

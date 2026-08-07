@@ -5,6 +5,7 @@ package lifecyclestate
 type Operation string
 
 const (
+	// OperationNone denotes that no lifecycle effect is current.
 	OperationNone    Operation = "none"
 	OperationPrepare Operation = "prepare"
 	OperationCreate  Operation = "create"
@@ -23,6 +24,7 @@ var operations = [...]Operation{
 	OperationDestroy,
 }
 
+// Operations returns a defensive copy of the six effect-bearing operations.
 func Operations() []Operation { return append([]Operation(nil), operations[:]...) }
 
 func validOperation(value Operation) bool {
@@ -41,6 +43,7 @@ type LifecycleState string
 type RecordState = LifecycleState
 
 const (
+	// StatePreparePending is the initial state before a prepare intent commits.
 	StatePreparePending   LifecycleState = "prepare-pending"
 	StatePrepareIntent    LifecycleState = "prepare-intent"
 	StatePrepared         LifecycleState = "prepared"
@@ -78,6 +81,7 @@ var lifecycleStates = [...]LifecycleState{
 	StateQuarantined,
 }
 
+// LifecycleStates returns a defensive copy of the complete closed state set.
 func LifecycleStates() []LifecycleState {
 	return append([]LifecycleState(nil), lifecycleStates[:]...)
 }
@@ -95,6 +99,7 @@ func validLifecycleState(value LifecycleState) bool {
 type Checkpoint string
 
 const (
+	// CheckpointNone records that no lifecycle effect has been confirmed.
 	CheckpointNone    Checkpoint = "none"
 	CheckpointPrepare Checkpoint = "prepare"
 	CheckpointCreate  Checkpoint = "create"
@@ -114,6 +119,7 @@ var checkpoints = [...]Checkpoint{
 	CheckpointDestroy,
 }
 
+// Checkpoints returns a defensive copy of the closed checkpoint set.
 func Checkpoints() []Checkpoint { return append([]Checkpoint(nil), checkpoints[:]...) }
 
 func validCheckpoint(value Checkpoint) bool {
@@ -129,6 +135,7 @@ func validCheckpoint(value Checkpoint) bool {
 type EffectStatus string
 
 const (
+	// EffectNone records that no logical effect is current.
 	EffectNone          EffectStatus = "none"
 	EffectIntent        EffectStatus = "intent"
 	EffectConfirmed     EffectStatus = "confirmed"
@@ -142,6 +149,7 @@ var effectStatuses = [...]EffectStatus{
 	EffectIndeterminate,
 }
 
+// EffectStatuses returns a defensive copy of the closed durable effect states.
 func EffectStatuses() []EffectStatus {
 	return append([]EffectStatus(nil), effectStatuses[:]...)
 }
@@ -160,6 +168,7 @@ func validEffectStatus(value EffectStatus) bool {
 type FailureClassification string
 
 const (
+	// FailureNone records that no first lifecycle failure has been retained.
 	FailureNone              FailureClassification = "none"
 	FailureMalformed         FailureClassification = "MALFORMED"
 	FailureUnsupported       FailureClassification = "UNSUPPORTED"
@@ -191,6 +200,7 @@ var failureClassifications = [...]FailureClassification{
 	FailureRecoveryRequired,
 }
 
+// FailureClassifications returns a defensive copy of the fixed failure set.
 func FailureClassifications() []FailureClassification {
 	return append([]FailureClassification(nil), failureClassifications[:]...)
 }
@@ -211,6 +221,7 @@ type ReconciliationStatus string
 type ReconcileStatus = ReconciliationStatus
 
 const (
+	// ReconciliationNone records that no reconciliation has occurred.
 	ReconciliationNone                  ReconciliationStatus = "none"
 	ReconciliationApplied               ReconciliationStatus = "applied"
 	ReconciliationNotApplied            ReconciliationStatus = "not-applied"
@@ -230,6 +241,7 @@ var reconciliationStatuses = [...]ReconciliationStatus{
 	ReconciliationIdentityMismatch,
 }
 
+// ReconciliationStatuses returns a defensive copy of the observation set.
 func ReconciliationStatuses() []ReconciliationStatus {
 	return append([]ReconciliationStatus(nil), reconciliationStatuses[:]...)
 }
@@ -246,19 +258,25 @@ func validReconciliationStatus(value ReconciliationStatus) bool {
 // BackendKind is deliberately closed to the no-guest fake adapter for E1.
 type BackendKind string
 
+// BackendAdapterKind is the compatibility name for BackendKind.
 type BackendAdapterKind = BackendKind
 
+// BackendFakeNoGuest is the only backend kind admitted by this passive slice.
 const BackendFakeNoGuest BackendKind = "fake-no-guest"
 
+// BackendKinds returns the closed passive backend-kind set.
 func BackendKinds() []BackendKind { return []BackendKind{BackendFakeNoGuest} }
 
 // BackendInstanceKind is deliberately closed to the bounded fake identity.
 type BackendInstanceKind string
 
+// InstanceIdentityKind is the compatibility name for BackendInstanceKind.
 type InstanceIdentityKind = BackendInstanceKind
 
+// BackendInstanceFake is the only instance kind admitted by this passive slice.
 const BackendInstanceFake BackendInstanceKind = "fake-instance"
 
+// BackendInstanceKinds returns the closed passive instance-kind set.
 func BackendInstanceKinds() []BackendInstanceKind {
 	return []BackendInstanceKind{BackendInstanceFake}
 }
@@ -267,6 +285,7 @@ func BackendInstanceKinds() []BackendInstanceKind {
 type EffectResultStatus string
 
 const (
+	// EffectResultApplied reports that the requested effect was applied.
 	EffectResultApplied       EffectResultStatus = "applied"
 	EffectResultNotApplied    EffectResultStatus = "not-applied"
 	EffectResultIndeterminate EffectResultStatus = "indeterminate"
@@ -277,6 +296,7 @@ const (
 type RecoveryFenceReason string
 
 const (
+	// RecoveryFenceNone records that no forward-mutation fence is active.
 	RecoveryFenceNone                RecoveryFenceReason = "none"
 	RecoveryFenceCommitIndeterminate RecoveryFenceReason = "commit-indeterminate"
 	RecoveryFenceCommitFailure       RecoveryFenceReason = "commit-failure"

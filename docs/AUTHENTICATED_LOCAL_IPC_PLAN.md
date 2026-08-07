@@ -5,7 +5,7 @@ backend, runtime, process launch, or guest.
 
 Owner: Execution Supervisor and macOS platform boundary.
 
-Decision: [Proposed ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md).
+Decision: [Accepted ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md).
 
 Protected-root bootstrap refinement:
 [Proposed ADR-0038](adr/0038-select-one-shot-coordinator-supervisor-bootstrap.md) selects a
@@ -54,8 +54,8 @@ accepted ADR-0034 + passed M1 source/manifest fixtures
   -> M2/S1 passive plan-v0 registration/fetch fixture and facade cutover (PASSED)
        -> S1 passive RegisterPlanV0/GetRegisteredPlanV0 records/envelopes (PASSED)
        -> ADR-0044 passive SubmitMainMJSV0 product-adapter record/envelope/flow (PASSED)
-       -> remaining SubmitApprovalV0/RequestAttemptV0 passive records/envelopes (BLOCKED)
-       -> S3 native authentication/cap harness
+       +-> remaining SubmitApprovalV0/RequestAttemptV0 passive records/envelopes (BLOCKED)
+       +-> existing three-method S3 native authentication/cap harness
             -> S4 single-process ad-hoc composition with fixed store + fake lifecycle
                  -> S5 installed Apple Development identity/session/update matrix
                       -> S6 Developer ID/notarized clean-host evidence
@@ -77,6 +77,9 @@ notarization authority, and clean disposable hosts.
 
 ## S0: decision review and invariant lock
 
+Status: `PASSED` by the retained
+[ADR-0029 S0 decision review](AUTHENTICATED_LOCAL_IPC_ADR_0029_S0_REVIEW.md).
+
 Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 
 - one unprivileged per-user Supervisor process and no helper;
@@ -89,8 +92,10 @@ Retain review sign-off on ADR-0029 before code is wired. Review must confirm:
 - attempt creation before lifecycle effects; and
 - startup enumeration and recovery by committed `AttemptID` only.
 
-Exit evidence: accepted or explicitly revised ADR text. A topology or responsibility change stops
-this plan and requires an updated Proposed ADR before implementation.
+Exit evidence: ADR-0029 is accepted with reconciled S3/C4 ordering, refusal ownership, candidate
+approval/attempt transport values, and ADR-0040 fixed-store gating. No topology or responsibility
+changed. A future topology or responsibility change requires a new Proposed ADR before
+implementation.
 
 ## M1 and S1/M2: passive contract boundary
 

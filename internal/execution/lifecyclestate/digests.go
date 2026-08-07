@@ -8,8 +8,13 @@ import (
 
 const digestBytes = 32
 
+// ImmutableBindingDigest identifies one complete immutable lifecycle binding.
 type ImmutableBindingDigest [digestBytes]byte
+
+// BackendImplementationDigest identifies the exact passive backend implementation.
 type BackendImplementationDigest [digestBytes]byte
+
+// BackendInstanceDigest identifies one bounded opaque backend instance value.
 type BackendInstanceDigest [digestBytes]byte
 
 func zeroDigest[T ~[digestBytes]byte](value T) bool { return value == (T{}) }

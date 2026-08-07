@@ -29,7 +29,7 @@ func TestFixtureVerifierHasNoNonTestGoConsumer(t *testing.T) {
 			return walkErr
 		}
 		if entry.IsDir() {
-			if path != repositoryRoot && (entry.Name() == ".git" || entry.Name() == "node_modules") {
+			if path != repositoryRoot && skipGoPackageWalkDirectory(entry.Name()) {
 				return filepath.SkipDir
 			}
 			return nil
@@ -58,5 +58,41 @@ func TestFixtureVerifierHasNoNonTestGoConsumer(t *testing.T) {
 	})
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+// skipGoPackageWalkDirectory mirrors the directory classes ignored by Go's
+// package discovery. Files in editor state, nested worktrees, testdata, and
+// vendored dependencies are not consumers in the current module.
+func skipGoPackageWalkDirectory(name string) bool {
+	return strings.HasPrefix(name, ".") ||
+		strings.HasPrefix(name, "_") ||
+		name == "testdata" ||
+		name == "vendor" ||
+		name == "node_modules"
+}
+
+func TestSkipGoPackageWalkDirectory(t *testing.T) {
+	t.Parallel()
+
+	for _, test := range []struct {
+		name string
+		skip bool
+	}{
+		{name: ".claude", skip: true},
+		{name: ".git", skip: true},
+		{name: "_scratch", skip: true},
+		{name: "testdata", skip: true},
+		{name: "vendor", skip: true},
+		{name: "node_modules", skip: true},
+		{name: "internal", skip: false},
+	} {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			if got := skipGoPackageWalkDirectory(test.name); got != test.skip {
+				t.Fatalf("skipGoPackageWalkDirectory(%q) = %t, want %t", test.name, got, test.skip)
+			}
+		})
 	}
 }

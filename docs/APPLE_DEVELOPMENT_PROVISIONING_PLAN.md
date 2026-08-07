@@ -230,7 +230,7 @@ All roles in this historical proposal should also set, as build settings:
 
 ## XPC/Mach service identities and peer-validation requirements
 
-From the currently Proposed ADR-0029, which is the only doc that names services and the validation
+From Accepted ADR-0029, which is the governing document that names services and the validation
 order. Two role-specific Mach services, recorded in the `InstallationManifest`:
 
 | Service name | Enrolled peer | Closed calls |

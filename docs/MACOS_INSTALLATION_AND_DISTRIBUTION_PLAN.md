@@ -116,7 +116,7 @@ The selected composition requires:
 
 ## IPC and App Group posture
 
-The product still follows Proposed ADR-0029: one native-fronted Go Supervisor process and two
+The product still follows Accepted ADR-0029: one native-fronted Go Supervisor process and two
 role-specific Supervisor services, one for the daemon and one for the Broker. Service identity,
 dynamic code validity, exact enrolled component identity, session, installation, epoch, closed
 method, and closed message shape remain independently required.

@@ -25,7 +25,7 @@ No new dependency or custom platform primitive is introduced. The applicable eco
 roles, dictionaries, caps, and replay policy. This slice freezes only that Capsule-owned policy and
 does not call the platform.
 
-An external experiment or new ADR was not required for this prerequisite. Proposed ADR-0029
+An external experiment or new ADR was not required for this prerequisite. Accepted ADR-0029
 already selects the two role-specific Supervisor services, authentication-before-body-copy
 ordering, fixed common fields, copy ownership, refusal classes, and method-specific bridge
 topology; Accepted ADR-0044 selects the single CLI-to-daemon method and its flow contract. The S3

@@ -227,7 +227,7 @@ Details later confirmed 3DDR is the account Team and W4 is a member/display suff
 profiles still have the wrong App IDs. The exact test-only identifiers/bootstrap fields and
 noncredential mismatch/update model are retained, but they do not advance installed or
 protected-root evidence.
-Proposed ADR-0029 selects the authenticated local IPC process/language topology and four-call
+Accepted ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface. Passive logical fixtures and the exact native dictionary prerequisite now cover three
 methods without activating transport. Both remaining methods, `SubmitApprovalV0` and
 `RequestAttemptV0`, remain `BLOCKED`; this slice assigns neither a native tag nor a deadline to

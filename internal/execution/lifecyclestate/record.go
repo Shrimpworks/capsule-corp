@@ -3,10 +3,13 @@ package lifecyclestate
 import "capsule.local/capsule/internal/protocol/v0candidate"
 
 const (
+	// LifecycleRecordFormatVersion is the only passive record encoding version.
 	LifecycleRecordFormatVersion = uint64(0)
+	// MaxAutomaticRecoveryAttempts bounds automatic observation-only recovery.
 	MaxAutomaticRecoveryAttempts = v0candidate.UInt53(3)
 )
 
+// RecordVersion is the positive monotonic version of one retained lifecycle record.
 type RecordVersion uint64
 
 // OptionalUnixSeconds represents an explicit optional UInt53 timestamp. A
@@ -56,6 +59,8 @@ type Record struct {
 	view RecordView
 }
 
+// NewRecord validates a complete immutable snapshot against the durable time
+// high-water from the same future store transaction and retains defensive data.
 func NewRecord(view RecordView, durableTimeHighWater v0candidate.UInt53) (Record, error) {
 	if err := validateRecordView(view, durableTimeHighWater); err != nil {
 		return Record{}, err
@@ -67,8 +72,10 @@ func NewRecord(view RecordView, durableTimeHighWater v0candidate.UInt53) (Record
 // remain immutable and expose only copied slices through their accessors.
 func (record Record) View() RecordView { return cloneRecordView(record.view) }
 
+// Bindings returns the record's immutable validated authority/runtime binding.
 func (record Record) Bindings() ImmutableBindings { return record.view.Bindings }
 
+// ImmutableBindingDigest returns the digest cross-linked to Bindings.
 func (record Record) ImmutableBindingDigest() ImmutableBindingDigest {
 	return record.view.ImmutableBindingDigest
 }

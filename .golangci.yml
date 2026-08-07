@@ -23,6 +23,11 @@ linters:
       # Spike/experiment code is explicitly non-production (see AGENTS.md)
       # and is not held to the same lint bar as product code.
       - experiments
+      # Local agent/editor state may contain complete nested git worktrees.
+      # Those copies are not packages in the current checkout and must not
+      # make local lint results depend on which parallel worktrees exist.
+      - ^\.claude/
+      - ^\.codex/
     rules:
       # Test files read fixture paths under repo control (not user input),
       # construct tiny fixture-index conversions that cannot overflow, and

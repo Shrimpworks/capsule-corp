@@ -10,6 +10,7 @@ import (
 type Classification string
 
 const (
+	// ClassificationMalformed reports bytes that cannot form the passive contract.
 	ClassificationMalformed         Classification = "MALFORMED"
 	ClassificationUnsupported       Classification = "UNSUPPORTED"
 	ClassificationSchema            Classification = "SCHEMA"

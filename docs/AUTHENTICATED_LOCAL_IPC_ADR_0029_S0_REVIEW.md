@@ -2,9 +2,10 @@
 
 Date: 2026-08-07
 
-C4 successor: 2026-08-10. This review preserves the pre-C4 decision state. The
-[passive C4 contract](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md) now closes the two method-value
-gaps without changing this topology decision.
+C4 successor: 2026-08-10. This review preserves the pre-C4 decision state. PR #247 merged the
+[passive C4 candidate](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md) for the two method-value gaps
+without changing this topology decision. The later CL4 audit is `PASSED` with disposition `AMEND`,
+so the current C4 evidence claim is `BLOCKED` pending focused hardening.
 
 Status: `PASSED`
 
@@ -132,8 +133,8 @@ pnpm check
 ```
 
 The future S3 harness still requires the exact defensive authorization and evidence boundaries in
-the current work plan. The completed C4 successor remains passive and activates no listener,
-signer, store consumer, process, runtime, backend, or guest.
+the current work plan. The merged C4 candidate remains passive and activates no listener, signer,
+store consumer, process, runtime, backend, or guest. CL4 found no runtime authority bypass.
 
 ## Confidence and limitations
 
@@ -141,5 +142,6 @@ Confidence is high that the selected process, service, authority-ownership, copy
 recovery topology remains consistent with the current repository mechanics and accepted alpha
 posture. Confidence in exact platform enforcement remains intentionally unset until the R1 brief
 and separately authorized S3 harness complete. Exact `SubmitApprovalV0` and `RequestAttemptV0`
-transport values were unset at review time; the C4 successor now freezes them passively. Installed
-platform enforcement remains unset.
+transport values were unset at review time; PR #247 records the passive candidate values, while the
+current C4 evidence claim remains `BLOCKED` on its separate focused hardening PR. Installed platform
+enforcement remains unset.

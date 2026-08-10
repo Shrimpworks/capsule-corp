@@ -1,12 +1,14 @@
-# Passive authenticated-local-IPC C4 native-contract completion
+# Passive authenticated-local-IPC C4 candidate and CL4 audit disposition
 
 Date: 2026-08-10
 
 Work item: freeze `SubmitApprovalV0` and `RequestAttemptV0` in the existing passive
 `xpc-dictionary-v0` contract.
 
-Status: `PASSED` for the exact passive, unwired five-method encoding, refusal, replay, and
-cross-language conformance scope.
+Status: `BLOCKED` for the current passive evidence claim pending the focused evidence-hardening
+implementation required by the completed CL4 audit.
+
+CL4 audit: `PASSED`; disposition: `AMEND`.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -36,9 +38,10 @@ The existing tags are unchanged. `0` remains invalid.
 
 The new reply state tags are closed. Approval state is `invalid=0`, `usable=1`, `consumed=2`, and
 `invalidated=3`. Attempt state is `invalid=0` and `created=1`. Success replies never use either
-invalid tag. The five-second values are no longer prose arithmetic: the generator emits exact
-admission-start deadline cases and both independent verifiers compare them. These are passive
-protocol deadlines, not observed platform latency or installed-service evidence.
+invalid tag. The five-second values are no longer prose arithmetic: the merged generator emits
+admission-start deadline cases. CL4 found that these do not yet establish explicit before, exactly
+at, and after boundary behavior and that the Go and Node comparison must be strengthened. These are
+passive protocol deadlines, not observed platform latency or installed-service evidence.
 
 ## Exact dictionaries and mechanically derived caps
 
@@ -132,10 +135,12 @@ does not grant that domain and reaches only the exact current-state/core binding
 - `schemas/conformance/authenticated-local-ipc-v0/oracles.json` retains the exact/cap-plus-one,
   copy, aggregate release/re-admission, cancellation, and response-loss oracles.
 - `scripts/generate-authenticated-local-ipc-conformance.mjs` derives the aggregates and generated
-  references. `scripts/verify-authenticated-local-ipc-conformance.mjs` independently reconstructs
-  and deep-compares the ordered case table and exact new method tables.
-- `passive_native_xpc_contract_test.go` independently compares the Go method/envelope/state/deadline/
-  response-loss model and requires the complete ordered native case set.
+  references. `scripts/verify-authenticated-local-ipc-conformance.mjs` reconstructs the ordered
+  case table and new method tables, but CL4 requires a stronger independent complete-map and
+  all-field comparison before the evidence claim can pass.
+- `passive_native_xpc_contract_test.go` compares the Go method/envelope/state/deadline/response-loss
+  model and ordered native cases, but CL4 requires complete dictionary, closed-map, required
+  `noState`, cancellation/deadline, and refusal-table completeness checks.
 
 Focused verification:
 
@@ -148,8 +153,19 @@ go test ./internal/execution/authorityplane
 ## Limitations and ADR impact
 
 This implements Accepted ADR-0029 and the S0 review without changing component responsibility,
-service topology, signed-object policy, or ADR lifecycle. No ADR addendum is required. The former
-C4 blocker is closed only for passive contract evidence. CL4 independent refusal-matrix re-audit,
-native OS pre-delivery enforcement, installed identities/session/update, Broker live signing,
+service topology, signed-object policy, or ADR lifecycle. No ADR addendum is required. CL4 found no
+runtime authority bypass, but its `AMEND` disposition blocks the current C4 passive evidence claim.
+A separate focused evidence-hardening PR must:
+
+1. generate explicit before, exactly at, and after 5,000-ms deadline cases for
+   `SubmitApprovalV0` and `RequestAttemptV0`, with exact-at-boundary behavior defined;
+2. strengthen the Go and Node verification to independently compare complete dictionaries, closed
+   maps, every case field, required `noState` entries, cancellation/deadline oracles, and
+   refusal-table completeness; and
+3. rerun generator `--check`, the independent Node verifier, focused Go contract/replay tests, and
+   `git diff --check`.
+
+This documentation integration does not implement that follow-up and does not mark it `PASSED`.
+Native OS pre-delivery enforcement, installed identities/session/update, Broker live signing,
 protected-state consumers, threshold-policy wiring, runtime/profile admission, and product
 admission remain separately `BLOCKED`.

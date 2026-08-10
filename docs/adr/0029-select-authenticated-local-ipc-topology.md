@@ -398,8 +398,10 @@ for safe response-loss recovery.
 The [S0 decision review](../AUTHENTICATED_LOCAL_IPC_ADR_0029_S0_REVIEW.md) accepts this topology
 without claiming platform enforcement or product activation. The existing three-method S3 native
 contract may proceed to its separately authorized controlled harness after the native-XPC research
-brief. `SubmitApprovalV0` and `RequestAttemptV0` now have their passive C4 contract, but installed
-use and the independent CL4 re-audit remain blocked/deferred. Consumer activation remains blocked
+brief. PR #247 merged the passive C4 candidate for `SubmitApprovalV0` and `RequestAttemptV0`.
+The independent CL4 audit is `PASSED` with disposition `AMEND` and found no runtime authority
+bypass, but the current C4 evidence claim is `BLOCKED` pending its separate focused hardening PR.
+Consumer activation remains blocked
 on the applicable harness and installed
 identity/session/update evidence, the selected owner lock and protected state, production approval
 verification and key authorization, update/repair integration, and all existing runtime/backend/

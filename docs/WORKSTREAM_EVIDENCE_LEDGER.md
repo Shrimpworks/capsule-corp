@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-07
+Date: 2026-08-10
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -22,6 +22,7 @@ next dependency boundary for the latest group are recorded in the
 | Passive authority-plane atomic cutover | `PASSED`: exact-one-`main.mjs` plan, bindings, manifest, source, registration, and defensive fetch publish atomically in the fixed-store oracle. | Authenticated product facades, Broker/approval, attempt, runtime, backend, and guest remain `BLOCKED`. |
 | Authenticated-local-IPC S3 native-contract prerequisite | `PASSED`: exact XPC dictionary keys/types, method/status/reason tags, versions, key counts, caps, method-derived bindings, and Go/Node refusal fixtures are frozen for the three passive methods. | The separately authorized native harness, listener, peer authentication, installed identity/update matrix, consumers, and product IPC remain `BLOCKED`. |
 | Broker rendering and approval conformance v0 | `PASSED`: Accepted ADR-0043 freezes a read-only ASCII-safe projection over bound Supervisor bytes, the exact Secure Enclave/user-presence/no-fallback key contract, and a Capsule-owned public-key-only ApprovalGrant Sign1 verifier with canonical/header/payload/signature/key/role/time/refusal tests. | Inline-input content is not present or shown. Installed UI, Keychain/LocalAuthentication, private key/signing, authenticated IPC, verifier/store wiring, activation, runtime, backend, guest, and product admission remain `BLOCKED`. |
+| R3 Approval Broker live-signing research | `PASSED`: the [canonical passive brief](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md) maps the Apple-supported `LAContext`/Keychain/Secure Enclave mechanism, preserves ADR-0043's exact key and COSE policy, keeps the Supervisor durable `SubmitApprovalV0` commit as the approval-authority linearization point, and defines experiment-only accessibility/signature candidates plus a future fault matrix. | No Broker durable journal/state authority, key, credential, profile, prompt, service, IPC consumer, or installed evidence was created. The disposable signing harness, installed authenticated service boundary, product consumers, and admission remain `BLOCKED`. |
 | C2B v3 passive successor | `PASSED`: accepted fork identities and exact runner/libkrunfw/kernel, descriptor/device/resource/teardown semantics are bound in an 18,357-byte zero-effect fixture with 128 field classifications. | At that immutable checkpoint, current-source libkrun, the final runner, and guest eligibility were blocked. V4 and v19/v27 later closed exact build/static and controlled-guest slices, and C5a later closed passive transport conformance; controlled transport, installed composition, and admission remain `BLOCKED`. |
 | C2B v4 build/static materialization | `PASSED`: exact accepted header, twice-reproduced current-source unsigned libkrun dylib, independent ABI audit, byte-equal unsigned final runner, and composed digest are retained with no execution. | Fixed-owned-guest eligibility is `BLOCKED` on separate authorization naming the exact v4 digest; admission remains `BLOCKED`. |
 | First fixed benign owned guest v19 | `PASSED`: one separately authorized experimental successor booted the fixed governed-`deno_core` known answer, matched its full bounded console proof, exited/reaped normally without force-kill, and completed unlinked-root teardown. | The result accepts no user source and does not close typed transport, hostile containment, installed composition, or admission. Raw evidence archive publication remains `BLOCKED` pending an exact verified `capsule-experiments` commit. |
@@ -48,10 +49,30 @@ The current generated conformance totals are 95 rules, 502 cases, and 624 fixtur
 field-authority manifest has 1,203 fields across 95 profiles and 60 targets. These whole-repository
 totals supersede older checkpoint counts without rewriting their historical evidence.
 
-## 2026-08-06 recent integration readback
+## 2026-08-10 current integration readback
 
-The following merge commits, not former draft-PR state or chat handoffs, are the current
-integration checkpoints. Current `main` at `942c19a0ab7ace605768e699218448ce60a40bae` has passing CI
+Fetched `origin/main` is `ed4220fe16d1752a75c67da957a25681d79e34f3`. The following merged
+integrations are passive-only prerequisites; neither activates a listener, service, product
+consumer, runtime, backend, VM, guest, or admission path.
+
+| PR | Merge commit | Retained scope |
+| --- | --- | --- |
+| #246 | `9c7160d7dfe4e2bb83d9bd2887a0034eeaaf17d7` | C5a `PASSED`: exact typed source/input/completion v1 frames, caps and cap-plus-one, canonical JSON, ordered refusal/state/restoration cases, endpoint custody, completion-last projection, and independent Go/Node agreement. C5b controlled execution and installed/product composition remain `BLOCKED`. |
+| #247 | `ed4220fe16d1752a75c67da957a25681d79e34f3` | Merged C4 passive five-method candidate with tags 4/5, approval/attempt dictionaries and state tags, 528/32-byte request maxima, 5,000 ms deadlines, refusal/copy/identifier-domain cases, semantic replay, and the five-entry response-loss table. The later CL4 audit is `PASSED` with disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED` pending its separate focused hardening PR. Installed IPC, live signing, consumers, and product activation remain `BLOCKED`. |
+
+CL4's independent read-only refusal-matrix audit is `PASSED` with disposition `AMEND`. It found no
+runtime authority bypass and has no ADR impact. The exact separate implementation destination is a
+focused evidence-hardening PR that adds explicit before/at/after 5,000-ms deadline cases with
+defined exact-at-boundary behavior and strengthens Go/Node comparison of complete dictionaries,
+closed maps, all case fields, required `noState` entries, cancellation/deadline oracles, and
+refusal-table completeness. That implementation is not part of this documentation integration and
+is not `PASSED`.
+
+## 2026-08-06 historical integration readback
+
+The following merge commits, not former draft-PR state or chat handoffs, were the integration
+checkpoints for that historical readback. `main` at
+`942c19a0ab7ace605768e699218448ce60a40bae` had passing CI
 and CodeQL; historical PR checks were not uniformly green.
 
 | PR | Merge commit | Retained scope |
@@ -650,6 +671,13 @@ Current dependency and priority view:
    proposal feed the atomic `RegisterPlanV0`/fetch fixed-store oracle with generated caps and
    complete current field authority. No authenticated product endpoint, Broker/approval consumer,
    attempt, runtime, backend, or guest is authorized.
+9. **Approval signing research passed; installed composition blocked:** R3 now retains the
+   [canonical passive Apple-platform brief](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md). The Supervisor's
+   durable `SubmitApprovalV0` commit remains the approval-authority linearization point; no durable
+   Broker journal or recovery authority is selected. `WhenPasscodeSetThisDeviceOnly` and direct
+   RFC 4754 SHA-256 output are experiment candidates only. The disposable installed signing
+   harness is `BLOCKED` on exact authorization, and product Broker/approval/attempt wiring remains
+   `BLOCKED` until that harness and the installed authenticated service boundary pass.
 
 TypeScript remains conditional. If later selected, Source Preparer P0A and ADR-0030's atomic
 plan-v1/RegisterPlanV1 cutover still apply with no dual active v0/v1 acceptance. CommonJS, package
@@ -673,12 +701,17 @@ freezes tags 4/5, exact dictionaries and numeric state tags, mechanically reprod
 request maxima, 5,000 ms admission deadlines, all 20 ordered foreign-tag collisions, role/session,
 local-versus-signed purpose/audience, same-width ID, smuggled-object, cap/release/re-admission,
 cancellation, no-reply integrity, semantic replay, and the exact five-entry response-loss table.
-The generator drift check, independent Node verifier, and Go model/tests agree. This is `PASSED`
-only for passive no-listener conformance; the independent CL4 re-audit is deferred and activation
-remains `BLOCKED`. Archive mutation/growth through F5 is
+The generator drift check, independent Node verifier, and Go model/tests produced the merged
+candidate. CL4 then completed `PASSED` with disposition `AMEND`: no runtime authority bypass was
+found, but the current C4 passive evidence claim is `BLOCKED` until its separate focused
+evidence-hardening implementation PR closes the exact deadline-boundary and independent-comparison
+gaps. Activation remains `BLOCKED`. Archive mutation/growth through F5 is
 `PASSED` in the fixed-store oracle; F6 execution, production-engine selection, production
 COSE/Keychain/user-presence signing, consumer ownership, evidence composition, and public cutover
-remain separate. The authority/lifecycle snapshot lacks real
+remain separate. R3's passive research is `PASSED`, but its accessibility/signature values are
+experiment candidates only and its disposable installed harness remains `BLOCKED` on exact
+authorization. Product Broker/approval/attempt wiring additionally waits for the installed
+authenticated service boundary. The authority/lifecycle snapshot lacks real
 multi-process locking and rollback-resistant identifier/nonce/effect uniqueness. The fixed snapshot
 is durable for controlled local tests, but ownership remains in-process and no production
 persistence claim follows. Content, evidence, runtime, real backend, and guest remain absent from

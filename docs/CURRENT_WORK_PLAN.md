@@ -24,7 +24,8 @@ historical context. C5a changes no runtime, governed-profile, installed, or prod
 Today closed or retained these exact slices:
 
 - the passive fixed-store threshold checker and its narrowed re-evaluated scope;
-- the passive three-method native-XPC contract and adversarial fixture expansion;
+- the passive five-method native-XPC contract and adversarial fixture expansion, including C4's
+  approval/attempt caps, deadlines, replay, and response-loss tables;
 - the proposed Supervisor authority-epoch decision and inert experiment packet;
 - the documentation-only F6 SQLite research and executable experiment packet;
 - issue labels, issue forms, and pull-request categorization;
@@ -50,7 +51,7 @@ ADR-0029 decision review + native XPC research -> S3 harness --+-> installed aut
                                                                │
 ADR-0045 E1 identity separation -> key/service/root corpus -----+
                                                                │
-remaining approval/attempt methods + signing research ----------+-> Broker live signing
+C4 passive approval/attempt methods (PASSED) + signing research -+-> Broker live signing
                                                                   -> protected one-attempt path
                                                                │
 typed transport design -> passive contract (`PASSED`) -> controlled harness ┐
@@ -79,10 +80,10 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C1 | Publish the raw v10-v27 harness, reports, manifests, and receipts to `Shrimpworks/capsule-experiments` | `BLOCKED` | Requires access to the owner-controlled disposable experiment workspace. Publish one verified immutable archive commit, then replace local-only evidence pointers with exact links. No new execution or broader claim. |
 | C2 | Run the one-time native XPC S3 harness | `BLOCKED` | CL1 and R1 are `PASSED`; execution still requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owned Mac, exact fixture digest, disposable process/service names, and defensive no-product scope. Retain OS pre-delivery peer refusal, message-derived identity, EUID/session, copy, cap, deadline, interruption, response-loss, and process-fault evidence. |
 | C3 | Run ADR-0045 E1 Supervisor-authority-epoch identity separation | `BLOCKED` | Requires explicit Apple Development authorization for the named Team-`3DDR84M4JS` profiles and owned disposable containers. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. |
-| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `IN_PROGRESS — TRENDING_GOOD` | The ADR-0029 S0 decision review is `PASSED`; implementation has not begun. Add passive method-specific tags, envelopes, case-derived caps/deadlines, refusal precedence, copy, replay, and response-loss fixtures without activating a listener, signer, store, process, or guest. |
+| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | Tags 4/5, exact dictionaries and state tags, mechanically derived 528/32-byte request caps, 5,000 ms deadlines, refusal/copy/identifier-domain cases, semantic replay, and the five-entry response-loss table pass independent Go/Node conformance. No listener, signer, store consumer, process, or guest is active. |
 | C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5a and separate authorization naming the exact runtime/profile successor and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, and restoration evidence without making an admission decision. |
-| C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the three already-frozen consumers. |
+| C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
 | C6b | Connect the installed Broker and approval/attempt methods | `BLOCKED` | Requires C4, R3, and C6a. Implement native rendering/UI, fresh user-presence signing, installed public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. |
 | C6c | Wire attempt admission and the fixed-store stop policy | `BLOCKED` | Requires C6b and an explicit decision for p95 provenance/window/lifetime and any persistent timing-trip semantics. Apply the re-evaluated guard transaction-locally after owner/full verification and before a new consume/create mutation; replay of an existing `AttemptID` converges first. |
 | C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
@@ -106,7 +107,7 @@ service, use credentials, run a guest, or turn a review into an architecture dec
 | CL1 — ADR-0029 S0 decision review | `PASSED` | The retained review accepts the two Supervisor services/four calls plus ADR-0044's separate CLI call, authentication-before-copy, no opcode bus, Go authority ownership, and `AttemptID`-only recovery; it reconciles S3/C4 ordering, refusal ownership, transport candidates, and the ADR-0040 fixed-store exception. |
 | CL2 — Issue #216 ratchet packet | Packet `PASSED`; execution `BLOCKED` on assignment | Fixed complexity thresholds, narrow function/path-specific exemptions, owner/removal conditions, and preservation rules for intentionally linear protocol validators. |
 | CL3 — Issue #217 package documentation batch | Packet `PASSED`; execution `BLOCKED` on assignment | One package at a time, starting with authority-bearing `registrationstate` exports. Document purpose, provenance/authority, caller obligations, and passive/product limitations without API changes. |
-| CL4 — IPC refusal-matrix review | Packet `PASSED`; execution `BLOCKED` on C4 | After C4 exists, independently verify cross-service/tag, role/session, purpose/audience, identifier-domain, caps, response-loss, and no-reply cases. |
+| CL4 — IPC refusal-matrix review | Packet `PASSED`; execution `BLOCKED` on assignment | C4 now exists. A later independent review must verify cross-service/tag, role/session, purpose/audience, identifier-domain, caps, response-loss, and no-reply cases without treating this implementation task as that review. |
 
 ## Deep research tasks for ChatGPT
 
@@ -133,6 +134,8 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
+The next orchestration checkpoint should collect C5a and a separately assigned CL4 re-audit; C4,
+CL1, R1, and R2 are `PASSED`. The owner
 The next orchestration checkpoint should collect C4 and this passed C5a handoff; CL1, R1, and R2
 are `PASSED`. The owner
 may authorize C1 and C3 independently when their exact workspace, identity, and host boundaries are

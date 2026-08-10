@@ -2,6 +2,10 @@
 
 Date: 2026-08-07
 
+C4 successor: 2026-08-10. This review preserves the pre-C4 decision state. The
+[passive C4 contract](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md) now closes the two method-value
+gaps without changing this topology decision.
+
 Status: `PASSED`
 
 Parent authenticated product IPC: `BLOCKED`
@@ -128,7 +132,7 @@ pnpm check
 ```
 
 The future S3 harness still requires the exact defensive authorization and evidence boundaries in
-the current work plan. The future C4 slice remains passive and may not activate a listener,
+the current work plan. The completed C4 successor remains passive and activates no listener,
 signer, store consumer, process, runtime, backend, or guest.
 
 ## Confidence and limitations
@@ -137,4 +141,5 @@ Confidence is high that the selected process, service, authority-ownership, copy
 recovery topology remains consistent with the current repository mechanics and accepted alpha
 posture. Confidence in exact platform enforcement remains intentionally unset until the R1 brief
 and separately authorized S3 harness complete. Exact `SubmitApprovalV0` and `RequestAttemptV0`
-transport values remain unset until C4.
+transport values were unset at review time; the C4 successor now freezes them passively. Installed
+platform enforcement remains unset.

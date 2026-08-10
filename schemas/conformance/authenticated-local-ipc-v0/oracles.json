@@ -255,6 +255,134 @@
       "noState": null,
       "postCoreState": "not-claimed-by-passive-output-oracle",
       "processTerminationRequired": true
+    },
+    {
+      "id": "submit-approval-v0.request.exact-maximum",
+      "method": "SubmitApprovalV0",
+      "direction": "request",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "registrationId": 16,
+        "approvalEnvelope": 512
+      },
+      "applicationDataBytes": 528,
+      "expected": {
+        "decision": "accept-outer-shape",
+        "classification": null,
+        "reason": null
+      },
+      "noState": null,
+      "postCoreState": null,
+      "processTerminationRequired": false
+    },
+    {
+      "id": "submit-approval-v0.request.cap-plus-one",
+      "method": "SubmitApprovalV0",
+      "direction": "request",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "registrationId": 16,
+        "approvalEnvelope": 513
+      },
+      "applicationDataBytes": 529,
+      "expected": {
+        "decision": "reject",
+        "classification": "MALFORMED",
+        "reason": "approval-envelope"
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null,
+      "processTerminationRequired": false
+    },
+    {
+      "id": "submit-approval-v0.reply.exact",
+      "method": "SubmitApprovalV0",
+      "direction": "reply",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "approvalId": 16
+      },
+      "applicationDataBytes": 16,
+      "expected": {
+        "decision": "accept-outer-shape",
+        "classification": null,
+        "reason": null
+      },
+      "noState": null,
+      "postCoreState": null,
+      "processTerminationRequired": false
+    },
+    {
+      "id": "request-attempt-v0.request.exact",
+      "method": "RequestAttemptV0",
+      "direction": "request",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "registrationId": 16,
+        "approvalId": 16
+      },
+      "applicationDataBytes": 32,
+      "expected": {
+        "decision": "accept-outer-shape",
+        "classification": null,
+        "reason": null
+      },
+      "noState": null,
+      "postCoreState": null,
+      "processTerminationRequired": false
+    },
+    {
+      "id": "request-attempt-v0.request.cap-plus-one",
+      "method": "RequestAttemptV0",
+      "direction": "request",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "registrationId": 16,
+        "approvalId": 17
+      },
+      "applicationDataBytes": 33,
+      "expected": {
+        "decision": "reject",
+        "classification": "SCHEMA",
+        "reason": "approval-id"
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null,
+      "processTerminationRequired": false
+    },
+    {
+      "id": "request-attempt-v0.reply.exact",
+      "method": "RequestAttemptV0",
+      "direction": "reply",
+      "byteSource": "deterministic-repeated-byte-per-field",
+      "fieldLengths": {
+        "attemptId": 16
+      },
+      "applicationDataBytes": 16,
+      "expected": {
+        "decision": "accept-outer-shape",
+        "classification": null,
+        "reason": null
+      },
+      "noState": null,
+      "postCoreState": null,
+      "processTerminationRequired": false
     }
   ],
   "refusals": [
@@ -967,7 +1095,10 @@
     "caller-mutation-after-request-construction-does-not-change-copied-body",
     "request-accessor-mutation-does-not-change-copied-body",
     "facade-input-copy-does-not-alias-passive-request",
-    "success-reply-accessor-mutation-does-not-change-retained-state-or-repeated-read"
+    "success-reply-accessor-mutation-does-not-change-retained-state-or-repeated-read",
+    "submit-approval-registration-and-envelope-copied-before-go-and-never-alias-native-memory",
+    "request-attempt-registration-and-approval-identifiers-copied-before-go-and-never-alias-native-memory",
+    "approval-and-attempt-success-identifiers-copied-into-fixed-native-output-buffers"
   ],
   "responseLoss": [
     {
@@ -990,6 +1121,25 @@
       "disposition": "repeatable-read-by-registration-id",
       "storeMutation": false,
       "repeatedReplyBodyByteEqual": true,
+      "requestIdIsIdempotencyKey": false
+    },
+    {
+      "method": "SubmitApprovalV0",
+      "disposition": "canonical-payload-and-signer-authorization-replay-returns-same-approval-and-current-state",
+      "semanticIdentity": "canonical-approval-payload+resolved-signer-authorization-identity",
+      "sameApprovalID": true,
+      "currentStateReturned": true,
+      "duplicateAuthorityEffects": 0,
+      "requestIdIsIdempotencyKey": false
+    },
+    {
+      "method": "RequestAttemptV0",
+      "disposition": "registration-and-approval-reference-replay-returns-same-attempt-and-current-state",
+      "semanticIdentity": "registration-id+approval-reference",
+      "sameAttemptID": true,
+      "currentStateReturned": true,
+      "duplicateAttempts": 0,
+      "duplicateLifecycleEffects": 0,
       "requestIdIsIdempotencyKey": false
     }
   ],
@@ -1075,6 +1225,38 @@
       "reason": "ipc-process-in-flight-bytes",
       "releasedMethod": "GetRegisteredPlanV0",
       "postReleaseReadmissionBytes": 1,
+      "postReleaseReadmission": "admitted",
+      "productionAggregateCapBytes": 2626696,
+      "queueDepth": 0,
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      }
+    },
+    {
+      "id": "supervisor.mixed-submit-approval-request-attempt-cap-plus-one",
+      "methods": [
+        {
+          "method": "SubmitApprovalV0",
+          "admittedBytes": 528
+        },
+        {
+          "method": "RequestAttemptV0",
+          "admittedBytes": 32
+        }
+      ],
+      "isolatedAccountingCapBytes": 560,
+      "attemptedAdditionalBytes": 1,
+      "classification": "CAPACITY",
+      "reason": "ipc-process-in-flight-bytes",
+      "releasedMethod": "RequestAttemptV0",
+      "releasedBytes": 32,
+      "postReleaseReadmissionBytes": 32,
       "postReleaseReadmission": "admitted",
       "productionAggregateCapBytes": 2626696,
       "queueDepth": 0,

@@ -58,10 +58,11 @@ already-passed passive/local mechanics from the still-blocked product compositio
 authority-plane cutover now atomically retains the exact plan, complete bindings, manifest, and
 source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
 path. Accepted ADR-0044 now selects exactly one bounded private-XPC internal-alpha CLI submission
-candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. The follow-on S3
-prerequisite now also freezes exact XPC dictionary keys/types, numeric method/status/reason tags,
-versions, envelope key counts, and generated cross-language refusal fixtures for the three passive
-methods. No listener, signing, peer-authentication, installed inventory, protected state, or
+candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. S3 and its C4
+successor now freeze exact XPC dictionary keys/types, numeric method/status/reason/state tags,
+versions, envelope key counts, and generated cross-language refusal fixtures for all five passive
+methods, including approval/attempt replay and response loss. No listener, signing,
+peer-authentication, installed inventory, protected state, or
 consumer is active. No connected product path yet carries submitted `main.mjs` through authenticated
 registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle
 drive, and a fixed completion summary. Accepted ADR-0040 freezes one fresh guest per attempt and
@@ -293,8 +294,8 @@ and unresolved teardown refuse. FakeBackend has no real runner, so runner identi
 [Accepted ADR-0029](adr/0029-select-authenticated-local-ipc-topology.md) now selects one
 unprivileged per-user Supervisor process with a small native XPC/Security front end and the existing
 Go authority/lifecycle core in-process. It defines two role-specific Mach services and four closed
-calls, but no bridge fixture, installed authenticated endpoint, product consumer, or production
-identity evidence is implemented.
+calls. Passive method-specific bridge specifications now cover all four Supervisor calls, but no
+installed authenticated endpoint, product consumer, or production identity evidence is implemented.
 [Accepted ADR-0044](adr/0044-select-private-xpc-internal-alpha-cli-adapter.md) additionally selects
 one private-XPC `SubmitMainMJSV0` CLI-to-daemon candidate for the owner-only internal alpha. Its
 [passive contract](INTERNAL_ALPHA_PRODUCT_ADAPTER_PASSIVE_CONTRACT.md) freezes typed bounded

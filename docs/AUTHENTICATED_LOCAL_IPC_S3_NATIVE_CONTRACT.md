@@ -4,6 +4,10 @@ Date: 2026-08-05
 
 Conformance amendment: 2026-08-06
 
+C4 successor: 2026-08-10. This document preserves the original three-method S3 scope. The current
+generated `native-xpc-v0` contract is extended, without renumbering these methods, by the
+[C4 passive contract](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md).
+
 Work item: exact native XPC dictionary contract for `SubmitMainMJSV0`, `RegisterPlanV0`, and
 `GetRegisteredPlanV0`.
 
@@ -172,8 +176,8 @@ key counts, caps, all three method envelopes, classification mappings, refusal-o
 cap-plus-one, missing/extra/wrong-type/nested, six ordered cross-service/tag collisions, joint
 version precedence, same-width identifier substitutions, local/signed purpose-audience swaps,
 wrong installation/epoch, explicitly keyed FD/endpoint/Mach-send-right smuggling,
-reply-correlation/extra-key, response-loss, and local-integrity cases. The Go and Node verifiers
-require the complete ordered native case set and deep-compare the exact three-entry response-loss
+reply-correlation/extra-key, response-loss, and local-integrity cases. The original three
+response-loss entries remain byte-for-byte semantic entries in the C4 successor's exact five-entry
 table. The Go verifier independently compares those fixtures with the production-side
 specifications and rejects generic command/service/role/backend/path/image/mount fields.
 
@@ -194,7 +198,8 @@ identity/update evidence, daemon/Broker consumers, protected state, approval, ru
 product admission remain separate blockers.
 
 Exactly three methods are frozen here. Both `SubmitApprovalV0` and `RequestAttemptV0` remain
-`BLOCKED`; neither has a native message tag, envelope, case-derived deadline, or activated caller.
+outside this historical S3 scope. The C4 successor now freezes their passive tags, envelopes,
+case-derived deadlines, replay, and response-loss evidence; activated callers remain `BLOCKED`.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`.

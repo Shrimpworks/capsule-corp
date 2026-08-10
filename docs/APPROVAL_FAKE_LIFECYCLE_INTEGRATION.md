@@ -68,14 +68,19 @@ named insertion point. It must not be a caller-carried permit or an out-of-trans
 can race the attempt commit. This slice does not invent that interface.
 
 The passive native XPC v0 prerequisite at commit
-`f929dfbc96a9dd4b6e303820a4e97848f6da8497`, merged in PR #225, and its adversarial-coverage
-successor merged in PR #230 are also dependency awareness only.
-It freezes submission, registration, and registered-plan lookup encodings but defines no approval,
-attempt, execute, or lifecycle method. A later method-specific adapter can therefore preserve this
-slice's ordering: the Broker signs Supervisor-fetched registered data; approval submission carries
-the registration identifier and exact signed envelope; attempt creation consumes stored authority;
-and lifecycle execution accepts only the Supervisor-issued `AttemptID`. Replacement plan, source,
-binding, backend, image, mount, path, resource, or guest bytes remain inadmissible at execute time.
+`f929dfbc96a9dd4b6e303820a4e97848f6da8497`, merged in PR #225, its adversarial-coverage successor
+merged in PR #230, and the five-method C4 successor merged in PR #247 are also dependency awareness
+only. PR #247 records the `SubmitApprovalV0` and `RequestAttemptV0` candidate tags, dictionaries,
+caps, deadlines, refusal precedence, semantic replay, and response-loss behavior without activating
+a listener, signer, protected-state consumer, lifecycle driver, or product endpoint. The completed
+CL4 audit is `PASSED` with disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED`
+pending a separate focused evidence-hardening PR. A later method-specific
+adapter must preserve this slice's ordering: the Broker signs Supervisor-fetched registered data;
+approval submission carries the registration identifier and exact signed envelope; the
+Supervisor's durable submit commit owns approval authority; attempt creation consumes stored
+authority; and lifecycle execution accepts only the Supervisor-issued `AttemptID`. Replacement
+plan, source, binding, backend, image, mount, path, resource, or guest bytes remain inadmissible at
+execute time.
 
 ## Frozen submission seam
 
@@ -140,4 +145,4 @@ Repository handoff verification remains the complete command set required by `AG
 | Confirmed versus indeterminate submit/attempt commit outcomes | Already covered by `TestApprovalAttemptFaultAndProcessDeathMatrix`; this integration adds production-verifier response loss after confirmed approval and attempt commits. The verifier seam does not change the store's confirmed/indeterminate transaction mechanics. |
 | Confirmed versus indeterminate `Complete` outcomes | Already covered independently by `completioncomposer.TestCrashEdgesResponseLossRestartAndStaleReplay`. Durable completion remains unwired to this no-guest slice, so claiming an integrated `Complete` path here would exceed scope. |
 | ADR-0024 versus ADR-0043 signer-policy authority | Resolved by an explicit cumulative-authority cross-reference in ADR-0024: ADR-0024 owns durable admission bindings; accepted ADR-0043 owns the additional Team/role/access-group/key-policy scope. |
-| ADR-0040 stop policy and passive native XPC v0 | Dispositioned under adjacent dependency ordering above. Both remain unmerged dependency awareness; neither branch is copied here. |
+| ADR-0040 stop policy and passive native XPC v0/C4 | Dispositioned under adjacent dependency ordering above. Their merged passive results remain dependency awareness only and are not copied or activated here. |

@@ -19,12 +19,15 @@ restored-feature refusals. Existing Supervisor tests retain one-use canonical-pa
 nonce uniqueness, and atomic approval-consume/attempt-create behavior.
 
 Remaining work: authenticated installed Broker-to-Supervisor fetch, Supervisor custody/readback of
-inline JSON content if the product must display it, native UI rendering, fresh `LAContext` and
-Secure Enclave key creation/use, installed key authorization, same-byte sign/verify composition,
-focus/cancel/synthetic-input adversarial testing, durable product wiring, and consumer activation.
+inline JSON content if the product must display it, native UI rendering, the separately authorized
+disposable signing harness defined by the [R3 evidence brief](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md),
+fresh `LAContext` and Secure Enclave key creation/use, installed key authorization, same-byte
+sign/verify composition, focus/cancel/synthetic-input adversarial testing, durable product wiring,
+and consumer activation.
 
-Next action: separately authorize and implement the installed Broker/Approval-key slice. Any live
-signing task must name the identity, host, fixtures, and exact credential-bearing operations.
+Next action: separately authorize the disposable installed signing harness. It must name the owned
+Mac, exact development-signed test target/profile/access group, disposable user/container, fixture
+digest, permitted Keychain mutations, and destructive rows before any product consumer is wired.
 
 Parent status: owner-only hostile-`.mjs` internal alpha is `IN_PROGRESS — TRENDING_GOOD`; Broker
 product activation and internal-alpha admission are `BLOCKED`.

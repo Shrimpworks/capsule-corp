@@ -58,10 +58,10 @@ already-passed passive/local mechanics from the still-blocked product compositio
 authority-plane cutover now atomically retains the exact plan, complete bindings, manifest, and
 source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
 path. Accepted ADR-0044 now selects exactly one bounded private-XPC internal-alpha CLI submission
-candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. S3 and its C4
-successor now freeze exact XPC dictionary keys/types, numeric method/status/reason/state tags,
-versions, envelope key counts, and generated cross-language refusal fixtures for all five passive
-methods, including approval/attempt replay and response loss. No listener, signing,
+candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. S3 retains its
+`PASSED` three-method passive contract. PR #247 merged the C4 approval/attempt candidate, but the
+completed CL4 audit has disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED`
+pending focused deadline-boundary and independent-verifier hardening. No listener, signing,
 peer-authentication, installed inventory, protected state, or
 consumer is active. No connected product path yet carries submitted `main.mjs` through authenticated
 registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle

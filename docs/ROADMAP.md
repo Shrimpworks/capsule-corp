@@ -231,10 +231,11 @@ protected-root evidence.
 Accepted ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface. Passive logical fixtures and the exact S3/C4 native dictionary contract now cover all five
 transport methods, including `SubmitApprovalV0` and `RequestAttemptV0`, without activating
-transport. Their tags, dictionaries, state tags, caps, deadlines, refusal precedence, semantic
-replay, and response-loss tables are `PASSED` in passive cross-language conformance. The native
-harness, independent CL4 re-audit, installed endpoints, production identities, consumers, and
-platform evidence remain unimplemented. The public-key approval verifier, fixed-store F2-F5
+transport. S3 remains `PASSED`; PR #247 merged the C4 candidate, but the completed `PASSED` CL4
+audit has disposition `AMEND`, so the current C4 passive evidence claim is `BLOCKED` pending its
+separate focused deadline-boundary and independent-verifier hardening PR. CL4 found no runtime
+authority bypass and has no ADR impact. The native harness, installed endpoints, production
+identities, consumers, and platform evidence remain unimplemented. The public-key approval verifier, fixed-store F2-F5
 archive oracle, and passive durable completion-last transaction are retained; live approval
 signing, production-engine selection, evidence composition, consumers, and atomic public migration
 remain separate work.
@@ -362,8 +363,13 @@ than a production approval verifier.
   connection, concurrency, in-flight-byte, queue, deadline, cancellation, downstream-stall, and
   overload envelope; retain maximum-size concurrency and slow/partial-client evidence for
   `DAEMON-001`.
+- Preserve the passed [R3 Broker live-signing research](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md),
+  including Supervisor-owned durable approval authority and experiment-only accessibility/raw-
+  signature candidates. Run its separately authorized disposable installed signing harness before
+  connecting any product consumer; research alone is not installed evidence.
 - Connect the passed passive Broker fetch/render projection to an installed native UI and fresh
-  user-presence approval operation.
+  user-presence approval operation only after that signing harness and the installed authenticated
+  service boundary pass.
 - Prove that UI activation or synthetic input alone cannot sign a grant without the configured
   LocalAuthentication/Keychain user-presence operation. Exercise Accessibility, overlay/focus, and
   stale-session cases under their explicit elevated-adversary limitations for `UI-001`.

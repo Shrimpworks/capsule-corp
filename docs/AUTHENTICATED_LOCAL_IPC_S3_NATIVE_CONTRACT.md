@@ -6,7 +6,9 @@ Conformance amendment: 2026-08-06
 
 C4 successor: 2026-08-10. This document preserves the original three-method S3 scope. The current
 generated `native-xpc-v0` contract is extended, without renumbering these methods, by the
-[C4 passive contract](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md).
+[C4 passive candidate](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md). The completed CL4 audit has
+disposition `AMEND`, so the current C4 evidence claim is `BLOCKED` pending focused hardening; this
+does not change S3's status.
 
 Work item: exact native XPC dictionary contract for `SubmitMainMJSV0`, `RegisterPlanV0`, and
 `GetRegisteredPlanV0`.
@@ -198,8 +200,9 @@ identity/update evidence, daemon/Broker consumers, protected state, approval, ru
 product admission remain separate blockers.
 
 Exactly three methods are frozen here. Both `SubmitApprovalV0` and `RequestAttemptV0` remain
-outside this historical S3 scope. The C4 successor now freezes their passive tags, envelopes,
-case-derived deadlines, replay, and response-loss evidence; activated callers remain `BLOCKED`.
+outside this historical S3 scope. PR #247 records their passive candidate tags, envelopes,
+case-derived deadlines, replay, and response-loss evidence; CL4 leaves the current C4 evidence
+claim `BLOCKED`, and activated callers remain `BLOCKED`.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission remains `BLOCKED`.

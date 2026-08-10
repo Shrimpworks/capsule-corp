@@ -45,10 +45,13 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
 20. [Broker rendering and approval conformance v0](BROKER_APPROVAL_CONFORMANCE_V0.md) — passive
     Supervisor-owned projection, public-key-only COSE verification, exact claim boundary, and
     installed-product blockers
-21. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
+21. [Approval Broker live-signing evidence brief](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md) — R3
+    read-only Apple-platform research, Supervisor-owned durable approval authority, experiment-only
+    accessibility/signature candidates, and the separately authorized installed-harness boundary
+22. [Public-key approval to FakeBackend integration](APPROVAL_FAKE_LIFECYCLE_INTEGRATION.md) —
     unwired public-fixture verification, durable one-attempt creation, response-loss/restart
     convergence, and `AttemptID`-only no-guest fake lifecycle evidence
-22. [Current work plan](CURRENT_WORK_PLAN.md) — reconciled merged baseline, dependency graph,
+23. [Current work plan](CURRENT_WORK_PLAN.md) — reconciled merged baseline, dependency graph,
     Codex/Claude/ChatGPT task groups, blockers, and the next orchestration checkpoint
 
 For live per-item status, see the
@@ -83,6 +86,12 @@ The cross-phase provenance, task-to-evidence mapping, merged integration checkpo
 handoff are maintained in the [workstream and evidence ledger](WORKSTREAM_EVIDENCE_LEDGER.md).
 The dependency-ordered actions are maintained separately in the
 [current work plan](CURRENT_WORK_PLAN.md).
+
+The [R3 Approval Broker live-signing brief](BROKER_LIVE_SIGNING_EVIDENCE_BRIEF.md) keeps the
+Supervisor's durable `SubmitApprovalV0` commit as the approval-authority linearization point. It
+selects no durable Broker journal and treats the accessibility and raw-signature values only as
+disposable installed-harness candidates. R3 is `PASSED`; the harness, installed authenticated
+service boundary, product consumers, and admission remain `BLOCKED`.
 
 The governed runtime's first composed-profile slice is the passive
 [C1 controlled-development composition contract](protocol/GOVERNED_DENO_CORE_C1_COMPOSITION.md).
@@ -135,7 +144,9 @@ The [S3 native contract](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) preserve
 three-method prerequisite, while the [C4 successor](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md)
 extends the current passive generated contract to `SubmitApprovalV0` and `RequestAttemptV0` with
 exact caps, deadlines, refusal precedence, semantic replay, and response-loss evidence. Installed
-IPC and the independent CL4 review remain blocked/deferred.
+IPC remains blocked. The independent CL4 audit is `PASSED` with disposition `AMEND` and found no
+runtime authority bypass, but the current C4 passive evidence claim is `BLOCKED` pending a separate
+focused deadline-boundary and independent-verifier hardening PR.
 
 The follow-on grammar/process decision is [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).

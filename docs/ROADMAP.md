@@ -115,14 +115,15 @@ successor retains exact accepted header/current-source libkrun and final-runner 
 audits their ABI, and supplies a new immutable composed digest without execution or a consumer. A
 later separately authorized [v19 experimental successor](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
 passed one fixed benign owned guest without mutating v4 or closing the intended typed transport.
-C2 remains the separately authorized composed execution boundary. P0-1 is a
-`PATCH-CANDIDATE`, P0-2
+C2 remains the separately authorized composed execution boundary. P0-1 is a `PATCH-CANDIDATE`, P0-2
 selected `GOVERNED-PATCH` without admission, and P0-3 has a backend-independent candidate plus an
 exact public governed libkrun source merge. That merge fixed two local console lifecycle defects,
 added bounded console/raw-FD library tests, and materially improved measured coverage, but retained
 uncovered code, a post-merge governed-branch/verifier mismatch, a pending Linux-arm64 unit job,
 absent independent review, and no real transport, launcher, guest/VMM, or installed composition.
-P0-4A passed only the conditional no-host-root topology. Session, MDM,
+The C5a passive successor now freezes exact byte/state/restoration conformance without executing
+that path; controlled C5b transport remains blocked. P0-4A passed only the conditional no-host-root
+topology. Session, MDM,
 power-loss, independent-builder, clean-host, and Linux-worker cases remain later validation work
 rather than reasons to delay backend-independent contract implementation.
 

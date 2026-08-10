@@ -1,8 +1,9 @@
 # Current work plan
 
-Date: 2026-08-07
+Date: 2026-08-10
 
-Work item: reconcile the merged repository state and define the next dependency-ordered work.
+Work item: reconcile the merged repository state, freeze C5a, and define the next
+dependency-ordered work.
 
 Status: `PASSED` for this planning and documentation scope.
 
@@ -16,10 +17,9 @@ experiment is not an activated product path.
 
 ## Reconciled baseline
 
-The plan is based on `main` commit `d1972b04be1de38c07f0fcc471d33e796e61d507`. PRs #227 through
-#240 are merged and there are no open pull requests at this checkpoint. Current `main` CI and
-CodeQL are green. Historical PR checks were not uniformly green, so this plan relies on the merged
-commits and current-main readback rather than former draft state.
+The C5a task started from fetched `origin/main` commit
+`4f6d52f2096aa8ab3ccb38f413d809ba0cd714d4`. The earlier merged-state reconciliation remains
+historical context. C5a changes no runtime, governed-profile, installed, or product bytes.
 
 Today closed or retained these exact slices:
 
@@ -33,8 +33,10 @@ Today closed or retained these exact slices:
 - a new-code exported-contract documentation gate;
 - a completed `lifecyclestate` exported-contract documentation batch plus current-checkout lint
   isolation from nested local agent worktrees;
-- focused coverage increases and one behavior-preserving archive-state refactor; and
-- the exact v19 benign guest and v27 30-marker fixed hostile-denial experiment checkpoints.
+- focused coverage increases and one behavior-preserving archive-state refactor;
+- the exact v19 benign guest and v27 30-marker fixed hostile-denial experiment checkpoints; and
+- C5a's passive typed source/input/completion byte contract, deterministic fixtures, ordered
+  refusal/state/restoration cases, and independent Go/Node verification.
 
 The generated repository totals are 95 rules, 502 cases, 624 fixtures, and 1,203 classified fields
 across 95 profiles and 60 targets.
@@ -51,7 +53,7 @@ ADR-0045 E1 identity separation -> key/service/root corpus -----+
 remaining approval/attempt methods + signing research ----------+-> Broker live signing
                                                                   -> protected one-attempt path
                                                                │
-typed transport design -> passive contract -> controlled harness ┐
+typed transport design -> passive contract (`PASSED`) -> controlled harness ┐
 installed service/identity evidence ------------------------------+-> pre-admission profile matrix
                                                                   -> admission review
                                                                   -> sealed real adapter
@@ -78,7 +80,7 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C2 | Run the one-time native XPC S3 harness | `BLOCKED` | CL1 and R1 are `PASSED`; execution still requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owned Mac, exact fixture digest, disposable process/service names, and defensive no-product scope. Retain OS pre-delivery peer refusal, message-derived identity, EUID/session, copy, cap, deadline, interruption, response-loss, and process-fault evidence. |
 | C3 | Run ADR-0045 E1 Supervisor-authority-epoch identity separation | `BLOCKED` | Requires explicit Apple Development authorization for the named Team-`3DDR84M4JS` profiles and owned disposable containers. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. |
 | C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `IN_PROGRESS — TRENDING_GOOD` | The ADR-0029 S0 decision review is `PASSED`; implementation has not begun. Add passive method-specific tags, envelopes, case-derived caps/deadlines, refusal precedence, copy, replay, and response-loss fixtures without activating a listener, signer, store, process, or guest. |
-| C5a | Freeze the final typed source/input/completion transport | `IN_PROGRESS — TRENDING_GOOD` | R2 is `PASSED`; implementation has not begun. Bind exact framing, ownership, caps, drain/reset/cancel behavior, descriptor substitutions, and completion-last inputs without running libkrun or a guest. |
+| C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5a and separate authorization naming the exact runtime/profile successor and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the three already-frozen consumers. |
 | C6b | Connect the installed Broker and approval/attempt methods | `BLOCKED` | Requires C4, R3, and C6a. Implement native rendering/UI, fresh user-presence signing, installed public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. |
@@ -131,7 +133,8 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-The next orchestration checkpoint should collect C4 and C5a; CL1, R1, and R2 are `PASSED`. The owner
+The next orchestration checkpoint should collect C4 and this passed C5a handoff; CL1, R1, and R2
+are `PASSED`. The owner
 may authorize C1 and C3 independently when their exact workspace, identity, and host boundaries are
 available. C2's CL1/R1 prerequisites are closed, but its exact fixture/host authorization remains
 mandatory. After those handoffs, update this file and the evidence ledger before starting installed

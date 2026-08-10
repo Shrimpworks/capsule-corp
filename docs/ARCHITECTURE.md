@@ -288,7 +288,8 @@ detail diagnostic then passed active local-CID and raw-block denials before iden
 down/unbacked `dummy0` as an over-strict probe-policy stop. V27 corrected the passive-network policy
 and then passed all 30 fixed denial markers, exact completion/console proofs, normal reap,
 unlinked-root teardown, unchanged canary, and zero network/credential authority or traffic in one
-exact owned guest. The final typed transport, broader hostile/platform/lifecycle corpus, installed
+exact owned guest. Passive C5a transport conformance is now frozen, while controlled real
+transport, the broader hostile/platform/lifecycle corpus, installed
 composition/recovery, and admission remain `BLOCKED`.
 
 The fake backend creates no guest and exists to test plan registration, approval consumption, state
@@ -316,6 +317,15 @@ the same bytes for an exact `AttemptID` replay. Because FakeBackend creates no r
 tree, runner identity is explicitly unresolved and fake absence is not real teardown evidence.
 This file is not a selected second product database; product integration must use the future
 Supervisor authority/lifecycle engine under the installed sole owner.
+
+Accepted ADR-0046 and the
+[passive typed transport v1](protocol/TYPED_GUEST_TRANSPORT_V1.md) now freeze the preceding
+source/input/completion byte boundary without activating it: exact 152/160/64-byte layouts,
+262,144-byte payload caps, completion cap-plus-one draining, four closed statuses, canonical JSON,
+ordered refusals, monotonic state/fault semantics, descriptor custody, and the completion-last join
+agree in dependency-free Go and Node fixtures. A valid frame remains only an observation. No
+endpoint, launcher, VMM, guest, installed identity, or product store consumes the contract; C5b
+execution and admission remain `BLOCKED`.
 
 The development-only ADR-0033 experiment observed duplicate-process refusal, last-descriptor
 release, `CLOEXEC`, enrolled file checks, and replacement limitations on one host. It selected the

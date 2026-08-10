@@ -791,8 +791,9 @@ and raises measured `port.rs`/`process_tx.rs` coverage from zero to 15/17 and 4/
 111/137 and 82/96 lines. It does not close the remaining 2 functions/26 lines in `port.rs`, 14
 lines in `process_tx.rs`, a post-merge branch/verifier pin mismatch, the caller shared-status
 hazard, independent review, or real control/queue/descriptor fuzzing and composition. The
-backend-independent P0-3 framing candidate
-and governed library source have not passed the real transport/launcher/guest corpus. P0-4A
+Accepted ADR-0046 and the passive C5a v1 contract now close only the backend-independent byte,
+state, and restoration definition with generated Go/Node agreement. The governed library source
+and that contract have not passed the real transport/launcher/guest corpus. P0-4A
 conditionally supported the no-host-root topology but did not establish signed/notarized
 distribution or a supported macOS floor. Neither the Bun nor governed `deno_core` evidence closes
 `RUNTIME-001`; current runtime bytes are not admissible. Root custody must separately pass

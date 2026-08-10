@@ -8,7 +8,10 @@ Status: `PASSED`
 
 Parent governed-runtime engineering: `IN_PROGRESS — TRENDING_GOOD`
 
-C5a passive contract and C5b controlled harness: `BLOCKED`
+C5a passive contract: `PASSED` in the later
+[v1 contract](protocol/TYPED_GUEST_TRANSPORT_V1.md)
+
+C5b controlled harness: `BLOCKED`
 
 Product runtime/profile admission: `BLOCKED`
 
@@ -28,8 +31,10 @@ absence. A valid guest frame is only one observation. The Supervisor may publish
 only after separately proving lifecycle, teardown, authoritative absence, and cleanup, then
 committing the immutable durable completion transaction.
 
-This closes the R2 design question only. The byte contract is not frozen, the governed transport
-is not executed, and v27's diagnostic console proof is not reclassified as final typed transport.
+At this research checkpoint, this closed the R2 design question only and the byte contract was not
+yet frozen. C5a later froze the passive v1 successor without execution. The governed transport is
+still not executed, and v27's diagnostic console proof is not reclassified as final typed
+transport.
 
 ## Reconciled inputs
 

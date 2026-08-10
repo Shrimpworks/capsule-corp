@@ -87,5 +87,8 @@ its core conclusion.
 - [ADR-0045: Select versioned Supervisor authority epochs](0045-select-versioned-supervisor-authority-epochs.md)
   — Proposed; passive decision and inert I2B3 packet `PASSED`, installed identity-separation and
   protected-root evidence remain `BLOCKED`
+- [ADR-0046: Freeze the passive typed guest transport](0046-freeze-passive-typed-guest-transport.md)
+  — Accepted; C5a passive byte/state/restoration conformance `PASSED`, controlled C5b execution,
+  installed composition, and admission remain `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

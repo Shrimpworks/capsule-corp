@@ -95,8 +95,9 @@ refusing descriptor, candidate machine, transport, teardown, artifact-blocker, k
 C2B evidence profile without executing it. C2B owns separately authorized composed execution
 evidence. The first fixed benign [owned-guest checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
 passes only for its exact v19 experiment, and its exact v27 successor passes the fixed 30-marker
-hostile-denial corpus with zero network/credential authority or traffic. Typed transport, broader
-installed/platform/lifecycle evidence, and runtime/profile admission remain blocked.
+hostile-denial corpus with zero network/credential authority or traffic. Passive C5a transport
+conformance is now `PASSED`; controlled C5b transport, broader installed/platform/lifecycle
+evidence, and runtime/profile admission remain blocked.
 The follow-on
 [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md) freezes the
 unchanged C1/C2A relationship to one exact historical governed build candidate. Its immutable
@@ -203,3 +204,7 @@ Development setup is documented in [Development](DEVELOPMENT.md). The sequenced 
 setup, Apple identity/credential checklist, and machine-loss recovery drill are in
 [Development machine setup and recovery](DEV_MACHINE_SETUP_AND_RECOVERY.md). GitHub configuration
 and public release checks are documented in [Repository setup](REPOSITORY_SETUP.md).
+The [passive typed guest transport v1](protocol/TYPED_GUEST_TRANSPORT_V1.md) freezes C5a's exact
+source/input/completion frames, canonical JSON, ordered refusals, endpoint/state rules, and
+completion-last projection with independent Go/Node fixtures. It activates no endpoint or guest;
+controlled C5b execution and admission remain blocked.

@@ -380,6 +380,14 @@ framing does not validate guest-controlled control IDs/events, queues, descripto
 open/close ordering, or cancellation/backpressure behavior. The exact pinned implementation and any
 fixes require their own sanitizer/coverage corpus and fail-closed teardown evidence.
 
+Passive C5a now makes the application framing falsifiable without reducing that threat: role-
+specific magic, exact retained bindings, fixed caps and cap-plus-one counting, canonical JSON, a
+closed non-prose status vocabulary, exact-offset trailer, ordered refusal precedence, and a
+monotonic cancellation/fault model agree in generated Go/Node fixtures. No real console, launcher,
+guest, VMM, installed endpoint, or process-fault mechanism participated. A valid C5a frame is not
+attestation and cannot establish durable completion without independent Supervisor lifecycle,
+teardown, absence, cleanup, and publication facts.
+
 ### Content and egress
 
 The Broker owns persisted user content. The Supervisor receives only transient attempt-scoped

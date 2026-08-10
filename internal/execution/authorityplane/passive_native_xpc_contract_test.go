@@ -15,6 +15,7 @@ type nativeXPCFixtureField struct {
 	MaxDataBytes    uint64             `json:"maxDataBytes"`
 	FixedUInt64     *uint64            `json:"fixedUInt64"`
 	FixedString     *string            `json:"fixedString"`
+	AllowedUInt64   []uint64           `json:"allowedUInt64"`
 	ApplicationData bool               `json:"applicationData"`
 	NonZeroData     bool               `json:"nonZeroData"`
 }
@@ -37,8 +38,25 @@ type nativeXPCFixtureMethod struct {
 }
 
 type nativeXPCFixtureCase struct {
-	ID       string          `json:"id"`
-	Expected json.RawMessage `json:"expected"`
+	ID        string          `json:"id"`
+	Method    string          `json:"method"`
+	Methods   string          `json:"methods"`
+	Direction *string         `json:"direction"`
+	Mutation  *string         `json:"mutation"`
+	Expected  json.RawMessage `json:"expected"`
+}
+
+type nativeXPCFixtureCaseTableEntry struct {
+	ID             string  `json:"id"`
+	Method         string  `json:"method"`
+	Direction      *string `json:"direction"`
+	Mutation       *string `json:"mutation"`
+	Decision       string  `json:"decision"`
+	Classification *string `json:"classification"`
+	StatusTag      *uint64 `json:"statusTag"`
+	ReasonTag      *uint64 `json:"reasonTag"`
+	BodyCopied     *bool   `json:"bodyCopied"`
+	CoreCalls      *uint64 `json:"coreCalls"`
 }
 
 type nativeXPCFixtureRefusalReply struct {
@@ -50,6 +68,7 @@ type nativeXPCFixtureRefusalReply struct {
 }
 
 type nativeXPCFixtureMethodBinding struct {
+	EntryPoint                string              `json:"entryPoint"`
 	Service                   string              `json:"service"`
 	ExpectedRole              CallerRole          `json:"expectedRole"`
 	ExpectedSigningIdentifier *string             `json:"expectedSigningIdentifier"`
@@ -57,11 +76,28 @@ type nativeXPCFixtureMethodBinding struct {
 	Purpose                   string              `json:"purpose"`
 	MessageTag                NativeXPCMessageTag `json:"messageTag"`
 	MethodVersion             uint64              `json:"methodVersion"`
+	DeadlineMilliseconds      uint64              `json:"deadlineMilliseconds"`
 }
 
 type nativeXPCFixtureResponseLoss struct {
-	Method      string `json:"method"`
-	Disposition string `json:"disposition"`
+	Method                    string `json:"method"`
+	Disposition               string `json:"disposition"`
+	SemanticIdentity          string `json:"semanticIdentity"`
+	SameApprovalID            bool   `json:"sameApprovalID"`
+	SameAttemptID             bool   `json:"sameAttemptID"`
+	CurrentStateReturned      bool   `json:"currentStateReturned"`
+	DuplicateAuthorityEffects uint64 `json:"duplicateAuthorityEffects"`
+	DuplicateAttempts         uint64 `json:"duplicateAttempts"`
+	DuplicateLifecycleEffects uint64 `json:"duplicateLifecycleEffects"`
+	RequestIDIsIdempotencyKey bool   `json:"requestIdIsIdempotencyKey"`
+}
+
+type nativeXPCFixtureDeadlineCase struct {
+	Method                   string `json:"method"`
+	DeadlineMilliseconds     uint64 `json:"deadlineMilliseconds"`
+	StartsAt                 string `json:"startsAt"`
+	ClientExtensionAllowed   bool   `json:"clientExtensionAllowed"`
+	AfterDispatchDisposition string `json:"afterDispatchDisposition"`
 }
 
 type nativeXPCFixtureFutureHarnessOracle struct {
@@ -84,6 +120,8 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		TransportEncoding        string                                   `json:"transportEncoding"`
 		TransportEncodingVersion uint64                                   `json:"transportEncodingVersion"`
 		MessageTags              map[string]uint64                        `json:"messageTags"`
+		ApprovalStateTags        map[string]uint64                        `json:"approvalStateTags"`
+		AttemptStateTags         map[string]uint64                        `json:"attemptStateTags"`
 		StatusTags               map[string]uint64                        `json:"statusTags"`
 		ReasonTags               map[string]uint64                        `json:"reasonTags"`
 		ClassificationToStatus   map[string]uint64                        `json:"classificationToStatus"`
@@ -92,8 +130,10 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		ValidationPrecedence     []string                                 `json:"validationPrecedence"`
 		Envelopes                map[string]nativeXPCFixtureMethod        `json:"envelopes"`
 		Cases                    []nativeXPCFixtureCase                   `json:"cases"`
+		CaseTable                []nativeXPCFixtureCaseTableEntry         `json:"caseTable"`
 		RefusalReplies           []nativeXPCFixtureRefusalReply           `json:"refusalReplies"`
 		ResponseLoss             []nativeXPCFixtureResponseLoss           `json:"responseLoss"`
+		DeadlineCases            []nativeXPCFixtureDeadlineCase           `json:"deadlineCases"`
 		FutureHarnessOracles     []nativeXPCFixtureFutureHarnessOracle    `json:"futureNativeHarnessOracles"`
 		PeerAuthentication       any                                      `json:"peerAuthenticationEvidence"`
 		ListenerActivated        bool                                     `json:"listenerActivated"`
@@ -125,9 +165,21 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		SubmitMainMJSV0Method:     uint64(NativeXPCMessageTagSubmitMainMJSV0),
 		RegisterPlanV0Method:      uint64(NativeXPCMessageTagRegisterPlanV0),
 		GetRegisteredPlanV0Method: uint64(NativeXPCMessageTagGetRegisteredPlanV0),
+		SubmitApprovalV0Method:    uint64(NativeXPCMessageTagSubmitApprovalV0),
+		RequestAttemptV0Method:    uint64(NativeXPCMessageTagRequestAttemptV0),
 	}
 	if !reflect.DeepEqual(fixture.MessageTags, wantTags) {
 		t.Fatalf("native message tags mismatch: got %#v want %#v", fixture.MessageTags, wantTags)
+	}
+	wantApprovalStates := map[string]uint64{
+		"invalid": uint64(NativeXPCApprovalStateInvalid), "usable": uint64(NativeXPCApprovalStateUsable),
+		"consumed": uint64(NativeXPCApprovalStateConsumed), "invalidated": uint64(NativeXPCApprovalStateInvalidated),
+	}
+	wantAttemptStates := map[string]uint64{
+		"invalid": uint64(NativeXPCAttemptStateInvalid), "created": uint64(NativeXPCAttemptStateCreated),
+	}
+	if !reflect.DeepEqual(fixture.ApprovalStateTags, wantApprovalStates) || !reflect.DeepEqual(fixture.AttemptStateTags, wantAttemptStates) {
+		t.Fatalf("native state tags mismatch: approval=%#v attempt=%#v", fixture.ApprovalStateTags, fixture.AttemptStateTags)
 	}
 	wantStatuses := map[string]uint64{
 		"OK": uint64(NativeXPCStatusOK), "MALFORMED": uint64(NativeXPCStatusMalformed),
@@ -172,7 +224,7 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		if received.ExpectedSigningIdentifier != nil {
 			receivedSigningID = *received.ExpectedSigningIdentifier
 		}
-		if received.Service != expected.Service || received.ExpectedRole != expected.ExpectedRole || receivedSigningID != expected.ExpectedSigningIdentifier || received.Audience != expected.Audience || received.Purpose != expected.Purpose || received.MessageTag != expected.MessageTag || received.MethodVersion != expected.MethodVersion {
+		if received.EntryPoint != expected.EntryPoint || received.Service != expected.Service || received.ExpectedRole != expected.ExpectedRole || receivedSigningID != expected.ExpectedSigningIdentifier || received.Audience != expected.Audience || received.Purpose != expected.Purpose || received.MessageTag != expected.MessageTag || received.MethodVersion != expected.MethodVersion || received.DeadlineMilliseconds != expected.DeadlineMilliseconds {
 			t.Fatalf("native method binding mismatch for %s: got %#v want %#v", expected.Method, received, expected)
 		}
 	}
@@ -193,6 +245,16 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 			ExpectedNativeXPCGetRegisteredPlanV0Reply(),
 			ExpectedNativeXPCGetRegisteredPlanV0RefusalReply(),
 		},
+		SubmitApprovalV0Method: {
+			ExpectedNativeXPCSubmitApprovalV0Request(),
+			ExpectedNativeXPCSubmitApprovalV0Reply(),
+			ExpectedNativeXPCSubmitApprovalV0RefusalReply(),
+		},
+		RequestAttemptV0Method: {
+			ExpectedNativeXPCRequestAttemptV0Request(),
+			ExpectedNativeXPCRequestAttemptV0Reply(),
+			ExpectedNativeXPCRequestAttemptV0RefusalReply(),
+		},
 	}
 	for method, goEnvelopes := range goMethods {
 		fixtureMethod, ok := fixture.Envelopes[method]
@@ -205,60 +267,136 @@ func TestNativeXPCContractMatchesGeneratedCrossLanguageFixture(t *testing.T) {
 		}
 	}
 	wantCaseIDs := []string{
-		"all.exact-key-and-type-sets", "submit.body-cap-plus-one",
-		"register.body-cap-plus-one", "get.body-cap-plus-one", "all.missing-key",
+		"all.exact-key-and-type-sets", "submit-approval.request.exact-maximum",
+		"request-attempt.request.exact-maximum", "submit.body-cap-plus-one",
+		"register.body-cap-plus-one", "get.body-cap-plus-one",
+		"submit-approval.body-cap-plus-one", "request-attempt.approval-id-width-plus-one",
+		"all.missing-key",
 		"all.extra-key", "all.wrong-type", "all.nested-container", "all.zero-request-id",
 		"all.unknown-protocol-version", "all.unknown-method-version",
 		"register.joint-protocol-method-record-version-mismatch",
 		"register.joint-method-record-version-mismatch", "register.embedded-record-version-mismatch",
-		"cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
-		"cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
-		"cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
-		"cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
-		"cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
-		"cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
-		"all.wrong-service", "all.wrong-role", "all.wrong-audience", "all.wrong-purpose",
+		"submit-approval.joint-protocol-method-record-version-mismatch",
+		"submit-approval.joint-method-record-version-mismatch",
+		"submit-approval.embedded-record-version-mismatch",
+	}
+	orderedMethods := []string{
+		SubmitMainMJSV0Method, RegisterPlanV0Method, GetRegisteredPlanV0Method,
+		SubmitApprovalV0Method, RequestAttemptV0Method,
+	}
+	for _, selected := range orderedMethods {
+		for _, received := range orderedMethods {
+			if selected != received {
+				wantCaseIDs = append(wantCaseIDs, "cross-service."+selected+".tag-"+received)
+			}
+		}
+	}
+	wantCaseIDs = append(wantCaseIDs,
+		"all.wrong-service", "all.wrong-role", "all.wrong-session", "all.wrong-audience", "all.wrong-purpose",
 		"all.local-audience-replaced-by-signed-object-audience",
 		"all.local-purpose-replaced-by-signed-object-purpose",
+		"submit-approval.signed-audience-replaced-by-local-channel-audience",
+		"submit-approval.signed-purpose-replaced-by-local-channel-purpose",
 		"all.request-id-replaced-by-installation-id-bytes",
 		"all.installation-id-replaced-by-request-id-bytes",
-		"get.registration-id-replaced-by-request-id-bytes", "all.wrong-installation",
+		"get.registration-id-replaced-by-request-id-bytes",
+		"submit-approval.registration-id-replaced-by-request-id-bytes",
+		"request-attempt.registration-id-replaced-by-approval-id-bytes",
+		"request-attempt.approval-id-replaced-by-registration-id-bytes",
+		"all.wrong-installation",
 		"all.wrong-epoch-digest", "all.epoch-uint53-cap-plus-one",
 		"all.extra-file-descriptor", "all.extra-endpoint", "all.extra-mach-send-right",
 		"all.success-reply-extra-key", "all.success-reply-request-id-mismatch",
 		"all.refusal-reply-extra-body", "all.local-integrity-output-fault",
-	}
+		"submit-approval.cancel-before-dispatch", "submit-approval.cancel-after-dispatch",
+		"request-attempt.cancel-before-dispatch", "request-attempt.cancel-after-dispatch",
+	)
 	gotCaseIDs := make([]string, len(fixture.Cases))
+	derivedCaseTable := make([]nativeXPCFixtureCaseTableEntry, len(fixture.Cases))
 	for index, candidate := range fixture.Cases {
 		gotCaseIDs[index] = candidate.ID
-		if len(candidate.Expected) == 0 || candidate.Expected[0] == '"' {
+		method := candidate.Method
+		if method == "" {
+			method = candidate.Methods
+		}
+		derived := nativeXPCFixtureCaseTableEntry{
+			ID: candidate.ID, Method: method, Direction: candidate.Direction, Mutation: candidate.Mutation,
+		}
+		if len(candidate.Expected) == 0 {
+			t.Fatalf("native case %s has no expected result", candidate.ID)
+		}
+		if candidate.Expected[0] == '"' {
+			if err := json.Unmarshal(candidate.Expected, &derived.Decision); err != nil {
+				t.Fatalf("decode native case %s decision: %v", candidate.ID, err)
+			}
+			derivedCaseTable[index] = derived
 			continue
 		}
 		var expected struct {
-			Classification string  `json:"classification"`
+			Decision       string  `json:"decision"`
+			Classification *string `json:"classification"`
 			StatusTag      *uint64 `json:"statusTag"`
-			ReasonTag      uint64  `json:"reasonTag"`
+			ReasonTag      *uint64 `json:"reasonTag"`
+			BodyCopied     *bool   `json:"bodyCopied"`
+			CoreCalls      *uint64 `json:"coreCalls"`
 		}
 		if err := json.Unmarshal(candidate.Expected, &expected); err != nil {
 			t.Fatalf("decode native case %s: %v", candidate.ID, err)
 		}
-		if expected.StatusTag != nil && expected.Classification != "" && *expected.StatusTag != fixture.StatusTags[expected.Classification] {
+		if expected.StatusTag != nil && expected.Classification != nil && *expected.StatusTag != fixture.StatusTags[*expected.Classification] {
 			t.Fatalf("native case %s status/classification mismatch", candidate.ID)
 		}
-		if expected.ReasonTag > uint64(NativeXPCReasonLocalIntegrityFault) {
-			t.Fatalf("native case %s uses unknown reason %d", candidate.ID, expected.ReasonTag)
+		if expected.ReasonTag != nil && *expected.ReasonTag > uint64(NativeXPCReasonLocalIntegrityFault) {
+			t.Fatalf("native case %s uses unknown reason %d", candidate.ID, *expected.ReasonTag)
 		}
+		derived.Decision = expected.Decision
+		derived.Classification = expected.Classification
+		derived.StatusTag = expected.StatusTag
+		derived.ReasonTag = expected.ReasonTag
+		derived.BodyCopied = expected.BodyCopied
+		derived.CoreCalls = expected.CoreCalls
+		derivedCaseTable[index] = derived
 	}
 	if !reflect.DeepEqual(gotCaseIDs, wantCaseIDs) {
 		t.Fatalf("native case order/set mismatch:\n got %#v\nwant %#v", gotCaseIDs, wantCaseIDs)
+	}
+	if !reflect.DeepEqual(fixture.CaseTable, derivedCaseTable) {
+		t.Fatalf("native case table does not exactly project the complete ordered case set:\n got %#v\nwant %#v", fixture.CaseTable, derivedCaseTable)
 	}
 	wantResponseLoss := []nativeXPCFixtureResponseLoss{
 		{Method: SubmitMainMJSV0Method, Disposition: SubmitMainMJSV0ResponseLossDisposition},
 		{Method: RegisterPlanV0Method, Disposition: RegisterPlanV0ResponseLossDisposition},
 		{Method: GetRegisteredPlanV0Method, Disposition: GetRegisteredPlanV0ResponseLossDisposition},
+		{
+			Method: SubmitApprovalV0Method, Disposition: SubmitApprovalV0ResponseLossDisposition,
+			SemanticIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+			SameApprovalID:   true, CurrentStateReturned: true, DuplicateAuthorityEffects: 0,
+			RequestIDIsIdempotencyKey: false,
+		},
+		{
+			Method: RequestAttemptV0Method, Disposition: RequestAttemptV0ResponseLossDisposition,
+			SemanticIdentity: "registration-id+approval-reference",
+			SameAttemptID:    true, CurrentStateReturned: true, DuplicateAttempts: 0,
+			DuplicateLifecycleEffects: 0, RequestIDIsIdempotencyKey: false,
+		},
 	}
 	if !reflect.DeepEqual(fixture.ResponseLoss, wantResponseLoss) {
 		t.Fatalf("native response-loss table mismatch: got %#v want %#v", fixture.ResponseLoss, wantResponseLoss)
+	}
+	wantDeadlines := []nativeXPCFixtureDeadlineCase{
+		{
+			Method: SubmitApprovalV0Method, DeadlineMilliseconds: SubmitApprovalV0DeadlineMilliseconds,
+			StartsAt: "admission", ClientExtensionAllowed: false,
+			AfterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
+		},
+		{
+			Method: RequestAttemptV0Method, DeadlineMilliseconds: RequestAttemptV0DeadlineMilliseconds,
+			StartsAt: "admission", ClientExtensionAllowed: false,
+			AfterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
+		},
+	}
+	if !reflect.DeepEqual(fixture.DeadlineCases, wantDeadlines) {
+		t.Fatalf("native deadline table mismatch: got %#v want %#v", fixture.DeadlineCases, wantDeadlines)
 	}
 	wantFutureOracles := []nativeXPCFixtureFutureHarnessOracle{{
 		ID: "os-peer-requirement-mismatch", Scope: "future-external-native-harness-only",
@@ -287,6 +425,7 @@ func assertNativeXPCEnvelope(t *testing.T, expected NativeXPCEnvelopeSpec, recei
 		t.Fatalf("native envelope field-count mismatch for %s %s", expected.Method, expected.Direction)
 	}
 	seen := make(map[string]struct{}, len(expected.Fields))
+	var derivedApplicationDataMaxBytes uint64
 	for index, expectedField := range expected.Fields {
 		receivedField := received.Fields[index]
 		if _, exists := seen[expectedField.Key]; exists {
@@ -298,7 +437,10 @@ func assertNativeXPCEnvelope(t *testing.T, expected NativeXPCEnvelopeSpec, recei
 			}
 		}
 		seen[expectedField.Key] = struct{}{}
-		if receivedField.Key != expectedField.Key || receivedField.ValueType != expectedField.ValueType || receivedField.MinDataBytes != expectedField.MinDataBytes || receivedField.MaxDataBytes != expectedField.MaxDataBytes || receivedField.ApplicationData != expectedField.ApplicationData || receivedField.NonZeroData != expectedField.NonZeroData {
+		if expectedField.ApplicationData {
+			derivedApplicationDataMaxBytes += expectedField.MaxDataBytes
+		}
+		if receivedField.Key != expectedField.Key || receivedField.ValueType != expectedField.ValueType || receivedField.MinDataBytes != expectedField.MinDataBytes || receivedField.MaxDataBytes != expectedField.MaxDataBytes || !reflect.DeepEqual(receivedField.AllowedUInt64, expectedField.AllowedUInt64) || receivedField.ApplicationData != expectedField.ApplicationData || receivedField.NonZeroData != expectedField.NonZeroData {
 			t.Fatalf("native field mismatch for %s %s: got %#v want %#v", expected.Method, expected.Direction, receivedField, expectedField)
 		}
 		if expectedField.HasFixedUInt64 {
@@ -316,6 +458,9 @@ func assertNativeXPCEnvelope(t *testing.T, expected NativeXPCEnvelopeSpec, recei
 			t.Fatalf("unexpected native fixed string for %s", expectedField.Key)
 		}
 	}
+	if derivedApplicationDataMaxBytes != expected.ApplicationDataMaxBytes {
+		t.Fatalf("native envelope application-data aggregate mismatch for %s %s: got %d want %d", expected.Method, expected.Direction, expected.ApplicationDataMaxBytes, derivedApplicationDataMaxBytes)
+	}
 }
 
 func TestNativeXPCContractHasNoGenericDispatchOrAuthorityFields(t *testing.T) {
@@ -323,6 +468,8 @@ func TestNativeXPCContractHasNoGenericDispatchOrAuthorityFields(t *testing.T) {
 		ExpectedNativeXPCSubmitMainMJSV0Request(),
 		ExpectedNativeXPCRegisterPlanV0Request(),
 		ExpectedNativeXPCGetRegisteredPlanV0Request(),
+		ExpectedNativeXPCSubmitApprovalV0Request(),
+		ExpectedNativeXPCRequestAttemptV0Request(),
 	} {
 		for _, field := range spec.Fields {
 			switch field.Key {

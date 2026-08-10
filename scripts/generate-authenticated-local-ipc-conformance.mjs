@@ -14,6 +14,8 @@ const authorityDisposition = "service-role-purpose-audience-derived";
 const requestIdDisposition = "correlation-only";
 const nativeXPCEncoding = "xpc-dictionary-v0";
 const nativeXPCEncodingVersion = 0;
+const identifierBytes = 16;
+const approvalEnvelopeMaxBytes = 512;
 const nativeXPCValidationPrecedence = Object.freeze([
   "protocol-version",
   "method-version",
@@ -46,12 +48,29 @@ const nativeXPCKeys = Object.freeze({
   source: "capsule.source",
   registrationId: "capsule.registration-id",
   planRegistration: "capsule.plan-registration",
+  approvalEnvelope: "capsule.approval-envelope",
+  approvalId: "capsule.approval-id",
+  approvalState: "capsule.approval-state",
+  attemptId: "capsule.attempt-id",
+  attemptState: "capsule.attempt-state",
 });
 const nativeXPCMessageTags = Object.freeze({
   invalid: 0,
   SubmitMainMJSV0: 1,
   RegisterPlanV0: 2,
   GetRegisteredPlanV0: 3,
+  SubmitApprovalV0: 4,
+  RequestAttemptV0: 5,
+});
+const nativeXPCApprovalStateTags = Object.freeze({
+  invalid: 0,
+  usable: 1,
+  consumed: 2,
+  invalidated: 3,
+});
+const nativeXPCAttemptStateTags = Object.freeze({
+  invalid: 0,
+  created: 1,
 });
 const nativeXPCStatusTags = Object.freeze({
   OK: 0,
@@ -113,17 +132,24 @@ const caps = Object.freeze({
   sourceManifest: 95,
   source: 262_144,
   planRegistration: 4_096,
+  approvalEnvelope: approvalEnvelopeMaxBytes,
   registerPlanV0Request: 328_337,
   registerPlanV0Reply: 4_096,
   getRegisteredPlanV0Request: 16,
   getRegisteredPlanV0Reply: 332_433,
   submitMainMJSV0Request: 2_097_152,
-  submitMainMJSV0Reply: 16,
+  submitMainMJSV0Reply: identifierBytes,
+  submitApprovalV0Request: identifierBytes + approvalEnvelopeMaxBytes,
+  submitApprovalV0Reply: identifierBytes,
+  requestAttemptV0Request: 2 * identifierBytes,
+  requestAttemptV0Reply: identifierBytes,
 });
 if (
   caps.registerPlanV0Request !==
     caps.executionPlan + caps.roleBindings + caps.sourceManifest + caps.source ||
-  caps.getRegisteredPlanV0Reply !== caps.registerPlanV0Request + caps.planRegistration
+  caps.getRegisteredPlanV0Reply !== caps.registerPlanV0Request + caps.planRegistration ||
+  caps.submitApprovalV0Request !== 16 + caps.approvalEnvelope ||
+  caps.requestAttemptV0Request !== 16 + 16
 ) {
   throw new Error("authenticated-local-IPC aggregate cap drift");
 }
@@ -176,6 +202,37 @@ const methods = {
     replyDataMaxBytes: caps.getRegisteredPlanV0Reply,
     deadlineMilliseconds: 2_000,
     responseLossDisposition: "repeatable-read-by-registration-id",
+    ...supervisorFlow,
+  },
+  submitApprovalV0: {
+    method: "SubmitApprovalV0",
+    methodVersion: 0,
+    embeddedRecordVersion: 0,
+    service: "com.capsulecorp.capsule.supervisor.broker.v0",
+    expectedRole: "broker",
+    audience,
+    purpose: "capsule.ipc.submit-approval.v0",
+    signedObjectAudience: signedApprovalAudience,
+    signedObjectPurpose: signedApprovalPurpose,
+    requestDataMaxBytes: caps.submitApprovalV0Request,
+    replyDataMaxBytes: caps.submitApprovalV0Reply,
+    deadlineMilliseconds: 5_000,
+    responseLossDisposition:
+      "canonical-payload-and-signer-authorization-replay-returns-same-approval-and-current-state",
+    ...supervisorFlow,
+  },
+  requestAttemptV0: {
+    method: "RequestAttemptV0",
+    methodVersion: 0,
+    service: "com.capsulecorp.capsule.supervisor.daemon.v0",
+    expectedRole: "daemon",
+    audience,
+    purpose: "capsule.ipc.request-attempt.v0",
+    requestDataMaxBytes: caps.requestAttemptV0Request,
+    replyDataMaxBytes: caps.requestAttemptV0Reply,
+    deadlineMilliseconds: 5_000,
+    responseLossDisposition:
+      "registration-and-approval-reference-replay-returns-same-attempt-and-current-state",
     ...supervisorFlow,
   },
 };
@@ -348,6 +405,7 @@ const zeroEffects = Object.freeze({
   backendCreated: false,
   guestCreated: false,
 });
+const nativeCases = nativeXPCCases();
 
 const nativeXPCContract = {
   objectType: "capsule.authenticated-local-ipc-native-xpc-contract",
@@ -360,6 +418,8 @@ const nativeXPCContract = {
   valueTypes: nativeXPCTypes,
   keys: nativeXPCKeys,
   messageTags: nativeXPCMessageTags,
+  approvalStateTags: nativeXPCApprovalStateTags,
+  attemptStateTags: nativeXPCAttemptStateTags,
   statusTags: nativeXPCStatusTags,
   reasonTags: nativeXPCReasonTags,
   classificationToStatus: Object.fromEntries(
@@ -385,6 +445,7 @@ const nativeXPCContract = {
     Object.values(methods).map((method) => [
       method.method,
       {
+        entryPoint: method.method,
         service: method.service,
         expectedRole: method.expectedRole,
         expectedSigningIdentifier: method.expectedSigningIdentifier ?? null,
@@ -392,9 +453,31 @@ const nativeXPCContract = {
         purpose: method.purpose,
         messageTag: nativeXPCMessageTags[method.method],
         methodVersion: method.methodVersion,
+        deadlineMilliseconds: method.deadlineMilliseconds,
       },
     ]),
   ),
+  signedObjectBindings: {
+    SubmitApprovalV0: {
+      outerField: nativeXPCKeys.approvalEnvelope,
+      encoding: "tagged-canonical-cose-sign1-with-embedded-canonical-cbor-payload",
+      objectType: "capsule.approval-grant",
+      objectVersion: methods.submitApprovalV0.embeddedRecordVersion,
+      audience: signedApprovalAudience,
+      purpose: signedApprovalPurpose,
+      localAudience: methods.submitApprovalV0.audience,
+      localPurpose: methods.submitApprovalV0.purpose,
+      localAndSignedBindingsInterchangeable: false,
+    },
+  },
+  identifierDomains: {
+    [nativeXPCKeys.requestId]: "live-call-correlation-only",
+    [nativeXPCKeys.installationId]: "current-installation-identity",
+    [nativeXPCKeys.registrationId]: "registration-lookup",
+    [nativeXPCKeys.approvalId]: "approval-reference",
+    [nativeXPCKeys.attemptId]: "attempt-reference",
+    sameWidthBytesInterchangeable: false,
+  },
   requestCommonKeyCount: 9,
   replyCommonKeyCount: 6,
   extraObjectsAllowed: 0,
@@ -409,7 +492,8 @@ const nativeXPCContract = {
   localIntegrityDisposition:
     "oversize-output-short-write-pointer-length-or-bridge-version-fault-terminates-process-without-reply",
   envelopes: nativeXPCEnvelopes,
-  cases: nativeXPCCases(),
+  cases: nativeCases,
+  caseTable: nativeCases.map(nativeXPCCaseTableEntry),
   refusalReplies: Object.entries(nativeXPCStatusTags)
     .filter(([classification]) => classification !== "OK")
     .map(([classification, statusTag]) => ({
@@ -425,6 +509,41 @@ const nativeXPCContract = {
     {
       method: "GetRegisteredPlanV0",
       disposition: methods.getRegisteredPlanV0.responseLossDisposition,
+    },
+    {
+      method: "SubmitApprovalV0",
+      disposition: methods.submitApprovalV0.responseLossDisposition,
+      semanticIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+      sameApprovalID: true,
+      currentStateReturned: true,
+      duplicateAuthorityEffects: 0,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "RequestAttemptV0",
+      disposition: methods.requestAttemptV0.responseLossDisposition,
+      semanticIdentity: "registration-id+approval-reference",
+      sameAttemptID: true,
+      currentStateReturned: true,
+      duplicateAttempts: 0,
+      duplicateLifecycleEffects: 0,
+      requestIdIsIdempotencyKey: false,
+    },
+  ],
+  deadlineCases: [
+    {
+      method: "SubmitApprovalV0",
+      deadlineMilliseconds: methods.submitApprovalV0.deadlineMilliseconds,
+      startsAt: "admission",
+      clientExtensionAllowed: false,
+      afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
+    },
+    {
+      method: "RequestAttemptV0",
+      deadlineMilliseconds: methods.requestAttemptV0.deadlineMilliseconds,
+      startsAt: "admission",
+      clientExtensionAllowed: false,
+      afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
     },
   ],
   futureNativeHarnessOracles: [
@@ -582,6 +701,58 @@ const oracles = {
       "local-integrity-fault",
       "LOCAL_FAILURE",
       "get-registered-plan-reply-shape",
+    ),
+    maximumCase(
+      "submit-approval-v0.request.exact-maximum",
+      "SubmitApprovalV0",
+      "request",
+      { registrationId: 16, approvalEnvelope: caps.approvalEnvelope },
+      caps.submitApprovalV0Request,
+      "accept-outer-shape",
+    ),
+    maximumCase(
+      "submit-approval-v0.request.cap-plus-one",
+      "SubmitApprovalV0",
+      "request",
+      { registrationId: 16, approvalEnvelope: caps.approvalEnvelope + 1 },
+      caps.submitApprovalV0Request + 1,
+      "reject",
+      "MALFORMED",
+      "approval-envelope",
+    ),
+    maximumCase(
+      "submit-approval-v0.reply.exact",
+      "SubmitApprovalV0",
+      "reply",
+      { approvalId: 16 },
+      caps.submitApprovalV0Reply,
+      "accept-outer-shape",
+    ),
+    maximumCase(
+      "request-attempt-v0.request.exact",
+      "RequestAttemptV0",
+      "request",
+      { registrationId: 16, approvalId: 16 },
+      caps.requestAttemptV0Request,
+      "accept-outer-shape",
+    ),
+    maximumCase(
+      "request-attempt-v0.request.cap-plus-one",
+      "RequestAttemptV0",
+      "request",
+      { registrationId: 16, approvalId: 17 },
+      caps.requestAttemptV0Request + 1,
+      "reject",
+      "SCHEMA",
+      "approval-id",
+    ),
+    maximumCase(
+      "request-attempt-v0.reply.exact",
+      "RequestAttemptV0",
+      "reply",
+      { attemptId: 16 },
+      caps.requestAttemptV0Reply,
+      "accept-outer-shape",
     ),
   ],
   refusals: [
@@ -827,6 +998,9 @@ const oracles = {
     "request-accessor-mutation-does-not-change-copied-body",
     "facade-input-copy-does-not-alias-passive-request",
     "success-reply-accessor-mutation-does-not-change-retained-state-or-repeated-read",
+    "submit-approval-registration-and-envelope-copied-before-go-and-never-alias-native-memory",
+    "request-attempt-registration-and-approval-identifiers-copied-before-go-and-never-alias-native-memory",
+    "approval-and-attempt-success-identifiers-copied-into-fixed-native-output-buffers",
   ],
   responseLoss: [
     {
@@ -849,6 +1023,25 @@ const oracles = {
       disposition: methods.getRegisteredPlanV0.responseLossDisposition,
       storeMutation: false,
       repeatedReplyBodyByteEqual: true,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "SubmitApprovalV0",
+      disposition: methods.submitApprovalV0.responseLossDisposition,
+      semanticIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+      sameApprovalID: true,
+      currentStateReturned: true,
+      duplicateAuthorityEffects: 0,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "RequestAttemptV0",
+      disposition: methods.requestAttemptV0.responseLossDisposition,
+      semanticIdentity: "registration-id+approval-reference",
+      sameAttemptID: true,
+      currentStateReturned: true,
+      duplicateAttempts: 0,
+      duplicateLifecycleEffects: 0,
       requestIdIsIdempotencyKey: false,
     },
   ],
@@ -899,6 +1092,24 @@ const oracles = {
       postReleaseReadmissionBytes: 1,
       postReleaseReadmission: "admitted",
       productionAggregateCapBytes: 2_626_696,
+      queueDepth: 0,
+      noState: zeroState,
+    },
+    {
+      id: "supervisor.mixed-submit-approval-request-attempt-cap-plus-one",
+      methods: [
+        { method: "SubmitApprovalV0", admittedBytes: caps.submitApprovalV0Request },
+        { method: "RequestAttemptV0", admittedBytes: caps.requestAttemptV0Request },
+      ],
+      isolatedAccountingCapBytes: caps.submitApprovalV0Request + caps.requestAttemptV0Request,
+      attemptedAdditionalBytes: 1,
+      classification: "CAPACITY",
+      reason: "ipc-process-in-flight-bytes",
+      releasedMethod: "RequestAttemptV0",
+      releasedBytes: caps.requestAttemptV0Request,
+      postReleaseReadmissionBytes: caps.requestAttemptV0Request,
+      postReleaseReadmission: "admitted",
+      productionAggregateCapBytes: supervisorFlow.inFlightRequestDataMaxBytes,
       queueDepth: 0,
       noState: zeroState,
     },
@@ -973,11 +1184,13 @@ const manifest = {
   transportEncoding: nativeXPCEncoding,
   transportEncodingVersion: nativeXPCEncodingVersion,
   numericMessageTags: nativeXPCMessageTags,
+  numericApprovalStateTags: nativeXPCApprovalStateTags,
+  numericAttemptStateTags: nativeXPCAttemptStateTags,
   numericStatusTags: nativeXPCStatusTags,
   numericReasonTags: nativeXPCReasonTags,
   peerAuthenticationEvidence: null,
   caps,
-  methodCount: 3,
+  methodCount: 5,
   refusalCaseCount: oracles.refusals.length,
   maximumCaseCount: oracles.maxima.length,
   nativeXPCEnvelopeCount: Object.values(nativeXPCEnvelopes).length * 3,
@@ -993,6 +1206,9 @@ const manifest = {
     planRegistrationBytes: registration.reference,
     sourceManifestBytes: sourceManifest.reference,
     sourceBytes: source.reference,
+    approvalEnvelopeBytes: (
+      await repositoryFixture("schemas/conformance/v0/approval-grant/ordinary.cose")
+    ).reference,
   },
 };
 expected.set("manifest.json", jsonBytes(manifest));
@@ -1126,6 +1342,34 @@ function nativeXPCBodyFields(method) {
           dataField(nativeXPCKeys.source, 0, caps.source, true, false),
         ],
       };
+    case "SubmitApprovalV0":
+      return {
+        request: [
+          dataField(nativeXPCKeys.registrationId, 16, 16, true, true),
+          dataField(nativeXPCKeys.approvalEnvelope, 1, caps.approvalEnvelope, true, false),
+        ],
+        reply: [
+          dataField(nativeXPCKeys.approvalId, 16, 16, true, true),
+          allowedUInt64Field(
+            nativeXPCKeys.approvalState,
+            Object.values(nativeXPCApprovalStateTags).filter((tag) => tag !== 0),
+          ),
+        ],
+      };
+    case "RequestAttemptV0":
+      return {
+        request: [
+          dataField(nativeXPCKeys.registrationId, 16, 16, true, true),
+          dataField(nativeXPCKeys.approvalId, 16, 16, true, true),
+        ],
+        reply: [
+          dataField(nativeXPCKeys.attemptId, 16, 16, true, true),
+          allowedUInt64Field(
+            nativeXPCKeys.attemptState,
+            Object.values(nativeXPCAttemptStateTags).filter((tag) => tag !== 0),
+          ),
+        ],
+      };
     default:
       throw new Error(`unknown native XPC method ${method}`);
   }
@@ -1148,6 +1392,10 @@ function fixedUInt64Field(key, value) {
 
 function fixedStringField(key, value) {
   return { key, valueType: nativeXPCTypes.string, fixedString: value };
+}
+
+function allowedUInt64Field(key, values) {
+  return { key, valueType: nativeXPCTypes.uint64, allowedUInt64: values };
 }
 
 function nativeXPCCases() {
@@ -1178,11 +1426,35 @@ function nativeXPCCases() {
         dispatchIdentity: "service-entry-point-and-role-derived-before-tag-cross-check",
       },
     );
-  return [
+  const cases = [
     {
       id: "all.exact-key-and-type-sets",
       methods: "all-frozen-methods",
       expected: "accept-outer-shape-only",
+    },
+    {
+      id: "submit-approval.request.exact-maximum",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: "registration-id=16-bytes;approval-envelope=512-bytes",
+      expected: {
+        decision: "accept-outer-shape-and-bounded-body-copy",
+        applicationDataBytes: caps.submitApprovalV0Request,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    {
+      id: "request-attempt.request.exact-maximum",
+      method: "RequestAttemptV0",
+      direction: "request",
+      mutation: "registration-id=16-bytes;approval-id=16-bytes",
+      expected: {
+        decision: "accept-outer-shape-and-bounded-body-copy",
+        applicationDataBytes: caps.requestAttemptV0Request,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
     },
     reject(
       "submit.body-cap-plus-one",
@@ -1202,6 +1474,20 @@ function nativeXPCCases() {
       "get.body-cap-plus-one",
       "GetRegisteredPlanV0",
       "registration-id=17-bytes",
+      "SCHEMA",
+      nativeXPCReasonTags.dataWidth,
+    ),
+    reject(
+      "submit-approval.body-cap-plus-one",
+      "SubmitApprovalV0",
+      "approval-envelope=513-bytes",
+      "MALFORMED",
+      nativeXPCReasonTags.dataCap,
+    ),
+    reject(
+      "request-attempt.approval-id-width-plus-one",
+      "RequestAttemptV0",
+      "approval-id=17-bytes",
       "SCHEMA",
       nativeXPCReasonTags.dataWidth,
     ),
@@ -1280,12 +1566,51 @@ function nativeXPCCases() {
         coreCalls: 1,
       },
     },
-    crossServiceTag("SubmitMainMJSV0", "RegisterPlanV0"),
-    crossServiceTag("SubmitMainMJSV0", "GetRegisteredPlanV0"),
-    crossServiceTag("RegisterPlanV0", "SubmitMainMJSV0"),
-    crossServiceTag("RegisterPlanV0", "GetRegisteredPlanV0"),
-    crossServiceTag("GetRegisteredPlanV0", "SubmitMainMJSV0"),
-    crossServiceTag("GetRegisteredPlanV0", "RegisterPlanV0"),
+    reject(
+      "submit-approval.joint-protocol-method-record-version-mismatch",
+      "SubmitApprovalV0",
+      "protocol-version=1;method-version=1;approval-grant.object-version=1",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.protocolVersion,
+      {
+        mismatchSet: "protocol-version,method-version,approval-grant-object-version",
+        selectedFailure: "protocol-version",
+        validationPrecedence: nativeXPCValidationPrecedence,
+      },
+    ),
+    reject(
+      "submit-approval.joint-method-record-version-mismatch",
+      "SubmitApprovalV0",
+      "method-version=1;approval-grant.object-version=1",
+      "UNSUPPORTED",
+      nativeXPCReasonTags.methodVersion,
+      {
+        mismatchSet: "method-version,approval-grant-object-version",
+        selectedFailure: "method-version",
+        validationPrecedence: nativeXPCValidationPrecedence,
+      },
+    ),
+    {
+      id: "submit-approval.embedded-record-version-mismatch",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: "approval-grant.object-version=1-with-valid-test-signature",
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "UNSUPPORTED",
+        statusTag: nativeXPCStatusTags.UNSUPPORTED,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    ...Object.keys(nativeXPCMessageTags)
+      .filter((method) => method !== "invalid")
+      .flatMap((selectedMethod) =>
+        Object.keys(nativeXPCMessageTags)
+          .filter((receivedTag) => receivedTag !== "invalid" && receivedTag !== selectedMethod)
+          .map((receivedTag) => crossServiceTag(selectedMethod, receivedTag)),
+      ),
     reject(
       "all.wrong-service",
       "all",
@@ -1308,6 +1633,18 @@ function nativeXPCCases() {
         deliveryPrecondition:
           "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
         replyDisposition: "delivered-in-band-refusal",
+      },
+    ),
+    reject(
+      "all.wrong-session",
+      "all",
+      "message-derived-euid-or-audit-session=other",
+      "AUTHENTICATION",
+      nativeXPCReasonTags.methodBinding,
+      {
+        deliveryPrecondition:
+          "message-delivered-only-in-passive-model;future-native-peer-session-gate-precedes-body-copy",
+        replyDisposition: "delivered-in-band-refusal-only-for-this-passive-oracle",
       },
     ),
     reject(
@@ -1339,6 +1676,34 @@ function nativeXPCCases() {
       nativeXPCReasonTags.methodBinding,
     ),
     {
+      id: "submit-approval.signed-audience-replaced-by-local-channel-audience",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: `approval-grant.audience=${audience}-with-valid-test-signature`,
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    {
+      id: "submit-approval.signed-purpose-replaced-by-local-channel-purpose",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: `approval-grant.purpose=${methods.submitApprovalV0.purpose}-with-valid-test-signature`,
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    {
       id: "all.request-id-replaced-by-installation-id-bytes",
       method: "all",
       direction: "request",
@@ -1364,6 +1729,51 @@ function nativeXPCCases() {
       expected: {
         decision: "continue-to-registration-lookup-without-transport-authority",
         registrationAuthorityGrantedByWidth: false,
+      },
+    },
+    {
+      id: "submit-approval.registration-id-replaced-by-request-id-bytes",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: "registration-id=request-id-bytes",
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        authorityGrantedByWidth: false,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    {
+      id: "request-attempt.registration-id-replaced-by-approval-id-bytes",
+      method: "RequestAttemptV0",
+      direction: "request",
+      mutation: "registration-id=approval-id-bytes",
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        authorityGrantedByWidth: false,
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+    },
+    {
+      id: "request-attempt.approval-id-replaced-by-registration-id-bytes",
+      method: "RequestAttemptV0",
+      direction: "request",
+      mutation: "approval-id=registration-id-bytes",
+      expected: {
+        decision: "core-refusal-after-bounded-body-copy",
+        classification: "BINDING",
+        statusTag: nativeXPCStatusTags.BINDING,
+        reasonTag: nativeXPCReasonTags.coreRefusal,
+        authorityGrantedByWidth: false,
+        bodyCopied: true,
+        coreCalls: 1,
       },
     },
     reject(
@@ -1455,7 +1865,75 @@ function nativeXPCCases() {
         reasonTag: nativeXPCReasonTags.localIntegrityFault,
       },
     },
+    {
+      id: "submit-approval.cancel-before-dispatch",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: "caller-cancel-before-bridge-dispatch",
+      expected: {
+        decision: "no-core-call-no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+        authorityStateChanged: false,
+      },
+      noState: zeroState,
+    },
+    {
+      id: "submit-approval.cancel-after-dispatch",
+      method: "SubmitApprovalV0",
+      direction: "request",
+      mutation: "caller-cancel-after-bridge-dispatch",
+      expected: {
+        decision: "response-delivery-cancelled-store-semantic-result-controls",
+        bodyCopied: true,
+        coreCalls: 1,
+        retryIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+      },
+    },
+    {
+      id: "request-attempt.cancel-before-dispatch",
+      method: "RequestAttemptV0",
+      direction: "request",
+      mutation: "caller-cancel-before-bridge-dispatch",
+      expected: {
+        decision: "no-core-call-no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+        authorityStateChanged: false,
+      },
+      noState: zeroState,
+    },
+    {
+      id: "request-attempt.cancel-after-dispatch",
+      method: "RequestAttemptV0",
+      direction: "request",
+      mutation: "caller-cancel-after-bridge-dispatch",
+      expected: {
+        decision: "response-delivery-cancelled-store-semantic-result-controls",
+        bodyCopied: true,
+        coreCalls: 1,
+        retryIdentity: "registration-id+approval-reference",
+      },
+    },
   ];
+  return cases;
+}
+
+function nativeXPCCaseTableEntry(candidate) {
+  const caseExpected =
+    typeof candidate.expected === "string" ? { decision: candidate.expected } : candidate.expected;
+  return {
+    id: candidate.id,
+    method: candidate.method ?? candidate.methods,
+    direction: candidate.direction ?? null,
+    mutation: candidate.mutation ?? null,
+    decision: caseExpected.decision,
+    classification: caseExpected.classification ?? null,
+    statusTag: caseExpected.statusTag ?? null,
+    reasonTag: caseExpected.reasonTag ?? null,
+    bodyCopied: caseExpected.bodyCopied ?? null,
+    coreCalls: caseExpected.coreCalls ?? null,
+  };
 }
 
 async function repositoryFixture(path) {
@@ -1468,7 +1946,12 @@ function reference(path, bytes) {
 }
 
 function jsonBytes(value) {
-  return Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
+  const json = JSON.stringify(value, null, 2).replace(
+    /"allowedUInt64": \[\n\s+([0-9]+)(?:,\n\s+([0-9]+))?(?:,\n\s+([0-9]+))?\n\s+\]/g,
+    (_match, first, second, third) =>
+      `"allowedUInt64": [${[first, second, third].filter((item) => item !== undefined).join(", ")}]`,
+  );
+  return Buffer.from(`${json}\n`);
 }
 
 function repeatedHex(value, length) {

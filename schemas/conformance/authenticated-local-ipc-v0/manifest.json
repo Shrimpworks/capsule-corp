@@ -12,7 +12,19 @@
     "invalid": 0,
     "SubmitMainMJSV0": 1,
     "RegisterPlanV0": 2,
-    "GetRegisteredPlanV0": 3
+    "GetRegisteredPlanV0": 3,
+    "SubmitApprovalV0": 4,
+    "RequestAttemptV0": 5
+  },
+  "numericApprovalStateTags": {
+    "invalid": 0,
+    "usable": 1,
+    "consumed": 2,
+    "invalidated": 3
+  },
+  "numericAttemptStateTags": {
+    "invalid": 0,
+    "created": 1
   },
   "numericStatusTags": {
     "OK": 0,
@@ -55,24 +67,29 @@
     "sourceManifest": 95,
     "source": 262144,
     "planRegistration": 4096,
+    "approvalEnvelope": 512,
     "registerPlanV0Request": 328337,
     "registerPlanV0Reply": 4096,
     "getRegisteredPlanV0Request": 16,
     "getRegisteredPlanV0Reply": 332433,
     "submitMainMJSV0Request": 2097152,
-    "submitMainMJSV0Reply": 16
+    "submitMainMJSV0Reply": 16,
+    "submitApprovalV0Request": 528,
+    "submitApprovalV0Reply": 16,
+    "requestAttemptV0Request": 32,
+    "requestAttemptV0Reply": 16
   },
-  "methodCount": 3,
+  "methodCount": 5,
   "refusalCaseCount": 37,
-  "maximumCaseCount": 12,
-  "nativeXPCEnvelopeCount": 9,
-  "nativeXPCCaseCount": 39,
+  "maximumCaseCount": 18,
+  "nativeXPCEnvelopeCount": 15,
+  "nativeXPCCaseCount": 70,
   "nativeXPCRefusalReplyCount": 13,
   "knownAnswers": {
     "native-xpc-v0.contract.json": {
       "path": "native-xpc-v0.contract.json",
-      "byteLength": 47686,
-      "sha256": "c35c4a2d077602a19fc754de0e79a7b9158aa5c9ea50a8aa2256c966405bba4c"
+      "byteLength": 108811,
+      "sha256": "6374afb534d537513f2fcc1e7ceecea0dc8a7171392c4fa363f95bbac391b122"
     },
     "submit-main-mjs-v0.method.json": {
       "path": "submit-main-mjs-v0.method.json",
@@ -121,8 +138,8 @@
     },
     "oracles.json": {
       "path": "oracles.json",
-      "byteLength": 32779,
-      "sha256": "1b520bfce0d343b2d2bbc7d7ff5a473b74b0a25b510da7c62ab881ef4ddec14a"
+      "byteLength": 38398,
+      "sha256": "aa9fc8b7d830407a9e32285fa2fd65ce78f3e2cbd8e57bc775e82dd0514a39c1"
     }
   },
   "bodyFixtures": {
@@ -155,6 +172,11 @@
       "path": "schemas/conformance/authority-plane-v0/main.mjs",
       "byteLength": 50,
       "sha256": "681f39365de1369ee486fa34e88b993c60df5a835006b65e0d8916df717c31cc"
+    },
+    "approvalEnvelopeBytes": {
+      "path": "schemas/conformance/v0/approval-grant/ordinary.cose",
+      "byteLength": 375,
+      "sha256": "fb0a9e7c983f6f3986260dce857edf6b18cba99ee386f9532300dbdc31a5a3bd"
     }
   }
 }

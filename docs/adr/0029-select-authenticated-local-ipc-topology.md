@@ -177,8 +177,8 @@ ID history is consulted.
 
 The logical method bodies and successful replies are selected below. `RegisterPlanV0` and
 `GetRegisteredPlanV0` have exact passive fixtures. `SubmitApprovalV0` and `RequestAttemptV0`
-retain these logical shapes, but their native tags, dictionaries, case-derived caps, deadlines,
-and refusal fixtures remain `BLOCKED` on the passive C4 slice:
+retain these logical shapes. The passive C4 successor now freezes their native tags, dictionaries,
+case-derived caps, deadlines, and refusal fixtures without activating a consumer:
 
 | Call | Request body owned by caller, copied before Go decode | Successful reply |
 | --- | --- | --- |
@@ -221,8 +221,9 @@ a local integrity fault.
 
 The exact application-visible aggregate request-data caps are 328,337 bytes for
 `RegisterPlanV0` and 16 for `GetRegisteredPlanV0`, excluding the fixed common header whose fields
-have the widths above. The 528-byte `SubmitApprovalV0` and 32-byte `RequestAttemptV0` arithmetic
-remains a candidate until C4 derives and verifies the complete native envelopes. The
+have the widths above. The C4 generator and independent verifier reproduce the exact 528-byte
+`SubmitApprovalV0` and 32-byte `RequestAttemptV0` request maxima from their complete native
+envelopes. The
 `GetRegisteredPlanV0` successful reply-data cap is 332,433 bytes. The revised registration/fetch
 caps come from the complete ADR-0034 field-authority projection: 65,536 plan bytes, 562 binding
 bytes, at most 95 canonical manifest bytes, 262,144 source bytes, and—on fetch—at most 4,096
@@ -240,8 +241,8 @@ returns `CAPACITY` after authentication and outer-header validation and before b
 state change.
 
 Supervisor-owned method deadlines start at admission: two seconds for `GetRegisteredPlanV0` and
-five seconds for `RegisterPlanV0`. The five-second values for `SubmitApprovalV0` and
-`RequestAttemptV0` remain candidates until C4 freezes their case-derived deadlines. Clients cannot
+five seconds for `RegisterPlanV0`. C4 freezes five-second admission-start deadlines for
+`SubmitApprovalV0` and `RequestAttemptV0` in exact generated cases. Clients cannot
 extend a frozen deadline. Disconnect or cancellation before
 bridge dispatch makes no Go call. After dispatch, client cancellation is only response
 cancellation: it cannot decide whether a durable operation committed. The Supervisor completes the
@@ -301,11 +302,11 @@ path, or caller-selected recovery action. A missing lifecycle record remains wor
 
 ### Refusal classes and no-state rule
 
-Wrong OS peer requirements are dropped by XPC and receive no application reply. For the three
-currently frozen native methods, the S3 native contract owns the exact numeric status/reason tags,
-validation precedence, cross-service/tag handling, and no-reply integrity faults. C4 must extend
-that model for `SubmitApprovalV0` and `RequestAttemptV0` without renumbering or reinterpreting the
-existing methods. The table below remains the logical core-classification guide rather than a
+Wrong OS peer requirements are dropped by XPC and receive no application reply. The S3 contract
+and C4 successor own the exact numeric status/reason/state tags, validation precedence,
+cross-service/tag handling, and no-reply integrity faults for all five methods. C4 adds tags 4/5
+without renumbering or reinterpreting the existing methods. The table below remains the logical
+core-classification guide rather than a
 competing transport mapping:
 
 | First refusal boundary | Classification |
@@ -397,8 +398,9 @@ for safe response-loss recovery.
 The [S0 decision review](../AUTHENTICATED_LOCAL_IPC_ADR_0029_S0_REVIEW.md) accepts this topology
 without claiming platform enforcement or product activation. The existing three-method S3 native
 contract may proceed to its separately authorized controlled harness after the native-XPC research
-brief. `SubmitApprovalV0` and `RequestAttemptV0` still require the passive C4 contract before
-installed use. Consumer activation remains blocked on the applicable harness and installed
+brief. `SubmitApprovalV0` and `RequestAttemptV0` now have their passive C4 contract, but installed
+use and the independent CL4 re-audit remain blocked/deferred. Consumer activation remains blocked
+on the applicable harness and installed
 identity/session/update evidence, the selected owner lock and protected state, production approval
 verification and key authorization, update/repair integration, and all existing runtime/backend/
 content/evidence gates.

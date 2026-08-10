@@ -664,8 +664,16 @@ security-control evidence, profile validation, or product admission. Integration
 exact commits and digests and verify ancestry rather than trust a branch name.
 
 Accepted ADR-0029 selects an IPC topology but does not implement or validate its native bridge,
-installed endpoints, peer identities, or production transport. Passive S3 freezes three methods;
-`SubmitApprovalV0` and `RequestAttemptV0` remain blocked. Archive mutation/growth through F5 is
+installed endpoints, peer identities, or production transport. Passive S3 freezes its original
+three-method scope, and the C4 successor extends the current generated contract to
+`SubmitApprovalV0` and `RequestAttemptV0` without renumbering tags 1-3. The retained C4 evidence
+freezes tags 4/5, exact dictionaries and numeric state tags, mechanically reproduced 528/32-byte
+request maxima, 5,000 ms admission deadlines, all 20 ordered foreign-tag collisions, role/session,
+local-versus-signed purpose/audience, same-width ID, smuggled-object, cap/release/re-admission,
+cancellation, no-reply integrity, semantic replay, and the exact five-entry response-loss table.
+The generator drift check, independent Node verifier, and Go model/tests agree. This is `PASSED`
+only for passive no-listener conformance; the independent CL4 re-audit is deferred and activation
+remains `BLOCKED`. Archive mutation/growth through F5 is
 `PASSED` in the fixed-store oracle; F6 execution, production-engine selection, production
 COSE/Keychain/user-presence signing, consumer ownership, evidence composition, and public cutover
 remain separate. The authority/lifecycle snapshot lacks real

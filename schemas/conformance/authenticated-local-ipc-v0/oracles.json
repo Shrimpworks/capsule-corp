@@ -1301,6 +1301,38 @@
       "admittedSlotHeldUntilCoreReturns": true
     },
     {
+      "id": "submit-approval.deadline-after-dispatch-commit",
+      "method": "SubmitApprovalV0",
+      "disposition": "deadline-cancels-response-delivery-only",
+      "coreCalls": 1,
+      "replyDisposition": "no-application-reply-on-expired-call",
+      "statusTag": null,
+      "reasonTag": null,
+      "postCoreState": {
+        "durableAuthority": "approval-commit-remains-authoritative",
+        "replayIdentity": "canonical-approval-payload+resolved-signer-authorization-identity",
+        "replayResult": "same-approval-id-and-current-state",
+        "newRefusalAllowed": false
+      },
+      "noState": null
+    },
+    {
+      "id": "request-attempt.deadline-after-dispatch-commit",
+      "method": "RequestAttemptV0",
+      "disposition": "deadline-cancels-response-delivery-only",
+      "coreCalls": 1,
+      "replyDisposition": "no-application-reply-on-expired-call",
+      "statusTag": null,
+      "reasonTag": null,
+      "postCoreState": {
+        "durableAuthority": "attempt-commit-remains-authoritative",
+        "replayIdentity": "registration-id+approval-reference",
+        "replayResult": "same-attempt-id-and-current-state",
+        "newRefusalAllowed": false
+      },
+      "noState": null
+    },
+    {
       "id": "downstream.stall",
       "disposition": "method-deadline-after-dispatch-response-unknown",
       "newWorkOnSameConnection": "CAPACITY",

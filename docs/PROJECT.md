@@ -59,9 +59,11 @@ authority-plane cutover now atomically retains the exact plan, complete bindings
 source and fetches them by `RegistrationID`; it is an unwired fixed-store oracle, not a product
 path. Accepted ADR-0044 now selects exactly one bounded private-XPC internal-alpha CLI submission
 candidate and its passive logical envelope/aggregate-flow contract is `PASSED`. S3 retains its
-`PASSED` three-method passive contract. PR #247 merged the C4 approval/attempt candidate, but the
-completed CL4 audit has disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED`
-pending focused deadline-boundary and independent-verifier hardening. No listener, signing,
+`PASSED` three-method passive contract. PR #247 merged the C4 approval/attempt candidate and PR
+#248 is the canonical predecessor for its completed CL4 audit. CL4 remains `PASSED` with historical
+disposition `AMEND`; the focused follow-up now closes its explicit 4,999/5,000/5,001-ms boundary,
+complete-map, all-field, `noState`, refusal, replay, cancellation, and response-loss evidence gaps.
+The exact passive/no-listener C4 evidence claim is `PASSED`. No listener, signing,
 peer-authentication, installed inventory, protected state, or
 consumer is active. No connected product path yet carries submitted `main.mjs` through authenticated
 registration, Broker rendering/signing, approval verification, attempt creation, real lifecycle

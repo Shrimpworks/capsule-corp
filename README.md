@@ -136,6 +136,12 @@ The repository contains specifications and buildable scaffolding. It does not st
 Current schemas/types remain canonical for current tests but are explicitly not the intended final
 v0 protocol; see [Schema status](schemas/README.md).
 
+The exact passive/no-listener C4 authenticated-local-IPC evidence claim is `PASSED`: PR #248 is
+the canonical predecessor and the focused follow-up closes its 4,999/5,000/5,001-ms deadline,
+complete closed-dictionary/map, refusal, replay, cancellation, response-loss, and mutation-proof
+findings. CL4 remains `PASSED` with historical disposition `AMEND`, now closed. Installed IPC,
+signing, consumers, runtime/profile admission, and product admission remain `BLOCKED`.
+
 The ordered path is now:
 
 1. Reconcile the completed spike evidence and freeze backend-independent contracts.

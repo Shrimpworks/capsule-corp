@@ -88,8 +88,8 @@
   "knownAnswers": {
     "native-xpc-v0.contract.json": {
       "path": "native-xpc-v0.contract.json",
-      "byteLength": 108811,
-      "sha256": "6374afb534d537513f2fcc1e7ceecea0dc8a7171392c4fa363f95bbac391b122"
+      "byteLength": 154210,
+      "sha256": "bfa35a6e98cc9b46ff7ef815f3c8f0ca9027ec8f98faff3970970d0f4718330d"
     },
     "submit-main-mjs-v0.method.json": {
       "path": "submit-main-mjs-v0.method.json",
@@ -138,8 +138,8 @@
     },
     "oracles.json": {
       "path": "oracles.json",
-      "byteLength": 38398,
-      "sha256": "aa9fc8b7d830407a9e32285fa2fd65ce78f3e2cbd8e57bc775e82dd0514a39c1"
+      "byteLength": 39625,
+      "sha256": "254ec5da9db2f3e0b590a3119d21abc958feb8d607eddb8deca2831b6d168b38"
     }
   },
   "bodyFixtures": {

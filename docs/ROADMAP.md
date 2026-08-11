@@ -231,10 +231,12 @@ protected-root evidence.
 Accepted ADR-0029 selects the authenticated local IPC process/language topology and four-call
 surface. Passive logical fixtures and the exact S3/C4 native dictionary contract now cover all five
 transport methods, including `SubmitApprovalV0` and `RequestAttemptV0`, without activating
-transport. S3 remains `PASSED`; PR #247 merged the C4 candidate, but the completed `PASSED` CL4
-audit has disposition `AMEND`, so the current C4 passive evidence claim is `BLOCKED` pending its
-separate focused deadline-boundary and independent-verifier hardening PR. CL4 found no runtime
-authority bypass and has no ADR impact. The native harness, installed endpoints, production
+transport. S3 remains `PASSED`; PR #247 merged the C4 candidate and PR #248 is its canonical
+audit/reconciliation predecessor. CL4 remains `PASSED` with historical disposition `AMEND` and
+found no runtime authority bypass. The focused follow-up closes the explicit before/at/after
+5,000-ms boundary plus complete-map, all-field, `noState`, refusal, cancellation, replay, and
+response-loss verifier gaps, so the exact passive/no-listener C4 evidence claim is `PASSED`.
+There is no ADR impact. The native harness, installed endpoints, production
 identities, consumers, and platform evidence remain unimplemented. The public-key approval verifier, fixed-store F2-F5
 archive oracle, and passive durable completion-last transaction are retained; live approval
 signing, production-engine selection, evidence composition, consumers, and atomic public migration

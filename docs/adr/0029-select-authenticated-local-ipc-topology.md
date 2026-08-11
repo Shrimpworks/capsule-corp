@@ -242,8 +242,10 @@ state change.
 
 Supervisor-owned method deadlines start at admission: two seconds for `GetRegisteredPlanV0` and
 five seconds for `RegisterPlanV0`. C4 freezes five-second admission-start deadlines for
-`SubmitApprovalV0` and `RequestAttemptV0` in exact generated cases. Clients cannot
-extend a frozen deadline. Disconnect or cancellation before
+`SubmitApprovalV0` and `RequestAttemptV0` in exact generated cases. Dispatch is allowed only while
+elapsed admission time is strictly less than 5,000 milliseconds; equality and later values expire
+before dispatch with no core call or application reply. Clients cannot extend a frozen deadline.
+Disconnect or cancellation before
 bridge dispatch makes no Go call. After dispatch, client cancellation is only response
 cancellation: it cannot decide whether a durable operation committed. The Supervisor completes the
 current determinate store operation or enters the existing recovery fence for an indeterminate
@@ -399,10 +401,11 @@ The [S0 decision review](../AUTHENTICATED_LOCAL_IPC_ADR_0029_S0_REVIEW.md) accep
 without claiming platform enforcement or product activation. The existing three-method S3 native
 contract may proceed to its separately authorized controlled harness after the native-XPC research
 brief. PR #247 merged the passive C4 candidate for `SubmitApprovalV0` and `RequestAttemptV0`.
-The independent CL4 audit is `PASSED` with disposition `AMEND` and found no runtime authority
-bypass, but the current C4 evidence claim is `BLOCKED` pending its separate focused hardening PR.
-Consumer activation remains blocked
-on the applicable harness and installed
+The independent CL4 audit is `PASSED` with historical disposition `AMEND` and found no runtime
+authority bypass. PR #248 is the canonical predecessor; the focused follow-up closes its exact
+deadline-boundary, complete-map, every-field, `noState`, cancellation, refusal, replay, and
+response-loss evidence findings. The passive/no-listener C4 evidence claim is now `PASSED`.
+Consumer activation remains `BLOCKED` on the applicable harness and installed
 identity/session/update evidence, the selected owner lock and protected state, production approval
 verification and key authorization, update/repair integration, and all existing runtime/backend/
 content/evidence gates.

@@ -4,8 +4,9 @@ Date: 2026-08-07
 
 C4 successor: 2026-08-10. This review preserves the pre-C4 decision state. PR #247 merged the
 [passive C4 candidate](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md) for the two method-value gaps
-without changing this topology decision. The later CL4 audit is `PASSED` with disposition `AMEND`,
-so the current C4 evidence claim is `BLOCKED` pending focused hardening.
+without changing this topology decision. The later CL4 audit is `PASSED` with historical
+disposition `AMEND`; PR #248 is the canonical predecessor and the focused hardening follow-up is
+closed, so the exact passive/no-listener C4 evidence claim is `PASSED`.
 
 Status: `PASSED`
 
@@ -143,5 +144,5 @@ recovery topology remains consistent with the current repository mechanics and a
 posture. Confidence in exact platform enforcement remains intentionally unset until the R1 brief
 and separately authorized S3 harness complete. Exact `SubmitApprovalV0` and `RequestAttemptV0`
 transport values were unset at review time; PR #247 records the passive candidate values, while the
-current C4 evidence claim remains `BLOCKED` on its separate focused hardening PR. Installed platform
-enforcement remains unset.
+focused follow-up closes the exact C4 evidence gaps and the passive/no-listener claim is `PASSED`.
+Installed platform enforcement remains unset.

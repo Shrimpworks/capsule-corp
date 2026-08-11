@@ -2,8 +2,7 @@
 
 Date: 2026-08-10
 
-Work item: reconcile the merged C4/C5a repository state, retain the canonical R3 Broker
-live-signing research, and define the next dependency-ordered work.
+Work item: close the CL4 `AMEND` findings for the exact passive/no-listener C4 evidence claim.
 
 Status: `PASSED` for this planning and documentation scope.
 
@@ -17,12 +16,12 @@ experiment is not an activated product path.
 
 ## Reconciled baseline
 
-This reconciliation started from fetched `origin/main` commit
-`ed4220fe16d1752a75c67da957a25681d79e34f3`, which includes C5a merge PR #246 and C4 merge PR
-#247. The earlier merged-state reconciliation remains historical context. The later CL4 audit is
-`PASSED` with disposition `AMEND`: it found no runtime authority bypass, but the current C4 passive
-evidence claim is `BLOCKED` pending a separate focused evidence-hardening PR. C4, C5a, R3, and CL4
-change no runtime, governed-profile, installed, or product bytes.
+This closure started from fetched `origin/main` commit
+`133669ba4b61b4e09baddfd6f7bb0a922ca49c8a`, merge PR #248. PR #248 is the canonical predecessor
+that retained R3, CL4's `PASSED` audit and historical `AMEND` disposition, and the focused C4
+implementation dependency. The follow-up now closes the exact boundary and independent-verifier
+findings, so the passive/no-listener C4 evidence claim is `PASSED`. C4, C5a, R3, and CL4 change no
+runtime, governed-profile, installed, or product bytes.
 
 Today closed or retained these exact slices:
 
@@ -57,7 +56,7 @@ ADR-0029 decision review + native XPC research -> S3 harness --+-> installed aut
                                                                │
 ADR-0045 E1 identity separation -> key/service/root corpus -----+
                                                                │
-C4 passive approval/attempt evidence (BLOCKED on focused hardening) + R3 passive research (PASSED)
+C4 passive approval/attempt evidence (PASSED) + R3 passive research (PASSED)
                                           -> disposable installed signing harness (BLOCKED) ---┐
 installed authenticated IPC boundary (BLOCKED) ----------------------------------------------+-> product Broker/approval/attempt wiring
                                                                                               -> protected one-attempt path
@@ -88,12 +87,12 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C1 | Publish the raw v10-v27 harness, reports, manifests, and receipts to `Shrimpworks/capsule-experiments` | `BLOCKED` | Requires access to the owner-controlled disposable experiment workspace. Publish one verified immutable archive commit, then replace local-only evidence pointers with exact links. No new execution or broader claim. |
 | C2 | Run the one-time native XPC S3 harness | `BLOCKED` | CL1 and R1 are `PASSED`; execution still requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owned Mac, exact fixture digest, disposable process/service names, and defensive no-product scope. Retain OS pre-delivery peer refusal, message-derived identity, EUID/session, copy, cap, deadline, interruption, response-loss, and process-fault evidence. |
 | C3 | Run ADR-0045 E1 Supervisor-authority-epoch identity separation | `BLOCKED` | Requires explicit Apple Development authorization for the named Team-`3DDR84M4JS` profiles and owned disposable containers. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. |
-| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `BLOCKED` | PR #247 merged the passive five-method candidate, but the `PASSED` CL4 audit disposition is `AMEND`. A separate focused evidence-hardening PR must generate explicit before/at/after 5,000-ms cases with exact-at-boundary behavior and strengthen independent Go/Node complete-dictionary, closed-map, all-field, required-`noState`, cancellation/deadline, and refusal-table checks. No runtime authority bypass was found; no listener, signer, store consumer, process, or guest is active. |
+| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | PR #248 is the canonical predecessor. The focused follow-up freezes ordered 4,999/5,000/5,001-ms cases for both methods, equality-as-expired behavior, complete closed dictionaries/maps, every ordered field, required `noState`, cancellation/deadline commit truth, all 20 foreign-tag collisions, complete refusal and five-entry response-loss tables, and bounded Go/Node mutation proofs. No listener, signer, store consumer, process, or guest is active. |
 | C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5a and separate authorization naming the exact runtime/profile successor and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
 | C6b1 | Run the disposable installed Broker signing evidence harness | `BLOCKED` | R3 is `PASSED`; execution still requires separate authorization naming the owned Mac, exact development-signed Broker test target/profile/access group, disposable user/container, immutable fixture digest, permitted Keychain mutations, and every destructive row. No product consumer, runtime, backend, VM, or guest. |
-| C6b2 | Connect the product Broker and approval/attempt methods | `BLOCKED` | Requires the focused C4 evidence-hardening follow-up to pass, plus C6a and C6b1. Implement native rendering/UI, installed signing/public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. Research alone cannot satisfy either installed dependency. |
+| C6b2 | Connect the product Broker and approval/attempt methods | `BLOCKED` | C4 is now `PASSED`; C6a and C6b1 remain required. Implement native rendering/UI, installed signing/public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. Research and passive conformance cannot satisfy either installed dependency. |
 | C6c | Wire attempt admission and the fixed-store stop policy | `BLOCKED` | Requires C6b2 and an explicit decision for p95 provenance/window/lifetime and any persistent timing-trip semantics. Apply the re-evaluated guard transaction-locally after owner/full verification and before a new consume/create mutation; replay of an existing `AttemptID` converges first. |
 | C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
 | C7 | Review one exact runtime/profile candidate for admission | `BLOCKED` | Requires C6d. Produce an explicit admit-or-refuse result over the exact candidate and retained evidence; controlled v19/v27 experiments alone cannot admit it. |
@@ -116,7 +115,7 @@ service, use credentials, run a guest, or turn a review into an architecture dec
 | CL1 — ADR-0029 S0 decision review | `PASSED` | The retained review accepts the two Supervisor services/four calls plus ADR-0044's separate CLI call, authentication-before-copy, no opcode bus, Go authority ownership, and `AttemptID`-only recovery; it reconciles S3/C4 ordering, refusal ownership, transport candidates, and the ADR-0040 fixed-store exception. |
 | CL2 — Issue #216 ratchet packet | Packet `PASSED`; execution `BLOCKED` on assignment | Fixed complexity thresholds, narrow function/path-specific exemptions, owner/removal conditions, and preservation rules for intentionally linear protocol validators. |
 | CL3 — Issue #217 package documentation batch | Packet `PASSED`; execution `BLOCKED` on assignment | One package at a time, starting with authority-bearing `registrationstate` exports. Document purpose, provenance/authority, caller obligations, and passive/product limitations without API changes. |
-| CL4 — IPC refusal-matrix review | `PASSED`; disposition `AMEND` | The independent read-only audit found no runtime authority bypass. It blocks the current C4 passive evidence claim until a separate focused implementation PR adds explicit before/at/after 5,000-ms cases and independently verifies complete dictionaries, closed maps, every case field, required `noState` entries, cancellation/deadline oracles, and refusal-table completeness. CL4 itself is complete; its follow-up is not. |
+| CL4 — IPC refusal-matrix review | `PASSED`; historical disposition `AMEND`; follow-up closed | The independent read-only audit found no runtime authority bypass. This focused implementation closes its before/at/after 5,000-ms, complete-dictionary/map, every-field, required-`noState`, cancellation/deadline, refusal, replay, response-loss, and mutation-proof findings. CL4 remains historically `AMEND`; the exact passive C4 claim is now `PASSED`. |
 
 ## Deep research tasks for ChatGPT
 
@@ -143,10 +142,9 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-The next orchestration checkpoint should collect this passed R3 canonicalization and dispatch the
-separate focused C4 evidence-hardening implementation PR required by the `PASSED` CL4 audit's
-`AMEND` disposition. C5a, CL1, CL4, R1, R2, and R3 are `PASSED` in their exact scopes; the current
-C4 passive evidence claim remains `BLOCKED` until that follow-up passes.
+The next orchestration checkpoint should collect this focused C4 implementation closure. C4, C5a,
+CL1, CL4, R1, R2, and R3 are `PASSED` in their exact scopes. CL4 retains historical disposition
+`AMEND`, now closed by this follow-up.
 The owner may authorize C1 and C3 independently when their exact workspace, identity, and host
 boundaries are available. C2's CL1/R1 prerequisites are closed, but its exact fixture/host
 authorization remains mandatory. The disposable C6b1 Broker signing harness remains independently

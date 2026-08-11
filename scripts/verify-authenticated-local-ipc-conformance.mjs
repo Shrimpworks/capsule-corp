@@ -318,8 +318,13 @@ for (const refusalReply of nativeXPC.refusalReplies) {
 }
 for (const candidate of nativeXPC.cases.filter((entry) => entry.noState)) {
   assertZeroState(candidate.noState, candidate.id);
-  assert.equal(candidate.expected.bodyCopied, false, candidate.id);
-  assert.equal(candidate.expected.coreCalls, 0, candidate.id);
+  if (candidate.id === "all.exact-key-and-type-sets") {
+    assert.equal(candidate.expected.bodyCopied, null, candidate.id);
+    assert.equal(candidate.expected.coreCalls, null, candidate.id);
+  } else {
+    assert.equal(candidate.expected.bodyCopied, false, candidate.id);
+    assert.equal(candidate.expected.coreCalls, 0, candidate.id);
+  }
 }
 assert.deepEqual(nativeXPC.caseTable, expectedNativeXPCCaseTable(nativeXPC));
 assert.deepEqual(nativeXPC.cases.map(caseTableEntry), nativeXPC.caseTable);
@@ -358,22 +363,11 @@ assert.deepEqual(nativeXPC.responseLoss, [
     requestIdIsIdempotencyKey: false,
   },
 ]);
-assert.deepEqual(nativeXPC.deadlineCases, [
-  {
-    method: "SubmitApprovalV0",
-    deadlineMilliseconds: 5_000,
-    startsAt: "admission",
-    clientExtensionAllowed: false,
-    afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
-  },
-  {
-    method: "RequestAttemptV0",
-    deadlineMilliseconds: 5_000,
-    startsAt: "admission",
-    clientExtensionAllowed: false,
-    afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
-  },
-]);
+assert.equal(
+  nativeXPC.deadlineBoundaryRule,
+  "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+);
+assert.deepEqual(nativeXPC.deadlineCases, expectedDeadlineCases());
 assert.deepEqual(nativeXPC.futureNativeHarnessOracles, [
   {
     id: "os-peer-requirement-mismatch",
@@ -518,6 +512,8 @@ assert.equal(oracles.responseLoss[1].bothRegistrationsSeparatelyReadable, true);
 assert.equal(oracles.responseLoss[2].requestIdIsIdempotencyKey, false);
 assert.equal(oracles.responseLoss[2].repeatedReplyBodyByteEqual, true);
 assert.deepEqual(oracles.responseLoss.slice(3), nativeXPC.responseLoss.slice(3));
+verifyHardenedNativeXPC(nativeXPC, oracles);
+runHardenedMutationProofs(nativeXPC, oracles);
 
 const combined = JSON.stringify({
   manifest,
@@ -537,9 +533,7 @@ assert.equal(combined.includes("GetRegisteredPlanV1"), false);
 assert.equal(combined.includes("typescript"), false);
 assert.equal(combined.includes("626-byte"), false);
 
-process.stdout.write(
-  "verified independent TypeScript passive authenticated-local-IPC known answers\n",
-);
+process.stdout.write("verified independent Node passive authenticated-local-IPC known answers\n");
 
 function expectedNativeXPCCaseTable(contract) {
   const status = contract.statusTags;
@@ -948,12 +942,60 @@ function expectedNativeXPCCaseTable(contract) {
       1,
     ),
   );
-  return result;
+  return result.map((entry) => ({ ...entry, ...expectedNativeXPCCaseControls(entry) }));
+}
+
+function expectedNativeXPCCaseControls(entry) {
+  let replyDisposition = "core-semantic-reply";
+  if (
+    entry.decision === "reject-before-body-copy" ||
+    entry.decision === "core-refusal-after-bounded-body-copy"
+  )
+    replyDisposition = "application-refusal-reply";
+  else if (entry.decision === "reject-reply") replyDisposition = "received-reply-rejected";
+  else if (
+    entry.decision === "terminate-without-reply" ||
+    entry.decision === "no-core-call-no-application-reply" ||
+    entry.decision === "response-delivery-cancelled-store-semantic-result-controls"
+  )
+    replyDisposition = "no-application-reply";
+  else if (entry.id === "all.exact-key-and-type-sets")
+    replyDisposition = "not-applicable-passive-shape-check";
+  if (["all.wrong-service", "all.wrong-role"].includes(entry.id))
+    replyDisposition = "delivered-in-band-refusal";
+  if (entry.id === "all.wrong-session")
+    replyDisposition = "delivered-in-band-refusal-only-for-this-passive-oracle";
+
+  let postCoreState = null;
+  if (entry.decision === "core-refusal-after-bounded-body-copy")
+    postCoreState = "core-refusal-no-authority-effect";
+  else if (
+    entry.decision === "response-delivery-cancelled-store-semantic-result-controls" ||
+    entry.decision === "terminate-without-reply"
+  )
+    postCoreState = "store-semantic-result-or-recovery-fence-controls";
+  else if (
+    entry.coreCalls === 1 ||
+    entry.id === "all.request-id-replaced-by-installation-id-bytes" ||
+    entry.id === "get.registration-id-replaced-by-request-id-bytes"
+  )
+    postCoreState = "core-semantic-result-controls";
+
+  const requiresNoState =
+    entry.decision === "reject-before-body-copy" ||
+    entry.decision === "no-core-call-no-application-reply" ||
+    entry.decision === "accept-outer-shape-only";
+  return {
+    replyDisposition,
+    terminationDisposition:
+      entry.decision === "terminate-without-reply" ? "terminate-process" : "continue-process",
+    noState: requiresNoState ? zeroStateValue() : null,
+    postCoreState,
+  };
 }
 
 function caseTableEntry(candidate) {
-  const expected =
-    typeof candidate.expected === "string" ? { decision: candidate.expected } : candidate.expected;
+  const expected = candidate.expected;
   return {
     id: candidate.id,
     method: candidate.method ?? candidate.methods,
@@ -965,6 +1007,10 @@ function caseTableEntry(candidate) {
     reasonTag: expected.reasonTag ?? null,
     bodyCopied: expected.bodyCopied ?? null,
     coreCalls: expected.coreCalls ?? null,
+    replyDisposition: candidate.replyDisposition,
+    terminationDisposition: candidate.terminationDisposition,
+    noState: candidate.noState,
+    postCoreState: candidate.postCoreState,
   };
 }
 
@@ -995,4 +1041,1207 @@ function assertZeroState(value, label) {
     },
     label,
   );
+}
+
+function verifyHardenedNativeXPC(contract, oracleSet) {
+  assertExactKeys(
+    contract,
+    [
+      "objectType",
+      "objectVersion",
+      "status",
+      "transportEncoding",
+      "transportEncodingVersion",
+      "fixtureSerialization",
+      "topLevelObjectType",
+      "valueTypes",
+      "keys",
+      "messageTags",
+      "approvalStateTags",
+      "attemptStateTags",
+      "statusTags",
+      "reasonTags",
+      "classificationToStatus",
+      "structuralReasonToStatus",
+      "coreRefusalMapping",
+      "localIntegrityMapping",
+      "methodBindings",
+      "signedObjectBindings",
+      "identifierDomains",
+      "requestCommonKeyCount",
+      "replyCommonKeyCount",
+      "extraObjectsAllowed",
+      "fileDescriptorsAllowed",
+      "endpointsAllowed",
+      "machRightsAllowed",
+      "nestedContainersAllowed",
+      "messageTagDisposition",
+      "validationPrecedence",
+      "requestIdDisposition",
+      "copyDisposition",
+      "localIntegrityDisposition",
+      "envelopes",
+      "cases",
+      "caseTable",
+      "refusalReplies",
+      "responseLoss",
+      "deadlineBoundaryRule",
+      "deadlineCases",
+      "futureNativeHarnessOracles",
+      "peerAuthenticationEvidence",
+      "listenerActivated",
+      "serviceRegistered",
+    ],
+    "native XPC contract",
+  );
+  assert.deepEqual(contract.valueTypes, {
+    uint64: "XPC_TYPE_UINT64",
+    data: "XPC_TYPE_DATA",
+    string: "XPC_TYPE_STRING",
+  });
+  assert.deepEqual(contract.keys, {
+    protocolVersion: "capsule.protocol-version",
+    methodVersion: "capsule.method-version",
+    messageTag: "capsule.message-tag",
+    requestId: "capsule.request-id",
+    installationId: "capsule.installation-id",
+    epochSequence: "capsule.epoch-sequence",
+    epochDigest: "capsule.epoch-digest",
+    audience: "capsule.audience",
+    purpose: "capsule.purpose",
+    status: "capsule.status",
+    reason: "capsule.reason",
+    jobProposal: "capsule.job-proposal",
+    executionPlan: "capsule.execution-plan",
+    roleBindings: "capsule.role-bindings",
+    sourceManifest: "capsule.source-manifest",
+    source: "capsule.source",
+    registrationId: "capsule.registration-id",
+    planRegistration: "capsule.plan-registration",
+    approvalEnvelope: "capsule.approval-envelope",
+    approvalId: "capsule.approval-id",
+    approvalState: "capsule.approval-state",
+    attemptId: "capsule.attempt-id",
+    attemptState: "capsule.attempt-state",
+  });
+  assert.deepEqual(contract.messageTags, {
+    invalid: 0,
+    SubmitMainMJSV0: 1,
+    RegisterPlanV0: 2,
+    GetRegisteredPlanV0: 3,
+    SubmitApprovalV0: 4,
+    RequestAttemptV0: 5,
+  });
+  assert.deepEqual(contract.approvalStateTags, {
+    invalid: 0,
+    usable: 1,
+    consumed: 2,
+    invalidated: 3,
+  });
+  assert.deepEqual(contract.attemptStateTags, { invalid: 0, created: 1 });
+  assert.deepEqual(contract.statusTags, {
+    OK: 0,
+    MALFORMED: 1,
+    UNSUPPORTED: 2,
+    SCHEMA: 3,
+    BINDING: 4,
+    AUTHENTICATION: 5,
+    STALE: 6,
+    REPLAY: 7,
+    CAPACITY: 8,
+    TRUST_STATE: 9,
+    LOCAL_FAILURE: 10,
+    RECOVERY_REQUIRED: 11,
+    SEMANTIC: 12,
+    DOMAIN: 13,
+  });
+  assert.deepEqual(contract.reasonTags, {
+    none: 0,
+    keySet: 1,
+    valueType: 2,
+    dataWidth: 3,
+    dataCap: 4,
+    zeroIdentifier: 5,
+    epochSequence: 6,
+    protocolVersion: 7,
+    methodVersion: 8,
+    messageTag: 9,
+    methodBinding: 10,
+    currentState: 11,
+    capacity: 12,
+    coreRefusal: 13,
+    localIntegrityFault: 14,
+  });
+  assert.deepEqual(contract.classificationToStatus, {
+    MALFORMED: 1,
+    UNSUPPORTED: 2,
+    SCHEMA: 3,
+    BINDING: 4,
+    AUTHENTICATION: 5,
+    STALE: 6,
+    REPLAY: 7,
+    CAPACITY: 8,
+    TRUST_STATE: 9,
+    LOCAL_FAILURE: 10,
+    RECOVERY_REQUIRED: 11,
+    SEMANTIC: 12,
+    DOMAIN: 13,
+  });
+  assert.deepEqual(contract.structuralReasonToStatus, {
+    keySet: 1,
+    valueType: 1,
+    dataWidth: 3,
+    dataCap: 1,
+    zeroIdentifier: 3,
+    epochSequence: 3,
+    protocolVersion: 2,
+    methodVersion: 2,
+    messageTag: 2,
+    methodBinding: 5,
+    currentState: 4,
+    capacity: 8,
+  });
+  assert.deepEqual(contract.methodBindings, expectedNativeXPCMethodBindings());
+  assert.deepEqual(contract.signedObjectBindings, {
+    SubmitApprovalV0: {
+      outerField: "capsule.approval-envelope",
+      encoding: "tagged-canonical-cose-sign1-with-embedded-canonical-cbor-payload",
+      objectType: "capsule.approval-grant",
+      objectVersion: 0,
+      audience: "capsule.execution-supervisor",
+      purpose: "capsule.plan.approve",
+      localAudience: "capsule.execution-supervisor.local.v0",
+      localPurpose: "capsule.ipc.submit-approval.v0",
+      localAndSignedBindingsInterchangeable: false,
+    },
+  });
+  assert.deepEqual(contract.identifierDomains, {
+    "capsule.request-id": "live-call-correlation-only",
+    "capsule.installation-id": "current-installation-identity",
+    "capsule.registration-id": "registration-lookup",
+    "capsule.approval-id": "approval-reference",
+    "capsule.attempt-id": "attempt-reference",
+    sameWidthBytesInterchangeable: false,
+  });
+  assert.equal(contract.fixtureSerialization, "exact-json-description-of-xpc-dictionaries");
+  assert.equal(contract.topLevelObjectType, "XPC_TYPE_DICTIONARY");
+  assert.equal(contract.coreRefusalMapping, "classification-selects-status;reason=coreRefusal");
+  assert.equal(
+    contract.localIntegrityMapping,
+    "terminate-without-reply;reason-tag-is-fixture-diagnostic-only",
+  );
+  assert.equal(contract.requestCommonKeyCount, 9);
+  assert.equal(contract.replyCommonKeyCount, 6);
+  assert.deepEqual(
+    [
+      contract.extraObjectsAllowed,
+      contract.fileDescriptorsAllowed,
+      contract.endpointsAllowed,
+      contract.machRightsAllowed,
+      contract.nestedContainersAllowed,
+    ],
+    [0, 0, 0, 0, 0],
+  );
+  assert.equal(contract.messageTagDisposition, "method-specific-cross-check-not-dispatch-opcode");
+  assert.deepEqual(contract.validationPrecedence, [
+    "protocol-version",
+    "method-version",
+    "service-entry-point-role-message-tag-audience-purpose",
+    "installation-epoch-current-state",
+    "application-data-copy",
+    "embedded-record-version-and-core-validation",
+  ]);
+  assert.equal(contract.requestIdDisposition, "correlation-only");
+  assert.equal(
+    contract.copyDisposition,
+    "body-copy-only-after-peer-flow-shape-current-state-binding",
+  );
+  assert.equal(
+    contract.localIntegrityDisposition,
+    "oversize-output-short-write-pointer-length-or-bridge-version-fault-terminates-process-without-reply",
+  );
+  assert.deepEqual(contract.envelopes, expectedNativeXPCEnvelopes());
+  assert.deepEqual(contract.refusalReplies, expectedRefusalReplies(contract));
+  verifyCompleteNativeXPCCases(contract);
+  assert.deepEqual(contract.responseLoss, expectedResponseLoss());
+  assert.deepEqual(contract.deadlineCases, expectedDeadlineCases());
+  assert.deepEqual(contract.futureNativeHarnessOracles, [
+    {
+      id: "os-peer-requirement-mismatch",
+      scope: "future-external-native-harness-only",
+      expected: "no-message-delivery-and-no-application-reply",
+      currentEvidence: false,
+      inBandRefusal: false,
+    },
+  ]);
+  assert.equal(contract.peerAuthenticationEvidence, null);
+  assert.equal(contract.listenerActivated, false);
+  assert.equal(contract.serviceRegistered, false);
+  assert.deepEqual(oracleSet.responseLoss, expectedOracleResponseLoss());
+  assert.deepEqual(oracleSet.refusals, expectedOracleRefusals());
+  assert.deepEqual(oracleSet.cancellationAndDeadline, expectedCancellationAndDeadline());
+  assert.deepEqual(oracleSet.flowControl, expectedFlowControl());
+}
+
+function expectedNativeXPCMethodBindings() {
+  return {
+    SubmitMainMJSV0: {
+      entryPoint: "SubmitMainMJSV0",
+      service: "com.capsulecorp.capsule.daemon.cli.v0",
+      expectedRole: "internal-alpha-cli",
+      expectedSigningIdentifier: "com.capsulecorp.capsule.cli",
+      audience: "capsule.daemon.local.v0",
+      purpose: "capsule.ipc.submit-main-mjs.v0",
+      messageTag: 1,
+      methodVersion: 0,
+      deadlineMilliseconds: 10_000,
+    },
+    RegisterPlanV0: {
+      entryPoint: "RegisterPlanV0",
+      service: "com.capsulecorp.capsule.supervisor.daemon.v0",
+      expectedRole: "daemon",
+      expectedSigningIdentifier: null,
+      audience: "capsule.execution-supervisor.local.v0",
+      purpose: "capsule.ipc.register-plan.v0",
+      messageTag: 2,
+      methodVersion: 0,
+      deadlineMilliseconds: 5_000,
+    },
+    GetRegisteredPlanV0: {
+      entryPoint: "GetRegisteredPlanV0",
+      service: "com.capsulecorp.capsule.supervisor.broker.v0",
+      expectedRole: "broker",
+      expectedSigningIdentifier: null,
+      audience: "capsule.execution-supervisor.local.v0",
+      purpose: "capsule.ipc.get-registered-plan.v0",
+      messageTag: 3,
+      methodVersion: 0,
+      deadlineMilliseconds: 2_000,
+    },
+    SubmitApprovalV0: {
+      entryPoint: "SubmitApprovalV0",
+      service: "com.capsulecorp.capsule.supervisor.broker.v0",
+      expectedRole: "broker",
+      expectedSigningIdentifier: null,
+      audience: "capsule.execution-supervisor.local.v0",
+      purpose: "capsule.ipc.submit-approval.v0",
+      messageTag: 4,
+      methodVersion: 0,
+      deadlineMilliseconds: 5_000,
+    },
+    RequestAttemptV0: {
+      entryPoint: "RequestAttemptV0",
+      service: "com.capsulecorp.capsule.supervisor.daemon.v0",
+      expectedRole: "daemon",
+      expectedSigningIdentifier: null,
+      audience: "capsule.execution-supervisor.local.v0",
+      purpose: "capsule.ipc.request-attempt.v0",
+      messageTag: 5,
+      methodVersion: 0,
+      deadlineMilliseconds: 5_000,
+    },
+  };
+}
+
+function expectedNativeXPCEnvelopes() {
+  const type = {
+    uint64: "XPC_TYPE_UINT64",
+    data: "XPC_TYPE_DATA",
+    string: "XPC_TYPE_STRING",
+  };
+  const key = {
+    protocol: "capsule.protocol-version",
+    method: "capsule.method-version",
+    tag: "capsule.message-tag",
+    request: "capsule.request-id",
+    installation: "capsule.installation-id",
+    epochSequence: "capsule.epoch-sequence",
+    epochDigest: "capsule.epoch-digest",
+    audience: "capsule.audience",
+    purpose: "capsule.purpose",
+    status: "capsule.status",
+    reason: "capsule.reason",
+  };
+  const data = (name, min, max, applicationData, nonZeroData) => ({
+    key: name,
+    valueType: type.data,
+    required: true,
+    minDataBytes: min,
+    maxDataBytes: max,
+    applicationData,
+    nonZeroData,
+  });
+  const uint = (name, fixedUInt64) => ({
+    key: name,
+    valueType: type.uint64,
+    required: true,
+    fixedUInt64,
+  });
+  const string = (name, fixedString) => ({
+    key: name,
+    valueType: type.string,
+    required: true,
+    fixedString,
+  });
+  const allowed = (name, allowedUInt64) => ({
+    key: name,
+    valueType: type.uint64,
+    required: true,
+    allowedUInt64,
+  });
+  const methods = [
+    [
+      "SubmitMainMJSV0",
+      1,
+      "capsule.daemon.local.v0",
+      "capsule.ipc.submit-main-mjs.v0",
+      2_097_152,
+      16,
+      [data("capsule.job-proposal", 1, 2_097_152, true, false)],
+      [data("capsule.registration-id", 16, 16, true, true)],
+    ],
+    [
+      "RegisterPlanV0",
+      2,
+      "capsule.execution-supervisor.local.v0",
+      "capsule.ipc.register-plan.v0",
+      328_337,
+      4_096,
+      [
+        data("capsule.execution-plan", 1, 65_536, true, false),
+        data("capsule.role-bindings", 562, 562, true, false),
+        data("capsule.source-manifest", 87, 95, true, false),
+        data("capsule.source", 0, 262_144, true, false),
+      ],
+      [data("capsule.plan-registration", 1, 4_096, true, false)],
+    ],
+    [
+      "GetRegisteredPlanV0",
+      3,
+      "capsule.execution-supervisor.local.v0",
+      "capsule.ipc.get-registered-plan.v0",
+      16,
+      332_433,
+      [data("capsule.registration-id", 16, 16, true, true)],
+      [
+        data("capsule.execution-plan", 1, 65_536, true, false),
+        data("capsule.role-bindings", 562, 562, true, false),
+        data("capsule.plan-registration", 1, 4_096, true, false),
+        data("capsule.source-manifest", 87, 95, true, false),
+        data("capsule.source", 0, 262_144, true, false),
+      ],
+    ],
+    [
+      "SubmitApprovalV0",
+      4,
+      "capsule.execution-supervisor.local.v0",
+      "capsule.ipc.submit-approval.v0",
+      528,
+      16,
+      [
+        data("capsule.registration-id", 16, 16, true, true),
+        data("capsule.approval-envelope", 1, 512, true, false),
+      ],
+      [
+        data("capsule.approval-id", 16, 16, true, true),
+        allowed("capsule.approval-state", [1, 2, 3]),
+      ],
+    ],
+    [
+      "RequestAttemptV0",
+      5,
+      "capsule.execution-supervisor.local.v0",
+      "capsule.ipc.request-attempt.v0",
+      32,
+      16,
+      [
+        data("capsule.registration-id", 16, 16, true, true),
+        data("capsule.approval-id", 16, 16, true, true),
+      ],
+      [data("capsule.attempt-id", 16, 16, true, true), allowed("capsule.attempt-state", [1])],
+    ],
+  ];
+  const result = {};
+  for (const [
+    method,
+    tag,
+    audience,
+    purpose,
+    requestMax,
+    replyMax,
+    requestBody,
+    replyBody,
+  ] of methods) {
+    const requestHeader = [
+      uint(key.protocol, 0),
+      uint(key.method, 0),
+      uint(key.tag, tag),
+      data(key.request, 16, 16, false, true),
+      data(key.installation, 16, 16, false, false),
+      { key: key.epochSequence, valueType: type.uint64, required: true },
+      data(key.epochDigest, 32, 32, false, false),
+      string(key.audience, audience),
+      string(key.purpose, purpose),
+    ];
+    const replyHeader = (success) => [
+      uint(key.protocol, 0),
+      uint(key.method, 0),
+      uint(key.tag, tag),
+      data(key.request, 16, 16, false, true),
+      success
+        ? uint(key.status, 0)
+        : { key: key.status, valueType: type.uint64, required: true, fixedUInt64: null },
+      success
+        ? uint(key.reason, 0)
+        : { key: key.reason, valueType: type.uint64, required: true, fixedUInt64: null },
+    ];
+    result[method] = {
+      request: {
+        method,
+        direction: "request",
+        protocolVersion: 0,
+        methodVersion: 0,
+        messageTag: tag,
+        exactKeyCount: requestHeader.length + requestBody.length,
+        requiredKeyCount: requestHeader.length + requestBody.length,
+        optionalKeyCount: 0,
+        closedMap: true,
+        applicationDataMaxBytes: requestMax,
+        fields: [...requestHeader, ...requestBody],
+      },
+      successReply: {
+        method,
+        direction: "success-reply",
+        protocolVersion: 0,
+        methodVersion: 0,
+        messageTag: tag,
+        exactKeyCount: 6 + replyBody.length,
+        requiredKeyCount: 6 + replyBody.length,
+        optionalKeyCount: 0,
+        closedMap: true,
+        applicationDataMaxBytes: replyMax,
+        fields: [...replyHeader(true), ...replyBody],
+      },
+      refusalReply: {
+        method,
+        direction: "refusal-reply",
+        protocolVersion: 0,
+        methodVersion: 0,
+        messageTag: tag,
+        exactKeyCount: 6,
+        requiredKeyCount: 6,
+        optionalKeyCount: 0,
+        closedMap: true,
+        applicationDataMaxBytes: 0,
+        fields: replyHeader(false),
+      },
+    };
+  }
+  return result;
+}
+
+function expectedRefusalReplies(contract) {
+  return Object.entries({
+    MALFORMED: 1,
+    UNSUPPORTED: 2,
+    SCHEMA: 3,
+    BINDING: 4,
+    AUTHENTICATION: 5,
+    STALE: 6,
+    REPLAY: 7,
+    CAPACITY: 8,
+    TRUST_STATE: 9,
+    LOCAL_FAILURE: 10,
+    RECOVERY_REQUIRED: 11,
+    SEMANTIC: 12,
+    DOMAIN: 13,
+  }).map(([classification, statusTag]) => ({
+    classification,
+    statusTag,
+    reasonTag: contract.reasonTags.coreRefusal,
+    bodyKeysAllowed: 0,
+    exactKeyCount: 6,
+  }));
+}
+
+function expectedResponseLoss() {
+  return [
+    { method: "SubmitMainMJSV0", disposition: "committed-retry-may-create-fresh-registration" },
+    { method: "RegisterPlanV0", disposition: "committed-retry-creates-fresh-registration" },
+    { method: "GetRegisteredPlanV0", disposition: "repeatable-read-by-registration-id" },
+    {
+      method: "SubmitApprovalV0",
+      disposition:
+        "canonical-payload-and-signer-authorization-replay-returns-same-approval-and-current-state",
+      semanticIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+      sameApprovalID: true,
+      currentStateReturned: true,
+      duplicateAuthorityEffects: 0,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "RequestAttemptV0",
+      disposition:
+        "registration-and-approval-reference-replay-returns-same-attempt-and-current-state",
+      semanticIdentity: "registration-id+approval-reference",
+      sameAttemptID: true,
+      currentStateReturned: true,
+      duplicateAttempts: 0,
+      duplicateLifecycleEffects: 0,
+      requestIdIsIdempotencyKey: false,
+    },
+  ];
+}
+
+function expectedDeadlineCases() {
+  const rule =
+    "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds";
+  const after = "response-unknown-store-semantic-result-or-recovery-fence-controls";
+  return ["SubmitApprovalV0", "RequestAttemptV0"].flatMap((method) => [
+    {
+      id: `${method}.deadline.immediately-before`,
+      method,
+      deadlineMilliseconds: 5_000,
+      startsAt: "admission",
+      clientExtensionAllowed: false,
+      boundaryRule: rule,
+      afterDispatchDisposition: after,
+      boundary: "immediately-before",
+      elapsedMilliseconds: 4_999,
+      expected: {
+        decision: "dispatch-core-before-deadline",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "store-semantic-reply-unless-deadline-cancels-delivery",
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+      noState: null,
+      postCoreState: "store-semantic-result-or-recovery-fence-controls",
+    },
+    {
+      id: `${method}.deadline.exactly-at`,
+      method,
+      deadlineMilliseconds: 5_000,
+      startsAt: "admission",
+      clientExtensionAllowed: false,
+      boundaryRule: rule,
+      afterDispatchDisposition: after,
+      boundary: "exactly-at",
+      elapsedMilliseconds: 5_000,
+      expected: {
+        decision: "deadline-expired-before-dispatch",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+      },
+      noState: zeroStateValue(),
+      postCoreState: null,
+    },
+    {
+      id: `${method}.deadline.immediately-after`,
+      method,
+      deadlineMilliseconds: 5_000,
+      startsAt: "admission",
+      clientExtensionAllowed: false,
+      boundaryRule: rule,
+      afterDispatchDisposition: after,
+      boundary: "immediately-after",
+      elapsedMilliseconds: 5_001,
+      expected: {
+        decision: "deadline-expired-before-dispatch",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+      },
+      noState: zeroStateValue(),
+      postCoreState: null,
+    },
+  ]);
+}
+
+function verifyCompleteNativeXPCCases(contract) {
+  const expectedTable = expectedNativeXPCCaseTable(contract);
+  assert.deepEqual(contract.caseTable, expectedTable);
+  assert.equal(contract.cases.length, expectedTable.length);
+  for (let index = 0; index < expectedTable.length; index += 1) {
+    const candidate = contract.cases[index];
+    const expectedRow = expectedTable[index];
+    assert.deepEqual(caseTableEntry(candidate), expectedRow, candidate.id);
+    const topKeys = ["id", candidate.method === undefined ? "methods" : "method"];
+    if (expectedRow.direction !== null) topKeys.push("direction");
+    if (expectedRow.mutation !== null) topKeys.push("mutation");
+    if (
+      candidate.id.includes("joint-protocol-method-record-version-mismatch") ||
+      candidate.id.includes("joint-method-record-version-mismatch")
+    ) {
+      topKeys.push("mismatchSet", "selectedFailure", "validationPrecedence");
+      assert.deepEqual(candidate.validationPrecedence, contract.validationPrecedence, candidate.id);
+      assert.equal(
+        candidate.selectedFailure,
+        candidate.id.includes("joint-protocol") ? "protocol-version" : "method-version",
+        candidate.id,
+      );
+    }
+    if (candidate.id.startsWith("cross-service.")) {
+      topKeys.push("dispatchIdentity");
+      assert.equal(
+        candidate.dispatchIdentity,
+        "service-entry-point-and-role-derived-before-tag-cross-check",
+        candidate.id,
+      );
+    }
+    if (["all.wrong-service", "all.wrong-role", "all.wrong-session"].includes(candidate.id)) {
+      topKeys.push("deliveryPrecondition");
+      assert.equal(typeof candidate.deliveryPrecondition, "string", candidate.id);
+      const expectedReply =
+        candidate.id === "all.wrong-session"
+          ? "delivered-in-band-refusal-only-for-this-passive-oracle"
+          : "delivered-in-band-refusal";
+      assert.equal(candidate.replyDisposition, expectedReply, candidate.id);
+    }
+    topKeys.push(
+      "expected",
+      "replyDisposition",
+      "terminationDisposition",
+      "noState",
+      "postCoreState",
+    );
+    assertExactKeys(candidate, topKeys, candidate.id);
+    if (expectedRow.noState === null) assert.equal(candidate.noState, null, candidate.id);
+    else assertZeroState(candidate.noState, candidate.id);
+
+    const expectedKeys = [
+      "decision",
+      "classification",
+      "statusTag",
+      "reasonTag",
+      "bodyCopied",
+      "coreCalls",
+    ];
+    if (
+      ["submit-approval.request.exact-maximum", "request-attempt.request.exact-maximum"].includes(
+        candidate.id,
+      )
+    ) {
+      expectedKeys.push("applicationDataBytes");
+      assert.equal(
+        candidate.expected.applicationDataBytes,
+        candidate.method === "SubmitApprovalV0" ? 528 : 32,
+        candidate.id,
+      );
+    }
+    if (candidate.id === "all.request-id-replaced-by-installation-id-bytes") {
+      expectedKeys.push("authorityGrantedByRequestId", "requestIdIsIdempotencyKey");
+      assert.equal(candidate.expected.authorityGrantedByRequestId, false);
+      assert.equal(candidate.expected.requestIdIsIdempotencyKey, false);
+    }
+    if (candidate.id === "get.registration-id-replaced-by-request-id-bytes") {
+      expectedKeys.push("registrationAuthorityGrantedByWidth");
+      assert.equal(candidate.expected.registrationAuthorityGrantedByWidth, false);
+    }
+    if (
+      [
+        "submit-approval.registration-id-replaced-by-request-id-bytes",
+        "request-attempt.registration-id-replaced-by-approval-id-bytes",
+        "request-attempt.approval-id-replaced-by-registration-id-bytes",
+      ].includes(candidate.id)
+    ) {
+      expectedKeys.push("authorityGrantedByWidth");
+      assert.equal(candidate.expected.authorityGrantedByWidth, false, candidate.id);
+    }
+    if (candidate.id.endsWith("cancel-before-dispatch")) {
+      expectedKeys.push("authorityStateChanged");
+      assert.equal(candidate.expected.authorityStateChanged, false, candidate.id);
+    }
+    if (candidate.id.endsWith("cancel-after-dispatch")) {
+      expectedKeys.push("retryIdentity");
+      assert.equal(
+        candidate.expected.retryIdentity,
+        candidate.method === "SubmitApprovalV0"
+          ? "canonical-approval-payload+resolved-signer-authorization-identity"
+          : "registration-id+approval-reference",
+        candidate.id,
+      );
+    }
+    assertExactKeys(candidate.expected, expectedKeys, `${candidate.id}.expected`);
+  }
+}
+
+function expectedOracleRefusals() {
+  const rows = [
+    [
+      "submit.method-version",
+      "SubmitMainMJSV0",
+      "methodVersion",
+      "UNSUPPORTED",
+      "submit-main-mjs-method-version",
+    ],
+    ["submit.method", "SubmitMainMJSV0", "method", "UNSUPPORTED", "submit-main-mjs-method"],
+    [
+      "submit.service",
+      "SubmitMainMJSV0",
+      "service",
+      "AUTHENTICATION",
+      "submit-main-mjs-method-binding",
+    ],
+    [
+      "submit.role",
+      "SubmitMainMJSV0",
+      "expectedRole",
+      "AUTHENTICATION",
+      "submit-main-mjs-method-binding",
+    ],
+    [
+      "submit.signing-identifier",
+      "SubmitMainMJSV0",
+      "expectedSigningIdentifier",
+      "AUTHENTICATION",
+      "submit-main-mjs-method-binding",
+    ],
+    [
+      "submit.audience",
+      "SubmitMainMJSV0",
+      "audience",
+      "AUTHENTICATION",
+      "submit-main-mjs-method-binding",
+    ],
+    [
+      "submit.purpose",
+      "SubmitMainMJSV0",
+      "purpose",
+      "AUTHENTICATION",
+      "submit-main-mjs-method-binding",
+    ],
+    [
+      "submit.protocol-version",
+      "SubmitMainMJSV0",
+      "protocolVersion",
+      "UNSUPPORTED",
+      "ipc-protocol-version",
+    ],
+    ["submit.zero-request-id", "SubmitMainMJSV0", "requestId", "SCHEMA", "ipc-request-id"],
+    [
+      "submit.installation",
+      "SubmitMainMJSV0",
+      "installationId",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "submit.epoch-sequence",
+      "SubmitMainMJSV0",
+      "epochSequence",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "submit.epoch-digest",
+      "SubmitMainMJSV0",
+      "epochDigest",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "register.method-version",
+      "RegisterPlanV0",
+      "methodVersion",
+      "UNSUPPORTED",
+      "register-plan-method-record-version",
+    ],
+    [
+      "register.role-binding-record-version",
+      "RegisterPlanV0",
+      "roleBindingRecordVersion",
+      "UNSUPPORTED",
+      "register-plan-method-record-version",
+    ],
+    ["register.method", "RegisterPlanV0", "method", "UNSUPPORTED", "register-plan-method"],
+    [
+      "register.service",
+      "RegisterPlanV0",
+      "service",
+      "AUTHENTICATION",
+      "register-plan-method-binding",
+    ],
+    [
+      "register.role",
+      "RegisterPlanV0",
+      "expectedRole",
+      "AUTHENTICATION",
+      "register-plan-method-binding",
+    ],
+    [
+      "register.audience",
+      "RegisterPlanV0",
+      "audience",
+      "AUTHENTICATION",
+      "register-plan-method-binding",
+    ],
+    [
+      "register.purpose",
+      "RegisterPlanV0",
+      "purpose",
+      "AUTHENTICATION",
+      "register-plan-method-binding",
+    ],
+    [
+      "register.protocol-version",
+      "RegisterPlanV0",
+      "protocolVersion",
+      "UNSUPPORTED",
+      "ipc-protocol-version",
+    ],
+    ["register.zero-request-id", "RegisterPlanV0", "requestId", "SCHEMA", "ipc-request-id"],
+    [
+      "register.installation",
+      "RegisterPlanV0",
+      "installationId",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "register.epoch-sequence",
+      "RegisterPlanV0",
+      "epochSequence",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "register.epoch-digest",
+      "RegisterPlanV0",
+      "epochDigest",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "fetch.method-version",
+      "GetRegisteredPlanV0",
+      "methodVersion",
+      "UNSUPPORTED",
+      "get-registered-plan-method-record-version",
+    ],
+    [
+      "fetch.role-binding-record-version",
+      "GetRegisteredPlanV0",
+      "roleBindingRecordVersion",
+      "UNSUPPORTED",
+      "get-registered-plan-method-record-version",
+    ],
+    ["fetch.method", "GetRegisteredPlanV0", "method", "UNSUPPORTED", "get-registered-plan-method"],
+    [
+      "fetch.service",
+      "GetRegisteredPlanV0",
+      "service",
+      "AUTHENTICATION",
+      "get-registered-plan-method-binding",
+    ],
+    [
+      "fetch.role",
+      "GetRegisteredPlanV0",
+      "expectedRole",
+      "AUTHENTICATION",
+      "get-registered-plan-method-binding",
+    ],
+    [
+      "fetch.audience",
+      "GetRegisteredPlanV0",
+      "audience",
+      "AUTHENTICATION",
+      "get-registered-plan-method-binding",
+    ],
+    [
+      "fetch.purpose",
+      "GetRegisteredPlanV0",
+      "purpose",
+      "AUTHENTICATION",
+      "get-registered-plan-method-binding",
+    ],
+    [
+      "fetch.protocol-version",
+      "GetRegisteredPlanV0",
+      "protocolVersion",
+      "UNSUPPORTED",
+      "ipc-protocol-version",
+    ],
+    ["fetch.zero-request-id", "GetRegisteredPlanV0", "requestId", "SCHEMA", "ipc-request-id"],
+    [
+      "fetch.installation",
+      "GetRegisteredPlanV0",
+      "installationId",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "fetch.epoch-sequence",
+      "GetRegisteredPlanV0",
+      "epochSequence",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "fetch.epoch-digest",
+      "GetRegisteredPlanV0",
+      "epochDigest",
+      "BINDING",
+      "ipc-current-supervisor-state",
+    ],
+    [
+      "fetch.zero-registration-id",
+      "GetRegisteredPlanV0",
+      "registrationId",
+      "SCHEMA",
+      "registration-id",
+    ],
+  ];
+  return rows.map(([id, method, mutation, classification, reason]) => ({
+    id,
+    method,
+    mutation,
+    expected: { decision: "reject", classification, reason },
+    noState: zeroStateValue(),
+  }));
+}
+
+function expectedOracleResponseLoss() {
+  return [
+    {
+      method: "SubmitMainMJSV0",
+      disposition: "committed-retry-may-create-fresh-registration",
+      downstreamDisposition: "committed-retry-creates-fresh-registration",
+      retryMayCreateFreshRegistration: true,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "RegisterPlanV0",
+      disposition: "committed-retry-creates-fresh-registration",
+      firstCommittedRegistrations: 1,
+      retryCommittedRegistrations: 2,
+      bothRegistrationsSeparatelyReadable: true,
+      requestIdIsIdempotencyKey: false,
+    },
+    {
+      method: "GetRegisteredPlanV0",
+      disposition: "repeatable-read-by-registration-id",
+      storeMutation: false,
+      repeatedReplyBodyByteEqual: true,
+      requestIdIsIdempotencyKey: false,
+    },
+    ...expectedResponseLoss().slice(3),
+  ];
+}
+
+function expectedCancellationAndDeadline() {
+  return [
+    {
+      id: "cancel.before-dispatch",
+      disposition: "caller-cancelled-before-dispatch",
+      coreCalls: 0,
+      noState: zeroStateValue(),
+    },
+    {
+      id: "cancel.after-dispatch",
+      disposition: "caller-cancelled-after-dispatch-response-unknown",
+      coreCalls: 1,
+      state: "method-semantic-result-controls;transport-does-not-infer-abort",
+      admittedSlotHeldUntilCoreReturns: true,
+    },
+    {
+      id: "deadline.after-dispatch",
+      disposition: "method-deadline-after-dispatch-response-unknown",
+      coreCalls: 1,
+      state: "method-semantic-result-or-recovery-fence-controls;transport-does-not-infer-abort",
+      admittedSlotHeldUntilCoreReturns: true,
+    },
+    {
+      id: "submit-approval.deadline-after-dispatch-commit",
+      method: "SubmitApprovalV0",
+      disposition: "deadline-cancels-response-delivery-only",
+      coreCalls: 1,
+      replyDisposition: "no-application-reply-on-expired-call",
+      statusTag: null,
+      reasonTag: null,
+      postCoreState: {
+        durableAuthority: "approval-commit-remains-authoritative",
+        replayIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+        replayResult: "same-approval-id-and-current-state",
+        newRefusalAllowed: false,
+      },
+      noState: null,
+    },
+    {
+      id: "request-attempt.deadline-after-dispatch-commit",
+      method: "RequestAttemptV0",
+      disposition: "deadline-cancels-response-delivery-only",
+      coreCalls: 1,
+      replyDisposition: "no-application-reply-on-expired-call",
+      statusTag: null,
+      reasonTag: null,
+      postCoreState: {
+        durableAuthority: "attempt-commit-remains-authoritative",
+        replayIdentity: "registration-id+approval-reference",
+        replayResult: "same-attempt-id-and-current-state",
+        newRefusalAllowed: false,
+      },
+      noState: null,
+    },
+    {
+      id: "downstream.stall",
+      disposition: "method-deadline-after-dispatch-response-unknown",
+      newWorkOnSameConnection: "CAPACITY",
+      queueDepth: 0,
+      processTerminationEvidence: false,
+    },
+  ];
+}
+
+function expectedFlowControl() {
+  const zero = zeroStateValue;
+  return [
+    {
+      id: "submit.connection.concurrent-cap-plus-one",
+      method: "SubmitMainMJSV0",
+      admitted: 1,
+      attempted: 2,
+      sameConnection: true,
+      classification: "CAPACITY",
+      reason: "ipc-connection-in-flight",
+      queueDepth: 0,
+      noState: zero(),
+    },
+    {
+      id: "submit.service-connections-cap-plus-one",
+      method: "SubmitMainMJSV0",
+      admitted: 4,
+      attempted: 5,
+      classification: "CAPACITY",
+      reason: "ipc-service-connections",
+      queueDepth: 0,
+      noState: zero(),
+    },
+    {
+      id: "supervisor.combined-process-cap-plus-one",
+      methods: [{ method: "RegisterPlanV0" }, { method: "GetRegisteredPlanV0" }],
+      admitted: 8,
+      attempted: 9,
+      classification: "CAPACITY",
+      reason: "ipc-service-connections",
+      alsoAtProcessCap: true,
+      queueDepth: 0,
+      noState: zero(),
+    },
+    {
+      id: "supervisor.mixed-register-get-aggregate-byte-cap-plus-one",
+      methods: [
+        { method: "RegisterPlanV0", admittedBytes: 328_337 },
+        { method: "GetRegisteredPlanV0", admittedBytes: 16 },
+      ],
+      isolatedAccountingCapBytes: 328_353,
+      attemptedAdditionalBytes: 1,
+      classification: "CAPACITY",
+      reason: "ipc-process-in-flight-bytes",
+      releasedMethod: "GetRegisteredPlanV0",
+      postReleaseReadmissionBytes: 1,
+      postReleaseReadmission: "admitted",
+      productionAggregateCapBytes: 2_626_696,
+      queueDepth: 0,
+      noState: zero(),
+    },
+    {
+      id: "supervisor.mixed-submit-approval-request-attempt-cap-plus-one",
+      methods: [
+        { method: "SubmitApprovalV0", admittedBytes: 528 },
+        { method: "RequestAttemptV0", admittedBytes: 32 },
+      ],
+      isolatedAccountingCapBytes: 560,
+      attemptedAdditionalBytes: 1,
+      classification: "CAPACITY",
+      reason: "ipc-process-in-flight-bytes",
+      releasedMethod: "RequestAttemptV0",
+      releasedBytes: 32,
+      postReleaseReadmissionBytes: 32,
+      postReleaseReadmission: "admitted",
+      productionAggregateCapBytes: 2_626_696,
+      queueDepth: 0,
+      noState: zero(),
+    },
+  ];
+}
+
+function runHardenedMutationProofs(contract, oracleSet) {
+  const mutations = [
+    ["missing dictionary field", (c) => c.envelopes.SubmitApprovalV0.request.fields.pop()],
+    [
+      "extra dictionary field",
+      (c) =>
+        c.envelopes.RequestAttemptV0.request.fields.push({
+          key: "capsule.extra",
+          valueType: "XPC_TYPE_DATA",
+        }),
+    ],
+    [
+      "changed type or width",
+      (c) => {
+        c.envelopes.SubmitApprovalV0.request.fields.at(-1).maxDataBytes = 511;
+      },
+    ],
+    [
+      "absent required noState",
+      (c) => {
+        delete c.cases.find((entry) => entry.id === "all.missing-key").noState;
+      },
+    ],
+    [
+      "modified cancellation result",
+      (_c, o) => {
+        o.cancellationAndDeadline[1].coreCalls = 0;
+      },
+    ],
+    [
+      "missing refusal case",
+      (c) => {
+        c.cases = c.cases.filter((entry) => entry.id !== "all.wrong-role");
+      },
+    ],
+    [
+      "response-loss drift",
+      (c) => {
+        c.responseLoss[3].sameApprovalID = false;
+      },
+    ],
+    [
+      "exact-at-boundary inversion",
+      (c) => {
+        c.deadlineCases.find(
+          (entry) => entry.id === "SubmitApprovalV0.deadline.exactly-at",
+        ).expected.decision = "dispatch-core-before-deadline";
+      },
+    ],
+  ];
+  for (const [label, mutate] of mutations) {
+    const changedContract = JSON.parse(JSON.stringify(contract));
+    const changedOracles = JSON.parse(JSON.stringify(oracleSet));
+    mutate(changedContract, changedOracles);
+    assert.throws(() => verifyHardenedNativeXPC(changedContract, changedOracles), undefined, label);
+  }
+}
+
+function assertExactKeys(value, expected, label) {
+  assert.deepEqual(Object.keys(value), expected, `${label} exact keys/order`);
+}
+
+function zeroStateValue() {
+  return {
+    authorityStateChanged: false,
+    coreCalls: 0,
+    registrationsCreated: 0,
+    approvalsConsumed: 0,
+    attemptsCreated: 0,
+    lifecycleCalls: 0,
+    backendCalls: 0,
+  };
 }

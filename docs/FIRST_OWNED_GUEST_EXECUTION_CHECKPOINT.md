@@ -24,6 +24,7 @@
 | Controlled denial-test v26 failure localization | `PASSED` | One exact guest passed active local-CID vsock-unavailable and raw-block write-open denial, then reported the fixed reason `non-loopback guest network interface is present`. |
 | Controlled denial-test v26 complete corpus | `BLOCKED` | The probe rejected expected down/unbacked `dummy0` by name before evaluating flags, backing, or routes. This is a probe-policy mismatch, not network-access evidence; v26 must not be rerun. |
 | Exact v27 fixed hostile-denial attempt | `PASSED` | One exact authorized owned guest completed all 30 expected markers, exact completion and console proofs, every fixed denial control, normal reap, unlinked-root teardown, and unchanged canary with zero network/credential authority or traffic. |
+| Raw v10-v27 archive retention | `BLOCKED` | Canonical conclusions and exact identities remain in Capsule, but the unpublished 280-file local archive commit/workspace is unavailable locally and remotely. Recovery requires an owner-supplied backup; otherwise new durable evidence requires a separately authorized rerun. |
 | Governed runtime and libkrun composition | `IN_PROGRESS — TRENDING_GOOD` | V27 closes the exact fixed hostile-denial experiment. Final typed transport, installed composition/recovery, broader lifecycle and platform matrices, independent admission review, and product wiring remain incomplete. |
 | Runtime/backend product admission | `BLOCKED` | No runtime, backend, profile, or product path is admitted by this checkpoint. |
 | Owner-only hostile-`.mjs` internal alpha | `IN_PROGRESS — TRENDING_GOOD` | This checkpoint retires one important uncertainty; authenticated submission, real approval, installed authority, arbitrary approved source, durable completion, recovery, and the minimum hostile corpus remain. |
@@ -204,11 +205,15 @@ This result must not be shortened to “Capsule is secure” or “the alpha is 
 - runtime or backend admission, a release artifact, product wiring, or an alpha release; or
 - durable archive publication of the raw v10-v27 experiment harness and evidence.
 
-The final item is an evidence-retention blocker, not a reason to erase the checkpoint. Raw local
-evidence remains in the owner-controlled disposable experiment workspace. Before this result is
-used as durable release or admission evidence, the harness, selected logs, manifests, and
-validation report must be published to `Shrimpworks/capsule-experiments`, verified, and linked here
-at an exact immutable archive commit.
+The final item is an evidence-retention blocker, not a reason to erase the checkpoint. The
+canonical conclusions and exact attempt/profile/artifact identities remain retained here, but the
+unpublished raw archive no longer exists in the documented owner workspace, any bounded local Git
+location checked, or the remote archive. The missing local commit was
+`3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`; its intended destination was
+`experiments/gate-c-c2b-fixed-owned-guest`. Recovery requires an owner-supplied backup, clone,
+bundle, object database, or filesystem snapshot. Without recovery, this checkpoint cannot become
+durable release or admission evidence unless a separately authorized rerun produces a new verified
+immutable archive.
 
 ## The next controlled experiment
 
@@ -479,9 +484,11 @@ open-descriptor hashes matched `002524fb...119d`. The host canary remained uncha
 `networkBytesSent: false`, and `maximumGuests: 1`. The exact runner PID and staged root pathname
 were absent afterward. The consumed authorization must not be reused.
 
-The v20-v27 reports and receipts remain in the disposable local experiment workspace, so they are
-not yet durable release or admission evidence. V27 is `PASSED` only for this exact materialized
-profile and single local owned-disposable guest reproduction.
+The canonical v20-v27 results and exact identities remain in this document, but the unpublished
+raw reports, receipts, harnesses, captures, and manifest are unavailable from the former disposable
+workspace and remote archive. V27 remains `PASSED` only for this exact historical materialized
+profile and single local owned-disposable guest reproduction; it is not durable release or
+admission evidence.
 
 This passing v27 experiment remains a controlled denial checkpoint, not the owner-only
 hostile-`.mjs` internal alpha. The alpha requires the complete installed authority path and the

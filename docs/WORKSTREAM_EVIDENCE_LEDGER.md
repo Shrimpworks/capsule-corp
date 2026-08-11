@@ -11,9 +11,24 @@ Current work progress is summarized in the
 names in this ledger are provenance, not today's work status. Read each completed slice separately
 from its parent workstream, ADR lifecycle, control-evidence state, and product admission.
 
-The consolidated outcomes, exact known answers, application status, combined verification, and
-next dependency boundary for the latest group are recorded in the
-[Phase 2B and Gate C parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md).
+The historical Phase 2B/Gate C consolidated outcomes and exact known answers remain in the
+[parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
+reconciliation and its next dependency boundary are recorded directly below.
+
+## 2026-08-10 execution-readiness reconciliation
+
+These read-only preparation results refine the next construction and authorization boundaries.
+They do not activate a listener, identity, key, service, runtime, backend, VM, guest, or product
+consumer.
+
+| Slice | Scoped result | Parent boundary |
+| --- | --- | --- |
+| C1 raw v10-v27 recovery/publication readiness | Discovery `PASSED`: the former workspace `/tmp/capsule-owned-guest.njcPIL/capsule-experiments`, local branch `codex/archive-c2b-owned-guest-v10-v27`, commit `3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`, intended archive root, 280-file packet, and 279-retained-file manifest are identified. Bounded local Git/worktree/object and remote readback found no recoverable copy. | Publication remains `BLOCKED` on an owner-supplied backup, clone, bundle, object database, or snapshot. Canonical v19/v27 conclusions remain, but raw durable release/admission evidence is unavailable. Rerunning requires separate authorization and new exact identities. |
+| C2 native-XPC authorization/fixture preparation | `PASSED`: Capsule commit `21931899...`, manifest digest `bc487c7f...7598`, native-contract digest `bfa35a6e...330d`, and ordered 70-case digest `9ac6845b...f68e` jointly identify the passive packet. The S3 method/cap/flow, peer/session, copy, response-loss, process-fault, disposable-name, evidence, and cleanup matrices are closed. | Execution remains `BLOCKED`. First freeze strict before/at/after equality cases for all three S3 deadlines, then obtain exact owner host/session, experimental service-alias, root/name, and no-product authorization. C4 methods remain passive collision/reference fixtures only. |
+| C3 ADR-0045 E1 packet audit | The checked-in inert E0 specification, identifiers, sentinels, E1-01..E1-15 ordering, denial oracles, stop conditions, and claim boundary are closed. | Executable E1 remains `BLOCKED`: materialized current/legacy probes, no-launch Coordinator bundle, plists/entitlements/descriptor/verifier and their immutable manifest do not exist. Materialize E0 first, then obtain exact host/device/profile/workspace authorization. ADR-0045 remains Proposed. |
+| C5b typed-transport preparation | `PASSED`: candidate lineages, C5a fixture corpus, descriptor/port topology, caps, fault/restoration matrix, cleanup, and archive destination are reconciled. The owner selected the v19 benign lineage `ac272171...f48fa` plus the governed 103-byte source `c8e940...b475` and SourceManifest `712b1b...61b0` for the no-run successor. | C5b0 construction and C5b execution remain `BLOCKED`. The successor must materialize exact profile/runner/root/init/launcher/controller/plan/frame identities without libkrun/HVF/guest activity; execution then needs separate host/guest authorization and does not admit the candidate. |
+| C6b1 Broker signing preparation | `PASSED`: the Supervisor-owned approval linearization/replay boundary, exact reusable plan input, candidate target/profile/access-group shape, public-key authorization, UI/prompt rules, evidence matrix, and destructive rows D1-D18 are reconciled. | Execution remains `BLOCKED`: no unsigned Broker target, deterministic composite fixture manifest, test-only Supervisor seam, matching profile, or disposable account/container exists. Proposed host label `dsteele-shrimp-mbp18-4-01` and first-run rows D1-D4/D14-D16 remain unconfirmed, not authorization. D5-D13/D17-D18 remain deferred. |
+| Durable experiment-evidence policy | PR #250 `PASSED`: tracked steering and the archive workflow now require a named owner, non-ephemeral backup, verified manifest, reviewed immutable `capsule-experiments` commit, remote readback, and canonical commit-pinned conclusion before cleanup or durable/release/admission claims. | The rule prevents recurrence; it does not recover the missing v10-v27 raw archive or change any historical control/product status. |
 
 ## 2026-08-05 merged-state reconciliation
 
@@ -51,8 +66,8 @@ totals supersede older checkpoint counts without rewriting their historical evid
 
 ## 2026-08-10 current integration readback
 
-Fetched `origin/main` at the focused follow-up start is
-`133669ba4b61b4e09baddfd6f7bb0a922ca49c8a`. The following merged
+Fetched `origin/main` at this reconciliation start is
+`1494c35371717add2718bd53e853faa937397996`. The following merged
 integrations are passive-only prerequisites; neither activates a listener, service, product
 consumer, runtime, backend, VM, guest, or admission path.
 
@@ -61,6 +76,8 @@ consumer, runtime, backend, VM, guest, or admission path.
 | #246 | `9c7160d7dfe4e2bb83d9bd2887a0034eeaaf17d7` | C5a `PASSED`: exact typed source/input/completion v1 frames, caps and cap-plus-one, canonical JSON, ordered refusal/state/restoration cases, endpoint custody, completion-last projection, and independent Go/Node agreement. C5b controlled execution and installed/product composition remain `BLOCKED`. |
 | #247 | `ed4220fe16d1752a75c67da957a25681d79e34f3` | Merged C4 passive five-method candidate with tags 4/5, approval/attempt dictionaries and state tags, 528/32-byte request maxima, 5,000 ms deadlines, refusal/copy/identifier-domain cases, semantic replay, and the five-entry response-loss table. The later CL4 audit is `PASSED` with historical disposition `AMEND`; PR #248 and the focused follow-up supersede its then-`BLOCKED` evidence status. Installed IPC, live signing, consumers, and product activation remain `BLOCKED`. |
 | #248 | `133669ba4b61b4e09baddfd6f7bb0a922ca49c8a` | Canonical predecessor for this task: reconciles C5a/C4, retains R3, and records CL4 `PASSED` with disposition `AMEND` plus the exact focused implementation dependency. It changes no runtime, installed, or product bytes. |
+| #249 | `21931899c468563a30dc06da1e7a7c26ec702162` | Closes the exact passive/no-listener C4 evidence claim with independent 4,999/5,000/5,001-ms boundaries for SubmitApprovalV0 and RequestAttemptV0, complete dictionaries/maps/fields, required `noState`, cancellation/deadline truth, refusal/replay/response-loss completeness, and bounded Go/Node mutation proofs. Installed IPC, signer, consumers, and product activation remain `BLOCKED`. |
+| #250 | `1494c35371717add2718bd53e853faa937397996` | Requires non-ephemeral backup, manifest/hash verification, immutable reviewed `capsule-experiments` publication, remote readback, and a commit-pinned canonical conclusion before important experiment evidence may be cleaned up or called durable/release/admission-grade. It changes no runtime or control evidence. |
 
 CL4's independent read-only refusal-matrix audit remains `PASSED` with historical disposition
 `AMEND`; it found no runtime authority bypass and has no ADR impact. This focused implementation

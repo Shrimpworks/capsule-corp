@@ -39,6 +39,31 @@ identities, placement/copy closure, modes, historical bindings, and R3's evidenc
 never tracked its signed executable payloads. Its Apple Development evidence is not Developer ID,
 notarization, distribution, or a published Release asset.
 
+## Unpublished v10-v27 owned-guest archive
+
+The v10-v27 owned-guest sequence produced canonical Capsule conclusions, but its compact raw archive
+never reached `Shrimpworks/capsule-experiments`:
+
+- former owner workspace: `/tmp/capsule-owned-guest.njcPIL/capsule-experiments`;
+- former local branch: `codex/archive-c2b-owned-guest-v10-v27`;
+- former local commit: `3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`;
+- intended destination: `experiments/gate-c-c2b-fixed-owned-guest`;
+- recorded packet: 280 files, approximately 1.72 MB, with a 279-retained-file manifest; and
+- canonical Capsule documentation source: `526b300f59674afc727ce80dcc106603a3503a07`.
+
+A bounded 2026-08-10 recovery audit found no matching workspace, repository clone/config, branch,
+reflog, registered worktree, loose object, remote commit, or remote destination. The raw per-version
+harnesses, reports, receipts, captures, frames, canary evidence, and exact file manifest are
+therefore unavailable unless the owner supplies an external backup, clone, Git bundle, object
+database, or filesystem snapshot. Chat/task history must not be used to reconstruct missing file
+hashes or represented as the archive.
+
+The historical v19 and v27 scoped results remain documented `PASSED` conclusions from their exact
+controlled runs. Their raw-evidence retention and any use as durable release or admission evidence
+remain `BLOCKED`. If recovery is impossible, only a separately authorized rerun with new exact
+identities can create replacement durable evidence; it does not retroactively recreate the lost
+packet.
+
 ## Repository boundary
 
 Keep here:

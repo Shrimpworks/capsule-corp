@@ -2,7 +2,8 @@
 
 Date: 2026-08-10
 
-Work item: close the CL4 `AMEND` findings for the exact passive/no-listener C4 evidence claim.
+Work item: reconcile the C1/C2/C3/C5b/C6b1 preparation callbacks and freeze the next executable
+construction order.
 
 Status: `PASSED` for this planning and documentation scope.
 
@@ -16,14 +17,31 @@ experiment is not an activated product path.
 
 ## Reconciled baseline
 
-This closure started from fetched `origin/main` commit
-`133669ba4b61b4e09baddfd6f7bb0a922ca49c8a`, merge PR #248. PR #248 is the canonical predecessor
-that retained R3, CL4's `PASSED` audit and historical `AMEND` disposition, and the focused C4
-implementation dependency. The follow-up now closes the exact boundary and independent-verifier
-findings, so the passive/no-listener C4 evidence claim is `PASSED`. C4, C5a, R3, and CL4 change no
-runtime, governed-profile, installed, or product bytes.
+This reconciliation starts from fetched `origin/main` commit
+`1494c35371717add2718bd53e853faa937397996`, merge PR #250. PR #249 closed the exact passive C4
+boundary and independent-verifier findings. PR #250 then made durable evidence retention a tracked
+steering and archive invariant: important raw evidence cannot live only in a temporary workspace,
+and cleanup cannot precede verified immutable remote publication. Neither change activates a
+runtime, governed profile, installed identity, service, product consumer, backend, VM, or guest.
 
-Today closed or retained these exact slices:
+Five later read-only preparation tasks now close what can be known before construction or
+authorization:
+
+- C1 recovery discovery `PASSED`, but raw v10-v27 publication remains `BLOCKED`: the former local
+  archive commit `3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`, branch, and workspace are absent from
+  bounded Capsule paths, Git refs/worktrees/objects, and the remote archive;
+- C2 authorization/fixture preparation `PASSED`; the native harness remains `BLOCKED` on exact
+  host/session authorization and passive equality-boundary fixtures for all three S3 deadlines;
+- C3 packet audit completed, but E1 remains `BLOCKED`: E0 is a closed inert specification, not a
+  materialized independently hashed probe/bundle/verifier set;
+- C5b authorization/fixture preparation `PASSED`; the owner selected the narrower v19 lineage plus
+  the governed 103-byte source/SourceManifest pair for a no-run successor, which does not admit it;
+  and
+- C6b1 preparation `PASSED`; execution remains `BLOCKED` until an unsigned Broker harness,
+  deterministic fixture manifest, test-only Supervisor seam, matching profile, disposable account,
+  and separately enumerated mutation authorization exist.
+
+The current retained baseline includes these exact slices:
 
 - the passive fixed-store threshold checker and its narrowed re-evaluated scope;
 - the passive five-method native-XPC contract and adversarial fixture expansion, including C4's
@@ -50,18 +68,19 @@ across 95 profiles and 60 targets.
 ## Product-critical dependency graph
 
 ```text
-raw v10-v27 evidence publication ------------------------------┐
+raw v10-v27 recovery -> verified publication ------------------┐
                                                                │
-ADR-0029 decision review + native XPC research -> S3 harness --+-> installed authenticated IPC
+S3 deadline closure -> native XPC harness ----------------------+-> installed authenticated IPC
                                                                │
-ADR-0045 E1 identity separation -> key/service/root corpus -----+
+E0 materialization -> ADR-0045 E1 identity separation ----------+-> key/service/root corpus
                                                                │
 C4 passive approval/attempt evidence (PASSED) + R3 passive research (PASSED)
-                                          -> disposable installed signing harness (BLOCKED) ---┐
+          -> unsigned Broker harness -> test Supervisor seam -> installed signing harness -----┐
 installed authenticated IPC boundary (BLOCKED) ----------------------------------------------+-> product Broker/approval/attempt wiring
                                                                                               -> protected one-attempt path
                                                                │
-typed transport design -> passive contract (`PASSED`) -> controlled harness ┐
+typed transport design -> passive contract (`PASSED`) -> v19/103-byte no-run successor
+                                                   -> controlled harness ----┐
 installed service/identity evidence ------------------------------+-> pre-admission profile matrix
                                                                   -> admission review
                                                                   -> sealed real adapter
@@ -84,17 +103,24 @@ branch and pull request unless the orchestrator explicitly groups it before work
 
 | Order | Work item | Current status | Start condition and acceptance boundary |
 | --- | --- | --- | --- |
-| C1 | Publish the raw v10-v27 harness, reports, manifests, and receipts to `Shrimpworks/capsule-experiments` | `BLOCKED` | Requires access to the owner-controlled disposable experiment workspace. Publish one verified immutable archive commit, then replace local-only evidence pointers with exact links. No new execution or broader claim. |
-| C2 | Run the one-time native XPC S3 harness | `BLOCKED` | CL1 and R1 are `PASSED`; execution still requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owned Mac, exact fixture digest, disposable process/service names, and defensive no-product scope. Retain OS pre-delivery peer refusal, message-derived identity, EUID/session, copy, cap, deadline, interruption, response-loss, and process-fault evidence. |
-| C3 | Run ADR-0045 E1 Supervisor-authority-epoch identity separation | `BLOCKED` | Requires explicit Apple Development authorization for the named Team-`3DDR84M4JS` profiles and owned disposable containers. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. |
-| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | PR #248 is the canonical predecessor. The focused follow-up freezes ordered 4,999/5,000/5,001-ms cases for both methods, equality-as-expired behavior, complete closed dictionaries/maps, every ordered field, required `noState`, cancellation/deadline commit truth, all 20 foreign-tag collisions, complete refusal and five-entry response-loss tables, and bounded Go/Node mutation proofs. No listener, signer, store consumer, process, or guest is active. |
+| C1a | Recover the unpublished raw v10-v27 archive | `BLOCKED` | Read-only recovery discovery `PASSED`, but the former `/tmp/capsule-owned-guest.njcPIL/capsule-experiments` workspace and local commit `3fdcf2c...` are unavailable in every authorized location checked. Resume only from an owner-supplied backup, clone, bundle, object database, or filesystem snapshot. Do not reconstruct the 279-entry manifest from chat history. |
+| C1b | Publish recovered raw v10-v27 evidence | `BLOCKED` | Requires C1a. Verify the 280-file packet and 279 retained-file manifest, publish `experiments/gate-c-c2b-fixed-owned-guest` in one reviewed immutable `capsule-experiments` commit, read it back, rerun its verifier, then add exact links. If recovery is impossible, a separately authorized rerun must produce new evidence. |
+| C2a | Freeze S3 deadline equality boundaries | `BLOCKED` | Add ordered before/at/after cases for SubmitMain 9,999/10,000/10,001 ms, RegisterPlan 4,999/5,000/5,001 ms, and GetRegisteredPlan 1,999/2,000/2,001 ms, with equality expired and complete independent Go/Node checks. Retain commit + manifest + native-contract + ordered-case digests as the fixture identity. No listener or process. |
+| C2b | Run the one-time native XPC S3 harness | `BLOCKED` | Requires C2a and explicit authorization naming `Shrimpworks/capsule-experiments`, the owner-confirmed Mac/session, complete fixture identity, experimental service alias map, disposable names/root, and defensive no-product scope. Retain OS peer refusal, exact-message identity, EUID/session, copy, cap/flow, deadline, interruption, response-loss, process-fault, and cleanup evidence. |
+| C3a | Materialize deterministic E0 fixtures | `BLOCKED` | Turn the `PASSED` inert E0 specification into exact current/legacy probes, a no-launch Coordinator bundle, plists, entitlements, LaunchAgent/descriptor inputs, manifest, and independent verifier with immutable digests. No portal, signing, profile, container, Keychain, service, runtime, or guest mutation. |
+| C3b | Run ADR-0045 E1 identity separation | `BLOCKED` | Requires C3a, owner-confirmed host/device binding, one frozen legacy negative profile, evidence workspace, and exact Apple Development authorization. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. ADR-0045 remains Proposed. |
+| C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | PR #248 is the canonical predecessor and PR #249 closes the focused follow-up. Ordered 4,999/5,000/5,001-ms cases for both methods, equality-as-expired behavior, complete closed dictionaries/maps, every ordered field, required `noState`, cancellation/deadline commit truth, all 20 foreign-tag collisions, complete refusal and five-entry response-loss tables, and bounded Go/Node mutation proofs are retained. No listener, signer, store consumer, process, or guest is active. |
 | C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
-| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5a and separate authorization naming the exact runtime/profile successor and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, and restoration evidence without making an admission decision. |
-| C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2 and C3 evidence plus the accepted-or-revised ADR-0029 result, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
-| C6b1 | Run the disposable installed Broker signing evidence harness | `BLOCKED` | R3 is `PASSED`; execution still requires separate authorization naming the owned Mac, exact development-signed Broker test target/profile/access group, disposable user/container, immutable fixture digest, permitted Keychain mutations, and every destructive row. No product consumer, runtime, backend, VM, or guest. |
-| C6b2 | Connect the product Broker and approval/attempt methods | `BLOCKED` | C4 is now `PASSED`; C6a and C6b1 remain required. Implement native rendering/UI, installed signing/public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. Research and passive conformance cannot satisfy either installed dependency. |
+| C5b0 | Materialize the no-run typed-transport successor | `BLOCKED` | The owner selected the v19 benign lineage at composed digest `ac272171...f48fa` plus the governed 103-byte source `c8e940...b475` and SourceManifest `712b1b...61b0`. Produce exact successor profile, runner, root, init, launcher, controller, plan, and frame identities without loading libkrun, calling HVF, starting a guest, or making an admission decision. |
+| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5b0 and separate authorization naming the exact successor, owner-confirmed host, and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
+| C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3b evidence under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
+| C6b1a | Build the unsigned Broker evidence harness | `BLOCKED` | Add and review the disposable target/source, deterministic projection/payload/display fixture manifest, effective-entitlement request, public-key-only checks, and no-credential test doubles. No signing, Keychain, LocalAuthentication, provisioning, install, or product consumer. |
+| C6b1b | Build the test-only Supervisor evidence seam | `BLOCKED` | Add an explicitly non-product harness that exercises SubmitApproval/RequestAttempt commit, replay, response-loss, and crash convergence while preserving the Supervisor as the only durable authority owner. It must not activate an installed listener or product consumer. |
+| C6b1c | Provision and read back the disposable identity | `BLOCKED` | Requires C6b1a/b plus exact owner authorization naming the owned Mac, development target/App ID/profile/access group, disposable account/container, and immutable composite fixture manifest. Proposed host label `dsteele-shrimp-mbp18-4-01` remains subject to owner confirmation. Stop before key creation or prompt/signing. |
+| C6b1d | Run the installed Broker signing evidence matrix | `BLOCKED` | Requires C6b1c and separately enumerated mutation authorization. Proposed first-run destructive rows D1-D4 and cleanup D14-D16 are not yet authorized; D5-D13 and D17-D18 remain deferred. No product consumer, runtime, backend, VM, or guest. |
+| C6b2 | Connect the product Broker and approval/attempt methods | `BLOCKED` | C4 is `PASSED`; C6a and C6b1d remain required. Implement native rendering/UI, installed signing/public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. Research and passive conformance cannot satisfy either installed dependency. |
 | C6c | Wire attempt admission and the fixed-store stop policy | `BLOCKED` | Requires C6b2 and an explicit decision for p95 provenance/window/lifetime and any persistent timing-trip semantics. Apply the re-evaluated guard transaction-locally after owner/full verification and before a new consume/create mutation; replay of an existing `AttemptID` converges first. |
-| C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
+| C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1b, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
 | C7 | Review one exact runtime/profile candidate for admission | `BLOCKED` | Requires C6d. Produce an explicit admit-or-refuse result over the exact candidate and retained evidence; controlled v19/v27 experiments alone cannot admit it. |
 | C8 | Connect the sealed real adapter and completion-last path | `BLOCKED` | Requires C6c, C7, and a separately authorized owned guest. Execute only by committed `AttemptID`; consume real result-integrity, runner, teardown, and absence facts. |
 | C9 | Run the installed hostile-`.mjs` admission corpus | `BLOCKED` | Requires C8. Response loss, restart, recovery, restoration, pressure, sleep/wake, update, and the minimum hostile source/authority/transport/root/lifecycle cases must converge in the exact signed-installed profile. |
@@ -142,13 +168,13 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-The next orchestration checkpoint should collect this focused C4 implementation closure. C4, C5a,
-CL1, CL4, R1, R2, and R3 are `PASSED` in their exact scopes. CL4 retains historical disposition
-`AMEND`, now closed by this follow-up.
-The owner may authorize C1 and C3 independently when their exact workspace, identity, and host
-boundaries are available. C2's CL1/R1 prerequisites are closed, but its exact fixture/host
-authorization remains mandatory. The disposable C6b1 Broker signing harness remains independently
-`BLOCKED` on its exact host/identity/profile/group/fixture/mutation authorization. After those
-handoffs, update this file and the evidence ledger before starting installed composition. No task
-may promote internal alpha or product admission from research, a passive contract, an ad-hoc
-harness, or a fixed guest experiment alone.
+After this documentation reconciliation merges, C2a, C3a, C5b0, and C6b1a may start in parallel as
+separate retained construction tasks. C6b1b may also proceed independently once its test-only seam
+is kept outside product activation. C1a resumes only if the owner supplies a backup or snapshot;
+otherwise a later exact rerun needs separate authorization and new identities.
+
+No signing, Keychain, service registration, installed listener, portal/profile mutation, libkrun/HVF
+execution, VM, or guest is authorized by this plan. C2b, C3b, C5b, C6b1c, and C6b1d must each stop
+again for their exact owner/environment authorization. No task may promote internal alpha or
+product admission from research, a passive contract, an ad-hoc harness, or a fixed guest
+experiment alone.

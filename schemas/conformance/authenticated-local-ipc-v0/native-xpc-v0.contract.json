@@ -224,26 +224,33 @@
         "methodVersion": 0,
         "messageTag": 1,
         "exactKeyCount": 10,
+        "requiredKeyCount": 10,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 2097152,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 1
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -252,6 +259,7 @@
           {
             "key": "capsule.installation-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -259,11 +267,13 @@
           },
           {
             "key": "capsule.epoch-sequence",
-            "valueType": "XPC_TYPE_UINT64"
+            "valueType": "XPC_TYPE_UINT64",
+            "required": true
           },
           {
             "key": "capsule.epoch-digest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 32,
             "maxDataBytes": 32,
             "applicationData": false,
@@ -272,16 +282,19 @@
           {
             "key": "capsule.audience",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.daemon.local.v0"
           },
           {
             "key": "capsule.purpose",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.ipc.submit-main-mjs.v0"
           },
           {
             "key": "capsule.job-proposal",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 2097152,
             "applicationData": true,
@@ -296,26 +309,33 @@
         "methodVersion": 0,
         "messageTag": 1,
         "exactKeyCount": 7,
+        "requiredKeyCount": 7,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 16,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 1
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -324,16 +344,19 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.registration-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -348,26 +371,33 @@
         "methodVersion": 0,
         "messageTag": 1,
         "exactKeyCount": 6,
+        "requiredKeyCount": 6,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 0,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 1
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -376,11 +406,13 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           }
         ]
@@ -394,26 +426,33 @@
         "methodVersion": 0,
         "messageTag": 2,
         "exactKeyCount": 13,
+        "requiredKeyCount": 13,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 328337,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 2
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -422,6 +461,7 @@
           {
             "key": "capsule.installation-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -429,11 +469,13 @@
           },
           {
             "key": "capsule.epoch-sequence",
-            "valueType": "XPC_TYPE_UINT64"
+            "valueType": "XPC_TYPE_UINT64",
+            "required": true
           },
           {
             "key": "capsule.epoch-digest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 32,
             "maxDataBytes": 32,
             "applicationData": false,
@@ -442,16 +484,19 @@
           {
             "key": "capsule.audience",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.execution-supervisor.local.v0"
           },
           {
             "key": "capsule.purpose",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.ipc.register-plan.v0"
           },
           {
             "key": "capsule.execution-plan",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 65536,
             "applicationData": true,
@@ -460,6 +505,7 @@
           {
             "key": "capsule.role-bindings",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 562,
             "maxDataBytes": 562,
             "applicationData": true,
@@ -468,6 +514,7 @@
           {
             "key": "capsule.source-manifest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 87,
             "maxDataBytes": 95,
             "applicationData": true,
@@ -476,6 +523,7 @@
           {
             "key": "capsule.source",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 0,
             "maxDataBytes": 262144,
             "applicationData": true,
@@ -490,26 +538,33 @@
         "methodVersion": 0,
         "messageTag": 2,
         "exactKeyCount": 7,
+        "requiredKeyCount": 7,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 4096,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 2
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -518,16 +573,19 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.plan-registration",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 4096,
             "applicationData": true,
@@ -542,26 +600,33 @@
         "methodVersion": 0,
         "messageTag": 2,
         "exactKeyCount": 6,
+        "requiredKeyCount": 6,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 0,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 2
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -570,11 +635,13 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           }
         ]
@@ -588,26 +655,33 @@
         "methodVersion": 0,
         "messageTag": 3,
         "exactKeyCount": 10,
+        "requiredKeyCount": 10,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 16,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 3
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -616,6 +690,7 @@
           {
             "key": "capsule.installation-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -623,11 +698,13 @@
           },
           {
             "key": "capsule.epoch-sequence",
-            "valueType": "XPC_TYPE_UINT64"
+            "valueType": "XPC_TYPE_UINT64",
+            "required": true
           },
           {
             "key": "capsule.epoch-digest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 32,
             "maxDataBytes": 32,
             "applicationData": false,
@@ -636,16 +713,19 @@
           {
             "key": "capsule.audience",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.execution-supervisor.local.v0"
           },
           {
             "key": "capsule.purpose",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.ipc.get-registered-plan.v0"
           },
           {
             "key": "capsule.registration-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -660,26 +740,33 @@
         "methodVersion": 0,
         "messageTag": 3,
         "exactKeyCount": 11,
+        "requiredKeyCount": 11,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 332433,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 3
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -688,16 +775,19 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.execution-plan",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 65536,
             "applicationData": true,
@@ -706,6 +796,7 @@
           {
             "key": "capsule.role-bindings",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 562,
             "maxDataBytes": 562,
             "applicationData": true,
@@ -714,6 +805,7 @@
           {
             "key": "capsule.plan-registration",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 4096,
             "applicationData": true,
@@ -722,6 +814,7 @@
           {
             "key": "capsule.source-manifest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 87,
             "maxDataBytes": 95,
             "applicationData": true,
@@ -730,6 +823,7 @@
           {
             "key": "capsule.source",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 0,
             "maxDataBytes": 262144,
             "applicationData": true,
@@ -744,26 +838,33 @@
         "methodVersion": 0,
         "messageTag": 3,
         "exactKeyCount": 6,
+        "requiredKeyCount": 6,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 0,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 3
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -772,11 +873,13 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           }
         ]
@@ -790,26 +893,33 @@
         "methodVersion": 0,
         "messageTag": 4,
         "exactKeyCount": 11,
+        "requiredKeyCount": 11,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 528,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 4
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -818,6 +928,7 @@
           {
             "key": "capsule.installation-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -825,11 +936,13 @@
           },
           {
             "key": "capsule.epoch-sequence",
-            "valueType": "XPC_TYPE_UINT64"
+            "valueType": "XPC_TYPE_UINT64",
+            "required": true
           },
           {
             "key": "capsule.epoch-digest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 32,
             "maxDataBytes": 32,
             "applicationData": false,
@@ -838,16 +951,19 @@
           {
             "key": "capsule.audience",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.execution-supervisor.local.v0"
           },
           {
             "key": "capsule.purpose",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.ipc.submit-approval.v0"
           },
           {
             "key": "capsule.registration-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -856,6 +972,7 @@
           {
             "key": "capsule.approval-envelope",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 1,
             "maxDataBytes": 512,
             "applicationData": true,
@@ -870,26 +987,33 @@
         "methodVersion": 0,
         "messageTag": 4,
         "exactKeyCount": 8,
+        "requiredKeyCount": 8,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 16,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 4
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -898,16 +1022,19 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.approval-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -916,6 +1043,7 @@
           {
             "key": "capsule.approval-state",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "allowedUInt64": [1, 2, 3]
           }
         ]
@@ -927,26 +1055,33 @@
         "methodVersion": 0,
         "messageTag": 4,
         "exactKeyCount": 6,
+        "requiredKeyCount": 6,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 0,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 4
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -955,11 +1090,13 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           }
         ]
@@ -973,26 +1110,33 @@
         "methodVersion": 0,
         "messageTag": 5,
         "exactKeyCount": 11,
+        "requiredKeyCount": 11,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 32,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 5
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -1001,6 +1145,7 @@
           {
             "key": "capsule.installation-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -1008,11 +1153,13 @@
           },
           {
             "key": "capsule.epoch-sequence",
-            "valueType": "XPC_TYPE_UINT64"
+            "valueType": "XPC_TYPE_UINT64",
+            "required": true
           },
           {
             "key": "capsule.epoch-digest",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 32,
             "maxDataBytes": 32,
             "applicationData": false,
@@ -1021,16 +1168,19 @@
           {
             "key": "capsule.audience",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.execution-supervisor.local.v0"
           },
           {
             "key": "capsule.purpose",
             "valueType": "XPC_TYPE_STRING",
+            "required": true,
             "fixedString": "capsule.ipc.request-attempt.v0"
           },
           {
             "key": "capsule.registration-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -1039,6 +1189,7 @@
           {
             "key": "capsule.approval-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -1053,26 +1204,33 @@
         "methodVersion": 0,
         "messageTag": 5,
         "exactKeyCount": 8,
+        "requiredKeyCount": 8,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 16,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 5
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -1081,16 +1239,19 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.attempt-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": true,
@@ -1099,6 +1260,7 @@
           {
             "key": "capsule.attempt-state",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "allowedUInt64": [1]
           }
         ]
@@ -1110,26 +1272,33 @@
         "methodVersion": 0,
         "messageTag": 5,
         "exactKeyCount": 6,
+        "requiredKeyCount": 6,
+        "optionalKeyCount": 0,
+        "closedMap": true,
         "applicationDataMaxBytes": 0,
         "fields": [
           {
             "key": "capsule.protocol-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.method-version",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 0
           },
           {
             "key": "capsule.message-tag",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": 5
           },
           {
             "key": "capsule.request-id",
             "valueType": "XPC_TYPE_DATA",
+            "required": true,
             "minDataBytes": 16,
             "maxDataBytes": 16,
             "applicationData": false,
@@ -1138,11 +1307,13 @@
           {
             "key": "capsule.status",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           },
           {
             "key": "capsule.reason",
             "valueType": "XPC_TYPE_UINT64",
+            "required": true,
             "fixedUInt64": null
           }
         ]
@@ -1153,7 +1324,26 @@
     {
       "id": "all.exact-key-and-type-sets",
       "methods": "all-frozen-methods",
-      "expected": "accept-outer-shape-only"
+      "expected": {
+        "decision": "accept-outer-shape-only",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
+        "bodyCopied": null,
+        "coreCalls": null
+      },
+      "replyDisposition": "not-applicable-passive-shape-check",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.request.exact-maximum",
@@ -1162,10 +1352,17 @@
       "mutation": "registration-id=16-bytes;approval-envelope=512-bytes",
       "expected": {
         "decision": "accept-outer-shape-and-bounded-body-copy",
-        "applicationDataBytes": 528,
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": true,
-        "coreCalls": 1
-      }
+        "coreCalls": 1,
+        "applicationDataBytes": 528
+      },
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "request-attempt.request.exact-maximum",
@@ -1174,10 +1371,17 @@
       "mutation": "registration-id=16-bytes;approval-id=16-bytes",
       "expected": {
         "decision": "accept-outer-shape-and-bounded-body-copy",
-        "applicationDataBytes": 32,
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": true,
-        "coreCalls": 1
-      }
+        "coreCalls": 1,
+        "applicationDataBytes": 32
+      },
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "submit.body-cap-plus-one",
@@ -1192,6 +1396,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1200,7 +1406,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "register.body-cap-plus-one",
@@ -1215,6 +1422,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1223,7 +1432,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "get.body-cap-plus-one",
@@ -1238,6 +1448,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1246,7 +1458,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.body-cap-plus-one",
@@ -1261,6 +1474,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1269,7 +1484,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "request-attempt.approval-id-width-plus-one",
@@ -1284,6 +1500,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1292,7 +1510,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.missing-key",
@@ -1307,6 +1526,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1315,7 +1536,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-key",
@@ -1330,6 +1552,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1338,7 +1562,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-type",
@@ -1353,6 +1578,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1361,7 +1588,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.nested-container",
@@ -1376,6 +1604,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1384,7 +1614,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.zero-request-id",
@@ -1399,6 +1630,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1407,7 +1640,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.unknown-protocol-version",
@@ -1422,6 +1656,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1430,7 +1666,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.unknown-method-version",
@@ -1445,6 +1682,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1453,7 +1692,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "register.joint-protocol-method-record-version-mismatch",
@@ -1478,6 +1718,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1486,7 +1728,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "register.joint-method-record-version-mismatch",
@@ -1511,6 +1754,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1519,7 +1764,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "register.embedded-record-version-mismatch",
@@ -1533,7 +1779,11 @@
         "reasonTag": 13,
         "bodyCopied": true,
         "coreCalls": 1
-      }
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "submit-approval.joint-protocol-method-record-version-mismatch",
@@ -1558,6 +1808,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1566,7 +1818,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.joint-method-record-version-mismatch",
@@ -1591,6 +1844,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1599,7 +1854,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.embedded-record-version-mismatch",
@@ -1613,7 +1869,11 @@
         "reasonTag": 13,
         "bodyCopied": true,
         "coreCalls": 1
-      }
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
@@ -1629,6 +1889,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1637,7 +1899,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
@@ -1653,6 +1916,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1661,7 +1926,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-SubmitApprovalV0",
@@ -1677,6 +1943,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1685,7 +1953,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-RequestAttemptV0",
@@ -1701,6 +1970,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1709,7 +1980,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
@@ -1725,6 +1997,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1733,7 +2007,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
@@ -1749,6 +2024,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1757,7 +2034,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-SubmitApprovalV0",
@@ -1773,6 +2051,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1781,7 +2061,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-RequestAttemptV0",
@@ -1797,6 +2078,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1805,7 +2088,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
@@ -1821,6 +2105,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1829,7 +2115,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
@@ -1845,6 +2132,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1853,7 +2142,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-SubmitApprovalV0",
@@ -1869,6 +2159,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1877,7 +2169,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-RequestAttemptV0",
@@ -1893,6 +2186,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1901,7 +2196,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-SubmitMainMJSV0",
@@ -1917,6 +2213,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1925,7 +2223,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-RegisterPlanV0",
@@ -1941,6 +2240,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1949,7 +2250,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-GetRegisteredPlanV0",
@@ -1965,6 +2267,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1973,7 +2277,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-RequestAttemptV0",
@@ -1989,6 +2294,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -1997,7 +2304,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-SubmitMainMJSV0",
@@ -2013,6 +2321,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2021,7 +2331,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-RegisterPlanV0",
@@ -2037,6 +2348,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2045,7 +2358,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-GetRegisteredPlanV0",
@@ -2061,6 +2375,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2069,7 +2385,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-SubmitApprovalV0",
@@ -2085,6 +2402,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2093,7 +2412,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-service",
@@ -2101,7 +2421,6 @@
       "direction": "request",
       "mutation": "selected-method-invoked-with-receiving-service=other-role-service",
       "deliveryPrecondition": "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
-      "replyDisposition": "delivered-in-band-refusal",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "AUTHENTICATION",
@@ -2110,6 +2429,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "delivered-in-band-refusal",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2118,7 +2439,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-role",
@@ -2126,7 +2448,6 @@
       "direction": "request",
       "mutation": "message-derived-role=other",
       "deliveryPrecondition": "peer-requirement-and-session-admitted-on-receiving-service;message-reached-method-binding-validator",
-      "replyDisposition": "delivered-in-band-refusal",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "AUTHENTICATION",
@@ -2135,6 +2456,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "delivered-in-band-refusal",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2143,7 +2466,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-session",
@@ -2151,7 +2475,6 @@
       "direction": "request",
       "mutation": "message-derived-euid-or-audit-session=other",
       "deliveryPrecondition": "message-delivered-only-in-passive-model;future-native-peer-session-gate-precedes-body-copy",
-      "replyDisposition": "delivered-in-band-refusal-only-for-this-passive-oracle",
       "expected": {
         "decision": "reject-before-body-copy",
         "classification": "AUTHENTICATION",
@@ -2160,6 +2483,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "delivered-in-band-refusal-only-for-this-passive-oracle",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2168,7 +2493,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-audience",
@@ -2183,6 +2509,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2191,7 +2519,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-purpose",
@@ -2206,6 +2535,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2214,7 +2545,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.local-audience-replaced-by-signed-object-audience",
@@ -2229,6 +2561,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2237,7 +2571,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.local-purpose-replaced-by-signed-object-purpose",
@@ -2252,6 +2587,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2260,7 +2597,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.signed-audience-replaced-by-local-channel-audience",
@@ -2274,7 +2612,11 @@
         "reasonTag": 13,
         "bodyCopied": true,
         "coreCalls": 1
-      }
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "submit-approval.signed-purpose-replaced-by-local-channel-purpose",
@@ -2288,7 +2630,11 @@
         "reasonTag": 13,
         "bodyCopied": true,
         "coreCalls": 1
-      }
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "all.request-id-replaced-by-installation-id-bytes",
@@ -2297,9 +2643,18 @@
       "mutation": "request-id=installation-id-bytes",
       "expected": {
         "decision": "accept-correlation-field-only",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
+        "bodyCopied": null,
+        "coreCalls": null,
         "authorityGrantedByRequestId": false,
         "requestIdIsIdempotencyKey": false
-      }
+      },
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "all.installation-id-replaced-by-request-id-bytes",
@@ -2314,6 +2669,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2322,7 +2679,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "get.registration-id-replaced-by-request-id-bytes",
@@ -2331,8 +2689,17 @@
       "mutation": "registration-id=request-id-bytes",
       "expected": {
         "decision": "continue-to-registration-lookup-without-transport-authority",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
+        "bodyCopied": null,
+        "coreCalls": null,
         "registrationAuthorityGrantedByWidth": false
-      }
+      },
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "submit-approval.registration-id-replaced-by-request-id-bytes",
@@ -2344,10 +2711,14 @@
         "classification": "BINDING",
         "statusTag": 4,
         "reasonTag": 13,
-        "authorityGrantedByWidth": false,
         "bodyCopied": true,
-        "coreCalls": 1
-      }
+        "coreCalls": 1,
+        "authorityGrantedByWidth": false
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "request-attempt.registration-id-replaced-by-approval-id-bytes",
@@ -2359,10 +2730,14 @@
         "classification": "BINDING",
         "statusTag": 4,
         "reasonTag": 13,
-        "authorityGrantedByWidth": false,
         "bodyCopied": true,
-        "coreCalls": 1
-      }
+        "coreCalls": 1,
+        "authorityGrantedByWidth": false
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "request-attempt.approval-id-replaced-by-registration-id-bytes",
@@ -2374,10 +2749,14 @@
         "classification": "BINDING",
         "statusTag": 4,
         "reasonTag": 13,
-        "authorityGrantedByWidth": false,
         "bodyCopied": true,
-        "coreCalls": 1
-      }
+        "coreCalls": 1,
+        "authorityGrantedByWidth": false
+      },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "all.wrong-installation",
@@ -2392,6 +2771,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2400,7 +2781,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-epoch-digest",
@@ -2415,6 +2797,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2423,7 +2807,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.epoch-uint53-cap-plus-one",
@@ -2438,6 +2823,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2446,7 +2833,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-file-descriptor",
@@ -2461,6 +2849,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2469,7 +2859,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-endpoint",
@@ -2484,6 +2875,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2492,7 +2885,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-mach-send-right",
@@ -2507,6 +2901,8 @@
         "bodyCopied": false,
         "coreCalls": 0
       },
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2515,7 +2911,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "all.success-reply-extra-key",
@@ -2526,8 +2923,14 @@
         "decision": "reject-reply",
         "classification": "MALFORMED",
         "statusTag": 1,
-        "reasonTag": 1
-      }
+        "reasonTag": 1,
+        "bodyCopied": null,
+        "coreCalls": null
+      },
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.success-reply-request-id-mismatch",
@@ -2538,8 +2941,14 @@
         "decision": "reject-reply",
         "classification": "BINDING",
         "statusTag": 4,
-        "reasonTag": 11
-      }
+        "reasonTag": 11,
+        "bodyCopied": null,
+        "coreCalls": null
+      },
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.refusal-reply-extra-body",
@@ -2550,8 +2959,14 @@
         "decision": "reject-reply",
         "classification": "MALFORMED",
         "statusTag": 1,
-        "reasonTag": 1
-      }
+        "reasonTag": 1,
+        "bodyCopied": null,
+        "coreCalls": null
+      },
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.local-integrity-output-fault",
@@ -2560,9 +2975,16 @@
       "mutation": "oversize-short-write-pointer-length-or-bridge-version-mismatch",
       "expected": {
         "decision": "terminate-without-reply",
+        "classification": null,
         "statusTag": null,
-        "reasonTag": 14
-      }
+        "reasonTag": 14,
+        "bodyCopied": null,
+        "coreCalls": null
+      },
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "terminate-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     },
     {
       "id": "submit-approval.cancel-before-dispatch",
@@ -2571,10 +2993,15 @@
       "mutation": "caller-cancel-before-bridge-dispatch",
       "expected": {
         "decision": "no-core-call-no-application-reply",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": false,
         "coreCalls": 0,
         "authorityStateChanged": false
       },
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2583,7 +3010,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.cancel-after-dispatch",
@@ -2592,10 +3020,17 @@
       "mutation": "caller-cancel-after-bridge-dispatch",
       "expected": {
         "decision": "response-delivery-cancelled-store-semantic-result-controls",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": true,
         "coreCalls": 1,
         "retryIdentity": "canonical-approval-payload+resolved-signer-authorization-identity"
-      }
+      },
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     },
     {
       "id": "request-attempt.cancel-before-dispatch",
@@ -2604,10 +3039,15 @@
       "mutation": "caller-cancel-before-bridge-dispatch",
       "expected": {
         "decision": "no-core-call-no-application-reply",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": false,
         "coreCalls": 0,
         "authorityStateChanged": false
       },
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
       "noState": {
         "authorityStateChanged": false,
         "coreCalls": 0,
@@ -2616,7 +3056,8 @@
         "attemptsCreated": 0,
         "lifecycleCalls": 0,
         "backendCalls": 0
-      }
+      },
+      "postCoreState": null
     },
     {
       "id": "request-attempt.cancel-after-dispatch",
@@ -2625,10 +3066,17 @@
       "mutation": "caller-cancel-after-bridge-dispatch",
       "expected": {
         "decision": "response-delivery-cancelled-store-semantic-result-controls",
+        "classification": null,
+        "statusTag": null,
+        "reasonTag": null,
         "bodyCopied": true,
         "coreCalls": 1,
         "retryIdentity": "registration-id+approval-reference"
-      }
+      },
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     }
   ],
   "caseTable": [
@@ -2642,7 +3090,19 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "not-applicable-passive-shape-check",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.request.exact-maximum",
@@ -2654,7 +3114,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "request-attempt.request.exact-maximum",
@@ -2666,7 +3130,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "submit.body-cap-plus-one",
@@ -2678,7 +3146,19 @@
       "statusTag": 1,
       "reasonTag": 4,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "register.body-cap-plus-one",
@@ -2690,7 +3170,19 @@
       "statusTag": 1,
       "reasonTag": 4,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "get.body-cap-plus-one",
@@ -2702,7 +3194,19 @@
       "statusTag": 3,
       "reasonTag": 3,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.body-cap-plus-one",
@@ -2714,7 +3218,19 @@
       "statusTag": 1,
       "reasonTag": 4,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "request-attempt.approval-id-width-plus-one",
@@ -2726,7 +3242,19 @@
       "statusTag": 3,
       "reasonTag": 3,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.missing-key",
@@ -2738,7 +3266,19 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-key",
@@ -2750,7 +3290,19 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-type",
@@ -2762,7 +3314,19 @@
       "statusTag": 1,
       "reasonTag": 2,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.nested-container",
@@ -2774,7 +3338,19 @@
       "statusTag": 1,
       "reasonTag": 2,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.zero-request-id",
@@ -2786,7 +3362,19 @@
       "statusTag": 3,
       "reasonTag": 5,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.unknown-protocol-version",
@@ -2798,7 +3386,19 @@
       "statusTag": 2,
       "reasonTag": 7,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.unknown-method-version",
@@ -2810,7 +3410,19 @@
       "statusTag": 2,
       "reasonTag": 8,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "register.joint-protocol-method-record-version-mismatch",
@@ -2822,7 +3434,19 @@
       "statusTag": 2,
       "reasonTag": 7,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "register.joint-method-record-version-mismatch",
@@ -2834,7 +3458,19 @@
       "statusTag": 2,
       "reasonTag": 8,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "register.embedded-record-version-mismatch",
@@ -2846,7 +3482,11 @@
       "statusTag": 2,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "submit-approval.joint-protocol-method-record-version-mismatch",
@@ -2858,7 +3498,19 @@
       "statusTag": 2,
       "reasonTag": 7,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.joint-method-record-version-mismatch",
@@ -2870,7 +3522,19 @@
       "statusTag": 2,
       "reasonTag": 8,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.embedded-record-version-mismatch",
@@ -2882,7 +3546,11 @@
       "statusTag": 2,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-RegisterPlanV0",
@@ -2894,7 +3562,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-GetRegisteredPlanV0",
@@ -2906,7 +3586,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-SubmitApprovalV0",
@@ -2918,7 +3610,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitMainMJSV0.tag-RequestAttemptV0",
@@ -2930,7 +3634,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-SubmitMainMJSV0",
@@ -2942,7 +3658,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-GetRegisteredPlanV0",
@@ -2954,7 +3682,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-SubmitApprovalV0",
@@ -2966,7 +3706,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RegisterPlanV0.tag-RequestAttemptV0",
@@ -2978,7 +3730,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-SubmitMainMJSV0",
@@ -2990,7 +3754,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-RegisterPlanV0",
@@ -3002,7 +3778,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-SubmitApprovalV0",
@@ -3014,7 +3802,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.GetRegisteredPlanV0.tag-RequestAttemptV0",
@@ -3026,7 +3826,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-SubmitMainMJSV0",
@@ -3038,7 +3850,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-RegisterPlanV0",
@@ -3050,7 +3874,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-GetRegisteredPlanV0",
@@ -3062,7 +3898,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.SubmitApprovalV0.tag-RequestAttemptV0",
@@ -3074,7 +3922,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-SubmitMainMJSV0",
@@ -3086,7 +3946,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-RegisterPlanV0",
@@ -3098,7 +3970,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-GetRegisteredPlanV0",
@@ -3110,7 +3994,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "cross-service.RequestAttemptV0.tag-SubmitApprovalV0",
@@ -3122,7 +4018,19 @@
       "statusTag": 2,
       "reasonTag": 9,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-service",
@@ -3134,7 +4042,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "delivered-in-band-refusal",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-role",
@@ -3146,7 +4066,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "delivered-in-band-refusal",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-session",
@@ -3158,7 +4090,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "delivered-in-band-refusal-only-for-this-passive-oracle",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-audience",
@@ -3170,7 +4114,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-purpose",
@@ -3182,7 +4138,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.local-audience-replaced-by-signed-object-audience",
@@ -3194,7 +4162,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.local-purpose-replaced-by-signed-object-purpose",
@@ -3206,7 +4186,19 @@
       "statusTag": 5,
       "reasonTag": 10,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.signed-audience-replaced-by-local-channel-audience",
@@ -3218,7 +4210,11 @@
       "statusTag": 4,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "submit-approval.signed-purpose-replaced-by-local-channel-purpose",
@@ -3230,7 +4226,11 @@
       "statusTag": 4,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "all.request-id-replaced-by-installation-id-bytes",
@@ -3242,7 +4242,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "all.installation-id-replaced-by-request-id-bytes",
@@ -3254,7 +4258,19 @@
       "statusTag": 4,
       "reasonTag": 11,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "get.registration-id-replaced-by-request-id-bytes",
@@ -3266,7 +4282,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "core-semantic-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-semantic-result-controls"
     },
     {
       "id": "submit-approval.registration-id-replaced-by-request-id-bytes",
@@ -3278,7 +4298,11 @@
       "statusTag": 4,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "request-attempt.registration-id-replaced-by-approval-id-bytes",
@@ -3290,7 +4314,11 @@
       "statusTag": 4,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "request-attempt.approval-id-replaced-by-registration-id-bytes",
@@ -3302,7 +4330,11 @@
       "statusTag": 4,
       "reasonTag": 13,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "core-refusal-no-authority-effect"
     },
     {
       "id": "all.wrong-installation",
@@ -3314,7 +4346,19 @@
       "statusTag": 4,
       "reasonTag": 11,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.wrong-epoch-digest",
@@ -3326,7 +4370,19 @@
       "statusTag": 4,
       "reasonTag": 11,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.epoch-uint53-cap-plus-one",
@@ -3338,7 +4394,19 @@
       "statusTag": 3,
       "reasonTag": 6,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-file-descriptor",
@@ -3350,7 +4418,19 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-endpoint",
@@ -3362,7 +4442,19 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.extra-mach-send-right",
@@ -3374,7 +4466,19 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "application-refusal-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "all.success-reply-extra-key",
@@ -3386,7 +4490,11 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.success-reply-request-id-mismatch",
@@ -3398,7 +4506,11 @@
       "statusTag": 4,
       "reasonTag": 11,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.refusal-reply-extra-body",
@@ -3410,7 +4522,11 @@
       "statusTag": 1,
       "reasonTag": 1,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "received-reply-rejected",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": null
     },
     {
       "id": "all.local-integrity-output-fault",
@@ -3422,7 +4538,11 @@
       "statusTag": null,
       "reasonTag": 14,
       "bodyCopied": null,
-      "coreCalls": null
+      "coreCalls": null,
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "terminate-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     },
     {
       "id": "submit-approval.cancel-before-dispatch",
@@ -3434,7 +4554,19 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "submit-approval.cancel-after-dispatch",
@@ -3446,7 +4578,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     },
     {
       "id": "request-attempt.cancel-before-dispatch",
@@ -3458,7 +4594,19 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": false,
-      "coreCalls": 0
+      "coreCalls": 0,
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     },
     {
       "id": "request-attempt.cancel-after-dispatch",
@@ -3470,7 +4618,11 @@
       "statusTag": null,
       "reasonTag": null,
       "bodyCopied": true,
-      "coreCalls": 1
+      "coreCalls": 1,
+      "replyDisposition": "no-application-reply",
+      "terminationDisposition": "continue-process",
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     }
   ],
   "refusalReplies": [
@@ -3599,20 +4751,165 @@
       "requestIdIsIdempotencyKey": false
     }
   ],
+  "deadlineBoundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
   "deadlineCases": [
     {
+      "id": "SubmitApprovalV0.deadline.immediately-before",
       "method": "SubmitApprovalV0",
       "deadlineMilliseconds": 5000,
       "startsAt": "admission",
       "clientExtensionAllowed": false,
-      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls"
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-before",
+      "elapsedMilliseconds": 4999,
+      "expected": {
+        "decision": "dispatch-core-before-deadline",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "store-semantic-reply-unless-deadline-cancels-delivery",
+        "bodyCopied": true,
+        "coreCalls": 1
+      },
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
     },
     {
+      "id": "SubmitApprovalV0.deadline.exactly-at",
+      "method": "SubmitApprovalV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "exactly-at",
+      "elapsedMilliseconds": 5000,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "SubmitApprovalV0.deadline.immediately-after",
+      "method": "SubmitApprovalV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-after",
+      "elapsedMilliseconds": 5001,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "RequestAttemptV0.deadline.immediately-before",
       "method": "RequestAttemptV0",
       "deadlineMilliseconds": 5000,
       "startsAt": "admission",
       "clientExtensionAllowed": false,
-      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls"
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-before",
+      "elapsedMilliseconds": 4999,
+      "expected": {
+        "decision": "dispatch-core-before-deadline",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "store-semantic-reply-unless-deadline-cancels-delivery",
+        "bodyCopied": true,
+        "coreCalls": 1
+      },
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
+    },
+    {
+      "id": "RequestAttemptV0.deadline.exactly-at",
+      "method": "RequestAttemptV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "exactly-at",
+      "elapsedMilliseconds": 5000,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "RequestAttemptV0.deadline.immediately-after",
+      "method": "RequestAttemptV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-after",
+      "elapsedMilliseconds": 5001,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
     }
   ],
   "futureNativeHarnessOracles": [

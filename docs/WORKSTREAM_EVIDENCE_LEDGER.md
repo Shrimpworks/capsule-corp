@@ -51,22 +51,24 @@ totals supersede older checkpoint counts without rewriting their historical evid
 
 ## 2026-08-10 current integration readback
 
-Fetched `origin/main` is `ed4220fe16d1752a75c67da957a25681d79e34f3`. The following merged
+Fetched `origin/main` at the focused follow-up start is
+`133669ba4b61b4e09baddfd6f7bb0a922ca49c8a`. The following merged
 integrations are passive-only prerequisites; neither activates a listener, service, product
 consumer, runtime, backend, VM, guest, or admission path.
 
 | PR | Merge commit | Retained scope |
 | --- | --- | --- |
 | #246 | `9c7160d7dfe4e2bb83d9bd2887a0034eeaaf17d7` | C5a `PASSED`: exact typed source/input/completion v1 frames, caps and cap-plus-one, canonical JSON, ordered refusal/state/restoration cases, endpoint custody, completion-last projection, and independent Go/Node agreement. C5b controlled execution and installed/product composition remain `BLOCKED`. |
-| #247 | `ed4220fe16d1752a75c67da957a25681d79e34f3` | Merged C4 passive five-method candidate with tags 4/5, approval/attempt dictionaries and state tags, 528/32-byte request maxima, 5,000 ms deadlines, refusal/copy/identifier-domain cases, semantic replay, and the five-entry response-loss table. The later CL4 audit is `PASSED` with disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED` pending its separate focused hardening PR. Installed IPC, live signing, consumers, and product activation remain `BLOCKED`. |
+| #247 | `ed4220fe16d1752a75c67da957a25681d79e34f3` | Merged C4 passive five-method candidate with tags 4/5, approval/attempt dictionaries and state tags, 528/32-byte request maxima, 5,000 ms deadlines, refusal/copy/identifier-domain cases, semantic replay, and the five-entry response-loss table. The later CL4 audit is `PASSED` with historical disposition `AMEND`; PR #248 and the focused follow-up supersede its then-`BLOCKED` evidence status. Installed IPC, live signing, consumers, and product activation remain `BLOCKED`. |
+| #248 | `133669ba4b61b4e09baddfd6f7bb0a922ca49c8a` | Canonical predecessor for this task: reconciles C5a/C4, retains R3, and records CL4 `PASSED` with disposition `AMEND` plus the exact focused implementation dependency. It changes no runtime, installed, or product bytes. |
 
-CL4's independent read-only refusal-matrix audit is `PASSED` with disposition `AMEND`. It found no
-runtime authority bypass and has no ADR impact. The exact separate implementation destination is a
-focused evidence-hardening PR that adds explicit before/at/after 5,000-ms deadline cases with
-defined exact-at-boundary behavior and strengthens Go/Node comparison of complete dictionaries,
-closed maps, all case fields, required `noState` entries, cancellation/deadline oracles, and
-refusal-table completeness. That implementation is not part of this documentation integration and
-is not `PASSED`.
+CL4's independent read-only refusal-matrix audit remains `PASSED` with historical disposition
+`AMEND`; it found no runtime authority bypass and has no ADR impact. This focused implementation
+closure adds explicit ordered 4,999/5,000/5,001-ms cases for both methods, defines equality as
+expired, independently checks complete closed dictionaries/maps and every ordered field, requires
+`noState` on pre-core refusals, verifies cancellation/deadline commit truth, all collisions, the
+complete refusal and five-entry response-loss tables, and proves the checks with bounded Go/Node
+mutations. The exact passive/no-listener C4 evidence claim is now `PASSED`.
 
 ## 2026-08-06 historical integration readback
 
@@ -703,9 +705,9 @@ local-versus-signed purpose/audience, same-width ID, smuggled-object, cap/releas
 cancellation, no-reply integrity, semantic replay, and the exact five-entry response-loss table.
 The generator drift check, independent Node verifier, and Go model/tests produced the merged
 candidate. CL4 then completed `PASSED` with disposition `AMEND`: no runtime authority bypass was
-found, but the current C4 passive evidence claim is `BLOCKED` until its separate focused
-evidence-hardening implementation PR closes the exact deadline-boundary and independent-comparison
-gaps. Activation remains `BLOCKED`. Archive mutation/growth through F5 is
+found. The focused follow-up now closes the exact deadline-boundary and independent-comparison
+gaps, so the passive/no-listener C4 evidence claim is `PASSED`. Activation remains `BLOCKED`.
+Archive mutation/growth through F5 is
 `PASSED` in the fixed-store oracle; F6 execution, production-engine selection, production
 COSE/Keychain/user-presence signing, consumer ownership, evidence composition, and public cutover
 remain separate. R3's passive research is `PASSED`, but its accessibility/signature values are

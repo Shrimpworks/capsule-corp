@@ -1,14 +1,13 @@
-# Passive authenticated-local-IPC C4 candidate and CL4 audit disposition
+# Passive authenticated-local-IPC C4 contract and CL4 amendment closure
 
 Date: 2026-08-10
 
 Work item: freeze `SubmitApprovalV0` and `RequestAttemptV0` in the existing passive
 `xpc-dictionary-v0` contract.
 
-Status: `BLOCKED` for the current passive evidence claim pending the focused evidence-hardening
-implementation required by the completed CL4 audit.
+Status: `PASSED` for the exact passive, unwired, no-listener C4 evidence scope.
 
-CL4 audit: `PASSED`; disposition: `AMEND`.
+CL4 audit: `PASSED`; historical disposition: `AMEND`; focused follow-up: closed.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -24,6 +23,10 @@ Keychain item, store consumer, threshold-policy hook, process, endpoint, runtime
 guest. APL-2 remains the applicable reuse-map row: a later product slice may adopt Apple XPC while
 Capsule owns the closed roles, dictionaries, bounds, and replay policy. No dependency is added.
 
+PR #248 is the canonical predecessor that retained the CL4 `AMEND` disposition and dispatched this
+focused implementation closure. This follow-up changes evidence strength only; it does not alter
+topology, authority ownership, replay identity, privileged responsibility, or ADR lifecycle.
+
 ## Frozen method and state tags
 
 The existing tags are unchanged. `0` remains invalid.
@@ -38,17 +41,28 @@ The existing tags are unchanged. `0` remains invalid.
 
 The new reply state tags are closed. Approval state is `invalid=0`, `usable=1`, `consumed=2`, and
 `invalidated=3`. Attempt state is `invalid=0` and `created=1`. Success replies never use either
-invalid tag. The five-second values are no longer prose arithmetic: the merged generator emits
-admission-start deadline cases. CL4 found that these do not yet establish explicit before, exactly
-at, and after boundary behavior and that the Go and Node comparison must be strengthened. These are
-passive protocol deadlines, not observed platform latency or installed-service evidence.
+invalid tag. The five-second deadline check is closed and mechanical: dispatch is allowed only
+when elapsed admission time is strictly less than 5,000 milliseconds. Equality is expired. For
+each new method, the generated ordered cases are:
+
+| Boundary | Case identity | Decision | Reply/status/reason | Core/state |
+| --- | --- | --- | --- | --- |
+| 4,999 ms | `<Method>.deadline.immediately-before` | dispatch the core | the store-semantic reply may be delivered unless the deadline later cancels delivery; transport status/reason are `null` | body copied, one core call, store semantic result or recovery fence controls |
+| 5,000 ms | `<Method>.deadline.exactly-at` | expired before dispatch | no application reply; status/reason are `null` | no body copy, zero core calls, exact zero `noState` |
+| 5,001 ms | `<Method>.deadline.immediately-after` | expired before dispatch | no application reply; status/reason are `null` | no body copy, zero core calls, exact zero `noState` |
+
+`<Method>` is separately `SubmitApprovalV0` and `RequestAttemptV0`, producing six cases in that
+order. These are passive protocol deadlines, not observed platform latency, OS cancellation, or
+installed-service evidence.
 
 ## Exact dictionaries and mechanically derived caps
 
 All requests retain the exact nine common keys and all replies retain the exact six common keys
 from the S3 contract. Values remain top-level `XPC_TYPE_UINT64`, `XPC_TYPE_DATA`, or
 `XPC_TYPE_STRING`; nested containers, file descriptors, endpoints, Mach rights, and extra objects
-remain forbidden.
+remain forbidden. Every envelope now records `requiredKeyCount == exactKeyCount`,
+`optionalKeyCount == 0`, and `closedMap == true`; every listed field independently records
+`required == true`.
 
 `SubmitApprovalV0` has exactly 11 request keys: the nine common keys, a nonzero 16-byte
 `capsule.registration-id`, and `capsule.approval-envelope` containing 1..512 exact bytes. Its
@@ -118,6 +132,9 @@ does not grant that domain and reaches only the exact current-state/core binding
 - Request IDs are not idempotency keys. Cancellation before dispatch makes no core call and creates
   no reply or state effect. Cancellation or deadline after dispatch cancels only response delivery;
   store truth or the recovery fence controls the result.
+- The exact after-dispatch commit oracles prohibit a deadline from turning an already committed
+  approval or attempt replay into a new refusal. Approval replay returns the same `ApprovalID` and
+  current state; attempt replay returns the same `AttemptID` and current state.
 - The generated response-loss table retains the original three entries and appends complete exact
   entries for both new methods. Go and Node deep-compare it.
 - A generated isolated aggregate case admits one maximum 528-byte approval request and one
@@ -135,12 +152,19 @@ does not grant that domain and reaches only the exact current-state/core binding
 - `schemas/conformance/authenticated-local-ipc-v0/oracles.json` retains the exact/cap-plus-one,
   copy, aggregate release/re-admission, cancellation, and response-loss oracles.
 - `scripts/generate-authenticated-local-ipc-conformance.mjs` derives the aggregates and generated
-  references. `scripts/verify-authenticated-local-ipc-conformance.mjs` reconstructs the ordered
-  case table and new method tables, but CL4 requires a stronger independent complete-map and
-  all-field comparison before the evidence claim can pass.
-- `passive_native_xpc_contract_test.go` compares the Go method/envelope/state/deadline/response-loss
-  model and ordered native cases, but CL4 requires complete dictionary, closed-map, required
-  `noState`, cancellation/deadline, and refusal-table completeness checks.
+  references. `scripts/verify-authenticated-local-ipc-conformance.mjs` independently compares the
+  complete closed method dictionaries and maps, every ordered case field, all 20 foreign-tag
+  collisions, the complete refusal and response-loss tables, required `noState` entries, deadline,
+  cancellation, release/re-admission, cap-plus-one, and no-reply oracles.
+- Every ordered native case now carries exact status/reason, body-copy/core-call, reply disposition,
+  process-termination disposition, `noState`, and post-core-state fields; `null` is an explicit
+  not-applicable value rather than an omitted or silently unchecked field.
+- `passive_native_xpc_contract_test.go` independently compares all five complete request/success/
+  refusal dictionaries, the full ordered cases, status/reason/state tables, six deadline cases,
+  exact five-entry response-loss table, and complete oracle sections.
+- Bounded Go and Node mutations prove refusal of a missing or extra dictionary field, changed
+  type/width/cap, absent required `noState`, changed cancellation/deadline result, missing refusal
+  case, response-loss drift, and exact-at-boundary inversion.
 
 Focused verification:
 
@@ -154,18 +178,9 @@ go test ./internal/execution/authorityplane
 
 This implements Accepted ADR-0029 and the S0 review without changing component responsibility,
 service topology, signed-object policy, or ADR lifecycle. No ADR addendum is required. CL4 found no
-runtime authority bypass, but its `AMEND` disposition blocks the current C4 passive evidence claim.
-A separate focused evidence-hardening PR must:
+runtime authority bypass; its historical `AMEND` disposition is now closed by the focused evidence
+hardening above, so the exact passive/no-listener C4 claim is `PASSED`.
 
-1. generate explicit before, exactly at, and after 5,000-ms deadline cases for
-   `SubmitApprovalV0` and `RequestAttemptV0`, with exact-at-boundary behavior defined;
-2. strengthen the Go and Node verification to independently compare complete dictionaries, closed
-   maps, every case field, required `noState` entries, cancellation/deadline oracles, and
-   refusal-table completeness; and
-3. rerun generator `--check`, the independent Node verifier, focused Go contract/replay tests, and
-   `git diff --check`.
-
-This documentation integration does not implement that follow-up and does not mark it `PASSED`.
 Native OS pre-delivery enforcement, installed identities/session/update, Broker live signing,
 protected-state consumers, threshold-policy wiring, runtime/profile admission, and product
 admission remain separately `BLOCKED`.

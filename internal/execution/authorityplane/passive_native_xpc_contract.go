@@ -17,63 +17,66 @@ const (
 
 // Passive native-XPC field names, key counts, method constants, and limits.
 const (
-	NativeXPCEncoding                       = "xpc-dictionary-v0"
-	NativeXPCEncodingVersion                = uint64(0)
-	NativeXPCProtocolVersionKey             = "capsule.protocol-version"
-	NativeXPCMethodVersionKey               = "capsule.method-version"
-	NativeXPCMessageTagKey                  = "capsule.message-tag"
-	NativeXPCRequestIDKey                   = "capsule.request-id"
-	NativeXPCInstallationIDKey              = "capsule.installation-id"
-	NativeXPCEpochSequenceKey               = "capsule.epoch-sequence"
-	NativeXPCEpochDigestKey                 = "capsule.epoch-digest"
-	NativeXPCAudienceKey                    = "capsule.audience"
-	NativeXPCPurposeKey                     = "capsule.purpose"
-	NativeXPCStatusKey                      = "capsule.status"
-	NativeXPCReasonKey                      = "capsule.reason"
-	NativeXPCJobProposalKey                 = "capsule.job-proposal"
-	NativeXPCExecutionPlanKey               = "capsule.execution-plan"
-	NativeXPCRoleBindingsKey                = "capsule.role-bindings"
-	NativeXPCSourceManifestKey              = "capsule.source-manifest"
-	NativeXPCSourceKey                      = "capsule.source"
-	NativeXPCRegistrationIDKey              = "capsule.registration-id"
-	NativeXPCPlanRegistrationKey            = "capsule.plan-registration"
-	NativeXPCApprovalEnvelopeKey            = "capsule.approval-envelope"
-	NativeXPCApprovalIDKey                  = "capsule.approval-id"
-	NativeXPCApprovalStateKey               = "capsule.approval-state"
-	NativeXPCAttemptIDKey                   = "capsule.attempt-id"
-	NativeXPCAttemptStateKey                = "capsule.attempt-state"
-	NativeXPCRequestCommonKeyCount          = uint64(9)
-	NativeXPCReplyCommonKeyCount            = uint64(6)
-	NativeXPCSubmitRequestKeyCount          = uint64(10)
-	NativeXPCSubmitReplyKeyCount            = uint64(7)
-	NativeXPCRegisterRequestKeyCount        = uint64(13)
-	NativeXPCRegisterReplyKeyCount          = uint64(7)
-	NativeXPCGetRequestKeyCount             = uint64(10)
-	NativeXPCGetReplyKeyCount               = uint64(11)
-	NativeXPCSubmitApprovalRequestKeyCount  = uint64(11)
-	NativeXPCSubmitApprovalReplyKeyCount    = uint64(8)
-	NativeXPCRequestAttemptRequestKeyCount  = uint64(11)
-	NativeXPCRequestAttemptReplyKeyCount    = uint64(8)
-	NativeXPCRefusalReplyKeyCount           = uint64(6)
-	NativeXPCExtraObjectsAllowed            = uint64(0)
-	NativeXPCFileDescriptorsAllowed         = uint64(0)
-	NativeXPCEndpointsAllowed               = uint64(0)
-	NativeXPCMachRightsAllowed              = uint64(0)
-	NativeXPCNestedContainersAllowed        = uint64(0)
-	SubmitApprovalV0Method                  = "SubmitApprovalV0"
-	SubmitApprovalV0MethodVersion           = uint64(0)
-	SubmitApprovalV0Purpose                 = "capsule.ipc.submit-approval.v0"
-	SubmitApprovalV0RequestDataMaxBytes     = uint64(528)
-	SubmitApprovalV0ReplyDataMaxBytes       = uint64(16)
-	SubmitApprovalV0DeadlineMilliseconds    = uint64(5_000)
-	SubmitApprovalV0ResponseLossDisposition = "canonical-payload-and-signer-authorization-replay-returns-same-approval-and-current-state"
-	RequestAttemptV0Method                  = "RequestAttemptV0"
-	RequestAttemptV0MethodVersion           = uint64(0)
-	RequestAttemptV0Purpose                 = "capsule.ipc.request-attempt.v0"
-	RequestAttemptV0RequestDataMaxBytes     = uint64(32)
-	RequestAttemptV0ReplyDataMaxBytes       = uint64(16)
-	RequestAttemptV0DeadlineMilliseconds    = uint64(5_000)
-	RequestAttemptV0ResponseLossDisposition = "registration-and-approval-reference-replay-returns-same-attempt-and-current-state"
+	NativeXPCEncoding                         = "xpc-dictionary-v0"
+	NativeXPCEncodingVersion                  = uint64(0)
+	NativeXPCProtocolVersionKey               = "capsule.protocol-version"
+	NativeXPCMethodVersionKey                 = "capsule.method-version"
+	NativeXPCMessageTagKey                    = "capsule.message-tag"
+	NativeXPCRequestIDKey                     = "capsule.request-id"
+	NativeXPCInstallationIDKey                = "capsule.installation-id"
+	NativeXPCEpochSequenceKey                 = "capsule.epoch-sequence"
+	NativeXPCEpochDigestKey                   = "capsule.epoch-digest"
+	NativeXPCAudienceKey                      = "capsule.audience"
+	NativeXPCPurposeKey                       = "capsule.purpose"
+	NativeXPCStatusKey                        = "capsule.status"
+	NativeXPCReasonKey                        = "capsule.reason"
+	NativeXPCJobProposalKey                   = "capsule.job-proposal"
+	NativeXPCExecutionPlanKey                 = "capsule.execution-plan"
+	NativeXPCRoleBindingsKey                  = "capsule.role-bindings"
+	NativeXPCSourceManifestKey                = "capsule.source-manifest"
+	NativeXPCSourceKey                        = "capsule.source"
+	NativeXPCRegistrationIDKey                = "capsule.registration-id"
+	NativeXPCPlanRegistrationKey              = "capsule.plan-registration"
+	NativeXPCApprovalEnvelopeKey              = "capsule.approval-envelope"
+	NativeXPCApprovalIDKey                    = "capsule.approval-id"
+	NativeXPCApprovalStateKey                 = "capsule.approval-state"
+	NativeXPCAttemptIDKey                     = "capsule.attempt-id"
+	NativeXPCAttemptStateKey                  = "capsule.attempt-state"
+	NativeXPCRequestCommonKeyCount            = uint64(9)
+	NativeXPCReplyCommonKeyCount              = uint64(6)
+	NativeXPCSubmitRequestKeyCount            = uint64(10)
+	NativeXPCSubmitReplyKeyCount              = uint64(7)
+	NativeXPCRegisterRequestKeyCount          = uint64(13)
+	NativeXPCRegisterReplyKeyCount            = uint64(7)
+	NativeXPCGetRequestKeyCount               = uint64(10)
+	NativeXPCGetReplyKeyCount                 = uint64(11)
+	NativeXPCSubmitApprovalRequestKeyCount    = uint64(11)
+	NativeXPCSubmitApprovalReplyKeyCount      = uint64(8)
+	NativeXPCRequestAttemptRequestKeyCount    = uint64(11)
+	NativeXPCRequestAttemptReplyKeyCount      = uint64(8)
+	NativeXPCRefusalReplyKeyCount             = uint64(6)
+	NativeXPCExtraObjectsAllowed              = uint64(0)
+	NativeXPCFileDescriptorsAllowed           = uint64(0)
+	NativeXPCEndpointsAllowed                 = uint64(0)
+	NativeXPCMachRightsAllowed                = uint64(0)
+	NativeXPCNestedContainersAllowed          = uint64(0)
+	NativeXPCDeadlineBoundaryRule             = "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds"
+	NativeXPCDeadlineExpiredDisposition       = "deadline-expired-before-dispatch"
+	NativeXPCDeadlineAfterDispatchDisposition = "response-unknown-store-semantic-result-or-recovery-fence-controls"
+	SubmitApprovalV0Method                    = "SubmitApprovalV0"
+	SubmitApprovalV0MethodVersion             = uint64(0)
+	SubmitApprovalV0Purpose                   = "capsule.ipc.submit-approval.v0"
+	SubmitApprovalV0RequestDataMaxBytes       = uint64(528)
+	SubmitApprovalV0ReplyDataMaxBytes         = uint64(16)
+	SubmitApprovalV0DeadlineMilliseconds      = uint64(5_000)
+	SubmitApprovalV0ResponseLossDisposition   = "canonical-payload-and-signer-authorization-replay-returns-same-approval-and-current-state"
+	RequestAttemptV0Method                    = "RequestAttemptV0"
+	RequestAttemptV0MethodVersion             = uint64(0)
+	RequestAttemptV0Purpose                   = "capsule.ipc.request-attempt.v0"
+	RequestAttemptV0RequestDataMaxBytes       = uint64(32)
+	RequestAttemptV0ReplyDataMaxBytes         = uint64(16)
+	RequestAttemptV0DeadlineMilliseconds      = uint64(5_000)
+	RequestAttemptV0ResponseLossDisposition   = "registration-and-approval-reference-replay-returns-same-attempt-and-current-state"
 )
 
 type NativeXPCMessageTag uint64
@@ -153,6 +156,7 @@ const (
 type NativeXPCFieldSpec struct {
 	Key             string
 	ValueType       NativeXPCValueType
+	Required        bool
 	MinDataBytes    uint64
 	MaxDataBytes    uint64
 	FixedUInt64     uint64
@@ -171,6 +175,9 @@ type NativeXPCEnvelopeSpec struct {
 	ProtocolVersion         uint64
 	MethodVersion           uint64
 	ExactKeyCount           uint64
+	RequiredKeyCount        uint64
+	OptionalKeyCount        uint64
+	ClosedMap               bool
 	ApplicationDataMaxBytes uint64
 	Fields                  []NativeXPCFieldSpec
 }
@@ -450,8 +457,8 @@ func nativeXPCRefusalReplySpec(method string, tag NativeXPCMessageTag, version u
 	return NativeXPCEnvelopeSpec{
 		Method: method, Direction: "refusal-reply", MessageTag: tag,
 		ProtocolVersion: PassiveIPCProtocolVersion, MethodVersion: version,
-		ExactKeyCount: NativeXPCRefusalReplyKeyCount,
-		Fields:        nativeXPCReplyHeader(tag, version, false),
+		ExactKeyCount: NativeXPCRefusalReplyKeyCount, RequiredKeyCount: NativeXPCRefusalReplyKeyCount, ClosedMap: true,
+		Fields: nativeXPCReplyHeader(tag, version, false),
 	}
 }
 
@@ -471,7 +478,7 @@ func nativeXPCRequestSpec(
 		nativeXPCFixedUInt64Field(NativeXPCMessageTagKey, uint64(tag)),
 		nativeXPCDataField(NativeXPCRequestIDKey, 16, 16, false, true),
 		nativeXPCDataField(NativeXPCInstallationIDKey, 16, 16, false, false),
-		{Key: NativeXPCEpochSequenceKey, ValueType: NativeXPCTypeUInt64},
+		{Key: NativeXPCEpochSequenceKey, ValueType: NativeXPCTypeUInt64, Required: true},
 		nativeXPCDataField(NativeXPCEpochDigestKey, 32, 32, false, false),
 		nativeXPCFixedStringField(NativeXPCAudienceKey, audience),
 		nativeXPCFixedStringField(NativeXPCPurposeKey, purpose),
@@ -480,7 +487,7 @@ func nativeXPCRequestSpec(
 	return NativeXPCEnvelopeSpec{
 		Method: method, Direction: "request", MessageTag: tag,
 		ProtocolVersion: PassiveIPCProtocolVersion, MethodVersion: methodVersion,
-		ExactKeyCount: exactKeyCount, ApplicationDataMaxBytes: applicationDataMaxBytes,
+		ExactKeyCount: exactKeyCount, RequiredKeyCount: exactKeyCount, ClosedMap: true, ApplicationDataMaxBytes: applicationDataMaxBytes,
 		Fields: fields,
 	}
 }
@@ -498,7 +505,7 @@ func nativeXPCSuccessReplySpec(
 	return NativeXPCEnvelopeSpec{
 		Method: method, Direction: "success-reply", MessageTag: tag,
 		ProtocolVersion: PassiveIPCProtocolVersion, MethodVersion: methodVersion,
-		ExactKeyCount: exactKeyCount, ApplicationDataMaxBytes: applicationDataMaxBytes,
+		ExactKeyCount: exactKeyCount, RequiredKeyCount: exactKeyCount, ClosedMap: true, ApplicationDataMaxBytes: applicationDataMaxBytes,
 		Fields: fields,
 	}
 }
@@ -511,23 +518,23 @@ func nativeXPCReplyHeader(tag NativeXPCMessageTag, methodVersion uint64, success
 		nativeXPCFixedUInt64Field(NativeXPCMethodVersionKey, methodVersion),
 		nativeXPCFixedUInt64Field(NativeXPCMessageTagKey, uint64(tag)),
 		nativeXPCDataField(NativeXPCRequestIDKey, 16, 16, false, true),
-		{Key: NativeXPCStatusKey, ValueType: NativeXPCTypeUInt64, FixedUInt64: status, HasFixedUInt64: success},
-		{Key: NativeXPCReasonKey, ValueType: NativeXPCTypeUInt64, FixedUInt64: reason, HasFixedUInt64: success},
+		{Key: NativeXPCStatusKey, ValueType: NativeXPCTypeUInt64, Required: true, FixedUInt64: status, HasFixedUInt64: success},
+		{Key: NativeXPCReasonKey, ValueType: NativeXPCTypeUInt64, Required: true, FixedUInt64: reason, HasFixedUInt64: success},
 	}
 }
 
 func nativeXPCDataField(key string, minimum, maximum uint64, applicationData, nonzero bool) NativeXPCFieldSpec {
-	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeData, MinDataBytes: minimum, MaxDataBytes: maximum, ApplicationData: applicationData, NonZeroData: nonzero}
+	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeData, Required: true, MinDataBytes: minimum, MaxDataBytes: maximum, ApplicationData: applicationData, NonZeroData: nonzero}
 }
 
 func nativeXPCAllowedUInt64Field(key string, allowed []uint64) NativeXPCFieldSpec {
-	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeUInt64, AllowedUInt64: append([]uint64(nil), allowed...)}
+	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeUInt64, Required: true, AllowedUInt64: append([]uint64(nil), allowed...)}
 }
 
 func nativeXPCFixedUInt64Field(key string, value uint64) NativeXPCFieldSpec {
-	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeUInt64, FixedUInt64: value, HasFixedUInt64: true}
+	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeUInt64, Required: true, FixedUInt64: value, HasFixedUInt64: true}
 }
 
 func nativeXPCFixedStringField(key, value string) NativeXPCFieldSpec {
-	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeString, FixedString: value, HasFixedString: true}
+	return NativeXPCFieldSpec{Key: key, ValueType: NativeXPCTypeString, Required: true, FixedString: value, HasFixedString: true}
 }

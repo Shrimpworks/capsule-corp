@@ -144,9 +144,10 @@ The [S3 native contract](AUTHENTICATED_LOCAL_IPC_S3_NATIVE_CONTRACT.md) preserve
 three-method prerequisite, while the [C4 successor](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md)
 extends the current passive generated contract to `SubmitApprovalV0` and `RequestAttemptV0` with
 exact caps, deadlines, refusal precedence, semantic replay, and response-loss evidence. Installed
-IPC remains blocked. The independent CL4 audit is `PASSED` with disposition `AMEND` and found no
-runtime authority bypass, but the current C4 passive evidence claim is `BLOCKED` pending a separate
-focused deadline-boundary and independent-verifier hardening PR.
+IPC remains blocked. The independent CL4 audit is `PASSED` with historical disposition `AMEND` and
+found no runtime authority bypass. PR #248 is the canonical predecessor; the focused follow-up now
+closes the explicit 4,999/5,000/5,001-ms deadline and independent complete-verifier gaps, so the
+exact passive/no-listener C4 evidence claim is `PASSED`.
 
 The follow-on grammar/process decision is [Accepted ADR-0035](adr/0035-select-disposable-mjs-source-validator.md)
 and its [implementation, conformance, and fault plan](MJS_SOURCE_VALIDATOR_IMPLEMENTATION_PLAN.md).

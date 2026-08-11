@@ -73,8 +73,9 @@ merged in PR #230, and the five-method C4 successor merged in PR #247 are also d
 only. PR #247 records the `SubmitApprovalV0` and `RequestAttemptV0` candidate tags, dictionaries,
 caps, deadlines, refusal precedence, semantic replay, and response-loss behavior without activating
 a listener, signer, protected-state consumer, lifecycle driver, or product endpoint. The completed
-CL4 audit is `PASSED` with disposition `AMEND`; the current C4 passive evidence claim is `BLOCKED`
-pending a separate focused evidence-hardening PR. A later method-specific
+CL4 audit is `PASSED` with historical disposition `AMEND`. PR #248 is the canonical predecessor;
+the focused evidence-hardening follow-up closes the audit findings, so the exact
+passive/no-listener C4 evidence claim is `PASSED`. A later method-specific
 adapter must preserve this slice's ordering: the Broker signs Supervisor-fetched registered data;
 approval submission carries the registration identifier and exact signed envelope; the
 Supervisor's durable submit commit owns approval authority; attempt creation consumes stored

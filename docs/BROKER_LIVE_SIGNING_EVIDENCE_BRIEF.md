@@ -16,8 +16,10 @@ security boundary, and product admission: `BLOCKED`.
 This document canonicalizes a supplied read-only research packet against the repository state at
 `origin/main` commit `ed4220fe16d1752a75c67da957a25681d79e34f3`. That state includes the merged
 passive C5a transport contract in PR #246 and the passive C4 approval/attempt candidate in PR #247.
-The later CL4 audit is `PASSED` with disposition `AMEND`, leaving the current C4 evidence claim
-`BLOCKED` pending focused hardening. Neither merge activates a platform or product path.
+The later CL4 audit is `PASSED` with historical disposition `AMEND`. PR #248 is the canonical
+predecessor to the focused follow-up that closed the audit's exact passive evidence findings, so
+the passive/no-listener C4 claim is `PASSED`. Neither merge nor the follow-up activates a platform
+or product path.
 
 ## Defensive scope
 
@@ -53,8 +55,9 @@ non-authoritative and the Go Supervisor core as the only durable owner of regist
 approval, attempt, and lifecycle state. The merged passive
 [C4 candidate](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md) records `SubmitApprovalV0` and
 `RequestAttemptV0` encodings, replay, and response-loss behavior without implementing their
-listeners or consumers. Its current evidence claim remains `BLOCKED` under the completed CL4
-audit's `AMEND` disposition.
+listeners or consumers. Its exact passive/no-listener evidence claim is `PASSED`; CL4 remains
+`PASSED` with historical disposition `AMEND`, now closed by the focused follow-up. Installed IPC,
+signing, consumers, and product admission remain `BLOCKED`.
 
 [Proposed ADR-0021](adr/0021-security-epoch-keychain-groups.md) remains Proposed. This document
 does not accept its identity-changing key/group transition policy.

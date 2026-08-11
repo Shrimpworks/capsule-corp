@@ -24,6 +24,10 @@ const nativeXPCValidationPrecedence = Object.freeze([
   "application-data-copy",
   "embedded-record-version-and-core-validation",
 ]);
+const deadlineBoundaryRule =
+  "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds";
+const deadlineAfterDispatchDisposition =
+  "response-unknown-store-semantic-result-or-recovery-fence-controls";
 const nativeXPCTypes = Object.freeze({
   uint64: "XPC_TYPE_UINT64",
   data: "XPC_TYPE_DATA",
@@ -405,7 +409,7 @@ const zeroEffects = Object.freeze({
   backendCreated: false,
   guestCreated: false,
 });
-const nativeCases = nativeXPCCases();
+const nativeCases = nativeXPCCases().map(completeNativeXPCCase);
 
 const nativeXPCContract = {
   objectType: "capsule.authenticated-local-ipc-native-xpc-contract",
@@ -530,21 +534,10 @@ const nativeXPCContract = {
       requestIdIsIdempotencyKey: false,
     },
   ],
+  deadlineBoundaryRule,
   deadlineCases: [
-    {
-      method: "SubmitApprovalV0",
-      deadlineMilliseconds: methods.submitApprovalV0.deadlineMilliseconds,
-      startsAt: "admission",
-      clientExtensionAllowed: false,
-      afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
-    },
-    {
-      method: "RequestAttemptV0",
-      deadlineMilliseconds: methods.requestAttemptV0.deadlineMilliseconds,
-      startsAt: "admission",
-      clientExtensionAllowed: false,
-      afterDispatchDisposition: "response-unknown-store-semantic-result-or-recovery-fence-controls",
-    },
+    ...deadlineBoundaryCases(methods.submitApprovalV0),
+    ...deadlineBoundaryCases(methods.requestAttemptV0),
   ],
   futureNativeHarnessOracles: [
     {
@@ -1136,6 +1129,38 @@ const oracles = {
       admittedSlotHeldUntilCoreReturns: true,
     },
     {
+      id: "submit-approval.deadline-after-dispatch-commit",
+      method: "SubmitApprovalV0",
+      disposition: "deadline-cancels-response-delivery-only",
+      coreCalls: 1,
+      replyDisposition: "no-application-reply-on-expired-call",
+      statusTag: null,
+      reasonTag: null,
+      postCoreState: {
+        durableAuthority: "approval-commit-remains-authoritative",
+        replayIdentity: "canonical-approval-payload+resolved-signer-authorization-identity",
+        replayResult: "same-approval-id-and-current-state",
+        newRefusalAllowed: false,
+      },
+      noState: null,
+    },
+    {
+      id: "request-attempt.deadline-after-dispatch-commit",
+      method: "RequestAttemptV0",
+      disposition: "deadline-cancels-response-delivery-only",
+      coreCalls: 1,
+      replyDisposition: "no-application-reply-on-expired-call",
+      statusTag: null,
+      reasonTag: null,
+      postCoreState: {
+        durableAuthority: "attempt-commit-remains-authoritative",
+        replayIdentity: "registration-id+approval-reference",
+        replayResult: "same-attempt-id-and-current-state",
+        newRefusalAllowed: false,
+      },
+      noState: null,
+    },
+    {
       id: "downstream.stall",
       disposition: "method-deadline-after-dispatch-response-unknown",
       newWorkOnSameConnection: "CAPACITY",
@@ -1250,6 +1275,68 @@ function maximumCase(
   };
 }
 
+function deadlineBoundaryCases(method) {
+  const deadline = method.deadlineMilliseconds;
+  const common = {
+    method: method.method,
+    deadlineMilliseconds: deadline,
+    startsAt: "admission",
+    clientExtensionAllowed: false,
+    boundaryRule: deadlineBoundaryRule,
+    afterDispatchDisposition: deadlineAfterDispatchDisposition,
+  };
+  return [
+    {
+      id: `${method.method}.deadline.immediately-before`,
+      ...common,
+      boundary: "immediately-before",
+      elapsedMilliseconds: deadline - 1,
+      expected: {
+        decision: "dispatch-core-before-deadline",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "store-semantic-reply-unless-deadline-cancels-delivery",
+        bodyCopied: true,
+        coreCalls: 1,
+      },
+      noState: null,
+      postCoreState: "store-semantic-result-or-recovery-fence-controls",
+    },
+    {
+      id: `${method.method}.deadline.exactly-at`,
+      ...common,
+      boundary: "exactly-at",
+      elapsedMilliseconds: deadline,
+      expected: {
+        decision: "deadline-expired-before-dispatch",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+      },
+      noState: zeroState,
+      postCoreState: null,
+    },
+    {
+      id: `${method.method}.deadline.immediately-after`,
+      ...common,
+      boundary: "immediately-after",
+      elapsedMilliseconds: deadline + 1,
+      expected: {
+        decision: "deadline-expired-before-dispatch",
+        statusTag: null,
+        reasonTag: null,
+        replyDisposition: "no-application-reply",
+        bodyCopied: false,
+        coreCalls: 0,
+      },
+      noState: zeroState,
+      postCoreState: null,
+    },
+  ];
+}
+
 function refusal(id, method, mutation, classification, reason) {
   return {
     id,
@@ -1276,8 +1363,16 @@ function nativeXPCEnvelope(
     methodVersion: method.methodVersion,
     messageTag,
     exactKeyCount,
+    requiredKeyCount: exactKeyCount,
+    optionalKeyCount: 0,
+    closedMap: true,
     applicationDataMaxBytes,
-    fields,
+    fields: fields.map(({ key, valueType, ...constraints }) => ({
+      key,
+      valueType,
+      required: true,
+      ...constraints,
+    })),
   };
 }
 
@@ -1920,8 +2015,7 @@ function nativeXPCCases() {
 }
 
 function nativeXPCCaseTableEntry(candidate) {
-  const caseExpected =
-    typeof candidate.expected === "string" ? { decision: candidate.expected } : candidate.expected;
+  const caseExpected = candidate.expected;
   return {
     id: candidate.id,
     method: candidate.method ?? candidate.methods,
@@ -1933,7 +2027,88 @@ function nativeXPCCaseTableEntry(candidate) {
     reasonTag: caseExpected.reasonTag ?? null,
     bodyCopied: caseExpected.bodyCopied ?? null,
     coreCalls: caseExpected.coreCalls ?? null,
+    replyDisposition: candidate.replyDisposition,
+    terminationDisposition: candidate.terminationDisposition,
+    noState: candidate.noState,
+    postCoreState: candidate.postCoreState,
   };
+}
+
+function completeNativeXPCCase(candidate) {
+  const {
+    expected: rawExpected,
+    replyDisposition: explicitReplyDisposition,
+    terminationDisposition: explicitTerminationDisposition,
+    noState: explicitNoState,
+    postCoreState: explicitPostCoreState,
+    ...context
+  } = candidate;
+  const sourceExpected = typeof rawExpected === "string" ? { decision: rawExpected } : rawExpected;
+  const {
+    decision,
+    classification = null,
+    statusTag = null,
+    reasonTag = null,
+    bodyCopied = null,
+    coreCalls = null,
+    ...additionalExpected
+  } = sourceExpected;
+  const completeExpected = {
+    decision,
+    classification,
+    statusTag,
+    reasonTag,
+    bodyCopied,
+    coreCalls,
+    ...additionalExpected,
+  };
+  const replyDisposition =
+    explicitReplyDisposition ?? nativeXPCReplyDisposition(candidate.id, decision);
+  const terminationDisposition =
+    explicitTerminationDisposition ??
+    (decision === "terminate-without-reply" ? "terminate-process" : "continue-process");
+  const noState = explicitNoState ?? (decision === "accept-outer-shape-only" ? zeroState : null);
+  const postCoreState =
+    explicitPostCoreState ?? nativeXPCPostCoreState(candidate.id, decision, coreCalls);
+  return {
+    ...context,
+    expected: completeExpected,
+    replyDisposition,
+    terminationDisposition,
+    noState,
+    postCoreState,
+  };
+}
+
+function nativeXPCReplyDisposition(id, decision) {
+  if (decision === "reject-before-body-copy" || decision === "core-refusal-after-bounded-body-copy")
+    return "application-refusal-reply";
+  if (decision === "reject-reply") return "received-reply-rejected";
+  if (
+    decision === "terminate-without-reply" ||
+    decision === "no-core-call-no-application-reply" ||
+    decision === "response-delivery-cancelled-store-semantic-result-controls"
+  )
+    return "no-application-reply";
+  if (id === "all.exact-key-and-type-sets") return "not-applicable-passive-shape-check";
+  return "core-semantic-reply";
+}
+
+function nativeXPCPostCoreState(id, decision, coreCalls) {
+  if (decision === "core-refusal-after-bounded-body-copy")
+    return "core-refusal-no-authority-effect";
+  if (
+    decision === "response-delivery-cancelled-store-semantic-result-controls" ||
+    decision === "terminate-without-reply"
+  )
+    return "store-semantic-result-or-recovery-fence-controls";
+  if (coreCalls === 1) return "core-semantic-result-controls";
+  if (
+    id === "all.request-id-replaced-by-installation-id-bytes" ||
+    id === "get.registration-id-replaced-by-request-id-bytes"
+  )
+    return "core-semantic-result-controls";
+  return null;
 }
 
 async function repositoryFixture(path) {

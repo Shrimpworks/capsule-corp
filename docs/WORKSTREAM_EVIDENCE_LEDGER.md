@@ -15,6 +15,15 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-08-11 C2a deadline-boundary closure
+
+| Slice | Scoped result | Parent boundary |
+| --- | --- | --- |
+| C2a S3 deadline equality fixtures | `PASSED`: the unified passive native-XPC contract now carries 15 ordered deadline cases. The original S3 methods add 9,999/10,000/10,001 ms, 4,999/5,000/5,001 ms, and 1,999/2,000/2,001 ms with dispatch only while elapsed time is strictly less than the deadline, equality expired, complete zero `noState` for at/after, and independent Go/Node agreement. The packet retains manifest `c76e1f6c...8b59`, native contract `7ae502b0...962c`, unchanged ordered 70-case digest `9ac6845b...f68e`, and oracle `254ec5da...8b38`. | C2b native delivery/enforcement remains `BLOCKED` on the complete merged Capsule commit plus those digests and exact owner host/session, alias-map, disposable-root/name, and no-product authorization. No listener, service, peer authentication, process, identity, credential, store, runtime, backend, VM, guest, or product consumer was activated. |
+
+This closes only the deadline-fixture prerequisite named in the 2026-08-10 C2 preparation row;
+its platform-harness and installed/product boundaries remain unchanged.
+
 ## 2026-08-10 execution-readiness reconciliation
 
 These read-only preparation results refine the next construction and authorization boundaries.

@@ -957,11 +957,21 @@ func expectedNativeXPCDeadlineCases() []nativeXPCFixtureDeadlineCase {
 	postCore := "store-semantic-result-or-recovery-fence-controls"
 	zero := nativeXPCFixtureZeroState{}
 	var cases []nativeXPCFixtureDeadlineCase
-	for _, method := range []string{SubmitApprovalV0Method, RequestAttemptV0Method} {
+	methods := []struct {
+		name     string
+		deadline uint64
+	}{
+		{name: SubmitMainMJSV0Method, deadline: SubmitMainMJSV0DeadlineMilliseconds},
+		{name: RegisterPlanV0Method, deadline: RegisterPlanV0DeadlineMilliseconds},
+		{name: GetRegisteredPlanV0Method, deadline: GetRegisteredPlanV0DeadlineMilliseconds},
+		{name: SubmitApprovalV0Method, deadline: SubmitApprovalV0DeadlineMilliseconds},
+		{name: RequestAttemptV0Method, deadline: RequestAttemptV0DeadlineMilliseconds},
+	}
+	for _, method := range methods {
 		cases = append(cases,
-			nativeXPCFixtureDeadlineCase{ID: method + ".deadline.immediately-before", Method: method, DeadlineMilliseconds: 5_000, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "immediately-before", ElapsedMilliseconds: 4_999, Expected: nativeXPCFixtureDeadlineExpected{Decision: "dispatch-core-before-deadline", ReplyDisposition: "store-semantic-reply-unless-deadline-cancels-delivery", BodyCopied: true, CoreCalls: 1}, PostCoreState: &postCore},
-			nativeXPCFixtureDeadlineCase{ID: method + ".deadline.exactly-at", Method: method, DeadlineMilliseconds: 5_000, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "exactly-at", ElapsedMilliseconds: 5_000, Expected: nativeXPCFixtureDeadlineExpected{Decision: NativeXPCDeadlineExpiredDisposition, ReplyDisposition: "no-application-reply"}, NoState: &zero},
-			nativeXPCFixtureDeadlineCase{ID: method + ".deadline.immediately-after", Method: method, DeadlineMilliseconds: 5_000, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "immediately-after", ElapsedMilliseconds: 5_001, Expected: nativeXPCFixtureDeadlineExpected{Decision: NativeXPCDeadlineExpiredDisposition, ReplyDisposition: "no-application-reply"}, NoState: &zero},
+			nativeXPCFixtureDeadlineCase{ID: method.name + ".deadline.immediately-before", Method: method.name, DeadlineMilliseconds: method.deadline, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "immediately-before", ElapsedMilliseconds: method.deadline - 1, Expected: nativeXPCFixtureDeadlineExpected{Decision: "dispatch-core-before-deadline", ReplyDisposition: "store-semantic-reply-unless-deadline-cancels-delivery", BodyCopied: true, CoreCalls: 1}, PostCoreState: &postCore},
+			nativeXPCFixtureDeadlineCase{ID: method.name + ".deadline.exactly-at", Method: method.name, DeadlineMilliseconds: method.deadline, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "exactly-at", ElapsedMilliseconds: method.deadline, Expected: nativeXPCFixtureDeadlineExpected{Decision: NativeXPCDeadlineExpiredDisposition, ReplyDisposition: "no-application-reply"}, NoState: &zero},
+			nativeXPCFixtureDeadlineCase{ID: method.name + ".deadline.immediately-after", Method: method.name, DeadlineMilliseconds: method.deadline, StartsAt: "admission", BoundaryRule: rule, AfterDispatchDisposition: after, Boundary: "immediately-after", ElapsedMilliseconds: method.deadline + 1, Expected: nativeXPCFixtureDeadlineExpected{Decision: NativeXPCDeadlineExpiredDisposition, ReplyDisposition: "no-application-reply"}, NoState: &zero},
 		)
 	}
 	return cases

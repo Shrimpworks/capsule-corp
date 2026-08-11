@@ -64,12 +64,16 @@ archive does not become a supported control or production claim.
 
 A future research task may use a temporary worktree while it is running. Before integration:
 
-1. retain reusable product contracts and conformance fixtures in Capsule;
-2. publish disposable code/evidence to `capsule-experiments` with exact source and environment
-   identities;
-3. verify the archive commit and file manifest;
-4. update Capsule's canonical decision and evidence ledger with a commit-pinned link; and
-5. remove the disposable tree from the Capsule change before merging it.
+1. name the evidence owner, expected manifest, and an owner-controlled non-ephemeral backup
+   location before running an important evidence-bearing experiment;
+2. retain reusable product contracts and conformance fixtures in Capsule;
+3. copy the complete disposable harness/evidence packet out of temporary workspaces and verify its
+   paths, sizes, and hashes independently;
+4. publish that packet to `capsule-experiments` with exact source and environment identities;
+5. read the remote archive commit and tree back and rerun the archive verifier;
+6. update Capsule's canonical decision and evidence ledger with a commit-pinned link; and
+7. remove the disposable tree from the Capsule change before merging it.
 
-If archive publication or verification fails, keep the source tree and stop the cleanup. Never
-delete the only retained copy of security evidence.
+If backup, archive publication, or remote verification fails, keep every available copy and stop
+the cleanup. Mark evidence retention `BLOCKED`; never delete the only retained copy of security
+evidence or claim that temporary/local-only evidence is durable, release-grade, or admission-grade.

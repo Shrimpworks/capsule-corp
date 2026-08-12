@@ -1,6 +1,6 @@
 # Approval Broker live-signing evidence brief
 
-Date: 2026-08-10
+Date: 2026-08-11
 
 Work item: R3 read-only Apple-platform research for a future installed Approval Broker signing
 harness.
@@ -33,6 +33,15 @@ The future installed harness described here is not authorized by this document. 
 profile and access group, disposable user/container, immutable fixture digest, permitted Keychain
 mutations, and every destructive row. The harness may have no product consumer, runtime, backend,
 VM, or guest.
+
+Subsequent construction work now retains an immutable
+[unsigned Broker harness](https://github.com/Shrimpworks/capsule-experiments/tree/4a2447d4bd0e03132dc616e608031ca313630cdd/experiments/broker-live-signing-c6b1)
+and [test-only Supervisor seam](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam).
+Those C6b1a/b construction slices are `PASSED` for deterministic public fixtures, no-credential
+interaction checks, and Supervisor-only commit/replay/response-loss/reopen/concurrency oracles.
+They do not change this document's installed-evidence boundary: no Apple identity/profile,
+Keychain, LocalAuthentication, private key, signing, installation, authenticated listener, or
+product consumer was used.
 
 ## Governing decisions and evidence boundary
 
@@ -321,11 +330,15 @@ The dependency split is now exact:
 
 1. **R3 canonical passive evidence brief — `PASSED`.** This document retains the read-only Apple
    mechanism, candidate values, authority correction, limitations, and future evidence matrix.
-2. **Disposable installed Broker signing evidence harness — `BLOCKED`.** It requires the exact
-   separate authorization described above. It implements no product consumer, runtime, backend,
-   VM, or guest.
-3. **Product Broker/`SubmitApprovalV0`/`RequestAttemptV0` wiring — `BLOCKED`.** It cannot begin
-   until the signing harness and installed authenticated service boundary pass their exact scopes.
+2. **C6b1a unsigned Broker harness — `PASSED`.** Its immutable no-credential construction is
+   pinned above; it is not a signed or installed target.
+3. **C6b1b test-only Supervisor seam — `PASSED`.** Its immutable local model preserves the
+   Supervisor as the sole durable authority owner; it is not a product store or consumer.
+4. **C6b1c identity/profile readback and C6b1d installed signing evidence — `BLOCKED`.** Each
+   requires its own exact owner authorization. Construction does not authorize provisioning,
+   Keychain, LocalAuthentication, prompts, signing, installation, or destructive rows.
+5. **Product Broker/`SubmitApprovalV0`/`RequestAttemptV0` wiring — `BLOCKED`.** It cannot begin
+   until C6b1d and the installed authenticated service boundary pass their exact scopes.
 
 A research document cannot satisfy installed evidence, product consumer evidence, or product
 admission.
@@ -359,6 +372,7 @@ authenticated consumer.
 Confidence is high for the API and accepted authority composition, medium for the two experiment
 candidates, and intentionally absent for installed behavior that was not run.
 
-Next action: obtain a separate exact authorization for the disposable installed signing evidence
-harness. Until its mandatory rows and the installed authenticated service boundary pass, live
-signing, product wiring, the installed security boundary, and product admission remain `BLOCKED`.
+Next action: obtain separate exact authorization for C6b1c identity/profile readback. After its
+readback passes, stop again for the enumerated C6b1d installed signing mutations. Until C6b1d and
+the installed authenticated service boundary pass, live signing, product wiring, the installed
+security boundary, and product admission remain `BLOCKED`.

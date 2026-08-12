@@ -3,20 +3,21 @@
 Date: 2026-08-05
 
 ```text
-Work item: passive I2B3 Supervisor-authority-epoch experiment packet freeze
+Work item: passive I2B3 Supervisor-authority-epoch packet plus C3a E0 construction
 Status: PASSED
-Scope: bounded inert packet and fixture requirements for versioned Supervisor/Coordinator
+Scope: bounded inert packet and reproducible unsigned fixtures for versioned Supervisor/Coordinator
   identities, container nonmembership, App Group/Mach separation, Keychain-group separation, and
   retirement oracles; no portal, signing, profile, installation, service, Keychain, container,
   process, root, store, runtime, backend, guest, or cleanup mutation was performed
-Evidence or reason: Proposed ADR-0045 and this checked-in packet close the candidate identity tuple, evidence
-  classes, stop order, mutation matrix, pass/refusal oracles, and claim boundary
-Remaining work: separately authorize materialization and independent verification of the fixed
-  probe inputs plus the exact Apple Development portal/profile/signing and disposable-container
-  mutation run; later
+Evidence or reason: Proposed ADR-0045 and this checked-in packet close the candidate identity tuple,
+  evidence classes, stop order, mutation matrix, pass/refusal oracles, and claim boundary; immutable
+  capsule-experiments merge dee784d40684100f8315720fab9a5cd3399f492b retains the exact unsigned
+  sources, bundles, inputs, manifest, independent verifier, and mutation results
+Remaining work: separately authorize the exact Apple Development portal/profile/signing and
+  disposable-container C3b/E1 mutation run; later
   Keychain/service/root/store work requires another authorization after this gate passes
-Next action: authorize E1 only for the closed packet below; stop again before any later
-  Keychain/service/root/store work
+Next action: authorize E1 only with the immutable C3a archive pin and its closed packet below; stop
+  again before any later Keychain/service/root/store work
 Parent status: installed owner-lock G3/I2B remains BLOCKED
 ```
 
@@ -42,6 +43,16 @@ The experiment is split at a hard review boundary:
 
 Passing E0 does not authorize E1. Passing E1 does not authorize the later Coordinator/key/service/
 root corpus.
+
+## Retained C3a construction
+
+The exact E0 materialization is retained at
+[`capsule-experiments` merge `dee784d40684100f8315720fab9a5cd3399f492b`](https://github.com/Shrimpworks/capsule-experiments/tree/dee784d40684100f8315720fab9a5cd3399f492b/experiments/macos-installation-i2b3-supervisor-authority-epoch-e0).
+It contains reproducible unsigned current/legacy probe bundles, a Coordinator bundle that was
+never launched, exact plist/entitlement/profile-request/LaunchAgent/descriptor inputs, a closed
+manifest, independent verification, and 23 refusal mutations. It used no Apple identity, profile,
+signing, container, service, Keychain, protected state, runtime, backend, VM, or guest. This closes
+C3a construction only; it does not observe E1 nonmembership or accept ADR-0045.
 
 ## Frozen identities and packet contents
 
@@ -158,9 +169,10 @@ new authorization names the exact groups, services, and keys.
 
 ## Pass, block, and candidate disposition
 
-This E0 packet freeze is `PASSED` because the retained definition closes the identities, fields,
-order, matrix, oracles, and stop boundary without side effect. Materialized deterministic bytes
-and their independent verifier are E1 prerequisites, not current evidence. E1 is `PASSED` only
+This E0 packet freeze and C3a materialization are `PASSED` because the retained definition and
+immutable unsigned archive close the identities, fields, order, matrix, oracles, bytes, and
+independent verification without platform authority or launch effects. Those deterministic bytes
+are E1 inputs, not E1 platform evidence. E1 is `PASSED` only
 when exact Apple Development identities on the
 named host show distinct platform container associations, every current/legacy cross-mutation
 denies without consent, cleanup is exact, and the stop inventory is empty.

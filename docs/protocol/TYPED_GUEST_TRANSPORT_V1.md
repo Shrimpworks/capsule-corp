@@ -12,11 +12,14 @@ Node verification, and passive state/restoration models only
 Evidence: 48 generated frame cases, 13 state/fault cases, 23 restoration cases, exact cap and
 cap-plus-one fixtures, and byte-for-byte generator drift checks
 
-Remaining work: C5b controlled transport execution, installed identity/composition, real
-completion/absence evidence, runtime/profile admission, and product wiring
+Remaining work: fresh executable successor construction, C5b controlled transport execution,
+installed identity/composition, real completion/absence evidence, runtime/profile admission, and
+product wiring
 
-Next action: request separate C5b authorization naming the exact runtime/profile successor, owned
-disposable guest and host, fixed fixture digest, process names, and evidence destination
+Next action: construct fresh executable runner/root/init/launcher/controller identities from the
+immutable C5b0 packet without loading libkrun, calling HVF, or starting a guest; only then request
+separate C5b authorization naming the exact successor, owned disposable guest and host, fixed
+fixture digest, process names, and evidence destination
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`
 
@@ -181,3 +184,10 @@ go test ./internal/protocol/typedguesttransportpassive
 These checks prove passive cross-language agreement only. C5b real console/launcher/VMM behavior,
 installed identities, runtime/profile admission, process-tree absence, recovery, durable product
 integration, and hostile-source execution remain `BLOCKED` and separately authorized.
+
+The later deterministic no-run packet is retained at
+[`capsule-experiments` merge `b357d0c0fb29100c180494e67cebd7809aabe3c5`](https://github.com/Shrimpworks/capsule-experiments/tree/b357d0c0fb29100c180494e67cebd7809aabe3c5/experiments/typed-guest-transport-c5b0-v19-successor).
+It binds the selected v19 provenance, governed source/SourceManifest, role contracts, no-run
+profile/plan, and fresh v1 frames. Its executable runner/root/init/launcher/controller identities
+remain explicitly null, so it closes C5b0 packet construction without closing executable
+construction, C5b execution, or admission.

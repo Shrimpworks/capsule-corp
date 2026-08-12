@@ -84,12 +84,13 @@
   "maximumCaseCount": 18,
   "nativeXPCEnvelopeCount": 15,
   "nativeXPCCaseCount": 70,
+  "nativeXPCDeadlineCaseCount": 15,
   "nativeXPCRefusalReplyCount": 13,
   "knownAnswers": {
     "native-xpc-v0.contract.json": {
       "path": "native-xpc-v0.contract.json",
-      "byteLength": 154210,
-      "sha256": "bfa35a6e98cc9b46ff7ef815f3c8f0ca9027ec8f98faff3970970d0f4718330d"
+      "byteLength": 162876,
+      "sha256": "7ae502b0742bab1e129cdb8fc026b680416587353af55631f55e80f2fabf962c"
     },
     "submit-main-mjs-v0.method.json": {
       "path": "submit-main-mjs-v0.method.json",

@@ -264,6 +264,7 @@ assert.deepEqual(
 );
 assert.equal(manifest.nativeXPCEnvelopeCount, 15);
 assert.equal(manifest.nativeXPCCaseCount, nativeXPC.cases.length);
+assert.equal(manifest.nativeXPCDeadlineCaseCount, nativeXPC.deadlineCases.length);
 assert.equal(manifest.nativeXPCRefusalReplyCount, nativeXPC.refusalReplies.length);
 for (const [classification, statusTag] of Object.entries(nativeXPC.classificationToStatus)) {
   assert.equal(statusTag, nativeXPC.statusTags[classification]);
@@ -1597,17 +1598,24 @@ function expectedDeadlineCases() {
   const rule =
     "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds";
   const after = "response-unknown-store-semantic-result-or-recovery-fence-controls";
-  return ["SubmitApprovalV0", "RequestAttemptV0"].flatMap((method) => [
+  const methods = [
+    ["SubmitMainMJSV0", 10_000],
+    ["RegisterPlanV0", 5_000],
+    ["GetRegisteredPlanV0", 2_000],
+    ["SubmitApprovalV0", 5_000],
+    ["RequestAttemptV0", 5_000],
+  ];
+  return methods.flatMap(([method, deadlineMilliseconds]) => [
     {
       id: `${method}.deadline.immediately-before`,
       method,
-      deadlineMilliseconds: 5_000,
+      deadlineMilliseconds,
       startsAt: "admission",
       clientExtensionAllowed: false,
       boundaryRule: rule,
       afterDispatchDisposition: after,
       boundary: "immediately-before",
-      elapsedMilliseconds: 4_999,
+      elapsedMilliseconds: deadlineMilliseconds - 1,
       expected: {
         decision: "dispatch-core-before-deadline",
         statusTag: null,
@@ -1622,13 +1630,13 @@ function expectedDeadlineCases() {
     {
       id: `${method}.deadline.exactly-at`,
       method,
-      deadlineMilliseconds: 5_000,
+      deadlineMilliseconds,
       startsAt: "admission",
       clientExtensionAllowed: false,
       boundaryRule: rule,
       afterDispatchDisposition: after,
       boundary: "exactly-at",
-      elapsedMilliseconds: 5_000,
+      elapsedMilliseconds: deadlineMilliseconds,
       expected: {
         decision: "deadline-expired-before-dispatch",
         statusTag: null,
@@ -1643,13 +1651,13 @@ function expectedDeadlineCases() {
     {
       id: `${method}.deadline.immediately-after`,
       method,
-      deadlineMilliseconds: 5_000,
+      deadlineMilliseconds,
       startsAt: "admission",
       clientExtensionAllowed: false,
       boundaryRule: rule,
       afterDispatchDisposition: after,
       boundary: "immediately-after",
-      elapsedMilliseconds: 5_001,
+      elapsedMilliseconds: deadlineMilliseconds + 1,
       expected: {
         decision: "deadline-expired-before-dispatch",
         statusTag: null,
@@ -2214,10 +2222,10 @@ function runHardenedMutationProofs(contract, oracleSet) {
       },
     ],
     [
-      "exact-at-boundary inversion",
+      "S3 exact-at-boundary inversion",
       (c) => {
         c.deadlineCases.find(
-          (entry) => entry.id === "SubmitApprovalV0.deadline.exactly-at",
+          (entry) => entry.id === "SubmitMainMJSV0.deadline.exactly-at",
         ).expected.decision = "dispatch-core-before-deadline";
       },
     ],

@@ -1,11 +1,10 @@
 # Current work plan
 
-Date: 2026-08-10
+Date: 2026-08-11
 
-Work item: reconcile the C1/C2/C3/C5b/C6b1 preparation callbacks and freeze the next executable
-construction order.
+Work item: close C2a's strict S3 deadline-equality fixtures without activating native IPC.
 
-Status: `PASSED` for this planning and documentation scope.
+Status: `PASSED` for the exact passive C2a fixture and documentation scope.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -17,12 +16,13 @@ experiment is not an activated product path.
 
 ## Reconciled baseline
 
-This reconciliation starts from fetched `origin/main` commit
-`1494c35371717add2718bd53e853faa937397996`, merge PR #250. PR #249 closed the exact passive C4
+This slice starts from fetched `origin/main` commit
+`88f3a2c1f968b1aa604ce14a2db4389822e5b193`, merge PR #251. PR #249 closed the exact passive C4
 boundary and independent-verifier findings. PR #250 then made durable evidence retention a tracked
 steering and archive invariant: important raw evidence cannot live only in a temporary workspace,
-and cleanup cannot precede verified immutable remote publication. Neither change activates a
-runtime, governed profile, installed identity, service, product consumer, backend, VM, or guest.
+and cleanup cannot precede verified immutable remote publication. PR #251 reconciled the five
+preparation callbacks and construction order. None activates a runtime, governed profile,
+installed identity, service, product consumer, backend, VM, or guest.
 
 Five later read-only preparation tasks now close what can be known before construction or
 authorization:
@@ -30,8 +30,8 @@ authorization:
 - C1 recovery discovery `PASSED`, but raw v10-v27 publication remains `BLOCKED`: the former local
   archive commit `3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`, branch, and workspace are absent from
   bounded Capsule paths, Git refs/worktrees/objects, and the remote archive;
-- C2 authorization/fixture preparation `PASSED`; the native harness remains `BLOCKED` on exact
-  host/session authorization and passive equality-boundary fixtures for all three S3 deadlines;
+- C2 authorization/fixture preparation and C2a's nine strict S3 deadline-boundary cases are
+  `PASSED`; the native harness remains `BLOCKED` on exact host/session authorization;
 - C3 packet audit completed, but E1 remains `BLOCKED`: E0 is a closed inert specification, not a
   materialized independently hashed probe/bundle/verifier set;
 - C5b authorization/fixture preparation `PASSED`; the owner selected the narrower v19 lineage plus
@@ -105,8 +105,8 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | --- | --- | --- | --- |
 | C1a | Recover the unpublished raw v10-v27 archive | `BLOCKED` | Read-only recovery discovery `PASSED`, but the former `/tmp/capsule-owned-guest.njcPIL/capsule-experiments` workspace and local commit `3fdcf2c...` are unavailable in every authorized location checked. Resume only from an owner-supplied backup, clone, bundle, object database, or filesystem snapshot. Do not reconstruct the 279-entry manifest from chat history. |
 | C1b | Publish recovered raw v10-v27 evidence | `BLOCKED` | Requires C1a. Verify the 280-file packet and 279 retained-file manifest, publish `experiments/gate-c-c2b-fixed-owned-guest` in one reviewed immutable `capsule-experiments` commit, read it back, rerun its verifier, then add exact links. If recovery is impossible, a separately authorized rerun must produce new evidence. |
-| C2a | Freeze S3 deadline equality boundaries | `BLOCKED` | Add ordered before/at/after cases for SubmitMain 9,999/10,000/10,001 ms, RegisterPlan 4,999/5,000/5,001 ms, and GetRegisteredPlan 1,999/2,000/2,001 ms, with equality expired and complete independent Go/Node checks. Retain commit + manifest + native-contract + ordered-case digests as the fixture identity. No listener or process. |
-| C2b | Run the one-time native XPC S3 harness | `BLOCKED` | Requires C2a and explicit authorization naming `Shrimpworks/capsule-experiments`, the owner-confirmed Mac/session, complete fixture identity, experimental service alias map, disposable names/root, and defensive no-product scope. Retain OS peer refusal, exact-message identity, EUID/session, copy, cap/flow, deadline, interruption, response-loss, process-fault, and cleanup evidence. |
+| C2a | Freeze S3 deadline equality boundaries | `PASSED` | Ordered before/at/after cases now cover SubmitMain 9,999/10,000/10,001 ms, RegisterPlan 4,999/5,000/5,001 ms, and GetRegisteredPlan 1,999/2,000/2,001 ms with equality expired, complete zero-state projections, and independent Go/Node checks. The unified passive contract has 15 deadline cases; no listener or process exists. |
+| C2b | Run the one-time native XPC S3 harness | `BLOCKED` | Requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owner-confirmed Mac/session, Capsule commit, manifest `c76e1f6c...8b59`, native contract `7ae502b0...962c`, ordered case digest `9ac6845b...f68e`, experimental service alias map, disposable names/root, and defensive no-product scope. Retain OS peer refusal, exact-message identity, EUID/session, copy, cap/flow, deadline, interruption, response-loss, process-fault, and cleanup evidence. |
 | C3a | Materialize deterministic E0 fixtures | `BLOCKED` | Turn the `PASSED` inert E0 specification into exact current/legacy probes, a no-launch Coordinator bundle, plists, entitlements, LaunchAgent/descriptor inputs, manifest, and independent verifier with immutable digests. No portal, signing, profile, container, Keychain, service, runtime, or guest mutation. |
 | C3b | Run ADR-0045 E1 identity separation | `BLOCKED` | Requires C3a, owner-confirmed host/device binding, one frozen legacy negative profile, evidence workspace, and exact Apple Development authorization. Prove current/legacy cross-container denial and cleanup; stop before Keychain, service registration, protected root, store, runtime, or guest. ADR-0045 remains Proposed. |
 | C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | PR #248 is the canonical predecessor and PR #249 closes the focused follow-up. Ordered 4,999/5,000/5,001-ms cases for both methods, equality-as-expired behavior, complete closed dictionaries/maps, every ordered field, required `noState`, cancellation/deadline commit truth, all 20 foreign-tag collisions, complete refusal and five-entry response-loss tables, and bounded Go/Node mutation proofs are retained. No listener, signer, store consumer, process, or guest is active. |
@@ -168,10 +168,10 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-After this documentation reconciliation merges, C2a, C3a, C5b0, and C6b1a may start in parallel as
-separate retained construction tasks. C6b1b may also proceed independently once its test-only seam
-is kept outside product activation. C1a resumes only if the owner supplies a backup or snapshot;
-otherwise a later exact rerun needs separate authorization and new identities.
+C2a is now `PASSED`; C2b must stop for exact owner/environment authorization. C3a, C5b0, C6b1a,
+and the independent test-only C6b1b seam may continue as separate retained construction tasks. C1a
+resumes only if the owner supplies a backup or snapshot; otherwise a later exact rerun needs
+separate authorization and new identities.
 
 No signing, Keychain, service registration, installed listener, portal/profile mutation, libkrun/HVF
 execution, VM, or guest is authorized by this plan. C2b, C3b, C5b, C6b1c, and C6b1d must each stop

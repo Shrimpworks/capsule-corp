@@ -536,6 +536,9 @@ const nativeXPCContract = {
   ],
   deadlineBoundaryRule,
   deadlineCases: [
+    ...deadlineBoundaryCases(methods.submitMainMJSV0),
+    ...deadlineBoundaryCases(methods.registerPlanV0),
+    ...deadlineBoundaryCases(methods.getRegisteredPlanV0),
     ...deadlineBoundaryCases(methods.submitApprovalV0),
     ...deadlineBoundaryCases(methods.requestAttemptV0),
   ],
@@ -1220,6 +1223,7 @@ const manifest = {
   maximumCaseCount: oracles.maxima.length,
   nativeXPCEnvelopeCount: Object.values(nativeXPCEnvelopes).length * 3,
   nativeXPCCaseCount: nativeXPCContract.cases.length,
+  nativeXPCDeadlineCaseCount: nativeXPCContract.deadlineCases.length,
   nativeXPCRefusalReplyCount: nativeXPCContract.refusalReplies.length,
   knownAnswers: Object.fromEntries(
     [...expected].map(([path, bytes]) => [path, reference(path, bytes)]),

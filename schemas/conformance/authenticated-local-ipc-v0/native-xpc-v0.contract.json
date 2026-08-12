@@ -4754,6 +4754,243 @@
   "deadlineBoundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
   "deadlineCases": [
     {
+      "id": "SubmitMainMJSV0.deadline.immediately-before",
+      "method": "SubmitMainMJSV0",
+      "deadlineMilliseconds": 10000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-before",
+      "elapsedMilliseconds": 9999,
+      "expected": {
+        "decision": "dispatch-core-before-deadline",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "store-semantic-reply-unless-deadline-cancels-delivery",
+        "bodyCopied": true,
+        "coreCalls": 1
+      },
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
+    },
+    {
+      "id": "SubmitMainMJSV0.deadline.exactly-at",
+      "method": "SubmitMainMJSV0",
+      "deadlineMilliseconds": 10000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "exactly-at",
+      "elapsedMilliseconds": 10000,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "SubmitMainMJSV0.deadline.immediately-after",
+      "method": "SubmitMainMJSV0",
+      "deadlineMilliseconds": 10000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-after",
+      "elapsedMilliseconds": 10001,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "RegisterPlanV0.deadline.immediately-before",
+      "method": "RegisterPlanV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-before",
+      "elapsedMilliseconds": 4999,
+      "expected": {
+        "decision": "dispatch-core-before-deadline",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "store-semantic-reply-unless-deadline-cancels-delivery",
+        "bodyCopied": true,
+        "coreCalls": 1
+      },
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
+    },
+    {
+      "id": "RegisterPlanV0.deadline.exactly-at",
+      "method": "RegisterPlanV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "exactly-at",
+      "elapsedMilliseconds": 5000,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "RegisterPlanV0.deadline.immediately-after",
+      "method": "RegisterPlanV0",
+      "deadlineMilliseconds": 5000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-after",
+      "elapsedMilliseconds": 5001,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "GetRegisteredPlanV0.deadline.immediately-before",
+      "method": "GetRegisteredPlanV0",
+      "deadlineMilliseconds": 2000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-before",
+      "elapsedMilliseconds": 1999,
+      "expected": {
+        "decision": "dispatch-core-before-deadline",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "store-semantic-reply-unless-deadline-cancels-delivery",
+        "bodyCopied": true,
+        "coreCalls": 1
+      },
+      "noState": null,
+      "postCoreState": "store-semantic-result-or-recovery-fence-controls"
+    },
+    {
+      "id": "GetRegisteredPlanV0.deadline.exactly-at",
+      "method": "GetRegisteredPlanV0",
+      "deadlineMilliseconds": 2000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "exactly-at",
+      "elapsedMilliseconds": 2000,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
+      "id": "GetRegisteredPlanV0.deadline.immediately-after",
+      "method": "GetRegisteredPlanV0",
+      "deadlineMilliseconds": 2000,
+      "startsAt": "admission",
+      "clientExtensionAllowed": false,
+      "boundaryRule": "dispatch-only-when-elapsed-milliseconds-is-strictly-less-than-deadline-milliseconds",
+      "afterDispatchDisposition": "response-unknown-store-semantic-result-or-recovery-fence-controls",
+      "boundary": "immediately-after",
+      "elapsedMilliseconds": 2001,
+      "expected": {
+        "decision": "deadline-expired-before-dispatch",
+        "statusTag": null,
+        "reasonTag": null,
+        "replyDisposition": "no-application-reply",
+        "bodyCopied": false,
+        "coreCalls": 0
+      },
+      "noState": {
+        "authorityStateChanged": false,
+        "coreCalls": 0,
+        "registrationsCreated": 0,
+        "approvalsConsumed": 0,
+        "attemptsCreated": 0,
+        "lifecycleCalls": 0,
+        "backendCalls": 0
+      },
+      "postCoreState": null
+    },
+    {
       "id": "SubmitApprovalV0.deadline.immediately-before",
       "method": "SubmitApprovalV0",
       "deadlineMilliseconds": 5000,

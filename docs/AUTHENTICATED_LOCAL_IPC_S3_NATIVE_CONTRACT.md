@@ -4,6 +4,8 @@ Date: 2026-08-05
 
 Conformance amendment: 2026-08-06
 
+Deadline-boundary amendment: 2026-08-11
+
 C4 successor: 2026-08-10. This document preserves the original three-method S3 scope. The current
 generated `native-xpc-v0` contract is extended, without renumbering these methods, by the
 [C4 passive contract](AUTHENTICATED_LOCAL_IPC_C4_NATIVE_CONTRACT.md). The completed CL4 audit
@@ -14,9 +16,9 @@ evidence-hardening follow-up is now closed. The exact passive/no-listener C4 evi
 Work item: exact native XPC dictionary contract for `SubmitMainMJSV0`, `RegisterPlanV0`, and
 `GetRegisteredPlanV0`.
 
-Status: `PASSED` for the exact passive, unwired encoding-contract and cross-language conformance
-scope. The S3 native authentication/cap harness remains `BLOCKED` on a separately authorized local
-harness; installed authenticated product IPC remains `BLOCKED`.
+Status: `PASSED` for the exact passive, unwired encoding-contract, strict deadline-boundary, and
+cross-language conformance scope. The S3 native authentication/cap harness remains `BLOCKED` on a
+separately authorized local harness; installed authenticated product IPC remains `BLOCKED`.
 
 ## Defensive scope
 
@@ -109,6 +111,26 @@ admits one byte again. This exercises aggregate accounting and release without c
 that the production 2,626,696-byte cap is reachable independently of the existing connection and
 request-count caps.
 
+## Strict deadline boundaries
+
+The admission-owned deadline rule is exact and shared by all five frozen passive methods: dispatch
+is allowed only while elapsed admission time is strictly less than the method deadline. Equality is
+expired before dispatch. C2a adds the missing ordered before/at/after cases for the three historical
+S3 methods while preserving the six C4 approval/attempt cases unchanged:
+
+| Method | Before | Exactly at | After |
+| --- | ---: | ---: | ---: |
+| `SubmitMainMJSV0` | 9,999 ms: copy body and call core once | 10,000 ms: no copy, no core call, no application reply | 10,001 ms: no copy, no core call, no application reply |
+| `RegisterPlanV0` | 4,999 ms: copy body and call core once | 5,000 ms: no copy, no core call, no application reply | 5,001 ms: no copy, no core call, no application reply |
+| `GetRegisteredPlanV0` | 1,999 ms: copy body and call core once | 2,000 ms: no copy, no core call, no application reply | 2,001 ms: no copy, no core call, no application reply |
+
+The before cases retain the store-semantic result or recovery fence as the only post-core truth;
+deadline cancellation may still prevent reply delivery. Every at/after case carries the complete
+zero `noState` projection. The generated unified contract therefore contains 15 deadline cases in
+method-tag order: nine S3 cases followed by the six existing C4 cases. These are deterministic
+passive protocol oracles, not observed platform timers, cancellation, delivery, or installed
+service evidence.
+
 ## Fixed status and refusal mapping
 
 Status tags are closed: `OK=0`, `MALFORMED=1`, `UNSUPPORTED=2`, `SCHEMA=3`, `BINDING=4`,
@@ -184,6 +206,13 @@ response-loss entries remain byte-for-byte semantic entries in the C4 successor'
 table. The Go verifier independently compares those fixtures with the production-side
 specifications and rejects generic command/service/role/backend/path/image/mount fields.
 
+The C2a fixture identity is the Capsule commit containing the packet plus manifest SHA-256
+`c76e1f6cc6d79db867618ee3a5cdb96794896705ada657c40e1c091cce818b59`, native-contract SHA-256
+`7ae502b0742bab1e129cdb8fc026b680416587353af55631f55e80f2fabf962c`, unchanged ordered 70-case
+digest `9ac6845baf35651aab057989264ab7fb17305751d3101df38d26b2334b8ef68e`, and oracle SHA-256
+`254ec5da9db2f3e0b590a3119d21abc958feb8d607eddb8deca2831b6d168b38`. A later harness must pin
+all of them; no single unnamed digest identifies the complete packet.
+
 Focused verification:
 
 ```sh
@@ -193,7 +222,7 @@ go test ./internal/execution/authorityplane
 ```
 
 Remaining S3 work is the separately authorized one-time C/Objective-C harness in
-`Shrimpworks/capsule-experiments`, consuming this exact fixture digest and testing actual peer-
+`Shrimpworks/capsule-experiments`, consuming the complete fixture identity above and testing actual peer-
 requirement-before-delivery, message-derived `SecCode`, EUID/session, flow, copy, interruption,
 deadline, response-loss, and process-fault behavior. Capsule must retain only its canonical result,
 generated product conformance fixtures, and non-activating production-side contract. S5 installed

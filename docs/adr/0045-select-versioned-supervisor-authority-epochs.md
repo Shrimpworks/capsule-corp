@@ -3,8 +3,9 @@
 - Status: Proposed
 - Date: 2026-08-05
 - Refines if accepted: ADR-0012, ADR-0021, ADR-0029, ADR-0033, ADR-0038, and ADR-0040
-- Evidence boundary: current Apple public documentation plus the retained Apple Development I2B3
-  observation; no Developer ID/notarized or installed successor-epoch evidence
+- Evidence boundary: current Apple public documentation, the retained Apple Development I2B3
+  observation, and the exact no-launch E1 signed-profile preflight; no Developer ID/notarized or
+  installed successor-epoch/container evidence
 
 ## Context
 
@@ -118,11 +119,14 @@ zero-effect portal preflight retained at `capsule-experiments` merge
 `e6390253a274e9ead76366f9869a5e1b272a1595` observed the portal rewriting that input by prepending
 `group.` and therefore rejected portal registration before mutation. Merge
 `3671a6eb23357ff28de4562dd60e8f68173034ae` corrects the disposition: the portal-registration path
-is `NO_GO`; the frozen identity itself remains the intended Proposed candidate and is `BLOCKED` on
-signed-profile and E1 execution evidence. Implementations must not substitute the rewritten
-iOS-style identifier. Exact explicit App IDs, embedded profiles, signatures, effective
-entitlements, and `com.apple.application-identifier` bindings remain mandatory pre-launch
-evidence.
+is `NO_GO`; the frozen identity itself remains the intended Proposed candidate. The exact
+no-launch signed-profile gate later `PASSED` at `capsule-experiments` merge
+`ee00ae2abbce64ae6458b82d0b53d904ee39aeb6`, retaining exact explicit App IDs, profile metadata,
+signatures, requirements, hardened runtime, and effective entitlement projections for the current
+Supervisor, never-launched Coordinator, and legacy negative probe. The candidate remains `BLOCKED`
+on E1 container execution evidence. Implementations must not substitute the rewritten iOS-style
+identifier. Exact explicit App IDs, embedded profiles, signatures, effective entitlements, and
+`com.apple.application-identifier` bindings remain mandatory pre-launch evidence.
 
 The stable Supervisor identity `com.capsulecorp.capsule.supervisor`, its private container, the
 I1B and I2B3 profiles, and the unlaunched I2B3 Coordinator identity are **legacy residue**, not
@@ -239,13 +243,13 @@ rollback-resistance claim follows without ADR-0012's independent anchor or witne
   installation-root, Supervisor-state, or backend authority.
 - State remains in one Supervisor-private container. App Groups remain empty residual IPC
   capabilities, and no live path crosses the boundary.
-- The initial authority-epoch design is complete enough to freeze the next experiment, but it is
-  not implemented or validated. This ADR remains Proposed.
+- The initial authority-epoch design is complete enough to freeze the next experiment, but its
+  container boundary is not implemented or validated. This ADR remains Proposed.
 - The bounded research and documentation slice is `PASSED` in its exact retained scope; repository
-  adoption remains Proposed pending review. Installed owner-lock G3/I2B remains `BLOCKED` on
-  separately authorized profile/signing readback followed by a fresh disposable-container
-  nonmembership mutations, Coordinator/Supervisor service/session, Keychain, root, owner, state
-  engine, restart, and retirement evidence.
+  adoption remains Proposed pending review. The exact no-launch profile/signature preflight is also
+  `PASSED`. Installed owner-lock G3/I2B remains `BLOCKED` on fresh separately authorized
+  disposable-container nonmembership mutations, Coordinator/Supervisor service/session, Keychain,
+  root, owner, state engine, restart, and retirement evidence.
 - Apple Development evidence can support only the exact named host, OS, certificate, profiles, and
   development distribution posture. Developer ID, notarization, Gatekeeper, clean-host,
   translocation, minimum-OS, package/update, and shipping retirement claims remain separate I6
@@ -255,6 +259,7 @@ rollback-resistance claim follows without ADR-0012's independent anchor or witne
 
 - [I2B3 stale-profile blocker](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md)
 - [I2B3 authority-epoch inert packet and mutation matrix](../MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md)
+- [E1 signed-profile preflight at immutable `capsule-experiments` merge](https://github.com/Shrimpworks/capsule-experiments/tree/ee00ae2abbce64ae6458b82d0b53d904ee39aeb6/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-signed-profile-preflight)
 - [Apple platform-semantics research](../MACOS_INSTALLATION_PLATFORM_RESEARCH.md)
 - [Apple: accessing files from the macOS App Sandbox](https://developer.apple.com/documentation/security/accessing-files-from-the-macos-app-sandbox)
 - [Apple: App Groups entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups)

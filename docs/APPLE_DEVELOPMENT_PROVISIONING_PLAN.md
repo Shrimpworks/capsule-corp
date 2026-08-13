@@ -136,8 +136,8 @@ separately enrolled daemon and Supervisor roles. Neither historical option autho
 | Daemon-role parser child | `com.capsulecorp.capsule.source-validator-parser.daemon.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
 | Broker-role parser child | `com.capsulecorp.capsule.source-validator-parser.approval-broker.v1` | Nested signed identity only; parser spawn remained disabled in R3 |
 | Trust Coordinator | `com.capsulecorp.capsule.trust-bootstrap.v1` | Historical unlaunched I2B3 preflight identity and legacy residue; epoch one uses a fresh versioned identity only after separate authorization |
-| Authority-epoch-one Supervisor candidate | `com.capsulecorp.capsule.supervisor.authority-e1` | Selected only by Proposed ADR-0045; inert construction and authorized Apple Development profile/signing/container evidence remain `BLOCKED` |
-| Authority-epoch-one Coordinator candidate | `com.capsulecorp.capsule.trust-bootstrap.authority-e1` | Selected only by Proposed ADR-0045; inert construction and authorized Apple Development profile/signing evidence remain `BLOCKED` |
+| Authority-epoch-one Supervisor candidate | `com.capsulecorp.capsule.supervisor.authority-e1` | Selected only by Proposed ADR-0045; inert construction and exact no-launch Apple Development profile/signature readback are `PASSED`; container evidence remains `BLOCKED` |
+| Authority-epoch-one Coordinator candidate | `com.capsulecorp.capsule.trust-bootstrap.authority-e1` | Selected only by Proposed ADR-0045; inert construction and exact no-launch Apple Development profile/signature readback are `PASSED`; Coordinator launch and later service/root evidence remain `BLOCKED` |
 | Native front-end (Supervisor's C/Obj-C shim) | N/A — not a separate bundle | Shares `com.capsulecorp.capsule.supervisor`'s code identity |
 | Guest launcher/runner (flagged for completeness, outside this provisioning plan) | e.g. `com.capsulecorp.capsule.runner` | Would eventually hold `com.apple.security.hypervisor`; blocked behind P0-0..P0-3 per `GATE_C_P0_RECONCILIATION.md` |
 

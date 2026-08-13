@@ -2,8 +2,8 @@
 
 Date: 2026-08-12
 
-Work item: reconcile the merged C2b0, C3b preflight, C5b1, and C6b1c evidence wave and advance the
-exact next evidence gates.
+Work item: reconcile the merged C2b0, C3b preflight, C5b1/C5b2, and C6b1c evidence wave and advance
+the exact next evidence gates.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -18,11 +18,11 @@ experiment is not an activated product path.
 ## Reconciled baseline
 
 This reconciliation starts from fetched `origin/main` commit
-`e5401a81b727915ec01afe9012a77e7586a57c13`, merge PR #254. PR #254 was built from
-`16fb810b97e7ff2a157a251ae4dc8023dcfc01b4`, merge PR #253, and merged 21 seconds after the
-independently completed C3b profile/signature evidence; this checkpoint pins that evidence without
-changing PR #254's historical input. PR #252 closes C2a's passive S3 deadline-equality fixture
-prerequisite. Four separately reviewed `capsule-experiments` merges now
+`22acf665797e248028c2625586322f698bc2ba74`, merge PR #255. PR #255 reconciled PR #254 at
+`e5401a81b727915ec01afe9012a77e7586a57c13` with the independently completed C3b
+profile/signature evidence without changing PR #254's historical input. This checkpoint adds the
+later C5b2 governed-input closure at experiments PR #18. PR #252 closes C2a's passive S3
+deadline-equality fixture prerequisite. Four separately reviewed `capsule-experiments` merges now
 retain the construction inputs that the prior plan left open:
 
 - [PR #6](https://github.com/Shrimpworks/capsule-experiments/tree/b357d0c0fb29100c180494e67cebd7809aabe3c5/experiments/typed-guest-transport-c5b0-v19-successor)
@@ -34,7 +34,7 @@ retain the construction inputs that the prior plan left open:
 - [PR #9](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam)
   at merge `067fe2beb40361bb714507cab1331004e0a656fa` retains the C6b1b test-only Supervisor seam.
 
-Eight later `capsule-experiments` merges retain the next construction and platform-preflight
+Nine later `capsule-experiments` merges retain the next construction and platform-preflight
 wave:
 
 - [PR #10](https://github.com/Shrimpworks/capsule-experiments/tree/db08ebf277432e06d6cba3b7f7338e3bd4a61252/experiments/typed-guest-transport-c5b1-executable-successor)
@@ -56,7 +56,10 @@ wave:
 - [PR #17](https://github.com/Shrimpworks/capsule-experiments/tree/ee00ae2abbce64ae6458b82d0b53d904ee39aeb6/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-signed-profile-preflight)
   at merge `ee00ae2abbce64ae6458b82d0b53d904ee39aeb6` retains the `PASSED` C3b
   profile/signature-only gate over the exact current Supervisor, never-launched Coordinator, and
-  legacy negative probe.
+  legacy negative probe; and
+- [PR #18](https://github.com/Shrimpworks/capsule-experiments/tree/5a2f835e8c9df8279237f940f5af757e119593bd/experiments/typed-guest-transport-c5b2-governed-input-closure)
+  at merge `5a2f835e8c9df8279237f940f5af757e119593bd` retains the `PASSED` C5b2
+  governed-input closure over the available current-source libkrun/header/ABI/final-runner bytes.
 
 These are immutable evidence pins, not product dependencies. None activates a runtime, governed
 profile, installed identity, service, product consumer, backend, VM, or guest.
@@ -75,9 +78,10 @@ authorization:
   for the frozen macOS-style App Group is `NO_GO`, not the identity itself. The exact
   profile/signature-only gate is also `PASSED`; C3b/E1 remains `BLOCKED` on a fresh
   launch/container authorization;
-- C5b0 deterministic packet construction and C5b1 fresh executable-candidate construction are
-  `PASSED`; governed runtime/library/firmware binding, the real controller, controlled C5b run,
-  and admission remain `BLOCKED`; and
+- C5b0 deterministic packet construction, C5b1 fresh executable-candidate construction, and C5b2
+  governed-input closure are `PASSED`. C5b2 binds the available current-source libkrun/header/ABI/
+  final-runner bytes; the governed `deno_core` and libkrunfw bytes, real controller, composite,
+  controlled C5b run, and admission remain `BLOCKED`; and
 - C6b1a unsigned Broker-harness construction, C6b1b test-only Supervisor-seam construction, and
   C6b1c no-install identity/profile/signed-artifact readback are `PASSED`; C6b1d installed live
   signing remains `BLOCKED` on its own exact Keychain/LocalAuthentication authorization. Its
@@ -159,7 +163,8 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
 | C5b0 | Materialize the deterministic no-run typed-transport packet | `PASSED` | Archive merge [`b357d0c0fb29100c180494e67cebd7809aabe3c5`](https://github.com/Shrimpworks/capsule-experiments/tree/b357d0c0fb29100c180494e67cebd7809aabe3c5/experiments/typed-guest-transport-c5b0-v19-successor) binds the v19 lineage digest, governed 103-byte source and SourceManifest, exact role contracts, no-run profile/plan, fresh typed frames, closed inventory, independent verifier, and six mutations. No v19 raw bytes were recreated; executable runner/root/init/launcher/controller identities remain explicitly null. |
 | C5b1 | Construct the fresh executable typed-transport successor | `PASSED` | Archive merge [`db08ebf277432e06d6cba3b7f7338e3bd4a61252`](https://github.com/Shrimpworks/capsule-experiments/tree/db08ebf277432e06d6cba3b7f7338e3bd4a61252/experiments/typed-guest-transport-c5b1-executable-successor) retains fresh reproducible runner, raw root, trusted init, launcher, and hard-stop controller candidates, a closed 41-file inventory, provenance/SBOM, independent parsing, and seven mutation refusals. It does not recover v19 or bind/run the governed runtime, libkrun/libkrunfw, kernel, firmware, or a real controller. |
-| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5b1 and separate authorization naming the exact successor, owner-confirmed host, and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
+| C5b2 | Bind the available governed successor inputs | `PASSED` | Archive merge [`5a2f835e8c9df8279237f940f5af757e119593bd`](https://github.com/Shrimpworks/capsule-experiments/tree/5a2f835e8c9df8279237f940f5af757e119593bd/experiments/typed-guest-transport-c5b2-governed-input-closure) independently binds the exact current-source libkrun header, ABI audit, unsigned dylib, and final runner source/binary by hash, raw Mach-O metadata, dependencies, exports, imports, and C17 audit. Retained libkrunfw/kernel receipts are identity evidence only; the governed `deno_core` executable and libkrunfw bytes remain absent, separate firmware is inapplicable under ADR-0041, and no complete controller/composite exists. Nothing was loaded or executed. |
+| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires recovery or reproducible reconstruction of the exact governed `deno_core` and libkrunfw bytes, a reviewed real controller, a new immutable runtime-root/composite manifest, and separate authorization naming that exact successor, owner-confirmed host, and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3b evidence under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
 | C6b1a | Build the unsigned Broker evidence harness | `PASSED` | Archive merge [`4a2447d4bd0e03132dc616e608031ca313630cdd`](https://github.com/Shrimpworks/capsule-experiments/tree/4a2447d4bd0e03132dc616e608031ca313630cdd/experiments/broker-live-signing-c6b1) retains the unsigned Swift/Objective-C target, requested entitlement inputs, deterministic closed fixture corpus, public-only signature/binding checks, no-credential interaction double, independent verifier, and stable future seam interface. It used no Apple identity/profile, Keychain, LocalAuthentication, signing, installation, listener, runtime, backend, VM, guest, or product consumer. |
 | C6b1b | Build the test-only Supervisor evidence seam | `PASSED` | Archive merge [`067fe2beb40361bb714507cab1331004e0a656fa`](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam) retains six ordered approval/attempt commit, replay, response-loss, reopen, and concurrency rows. Canonical payload plus resolved signer authorization is replay identity; the Supervisor experiment store is the only durable authority owner. The model is test-only and is never imported or promoted into product code. |
@@ -215,10 +220,10 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-C2b0, C3b's complete no-launch profile/signature preflight, C5b1, and C6b1c are now `PASSED` in the
-exact bounded scopes pinned above. The immediate C3b step is a freshly authorized E1 container
+C2b0, C3b's complete no-launch profile/signature preflight, C5b1/C5b2, and C6b1c are now `PASSED`
+in the exact bounded scopes pinned above. The immediate C3b step is a freshly authorized E1 container
 matrix over E1-01..E1-12 and E1-14..E1-15; E1-13 remains excluded. C2b native execution, the C3b
-container matrix, C5b controlled execution,
+container matrix, C5b controller/composite construction and controlled execution,
 and C6b1d live signing each require their own exact authorization. C1a resumes only if the owner
 supplies a backup or snapshot; otherwise a later exact rerun needs separate authorization and new
 identities.

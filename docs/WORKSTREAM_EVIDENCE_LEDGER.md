@@ -15,6 +15,19 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-08-12 construction and platform-preflight reconciliation
+
+| Slice | Immutable result | Parent boundary |
+| --- | --- | --- |
+| C2b0 inert native-XPC harness | `PASSED` at [`capsule-experiments` merge `3d7bd46352506bf6018286749c2c85a3e2f683df`](https://github.com/Shrimpworks/capsule-experiments/tree/3d7bd46352506bf6018286749c2c85a3e2f683df/experiments/authenticated-local-ipc-s3-native-xpc-c2b0-ce7220e523bc43ba-c7ae502b0742bab1e): exact imported S3/C4-reference fixtures, alias map, closed execution plan, gated sources, deterministic unsigned artifacts, independent verifier, and 12 mutation refusals are retained. | Nothing was signed, launched, registered, or delivered. C2b native execution/OS enforcement and installed IPC remain `BLOCKED` on a fresh exact authorization. |
+| C5b1 executable-successor construction | `PASSED` at [`capsule-experiments` merge `db08ebf277432e06d6cba3b7f7338e3bd4a61252`](https://github.com/Shrimpworks/capsule-experiments/tree/db08ebf277432e06d6cba3b7f7338e3bd4a61252/experiments/typed-guest-transport-c5b1-executable-successor): fresh deterministic runner/root/init/launcher/hard-stop-controller candidates, closed inventory, provenance/SBOM, independent parsing, and seven refusals are retained. | The governed runtime/libkrun/libkrunfw/kernel/firmware and a real controller remain absent. Nothing executed. C5b and admission remain `BLOCKED`. |
+| C3b exact-profile and App Group preflights | The zero-effect missing-profile stop is retained at merge `50c494d4841c5d42e8e2120b82c0481a706a5236`; the exact legacy profile was later restored outside Git. The portal observation is retained at merge `e6390253a274e9ead76366f9869a5e1b272a1595`, and its canonical correction at [`3671a6eb23357ff28de4562dd60e8f68173034ae`](https://github.com/Shrimpworks/capsule-experiments/tree/3671a6eb23357ff28de4562dd60e8f68173034ae/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight) makes only Developer-portal registration of the frozen macOS-style App Group `NO_GO`. | The exact identity remains intended. No App Group portal resource, signature, launch, container, sentinel, service, Keychain, root/store, runtime, or guest was created. Profile/signature readback and E1 execution remain `BLOCKED`; ADR-0045 remains Proposed. |
+| C6b1c Broker identity/profile and signed-artifact readback | `PASSED` at [`capsule-experiments` merge `82d1a799f70482856aaa6030f612d701b39cec67`](https://github.com/Shrimpworks/capsule-experiments/tree/82d1a799f70482856aaa6030f612d701b39cec67/experiments/broker-live-signing-c6b1c-signed-artifact-readback): exact profile metadata, selected certificate, strict signed Broker requirement/CDHash, hardened runtime, and App Sandbox plus one exact Approval Keychain-group entitlement are retained. | The raw profile was not embedded and the app was never installed or launched. No Keychain, LocalAuthentication, Secure Enclave, service, product consumer, runtime, backend, VM, or guest was accessed. C6b1d remains `BLOCKED` on a fresh authorization. |
+
+The next exact gates are C3b profile/signature-only readback without launch/container access and a
+separate C6b1d authorization packet. C2b native execution, the later C3b container matrix, C5b
+controlled execution, C6b1d live signing, installed composition, and admission remain `BLOCKED`.
+
 ## 2026-08-11 merged construction-wave reconciliation
 
 The Capsule C2a prerequisite and four separately reviewed experiment archives are now immutable.
@@ -30,9 +43,9 @@ runtime, backend, VM, guest, or product-admission evidence.
 | C6b1a unsigned Broker harness | `PASSED` at [`capsule-experiments` merge `4a2447d4bd0e03132dc616e608031ca313630cdd`](https://github.com/Shrimpworks/capsule-experiments/tree/4a2447d4bd0e03132dc616e608031ca313630cdd/experiments/broker-live-signing-c6b1): unsigned Swift/Objective-C sources, entitlement requests, deterministic public fixtures, public-only checks, no-credential interaction tests, and a stable seam interface are retained. | No Apple identity/profile, Keychain, LocalAuthentication, private key, sign call, installation, listener, or product consumer was used. C6b1c/d remain `BLOCKED`. |
 | C6b1b test-only Supervisor seam | `PASSED` at [`capsule-experiments` merge `067fe2beb40361bb714507cab1331004e0a656fa`](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam): six ordered commit/replay/response-loss/reopen/concurrency rows preserve canonical-payload-plus-signer-authorization replay identity and Supervisor-only durable authority. | The experiment file store is not a product engine and must be replaced, not promoted. Installed signing, authenticated IPC, protected product state, consumers, runtime/backend/guest activity, and admission remain `BLOCKED`. |
 
-The next dependency boundary is therefore exact owner authorization for C2b and C3b, a separate
-credential-free C5b executable-construction slice, and later separately authorized C6b1c identity/
-profile readback followed by C6b1d installed signing mutations.
+This 2026-08-11 checkpoint is historical. The 2026-08-12 reconciliation above supersedes its
+next-step text: C2b0, C5b1, the C3b preflights, and C6b1c have since closed their narrower scopes;
+their execution or installed parents remain blocked exactly as stated above.
 
 ## 2026-08-11 C2a deadline-boundary closure
 

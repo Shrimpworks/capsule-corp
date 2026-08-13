@@ -90,8 +90,12 @@ now pass their exact construction scopes. They retain deterministic public fixtu
 interaction checks, and Supervisor-only approval/attempt commit, replay, response-loss, reopen,
 and concurrency oracles. Neither used an Apple identity/profile, Keychain, LocalAuthentication,
 private key, live sign call, installation, authenticated listener, product store/consumer,
-runtime, backend, VM, or guest. Identity/profile readback, installed signing, product wiring, and
-admission remain `BLOCKED`.
+runtime, backend, VM, or guest. The later
+[C6b1c no-install signed-artifact readback](https://github.com/Shrimpworks/capsule-experiments/tree/82d1a799f70482856aaa6030f612d701b39cec67/experiments/broker-live-signing-c6b1c-signed-artifact-readback)
+is `PASSED` for the exact development-profile metadata, signed Broker bytes, strict requirement,
+hardened runtime, and closed effective-entitlement projection. It did not embed the raw profile,
+install, launch, or touch Keychain/LocalAuthentication. C6b1d installed signing, product wiring,
+and admission remain `BLOCKED`.
 
 Installation I2B2 is `PASSED` for unsigned installation-only bytes and layout. It extends the
 unchanged I1A construction to the exact eight-role tree with an inert Trust Coordinator,
@@ -105,8 +109,12 @@ Sandbox container. Proposed ADR-0045 now selects a separate versioned Supervisor
 candidate and freezes its inert identity-separation matrix. That passive work and the immutable
 [C3a E0 archive](https://github.com/Shrimpworks/capsule-experiments/tree/dee784d40684100f8315720fab9a5cd3399f492b/experiments/macos-installation-i2b3-supervisor-authority-epoch-e0)
 are `PASSED` for exact reproducible unsigned, no-launch construction and mutation verification.
-Installed I2B remains `BLOCKED` on separately authorized Apple Development identity-separation
-mutations followed by key/service/root and descriptor-relative evidence; no installed
+The exact legacy negative profile is restored outside Git. The retained
+[C3b portal-preflight correction](https://github.com/Shrimpworks/capsule-experiments/tree/3671a6eb23357ff28de4562dd60e8f68173034ae/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
+keeps the frozen macOS-style `<TeamIdentifier>.<group-name>` App Group unchanged and makes only its
+Developer-portal registration path `NO_GO`. Installed I2B remains `BLOCKED` on the no-launch
+profile/signature gate, a later separately authorized Apple Development identity-separation
+matrix, and then key/service/root and descriptor-relative evidence; no installed
 security-control claim follows. See the
 [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md) and
 [authority-epoch packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).

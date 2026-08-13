@@ -42,9 +42,18 @@ binds its contract/profile/plan/frame identities. The later
 retains fresh runner/root/init/launcher/hard-stop candidates, and the immutable
 [C5b2 governed-input closure](https://github.com/Shrimpworks/capsule-experiments/tree/5a2f835e8c9df8279237f940f5af757e119593bd/experiments/typed-guest-transport-c5b2-governed-input-closure)
 independently binds the available current-source libkrun/header/ABI/final-runner bytes. The governed
-`deno_core` and libkrunfw bytes, real controller, composite, controlled C5b transport execution,
-installed composition, and admission remain `BLOCKED`; separate firmware is inapplicable under
-Accepted ADR-0041.
+runtime-input recovery, controller core, libkrunfw recovery, descriptive adapter, and exact static
+Deno reproduction are now retained at immutable experiments merges
+[`b5db7bcbbf7fe814faec3950ebfbf2d2ac7786e2`](https://github.com/Shrimpworks/capsule-experiments/tree/b5db7bcbbf7fe814faec3950ebfbf2d2ac7786e2/experiments/typed-guest-transport-c5b3-runtime-input-recovery),
+[`60234e22674e46a42e8e5c382d85217a930c2c13`](https://github.com/Shrimpworks/capsule-experiments/tree/60234e22674e46a42e8e5c382d85217a930c2c13/experiments/typed-guest-transport-c5b3-controlled-test-controller),
+[`068e221dafa7cf3e9a945cee7e8bf077eeed1c6b`](https://github.com/Shrimpworks/capsule-experiments/tree/068e221dafa7cf3e9a945cee7e8bf077eeed1c6b/experiments/typed-guest-transport-c5b4-libkrunfw-recovery),
+[`3cfe7db16c55894be444d4c783659043dbd25c95`](https://github.com/Shrimpworks/capsule-experiments/tree/3cfe7db16c55894be444d4c783659043dbd25c95/experiments/typed-guest-transport-c5b5-no-run-effect-adapter),
+and [`d9967e80a6155a65c6876dc686d8f8498b4a908f`](https://github.com/Shrimpworks/capsule-experiments/tree/d9967e80a6155a65c6876dc686d8f8498b4a908f/experiments/typed-guest-transport-c5b6-deno-static-reproduction).
+Those slices `PASSED` only for exact no-run custody, construction, static/model, and reproducibility
+claims. A rebuilt runtime root, real effect implementation, complete immutable composite,
+controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
+composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
+separate firmware is inapplicable under Accepted ADR-0041.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a

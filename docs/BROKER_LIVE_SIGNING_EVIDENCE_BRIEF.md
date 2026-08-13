@@ -380,6 +380,10 @@ immutable inputs together:
   receipt. No broad Keychain inventory, private-key export, credential/biometric retention,
   product listener, runtime, backend, VM, or guest is allowed.
 
+The Capsule commit above remains the immutable C6b1c construction input. Later documentation-only
+checkpoint commits do not retarget the signed artifact or silently substitute new product bytes;
+any rebuilt or changed Broker requires a new exact signed-artifact readback before C6b1d.
+
 The proposed first bounded mutation set remains individually opt-in: D1 create exactly one primary
 permanent Secure Enclave P-256 key; D2 create one same-tag duplicate and prove zero/multiple-match
 refusal; D3 delete only that duplicate and prove exact absence; D4 delete the primary mid-run and

@@ -112,9 +112,13 @@ are `PASSED` for exact reproducible unsigned, no-launch construction and mutatio
 The exact legacy negative profile is restored outside Git. The retained
 [C3b portal-preflight correction](https://github.com/Shrimpworks/capsule-experiments/tree/3671a6eb23357ff28de4562dd60e8f68173034ae/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
 keeps the frozen macOS-style `<TeamIdentifier>.<group-name>` App Group unchanged and makes only its
-Developer-portal registration path `NO_GO`. Installed I2B remains `BLOCKED` on the no-launch
-profile/signature gate, a later separately authorized Apple Development identity-separation
-matrix, and then key/service/root and descriptor-relative evidence; no installed
+Developer-portal registration path `NO_GO`. The immutable
+[C3b signed-profile preflight](https://github.com/Shrimpworks/capsule-experiments/tree/ee00ae2abbce64ae6458b82d0b53d904ee39aeb6/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-signed-profile-preflight)
+is `PASSED` for the exact no-launch profiles, signatures, requirements, hardened runtime, and
+effective entitlement projections of the current Supervisor, never-launched Coordinator, and
+legacy negative probe. Installed I2B remains `BLOCKED` on a separately authorized Apple
+Development identity-separation container matrix and then key/service/root and
+descriptor-relative evidence; no installed
 security-control claim follows. See the
 [I2B3 blocker result](MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md) and
 [authority-epoch packet](MACOS_INSTALLATION_I2B3_SUPERVISOR_AUTHORITY_EPOCH_EXPERIMENT.md).

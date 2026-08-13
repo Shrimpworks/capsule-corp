@@ -3,21 +3,23 @@
 Date: 2026-08-05
 
 ```text
-Work item: passive I2B3 Supervisor-authority-epoch packet plus C3a E0 construction
+Work item: passive I2B3 Supervisor-authority-epoch packet, C3a E0 construction, and C3b
+  profile/signature preflight
 Status: PASSED
-Scope: bounded inert packet and reproducible unsigned fixtures for versioned Supervisor/Coordinator
-  identities, container nonmembership, App Group/Mach separation, Keychain-group separation, and
-  retirement oracles; no portal, signing, profile, installation, service, Keychain, container,
-  process, root, store, runtime, backend, guest, or cleanup mutation was performed
+Scope: bounded inert packet, reproducible unsigned fixtures, and separately authorized no-launch
+  profile/signature readback for versioned Supervisor/Coordinator identities, container
+  nonmembership, App Group/Mach separation, Keychain-group separation, and retirement oracles; no
+  bundle launch, container, service, Keychain item, LocalAuthentication prompt, root, store,
+  runtime, backend, VM, or guest operation was performed
 Evidence or reason: Proposed ADR-0045 and this checked-in packet close the candidate identity tuple,
   evidence classes, stop order, mutation matrix, pass/refusal oracles, and claim boundary; immutable
   capsule-experiments merge dee784d40684100f8315720fab9a5cd3399f492b retains the exact unsigned
-  sources, bundles, inputs, manifest, independent verifier, and mutation results
-Remaining work: complete the separately authorized Apple Development profile/signature-only gate,
-  then separately authorize the disposable-container C3b/E1 mutation run; later
+  sources, bundles, inputs, manifest, independent verifier, and mutation results, while merge
+  ee00ae2abbce64ae6458b82d0b53d904ee39aeb6 retains the exact signed-profile preflight result
+Remaining work: separately authorize the disposable-container C3b/E1 mutation run; later
   Keychain/service/root/store work requires another authorization after this gate passes
-Next action: finish exact signed-profile readback without bundle launch or container access, then
-  obtain a fresh authorization for E1; stop again before any later Keychain/service/root/store work
+Next action: obtain a fresh authorization for E1-01..E1-12 and E1-14..E1-15 against the retained
+  identities; E1-13 remains excluded, and work stops again before later Keychain/service/root/store
 Parent status: installed owner-lock G3/I2B remains BLOCKED
 ```
 
@@ -38,7 +40,8 @@ The experiment is split at hard review boundaries:
 2. **I2B3 profile/signature gate:** separately authorized explicit App IDs/profiles and
    signing/readback only. It embeds and independently reads the exact development profiles and
    effective entitlements for the current Supervisor, never-launched Coordinator, and legacy
-   negative probe. No bundle launches and no container is opened.
+   negative probe. This gate is now `PASSED` at the immutable merge pinned below. No bundle was
+   launched and no container was opened.
 3. **I2B3-E1 identity-separation mutation:** separately authorized disposable probe launches
    against only platform-created test containers.
    It must stop and clean the exact disposable sentinels before any `SMAppService` registration,
@@ -74,7 +77,18 @@ observed that the Developer portal prepends `group.` when asked to register the 
 narrows the resulting `NO_GO` to that portal-registration path. Apple's current documentation
 supports the frozen `<team identifier>.<group name>` form on macOS without Developer-website App
 Group registration. The exact identity therefore remains intended; its platform claim remains
-`BLOCKED` on signed-profile evidence. Do not silently rewrite it to an iOS-style `group.` value.
+`BLOCKED` on E1 container evidence. Do not silently rewrite it to an iOS-style `group.` value.
+
+The exact no-launch
+[signed-profile preflight](https://github.com/Shrimpworks/capsule-experiments/tree/ee00ae2abbce64ae6458b82d0b53d904ee39aeb6/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-signed-profile-preflight)
+is `PASSED` at immutable merge `ee00ae2abbce64ae6458b82d0b53d904ee39aeb6`. On owner Mac
+`dsteele-shrimp-mbp18-4-01`, it retained the two exact explicit App IDs and Mac development-profile
+UUID/CMS/certificate/device bindings plus strict signature, designated-requirement, CDHash,
+hardened-runtime, absent-debug, App Sandbox, macOS-style App Group, and role-specific Keychain-group
+readback for the current Supervisor, never-launched Coordinator, and legacy negative probe. Raw
+profiles remain outside Git. No bundle or Coordinator was launched, and no container, sentinel,
+service, Keychain item, LocalAuthentication prompt, root/store, runtime, backend, VM, or guest was
+accessed.
 
 ## Frozen identities and packet contents
 
@@ -135,14 +149,15 @@ effective entitlement, code requirement, identity, platform-returned container U
 sentinel digest needed to reproduce the result:
 
 1. Reconfirm the exact named host/OS/SDK, Team `3DDR84M4JS`, selected Apple Development certificate,
-   device, proposed explicit App IDs, profile capacity, and absence of Developer ID use.
-2. Create only the exact epoch-one Supervisor and Coordinator explicit App IDs and development
-   profiles. Do not create or register the macOS-style App Group in the Developer portal; stop if
-   any profile projection rewrites it or otherwise differs.
-3. Sign without launch, embed the exact profiles, and require strict inside-out signature, profile
-   UUID/CMS/certificate/device binding, `com.apple.application-identifier`, Team OU/TeamIdentifier,
-   signing ID, effective-entitlement, hardened-runtime, no-debug, App Group, Keychain-group,
-   LaunchAgent-label, and peer-requirement readback. Retain this gate and stop for review.
+   device, already-created explicit App IDs/profiles, and absence of Developer ID use against
+   immutable preflight merge `ee00ae2abbce64ae6458b82d0b53d904ee39aeb6`.
+2. Do not create or register a macOS-style App Group in the Developer portal. Use only the retained
+   exact epoch-one profile identities; stop if a profile projection rewrites them or otherwise
+   differs.
+3. Before launch, require strict inside-out signature, profile UUID/CMS/certificate/device binding,
+   `com.apple.application-identifier`, Team OU/TeamIdentifier, signing ID, effective-entitlement,
+   hardened-runtime, absent-debug, App Group, Keychain-group, LaunchAgent-label, and
+   peer-requirement readback to match the retained gate exactly.
 4. Under a fresh authorization, run only the two Supervisor container probes needed for the
    matrix. Each obtains its own
    platform-selected container/standard-directory URL through supported APIs. The harness records
@@ -194,10 +209,11 @@ new authorization names the exact groups, services, and keys.
 
 ## Pass, block, and candidate disposition
 
-This E0 packet freeze and C3a materialization are `PASSED` because the retained definition and
-immutable unsigned archive close the identities, fields, order, matrix, oracles, bytes, and
-independent verification without platform authority or launch effects. Those deterministic bytes
-are E1 inputs, not E1 platform evidence. E1 is `PASSED` only
+This E0 packet freeze, C3a materialization, and C3b profile/signature-only preflight are `PASSED`
+because the retained definitions and immutable archives close the identities, fields, order,
+matrix, oracles, unsigned bytes, profile/signature bindings, and independent verification without
+bundle launch or container access. Those deterministic and signed identities are E1 inputs, not E1
+platform evidence. E1 is `PASSED` only
 when exact Apple Development identities on the
 named host show distinct platform container associations, every current/legacy cross-mutation
 denies without consent, cleanup is exact, and the stop inventory is empty.

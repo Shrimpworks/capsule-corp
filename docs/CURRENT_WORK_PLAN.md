@@ -1,12 +1,11 @@
 # Current work plan
 
-Date: 2026-08-11
+Date: 2026-08-12
 
-Work item: reconcile the merged C2a, C3a, C5b0, C6b1a, and C6b1b construction wave and advance
-the exact next evidence gates.
+Work item: reconcile the merged C2b0, C3b preflight, C5b1, and C6b1c evidence wave and advance the
+exact next evidence gates.
 
-Status: `PASSED` for this canonical reconciliation and the five completed child scopes named
-below.
+Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -19,8 +18,8 @@ experiment is not an activated product path.
 ## Reconciled baseline
 
 This reconciliation starts from fetched `origin/main` commit
-`e7220e523bc43ba8867122a1233e1625f2c1c164`, merge PR #252. PR #252 closes C2a's passive S3
-deadline-equality fixture prerequisite. Four separately reviewed `capsule-experiments` merges now
+`16fb810b97e7ff2a157a251ae4dc8023dcfc01b4`, merge PR #253. Its predecessor PR #252 closes C2a's
+passive S3 deadline-equality fixture prerequisite. Four separately reviewed `capsule-experiments` merges now
 retain the construction inputs that the prior plan left open:
 
 - [PR #6](https://github.com/Shrimpworks/capsule-experiments/tree/b357d0c0fb29100c180494e67cebd7809aabe3c5/experiments/typed-guest-transport-c5b0-v19-successor)
@@ -32,6 +31,26 @@ retain the construction inputs that the prior plan left open:
 - [PR #9](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam)
   at merge `067fe2beb40361bb714507cab1331004e0a656fa` retains the C6b1b test-only Supervisor seam.
 
+Seven later `capsule-experiments` merges retain the next construction and platform-preflight
+wave:
+
+- [PR #10](https://github.com/Shrimpworks/capsule-experiments/tree/db08ebf277432e06d6cba3b7f7338e3bd4a61252/experiments/typed-guest-transport-c5b1-executable-successor)
+  at merge `db08ebf277432e06d6cba3b7f7338e3bd4a61252` retains the fresh deterministic C5b1
+  executable-successor candidates;
+- [PR #11](https://github.com/Shrimpworks/capsule-experiments/tree/3d7bd46352506bf6018286749c2c85a3e2f683df/experiments/authenticated-local-ipc-s3-native-xpc-c2b0-ce7220e523bc43ba-c7ae502b0742bab1e)
+  at merge `3d7bd46352506bf6018286749c2c85a3e2f683df` retains the inert C2b0 native-XPC harness;
+- [PR #12](https://github.com/Shrimpworks/capsule-experiments/tree/50c494d4841c5d42e8e2120b82c0481a706a5236/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1)
+  and [PR #13](https://github.com/Shrimpworks/capsule-experiments/tree/cd06bd84690a16bb4d0924a8a4cd64845ebb0159/experiments/broker-live-signing-c6b1c-identity-profile-readback)
+  retain the exact zero-effect C3b missing-profile stop and C6b1c portal/download stop;
+- [PR #14](https://github.com/Shrimpworks/capsule-experiments/tree/e6390253a274e9ead76366f9869a5e1b272a1595/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
+  retains the C3b portal-form observation, while
+  [PR #16](https://github.com/Shrimpworks/capsule-experiments/tree/3671a6eb23357ff28de4562dd60e8f68173034ae/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
+  supplies its canonical interpretation: only Developer-portal registration of the frozen
+  macOS-style App Group is `NO_GO`; the exact identity remains intended and `BLOCKED` on signed
+  platform evidence; and
+- [PR #15](https://github.com/Shrimpworks/capsule-experiments/tree/82d1a799f70482856aaa6030f612d701b39cec67/experiments/broker-live-signing-c6b1c-signed-artifact-readback)
+  retains the `PASSED` no-install C6b1c identity/profile and signed-artifact readback.
+
 These are immutable evidence pins, not product dependencies. None activates a runtime, governed
 profile, installed identity, service, product consumer, backend, VM, or guest.
 
@@ -41,17 +60,20 @@ authorization:
 - C1 recovery discovery `PASSED`, but raw v10-v27 publication remains `BLOCKED`: the former local
   archive commit `3fdcf2cebda087ecc99fbc73acfd21a3eae06b5b`, branch, and workspace are absent from
   bounded Capsule paths, Git refs/worktrees/objects, and the remote archive;
-- C2 authorization/fixture preparation and C2a's nine strict S3 deadline-boundary cases are
-  `PASSED`; the native harness remains `BLOCKED` on exact host/session authorization;
-- C3a deterministic E0 materialization is `PASSED` for exact unsigned, no-launch probes, bundles,
-  inputs, manifests, independent verification, and mutation refusals; C3b/E1 remains `BLOCKED` on
-  exact owner and Apple Development authorization;
-- C5b0 deterministic packet construction is `PASSED`; the packet retains exact contract/profile/
-  plan/frame identities while its executable runner/root/init/launcher/controller fields remain
-  null, so executable construction and the C5b run remain `BLOCKED`; and
-- C6b1a unsigned Broker-harness construction and C6b1b test-only Supervisor-seam construction are
-  `PASSED`; C6b1c identity/profile readback and C6b1d installed signing remain `BLOCKED` on exact
-  owner authorization and platform evidence.
+- C2 authorization/fixture preparation, C2a's nine strict S3 deadline-boundary cases, and C2b0's
+  inert reproducible harness construction are `PASSED`; native execution remains `BLOCKED` on a
+  fresh exact host/session authorization;
+- C3a deterministic E0 materialization and the bounded C3b preflights are `PASSED` in their exact
+  no-launch scopes. The required legacy profile has been restored. The portal-registration path
+  for the frozen macOS-style App Group is `NO_GO`, not the identity itself. C3b/E1 remains
+  `BLOCKED` first on exact profile/signature readback and then on a fresh launch/container
+  authorization;
+- C5b0 deterministic packet construction and C5b1 fresh executable-candidate construction are
+  `PASSED`; governed runtime/library/firmware binding, the real controller, controlled C5b run,
+  and admission remain `BLOCKED`; and
+- C6b1a unsigned Broker-harness construction, C6b1b test-only Supervisor-seam construction, and
+  C6b1c no-install identity/profile/signed-artifact readback are `PASSED`; C6b1d installed live
+  signing remains `BLOCKED` on its own exact Keychain/LocalAuthentication authorization.
 
 The current retained baseline includes these exact slices:
 
@@ -82,18 +104,18 @@ across 95 profiles and 60 targets.
 ```text
 raw v10-v27 recovery -> verified publication ------------------┐
                                                                │
-S3 deadline closure (`PASSED`) -> native XPC harness ------------+-> installed authenticated IPC
+S3 deadline closure -> inert native XPC harness (`PASSED`) -> controlled run +-> installed authenticated IPC
                                                                │
 E0 materialization (`PASSED`) -> ADR-0045 E1 identity separation +-> key/service/root corpus
                                                                │
 C4 passive approval/attempt evidence (PASSED) + R3 passive research (PASSED)
           -> unsigned Broker harness (`PASSED`) -> test Supervisor seam (`PASSED`)
-          -> identity/profile readback -> installed signing harness ----------------------------┐
+          -> identity/profile readback (`PASSED`) -> installed signing harness -----------------┐
 installed authenticated IPC boundary (BLOCKED) ----------------------------------------------+-> product Broker/approval/attempt wiring
                                                                                               -> protected one-attempt path
                                                                │
 typed transport design -> passive contract (`PASSED`) -> v19/103-byte no-run packet (`PASSED`)
-                                                   -> fresh executable construction
+                                                   -> fresh executable construction (`PASSED`)
                                                    -> controlled harness ----┐
 installed service/identity evidence ------------------------------+-> pre-admission profile matrix
                                                                   -> admission review
@@ -121,18 +143,18 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C1b | Publish recovered raw v10-v27 evidence | `BLOCKED` | Requires C1a. Verify the 280-file packet and 279 retained-file manifest, publish `experiments/gate-c-c2b-fixed-owned-guest` in one reviewed immutable `capsule-experiments` commit, read it back, rerun its verifier, then add exact links. If recovery is impossible, a separately authorized rerun must produce new evidence. |
 | C2a | Freeze S3 deadline equality boundaries | `PASSED` | Ordered before/at/after cases now cover SubmitMain 9,999/10,000/10,001 ms, RegisterPlan 4,999/5,000/5,001 ms, and GetRegisteredPlan 1,999/2,000/2,001 ms with equality expired, complete zero-state projections, and independent Go/Node checks. The unified passive contract has 15 deadline cases; no listener or process exists. |
 | C2b | Run the one-time native XPC S3 harness | `BLOCKED` | Requires explicit authorization naming `Shrimpworks/capsule-experiments`, the owner-confirmed Mac/session, Capsule commit, manifest `c76e1f6c...8b59`, native contract `7ae502b0...962c`, ordered case digest `9ac6845b...f68e`, experimental service alias map, disposable names/root, and defensive no-product scope. Retain OS peer refusal, exact-message identity, EUID/session, copy, cap/flow, deadline, interruption, response-loss, process-fault, and cleanup evidence. |
-| C3a | Materialize deterministic E0 fixtures | `PASSED` | Archive merge [`dee784d40684100c180494e67cebd7809aabe3c5`](https://github.com/Shrimpworks/capsule-experiments/tree/dee784d40684100f8315720fab9a5cd3399f492b/experiments/macos-installation-i2b3-supervisor-authority-epoch-e0) retains exact current/legacy probe sources and reproducible unsigned bundles, a never-launched Coordinator, plists, entitlement/profile requests, disabled LaunchAgent and inactive descriptor inputs, a closed manifest, independent verification, and 23 mutation refusals. No portal, identity, profile, signing, container, service, Keychain, runtime, backend, VM, or guest was accessed or activated. |
-| C3b | Run ADR-0045 E1 identity separation | `BLOCKED` | C3a is complete. Resume only with the exact merged archive pin and manifest, owner-confirmed host/device/toolchain binding, the frozen I2B3 legacy negative-profile metadata, a non-ephemeral evidence workspace, and explicit Apple Development authorization for E1-01..E1-12 and E1-14..E1-15. E1-13 remains excluded. Stop before Keychain, service registration, protected root, store, runtime, or guest. ADR-0045 remains Proposed. |
+| C3a | Materialize deterministic E0 fixtures | `PASSED` | Archive merge [`dee784d40684100f8315720fab9a5cd3399f492b`](https://github.com/Shrimpworks/capsule-experiments/tree/dee784d40684100f8315720fab9a5cd3399f492b/experiments/macos-installation-i2b3-supervisor-authority-epoch-e0) retains exact current/legacy probe sources and reproducible unsigned bundles, a never-launched Coordinator, plists, entitlement/profile requests, disabled LaunchAgent and inactive descriptor inputs, a closed manifest, independent verification, and 23 mutation refusals. No portal, identity, profile, signing, container, service, Keychain, runtime, backend, VM, or guest was accessed or activated. |
+| C3b | Run ADR-0045 E1 identity separation | `BLOCKED` | C3a, exact legacy-profile restoration, and the App Group portal preflight are complete. The frozen `3DDR84M4JS...` App Group is the macOS-style entitlement value and is not a Developer-portal App Group resource; do not rewrite it to `group.`. First perform an independently retained profile/signature-only gate over the explicit epoch-one App IDs, embedded development profiles, current Supervisor, no-launch Coordinator, and legacy probe. Require exact Team/application identifiers, profile UUID/CMS/certificate/device binding, CDHashes/designated requirements, effective App Group/Keychain entitlements, hardened runtime, and no-debug readback without launching a bundle or opening a container. Only after that passes may a fresh authorization run E1-01..E1-12 and E1-14..E1-15; E1-13 remains excluded. ADR-0045 remains Proposed. |
 | C4 | Freeze `SubmitApprovalV0` and `RequestAttemptV0` | `PASSED` | PR #248 is the canonical predecessor and PR #249 closes the focused follow-up. Ordered 4,999/5,000/5,001-ms cases for both methods, equality-as-expired behavior, complete closed dictionaries/maps, every ordered field, required `noState`, cancellation/deadline commit truth, all 20 foreign-tag collisions, complete refusal and five-entry response-loss tables, and bounded Go/Node mutation proofs are retained. No listener, signer, store consumer, process, or guest is active. |
 | C5a | Freeze the final typed source/input/completion transport | `PASSED` | The passive v1 contract freezes exact 152/160/64-byte layouts, 262,144-byte payload caps, completion cap-plus-one, big-endian bindings, four statuses, canonical JSON, refusal precedence, monotonic state/fault behavior, endpoint custody, completion-last projection, deterministic fixtures, and independent Go/Node verification. No endpoint, process, runtime, backend, guest, or store mutation occurred. |
 | C5b0 | Materialize the deterministic no-run typed-transport packet | `PASSED` | Archive merge [`b357d0c0fb29100c180494e67cebd7809aabe3c5`](https://github.com/Shrimpworks/capsule-experiments/tree/b357d0c0fb29100c180494e67cebd7809aabe3c5/experiments/typed-guest-transport-c5b0-v19-successor) binds the v19 lineage digest, governed 103-byte source and SourceManifest, exact role contracts, no-run profile/plan, fresh typed frames, closed inventory, independent verifier, and six mutations. No v19 raw bytes were recreated; executable runner/root/init/launcher/controller identities remain explicitly null. |
-| C5b1 | Construct the fresh executable typed-transport successor | `BLOCKED` | Consume the immutable C5b0 packet and retained governed sources to build and independently reproduce fresh runner, root, init, launcher, and controller bytes with toolchain, license/SBOM/provenance, and mutation evidence. This no-run task may compile and inspect but must not load libkrun, call HVF, execute a runner, create a VM/guest, sign/install, or admit the candidate. |
+| C5b1 | Construct the fresh executable typed-transport successor | `PASSED` | Archive merge [`db08ebf277432e06d6cba3b7f7338e3bd4a61252`](https://github.com/Shrimpworks/capsule-experiments/tree/db08ebf277432e06d6cba3b7f7338e3bd4a61252/experiments/typed-guest-transport-c5b1-executable-successor) retains fresh reproducible runner, raw root, trusted init, launcher, and hard-stop controller candidates, a closed 41-file inventory, provenance/SBOM, independent parsing, and seven mutation refusals. It does not recover v19 or bind/run the governed runtime, libkrun/libkrunfw, kernel, firmware, or a real controller. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires C5b1 and separate authorization naming the exact successor, owner-confirmed host, and owned disposable guest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3b evidence under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
 | C6b1a | Build the unsigned Broker evidence harness | `PASSED` | Archive merge [`4a2447d4bd0e03132dc616e608031ca313630cdd`](https://github.com/Shrimpworks/capsule-experiments/tree/4a2447d4bd0e03132dc616e608031ca313630cdd/experiments/broker-live-signing-c6b1) retains the unsigned Swift/Objective-C target, requested entitlement inputs, deterministic closed fixture corpus, public-only signature/binding checks, no-credential interaction double, independent verifier, and stable future seam interface. It used no Apple identity/profile, Keychain, LocalAuthentication, signing, installation, listener, runtime, backend, VM, guest, or product consumer. |
 | C6b1b | Build the test-only Supervisor evidence seam | `PASSED` | Archive merge [`067fe2beb40361bb714507cab1331004e0a656fa`](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam) retains six ordered approval/attempt commit, replay, response-loss, reopen, and concurrency rows. Canonical payload plus resolved signer authorization is replay identity; the Supervisor experiment store is the only durable authority owner. The model is test-only and is never imported or promoted into product code. |
-| C6b1c | Provision and read back the disposable identity | `BLOCKED` | C6b1a/b are complete. Resume only with exact owner authorization naming the owned Mac, development target/App ID/profile/access group, disposable account/container, and both immutable archive/fixture identities. Proposed host label `dsteele-shrimp-mbp18-4-01` remains subject to owner confirmation. Stop before key creation or prompt/signing. |
-| C6b1d | Run the installed Broker signing evidence matrix | `BLOCKED` | Requires C6b1c and separately enumerated mutation authorization. Proposed first-run destructive rows D1-D4 and cleanup D14-D16 are not yet authorized; D5-D13 and D17-D18 remain deferred. No product consumer, runtime, backend, VM, or guest. |
+| C6b1c | Provision and read back the disposable identity | `PASSED` | Archive merge [`82d1a799f70482856aaa6030f612d701b39cec67`](https://github.com/Shrimpworks/capsule-experiments/tree/82d1a799f70482856aaa6030f612d701b39cec67/experiments/broker-live-signing-c6b1c-signed-artifact-readback) retains the exact development profile metadata and no-install signed app. Strict signature, exact bundle/Team/designated requirement, hardened runtime, and the closed App Sandbox plus one Approval Keychain-group entitlement readback pass. The profile wildcard is only an allowlist; no raw profile is embedded, and the app was never installed or launched. |
+| C6b1d | Run the installed Broker signing evidence matrix | `BLOCKED` | Requires a fresh authorization naming the exact C6b1c archive/artifact/profile, owner account/container, allowed Keychain and LocalAuthentication operations, prompt handling, evidence destination, and cleanup. Proposed first-run destructive rows D1-D4 and cleanup D14-D16 are not yet authorized; D5-D13 and D17-D18 remain deferred. No product consumer, runtime, backend, VM, or guest. |
 | C6b2 | Connect the product Broker and approval/attempt methods | `BLOCKED` | C4 is `PASSED`; C6a and C6b1d remain required. Implement native rendering/UI, installed signing/public-key verification, and method-specific `SubmitApprovalV0`/`RequestAttemptV0` consumers without runtime or guest activation. Research and passive conformance cannot satisfy either installed dependency. |
 | C6c | Wire attempt admission and the fixed-store stop policy | `BLOCKED` | Requires C6b2 and an explicit decision for p95 provenance/window/lifetime and any persistent timing-trip semantics. Apply the re-evaluated guard transaction-locally after owner/full verification and before a new consume/create mutation; replay of an existing `AttemptID` converges first. |
 | C6d | Run the pre-admission installed runtime/profile matrix | `BLOCKED` | Requires C1b, C5b, C6a, governed release/artifact review, and separate authorization naming the exact signed-installed candidate and owned test environments. Retain identity compatibility, runtime/root/loader restoration, transport, teardown/recovery, and the required broader lifecycle/platform evidence without accepting user source or making an admission decision. |
@@ -183,15 +205,17 @@ and return a canonical repository artifact before its conclusion drives implemen
 
 ## Next checkpoint
 
-C2a, C3a, the deterministic C5b0 packet, C6b1a, and C6b1b are now `PASSED` in their exact passive,
-inert, or test-only scopes and are pinned above. C2b and C3b must stop for exact owner/environment
-authorization. C5b1 is the next credential-free no-run construction task. C6b1c must stop for exact
-identity/profile/account authorization before any provisioning readback, and C6b1d remains a
-separate later mutation/signing authorization. C1a resumes only if the owner supplies a backup or
-snapshot; otherwise a later exact rerun needs separate authorization and new identities.
+C2b0, C3b's no-launch preflights, C5b1, and C6b1c are now `PASSED` in the exact bounded scopes
+pinned above. The immediate C3b step is the profile/signature-only readback gate; it may create the
+two explicit development identities/profiles and sign the exact probes, but may not launch them or
+open any container. C2b native execution, the later C3b container matrix, C5b controlled execution,
+and C6b1d live signing each require their own exact authorization. C1a resumes only if the owner
+supplies a backup or snapshot; otherwise a later exact rerun needs separate authorization and new
+identities.
 
-No signing, Keychain, service registration, installed listener, portal/profile mutation, libkrun/HVF
-execution, VM, or guest is authorized by this plan. C2b, C3b, C5b, C6b1c, and C6b1d must each stop
-again for their exact owner/environment authorization. No task may promote internal alpha or
+This plan records but does not itself authorize new signing, Keychain use, service registration,
+installed listener activation, libkrun/HVF execution, VM, or guest work. C2b, the C3b container
+matrix, C5b, and C6b1d must each stop again for their exact owner/environment authorization. No
+task may promote internal alpha or
 product admission from research, a passive contract, an ad-hoc harness, or a fixed guest
 experiment alone.

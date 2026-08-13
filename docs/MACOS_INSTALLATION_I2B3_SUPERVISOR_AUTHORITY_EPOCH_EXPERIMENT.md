@@ -13,11 +13,11 @@ Evidence or reason: Proposed ADR-0045 and this checked-in packet close the candi
   evidence classes, stop order, mutation matrix, pass/refusal oracles, and claim boundary; immutable
   capsule-experiments merge dee784d40684100f8315720fab9a5cd3399f492b retains the exact unsigned
   sources, bundles, inputs, manifest, independent verifier, and mutation results
-Remaining work: separately authorize the exact Apple Development portal/profile/signing and
-  disposable-container C3b/E1 mutation run; later
+Remaining work: complete the separately authorized Apple Development profile/signature-only gate,
+  then separately authorize the disposable-container C3b/E1 mutation run; later
   Keychain/service/root/store work requires another authorization after this gate passes
-Next action: authorize E1 only with the immutable C3a archive pin and its closed packet below; stop
-  again before any later Keychain/service/root/store work
+Next action: finish exact signed-profile readback without bundle launch or container access, then
+  obtain a fresh authorization for E1; stop again before any later Keychain/service/root/store work
 Parent status: installed owner-lock G3/I2B remains BLOCKED
 ```
 
@@ -29,14 +29,18 @@ authorization, disposable Capsule Team `3DDR84M4JS` development probes on the ow
 Do not access any other system, identity, credential, container, process, or data, and preserve all
 existing Capsule safeguards.
 
-The experiment is split at a hard review boundary:
+The experiment is split at hard review boundaries:
 
 1. **I2B3-E0 inert packet:** this checked-in closed definition of deterministic source, bundle
    layout, plist, entitlement, expected requirement, profile-request metadata, test vectors, and
    verifier. It performs no portal action, signing, profile download, install, registration,
    launch, Keychain operation, container creation, or filesystem mutation.
-2. **I2B3-E1 identity-separation mutation:** separately authorized explicit App IDs/profiles,
-   signing/readback, and disposable probe launches against only platform-created test containers.
+2. **I2B3 profile/signature gate:** separately authorized explicit App IDs/profiles and
+   signing/readback only. It embeds and independently reads the exact development profiles and
+   effective entitlements for the current Supervisor, never-launched Coordinator, and legacy
+   negative probe. No bundle launches and no container is opened.
+3. **I2B3-E1 identity-separation mutation:** separately authorized disposable probe launches
+   against only platform-created test containers.
    It must stop and clean the exact disposable sentinels before any `SMAppService` registration,
    bootstrap Mach service, Coordinator launch, LocalAuthentication, Keychain item, installation
    root, Supervisor protected root, owner lock, store, runtime, backend, VM, guest, or attempt.
@@ -53,6 +57,24 @@ never launched, exact plist/entitlement/profile-request/LaunchAgent/descriptor i
 manifest, independent verification, and 23 refusal mutations. It used no Apple identity, profile,
 signing, container, service, Keychain, protected state, runtime, backend, VM, or guest. This closes
 C3a construction only; it does not observe E1 nonmembership or accept ADR-0045.
+
+## Retained C3b preflight reconciliation
+
+The exact legacy I2B3 negative profile was restored through an owner-controlled non-Git path and
+reconfirmed as UUID `c45a058b-ffdd-4a6b-bd8c-d746772a2702` with CMS SHA-256
+`964f79980edf22a7280fe19e52893a1e40b0a8639d5bbe3d5dc8fdfada9c6c76`. Raw profile bytes remain
+outside Git.
+
+The zero-effect [initial E1 preflight](https://github.com/Shrimpworks/capsule-experiments/tree/50c494d4841c5d42e8e2120b82c0481a706a5236/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1)
+records the earlier exact-profile absence. The later
+[App Group portal preflight](https://github.com/Shrimpworks/capsule-experiments/tree/e6390253a274e9ead76366f9869a5e1b272a1595/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
+observed that the Developer portal prepends `group.` when asked to register the frozen
+`3DDR84M4JS...` identifier. The canonical
+[correction](https://github.com/Shrimpworks/capsule-experiments/tree/3671a6eb23357ff28de4562dd60e8f68173034ae/experiments/macos-installation-i2b3-supervisor-authority-epoch-e1-app-group-preflight)
+narrows the resulting `NO_GO` to that portal-registration path. Apple's current documentation
+supports the frozen `<team identifier>.<group name>` form on macOS without Developer-website App
+Group registration. The exact identity therefore remains intended; its platform claim remains
+`BLOCKED` on signed-profile evidence. Do not silently rewrite it to an iOS-style `group.` value.
 
 ## Frozen identities and packet contents
 
@@ -115,11 +137,14 @@ sentinel digest needed to reproduce the result:
 1. Reconfirm the exact named host/OS/SDK, Team `3DDR84M4JS`, selected Apple Development certificate,
    device, proposed explicit App IDs, profile capacity, and absence of Developer ID use.
 2. Create only the exact epoch-one Supervisor and Coordinator explicit App IDs and development
-   profiles, or stop if the portal/profile projection differs.
-3. Sign without launch and require strict inside-out signature, profile, Team OU/TeamIdentifier,
+   profiles. Do not create or register the macOS-style App Group in the Developer portal; stop if
+   any profile projection rewrites it or otherwise differs.
+3. Sign without launch, embed the exact profiles, and require strict inside-out signature, profile
+   UUID/CMS/certificate/device binding, `com.apple.application-identifier`, Team OU/TeamIdentifier,
    signing ID, effective-entitlement, hardened-runtime, no-debug, App Group, Keychain-group,
-   LaunchAgent-label, and peer-requirement readback.
-4. Run only the two Supervisor container probes needed for the matrix. Each obtains its own
+   LaunchAgent-label, and peer-requirement readback. Retain this gate and stop for review.
+4. Under a fresh authorization, run only the two Supervisor container probes needed for the
+   matrix. Each obtains its own
    platform-selected container/standard-directory URL through supported APIs. The harness records
    those returned URLs and supplies the peer URL only to the fixed cross-container test operation;
    no path is guessed, accepted by product code, or retained as authority.

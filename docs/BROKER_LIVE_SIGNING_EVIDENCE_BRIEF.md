@@ -43,6 +43,17 @@ They do not change this document's installed-evidence boundary: no Apple identit
 Keychain, LocalAuthentication, private key, signing, installation, authenticated listener, or
 product consumer was used.
 
+The later no-install
+[C6b1c signed-artifact readback](https://github.com/Shrimpworks/capsule-experiments/tree/82d1a799f70482856aaa6030f612d701b39cec67/experiments/broker-live-signing-c6b1c-signed-artifact-readback)
+is also `PASSED` in its exact bounded scope. It retains the selected development-profile metadata
+and exact signed Broker artifact with Team `3DDR84M4JS`, bundle ID
+`com.capsulecorp.capsule.broker.c6b1`, CDHash
+`029b8d5cabd38e1fde9e23564e4e5b1590cf569d`, hardened runtime, App Sandbox, and exactly one
+Approval Keychain access group
+`3DDR84M4JS.com.capsulecorp.capsule.broker.approval.epoch-7`. The profile wildcard is an allowlist,
+not proof of key access. The raw profile was not embedded, the app was not installed or launched,
+and no Keychain, LocalAuthentication, Secure Enclave, service, IPC, or product operation occurred.
+
 ## Governing decisions and evidence boundary
 
 [Accepted ADR-0043](adr/0043-freeze-broker-rendering-and-approval-verification.md) remains the
@@ -334,14 +345,49 @@ The dependency split is now exact:
    pinned above; it is not a signed or installed target.
 3. **C6b1b test-only Supervisor seam — `PASSED`.** Its immutable local model preserves the
    Supervisor as the sole durable authority owner; it is not a product store or consumer.
-4. **C6b1c identity/profile readback and C6b1d installed signing evidence — `BLOCKED`.** Each
-   requires its own exact owner authorization. Construction does not authorize provisioning,
-   Keychain, LocalAuthentication, prompts, signing, installation, or destructive rows.
-5. **Product Broker/`SubmitApprovalV0`/`RequestAttemptV0` wiring — `BLOCKED`.** It cannot begin
+4. **C6b1c identity/profile and no-install signed-artifact readback — `PASSED`.** The immutable
+   archive pin above retains exact profile metadata, signature/requirement/CDHash, hardened-runtime,
+   and closed effective-entitlement evidence without installation or launch.
+5. **C6b1d installed signing evidence — `BLOCKED`.** It requires a fresh exact owner authorization
+   naming the retained C6b1c artifact/profile, owner account/container, Keychain and
+   LocalAuthentication operations, prompt rules, destructive rows, evidence destination, and
+   cleanup. C6b1c does not authorize any of those effects.
+6. **Product Broker/`SubmitApprovalV0`/`RequestAttemptV0` wiring — `BLOCKED`.** It cannot begin
    until C6b1d and the installed authenticated service boundary pass their exact scopes.
 
 A research document cannot satisfy installed evidence, product consumer evidence, or product
 admission.
+
+## C6b1d authorization packet inputs
+
+This packet is preparation, not authorization. A later owner authorization must name all of these
+immutable inputs together:
+
+- Capsule commit `16fb810b97e7ff2a157a251ae4dc8023dcfc01b4` and `capsule-experiments`
+  merge `82d1a799f70482856aaa6030f612d701b39cec67`;
+- signed executable SHA-256
+  `0a31663736678b0fccefb3f524209167aaed085b3c214cf8af2024a82ea38833`, CDHash
+  `029b8d5cabd38e1fde9e23564e4e5b1590cf569d`, and CodeDirectory SHA-256
+  `029b8d5cabd38e1fde9e23564e4e5b1590cf569dabc8bf1d307d7f80340c0431`;
+- development profile `XT8MS38HWV`, UUID `2e8d338c-5668-4d41-9eb3-eb29634ebecf`, CMS SHA-256
+  `a00dca2e4cfb8d4d432ffbeeaa0cc616e74aa8294364286f28dfe998ae0e32ee`, and certificate SHA-256
+  `D3E9FBDDBC342F747C3649B5A6FFB307A575827404E02D638C11B6B795A09629`;
+- exact bundle ID `com.capsulecorp.capsule.broker.c6b1`, Approval group
+  `3DDR84M4JS.com.capsulecorp.capsule.broker.approval.epoch-7`, application tag
+  `com.capsulecorp.capsule.broker.c6b1.approval-key.v0.generation-1`, and the owner-confirmed
+  disposable account/container and evidence destination; and
+- the permitted Keychain/LocalAuthentication calls, prompt behavior, stop conditions, and cleanup
+  receipt. No broad Keychain inventory, private-key export, credential/biometric retention,
+  product listener, runtime, backend, VM, or guest is allowed.
+
+The proposed first bounded mutation set remains individually opt-in: D1 create exactly one primary
+permanent Secure Enclave P-256 key; D2 create one same-tag duplicate and prove zero/multiple-match
+refusal; D3 delete only that duplicate and prove exact absence; D4 delete the primary mid-run and
+prove missing-key refusal with no lazy recreation; D14 delete exact experiment keys and prove zero
+matches; D15 stop/remove only experiment app/process/service/container state; and D16 delete the
+disposable account/home only after retained-evidence and path readback. D5-D13 and D17-D18 remain
+excluded. Every included destructive row must be repeated verbatim in the eventual owner
+authorization; omission means it does not run.
 
 ## ADR impact
 
@@ -372,7 +418,8 @@ authenticated consumer.
 Confidence is high for the API and accepted authority composition, medium for the two experiment
 candidates, and intentionally absent for installed behavior that was not run.
 
-Next action: obtain separate exact authorization for C6b1c identity/profile readback. After its
-readback passes, stop again for the enumerated C6b1d installed signing mutations. Until C6b1d and
+Next action: freeze the exact C6b1d owner authorization over the retained C6b1c bytes. The first
+run may include only individually approved D1-D4 and cleanup D14-D16; D5-D13 and D17-D18 remain
+deferred unless separately named. Until C6b1d and
 the installed authenticated service boundary pass, live signing, product wiring, the installed
 security boundary, and product admission remain `BLOCKED`.

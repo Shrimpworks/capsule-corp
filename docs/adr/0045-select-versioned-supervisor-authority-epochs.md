@@ -27,8 +27,10 @@ Current Apple documentation, retrieved 2026-08-05, supplies a candidate but not 
 - Apple's migration documentation names the ordinary container by bundle identifier, while code
   signing documentation explains that a bundled code-signing identifier is typically its bundle
   identifier and that designated requirements express code identity.
-- App Group membership grants shared-container and IPC authority; on macOS, a group-prefixed name
-  is the supported Mach/XPC naming form. It may also add a Keychain access group.
+- App Group membership grants shared-container and IPC authority. Apple documents both the
+  iOS-style `group.<name>` form and the macOS-only `<TeamIdentifier>.<name>` form; the latter does
+  not require Developer-website App Group registration. A group may also add a Keychain access
+  group, while the group-prefixed name is the supported Mach/XPC naming form.
 - A Keychain item belongs to one access group. A caller outside that group cannot add an item to it,
   and queries must name the exact group or they search every group available to the caller.
 - `SMAppService` registers in-bundle LaunchAgents, but does not define Capsule authority,
@@ -109,6 +111,18 @@ These are candidate strings to validate against the exact Team portal/profile an
 composition. A production Developer ID/notarized profile may encode App Group authorization
 differently; it must preserve the same logical separation and obtain its own evidence. Apple
 Development profile success on one enrolled Mac cannot be cited for shipping distribution.
+
+The frozen bootstrap App Group is deliberately the macOS-style
+`<TeamIdentifier>.<group-name>` entitlement, not a Developer-portal App Group resource. The
+zero-effect portal preflight retained at `capsule-experiments` merge
+`e6390253a274e9ead76366f9869a5e1b272a1595` observed the portal rewriting that input by prepending
+`group.` and therefore rejected portal registration before mutation. Merge
+`3671a6eb23357ff28de4562dd60e8f68173034ae` corrects the disposition: the portal-registration path
+is `NO_GO`; the frozen identity itself remains the intended Proposed candidate and is `BLOCKED` on
+signed-profile and E1 execution evidence. Implementations must not substitute the rewritten
+iOS-style identifier. Exact explicit App IDs, embedded profiles, signatures, effective
+entitlements, and `com.apple.application-identifier` bindings remain mandatory pre-launch
+evidence.
 
 The stable Supervisor identity `com.capsulecorp.capsule.supervisor`, its private container, the
 I1B and I2B3 profiles, and the unlaunched I2B3 Coordinator identity are **legacy residue**, not
@@ -229,7 +243,7 @@ rollback-resistance claim follows without ADR-0012's independent anchor or witne
   not implemented or validated. This ADR remains Proposed.
 - The bounded research and documentation slice is `PASSED` in its exact retained scope; repository
   adoption remains Proposed pending review. Installed owner-lock G3/I2B remains `BLOCKED` on
-  separately authorized profile/signing, disposable-container
+  separately authorized profile/signing readback followed by a fresh disposable-container
   nonmembership mutations, Coordinator/Supervisor service/session, Keychain, root, owner, state
   engine, restart, and retirement evidence.
 - Apple Development evidence can support only the exact named host, OS, certificate, profiles, and

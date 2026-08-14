@@ -120,8 +120,10 @@ verification. The manifest should begin with the passive candidate objects and e
 the coordinated versioned migrations that add new target fields; it must not extend the deprecated
 mixed `Job` model.
 
-The passive implementation now retains a closed 713-field manifest across 45 selected
-targets: the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant` candidates;
+The passive implementation now retains 1,203 closed field classifications across 60 selected
+targets and 95 profiles; the generated authority manifest is the source of truth for current
+counts. It covers the `JobProposal`, `ExecutionPlan`, `PlanRegistration`, and `ApprovalGrant`
+candidates;
 the passive approval reference, attempt reference, durable approval record, and immutable attempt;
 the TypeScript approved-byte object family plus its future-plan source-binding projection; the
 single-member MJS `SourceManifest` including its nested path/digest/length fields; the passive

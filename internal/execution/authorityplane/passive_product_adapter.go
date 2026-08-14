@@ -252,17 +252,20 @@ func newPassiveProductAdapterHarness(
 	}, nil
 }
 
+// passiveMethodDeadline converts a method record's DeadlineMilliseconds into
+// the time.Duration passed to runPassiveAdmitted. It computes the value
+// directly instead of matching a hardcoded set of known deadlines, so an
+// unwired or future method's deadline is never rejected with a panic. Method
+// records reach this function only after validateSubmitMethod,
+// validateRegisterMethod, or validateGetMethod has matched every field of
+// the received record against its fixed expected record, so
+// DeadlineMilliseconds is always one of this package's non-zero constants
+// on every path wired today; a value of zero would still convert cleanly to
+// an already-expired deadline (context.WithTimeout treats a non-positive
+// duration as immediately Done), which is a fail-closed outcome, not an
+// unbounded or fail-open one.
 func passiveMethodDeadline(milliseconds uint64) time.Duration {
-	switch milliseconds {
-	case SubmitMainMJSV0DeadlineMilliseconds:
-		return 10 * time.Second
-	case RegisterPlanV0DeadlineMilliseconds:
-		return 5 * time.Second
-	case GetRegisteredPlanV0DeadlineMilliseconds:
-		return 2 * time.Second
-	default:
-		panic("passive-method-deadline")
-	}
+	return time.Duration(milliseconds) * time.Millisecond // #nosec G115 -- every wired caller supplies a validated method-record deadline constant far below the millisecond range that would overflow int64 nanoseconds.
 }
 
 func (h *passiveProductAdapterHarness) submitMainMJSV0(

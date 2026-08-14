@@ -236,31 +236,6 @@ func TestFixedStoreV2SecondActivationFaultRaceAndProcessDeathOldOrCompleteNew(t 
 	})
 }
 
-func TestFixedStoreV2Exact64SegmentsAcceptAndSegment65RefusesWithoutRewrite(t *testing.T) {
-	path, store, owner, _ := newEligibleGrowthStoreV2(t, archivestate.MaxReferencedArchiveSegments+1)
-	for ordinal := 1; ordinal <= archivestate.MaxReferencedArchiveSegments; ordinal++ {
-		store = activateNextArchiveSegment(t, store, owner)
-		if got := len(store.segments); got != ordinal {
-			t.Fatalf("segment count after ordinal %d = %d", ordinal, got)
-		}
-	}
-	report, err := VerifyFixedFileStoreV2(path)
-	if err != nil || report.SegmentCount != archivestate.MaxReferencedArchiveSegments ||
-		report.ArchiveGeneration != archivestate.ArchiveGeneration(archivestate.MaxReferencedArchiveSegments+1) ||
-		report.HotCounts.Registrations != 1 {
-		t.Fatalf("exact 64-segment world = %#v, %v", report, err)
-	}
-	before := inventoryDigest(t, path)
-	if _, err := store.PlanArchive(context.Background(), owner, archiveOneCohortLimits(t)); err == nil ||
-		!bytes.Contains([]byte(err.Error()), []byte("CAPACITY")) {
-		t.Fatalf("segment 65 plan = %v", err)
-	}
-	after := inventoryDigest(t, path)
-	if before != after {
-		t.Fatal("segment 65 refusal rewrote, deleted, or evicted retained history")
-	}
-}
-
 func TestFixedStoreV2SecondSegmentMutationRefusalsNeverRewriteOrScanFallback(t *testing.T) {
 	for _, test := range []struct {
 		name   string
@@ -634,6 +609,110 @@ func activateNextArchiveSegment(t *testing.T, store *FixedFileStoreV2, owner Arc
 		t.Fatal(err)
 	}
 	return reopened
+}
+
+// newExactArchiveCapacityStoreV2 constructs the closed 64-segment input shared
+// by the F4C capacity and F5 backup assertions. The ordinary activation, fault,
+// response-loss, and reopen paths are covered by the focused F3/F4C tests.
+// Replaying those five full-verification phases for every ordinal made this one
+// boundary fixture consume the package's entire race-test timeout. This helper
+// instead builds deterministic successors 1 through 63 in memory, publishes
+// their sealed segments before the active bytes, and performs one complete
+// closed-world load. It then uses the production Plan/Prepare/Verify/Activate
+// path for ordinal 64 so the load-bearing 63-to-64 boundary remains covered.
+func newExactArchiveCapacityStoreV2(t *testing.T) (string, *FixedFileStoreV2, *archiveOwnerStub) {
+	t.Helper()
+	path, _, owner, _ := newEligibleGrowthStoreV2(t, archivestate.MaxReferencedArchiveSegments+1)
+	root, err := ensureArchiveRoot(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := loadV2State(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for ordinal := 1; ordinal < archivestate.MaxReferencedArchiveSegments; ordinal++ {
+		plan, planErr := planArchiveFromLoaded(loaded, owner.OwnerSessionID(), archiveOneCohortLimits(t))
+		if planErr != nil {
+			t.Fatal(planErr)
+		}
+		segmentBytes, segment, candidate, buildErr := buildArchiveCandidate(loaded, plan)
+		if buildErr != nil {
+			t.Fatal(buildErr)
+		}
+		segmentPath := filepath.Join(root, archiveSegmentName(segment.Segment.Digest()))
+		if writeErr := os.WriteFile(segmentPath, segmentBytes, 0o400); writeErr != nil {
+			t.Fatal(writeErr)
+		}
+		loaded = exactArchiveCapacitySuccessor(t, loaded, segment, candidate)
+		if got := len(loaded.Segments); got != ordinal || len(candidate.Descriptors) != ordinal {
+			t.Fatalf("segment count after ordinal %d = %d", ordinal, got)
+		}
+	}
+	writeV2Envelope(t, path, loaded.Envelope)
+	store, err := OpenFixedFileStoreV2WithOptions(path, FixedFileStoreV1Options{
+		EffectIDs: &lifecycleEffectIDSequence{next: 401}, OwnerSessionID: owner.session,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := len(store.segments); got != archivestate.MaxReferencedArchiveSegments-1 {
+		t.Fatalf("segment count before production boundary activation = %d", got)
+	}
+	store = activateNextArchiveSegment(t, store, owner)
+	if got := len(store.segments); got != archivestate.MaxReferencedArchiveSegments {
+		t.Fatalf("segment count after production boundary activation = %d", got)
+	}
+	return path, store, owner
+}
+
+func exactArchiveCapacitySuccessor(
+	t *testing.T,
+	prior loadedV2State,
+	segment loadedArchiveSegmentV0,
+	candidate diskEnvelopeV2,
+) loadedV2State {
+	t.Helper()
+	indexes, err := archiveIndexesFromDisk(candidate.Indexes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tombstones, tombstoneDigest, _, err := effectTombstonesFromEnvelope(candidate, indexes)
+	if err != nil {
+		t.Fatal(err)
+	}
+	descriptors := make([]archivestate.ArchiveDescriptor, len(candidate.Descriptors))
+	for index, view := range candidate.Descriptors {
+		descriptors[index], err = archivestate.NewArchiveDescriptor(view)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	active, err := buildActiveStateV2(candidate, descriptors, indexes, tombstoneDigest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lifecycles := make([]lifecyclestate.Record, len(candidate.Lifecycles))
+	for index, disk := range candidate.Lifecycles {
+		lifecycles[index], err = restoreLifecycleRecord(disk, candidate.State.TimeHighWaterUnixSeconds)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	segments := append(cloneLoadedArchiveSegments(prior.Segments), segment)
+	if err := validateActivationCheckpointDisk(candidate, indexes, segments); err != nil {
+		t.Fatal(err)
+	}
+	encoded, err := encodeEnvelopeV2(candidate)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return loadedV2State{
+		Envelope: candidate, ActiveEncodedBytes: uint64(len(encoded)), State: cloneState(candidate.State),
+		Lifecycles:       cloneLifecycleRecords(lifecycles, candidate.State.TimeHighWaterUnixSeconds),
+		EffectTombstones: cloneEffectTombstones(tombstones), Active: active, Genesis: prior.Genesis,
+		Segments: segments,
+	}
 }
 
 type growthInventory struct {

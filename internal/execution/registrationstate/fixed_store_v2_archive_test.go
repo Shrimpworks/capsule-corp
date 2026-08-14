@@ -414,6 +414,81 @@ func TestArchiveActivationDuplicateOwnerAndStaleConcurrencyRefuse(t *testing.T) 
 	}
 }
 
+// TestFixedStoreV2ArchiveEntryAndSnapshotRaceOrdinaryMutationCommit is a
+// regression test for #269: archiveEntry (used by PlanArchive and every other
+// archive/backup entry point) and snapshotV2 used to read store.active,
+// store.state, store.lifecycles, and store.genesis without holding store.mu,
+// while commitV2WorldLocked writes those same fields under that mutex. Racing
+// an archive read against an ordinary mutation commit on the same store
+// reliably tripped `go test -race` before the fix; it must pass cleanly after
+// it, with both reads now holding store.mu for their access to shared state.
+func TestFixedStoreV2ArchiveEntryAndSnapshotRaceOrdinaryMutationCommit(t *testing.T) {
+	_, store, owner := newEligibleFixedStoreV2(t)
+	limits, err := archivestate.NewArchiveLimits(1, uint64(archivestate.MaxSupervisorArchiveBytes))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// The mutation commit's write to store.active/state/lifecycles/genesis
+	// (commitV2WorldLocked) sits behind a comparatively slow fsync/rename
+	// sequence, so the actual unsynchronized write instant is a narrow window.
+	// Spin the archive/snapshot reads in a tight loop for the whole duration of
+	// a bounded sequence of ordinary mutation commits, rather than firing a
+	// fixed number of one-shot calls, so the reads keep sampling continuously
+	// and reliably land inside that window.
+	const commits = 40
+	stopReaders := make(chan struct{})
+	var group sync.WaitGroup
+	group.Add(3)
+
+	go func() {
+		defer group.Done()
+		for {
+			select {
+			case <-stopReaders:
+				return
+			default:
+			}
+			// archiveEntry's unlocked read of store.active raced here.
+			if _, err := store.PlanArchive(context.Background(), owner, limits); err != nil &&
+				!errors.Is(err, ErrArchiveStaleTransaction) {
+				t.Errorf("concurrent PlanArchive: %v", err)
+				return
+			}
+		}
+	}()
+	go func() {
+		defer group.Done()
+		for {
+			select {
+			case <-stopReaders:
+				return
+			default:
+			}
+			// snapshotV2's unlocked read of store.state/lifecycles/active/genesis
+			// raced here.
+			if _, err := store.snapshotV2(context.Background()); err != nil {
+				t.Errorf("concurrent snapshotV2: %v", err)
+				return
+			}
+		}
+	}()
+	go func() {
+		defer group.Done()
+		defer close(stopReaders)
+		for i := range commits {
+			// An ordinary mutation commit, matching commitV2WorldLocked's write
+			// path that both reads above raced against.
+			observation := v0candidate.UInt53(1_785_456_300 + 1000 + uint64(i))
+			if err := store.persistTimeHighWater(context.Background(), observation); err != nil {
+				t.Errorf("concurrent persistTimeHighWater: %v", err)
+				return
+			}
+		}
+	}()
+	group.Wait()
+}
+
 func TestArchiveOwnerRecheckedBeforePublicationActivationAndReopen(t *testing.T) {
 	tests := []struct {
 		name        string

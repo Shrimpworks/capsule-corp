@@ -309,8 +309,11 @@ func (store *FixedFileStoreV2) archiveEntry(
 	if err != nil {
 		return loadedV2State{}, lifecyclestate.OwnerSessionID{}, fmt.Errorf("%w: %v", ErrStoreRepairRequired, err)
 	}
-	if loaded.Active.View().CurrentCheckpoint != store.active.View().CurrentCheckpoint ||
-		loaded.Active.View().SnapshotGeneration != store.active.View().SnapshotGeneration {
+	store.mu.Lock()
+	activeView := store.active.View()
+	store.mu.Unlock()
+	if loaded.Active.View().CurrentCheckpoint != activeView.CurrentCheckpoint ||
+		loaded.Active.View().SnapshotGeneration != activeView.SnapshotGeneration {
 		return loadedV2State{}, lifecyclestate.OwnerSessionID{}, ErrArchiveStaleTransaction
 	}
 	return loaded, session, nil

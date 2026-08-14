@@ -389,6 +389,8 @@ func (store *FixedFileStoreV2) snapshotV2(ctx context.Context) (fixedStoreV2Snap
 	if err := ctx.Err(); err != nil {
 		return fixedStoreV2Snapshot{}, err
 	}
+	store.mu.Lock()
+	defer store.mu.Unlock()
 	return fixedStoreV2Snapshot{
 		State:      cloneState(store.state),
 		Lifecycles: cloneLifecycleRecords(store.lifecycles, store.state.TimeHighWaterUnixSeconds),

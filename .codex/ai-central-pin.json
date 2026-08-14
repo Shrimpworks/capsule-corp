@@ -1,4 +1,4 @@
 {
-  "expectedCommit": "d499741ffb951ab9922605f4af53049513fb677d",
+  "expectedCommit": "7c9478c07427676db65b3a057ba36fe61aec6c1e",
   "note": "Recorded by `pnpm codex:links -- --record-pin` after reviewing the linked AI Central checkout. setup-codex-links.mjs refuses to link when the checkout's current commit no longer matches this value."
 }

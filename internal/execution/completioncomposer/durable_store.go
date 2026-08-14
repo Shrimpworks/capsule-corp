@@ -81,11 +81,19 @@ type storedDurableCompletion struct {
 // oracle. Callers must provide external ownership; this type supplies no
 // installed lock, protected root, rollback defense, archive, or production DB.
 type FixedFileCompletionStore struct {
-	mu       sync.Mutex
-	path     string
+	mu   sync.Mutex
+	path string
+
 	snapshot durableStoreSnapshot
-	fault    StoreFaultHook
-	fenced   bool
+	// resultJSONBytes is the running total of decoded ResultJSON bytes across
+	// every record currently in snapshot. It is computed once, in full, when
+	// the store is created or opened, and then maintained incrementally on
+	// every successful commit so CommitCompletion never has to re-decode the
+	// whole store to size-check a single append.
+	resultJSONBytes int
+
+	fault  StoreFaultHook
+	fenced bool
 }
 
 func CreateFixedFileCompletionStore(
@@ -109,6 +117,8 @@ func CreateFixedFileCompletionStore(
 	if err := createSnapshotFile(path, exact, fault); err != nil {
 		return nil, err
 	}
+	// resultJSONBytes is left at its zero value: a freshly created snapshot
+	// holds no records.
 	return &FixedFileCompletionStore{path: path, snapshot: snapshot, fault: fault}, nil
 }
 
@@ -199,11 +209,11 @@ func OpenFixedFileCompletionStore(path string, fault StoreFaultHook) (*FixedFile
 	if len(exact) > MaximumDurableCompletionStoreBytes {
 		return nil, classified(ClassificationRecoveryRequired, "completion-store-cap")
 	}
-	snapshot, err := decodeStoreSnapshot(exact)
+	snapshot, resultJSONBytes, err := decodeStoreSnapshot(exact)
 	if err != nil {
 		return nil, err
 	}
-	return &FixedFileCompletionStore{path: path, snapshot: snapshot, fault: fault}, nil
+	return &FixedFileCompletionStore{path: path, snapshot: snapshot, resultJSONBytes: resultJSONBytes, fault: fault}, nil
 }
 
 func (store *FixedFileCompletionStore) Close() {
@@ -253,14 +263,13 @@ func (store *FixedFileCompletionStore) CommitCompletion(
 		hex.EncodeToString(view.Projection.InstallationID[:]) != store.snapshot.InstallationID {
 		return DurableCompletion{}, false, classified(ClassificationBinding, "completion-store-built-record")
 	}
-	aggregate := len(view.Completion.View().ResultJSON)
-	for _, retained := range store.snapshot.Records {
-		decoded, decodeErr := base64.StdEncoding.Strict().DecodeString(retained.ResultJSON)
-		if decodeErr != nil {
-			return DurableCompletion{}, false, classified(ClassificationRecoveryRequired, "completion-store-retained-result")
-		}
-		aggregate += len(decoded)
-	}
+	// The prior aggregate (store.resultJSONBytes) already accounts for every
+	// retained record's decoded ResultJSON length — it was computed once in
+	// full when the store was created or opened, and has been kept correct
+	// incrementally on every commit since. Adding just the new record's
+	// length here keeps this check O(1) instead of re-decoding every
+	// retained record on every commit.
+	aggregate := store.resultJSONBytes + len(view.Completion.View().ResultJSON)
 	if aggregate > MaximumRetainedResultJSONBytes {
 		return DurableCompletion{}, false, classified(ClassificationCapacity, "completion-store-result-capacity")
 	}
@@ -273,10 +282,16 @@ func (store *FixedFileCompletionStore) CommitCompletion(
 	working.Records = append(working.Records, stored)
 	working.Generation++
 	working.LastCommitSequence = sequence
-	if err := validateStoreSnapshot(working); err != nil {
+	// store.snapshot was already fully validated (on create, on open, or by
+	// this same incremental check on every earlier commit), so only the
+	// newly appended record needs checking here — this keeps validation
+	// cost independent of total store size instead of re-decoding and
+	// re-marshaling every previously-committed record on every commit.
+	newAggregate, err := validateAppendedCompletion(view.Projection.InstallationID, len(store.snapshot.Records), store.resultJSONBytes, stored)
+	if err != nil {
 		return DurableCompletion{}, false, err
 	}
-	exact, err := encodeStoreSnapshot(working)
+	exact, err := marshalStoreSnapshot(working)
 	if err != nil {
 		return DurableCompletion{}, false, err
 	}
@@ -284,6 +299,7 @@ func (store *FixedFileCompletionStore) CommitCompletion(
 		return DurableCompletion{}, false, err
 	}
 	store.snapshot = working
+	store.resultJSONBytes = newAggregate
 	return record, true, nil
 }
 
@@ -385,9 +401,17 @@ func syncDirectory(path string) error {
 }
 
 func encodeStoreSnapshot(snapshot durableStoreSnapshot) ([]byte, error) {
-	if err := validateStoreSnapshot(snapshot); err != nil {
+	if _, err := validateStoreSnapshot(snapshot); err != nil {
 		return nil, err
 	}
+	return marshalStoreSnapshot(snapshot)
+}
+
+// marshalStoreSnapshot encodes an already-validated snapshot. It performs no
+// validation of its own so callers that have separately established
+// snapshot validity (for example CommitCompletion's incremental check) do
+// not pay for a redundant full re-validation on every write.
+func marshalStoreSnapshot(snapshot durableStoreSnapshot) ([]byte, error) {
 	exact, err := json.Marshal(snapshot)
 	if err != nil || len(exact) > MaximumDurableCompletionStoreBytes {
 		return nil, classified(ClassificationCapacity, "completion-store-encoded-cap")
@@ -395,27 +419,32 @@ func encodeStoreSnapshot(snapshot durableStoreSnapshot) ([]byte, error) {
 	return exact, nil
 }
 
-func decodeStoreSnapshot(exact []byte) (durableStoreSnapshot, error) {
+// decodeStoreSnapshot decodes and fully validates exact, returning the
+// aggregate decoded ResultJSON byte total across every record alongside the
+// snapshot so the caller can seed an incremental running total without a
+// second O(n) pass.
+func decodeStoreSnapshot(exact []byte) (durableStoreSnapshot, int, error) {
 	// encoding/json's Decoder accepts syntactically ambiguous duplicate
 	// object member names with last-value-wins behavior; reject them before
 	// struct-decoding so a corrupted/tampered snapshot with a conflicting
 	// earlier member cannot silently reopen as if it were unambiguous.
 	if err := rejectDuplicateJSONNames(exact); err != nil {
-		return durableStoreSnapshot{}, classified(ClassificationRecoveryRequired, "completion-store-duplicate-name")
+		return durableStoreSnapshot{}, 0, classified(ClassificationRecoveryRequired, "completion-store-duplicate-name")
 	}
 	decoder := json.NewDecoder(bytes.NewReader(exact))
 	decoder.DisallowUnknownFields()
 	var snapshot durableStoreSnapshot
 	if err := decoder.Decode(&snapshot); err != nil {
-		return durableStoreSnapshot{}, classified(ClassificationRecoveryRequired, "completion-store-malformed")
+		return durableStoreSnapshot{}, 0, classified(ClassificationRecoveryRequired, "completion-store-malformed")
 	}
 	if token, err := decoder.Token(); err != io.EOF || token != nil {
-		return durableStoreSnapshot{}, classified(ClassificationRecoveryRequired, "completion-store-trailing")
+		return durableStoreSnapshot{}, 0, classified(ClassificationRecoveryRequired, "completion-store-trailing")
 	}
-	if err := validateStoreSnapshot(snapshot); err != nil {
-		return durableStoreSnapshot{}, err
+	resultJSONBytes, err := validateStoreSnapshot(snapshot)
+	if err != nil {
+		return durableStoreSnapshot{}, 0, err
 	}
-	return snapshot, nil
+	return snapshot, resultJSONBytes, nil
 }
 
 // rejectDuplicateJSONNames walks exact and fails if any JSON object in it
@@ -483,41 +512,87 @@ func rejectDuplicateJSONNames(exact []byte) error {
 	return nil
 }
 
-func validateStoreSnapshot(snapshot durableStoreSnapshot) error {
+// validateStoreSnapshot performs the full structural and consistency check
+// across every record in snapshot: it is the authoritative validator used
+// whenever a snapshot is decoded from an untrusted source (disk) or built
+// fresh (store creation). It returns the aggregate decoded ResultJSON byte
+// total across all records alongside any error.
+//
+// This is inherently O(n) in len(snapshot.Records); callers on a hot,
+// repeated path (such as CommitCompletion) must not call this once per
+// write against an ever-growing snapshot — use validateAppendedCompletion
+// instead once the base snapshot is already known-valid.
+func validateStoreSnapshot(snapshot durableStoreSnapshot) (int, error) {
 	if snapshot.ObjectType != durableCompletionStoreType || snapshot.ObjectVersion != DurableCompletionStoreVersion {
-		return classified(ClassificationRecoveryRequired, "completion-store-version")
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-version")
 	}
 	installationID, err := decode16[v0candidate.InstallationID](snapshot.InstallationID)
 	if err != nil || installationID == (v0candidate.InstallationID{}) {
-		return classified(ClassificationRecoveryRequired, "completion-store-installation")
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-installation")
 	}
 	if len(snapshot.Records) > MaximumRetainedCompletions || snapshot.Generation != uint64(len(snapshot.Records)) ||
 		snapshot.LastCommitSequence != uint64(len(snapshot.Records)) {
-		return classified(ClassificationRecoveryRequired, "completion-store-counts")
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-counts")
 	}
 	seen := make(map[string]struct{}, len(snapshot.Records))
 	var aggregate int
 	for index, stored := range snapshot.Records {
 		if stored.CommitSequence != uint64(index+1) {
-			return classified(ClassificationRecoveryRequired, "completion-store-sequence")
+			return 0, classified(ClassificationRecoveryRequired, "completion-store-sequence")
 		}
 		if _, exists := seen[stored.AttemptID]; exists {
-			return classified(ClassificationRecoveryRequired, "completion-store-duplicate")
+			return 0, classified(ClassificationRecoveryRequired, "completion-store-duplicate")
 		}
 		seen[stored.AttemptID] = struct{}{}
 		record, err := decodeStoredCompletion(stored)
 		if err != nil {
-			return classified(ClassificationRecoveryRequired, "completion-store-record")
+			return 0, classified(ClassificationRecoveryRequired, "completion-store-record")
 		}
 		aggregate += len(record.CompletionRecord().View().ResultJSON)
 		if record.View().Projection.InstallationID != installationID {
-			return classified(ClassificationRecoveryRequired, "completion-store-record-installation")
+			return 0, classified(ClassificationRecoveryRequired, "completion-store-record-installation")
 		}
 		if aggregate > MaximumRetainedResultJSONBytes {
-			return classified(ClassificationRecoveryRequired, "completion-store-result-cap")
+			return 0, classified(ClassificationRecoveryRequired, "completion-store-result-cap")
 		}
 	}
-	return nil
+	return aggregate, nil
+}
+
+// validateAppendedCompletion checks that appending stored — the record just
+// produced for commit sequence baseRecords+1 — onto a base snapshot already
+// known to be valid (holding baseRecords records and baseResultJSONBytes
+// total decoded ResultJSON bytes) yields a valid extended snapshot.
+//
+// It intentionally does not re-walk or re-decode any of the base snapshot's
+// existing records: baseRecords/baseResultJSONBytes were themselves
+// established either by validateStoreSnapshot (on store creation or open)
+// or by this same function on every earlier commit, so re-checking them
+// again here would reintroduce the O(n) per-commit cost this function
+// exists to avoid. Duplicate-AttemptID and installation-mismatch protection
+// against records elsewhere in the store is provided by CommitCompletion's
+// own pre-append scan and build-time checks, not repeated here.
+func validateAppendedCompletion(
+	installationID v0candidate.InstallationID,
+	baseRecords int,
+	baseResultJSONBytes int,
+	stored storedDurableCompletion,
+) (int, error) {
+	if stored.CommitSequence != uint64(baseRecords+1) { //nolint:gosec // baseRecords is len(snapshot.Records), bounded by MaximumRetainedCompletions (4096).
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-sequence")
+	}
+	record, err := decodeStoredCompletion(stored)
+	if err != nil {
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-record")
+	}
+	if record.View().Projection.InstallationID != installationID {
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-record-installation")
+	}
+	aggregate := baseResultJSONBytes + len(record.CompletionRecord().View().ResultJSON)
+	if aggregate > MaximumRetainedResultJSONBytes {
+		return 0, classified(ClassificationRecoveryRequired, "completion-store-result-cap")
+	}
+	return aggregate, nil
 }
 
 func encodeStoredCompletion(record DurableCompletion) (storedDurableCompletion, error) {

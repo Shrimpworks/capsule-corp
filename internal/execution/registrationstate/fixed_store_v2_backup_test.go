@@ -555,9 +555,12 @@ func TestBackupExactSegmentCapacityAndRepeatedVerification(t *testing.T) {
 }
 
 func TestCoherentBackupAcceptsExact64SegmentWorldAndPreservesCapPlusOneRefusal(t *testing.T) {
-	path, store, owner, _ := newEligibleGrowthStoreV2(t, archivestate.MaxReferencedArchiveSegments+1)
-	for range archivestate.MaxReferencedArchiveSegments {
-		store = activateNextArchiveSegment(t, store, owner)
+	path, store, owner := newExactArchiveCapacityStoreV2(t)
+	report, err := VerifyFixedFileStoreV2(path)
+	if err != nil || report.SegmentCount != archivestate.MaxReferencedArchiveSegments ||
+		report.ArchiveGeneration != archivestate.ArchiveGeneration(archivestate.MaxReferencedArchiveSegments+1) ||
+		report.HotCounts.Registrations != 1 {
+		t.Fatalf("exact 64-segment world = %#v, %v", report, err)
 	}
 	before := inventoryDigest(t, path)
 	root := newEmptyBackupRoot(t)
@@ -565,9 +568,9 @@ func TestCoherentBackupAcceptsExact64SegmentWorldAndPreservesCapPlusOneRefusal(t
 	if err != nil || manifest.View().SegmentCount != archivestate.MaxReferencedArchiveSegments {
 		t.Fatalf("exact-cap backup = %#v, %v", manifest.View(), err)
 	}
-	verified, report, err := VerifyCoherentBackup(context.Background(), root)
-	if err != nil || verified.View() != manifest.View() || report.SegmentCount != archivestate.MaxReferencedArchiveSegments {
-		t.Fatalf("exact-cap verification = %#v %#v, %v", verified.View(), report, err)
+	verified, backupReport, err := VerifyCoherentBackup(context.Background(), root)
+	if err != nil || verified.View() != manifest.View() || backupReport.SegmentCount != archivestate.MaxReferencedArchiveSegments {
+		t.Fatalf("exact-cap verification = %#v %#v, %v", verified.View(), backupReport, err)
 	}
 	if _, err := store.PlanArchive(context.Background(), owner, archiveOneCohortLimits(t)); err == nil ||
 		!bytes.Contains([]byte(err.Error()), []byte("CAPACITY")) {

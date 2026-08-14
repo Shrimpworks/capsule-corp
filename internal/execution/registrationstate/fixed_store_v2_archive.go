@@ -874,21 +874,39 @@ func segmentCohorts(
 			return bytes.Compare(attempts[left].AttemptID[:], attempts[right].AttemptID[:]) < 0
 		})
 		lifecycleDisks := make([]lifecycleRecordDisk, len(attempts))
-		registrationExact, _ := json.Marshal(registration)
-		registrationDigest, _ := archivestate.DigestRecord(archivestate.RecordRegistration, registrationExact)
+		registrationExact, marshalErr := json.Marshal(registration)
+		if marshalErr != nil {
+			return nil, nil, marshalErr
+		}
+		registrationDigest, digestErr := archivestate.DigestRecord(archivestate.RecordRegistration, registrationExact)
+		if digestErr != nil {
+			return nil, nil, digestErr
+		}
 		approvalRefs := make([]archivestate.ArchiveRecordReference, len(approvals))
 		attemptRefs := make([]archivestate.ArchiveRecordReference, len(attempts))
 		lifecycleRefs := make([]archivestate.ArchiveRecordReference, len(attempts))
 		encodedLength := uint64(len(registrationExact))
 		for index, approval := range approvals {
-			exact, _ := json.Marshal(approval)
-			digest, _ := archivestate.DigestRecord(archivestate.RecordApproval, exact)
+			exact, marshalErr := json.Marshal(approval)
+			if marshalErr != nil {
+				return nil, nil, marshalErr
+			}
+			digest, digestErr := archivestate.DigestRecord(archivestate.RecordApproval, exact)
+			if digestErr != nil {
+				return nil, nil, digestErr
+			}
 			approvalRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordApproval, Digest: digest}
 			encodedLength += uint64(len(exact))
 		}
 		for index, attempt := range attempts {
-			exact, _ := json.Marshal(attempt)
-			digest, _ := archivestate.DigestRecord(archivestate.RecordAttempt, exact)
+			exact, marshalErr := json.Marshal(attempt)
+			if marshalErr != nil {
+				return nil, nil, marshalErr
+			}
+			digest, digestErr := archivestate.DigestRecord(archivestate.RecordAttempt, exact)
+			if digestErr != nil {
+				return nil, nil, digestErr
+			}
 			attemptRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordAttempt, Digest: digest}
 			encodedLength += uint64(len(exact))
 			record, exists := lifecycleByAttempt[attempt.AttemptID]
@@ -896,8 +914,14 @@ func segmentCohorts(
 				return nil, nil, errors.New("archive segment cohort lacks lifecycle")
 			}
 			lifecycleDisks[index] = lifecycleRecordToDisk(record)
-			lifecycleExact, _ := json.Marshal(lifecycleDisks[index])
-			lifecycleDigest, _ := archivestate.DigestRecord(archivestate.RecordLifecycle, lifecycleExact)
+			lifecycleExact, marshalErr := json.Marshal(lifecycleDisks[index])
+			if marshalErr != nil {
+				return nil, nil, marshalErr
+			}
+			lifecycleDigest, digestErr := archivestate.DigestRecord(archivestate.RecordLifecycle, lifecycleExact)
+			if digestErr != nil {
+				return nil, nil, digestErr
+			}
 			lifecycleRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordLifecycle, Digest: lifecycleDigest}
 			encodedLength += uint64(len(lifecycleExact))
 		}

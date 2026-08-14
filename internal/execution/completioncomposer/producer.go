@@ -113,7 +113,10 @@ func (producer *Producer) build(
 	if err != nil {
 		return DurableCompletion{}, classified(ClassificationLocalFailure, "completion-compositor")
 	}
-	result, err := compositor.Compose(ctx, request.AttemptID)
+	// created and lifecycle were already fetched above to build completion;
+	// hand them to the compositor directly instead of letting Compose read
+	// ResolveCreated/ReadLifecycle a second time from the same sources.
+	result, err := compositor.ComposeResolved(ctx, request.AttemptID, created, lifecycle)
 	if err != nil {
 		return DurableCompletion{}, err
 	}

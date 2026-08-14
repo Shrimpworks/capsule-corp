@@ -55,6 +55,42 @@ func (compositor *Compositor) Compose(
 	if err != nil {
 		return Result{}, mapSourceFailure(err, "terminal-attempt")
 	}
+	lifecycle, err := compositor.sources.Lifecycles.ReadLifecycle(ctx, attemptID)
+	if err != nil {
+		return Result{}, mapSourceFailure(err, "terminal-lifecycle")
+	}
+	return compositor.composeFromResolved(ctx, attemptID, created, lifecycle)
+}
+
+// ComposeResolved composes a Result exactly as Compose does, but accepts
+// created/lifecycle values the caller has already fetched instead of
+// reading compositor.sources.Attempts/Lifecycles again. A caller such as
+// Producer.build, which must resolve both to construct the CompletionRecord
+// it feeds the compositor as the Completions source, uses this to fence
+// every read of a given commit's attempt and lifecycle state to a single
+// fetch instead of reading each source twice from two independent,
+// unfenced calls.
+func (compositor *Compositor) ComposeResolved(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+	created registrationstate.CreatedAttempt,
+	lifecycle lifecyclestate.Record,
+) (Result, error) {
+	if err := ctx.Err(); err != nil {
+		return Result{}, classified(ClassificationLocalFailure, "terminal-context")
+	}
+	if attemptID == (approvalattempt.AttemptID{}) {
+		return Result{}, classified(ClassificationSchema, "terminal-attempt-id")
+	}
+	return compositor.composeFromResolved(ctx, attemptID, created, lifecycle)
+}
+
+func (compositor *Compositor) composeFromResolved(
+	ctx context.Context,
+	attemptID approvalattempt.AttemptID,
+	created registrationstate.CreatedAttempt,
+	lifecycle lifecyclestate.Record,
+) (Result, error) {
 	created = cloneCreatedAttempt(created)
 	plan, err := validateCreatedAttempt(created, attemptID)
 	if err != nil {
@@ -66,10 +102,6 @@ func (compositor *Compositor) Compose(
 	}
 	if err := completion.Validate(); err != nil {
 		return Result{}, classified(ClassificationRecoveryRequired, "terminal-completion-corrupt")
-	}
-	lifecycle, err := compositor.sources.Lifecycles.ReadLifecycle(ctx, attemptID)
-	if err != nil {
-		return Result{}, mapSourceFailure(err, "terminal-lifecycle")
 	}
 	lifecycleView, err := validateTerminalLifecycle(lifecycle, created)
 	if err != nil {

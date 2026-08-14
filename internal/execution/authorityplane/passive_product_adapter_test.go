@@ -457,6 +457,36 @@ func TestPassiveCancellationDeadlineStallAndResponseLossSemantics(t *testing.T) 
 	}
 }
 
+// TestPassiveMethodDeadlineNoPanicOnUnwiredOrUnrecognizedDeadlines pins
+// passiveMethodDeadline to computing time.Duration(milliseconds) *
+// time.Millisecond directly, never panicking, for deadlines that reach it
+// today (the two currently-unwired authorityplane methods' deadline
+// constants) and for an arbitrary value matching no named constant at all.
+func TestPassiveMethodDeadlineNoPanicOnUnwiredOrUnrecognizedDeadlines(t *testing.T) {
+	cases := []struct {
+		name         string
+		milliseconds uint64
+	}{
+		{name: "SubmitApprovalV0 (unwired)", milliseconds: SubmitApprovalV0DeadlineMilliseconds},
+		{name: "RequestAttemptV0 (unwired)", milliseconds: RequestAttemptV0DeadlineMilliseconds},
+		{name: "arbitrary unrecognized value", milliseconds: 87_654},
+	}
+	for _, testCase := range cases {
+		t.Run(testCase.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Fatalf("passiveMethodDeadline(%d) panicked: %v", testCase.milliseconds, r)
+				}
+			}()
+			got := passiveMethodDeadline(testCase.milliseconds)
+			want := time.Duration(testCase.milliseconds) * time.Millisecond
+			if got != want {
+				t.Fatalf("passiveMethodDeadline(%d) = %v, want %v", testCase.milliseconds, got, want)
+			}
+		})
+	}
+}
+
 func passiveProductSupervisor() SupervisorContext {
 	return SupervisorContext{
 		InstallationID: repeatedID[v0candidate.InstallationID](0x11),

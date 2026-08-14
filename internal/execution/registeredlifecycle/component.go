@@ -144,13 +144,34 @@ func (component *Component) RecoverCreatedAttempts(ctx context.Context) ([]Snaps
 	return results, firstErr
 }
 
-// cleanupWithPriorTimeLocked preserves ADR-0025's trusted-clock failure rule:
-// no new prepare/create/start/observe effect may begin, while exact
-// reconciliation and destructive stop/destroy work may use the existing
-// durable high-water timestamp.
-func (component *Component) cleanupWithPriorTimeLocked(
+// lifecycleStepMode selects which of the two states where a normal forward
+// drive and a post clock-failure cleanup pass legitimately diverge applies to
+// the current stepLocked call. Every other state is handled identically by
+// both callers, driven from the single shared stepLocked switch below.
+type lifecycleStepMode int
+
+const (
+	// stepDriveForward is the normal Drive/Recover path: created/prepared
+	// work may begin, and a retryable not-applied disposition resumes
+	// whichever operation it stalled on.
+	stepDriveForward lifecycleStepMode = iota
+	// stepCleanupAfterClockFailure preserves ADR-0025's trusted-clock
+	// failure rule: no new prepare/create/start/observe effect may begin,
+	// while exact reconciliation and destructive stop/destroy work may use
+	// the existing durable high-water timestamp.
+	stepCleanupAfterClockFailure
+)
+
+// stepLocked is the single FSM stepper shared by advanceLocked (normal
+// drive) and cleanupWithPriorTimeLocked (post clock-failure cleanup). It
+// replaces two independently maintained ~45-line switches over the same 13
+// lifecycle states; mode selects the couple of states that legitimately
+// differ between the two callers, and every other transition is common to
+// both so a future state addition or bugfix cannot drift between them.
+func (component *Component) stepLocked(
 	ctx context.Context,
 	record lifecyclestate.Record,
+	mode lifecycleStepMode,
 	clockErr error,
 ) (Snapshot, error) {
 	for {
@@ -161,66 +182,18 @@ func (component *Component) cleanupWithPriorTimeLocked(
 		case lifecyclestate.StateQuarantined:
 			return snapshotFromRecord(record), classified(ClassificationTrustState, "lifecycle-quarantined")
 		case lifecyclestate.StateCreated, lifecyclestate.StateStarted, lifecyclestate.StateObserved:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationStop)
+			if mode == stepCleanupAfterClockFailure {
+				return component.performAndContinue(ctx, record, lifecyclestate.OperationStop)
+			}
+			return component.performAndContinue(ctx, record, forwardOperationFor(view.State))
 		case lifecyclestate.StateStopped:
 			return component.performAndContinue(ctx, record, lifecyclestate.OperationDestroy)
 		case lifecyclestate.StateUnresolved:
 			if retryableConfirmedNotApplied(view) {
-				if view.Operation == lifecyclestate.OperationStop || view.Operation == lifecyclestate.OperationDestroy {
-					return component.performAndContinue(ctx, record, view.Operation)
+				if mode == stepCleanupAfterClockFailure &&
+					view.Operation != lifecyclestate.OperationStop && view.Operation != lifecyclestate.OperationDestroy {
+					return snapshotFromRecord(record), clockErr
 				}
-				return snapshotFromRecord(record), clockErr
-			}
-			var err error
-			record, err = component.reconcileLocked(ctx, record)
-			if err != nil {
-				return snapshotFromRecord(record), err
-			}
-		case lifecyclestate.StatePrepareIntent,
-			lifecyclestate.StateCreateIntent,
-			lifecyclestate.StateStartIntent,
-			lifecyclestate.StateObserveIntent,
-			lifecyclestate.StateStopIntent,
-			lifecyclestate.StateDestroyIntent,
-			lifecyclestate.StateDestroyConfirmed:
-			var err error
-			record, err = component.reconcileLocked(ctx, record)
-			if err != nil {
-				return snapshotFromRecord(record), err
-			}
-		case lifecyclestate.StatePreparePending, lifecyclestate.StatePrepared:
-			return snapshotFromRecord(record), clockErr
-		default:
-			return snapshotFromRecord(record), classified(ClassificationRecoveryRequired, "lifecycle-state-invalid")
-		}
-	}
-}
-
-func (component *Component) advanceLocked(
-	ctx context.Context,
-	record lifecyclestate.Record,
-) (Snapshot, error) {
-	for {
-		view := record.View()
-		switch view.State {
-		case lifecyclestate.StateDestroyed:
-			return terminalSnapshot(record)
-		case lifecyclestate.StateQuarantined:
-			return snapshotFromRecord(record), classified(ClassificationTrustState, "lifecycle-quarantined")
-		case lifecyclestate.StatePreparePending:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationPrepare)
-		case lifecyclestate.StatePrepared:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationCreate)
-		case lifecyclestate.StateCreated:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationStart)
-		case lifecyclestate.StateStarted:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationObserve)
-		case lifecyclestate.StateObserved:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationStop)
-		case lifecyclestate.StateStopped:
-			return component.performAndContinue(ctx, record, lifecyclestate.OperationDestroy)
-		case lifecyclestate.StateUnresolved:
-			if retryableConfirmedNotApplied(view) {
 				return component.performAndContinue(ctx, record, view.Operation)
 			}
 			var err error
@@ -240,10 +213,50 @@ func (component *Component) advanceLocked(
 			if err != nil {
 				return snapshotFromRecord(record), err
 			}
+		case lifecyclestate.StatePreparePending, lifecyclestate.StatePrepared:
+			if mode == stepCleanupAfterClockFailure {
+				return snapshotFromRecord(record), clockErr
+			}
+			return component.performAndContinue(ctx, record, forwardOperationFor(view.State))
 		default:
 			return snapshotFromRecord(record), classified(ClassificationRecoveryRequired, "lifecycle-state-invalid")
 		}
 	}
+}
+
+// forwardOperationFor returns the next operation a normal forward drive
+// performs from the given state. It is only consulted for states where
+// stepLocked's two callers agree on driving forward (stepDriveForward mode).
+func forwardOperationFor(state lifecyclestate.LifecycleState) lifecyclestate.Operation {
+	switch state {
+	case lifecyclestate.StatePreparePending:
+		return lifecyclestate.OperationPrepare
+	case lifecyclestate.StatePrepared:
+		return lifecyclestate.OperationCreate
+	case lifecyclestate.StateCreated:
+		return lifecyclestate.OperationStart
+	case lifecyclestate.StateStarted:
+		return lifecyclestate.OperationObserve
+	case lifecyclestate.StateObserved:
+		return lifecyclestate.OperationStop
+	default:
+		return ""
+	}
+}
+
+func (component *Component) cleanupWithPriorTimeLocked(
+	ctx context.Context,
+	record lifecyclestate.Record,
+	clockErr error,
+) (Snapshot, error) {
+	return component.stepLocked(ctx, record, stepCleanupAfterClockFailure, clockErr)
+}
+
+func (component *Component) advanceLocked(
+	ctx context.Context,
+	record lifecyclestate.Record,
+) (Snapshot, error) {
+	return component.stepLocked(ctx, record, stepDriveForward, nil)
 }
 
 func (component *Component) performAndContinue(

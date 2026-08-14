@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"strings"
 	"sync"
 	"testing"
 
@@ -659,6 +660,302 @@ func TestDurableLifecycleCreateIdentityCollisionQuarantinesWithoutAdoption(t *te
 	recovery, err := reopened.RecoveryAttemptIDs(context.Background())
 	if err != nil || len(recovery) != 2 {
 		t.Fatalf("quarantine recovery set = %x, %v", recovery, err)
+	}
+}
+
+// TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFailure
+// exercises validateReconciledInstanceLocked's quarantine branch in
+// CompleteReconciliation directly (lifecycle_store.go), covering both
+// dispositions that can trip it while landing the record in
+// StateQuarantined: a ReconciliationPresent report with no recorded
+// instance, and a ReconciliationIdentityMismatch report that conflicts with
+// the recorded instance. Each case must set the store's
+// TrustRepairRequired/AttemptsDisabled trust-fencing fields, mirroring the
+// already-tested ConfirmEffect-side identity collision.
+//
+// The third disposition named in issue #271 - a duplicate instance observed
+// via a ReconciliationApplied create report - is deliberately not covered
+// here as a passing "quarantines" case. It uncovers a real defect; see
+// TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead
+// below and the accompanying report.
+func TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFailure(t *testing.T) {
+	assertQuarantinedTrustState := func(t *testing.T, harness lifecycleTransactionHarness) {
+		t.Helper()
+		if harness.store.state.TrustPhase != TrustRepairRequired ||
+			harness.store.state.TrustReason != "lifecycle-instance-identity-mismatch" ||
+			!harness.store.state.AttemptsDisabled {
+			t.Fatalf(
+				"quarantine trust state = phase %s, reason %q, disabled %v",
+				harness.store.state.TrustPhase, harness.store.state.TrustReason, harness.store.state.AttemptsDisabled,
+			)
+		}
+	}
+
+	t.Run("present-without-recorded-instance-quarantines", func(t *testing.T) {
+		harness := newLifecycleTransactionHarness(t, 1)
+		attemptID := harness.attemptIDs[0]
+		record, _, err := harness.store.EnsureLifecycle(context.Background(), attemptID, harness.backend)
+		if err != nil {
+			t.Fatal(err)
+		}
+		permit, err := harness.store.BeginEffect(
+			context.Background(), attemptID, record.View().RecordVersion, lifecyclestate.OperationPrepare,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		record, err = harness.store.RecordIndeterminate(context.Background(), permit, ClassificationRecoveryRequired)
+		if err != nil {
+			t.Fatal(err)
+		}
+		reportedInstance, err := lifecyclestate.NewBackendInstanceIdentity(
+			lifecyclestate.BackendInstanceFake, []byte("present-but-unrecorded"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		present, err := lifecyclestate.NewReconcileResult(
+			lifecyclestate.OperationPrepare, lifecyclestate.ReconciliationPresent, reportedInstance,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		quarantined, err := harness.store.RecordReconciliation(
+			context.Background(), attemptID, record.View().RecordVersion, present,
+		)
+		if err != nil {
+			t.Fatalf("present-status reconciliation returned an error instead of quarantining: %v", err)
+		}
+		view := quarantined.View()
+		if view.State != lifecyclestate.StateQuarantined ||
+			view.EffectStatus != lifecyclestate.EffectIndeterminate ||
+			view.LastReconciliation != lifecyclestate.ReconciliationIdentityMismatch ||
+			view.RecoveryFence != lifecyclestate.RecoveryFenceIdentityMismatch {
+			t.Fatalf("present-status quarantine transition = %#v", view)
+		}
+		assertQuarantinedTrustState(t, harness)
+	})
+
+	t.Run("identity-mismatch-against-recorded-instance-quarantines", func(t *testing.T) {
+		harness := newLifecycleTransactionHarness(t, 1)
+		attemptID := harness.attemptIDs[0]
+		record, _, err := harness.store.EnsureLifecycle(context.Background(), attemptID, harness.backend)
+		if err != nil {
+			t.Fatal(err)
+		}
+		preparePermit, err := harness.store.BeginEffect(
+			context.Background(), attemptID, record.View().RecordVersion, lifecyclestate.OperationPrepare,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		preparedResult, err := lifecyclestate.NewEffectResult(
+			lifecyclestate.OperationPrepare, lifecyclestate.EffectResultApplied, lifecyclestate.BackendInstanceIdentity{},
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		record, err = harness.store.ConfirmEffect(context.Background(), preparePermit, preparedResult)
+		if err != nil {
+			t.Fatal(err)
+		}
+		createPermit, err := harness.store.BeginEffect(
+			context.Background(), attemptID, record.View().RecordVersion, lifecyclestate.OperationCreate,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		recordedInstance, err := lifecyclestate.NewBackendInstanceIdentity(
+			lifecyclestate.BackendInstanceFake, []byte("originally-recorded"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		createdResult, err := lifecyclestate.NewEffectResult(
+			lifecyclestate.OperationCreate, lifecyclestate.EffectResultApplied, recordedInstance,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		record, err = harness.store.ConfirmEffect(context.Background(), createPermit, createdResult)
+		if err != nil {
+			t.Fatal(err)
+		}
+		startPermit, err := harness.store.BeginEffect(
+			context.Background(), attemptID, record.View().RecordVersion, lifecyclestate.OperationStart,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		record, err = harness.store.RecordIndeterminate(context.Background(), startPermit, ClassificationRecoveryRequired)
+		if err != nil {
+			t.Fatal(err)
+		}
+		conflictingInstance, err := lifecyclestate.NewBackendInstanceIdentity(
+			lifecyclestate.BackendInstanceFake, []byte("actually-observed"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		mismatch, err := lifecyclestate.NewReconcileResult(
+			lifecyclestate.OperationStart, lifecyclestate.ReconciliationIdentityMismatch, conflictingInstance,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		quarantined, err := harness.store.RecordReconciliation(
+			context.Background(), attemptID, record.View().RecordVersion, mismatch,
+		)
+		if err != nil {
+			t.Fatalf("identity-mismatch reconciliation returned an error instead of quarantining: %v", err)
+		}
+		view := quarantined.View()
+		if view.State != lifecyclestate.StateQuarantined ||
+			view.EffectStatus != lifecyclestate.EffectIndeterminate ||
+			view.LastReconciliation != lifecyclestate.ReconciliationIdentityMismatch ||
+			view.RecoveryFence != lifecyclestate.RecoveryFenceIdentityMismatch {
+			t.Fatalf("identity-mismatch quarantine transition = %#v", view)
+		}
+		assertQuarantinedTrustState(t, harness)
+	})
+
+}
+
+// TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead
+// documents a defect found while adding issue #271's coverage, rather than
+// silently patching it: when CompleteReconciliation's validation catches a
+// duplicate instance identity reported via a ReconciliationApplied create
+// result (as opposed to the already-tested ConfirmEffect-side collision in
+// TestDurableLifecycleCreateIdentityCollisionQuarantinesWithoutAdoption), its
+// error-handling branch (lifecycle_store.go around L645-658) resets State,
+// EffectStatus, LastReconciliation, RecoveryFence, and NextRecoveryAt to
+// quarantine values, but never clears the Instance field that
+// applyReconciliationResult/applyConfirmedEffect had already adopted onto
+// the record a few lines earlier. The quarantined record is then committed
+// still carrying the colliding instance identity, so the store's own
+// whole-state invariant check (validateV1State, fixed_store_v1.go ~L629-633)
+// rejects the candidate state with "fixed lifecycle state has a duplicate
+// instance identity" before it can ever be persisted. The intended
+// quarantine-without-adoption transition for this specific disposition can
+// never durably complete: RecordReconciliation/CompleteReconciliation always
+// return this internal invariant error instead of quarantining, and the
+// second attempt is left stuck rather than fenced.
+//
+// This is a security-relevant gap (the deny-by-default quarantine defense
+// silently fails to fire, and callers just get an opaque store error), but
+// fixing it is out of scope for issue #271, which asks to stop and report
+// rather than fix this defect under a test-only issue. This test pins today's
+// actual (defective) behavior so any future change to it is deliberate; do
+// not "fix" it by loosening this assertion without also fixing
+// CompleteReconciliation to clear the colliding instance before quarantining.
+func TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead(t *testing.T) {
+	harness := newLifecycleTransactionHarness(t, 2)
+	sharedInstance, err := lifecyclestate.NewBackendInstanceIdentity(
+		lifecyclestate.BackendInstanceFake, []byte("shared-instance"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	preparedResult, err := lifecyclestate.NewEffectResult(
+		lifecyclestate.OperationPrepare, lifecyclestate.EffectResultApplied, lifecyclestate.BackendInstanceIdentity{},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	firstID := harness.attemptIDs[0]
+	firstRecord, _, err := harness.store.EnsureLifecycle(context.Background(), firstID, harness.backend)
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstPrepare, err := harness.store.BeginEffect(
+		context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstRecord, err = harness.store.ConfirmEffect(context.Background(), firstPrepare, preparedResult)
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstCreate, err := harness.store.BeginEffect(
+		context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationCreate,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	firstCreatedResult, err := lifecyclestate.NewEffectResult(
+		lifecyclestate.OperationCreate, lifecyclestate.EffectResultApplied, sharedInstance,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := harness.store.ConfirmEffect(context.Background(), firstCreate, firstCreatedResult); err != nil {
+		t.Fatal(err)
+	}
+
+	secondID := harness.attemptIDs[1]
+	secondRecord, _, err := harness.store.EnsureLifecycle(context.Background(), secondID, harness.backend)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondPrepare, err := harness.store.BeginEffect(
+		context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondRecord, err = harness.store.ConfirmEffect(context.Background(), secondPrepare, preparedResult)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondCreate, err := harness.store.BeginEffect(
+		context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationCreate,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondRecord, err = harness.store.RecordIndeterminate(context.Background(), secondCreate, ClassificationRecoveryRequired)
+	if err != nil {
+		t.Fatal(err)
+	}
+	duplicateApplied, err := lifecyclestate.NewReconcileResult(
+		lifecyclestate.OperationCreate, lifecyclestate.ReconciliationApplied, sharedInstance,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// BeginReconciliation's eligibility checkpoint (AutomaticRecoveryCount++,
+	// LastReconciliation reset to none) is a separate durable commit from the
+	// result commit that fails below; only the result side is broken here, so
+	// this intentionally does not assert the file is byte-for-byte unchanged.
+	_, err = harness.store.RecordReconciliation(
+		context.Background(), secondID, secondRecord.View().RecordVersion, duplicateApplied,
+	)
+	if err == nil {
+		t.Fatal("expected the known duplicate-instance-on-applied defect to still fail closed; " +
+			"if this now succeeds, CompleteReconciliation was fixed to clear the colliding instance " +
+			"before quarantining - update this test to assert the correct quarantine transition and " +
+			"fold it back into TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFailure")
+	}
+	if !strings.Contains(err.Error(), "duplicate instance identity") {
+		t.Fatalf("unexpected failure mode for the known defect, got: %v", err)
+	}
+
+	stuck, err := harness.store.ReadLifecycle(context.Background(), secondID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stuck.View().State == lifecyclestate.StateQuarantined {
+		t.Fatal("second attempt unexpectedly reached quarantine; the defect appears fixed, see comment above")
+	}
+	firstStillOwns, err := harness.store.ReadLifecycle(context.Background(), firstID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !firstStillOwns.View().Instance.Present() || firstStillOwns.View().Instance.Digest() != sharedInstance.Digest() {
+		t.Fatalf("original instance owner lost its binding: %#v", firstStillOwns.View())
 	}
 }
 

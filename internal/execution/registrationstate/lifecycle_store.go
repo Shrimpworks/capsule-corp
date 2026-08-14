@@ -646,6 +646,9 @@ func (store *FixedFileStoreV1) CompleteReconciliation(
 	applyReconciliationResult(&final, result)
 	if err := store.validateReconciledInstanceLocked(attemptID, &final, result); err != nil {
 		if errors.Is(err, ErrLifecycleBindingMismatch) {
+			// Quarantine the last durable checkpoint, not any instance or
+			// checkpoint tentatively adopted from the invalid result.
+			final = eligibleView
 			final.State = lifecyclestate.StateQuarantined
 			final.EffectStatus = lifecyclestate.EffectIndeterminate
 			final.LastReconciliation = lifecyclestate.ReconciliationIdentityMismatch

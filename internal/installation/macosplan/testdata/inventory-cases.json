@@ -586,7 +586,7 @@
     "expected": {
       "decision": "refuse",
       "classification": "malformed",
-      "reason": "component-mixed-or-duplicate"
+      "reason": "component-duplicate-role-id"
     }
   },
   {
@@ -704,7 +704,7 @@
     "expected": {
       "decision": "refuse",
       "classification": "malformed",
-      "reason": "component-mixed-or-duplicate"
+      "reason": "component-empty-role-id"
     }
   },
   {

@@ -122,11 +122,11 @@ func inventoryFixtureCases(profile Profile) []InventoryFixtureCase {
 		"com.capsulecorp.capsule.runner", "com.capsulecorp.capsule.runner", "com.capsulecorp.capsule.runner",
 	))
 	mixed := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
-	mixed.Roles[3].ServiceIdentifier = BrokerValidatorServiceIdentity
+	mixed.Roles[roleIndex(profile, DaemonValidatorLauncherRoleID)].ServiceIdentifier = BrokerValidatorServiceIdentity
 	duplicate := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
-	duplicate.Roles[4].RoleID = duplicate.Roles[3].RoleID
+	duplicate.Roles[roleIndex(profile, DaemonValidatorParserRoleID)].RoleID = duplicate.Roles[roleIndex(profile, DaemonValidatorLauncherRoleID)].RoleID
 	emptyRoleID := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
-	emptyRoleID.Roles[5].RoleID = ""
+	emptyRoleID.Roles[roleIndex(profile, BrokerValidatorLauncherRoleID)].RoleID = ""
 	profileMismatch := InventoryObservation{ProfileID: profile.ProfileID + "-mismatch", Roles: append([]RoleProjection(nil), profile.Roles...)}
 
 	return []InventoryFixtureCase{
@@ -138,6 +138,15 @@ func inventoryFixtureCases(profile Profile) []InventoryFixtureCase {
 		{ID: "inventory-empty-role-id-refuses", Input: emptyRoleID, Expected: EvaluateActivation(profile, emptyRoleID)},
 		{ID: "inventory-profile-id-mismatch-refuses", Input: profileMismatch, Expected: EvaluateActivation(profile, profileMismatch)},
 	}
+}
+
+func roleIndex(profile Profile, roleID string) int {
+	for index, candidate := range profile.Roles {
+		if candidate.RoleID == roleID {
+			return index
+		}
+	}
+	panic(fmt.Sprintf("canonical role %q not found", roleID))
 }
 
 func bootstrapFixtureCases() []BootstrapFixtureCase {
@@ -205,6 +214,7 @@ func repairFixtureCases() []RepairFixtureCase {
 		{"protected-state-repair", RepairInput{RecordVersion: 0, ApplicationFilesExact: true, InstallationRootAvailable: true, StoreAndHistoryComplete: true, CleanupObligationsResolved: true, CurrentEpochExact: true}},
 		{"new-installation", RepairInput{RecordVersion: 0}},
 		{"refuse-history-loss", RepairInput{RecordVersion: 0, ApplicationFilesExact: true, InstallationRootAvailable: true, StateRootContinuityProven: true, OwnerLockContinuityProven: true, CurrentEpochExact: true}},
+		{"application-and-state-already-exact", RepairInput{RecordVersion: 0, ApplicationFilesExact: true, InstallationRootAvailable: true, StateRootContinuityProven: true, OwnerLockContinuityProven: true, StoreAndHistoryComplete: true, CleanupObligationsResolved: true, CurrentEpochExact: true}},
 	}
 	cases := make([]RepairFixtureCase, 0, len(candidates))
 	for _, candidate := range candidates {

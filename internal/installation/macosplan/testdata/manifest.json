@@ -10,8 +10,8 @@
     },
     {
       "path": "internal/installation/macosplan/testdata/inventory-cases.json",
-      "bytes": 45723,
-      "sha256": "47be3cde8d45c4b691d583d6bd20eb392cd18d56b6d5fcec9d467a4bf1a84e05"
+      "bytes": 45717,
+      "sha256": "0ec5458504a647028126a950cea3f3164fc3237cf72ce53eb826323388bf0c2c"
     },
     {
       "path": "internal/installation/macosplan/testdata/profile.json",
@@ -20,8 +20,8 @@
     },
     {
       "path": "internal/installation/macosplan/testdata/repair-cases.json",
-      "bytes": 3492,
-      "sha256": "b0ca1c33df713dcb49df2f749ddc10b990bdcdbb4fafae791668e83f21f0b35e"
+      "bytes": 4203,
+      "sha256": "6cb1b2eaed7ef51a8e0e3cb5dbaca79e0fb944c7f6338a2e0427aafb2a86164e"
     },
     {
       "path": "internal/installation/macosplan/testdata/uninstall-cases.json",

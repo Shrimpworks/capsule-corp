@@ -118,5 +118,29 @@
         "reason": "history-or-cleanup-unresolved"
       }
     }
+  },
+  {
+    "id": "application-and-state-already-exact",
+    "input": {
+      "recordVersion": 0,
+      "applicationFilesExact": true,
+      "installationRootAvailable": true,
+      "stateRootContinuityProven": true,
+      "ownerLockContinuityProven": true,
+      "storeAndHistoryComplete": true,
+      "cleanupObligationsResolved": true,
+      "currentEpochExact": true,
+      "forwardTransitionAuthorized": false
+    },
+    "expected": {
+      "recordVersion": 0,
+      "class": "restore-current-release-preserve-state",
+      "attemptsState": "disabled",
+      "result": {
+        "decision": "accept",
+        "classification": "none",
+        "reason": "application-and-state-already-exact"
+      }
+    }
   }
 ]

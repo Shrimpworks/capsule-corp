@@ -50,10 +50,14 @@ Deno reproduction are now retained at immutable experiments merges
 [`3cfe7db16c55894be444d4c783659043dbd25c95`](https://github.com/Shrimpworks/capsule-experiments/tree/3cfe7db16c55894be444d4c783659043dbd25c95/experiments/typed-guest-transport-c5b5-no-run-effect-adapter),
 and [`d9967e80a6155a65c6876dc686d8f8498b4a908f`](https://github.com/Shrimpworks/capsule-experiments/tree/d9967e80a6155a65c6876dc686d8f8498b4a908f/experiments/typed-guest-transport-c5b6-deno-static-reproduction).
 Those slices `PASSED` only for exact no-run custody, construction, static/model, and reproducibility
-claims. A rebuilt runtime root, real effect implementation, complete immutable composite,
-controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
-composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
-separate firmware is inapplicable under Accepted ADR-0041.
+claims. The later
+[`C5b7` deterministic runtime root](https://github.com/Shrimpworks/capsule-experiments/tree/78485fb91a31733c568fe43e5fa295474e5956e1/experiments/typed-guest-transport-c5b7-deterministic-runtime-root)
+also `PASSED` its no-run scope with two byte-identical 100,663,296-byte roots, a closed 19-node
+inventory, and 15 mutation refusals. Its exact root is incompatible as-is with C5b5's historical
+134,217,728-byte contract. A reviewed size-compatible real effect implementation, complete
+immutable composite, controlled C5b transport execution, preferred-form libkrunfw/kernel source
+compliance, installed composition, and admission remain `BLOCKED`; the extracted kernel remains
+evidence-only and separate firmware is inapplicable under Accepted ADR-0041.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a

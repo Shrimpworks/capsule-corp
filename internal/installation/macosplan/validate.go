@@ -23,8 +23,11 @@ func EvaluateInventory(profile Profile, observed InventoryObservation) Result {
 	}
 	seen := make(map[string]struct{}, len(observed.Roles))
 	for _, candidate := range observed.Roles {
-		if _, exists := seen[candidate.RoleID]; exists || candidate.RoleID == "" {
-			return refuse(ClassificationMalformed, "component-mixed-or-duplicate")
+		if candidate.RoleID == "" {
+			return refuse(ClassificationMalformed, "component-empty-role-id")
+		}
+		if _, exists := seen[candidate.RoleID]; exists {
+			return refuse(ClassificationMalformed, "component-duplicate-role-id")
 		}
 		seen[candidate.RoleID] = struct{}{}
 	}
@@ -46,13 +49,17 @@ func EvaluateActivation(profile Profile, observed InventoryObservation) Result {
 	if result := EvaluateInventory(profile, observed); result.Decision != DecisionAccept {
 		return result
 	}
+	// CanonicalProfile is permanently inactive in I0, so the signing refusal is
+	// the only reachable outcome below. The bootstrap, service, entitlement, and
+	// accept branches remain intentionally dormant until a future active-profile
+	// variant adds its own tests before changing this trust-boundary contract.
 	if profile.Signing.State != ProfileActive || profile.Signing.TeamIdentifier == "" ||
 		profile.Signing.ProvisioningProfileSetID == "" || profile.Signing.CodeDirectoryHashSetID == "" ||
 		profile.Signing.EntitlementsDigestSetID == "" {
 		return refuse(ClassificationTrustState, "signing-profile-inactive")
 	}
 	if profile.Bootstrap.State != ProfileActive || profile.Bootstrap.BootstrapOwner == "" ||
-		profile.Bootstrap.StoreFormatIdentity == "capsule.supervisor.product-store/unselected" {
+		profile.Bootstrap.StoreFormatIdentity == unselectedProductStoreIdentity {
 		return refuse(ClassificationTrustState, "bootstrap-profile-inactive")
 	}
 	for _, service := range profile.Services {
@@ -319,6 +326,7 @@ func ClassifyUninstall(mode UninstallMode) UninstallOutput {
 }
 
 func digestJSON(value any) string {
+	// #279 defers error propagation because it would alter UpdateIdentityForProfile's API; current inputs are package-controlled and marshalable.
 	encoded, err := json.Marshal(value)
 	if err != nil {
 		panic(err)

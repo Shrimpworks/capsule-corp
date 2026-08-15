@@ -71,15 +71,16 @@ func TestCanonicalProfileComposesADRServiceAndValidatorIdentities(t *testing.T) 
 			t.Fatalf("service %q unexpectedly active", identity)
 		}
 	}
-	if profile.Roles[4].SigningIdentifier != DaemonValidatorParserIdentity ||
-		profile.Roles[6].SigningIdentifier != BrokerValidatorParserIdentity {
+	if profile.Roles[roleIndex(profile, DaemonValidatorParserRoleID)].SigningIdentifier != DaemonValidatorParserIdentity ||
+		profile.Roles[roleIndex(profile, BrokerValidatorParserRoleID)].SigningIdentifier != BrokerValidatorParserIdentity {
 		t.Fatal("role-specific parser identities are not closed")
 	}
-	if profile.Roles[1].ServiceDescriptorPath != "Capsule.app/Contents/Library/LaunchAgents/com.capsulecorp.capsule.daemon.plist" ||
-		profile.Roles[2].ServiceDescriptorPath != "Capsule.app/Contents/Library/LaunchAgents/com.capsulecorp.capsule.supervisor.plist" {
+	if profile.Roles[roleIndex(profile, DaemonRoleID)].ServiceDescriptorPath != "Capsule.app/Contents/Library/LaunchAgents/com.capsulecorp.capsule.daemon.plist" ||
+		profile.Roles[roleIndex(profile, SupervisorRoleID)].ServiceDescriptorPath != "Capsule.app/Contents/Library/LaunchAgents/com.capsulecorp.capsule.supervisor.plist" {
 		t.Fatal("per-user service descriptor paths are not closed")
 	}
-	if profile.Roles[3].ResourcePolicyPath == "" || profile.Roles[5].ResourcePolicyPath == "" {
+	if profile.Roles[roleIndex(profile, DaemonValidatorLauncherRoleID)].ResourcePolicyPath == "" ||
+		profile.Roles[roleIndex(profile, BrokerValidatorLauncherRoleID)].ResourcePolicyPath == "" {
 		t.Fatal("R2 inactive resource-policy paths are not closed")
 	}
 }
@@ -104,8 +105,8 @@ func TestInventoryRefusesMissingMixedExtraBeforeInactiveSigning(t *testing.T) {
 		"component-missing",
 		"component-extra",
 		"component-mixed",
-		"component-mixed-or-duplicate",
-		"component-mixed-or-duplicate",
+		"component-duplicate-role-id",
+		"component-empty-role-id",
 		"inventory-profile-mismatch",
 	}
 	for index, test := range tests {
@@ -269,12 +270,12 @@ func TestEvaluateBootstrapCoversEveryReachableRefusalAndTheReadyTransition(t *te
 
 // TestEvaluateUpdateCoversInputAndInventoryRefusalsBeforeTheIdentityGate
 // covers the three EvaluateUpdate refusals that precede its
-// Predecessor/Successor-vs-canonical comparison. Every branch after that
-// comparison requires an active signing profile to be reached, which is
-// mutually exclusive with matching CanonicalProfile()'s permanently
-// inactive I0 posture — those branches are exercised, along with this
-// package's own i0-active-update-profile-unsupported guard, by
-// TestUpdateIdentityAndInactiveReplacementRefusal instead.
+// Predecessor/Successor-vs-canonical comparison. The protected-root,
+// migration, and acceptance branches after the signing gate are currently
+// unreachable: matching CanonicalProfile requires its permanently inactive
+// I0 signing state, while passing the next gate requires an active state.
+// TestUpdateIdentityAndInactiveReplacementRefusal covers the reachable
+// inactive-signing refusal and the noncanonical active-identity guard only.
 func TestEvaluateUpdateCoversInputAndInventoryRefusalsBeforeTheIdentityGate(t *testing.T) {
 	wrongVersion := UpdateInput{RecordVersion: 1}
 	if output := EvaluateUpdate(wrongVersion); output.Result.Reason != "update-input-version" || output.Compatibility != "refused" {
@@ -330,6 +331,20 @@ func TestRepairClassificationsNeverRewriteSecurityHistory(t *testing.T) {
 	}
 }
 
+func TestRepairFixturesCoverAlreadyExactInstallation(t *testing.T) {
+	for _, fixture := range repairFixtureCases() {
+		if fixture.ID != "application-and-state-already-exact" {
+			continue
+		}
+		output := ClassifyRepair(fixture.Input)
+		if output.Class != RepairRestoreApplicationFiles || output.Result != accept("application-and-state-already-exact") {
+			t.Fatalf("already exact installation = %+v", output)
+		}
+		return
+	}
+	t.Fatal("repair fixtures do not cover an already exact installation")
+}
+
 // TestDigestJSONPanicsOnUnmarshalableInput guards digestJSON's deliberate
 // panic instead of silently swallowing an encoding error: every current
 // caller passes it a package-controlled struct/slice that always marshals,
@@ -355,6 +370,23 @@ func TestResultValidateAcceptsWellFormedTuplesAndRejectsMalformedOnes(t *testing
 	}
 	if err := refuse(ClassificationBinding, "component-missing").Validate(); err != nil {
 		t.Fatalf("well-formed refuse rejected: %v", err)
+	}
+
+	profile := CanonicalProfile()
+	exactInventory := InventoryObservation{ProfileID: profile.ProfileID, Roles: append([]RoleProjection(nil), profile.Roles...)}
+	realOutputs := []Result{
+		ValidateProfile(profile),
+		EvaluateInventory(profile, exactInventory),
+		EvaluateActivation(profile, exactInventory),
+		EvaluateBootstrap(bootstrapFixtureCases()[0].Input).Result,
+		EvaluateUpdate(updateFixtureCases(profile)[0].Input).Result,
+		ClassifyRepair(repairFixtureCases()[0].Input).Result,
+		ClassifyUninstall(UninstallApplicationOnly).Result,
+	}
+	for index, result := range realOutputs {
+		if err := result.Validate(); err != nil {
+			t.Fatalf("real output[%d] %+v is invalid: %v", index, result, err)
+		}
 	}
 
 	malformed := []Result{

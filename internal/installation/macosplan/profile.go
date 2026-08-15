@@ -3,9 +3,10 @@ package macosplan
 import "capsule.local/capsule/internal/protocol/sourcevalidatorpassive"
 
 const (
-	brokerBundlePath     = ApplicationPath
-	daemonBundlePath     = ApplicationPath + "/Contents/Library/Helpers/CapsuleDaemon.app"
-	supervisorBundlePath = ApplicationPath + "/Contents/Library/Helpers/CapsuleSupervisor.app"
+	brokerBundlePath               = ApplicationPath
+	daemonBundlePath               = ApplicationPath + "/Contents/Library/Helpers/CapsuleDaemon.app"
+	supervisorBundlePath           = ApplicationPath + "/Contents/Library/Helpers/CapsuleSupervisor.app"
+	unselectedProductStoreIdentity = "capsule.supervisor.product-store/unselected"
 
 	brokerValidatorBundlePath = ApplicationPath + "/Contents/XPCServices/CapsuleSourceValidatorBroker.xpc"
 	daemonValidatorBundlePath = daemonBundlePath + "/Contents/XPCServices/CapsuleSourceValidatorDaemon.xpc"
@@ -70,7 +71,7 @@ func CanonicalProfile() Profile {
 			OwnerLockMode:            0o600,
 			OwnerLockLinkCount:       1,
 			StoreEntryName:           "supervisor.store",
-			StoreFormatIdentity:      "capsule.supervisor.product-store/unselected",
+			StoreFormatIdentity:      unselectedProductStoreIdentity,
 			OwnerMechanismIdentity:   "capsule.supervisor.owner.darwin-openat-flock/v0",
 			OrdinaryStartupOperation: "open-without-create",
 			InitialAttemptState:      "disabled",

@@ -42,10 +42,17 @@ type RetainedNonce struct {
 	Approval      approvalattempt.ApprovalRecord
 }
 
+// RetainedEffectClassification distinguishes the lifecycle record's current
+// effect from an independently retained historical tombstone. It prevents a
+// later lifecycle record from being presented as the issuer of an older effect.
 type RetainedEffectClassification string
 
 const (
-	RetainedEffectCurrent             RetainedEffectClassification = "current"
+	// RetainedEffectCurrent includes the matching live lifecycle projection;
+	// RetainedEffectSupersededByCurrent returns only immutable tombstone facts.
+	// Neither result proves an adapter effect occurred or grants retry authority.
+	RetainedEffectCurrent RetainedEffectClassification = "current"
+	// RetainedEffectSupersededByCurrent returns tombstone facts without a false lifecycle issuer.
 	RetainedEffectSupersededByCurrent RetainedEffectClassification = "superseded-by-current"
 )
 
@@ -104,6 +111,9 @@ type RetainedIdentityCollisions struct {
 	AttemptReplay  bool
 }
 
+// Any reports whether at least one candidate identity or replay key already
+// exists in the fully verified retained-global world. It is a passive query,
+// not a reservation; mutation must repeat collision checks transactionally.
 func (collisions RetainedIdentityCollisions) Any() bool {
 	return collisions.Registration || collisions.Approval || collisions.Attempt || collisions.Nonce ||
 		collisions.Effect || collisions.Instance || collisions.ApprovalReplay || collisions.AttemptReplay

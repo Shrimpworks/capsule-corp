@@ -23,8 +23,12 @@ import (
 )
 
 const (
+	// MaxRetainedLifecycleRecords and MaxActiveLifecycleRecords are inclusive,
+	// no-eviction fixed-oracle limits. Only a durably destroyed record with
+	// cleanup false after authoritative absence releases active capacity.
 	MaxRetainedLifecycleRecords = 4_096
-	MaxActiveLifecycleRecords   = 256
+	// MaxActiveLifecycleRecords caps attempts whose cleanup work is not durably closed.
+	MaxActiveLifecycleRecords = 256
 )
 
 // LifecycleSetDigest identifies the complete sorted v1 lifecycle collection.
@@ -42,8 +46,12 @@ type OfflineMigrationLock interface {
 type MigrationFault string
 
 const (
+	// FaultMigrationBeforeRename is a confirmed-abort test edge;
+	// FaultMigrationAfterRename is indeterminate until reopen establishes the
+	// complete v0 predecessor or v1 successor. Neither is a product control.
 	FaultMigrationBeforeRename MigrationFault = "migration-before-rename"
-	FaultMigrationAfterRename  MigrationFault = "migration-after-rename"
+	// FaultMigrationAfterRename requires reopen to distinguish complete v0/v1 worlds.
+	FaultMigrationAfterRename MigrationFault = "migration-after-rename"
 )
 
 // MigrationFaultInjector is a local conformance port. Returning an error at
@@ -53,13 +61,20 @@ type MigrationFaultInjector interface {
 	FailMigrationAt(MigrationFault) error
 }
 
+// V0ToV1MigrationOptions carries only the asserted offline owner-lock check
+// and optional local fault injector. It contains no replacement records or
+// migration data and cannot relax full source validation.
 type V0ToV1MigrationOptions struct {
 	Lock   OfflineMigrationLock
 	Faults MigrationFaultInjector
 }
 
 var (
-	ErrMigrationLockRequired         = errors.New("fixed supervisor-state migration requires the offline owner lock")
+	// ErrMigrationLockRequired reports missing/lost exclusive ownership;
+	// ErrMigrationOutcomeIndeterminate requires reopen before deciding which
+	// complete format committed. Callers must not retry mutation in place.
+	ErrMigrationLockRequired = errors.New("fixed supervisor-state migration requires the offline owner lock")
+	// ErrMigrationOutcomeIndeterminate requires full reopen before later mutation.
 	ErrMigrationOutcomeIndeterminate = errors.New("fixed supervisor-state migration outcome is indeterminate")
 )
 

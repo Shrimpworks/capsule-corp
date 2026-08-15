@@ -30,43 +30,82 @@ type ArchiveOwner interface {
 	CheckHeld(context.Context) error
 }
 
+// ArchiveFault names deterministic F3/F4C segment-publication and activation
+// edges. Values are accepted only by a local fault injector and are not
+// caller-selected archive policy, paths, records, or authority.
 type ArchiveFault string
 
 const (
+	// FaultArchiveAfterSegmentTempCreate through FaultArchiveAfterReopen cover
+	// publish-before-reference and active-snapshot durability. Pre-publication
+	// failures preserve the old world; post-publication/activation uncertainty
+	// requires full reopen before any further mutation.
 	FaultArchiveAfterSegmentTempCreate ArchiveFault = "archive-after-segment-temp-create"
-	FaultArchiveAfterSegmentTempWrite  ArchiveFault = "archive-after-segment-temp-write" //nolint:gosec // G101: fixed fault label.
-	FaultArchiveAfterSegmentTempSync   ArchiveFault = "archive-after-segment-temp-sync"
-	FaultArchiveBeforeSegmentPublish   ArchiveFault = "archive-before-segment-publish"
-	FaultArchiveAfterSegmentPublish    ArchiveFault = "archive-after-segment-publish"
-	FaultArchiveAfterSegmentDirSync    ArchiveFault = "archive-after-segment-directory-sync"
-	FaultArchiveAfterActiveTempCreate  ArchiveFault = "archive-after-active-temp-create"
-	FaultArchiveAfterActiveTempWrite   ArchiveFault = "archive-after-active-temp-write" //nolint:gosec // G101: fixed fault label.
-	FaultArchiveAfterActiveTempSync    ArchiveFault = "archive-after-active-temp-sync"
-	FaultArchiveBeforeActivation       ArchiveFault = "archive-before-activation"
-	FaultArchiveAfterActivation        ArchiveFault = "archive-after-activation"
-	FaultArchiveAfterActiveDirSync     ArchiveFault = "archive-after-active-directory-sync"
-	FaultArchiveAfterReopen            ArchiveFault = "archive-after-reopen"
+	// FaultArchiveAfterSegmentTempWrite follows writing candidate segment bytes.
+	FaultArchiveAfterSegmentTempWrite ArchiveFault = "archive-after-segment-temp-write" //nolint:gosec // G101: fixed fault label.
+	// FaultArchiveAfterSegmentTempSync follows syncing candidate segment bytes.
+	FaultArchiveAfterSegmentTempSync ArchiveFault = "archive-after-segment-temp-sync"
+	// FaultArchiveBeforeSegmentPublish is the final confirmed pre-publication edge.
+	FaultArchiveBeforeSegmentPublish ArchiveFault = "archive-before-segment-publish"
+	// FaultArchiveAfterSegmentPublish leaves at most an inactive published segment.
+	FaultArchiveAfterSegmentPublish ArchiveFault = "archive-after-segment-publish"
+	// FaultArchiveAfterSegmentDirSync follows durable inactive-segment publication.
+	FaultArchiveAfterSegmentDirSync ArchiveFault = "archive-after-segment-directory-sync"
+	// FaultArchiveAfterActiveTempCreate follows successor snapshot temp creation.
+	FaultArchiveAfterActiveTempCreate ArchiveFault = "archive-after-active-temp-create"
+	// FaultArchiveAfterActiveTempWrite follows writing the complete successor snapshot.
+	FaultArchiveAfterActiveTempWrite ArchiveFault = "archive-after-active-temp-write" //nolint:gosec // G101: fixed fault label.
+	// FaultArchiveAfterActiveTempSync follows syncing the successor snapshot.
+	FaultArchiveAfterActiveTempSync ArchiveFault = "archive-after-active-temp-sync"
+	// FaultArchiveBeforeActivation is the final confirmed pre-activation edge.
+	FaultArchiveBeforeActivation ArchiveFault = "archive-before-activation"
+	// FaultArchiveAfterActivation requires reopen to establish active predecessor/successor.
+	FaultArchiveAfterActivation ArchiveFault = "archive-after-activation"
+	// FaultArchiveAfterActiveDirSync follows the active-reference durability barrier.
+	FaultArchiveAfterActiveDirSync ArchiveFault = "archive-after-active-directory-sync"
+	// FaultArchiveAfterReopen follows successful full successor verification.
+	FaultArchiveAfterReopen ArchiveFault = "archive-after-reopen"
 )
 
+// ArchiveFaultInjector is a local conformance seam for one named archive
+// persistence edge. Implementations must not supply records or paths, and an
+// injected indeterminate result remains fenced until full reopen.
 type ArchiveFaultInjector interface {
 	FailArchiveAt(ArchiveFault) error
 }
 
 var (
-	ErrArchiveOwnerRequired        = errors.New("fixed supervisor archive requires the installation owner")
+	// ErrArchiveOwnerRequired through ErrArchiveOutcomeIndeterminate are closed
+	// archive-transaction failures. Owner/stale/no-cohort results create no
+	// archive authority; an indeterminate outcome requires reopening the complete
+	// active and referenced-segment world before mutation resumes.
+	ErrArchiveOwnerRequired = errors.New("fixed supervisor archive requires the installation owner")
+	// ErrArchiveOwnerSessionMismatch rejects a sealed value from another owner lifetime.
 	ErrArchiveOwnerSessionMismatch = errors.New("fixed supervisor archive owner session mismatch")
-	ErrArchiveStaleTransaction     = errors.New("fixed supervisor archive transaction is stale")
-	ErrArchiveNoEligibleCohort     = errors.New("fixed supervisor archive has no eligible cohort")
+	// ErrArchiveStaleTransaction rejects a plan/candidate whose predecessor changed.
+	ErrArchiveStaleTransaction = errors.New("fixed supervisor archive transaction is stale")
+	// ErrArchiveNoEligibleCohort reports that no complete closed cohort can move.
+	ErrArchiveNoEligibleCohort = errors.New("fixed supervisor archive has no eligible cohort")
+	// ErrArchiveOutcomeIndeterminate requires full reopen before later mutation.
 	ErrArchiveOutcomeIndeterminate = errors.New("fixed supervisor archive outcome is indeterminate")
 )
 
+// FixedStoreV2ArchivePlan is a sealed, owner-session-bound deterministic
+// selection from one fully verified v2 snapshot. It carries no caller records
+// or paths and writes nothing; a later generation or owner makes it stale.
 type FixedStoreV2ArchivePlan struct {
 	plan  archivestate.ArchivePlan
 	owner lifecyclestate.OwnerSessionID
 }
 
+// View returns a defensive path-free projection of the selected cohorts and
+// source/checkpoint bindings. The view is inspectable conformance data, not an
+// activation permit and not authority to replace the sealed plan.
 func (plan FixedStoreV2ArchivePlan) View() archivestate.ArchivePlanView { return plan.plan.View() }
 
+// PreparedFixedStoreV2Archive is a sealed in-memory candidate containing the
+// exact segment bytes and complete successor envelope derived from a plan. It
+// is not published, verified, active, or caller-constructible authority.
 type PreparedFixedStoreV2Archive struct {
 	plan          FixedStoreV2ArchivePlan
 	segmentBytes  []byte
@@ -74,22 +113,34 @@ type PreparedFixedStoreV2Archive struct {
 	candidate     diskEnvelopeV2
 }
 
+// SegmentBytes returns a defensive copy of the prepared immutable-segment
+// candidate. Possessing the bytes does not publish or activate the segment.
 func (prepared PreparedFixedStoreV2Archive) SegmentBytes() []byte {
 	return bytes.Clone(prepared.segmentBytes)
 }
 
+// SegmentDigest returns the prepared candidate's content identity. A digest
+// alone is not origin, verification, publication, checkpoint, or authority.
 func (prepared PreparedFixedStoreV2Archive) SegmentDigest() archivestate.ArchiveSegmentDigest {
 	return prepared.segmentDigest
 }
 
+// VerifiedFixedStoreV2Archive is the sealed result of independently reopening
+// and byte-checking a prepared candidate. Activation still requires the same
+// held owner, fresh predecessor bindings, publish-before-reference ordering,
+// and a complete post-commit reopen.
 type VerifiedFixedStoreV2Archive struct {
 	prepared PreparedFixedStoreV2Archive
 }
 
+// SegmentBytes returns a defensive copy of the verified candidate bytes. It
+// does not expose the successor envelope or grant direct file activation.
 func (verified VerifiedFixedStoreV2Archive) SegmentBytes() []byte {
 	return verified.prepared.SegmentBytes()
 }
 
+// SegmentDigest returns the verified candidate's content identity. Callers
+// must not treat it as proof that the active snapshot references the segment.
 func (verified VerifiedFixedStoreV2Archive) SegmentDigest() archivestate.ArchiveSegmentDigest {
 	return verified.prepared.segmentDigest
 }

@@ -16,24 +16,47 @@ const (
 	// a production engine, installed-state claim, or continuity mechanism.
 	InternalAlphaFixedStorePosture = "owner-only-disposable-alpha-oracle"
 
-	InternalAlphaMaxCumulativeAttempts  = uint64(128)
-	InternalAlphaMaxActiveStoreBytes    = uint64(8 << 20)
-	InternalAlphaMaxArchiveSegments     = uint16(16)
+	// InternalAlphaMaxCumulativeAttempts through
+	// InternalAlphaMaxDurableCommitP95 are ADR-0040's exact fail-closed owner-
+	// only alpha stops. Values are compared without clamping; reaching a count/
+	// byte threshold or exceeding a duration refuses new attempt admission.
+	InternalAlphaMaxCumulativeAttempts = uint64(128)
+	// InternalAlphaMaxActiveStoreBytes is the inclusive active-file stop at 8 MiB.
+	InternalAlphaMaxActiveStoreBytes = uint64(8 << 20)
+	// InternalAlphaMaxArchiveSegments is the inclusive referenced-segment stop.
+	InternalAlphaMaxArchiveSegments = uint16(16)
+	// InternalAlphaMaxStartupVerification is the maximum allowed full-open duration.
 	InternalAlphaMaxStartupVerification = 2 * time.Second
-	InternalAlphaMaxDurableCommitP95    = 250 * time.Millisecond
+	// InternalAlphaMaxDurableCommitP95 is the maximum supplied durable-commit p95.
+	InternalAlphaMaxDurableCommitP95 = 250 * time.Millisecond
 )
 
+// ErrInternalAlphaAttemptRefused reports that the passive checker could not
+// establish every exact ADR-0040 store condition. It creates no trip latch or
+// authority change and must not be converted into permissive fallback.
 var ErrInternalAlphaAttemptRefused = errors.New("owner-only internal-alpha fixed-store attempt refused")
 
+// InternalAlphaStoreStopReason is the fixed, content-free first-stop vocabulary
+// for the owner-only disposable-alpha policy. It is not a public execution
+// result, product admission tier, or claim that the threshold source is wired.
 type InternalAlphaStoreStopReason string
 
 const (
-	InternalAlphaStoreStopUnknownState        InternalAlphaStoreStopReason = "unknown-state"
-	InternalAlphaStoreStopCumulativeAttempts  InternalAlphaStoreStopReason = "cumulative-attempts"
-	InternalAlphaStoreStopActiveStoreBytes    InternalAlphaStoreStopReason = "active-store-bytes"
-	InternalAlphaStoreStopArchiveSegments     InternalAlphaStoreStopReason = "archive-segments"
+	// InternalAlphaStoreStopUnknownState through
+	// InternalAlphaStoreStopDurableCommitP95 identify the first failed policy
+	// dimension. Unknown provenance or incomplete verification refuses rather
+	// than being treated as a zero observation.
+	InternalAlphaStoreStopUnknownState InternalAlphaStoreStopReason = "unknown-state"
+	// InternalAlphaStoreStopCumulativeAttempts marks the 128-attempt stop.
+	InternalAlphaStoreStopCumulativeAttempts InternalAlphaStoreStopReason = "cumulative-attempts"
+	// InternalAlphaStoreStopActiveStoreBytes marks the 8 MiB active-store stop.
+	InternalAlphaStoreStopActiveStoreBytes InternalAlphaStoreStopReason = "active-store-bytes"
+	// InternalAlphaStoreStopArchiveSegments marks the 16-segment stop.
+	InternalAlphaStoreStopArchiveSegments InternalAlphaStoreStopReason = "archive-segments"
+	// InternalAlphaStoreStopStartupVerification marks a full verification over two seconds.
 	InternalAlphaStoreStopStartupVerification InternalAlphaStoreStopReason = "startup-full-verification"
-	InternalAlphaStoreStopDurableCommitP95    InternalAlphaStoreStopReason = "durable-commit-p95"
+	// InternalAlphaStoreStopDurableCommitP95 marks a p95 over 250 milliseconds.
+	InternalAlphaStoreStopDurableCommitP95 InternalAlphaStoreStopReason = "durable-commit-p95"
 )
 
 // InternalAlphaStartupVerification is a sealed, re-evaluated observation issued
@@ -59,6 +82,9 @@ type InternalAlphaDurableCommitP95 struct {
 	duration time.Duration
 }
 
+// ObserveInternalAlphaDurableCommitP95 seals a nonnegative supplied duration
+// for passive policy comparison. It does not measure, authenticate, aggregate,
+// persist, or select the production p95 source/window/lifetime.
 func ObserveInternalAlphaDurableCommitP95(duration time.Duration) (InternalAlphaDurableCommitP95, error) {
 	if duration < 0 {
 		return InternalAlphaDurableCommitP95{}, errors.New("internal-alpha durable-commit p95 cannot be negative")

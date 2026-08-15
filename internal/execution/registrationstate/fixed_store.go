@@ -21,21 +21,38 @@ import (
 type StoreFault string
 
 const (
-	SupervisorStoreFormatV0   = uint64(0)
-	SupervisorStoreFormatV1   = uint64(1)
-	MaxSupervisorStateBytes   = int64(16 << 20)
+	// SupervisorStoreFormatV0 and SupervisorStoreFormatV1 identify the closed
+	// fixed-oracle snapshot generations; the byte limits bound complete reads.
+	// Fault constants name deterministic durability edges for local tests only
+	// and never authorize a caller to alter persisted state in product use.
+	SupervisorStoreFormatV0 = uint64(0)
+	// SupervisorStoreFormatV1 adds the colocated durable lifecycle collection.
+	SupervisorStoreFormatV1 = uint64(1)
+	// MaxSupervisorStateBytes bounds complete v0 fixed-store reads.
+	MaxSupervisorStateBytes = int64(16 << 20)
+	// MaxSupervisorStateV1Bytes bounds complete v1 fixed-store reads.
 	MaxSupervisorStateV1Bytes = int64(64 << 20)
 
-	FaultTimeHighWaterWrite                  StoreFault = "time-high-water-write"
-	FaultTimeHighWaterIndeterminatePreState  StoreFault = "time-high-water-indeterminate-pre-state"
-	FaultTimeHighWaterCommitIndeterminate    StoreFault = "time-high-water-commit-indeterminate"
-	FaultRegistrationCommitAbort             StoreFault = "registration-commit-confirmed-abort"
-	FaultApprovalCommitAbort                 StoreFault = "approval-commit-confirmed-abort"
+	// FaultTimeHighWaterWrite is a confirmed failure before time persistence.
+	FaultTimeHighWaterWrite StoreFault = "time-high-water-write"
+	// FaultTimeHighWaterIndeterminatePreState fences before candidate durability is known.
+	FaultTimeHighWaterIndeterminatePreState StoreFault = "time-high-water-indeterminate-pre-state"
+	// FaultTimeHighWaterCommitIndeterminate follows the atomic time-state rename.
+	FaultTimeHighWaterCommitIndeterminate StoreFault = "time-high-water-commit-indeterminate"
+	// FaultRegistrationCommitAbort is a confirmed pre-commit registration failure.
+	FaultRegistrationCommitAbort StoreFault = "registration-commit-confirmed-abort"
+	// FaultApprovalCommitAbort is a confirmed pre-commit approval failure.
+	FaultApprovalCommitAbort StoreFault = "approval-commit-confirmed-abort"
+	// FaultApprovalCommitIndeterminatePreState fences before approval durability is known.
 	FaultApprovalCommitIndeterminatePreState StoreFault = "approval-commit-indeterminate-pre-state"
-	FaultApprovalCommitIndeterminate         StoreFault = "approval-commit-indeterminate"
-	FaultAttemptCommitAbort                  StoreFault = "attempt-commit-confirmed-abort"
-	FaultAttemptCommitIndeterminatePreState  StoreFault = "attempt-commit-indeterminate-pre-state"
-	FaultAttemptCommitIndeterminate          StoreFault = "attempt-commit-indeterminate"
+	// FaultApprovalCommitIndeterminate follows the atomic approval-state rename.
+	FaultApprovalCommitIndeterminate StoreFault = "approval-commit-indeterminate"
+	// FaultAttemptCommitAbort is a confirmed pre-commit consume/create failure.
+	FaultAttemptCommitAbort StoreFault = "attempt-commit-confirmed-abort"
+	// FaultAttemptCommitIndeterminatePreState fences before consume/create durability is known.
+	FaultAttemptCommitIndeterminatePreState StoreFault = "attempt-commit-indeterminate-pre-state"
+	// FaultAttemptCommitIndeterminate follows the atomic consume/create rename.
+	FaultAttemptCommitIndeterminate StoreFault = "attempt-commit-indeterminate"
 )
 
 // ErrCommitOutcomeIndeterminate means the atomic rename completed but the
@@ -82,6 +99,11 @@ type diskEnvelope struct {
 	State              installationState `json:"state"`
 }
 
+// NewFixedFileStore opens and fully validates an existing v0 fixed snapshot or
+// creates its one explicit mode-0600 genesis from trusted InitialState. The
+// path is an installation-configured local capability, not an IPC/public input.
+// This unwired no-archive constructor is a conformance oracle, not a product
+// store, multi-process owner boundary, continuity mechanism, or guest authority.
 func NewFixedFileStore(path string, initial InitialState) (*FixedFileStore, error) {
 	if path == "" {
 		return nil, errors.New("fixed registration store path is required")

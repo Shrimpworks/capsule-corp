@@ -7,7 +7,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
-	"strings"
 	"sync"
 	"testing"
 
@@ -819,144 +818,126 @@ func TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFa
 		assertQuarantinedTrustState(t, harness)
 	})
 
-}
+	t.Run("duplicate-instance-on-applied-quarantines-without-adoption", func(t *testing.T) {
+		harness := newLifecycleTransactionHarness(t, 2)
+		sharedInstance, err := lifecyclestate.NewBackendInstanceIdentity(
+			lifecyclestate.BackendInstanceFake, []byte("shared-instance"),
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		preparedResult, err := lifecyclestate.NewEffectResult(
+			lifecyclestate.OperationPrepare, lifecyclestate.EffectResultApplied, lifecyclestate.BackendInstanceIdentity{},
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-// TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead
-// documents a defect found while adding issue #271's coverage, rather than
-// silently patching it: when CompleteReconciliation's validation catches a
-// duplicate instance identity reported via a ReconciliationApplied create
-// result (as opposed to the already-tested ConfirmEffect-side collision in
-// TestDurableLifecycleCreateIdentityCollisionQuarantinesWithoutAdoption), its
-// error-handling branch (lifecycle_store.go around L645-658) resets State,
-// EffectStatus, LastReconciliation, RecoveryFence, and NextRecoveryAt to
-// quarantine values, but never clears the Instance field that
-// applyReconciliationResult/applyConfirmedEffect had already adopted onto
-// the record a few lines earlier. The quarantined record is then committed
-// still carrying the colliding instance identity, so the store's own
-// whole-state invariant check (validateV1State, fixed_store_v1.go ~L629-633)
-// rejects the candidate state with "fixed lifecycle state has a duplicate
-// instance identity" before it can ever be persisted. The intended
-// quarantine-without-adoption transition for this specific disposition can
-// never durably complete: RecordReconciliation/CompleteReconciliation always
-// return this internal invariant error instead of quarantining, and the
-// second attempt is left stuck rather than fenced.
-//
-// This is a security-relevant gap (the deny-by-default quarantine defense
-// silently fails to fire, and callers just get an opaque store error), but
-// fixing it is out of scope for issue #271, which asks to stop and report
-// rather than fix this defect under a test-only issue. This test pins today's
-// actual (defective) behavior so any future change to it is deliberate; do
-// not "fix" it by loosening this assertion without also fixing
-// CompleteReconciliation to clear the colliding instance before quarantining.
-func TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead(t *testing.T) {
-	harness := newLifecycleTransactionHarness(t, 2)
-	sharedInstance, err := lifecyclestate.NewBackendInstanceIdentity(
-		lifecyclestate.BackendInstanceFake, []byte("shared-instance"),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	preparedResult, err := lifecyclestate.NewEffectResult(
-		lifecyclestate.OperationPrepare, lifecyclestate.EffectResultApplied, lifecyclestate.BackendInstanceIdentity{},
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
+		firstID := harness.attemptIDs[0]
+		firstRecord, _, err := harness.store.EnsureLifecycle(context.Background(), firstID, harness.backend)
+		if err != nil {
+			t.Fatal(err)
+		}
+		firstPrepare, err := harness.store.BeginEffect(
+			context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		firstRecord, err = harness.store.ConfirmEffect(context.Background(), firstPrepare, preparedResult)
+		if err != nil {
+			t.Fatal(err)
+		}
+		firstCreate, err := harness.store.BeginEffect(
+			context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationCreate,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		firstCreatedResult, err := lifecyclestate.NewEffectResult(
+			lifecyclestate.OperationCreate, lifecyclestate.EffectResultApplied, sharedInstance,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := harness.store.ConfirmEffect(context.Background(), firstCreate, firstCreatedResult); err != nil {
+			t.Fatal(err)
+		}
 
-	firstID := harness.attemptIDs[0]
-	firstRecord, _, err := harness.store.EnsureLifecycle(context.Background(), firstID, harness.backend)
-	if err != nil {
-		t.Fatal(err)
-	}
-	firstPrepare, err := harness.store.BeginEffect(
-		context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	firstRecord, err = harness.store.ConfirmEffect(context.Background(), firstPrepare, preparedResult)
-	if err != nil {
-		t.Fatal(err)
-	}
-	firstCreate, err := harness.store.BeginEffect(
-		context.Background(), firstID, firstRecord.View().RecordVersion, lifecyclestate.OperationCreate,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	firstCreatedResult, err := lifecyclestate.NewEffectResult(
-		lifecyclestate.OperationCreate, lifecyclestate.EffectResultApplied, sharedInstance,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err := harness.store.ConfirmEffect(context.Background(), firstCreate, firstCreatedResult); err != nil {
-		t.Fatal(err)
-	}
+		secondID := harness.attemptIDs[1]
+		secondRecord, _, err := harness.store.EnsureLifecycle(context.Background(), secondID, harness.backend)
+		if err != nil {
+			t.Fatal(err)
+		}
+		secondPrepare, err := harness.store.BeginEffect(
+			context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		secondRecord, err = harness.store.ConfirmEffect(context.Background(), secondPrepare, preparedResult)
+		if err != nil {
+			t.Fatal(err)
+		}
+		secondCreate, err := harness.store.BeginEffect(
+			context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationCreate,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		secondRecord, err = harness.store.RecordIndeterminate(
+			context.Background(), secondCreate, ClassificationRecoveryRequired,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		duplicateApplied, err := lifecyclestate.NewReconcileResult(
+			lifecyclestate.OperationCreate, lifecyclestate.ReconciliationApplied, sharedInstance,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	secondID := harness.attemptIDs[1]
-	secondRecord, _, err := harness.store.EnsureLifecycle(context.Background(), secondID, harness.backend)
-	if err != nil {
-		t.Fatal(err)
-	}
-	secondPrepare, err := harness.store.BeginEffect(
-		context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationPrepare,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	secondRecord, err = harness.store.ConfirmEffect(context.Background(), secondPrepare, preparedResult)
-	if err != nil {
-		t.Fatal(err)
-	}
-	secondCreate, err := harness.store.BeginEffect(
-		context.Background(), secondID, secondRecord.View().RecordVersion, lifecyclestate.OperationCreate,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-	secondRecord, err = harness.store.RecordIndeterminate(context.Background(), secondCreate, ClassificationRecoveryRequired)
-	if err != nil {
-		t.Fatal(err)
-	}
-	duplicateApplied, err := lifecyclestate.NewReconcileResult(
-		lifecyclestate.OperationCreate, lifecyclestate.ReconciliationApplied, sharedInstance,
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
+		quarantined, err := harness.store.RecordReconciliation(
+			context.Background(), secondID, secondRecord.View().RecordVersion, duplicateApplied,
+		)
+		if err != nil {
+			t.Fatalf("duplicate-instance applied reconciliation returned an error instead of quarantining: %v", err)
+		}
+		view := quarantined.View()
+		if view.State != lifecyclestate.StateQuarantined ||
+			view.EffectStatus != lifecyclestate.EffectIndeterminate ||
+			view.LastReconciliation != lifecyclestate.ReconciliationIdentityMismatch ||
+			view.RecoveryFence != lifecyclestate.RecoveryFenceIdentityMismatch ||
+			view.Instance.Present() {
+			t.Fatalf("duplicate-instance applied quarantine transition = %#v", view)
+		}
+		if view.LastConfirmedCheckpoint != lifecyclestate.CheckpointPrepare {
+			t.Fatalf("duplicate-instance applied checkpoint = %s", view.LastConfirmedCheckpoint)
+		}
+		assertQuarantinedTrustState(t, harness)
 
-	// BeginReconciliation's eligibility checkpoint (AutomaticRecoveryCount++,
-	// LastReconciliation reset to none) is a separate durable commit from the
-	// result commit that fails below; only the result side is broken here, so
-	// this intentionally does not assert the file is byte-for-byte unchanged.
-	_, err = harness.store.RecordReconciliation(
-		context.Background(), secondID, secondRecord.View().RecordVersion, duplicateApplied,
-	)
-	if err == nil {
-		t.Fatal("expected the known duplicate-instance-on-applied defect to still fail closed; " +
-			"if this now succeeds, CompleteReconciliation was fixed to clear the colliding instance " +
-			"before quarantining - update this test to assert the correct quarantine transition and " +
-			"fold it back into TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFailure")
-	}
-	if !strings.Contains(err.Error(), "duplicate instance identity") {
-		t.Fatalf("unexpected failure mode for the known defect, got: %v", err)
-	}
+		firstStillOwns, err := harness.store.ReadLifecycle(context.Background(), firstID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !firstStillOwns.View().Instance.Present() || firstStillOwns.View().Instance.Digest() != sharedInstance.Digest() {
+			t.Fatalf("original instance owner lost its binding: %#v", firstStillOwns.View())
+		}
 
-	stuck, err := harness.store.ReadLifecycle(context.Background(), secondID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if stuck.View().State == lifecyclestate.StateQuarantined {
-		t.Fatal("second attempt unexpectedly reached quarantine; the defect appears fixed, see comment above")
-	}
-	firstStillOwns, err := harness.store.ReadLifecycle(context.Background(), firstID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !firstStillOwns.View().Instance.Present() || firstStillOwns.View().Instance.Digest() != sharedInstance.Digest() {
-		t.Fatalf("original instance owner lost its binding: %#v", firstStillOwns.View())
-	}
+		reopened, err := OpenFixedFileStoreV1(harness.path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		reopenedSecond, err := reopened.ReadLifecycle(context.Background(), secondID)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if reopenedSecond.View().State != lifecyclestate.StateQuarantined || reopenedSecond.View().Instance.Present() ||
+			reopened.state.TrustPhase != TrustRepairRequired || !reopened.state.AttemptsDisabled {
+			t.Fatalf("reopened duplicate-instance quarantine = %#v, trust = %#v", reopenedSecond.View(), reopened.state)
+		}
+	})
 }
 
 func TestDurableLifecycleCapacityReservationAndExpiredAuthorityRecovery(t *testing.T) {

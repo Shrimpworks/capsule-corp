@@ -8,6 +8,9 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
+// Options supplies only Supervisor-owned registration dependencies. Store,
+// trusted clock, and identifier source are mandatory; Checkpoint is an
+// optional test hook and must not perform product work or grant authority.
 type Options struct {
 	Store       StateStore
 	Clock       TrustedClock
@@ -24,6 +27,9 @@ type Component struct {
 	checkpoint  CheckpointHook
 }
 
+// New constructs the unwired registration component after rejecting missing
+// authority dependencies. Construction opens no IPC endpoint, persists no
+// state, admits no runtime/backend, and creates no guest.
 func New(options Options) (*Component, error) {
 	if options.Store == nil || options.Clock == nil || options.Identifiers == nil {
 		return nil, errors.New("registration store, trusted clock, and identifier source are required")

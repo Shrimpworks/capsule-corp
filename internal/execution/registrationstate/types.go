@@ -18,33 +18,64 @@ import (
 )
 
 const (
+	// RegistrationLifetimeSeconds is the trusted maximum lifetime admitted
+	// between the Supervisor's durable effective time and a plan's expiry.
+	// The remaining constants are fixed local store capacities, format labels,
+	// and authenticated method purposes; callers may not override them.
 	RegistrationLifetimeSeconds = uint64(300)
-	MaxUnexpiredRegistrations   = 256
-	MaxRetainedRegistrations    = 4_096
-	StorageFormatVersion        = uint64(0)
-	RetentionStateRetained      = "retained"
-	RegisterPlanPurpose         = "register-plan"
-	SubmitApprovalPurpose       = "submit-approval"
-	RequestAttemptPurpose       = "request-attempt"
+	// MaxUnexpiredRegistrations caps concurrently usable registration authority.
+	MaxUnexpiredRegistrations = 256
+	// MaxRetainedRegistrations caps retained v0 records without eviction.
+	MaxRetainedRegistrations = 4_096
+	// StorageFormatVersion binds the retained registration-record shape.
+	StorageFormatVersion = uint64(0)
+	// RetentionStateRetained is the only admitted v0 record-retention state.
+	RetentionStateRetained = "retained"
+	// RegisterPlanPurpose authenticates daemon-to-Supervisor registration calls.
+	RegisterPlanPurpose = "register-plan"
+	// SubmitApprovalPurpose authenticates Broker-to-Supervisor submission calls.
+	SubmitApprovalPurpose = "submit-approval"
+	// RequestAttemptPurpose authenticates daemon-to-Supervisor attempt calls.
+	RequestAttemptPurpose = "request-attempt"
 )
 
+// Classification is the package's closed, content-free conformance failure
+// vocabulary. It identifies the boundary that refused an operation without
+// becoming a public protocol error or carrying caller-controlled prose.
 type Classification string
 
 const (
-	ClassificationMalformed         Classification = "MALFORMED"
-	ClassificationUnsupported       Classification = "UNSUPPORTED"
-	ClassificationSchema            Classification = "SCHEMA"
-	ClassificationPolicy            Classification = "POLICY"
-	ClassificationBinding           Classification = "BINDING"
-	ClassificationDomain            Classification = "DOMAIN"
-	ClassificationAuthentication    Classification = "AUTHENTICATION"
-	ClassificationStale             Classification = "STALE"
-	ClassificationCapacity          Classification = "CAPACITY"
-	ClassificationLocalFailure      Classification = "LOCAL_FAILURE"
-	ClassificationTrustState        Classification = "TRUST_STATE"
-	ClassificationLifecycleFailure  Classification = "LIFECYCLE_FAILURE"
+	// ClassificationMalformed through ClassificationRecoveryRequired separate
+	// request defects, authority-binding failures, capacity, local failure, and
+	// indeterminate recovery. Callers must handle unknown errors fail closed and
+	// must not treat any classification as permission to retry an effect.
+	ClassificationMalformed Classification = "MALFORMED"
+	// ClassificationUnsupported rejects a recognized boundary's unavailable feature/version.
+	ClassificationUnsupported Classification = "UNSUPPORTED"
+	// ClassificationSchema rejects a known object with an invalid closed shape.
+	ClassificationSchema Classification = "SCHEMA"
+	// ClassificationPolicy rejects valid input under trusted fixed policy.
+	ClassificationPolicy Classification = "POLICY"
+	// ClassificationBinding rejects disagreement with retained authority facts.
+	ClassificationBinding Classification = "BINDING"
+	// ClassificationDomain rejects a valid-width value used in the wrong role.
+	ClassificationDomain Classification = "DOMAIN"
+	// ClassificationAuthentication rejects an unauthenticated or wrong-role/purpose caller.
+	ClassificationAuthentication Classification = "AUTHENTICATION"
+	// ClassificationStale rejects expired, fenced, superseded, or sequence-invalid state.
+	ClassificationStale Classification = "STALE"
+	// ClassificationCapacity rejects a fixed bound without eviction or authority change.
+	ClassificationCapacity Classification = "CAPACITY"
+	// ClassificationLocalFailure reports a confirmed local prerequisite failure.
+	ClassificationLocalFailure Classification = "LOCAL_FAILURE"
+	// ClassificationTrustState rejects quarantined or repair-required installation state.
+	ClassificationTrustState Classification = "TRUST_STATE"
+	// ClassificationLifecycleFailure records an unresolved lifecycle operation failure.
+	ClassificationLifecycleFailure Classification = "LIFECYCLE_FAILURE"
+	// ClassificationCleanupUnresolved records cleanup whose authoritative result is unknown.
 	ClassificationCleanupUnresolved Classification = "CLEANUP_UNRESOLVED"
-	ClassificationRecoveryRequired  Classification = "RECOVERY_REQUIRED"
+	// ClassificationRecoveryRequired fences an indeterminate or invalid durable state.
+	ClassificationRecoveryRequired Classification = "RECOVERY_REQUIRED"
 )
 
 type stateError struct {
@@ -78,11 +109,19 @@ func ErrorClassification(err error) (Classification, bool) {
 	return "", false
 }
 
+// CallerRole names the authenticated local role asserted by the future IPC
+// boundary. A role is an identity classification only; each operation also
+// requires its exact method purpose and repeats state/binding validation.
 type CallerRole string
 
 const (
-	CallerDaemon  CallerRole = "daemon"
-	CallerBroker  CallerRole = "broker"
+	// CallerDaemon identifies the planning daemon role for exact registration
+	// and attempt-request purposes. The value grants no authority when supplied
+	// through an unauthenticated or wrong-purpose call context.
+	CallerDaemon CallerRole = "daemon"
+	// CallerBroker identifies the trusted approval/content Broker role.
+	CallerBroker CallerRole = "broker"
+	// CallerUpdater identifies the external-trust/update role; it has no registration authority here.
 	CallerUpdater CallerRole = "updater"
 )
 
@@ -94,12 +133,19 @@ type AuthenticatedCallContext struct {
 	Purpose       string
 }
 
+// TrustPhase records whether the local installation state may admit authority,
+// is fenced during a transition, or requires repair. Only TrustStable admits
+// new work; package callers cannot clear or normalize another phase.
 type TrustPhase string
 
 const (
-	TrustStable           TrustPhase = "stable"
+	// TrustStable is the only phase that may admit new authority after every
+	// other binding and policy check passes; it is not proof of product readiness.
+	TrustStable TrustPhase = "stable"
+	// TrustTransitionFenced blocks admission during an incomplete trust transition.
 	TrustTransitionFenced TrustPhase = "transition-fenced"
-	TrustRepairRequired   TrustPhase = "repair-required"
+	// TrustRepairRequired blocks admission until an explicit evidence-preserving repair.
+	TrustRepairRequired TrustPhase = "repair-required"
 )
 
 const sequenceExhaustedReason = "registration-sequence-exhausted"
@@ -127,10 +173,16 @@ type PlanRegistration struct {
 	view  v0candidate.PlanRegistration
 }
 
+// Bytes returns a defensive copy of the exact deterministic-CBOR registration
+// response. The bytes are a typed local response, not signed portable authority
+// and never contain or replace the Supervisor-retained plan bytes.
 func (registration PlanRegistration) Bytes() []byte {
 	return bytes.Clone(registration.bytes)
 }
 
+// View returns the decoded, typed projection of the Supervisor-issued wire
+// response. The projection is informational until its bindings are resolved
+// against Supervisor-retained state and does not contain the plan bytes.
 func (registration PlanRegistration) View() v0candidate.PlanRegistration {
 	return registration.view
 }
@@ -230,16 +282,28 @@ type stateSnapshot struct {
 	Records                    []StoredRegistration
 }
 
+// TrustedClock supplies a nonnegative UInt53 Unix-second observation to the
+// Supervisor-owned durable high-water rule. Implementations must report
+// observation failure rather than substitute, clamp, or move time backward.
 type TrustedClock interface {
 	ObserveUnixSeconds(context.Context) (uint64, error)
 }
 
+// IdentifierSource supplies fresh Supervisor-owned registration identities.
+// The store rejects zero and retained collisions; callers never provide a
+// registration ID through this port.
 type IdentifierSource interface {
 	NewRegistrationID(context.Context) (v0candidate.RegistrationID, error)
 }
 
+// SystemTrustedClock is the local wall-clock implementation used by unwired
+// conformance components. Durable monotonicity comes from the store high-water,
+// not from this stateless source or from a platform-attestation claim.
 type SystemTrustedClock struct{}
 
+// ObserveUnixSeconds returns the current whole Unix second after cancellation
+// and UInt53-range checks. It performs no persistence; the caller must commit
+// the observation before relying on it for expiry or authority decisions.
 func (SystemTrustedClock) ObserveUnixSeconds(ctx context.Context) (uint64, error) {
 	if err := ctx.Err(); err != nil {
 		return 0, err
@@ -251,8 +315,14 @@ func (SystemTrustedClock) ObserveUnixSeconds(ctx context.Context) (uint64, error
 	return uint64(now), nil
 }
 
+// CryptoIdentifierSource draws opaque registration IDs from the operating
+// system cryptographic random source. Uniqueness and durable non-reuse remain
+// store obligations, including across all visible retained history.
 type CryptoIdentifierSource struct{}
 
+// NewRegistrationID returns one caller-independent candidate identity or an
+// error. The value does not grant registration authority until committed with
+// the complete Supervisor record in one store transaction.
 func (CryptoIdentifierSource) NewRegistrationID(
 	ctx context.Context,
 ) (v0candidate.RegistrationID, error) {
@@ -266,10 +336,17 @@ func (CryptoIdentifierSource) NewRegistrationID(
 	return identifier, nil
 }
 
+// Checkpoint identifies test-only observation edges in registration handling.
+// It is not a durable lifecycle checkpoint, execution permission, or evidence
+// that a registration transaction committed.
 type Checkpoint string
 
 const (
-	CheckpointPlanDecoded       Checkpoint = "plan-decoded"
+	// CheckpointPlanDecoded and CheckpointTimeHighWaterDone bracket validation
+	// and durable-time persistence for deterministic fault/concurrency tests.
+	// Hooks must not be used as product callbacks or authority sources.
+	CheckpointPlanDecoded Checkpoint = "plan-decoded"
+	// CheckpointTimeHighWaterDone follows confirmed durable time persistence.
 	CheckpointTimeHighWaterDone Checkpoint = "time-high-water-durable"
 )
 
@@ -278,6 +355,10 @@ const (
 // defensive copies.
 type CheckpointHook func(context.Context, Checkpoint, *v0candidate.DecodedExecutionPlan)
 
+// StateStore is the package-private Supervisor transaction seam shared by
+// registration and approval/attempt components. Implementations must return
+// defensive state, preserve atomic consume/create semantics, and fence every
+// indeterminate outcome before later mutation; it is not a public store API.
 type StateStore interface {
 	snapshot(context.Context) (installationState, error)
 	persistTimeHighWater(context.Context, v0candidate.UInt53) error

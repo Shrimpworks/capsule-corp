@@ -19,14 +19,25 @@ import (
 )
 
 const (
+	// FaultV2MigrationAfterTempCreate through FaultV2MigrationAfterDirSync name
+	// deterministic F2 persistence edges. Pre-rename failures preserve v1;
+	// post-rename outcomes require full reopen and never permit normalization,
+	// downgrade, or authority reconstruction from partial bytes.
 	FaultV2MigrationAfterTempCreate MigrationFault = "v2-migration-after-temp-create"
-	FaultV2MigrationAfterTempMode   MigrationFault = "v2-migration-after-temp-mode"
-	FaultV2MigrationAfterTempWrite  MigrationFault = "v2-migration-after-temp-write" //nolint:gosec // G101: fixed fault label, not a credential.
-	FaultV2MigrationAfterTempSync   MigrationFault = "v2-migration-after-temp-sync"
-	FaultV2MigrationAfterTempClose  MigrationFault = "v2-migration-after-temp-close"
-	FaultV2MigrationBeforeRename    MigrationFault = "v2-migration-before-rename"
-	FaultV2MigrationAfterRename     MigrationFault = "v2-migration-after-rename"
-	FaultV2MigrationAfterDirSync    MigrationFault = "v2-migration-after-directory-sync"
+	// FaultV2MigrationAfterTempMode follows protection of the candidate file.
+	FaultV2MigrationAfterTempMode MigrationFault = "v2-migration-after-temp-mode"
+	// FaultV2MigrationAfterTempWrite follows writing the complete candidate bytes.
+	FaultV2MigrationAfterTempWrite MigrationFault = "v2-migration-after-temp-write" //nolint:gosec // G101: fixed fault label, not a credential.
+	// FaultV2MigrationAfterTempSync follows syncing the complete candidate file.
+	FaultV2MigrationAfterTempSync MigrationFault = "v2-migration-after-temp-sync"
+	// FaultV2MigrationAfterTempClose follows closing the synced candidate file.
+	FaultV2MigrationAfterTempClose MigrationFault = "v2-migration-after-temp-close"
+	// FaultV2MigrationBeforeRename is the final confirmed-abort migration edge.
+	FaultV2MigrationBeforeRename MigrationFault = "v2-migration-before-rename"
+	// FaultV2MigrationAfterRename requires reopen to establish v1 or v2 truth.
+	FaultV2MigrationAfterRename MigrationFault = "v2-migration-after-rename"
+	// FaultV2MigrationAfterDirSync follows the successor directory durability barrier.
+	FaultV2MigrationAfterDirSync MigrationFault = "v2-migration-after-directory-sync"
 )
 
 const migrationGenesisKind = "migration-genesis"

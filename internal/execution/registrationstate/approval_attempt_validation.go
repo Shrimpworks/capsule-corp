@@ -11,12 +11,21 @@ import (
 )
 
 const (
-	MaxUsableApprovals     = 256
-	MaxRetainedApprovals   = 4_096
+	// MaxUsableApprovals through MaxRetainedAttempts are inclusive, no-eviction
+	// fixed-oracle ceilings; the format constants bind the retained approval and
+	// immutable created-attempt record versions. Capacity failure never permits
+	// deleting authority or resurrecting an approval.
+	MaxUsableApprovals = 256
+	// MaxRetainedApprovals caps durable approval history without eviction.
+	MaxRetainedApprovals = 4_096
+	// MaxNonterminalAttempts caps immutable attempts still owning active capacity.
 	MaxNonterminalAttempts = 256
-	MaxRetainedAttempts    = 4_096
-	ApprovalStoreVersion   = uint64(0)
-	AttemptStoreVersion    = uint64(0)
+	// MaxRetainedAttempts caps durable attempt history without eviction.
+	MaxRetainedAttempts = 4_096
+	// ApprovalStoreVersion binds the retained exact approval record shape.
+	ApprovalStoreVersion = uint64(0)
+	// AttemptStoreVersion binds the immutable created-attempt record shape.
+	AttemptStoreVersion = uint64(0)
 )
 
 func validateApprovalAttemptState(state installationState, enforceAttemptCapacity bool) error {

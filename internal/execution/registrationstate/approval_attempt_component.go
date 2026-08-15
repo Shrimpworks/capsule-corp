@@ -12,6 +12,9 @@ import (
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
+// ApprovalLifetimeSeconds is the trusted maximum signed approval interval.
+// Submission and consumption also require the durable effective time to remain
+// strictly before both approval and registration expiry; callers cannot extend it.
 const ApprovalLifetimeSeconds = uint64(300)
 
 type approvalAttemptStateError struct {
@@ -31,16 +34,28 @@ func approvalAttemptClassified(classification approvalattempt.Classification, co
 	return &approvalAttemptStateError{classification: classification, code: code}
 }
 
+// ApprovalIdentifierSource supplies fresh Supervisor-owned approval IDs.
+// The authority store rejects zero and retained collisions; Broker input never
+// selects this durable identity.
 type ApprovalIdentifierSource interface {
 	NewApprovalID(context.Context) (approvalattempt.ApprovalID, error)
 }
 
+// AttemptIdentifierSource supplies fresh Supervisor-owned execution-attempt
+// IDs immediately before consume/create. The store rejects zero and collisions,
+// and the signed attempt nonce is never substituted for this identity.
 type AttemptIdentifierSource interface {
 	NewAttemptID(context.Context) (approvalattempt.AttemptID, error)
 }
 
+// CryptoApprovalIdentifierSource draws opaque approval IDs from the operating
+// system cryptographic random source. Durable uniqueness remains a store check,
+// not a property inferred from successful randomness alone.
 type CryptoApprovalIdentifierSource struct{}
 
+// NewApprovalID returns one candidate approval identity or an error. It grants
+// no authority unless the Supervisor atomically commits the verified approval
+// record with every binding and replay check satisfied.
 func (CryptoApprovalIdentifierSource) NewApprovalID(ctx context.Context) (approvalattempt.ApprovalID, error) {
 	if err := ctx.Err(); err != nil {
 		return approvalattempt.ApprovalID{}, err
@@ -50,8 +65,14 @@ func (CryptoApprovalIdentifierSource) NewApprovalID(ctx context.Context) (approv
 	return identifier, err
 }
 
+// CryptoAttemptIdentifierSource draws opaque AttemptID candidates from the
+// operating system cryptographic random source. It neither derives from nor
+// aliases ApprovalID or AttemptNonce domains.
 type CryptoAttemptIdentifierSource struct{}
 
+// NewAttemptID returns one candidate attempt identity or an error. The value
+// becomes authoritative only in the atomic transaction that consumes exactly
+// one usable approval and creates exactly one immutable attempt.
 func (CryptoAttemptIdentifierSource) NewAttemptID(ctx context.Context) (approvalattempt.AttemptID, error) {
 	if err := ctx.Err(); err != nil {
 		return approvalattempt.AttemptID{}, err
@@ -61,6 +82,10 @@ func (CryptoAttemptIdentifierSource) NewAttemptID(ctx context.Context) (approval
 	return identifier, err
 }
 
+// IntegrityPreflight is the closed binding set passed to a point-in-time
+// runtime-integrity assessor before approval consumption. Its values originate
+// in Supervisor-retained approval/registration state, never caller replacement
+// bytes, and it is not an exported attestation.
 type IntegrityPreflight struct {
 	ApprovalID     approvalattempt.ApprovalID
 	RegistrationID v0candidate.RegistrationID
@@ -71,27 +96,49 @@ type IntegrityPreflight struct {
 	SupervisorID   v0candidate.SupervisorID
 }
 
+// RuntimeIntegrityAssessor evaluates the exact retained preflight without
+// creating backend, lifecycle, content, or guest effects. Failure leaves a
+// still-usable approval unconsumed, although trusted state may tighten closed.
 type RuntimeIntegrityAssessor interface {
 	Assess(context.Context, IntegrityPreflight) (RuntimeIntegrityAssessment, error)
 }
 
+// RuntimeIntegrityAssessment is a point-in-time internal proceed decision
+// bound back to the supplied preflight and durable effective second. The caller
+// must reject mismatched, stale, failed, or non-permitted assessments.
 type RuntimeIntegrityAssessment struct {
 	Preflight  IntegrityPreflight
 	AssessedAt v0candidate.UInt53
 	Permitted  bool
 }
 
+// ApprovalAttemptCheckpoint identifies test-only edges around approval and
+// consume/create commits. A checkpoint observation is not durable authority,
+// lifecycle state, product evidence, or permission to call a backend.
 type ApprovalAttemptCheckpoint string
 
 const (
+	// CheckpointBeforeApprovalCommit through CheckpointAfterAttemptCommit let
+	// deterministic tests distinguish confirmed-abort from response-loss edges.
+	// Production behavior must derive truth from reopened store state instead.
 	CheckpointBeforeApprovalCommit ApprovalAttemptCheckpoint = "before-approval-commit"
-	CheckpointAfterApprovalCommit  ApprovalAttemptCheckpoint = "after-approval-commit"
-	CheckpointBeforeAttemptCommit  ApprovalAttemptCheckpoint = "before-attempt-commit"
-	CheckpointAfterAttemptCommit   ApprovalAttemptCheckpoint = "after-attempt-commit"
+	// CheckpointAfterApprovalCommit models response loss after approval durability.
+	CheckpointAfterApprovalCommit ApprovalAttemptCheckpoint = "after-approval-commit"
+	// CheckpointBeforeAttemptCommit precedes atomic consume/create durability.
+	CheckpointBeforeAttemptCommit ApprovalAttemptCheckpoint = "before-attempt-commit"
+	// CheckpointAfterAttemptCommit models response loss after atomic consume/create.
+	CheckpointAfterAttemptCommit ApprovalAttemptCheckpoint = "after-attempt-commit"
 )
 
+// ApprovalAttemptCheckpointHook is a local fault/concurrency test seam. An
+// error before a commit models interruption; an error after it models a lost
+// response and must never roll back or duplicate the committed authority.
 type ApprovalAttemptCheckpointHook func(context.Context, ApprovalAttemptCheckpoint) error
 
+// ApprovalAttemptOptions supplies the Supervisor-owned authority dependencies.
+// All except Checkpoint are mandatory; the verifier must return exact verified
+// bytes and trusted authorization identity, and none of these ports may call a
+// lifecycle adapter or backend.
 type ApprovalAttemptOptions struct {
 	Store               StateStore
 	Clock               TrustedClock
@@ -115,6 +162,9 @@ type ApprovalAttemptComponent struct {
 	checkpoint          ApprovalAttemptCheckpointHook
 }
 
+// NewApprovalAttempt constructs the unwired durable approval/attempt boundary
+// after requiring every authority dependency. It opens no listener, performs
+// no signing, creates no attempt, and invokes no lifecycle or backend effect.
 func NewApprovalAttempt(options ApprovalAttemptOptions) (*ApprovalAttemptComponent, error) {
 	if options.Store == nil || options.Clock == nil || options.Verifier == nil ||
 		options.ApprovalIdentifiers == nil || options.AttemptIdentifiers == nil || options.Integrity == nil {
@@ -134,6 +184,11 @@ func NewApprovalAttempt(options ApprovalAttemptOptions) (*ApprovalAttemptCompone
 	}, nil
 }
 
+// SubmitApproval admits exact signed-envelope bytes only from the authenticated
+// Broker purpose, verifies all retained registration/key/time/replay bindings,
+// and commits one usable approval before returning a defensive reference.
+// Canonical-payload replay is idempotent; rejection creates no authority, while
+// an indeterminate commit fences mutation until reopen.
 func (component *ApprovalAttemptComponent) SubmitApproval(
 	ctx context.Context,
 	call AuthenticatedCallContext,
@@ -246,6 +301,10 @@ func (component *ApprovalAttemptComponent) SubmitApproval(
 	return approvalSubmission(committed)
 }
 
+// RequestAttempt accepts only an authenticated daemon call, RegistrationID,
+// and Supervisor-issued ApprovalReference. After point-in-time preflight it
+// atomically burns the usable approval and creates one immutable AttemptID
+// before any lifecycle/backend effect; exact replay returns the same attempt.
 func (component *ApprovalAttemptComponent) RequestAttempt(
 	ctx context.Context,
 	call AuthenticatedCallContext,
@@ -394,6 +453,9 @@ func (component *ApprovalAttemptComponent) RequestAttempt(
 	return attemptCreation(created)
 }
 
+// Approval resolves one retained approval reference to a defensive record.
+// It refuses while recovery is fenced and grants no new usability, consume,
+// signing, lifecycle, or backend authority.
 func (component *ApprovalAttemptComponent) Approval(
 	ctx context.Context,
 	reference approvalattempt.ApprovalReference,
@@ -414,6 +476,9 @@ func (component *ApprovalAttemptComponent) Approval(
 	return approvalattempt.CloneApprovalRecord(state.Approvals[index]), nil
 }
 
+// Attempt resolves one retained AttemptReference to its immutable created
+// record. It refuses while recovery is fenced and does not drive, recover, or
+// classify lifecycle/backend work.
 func (component *ApprovalAttemptComponent) Attempt(
 	ctx context.Context,
 	reference approvalattempt.AttemptReference,
@@ -507,6 +572,10 @@ func consumedApprovalBinding(record approvalattempt.ApprovalRecord) ConsumedAppr
 	}
 }
 
+// CreatedAttempts returns defensive references for every retained immutable
+// created attempt. It is a local recovery projection only: callers must still
+// use AttemptID-only lifecycle recovery, and a returned reference is not proof
+// of completion, cleanup, backend absence, or product admission.
 func (component *ApprovalAttemptComponent) CreatedAttempts(ctx context.Context) ([]approvalattempt.AttemptReference, error) {
 	if component.store.recoveryFenced() {
 		return nil, approvalAttemptClassified(

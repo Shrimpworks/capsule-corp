@@ -24,34 +24,59 @@ import (
 type LifecycleStoreFault string
 
 const (
-	FaultLifecycleEnsureAbort                 LifecycleStoreFault = "lifecycle-ensure-confirmed-abort"
+	// FaultLifecycleEnsureAbort through
+	// FaultLifecycleReconciliationResultIndeterminate name deterministic E3/E4
+	// persistence edges. Abort values mean no candidate commit; indeterminate
+	// values fence mutation until reopen establishes the complete durable state.
+	FaultLifecycleEnsureAbort LifecycleStoreFault = "lifecycle-ensure-confirmed-abort"
+	// FaultLifecycleEnsureIndeterminatePreState fences before lifecycle creation durability is known.
 	FaultLifecycleEnsureIndeterminatePreState LifecycleStoreFault = "lifecycle-ensure-indeterminate-pre-state"
-	FaultLifecycleEnsureIndeterminate         LifecycleStoreFault = "lifecycle-ensure-commit-indeterminate"
+	// FaultLifecycleEnsureIndeterminate follows lifecycle-record rename.
+	FaultLifecycleEnsureIndeterminate LifecycleStoreFault = "lifecycle-ensure-commit-indeterminate"
 
-	FaultLifecycleIntentAbort                 LifecycleStoreFault = "lifecycle-intent-confirmed-abort"
+	// FaultLifecycleIntentAbort is a confirmed failure before effect-intent commit.
+	FaultLifecycleIntentAbort LifecycleStoreFault = "lifecycle-intent-confirmed-abort"
+	// FaultLifecycleIntentIndeterminatePreState fences before intent durability is known.
 	FaultLifecycleIntentIndeterminatePreState LifecycleStoreFault = "lifecycle-intent-indeterminate-pre-state"
-	FaultLifecycleIntentIndeterminate         LifecycleStoreFault = "lifecycle-intent-commit-indeterminate"
+	// FaultLifecycleIntentIndeterminate follows effect-intent rename.
+	FaultLifecycleIntentIndeterminate LifecycleStoreFault = "lifecycle-intent-commit-indeterminate"
 
-	FaultLifecycleAfterEffectAbort                 LifecycleStoreFault = "lifecycle-after-effect-confirmed-abort"
+	// FaultLifecycleAfterEffectAbort is a confirmed result-commit failure that fences successor effects.
+	FaultLifecycleAfterEffectAbort LifecycleStoreFault = "lifecycle-after-effect-confirmed-abort"
+	// FaultLifecycleAfterEffectIndeterminatePreState fences before result durability is known.
 	FaultLifecycleAfterEffectIndeterminatePreState LifecycleStoreFault = "lifecycle-after-effect-indeterminate-pre-state"
-	FaultLifecycleAfterEffectIndeterminate         LifecycleStoreFault = "lifecycle-after-effect-commit-indeterminate"
+	// FaultLifecycleAfterEffectIndeterminate follows effect-result rename.
+	FaultLifecycleAfterEffectIndeterminate LifecycleStoreFault = "lifecycle-after-effect-commit-indeterminate"
 
-	FaultLifecycleRecordIndeterminateAbort               LifecycleStoreFault = "lifecycle-record-indeterminate-confirmed-abort"
-	FaultLifecycleRecordIndeterminatePreState            LifecycleStoreFault = "lifecycle-record-indeterminate-pre-state"
+	// FaultLifecycleRecordIndeterminateAbort is a confirmed unresolved-record failure.
+	FaultLifecycleRecordIndeterminateAbort LifecycleStoreFault = "lifecycle-record-indeterminate-confirmed-abort"
+	// FaultLifecycleRecordIndeterminatePreState fences before unresolved-state durability is known.
+	FaultLifecycleRecordIndeterminatePreState LifecycleStoreFault = "lifecycle-record-indeterminate-pre-state"
+	// FaultLifecycleRecordIndeterminateCommitIndeterminate follows unresolved-state rename.
 	FaultLifecycleRecordIndeterminateCommitIndeterminate LifecycleStoreFault = "lifecycle-record-indeterminate-commit-indeterminate"
 
-	FaultLifecycleReconciliationEligibilityAbort                 LifecycleStoreFault = "lifecycle-reconciliation-eligibility-confirmed-abort"
+	// FaultLifecycleReconciliationEligibilityAbort is a confirmed pre-observation checkpoint failure.
+	FaultLifecycleReconciliationEligibilityAbort LifecycleStoreFault = "lifecycle-reconciliation-eligibility-confirmed-abort"
+	// FaultLifecycleReconciliationEligibilityIndeterminatePreState fences before slot durability is known.
 	FaultLifecycleReconciliationEligibilityIndeterminatePreState LifecycleStoreFault = "lifecycle-reconciliation-eligibility-indeterminate-pre-state"
-	FaultLifecycleReconciliationEligibilityIndeterminate         LifecycleStoreFault = "lifecycle-reconciliation-eligibility-commit-indeterminate"
+	// FaultLifecycleReconciliationEligibilityIndeterminate follows eligibility-checkpoint rename.
+	FaultLifecycleReconciliationEligibilityIndeterminate LifecycleStoreFault = "lifecycle-reconciliation-eligibility-commit-indeterminate"
 
-	FaultLifecycleReconciliationResultAbort                 LifecycleStoreFault = "lifecycle-reconciliation-result-confirmed-abort"
+	// FaultLifecycleReconciliationResultAbort is a confirmed observation-result commit failure.
+	FaultLifecycleReconciliationResultAbort LifecycleStoreFault = "lifecycle-reconciliation-result-confirmed-abort"
+	// FaultLifecycleReconciliationResultIndeterminatePreState fences before result durability is known.
 	FaultLifecycleReconciliationResultIndeterminatePreState LifecycleStoreFault = "lifecycle-reconciliation-result-indeterminate-pre-state"
-	FaultLifecycleReconciliationResultIndeterminate         LifecycleStoreFault = "lifecycle-reconciliation-result-commit-indeterminate"
+	// FaultLifecycleReconciliationResultIndeterminate follows reconciliation-result rename.
+	FaultLifecycleReconciliationResultIndeterminate LifecycleStoreFault = "lifecycle-reconciliation-result-commit-indeterminate"
 )
 
 var (
-	ErrLifecycleNotFound        = errors.New("fixed supervisor lifecycle record not found")
+	// ErrLifecycleNotFound reports that no retained lifecycle record exists for
+	// the AttemptID. It does not prove an effect never happened or cleanup ended.
+	ErrLifecycleNotFound = errors.New("fixed supervisor lifecycle record not found")
+	// ErrLifecycleVersionConflict reports a stale record version or concurrent transition.
 	ErrLifecycleVersionConflict = errors.New("fixed supervisor lifecycle record version conflict")
+	// ErrLifecycleBindingMismatch reports a wrong domain, permit, transition, effect, or identity link.
 	ErrLifecycleBindingMismatch = errors.New("fixed supervisor lifecycle binding mismatch")
 )
 
@@ -62,8 +87,14 @@ type LifecycleEffectIDSource interface {
 	NewEffectID(context.Context) (lifecyclestate.EffectID, error)
 }
 
+// CryptoLifecycleEffectIDSource draws opaque effect identities from the
+// operating system cryptographic random source immediately before an intent
+// transaction. Durable uniqueness remains a store/tombstone obligation.
 type CryptoLifecycleEffectIDSource struct{}
 
+// NewEffectID returns one EffectID-domain candidate or an error. The value
+// becomes usable only when committed with the exact AttemptID, operation,
+// sequence, immutable bindings, owner session, and v2 tombstone before effect.
 func (CryptoLifecycleEffectIDSource) NewEffectID(ctx context.Context) (lifecyclestate.EffectID, error) {
 	if err := ctx.Err(); err != nil {
 		return lifecyclestate.EffectID{}, err
@@ -79,6 +110,9 @@ func (CryptoLifecycleEffectIDSource) NewEffectID(ctx context.Context) (lifecycle
 	return lifecyclestate.NewEffectID(domain)
 }
 
+// FixedFileStoreV1Options supplies only trusted local effect-ID and owner-
+// session sources. Defaults are for unwired local conformance; callers cannot
+// use the options to provide records, backend configuration, paths, or effects.
 type FixedFileStoreV1Options struct {
 	EffectIDs      LifecycleEffectIDSource
 	OwnerSessionID lifecyclestate.OwnerSessionID
@@ -118,6 +152,10 @@ func (store *FixedFileStoreV1) InjectLifecycleFailure(point LifecycleStoreFault,
 	store.faults[point] = err
 }
 
+// LifecycleRecoveryFenced reports whether this open handle must refuse further
+// lifecycle work because durability, validation, ownership, repair, or shutdown
+// is unresolved. It is advisory to callers; every store method rechecks the
+// fence and only reopen under valid ownership can establish durable truth.
 func (store *FixedFileStoreV1) LifecycleRecoveryFenced() bool {
 	store.mu.Lock()
 	defer store.mu.Unlock()
@@ -183,6 +221,11 @@ func (store *FixedFileStoreV1) AdvanceLifecycleTime(
 	)
 }
 
+// EnsureLifecycle creates at most one cleanup-bearing prepare-pending record
+// for an already committed immutable AttemptID, using authority bindings read
+// from the colocated store and a closed fake-only backend binding. Exact replay
+// returns the same record; mismatch or indeterminate commit fences fail closed,
+// and no adapter effect occurs in this transaction.
 func (store *FixedFileStoreV1) EnsureLifecycle(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -269,6 +312,9 @@ func (store *FixedFileStoreV1) EnsureLifecycle(
 	return cloneLifecycleRecord(committed, store.state.TimeHighWaterUnixSeconds), true, nil
 }
 
+// ReadLifecycle returns a defensive copy of the retained record for one
+// AttemptID after checking readable ownership/recovery state. Missing means no
+// lifecycle record is present; it does not prove no effect or completed cleanup.
 func (store *FixedFileStoreV1) ReadLifecycle(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -288,6 +334,10 @@ func (store *FixedFileStoreV1) ReadLifecycle(
 	return cloneLifecycleRecord(store.lifecycles[index], store.state.TimeHighWaterUnixSeconds), nil
 }
 
+// BeginEffect durably commits one operation intent and stable Supervisor-issued
+// EffectID before an adapter call, then returns a sealed owner-session-bound
+// permit. Exact intent/retry replay reuses the same ID; stale versions, wrong
+// predecessors, collisions, or indeterminate commits refuse without a new effect.
 func (store *FixedFileStoreV1) BeginEffect(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -421,6 +471,10 @@ func (store *FixedFileStoreV1) BeginEffect(
 	return permit, nil
 }
 
+// ConfirmEffect commits a closed applied or confirmed-not-applied result for
+// the exact sealed permit. Indeterminate adapter outcomes must use
+// RecordIndeterminate; identity collision quarantines state, and commit
+// uncertainty fences before any successor effect.
 func (store *FixedFileStoreV1) ConfirmEffect(
 	ctx context.Context,
 	permit lifecyclestate.EffectPermit,
@@ -489,6 +543,9 @@ func (store *FixedFileStoreV1) ConfirmEffect(
 	return cloneLifecycleRecord(updated, store.state.TimeHighWaterUnixSeconds), nil
 }
 
+// RecordIndeterminate durably marks the exact permitted effect unresolved with
+// cleanup retained and a closed lifecycle/cleanup failure classification. It
+// never retries, clears the obligation, or converts a lost response to success.
 func (store *FixedFileStoreV1) RecordIndeterminate(
 	ctx context.Context,
 	permit lifecyclestate.EffectPermit,
@@ -543,6 +600,10 @@ func (store *FixedFileStoreV1) RecordIndeterminate(
 	return cloneLifecycleRecord(updated, store.state.TimeHighWaterUnixSeconds), nil
 }
 
+// BeginReconciliation durably consumes one bounded automatic-observation slot
+// and records the next eligible time before the caller observes the adapter.
+// It performs no effect itself; stale timing, exhausted budget, wrong version,
+// or non-reconcilable state refuses without an adapter call.
 func (store *FixedFileStoreV1) BeginReconciliation(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -610,6 +671,10 @@ func (store *FixedFileStoreV1) BeginReconciliation(
 	return cloneLifecycleRecord(eligibleRecord, store.state.TimeHighWaterUnixSeconds), nil
 }
 
+// CompleteReconciliation commits one closed observation made after the matching
+// eligibility checkpoint. It may resolve an intent according to the retained
+// protocol, but only authoritative absence after confirmed destroy reaches
+// destroyed/cleanup-false; identity mismatch quarantines and requires repair.
 func (store *FixedFileStoreV1) CompleteReconciliation(
 	ctx context.Context,
 	attemptID approvalattempt.AttemptID,
@@ -709,6 +774,10 @@ func (store *FixedFileStoreV1) RecordReconciliation(
 	return store.CompleteReconciliation(ctx, attemptID, eligible.View().RecordVersion, result)
 }
 
+// RecoveryAttemptIDs returns a sorted defensive set of hot AttemptIDs whose
+// lifecycle is absent or still nonterminal, cleanup-bearing, unresolved,
+// quarantined, or fenced. It excludes only durably destroyed cleanup-free work
+// and never treats archive records or missing backend state as recovery work.
 func (store *FixedFileStoreV1) RecoveryAttemptIDs(ctx context.Context) ([]approvalattempt.AttemptID, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err

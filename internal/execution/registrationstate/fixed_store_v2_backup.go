@@ -32,6 +32,9 @@ const (
 // no cached, incremental, or startup-fast verification mode.
 type VerificationMode string
 
+// VerificationFull requires a fresh closed decode and complete recomputation
+// of the active snapshot, every referenced segment, all indexes, counts,
+// digests, and cross-links. No cached or incremental success is recognized.
 const VerificationFull VerificationMode = "full"
 
 // ArchiveVerificationClassification is a bounded offline reporting
@@ -39,20 +42,36 @@ const VerificationFull VerificationMode = "full"
 type ArchiveVerificationClassification string
 
 const (
-	ArchiveVerificationVerified              ArchiveVerificationClassification = "verified"
-	ArchiveVerificationVerifiedWithOrphans   ArchiveVerificationClassification = "verified-with-known-unreferenced"
-	ArchiveVerificationIncomplete            ArchiveVerificationClassification = "incomplete"
-	ArchiveVerificationExtraArtifacts        ArchiveVerificationClassification = "extra-artifacts"
-	ArchiveVerificationCorrupt               ArchiveVerificationClassification = "corrupt"
-	ArchiveVerificationMixedGeneration       ArchiveVerificationClassification = "mixed-generation"
-	ArchiveVerificationCrossInstallation     ArchiveVerificationClassification = "cross-installation"
-	ArchiveVerificationRollbackUncertain     ArchiveVerificationClassification = "rollback-uncertain"
+	// ArchiveVerificationVerified through
+	// ArchiveVerificationEligibleFutureRestore are fixed, content-free offline
+	// results. They report evidence state only; no classification activates a
+	// restore, deletes history, enables attempts, or advances product posture.
+	ArchiveVerificationVerified ArchiveVerificationClassification = "verified"
+	// ArchiveVerificationVerifiedWithOrphans reports fully valid unreferenced segments.
+	ArchiveVerificationVerifiedWithOrphans ArchiveVerificationClassification = "verified-with-known-unreferenced"
+	// ArchiveVerificationIncomplete reports a missing member of a claimed coherent set.
+	ArchiveVerificationIncomplete ArchiveVerificationClassification = "incomplete"
+	// ArchiveVerificationExtraArtifacts reports entries outside the closed expected set.
+	ArchiveVerificationExtraArtifacts ArchiveVerificationClassification = "extra-artifacts"
+	// ArchiveVerificationCorrupt reports malformed or digest-invalid retained evidence.
+	ArchiveVerificationCorrupt ArchiveVerificationClassification = "corrupt"
+	// ArchiveVerificationMixedGeneration reports an inconsistent snapshot/segment generation.
+	ArchiveVerificationMixedGeneration ArchiveVerificationClassification = "mixed-generation"
+	// ArchiveVerificationCrossInstallation reports installation/Supervisor/epoch mismatch.
+	ArchiveVerificationCrossInstallation ArchiveVerificationClassification = "cross-installation"
+	// ArchiveVerificationRollbackUncertain reports a valid set lacking a trusted latest anchor.
+	ArchiveVerificationRollbackUncertain ArchiveVerificationClassification = "rollback-uncertain"
+	// ArchiveVerificationEligibleFutureRestore reports exact anchor equality without activation.
 	ArchiveVerificationEligibleFutureRestore ArchiveVerificationClassification = "eligible-for-future-restore"
 )
 
 // StoreRoot and BackupRoot are internal trusted local capabilities. They are
 // not public/IPC path contracts and expose no path accessor.
 type StoreRoot struct{ path string }
+
+// BackupRoot is a sealed reference to an existing owner-only backup directory.
+// It exposes no path accessor and becomes usable only after complete manifest-
+// last verification; it is not restore authority or a public path contract.
 type BackupRoot struct{ path string }
 
 // OpenStoreRoot accepts only an existing installation-configured v2 store
@@ -76,7 +95,14 @@ func OpenBackupRoot(path string) (BackupRoot, error) {
 	return BackupRoot{path: path}, nil
 }
 
+// BackupFileDigest identifies exact copied file bytes inside one coherent
+// backup manifest. It is an integrity identity, not provenance or restore
+// authorization.
 type BackupFileDigest [32]byte
+
+// BackupManifestDigest identifies the closed manifest projection with its
+// digest field omitted. It cannot establish freshness or defeat coherent
+// rollback without an independent latest-checkpoint anchor.
 type BackupManifestDigest [32]byte
 
 // backupHotSetDigestsDisk explicitly serializes the fifth F4B collection.
@@ -152,11 +178,17 @@ type BackupManifestView struct {
 	ManifestDigest            BackupManifestDigest
 }
 
+// BackupManifest is a sealed, verified, path-free handle to one manifest-last
+// coherent copy. It is returned only after the copied set reopens completely;
+// F5 uses it for inspection and read-only admission, never restore activation.
 type BackupManifest struct {
 	disk backupManifestDisk
 	root BackupRoot
 }
 
+// View returns the defensive fixed metadata projection of a verified coherent
+// backup. It contains no root path or retained record bytes and grants no
+// restore, attempt, archive-deletion, or trust-transition authority.
 func (manifest BackupManifest) View() BackupManifestView {
 	disk := manifest.disk
 	return BackupManifestView{
@@ -171,6 +203,10 @@ func (manifest BackupManifest) View() BackupManifestView {
 	}
 }
 
+// ArchiveVerificationReport is the bounded, content-free offline report for a
+// fully inspected live or backup world. Counts and identities describe what
+// was observed; they are not product evidence, rollback protection, repair,
+// restore activation, or permission to delete an artifact.
 type ArchiveVerificationReport struct {
 	Version              uint64
 	Classification       ArchiveVerificationClassification
@@ -197,44 +233,86 @@ type ArchiveVerificationReport struct {
 	CrossInstallation    uint16
 }
 
+// BackupFault names deterministic manifest-last copy and reopen edges used by
+// local conformance tests. It carries no destination, bytes, records, or
+// authority and is not a product backup-control input.
 type BackupFault string
 
 const (
-	FaultBackupAfterPrepare              BackupFault = "backup-after-prepare"
-	FaultBackupAfterActiveTempCreate     BackupFault = "backup-after-active-temp-create"
-	FaultBackupAfterActiveCopy           BackupFault = "backup-after-active-copy"
-	FaultBackupAfterActiveSync           BackupFault = "backup-after-active-sync"
-	FaultBackupAfterActiveClose          BackupFault = "backup-after-active-close"
-	FaultBackupAfterActiveReopen         BackupFault = "backup-after-active-reopen"
-	FaultBackupAfterActiveRename         BackupFault = "backup-after-active-rename"
-	FaultBackupAfterActiveDirectorySync  BackupFault = "backup-after-active-directory-sync"
-	FaultBackupAfterSegmentTempCreate    BackupFault = "backup-after-segment-temp-create"
-	FaultBackupAfterSegmentCopy          BackupFault = "backup-after-segment-copy"
-	FaultBackupAfterSegmentSync          BackupFault = "backup-after-segment-sync"
-	FaultBackupAfterSegmentClose         BackupFault = "backup-after-segment-close"
-	FaultBackupAfterSegmentReopen        BackupFault = "backup-after-segment-reopen"
-	FaultBackupAfterSegmentRename        BackupFault = "backup-after-segment-rename"
+	// FaultBackupAfterPrepare through FaultBackupAfterReopen cover the ordered
+	// active/segment/manifest write barriers. Failures preserve evidence; an
+	// outcome after a rename or directory-sync edge may be indeterminate and
+	// must be established by full verification rather than guessed.
+	FaultBackupAfterPrepare BackupFault = "backup-after-prepare"
+	// FaultBackupAfterActiveTempCreate follows active-copy temp creation.
+	FaultBackupAfterActiveTempCreate BackupFault = "backup-after-active-temp-create"
+	// FaultBackupAfterActiveCopy follows copying the complete active snapshot.
+	FaultBackupAfterActiveCopy BackupFault = "backup-after-active-copy"
+	// FaultBackupAfterActiveSync follows syncing the active snapshot copy.
+	FaultBackupAfterActiveSync BackupFault = "backup-after-active-sync"
+	// FaultBackupAfterActiveClose follows closing the active snapshot copy.
+	FaultBackupAfterActiveClose BackupFault = "backup-after-active-close"
+	// FaultBackupAfterActiveReopen follows byte-checking the active snapshot copy.
+	FaultBackupAfterActiveReopen BackupFault = "backup-after-active-reopen"
+	// FaultBackupAfterActiveRename follows publishing the active snapshot copy.
+	FaultBackupAfterActiveRename BackupFault = "backup-after-active-rename"
+	// FaultBackupAfterActiveDirectorySync follows active-copy directory durability.
+	FaultBackupAfterActiveDirectorySync BackupFault = "backup-after-active-directory-sync"
+	// FaultBackupAfterSegmentTempCreate follows segment-copy temp creation.
+	FaultBackupAfterSegmentTempCreate BackupFault = "backup-after-segment-temp-create"
+	// FaultBackupAfterSegmentCopy follows copying one complete referenced segment.
+	FaultBackupAfterSegmentCopy BackupFault = "backup-after-segment-copy"
+	// FaultBackupAfterSegmentSync follows syncing one referenced segment copy.
+	FaultBackupAfterSegmentSync BackupFault = "backup-after-segment-sync"
+	// FaultBackupAfterSegmentClose follows closing one referenced segment copy.
+	FaultBackupAfterSegmentClose BackupFault = "backup-after-segment-close"
+	// FaultBackupAfterSegmentReopen follows byte-checking one segment copy.
+	FaultBackupAfterSegmentReopen BackupFault = "backup-after-segment-reopen"
+	// FaultBackupAfterSegmentRename follows publishing one segment copy.
+	FaultBackupAfterSegmentRename BackupFault = "backup-after-segment-rename"
+	// FaultBackupAfterSegmentDirectorySync follows segment-directory durability.
 	FaultBackupAfterSegmentDirectorySync BackupFault = "backup-after-segment-directory-sync"
+	// FaultBackupAfterCheckpointValidation follows complete copied-set cross-link checks.
 	FaultBackupAfterCheckpointValidation BackupFault = "backup-after-checkpoint-validation"
-	FaultBackupAfterManifestTempCreate   BackupFault = "backup-after-manifest-temp-create"
-	FaultBackupAfterManifestWrite        BackupFault = "backup-after-manifest-write"
-	FaultBackupAfterManifestSync         BackupFault = "backup-after-manifest-sync"
-	FaultBackupAfterManifestClose        BackupFault = "backup-after-manifest-close"
-	FaultBackupAfterManifestReopen       BackupFault = "backup-after-manifest-reopen"
-	FaultBackupAfterManifestRename       BackupFault = "backup-after-manifest-rename"
-	FaultBackupAfterRootDirectorySync    BackupFault = "backup-after-root-directory-sync"
-	FaultBackupAfterReopen               BackupFault = "backup-after-reopen"
+	// FaultBackupAfterManifestTempCreate follows manifest temp creation.
+	FaultBackupAfterManifestTempCreate BackupFault = "backup-after-manifest-temp-create"
+	// FaultBackupAfterManifestWrite follows writing the closed manifest last.
+	FaultBackupAfterManifestWrite BackupFault = "backup-after-manifest-write"
+	// FaultBackupAfterManifestSync follows syncing the manifest-last bytes.
+	FaultBackupAfterManifestSync BackupFault = "backup-after-manifest-sync"
+	// FaultBackupAfterManifestClose follows closing the synced manifest.
+	FaultBackupAfterManifestClose BackupFault = "backup-after-manifest-close"
+	// FaultBackupAfterManifestReopen follows byte-checking the manifest.
+	FaultBackupAfterManifestReopen BackupFault = "backup-after-manifest-reopen"
+	// FaultBackupAfterManifestRename follows publishing the manifest-last marker.
+	FaultBackupAfterManifestRename BackupFault = "backup-after-manifest-rename"
+	// FaultBackupAfterRootDirectorySync follows complete backup-root durability.
+	FaultBackupAfterRootDirectorySync BackupFault = "backup-after-root-directory-sync"
+	// FaultBackupAfterReopen follows independent full verification of the copy.
+	FaultBackupAfterReopen BackupFault = "backup-after-reopen"
 )
 
+// BackupFaultInjector is a test-only one-shot failure port for a named backup
+// edge. It must not alter the source world or supply backup contents.
 type BackupFaultInjector interface{ FailBackupAt(BackupFault) error }
 
 var (
-	ErrBackupDestinationNotEmpty  = errors.New("fixed supervisor coherent backup destination is not empty")
-	ErrBackupIncomplete           = errors.New("fixed supervisor coherent backup is incomplete")
+	// ErrBackupDestinationNotEmpty through ErrOrphanOutcomeIndeterminate are
+	// fail-closed backup, restore-admission, and evidence-preservation results.
+	// None permits partial reuse, rollback, automatic repair, or deletion of
+	// referenced, unknown, corrupt, or backup-referenced history.
+	ErrBackupDestinationNotEmpty = errors.New("fixed supervisor coherent backup destination is not empty")
+	// ErrBackupIncomplete reports a destination without one complete manifest-last set.
+	ErrBackupIncomplete = errors.New("fixed supervisor coherent backup is incomplete")
+	// ErrBackupOutcomeIndeterminate requires verification before retry or reuse.
 	ErrBackupOutcomeIndeterminate = errors.New("fixed supervisor coherent backup outcome is indeterminate")
-	ErrBackupEvidencePreserved    = errors.New("fixed supervisor backup evidence is preserved")
-	ErrRestoreRollbackUncertain   = errors.New("fixed supervisor restore is rollback-uncertain")
-	ErrOrphanEvidencePreserved    = errors.New("fixed supervisor orphan evidence is preserved")
+	// ErrBackupEvidencePreserved reports unsafe backup bytes retained without cleanup.
+	ErrBackupEvidencePreserved = errors.New("fixed supervisor backup evidence is preserved")
+	// ErrRestoreRollbackUncertain refuses activation without exact independent-anchor equality.
+	ErrRestoreRollbackUncertain = errors.New("fixed supervisor restore is rollback-uncertain")
+	// ErrOrphanEvidencePreserved reports artifacts that cannot be safely selected for removal.
+	ErrOrphanEvidencePreserved = errors.New("fixed supervisor orphan evidence is preserved")
+	// ErrOrphanOutcomeIndeterminate requires a fresh full inventory after removal uncertainty.
 	ErrOrphanOutcomeIndeterminate = errors.New("fixed supervisor orphan cleanup outcome is indeterminate")
 )
 
@@ -705,6 +783,10 @@ type IndependentLatestCheckpoint struct {
 	CurrentCheckpoint    archivestate.ArchiveCheckpointReference
 }
 
+// LatestCheckpointFromManifest derives the exact anchor-shaped projection of
+// a verified manifest for fixtures and equality checks. The returned value is
+// not independently protected merely because it came from the same backup;
+// production restore requires a separately trusted anchor source.
 func LatestCheckpointFromManifest(manifest BackupManifest) IndependentLatestCheckpoint {
 	view := manifest.View()
 	return IndependentLatestCheckpoint{
@@ -716,6 +798,10 @@ func LatestCheckpointFromManifest(manifest BackupManifest) IndependentLatestChec
 	}
 }
 
+// RestoreAdmissionReport is the read-only comparison of a verified backup,
+// the live predecessor, and an optional independent latest-checkpoint fixture.
+// Eligible means only eligible for a future separately authorized ceremony;
+// this package never replaces live bytes or enables attempts.
 type RestoreAdmissionReport struct {
 	Classification ArchiveVerificationClassification
 	Eligible       bool
@@ -764,12 +850,22 @@ func (store *FixedFileStoreV2) VerifyRestoreAdmission(
 type ArchiveArtifactClassification string
 
 const (
-	ArchiveArtifactReferenced        ArchiveArtifactClassification = "referenced"
+	// ArchiveArtifactReferenced through ArchiveArtifactCrossInstallation form
+	// the closed offline inventory vocabulary. Only a sealed, fully verified
+	// known-unreferenced candidate can proceed to explicit deletion; every other
+	// classification is preserved as evidence.
+	ArchiveArtifactReferenced ArchiveArtifactClassification = "referenced"
+	// ArchiveArtifactKnownUnreferenced is fully valid, unreferenced live and in supplied backups.
 	ArchiveArtifactKnownUnreferenced ArchiveArtifactClassification = "known-unreferenced"
-	ArchiveArtifactBackupReferenced  ArchiveArtifactClassification = "backup-referenced"
-	ArchiveArtifactUnknown           ArchiveArtifactClassification = "unknown"
-	ArchiveArtifactCorrupt           ArchiveArtifactClassification = "corrupt"
-	ArchiveArtifactMixedGeneration   ArchiveArtifactClassification = "mixed-generation"
+	// ArchiveArtifactBackupReferenced remains protected by a verified backup manifest.
+	ArchiveArtifactBackupReferenced ArchiveArtifactClassification = "backup-referenced"
+	// ArchiveArtifactUnknown does not match a closed digest-addressed artifact shape.
+	ArchiveArtifactUnknown ArchiveArtifactClassification = "unknown"
+	// ArchiveArtifactCorrupt matches the shape but fails closed decode or digest checks.
+	ArchiveArtifactCorrupt ArchiveArtifactClassification = "corrupt"
+	// ArchiveArtifactMixedGeneration belongs to an inconsistent archive generation.
+	ArchiveArtifactMixedGeneration ArchiveArtifactClassification = "mixed-generation"
+	// ArchiveArtifactCrossInstallation binds another installation/Supervisor/epoch.
 	ArchiveArtifactCrossInstallation ArchiveArtifactClassification = "cross-installation"
 )
 
@@ -784,18 +880,29 @@ type KnownUnreferencedOrphan struct {
 	session    lifecyclestate.OwnerSessionID
 }
 
+// Digest returns the candidate's verified segment identity without exposing
+// its path or inode. The digest alone is insufficient to delete: the store
+// rechecks owner session, live/backup references, exact bytes, and inode.
 func (candidate KnownUnreferencedOrphan) Digest() archivestate.ArchiveSegmentDigest {
 	return candidate.digest
 }
 
+// ArchiveInventory is a sealed snapshot of one owner-held full artifact scan.
+// It contains a bounded report, defensive deletion candidates, and the backup
+// roots included in the reference scan; it grants no automatic cleanup.
 type ArchiveInventory struct {
 	report     ArchiveVerificationReport
 	candidates []KnownUnreferencedOrphan
 	backups    []BackupRoot
 }
 
+// Report returns the inventory's content-free classification and counts. It
+// does not expose artifact paths or authorize deletion or repair.
 func (inventory ArchiveInventory) Report() ArchiveVerificationReport { return inventory.report }
 
+// KnownUnreferenced returns a defensive copy of sealed candidates only when
+// the complete scan found no unsafe evidence. Each candidate must still pass
+// a fresh reference, owner-session, byte, and inode check before removal.
 func (inventory ArchiveInventory) KnownUnreferenced() []KnownUnreferencedOrphan {
 	return append([]KnownUnreferencedOrphan{}, inventory.candidates...)
 }
@@ -995,15 +1102,27 @@ func (store *FixedFileStoreV2) DeleteKnownUnreferencedOrphan(
 	return failOrphan(faults, FaultOrphanAfterReopen, true)
 }
 
+// OrphanFault names deterministic explicit-removal durability edges used by
+// local tests. It cannot select a path or candidate and is not an automatic
+// garbage-collection policy.
 type OrphanFault string
 
 const (
-	FaultOrphanBeforeRemove       OrphanFault = "orphan-before-remove"
-	FaultOrphanAfterRemove        OrphanFault = "orphan-after-remove"
+	// FaultOrphanBeforeRemove is a confirmed failure edge; the later constants
+	// model removal/directory-sync/reopen outcomes that preserve fail-closed
+	// evidence and may require a fresh inventory before any retry.
+	FaultOrphanBeforeRemove OrphanFault = "orphan-before-remove"
+	// FaultOrphanAfterRemove follows unlink and requires a fresh inventory on uncertainty.
+	FaultOrphanAfterRemove OrphanFault = "orphan-after-remove"
+	// FaultOrphanAfterDirectorySync follows durable archive-directory removal.
 	FaultOrphanAfterDirectorySync OrphanFault = "orphan-after-directory-sync"
-	FaultOrphanAfterReopen        OrphanFault = "orphan-after-reopen"
+	// FaultOrphanAfterReopen follows successful post-removal full verification.
+	FaultOrphanAfterReopen OrphanFault = "orphan-after-reopen"
 )
 
+// OrphanFaultInjector is a test-only failure port for the explicit sealed-
+// orphan removal transaction. It supplies neither candidate nor filesystem
+// authority.
 type OrphanFaultInjector interface{ FailOrphanAt(OrphanFault) error }
 
 func failOrphan(faults OrphanFaultInjector, point OrphanFault, indeterminate bool) error {

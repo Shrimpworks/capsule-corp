@@ -105,8 +105,10 @@ C2B evidence profile without executing it. C2B owns separately authorized compos
 evidence. The first fixed benign [owned-guest checkpoint](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md)
 passes only for its exact v19 experiment, and its exact v27 successor passes the fixed 30-marker
 hostile-denial corpus with zero network/credential authority or traffic. Passive C5a transport
-conformance is now `PASSED`; controlled C5b transport, broader installed/platform/lifecycle
-evidence, and runtime/profile admission remain blocked.
+conformance and the exact no-run
+[C5b7 deterministic runtime root](https://github.com/Shrimpworks/capsule-experiments/tree/78485fb91a31733c568fe43e5fa295474e5956e1/experiments/typed-guest-transport-c5b7-deterministic-runtime-root)
+are now `PASSED` in their bounded scopes; controlled C5b transport, broader installed/platform/
+lifecycle evidence, and runtime/profile admission remain blocked.
 The follow-on
 [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md) freezes the
 unchanged C1/C2A relationship to one exact historical governed build candidate. Its immutable

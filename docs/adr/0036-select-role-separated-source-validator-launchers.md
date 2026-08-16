@@ -238,6 +238,11 @@ The architecture-decision work recorded by this ADR is `PASSED`. The product Sou
 both independent consumers pass. The rejected direct embedded-helper path is `NO_GO`; the Source
 Validator capability is not.
 
+Accepted ADR-0040 keeps those R4/R5 and consumer gates out of C7's owner-only internal-alpha
+runtime/profile admission. They admit this later Product Source Validator itself, not the C7
+candidate. Any external-alpha requirement for this control needs its own frozen dependency before
+that later admission path opens.
+
 ## Consequences
 
 The two private services preserve role separation and keep parser memory outside the daemon and

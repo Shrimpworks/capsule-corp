@@ -20,6 +20,10 @@ expressions with ECMAScript grammar.
 ADR-0040 later removes this host parser from the owner-only internal-alpha admission path while
 preserving this decision as post-alpha defense-in-depth. The internal alpha approves exact bytes
 and relies on the admitted guest's physical no-loader and host-authority omission.
+C7 therefore reviews only the ADR-0040 owner-only internal-alpha runtime/profile and does not
+consume R4/R5. R1-R5B remain the ordered admission gates for this later Product Source Validator
+itself; any requirement for an external-alpha profile must be frozen separately before that
+admission path opens.
 
 The parser cannot simply move into an existing authority component. The daemon is
 public-facing and can skip its own check if compromised. The Approval Broker owns

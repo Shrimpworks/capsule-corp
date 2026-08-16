@@ -213,6 +213,12 @@ fenced without authority recovery.
   identity-separation, caller/key, SMAppService, protected-root, session, and descriptor-relative
   evidence must pass before the corpus can resume. See the
   [I2B3 blocker result](../MACOS_INSTALLATION_I2B3_SIGNING_PREFLIGHT_AND_STALE_PROFILE_BLOCKER.md).
+- C3b identity-separation evidence feeds a separate C3c adoption checkpoint. C3c must accept,
+  amend, reject, or supersede this ADR and ADR-0045 together before C6a begins. Any accepted result
+  must freeze the bootstrap ceremony, complete authority-descriptor digest, transition/state-engine
+  binding, and create/open disposition consumed by C6a. If C3b is insufficient, C3c remains
+  `BLOCKED` and names the additional bounded evidence; C6a cannot begin around a still-Proposed
+  authority contract.
 - The exact I2A decision slice is `PASSED`; this ADR's lifecycle remains Proposed and no installed
   security-control evidence advances.
 - Product-store selection, production signed corpus, archive F4B+, ordinary authenticated IPC,

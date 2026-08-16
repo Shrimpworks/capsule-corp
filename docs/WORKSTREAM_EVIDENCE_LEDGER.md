@@ -15,19 +15,20 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
-## 2026-08-16 C5b8/C5b9 immutable no-run reconciliation
+## 2026-08-16 C5b8/C5b9 no-run and controlled-harness preflight reconciliation
 
 | Slice | Immutable result | Parent boundary |
 | --- | --- | --- |
 | C5b8 sealed controlled-test effects | `PASSED` at [`capsule-experiments` merge `e83614af34d5c39c12a4a3d6e6cda8dcf0304030`](https://github.com/Shrimpworks/capsule-experiments/tree/e83614af34d5c39c12a4a3d6e6cda8dcf0304030/experiments/typed-guest-transport-c5b8-controlled-test-effects): byte-equal no-run objects retain the narrow operation-sequencing layer and complete test-double success/fault/replay/cleanup coverage behind one fixed operation port. | Test-double `APPLIED` results prove only validation and ordering. No filesystem, durable-store, process-tree, root, libkrun, HVF, VM, or guest effect occurred; the singleton test session is not a product session manager. |
 | C5b8/C5b7 root-binding successor | `PASSED` at [`capsule-experiments` merge `b0819d76883eb86cbbc03b2b7033fe55bedbf713`](https://github.com/Shrimpworks/capsule-experiments/tree/b0819d76883eb86cbbc03b2b7033fe55bedbf713/experiments/typed-guest-transport-c5b8-c5b7-root-binding-successor): the successor binds the exact 100,663,296-byte C5b7 root, sealed C5b8 object, source/input frames, byte-equal composed objects, closed undefined surface, and ten verifier mutations. | This resolves C5b5's historical root-size incompatibility only through a new immutable test-double successor. No retained dylib/runtime was loaded and no backend, VM, guest, installation, or admission effect occurred. |
 | C5b9 immutable no-run composite | `PASSED` at [`capsule-experiments` merge `3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite): the packet binds six exact component roles, complete controller/13-symbol libkrun static closure, a 14-file archive inventory, exact typed fixtures/caps/completion-last/teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutation refusals. | `_c5b8_controlled_test_operation` has no provider; all host/guest/authorization/effect fields remain absent. The lost v19/v27 bytes remain unavailable and their identities were not reused. Controlled C5b execution, installed composition, runtime/profile admission, and product admission remain `BLOCKED`. |
+| C5b controlled-harness compatibility preflight | Static compatibility question `PASSED` at [`capsule-experiments` merge `7fc3af9c46895b340c3118a96cb50abb26b1d977`](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight): exact source/component/Mach-O inspection, ten mutations, and closed inventory retain four contradictions. The exact candidate—make C5b9 runnable only by supplying `_c5b8_controlled_test_operation`—is `NO_GO`. | The retained runner/root identities disagree; effect order reaches `krun_start_enter` before source/input writes; the runner lacks the per-effect ABI; and both candidate owners import libkrun execution. The owner-confirmed host/guest scope authorized preparation only; `executionAuthorized` remains false. No native artifact, libkrun/HVF, runner, VM, guest, network, credential, or product effect occurred. |
 
-The next C5b step is no longer credential-free construction. It is a separately authorized
-controlled harness naming the exact C5b9 merge, real fixed operation provider, owner-confirmed
-host, owned disposable guest, retained fault/teardown/restoration evidence, stop conditions, and
-cleanup. This reconciliation does not satisfy the raw v10-v27 archive blocker or authorize that
-run.
+The next C5b step is a versioned no-run successor adapter/composition in which one fixed host-runner
+process is the sole libkrun owner and the Supervisor owns only closed process/transport effects.
+It requires independent review before a later final authorization can name its exact immutable
+merge and manifest for controlled execution. This reconciliation does not satisfy the raw v10-v27
+archive blocker or authorize a run.
 
 ## 2026-08-14 C5b no-run input, controller, and runtime-root reconciliation
 

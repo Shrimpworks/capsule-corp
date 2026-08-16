@@ -43,8 +43,9 @@ separation evidence exists. See the
 
 ## Current versus intended state
 
-The repository currently contains buildable Go and TypeScript scaffolding. It does not yet launch a
-guest or implement the authorities in this design.
+The repository currently contains buildable Go and TypeScript scaffolding plus bounded passive
+authority mechanics. It does not launch a guest or activate the installed product authorities in
+this design.
 
 The JSON Schemas in `schemas/` and types in `packages/protocol` are canonical for the current
 scaffold only. They are explicitly pre-freeze and inconsistent with the intended object model in
@@ -53,18 +54,27 @@ models capabilities that v0 will not support. The current receipt also lacks com
 Supervisor evidence. Phase 2 replaces these contracts after the platform and interoperability
 spikes determine honest enforceable semantics.
 
-The Phase 2A contract-foundation slice now provides passive candidates for a narrow first
-`JobProposal` and minimum `ExecutionPlan`/`PlanRegistration` payloads. Their fixtures and decoded
-Go/TypeScript views are verification artifacts only: no product endpoint consumes them, and the
-minimum plan omits unresolved controls and cannot authorize execution.
+The Phase 2A contract-foundation slice implements the narrow passive proposal-to-plan path.
+TypeScript `decodeJobProposal` performs strict raw/schema narrowing, `resolveJobProposal` combines
+only decoder-issued candidates with separately issued trusted profile and policy contexts, and
+`constructExecutionPlan` produces the minimum provenance-bearing `ExecutionPlan` bytes. The
+minimum `PlanRegistration` payloads and independent decoded Go/TypeScript views remain bounded
+verification artifacts: no product endpoint consumes them, unresolved controls are omitted, and
+they cannot authorize execution.
 
-The current unwired implementation also retains an exact plan-registration conformance handoff.
-TypeScript prepares only a defensive copy of provenance-bearing constructed plan bytes plus a
-complete separately issued role-binding set. A local test command passes those inert values to the
-Go `registrationstate` component, which independently predecodes, strictly decodes, role-binds,
-hashes, registers, and re-reads the exact bytes. The command's JSON wrapper is test serialization,
-not a local IPC contract or product transport. No authenticated TypeScript/Go process seam, daemon
-consumer, Broker, approval, real backend, or guest is connected.
+The current unwired implementation also retains an exact plan-registration conformance handoff and
+an in-process atomic custody facade. TypeScript prepares only a defensive copy of
+provenance-bearing constructed plan bytes plus a complete separately issued role-binding set. A
+local test command passes those inert values to the Go `registrationstate` component, which
+independently predecodes, strictly decodes, role-binds, hashes, registers, and re-reads the exact
+bytes. Separately, `authorityplane.Facade.RegisterPlanV0` validates and atomically stores the plan,
+resolved bindings, registration, canonical source manifest, and exact source; Broker-scoped
+`Facade.GetRegisteredPlanV0` returns defensive copies by `RegistrationID`. The command's JSON
+wrapper and facade call context are test/in-process mechanics, not authenticated IPC or product
+transport. The [readiness map](ALPHA_VERTICAL_FLOW_READINESS.md) records these passive scopes as
+`PASSED`; authenticated TypeScript/Go process seams, protected product state, daemon and Broker
+consumers, native approval, real adapters, runtime/profile admission, backend, and guest remain
+`BLOCKED`.
 
 The same Go authority path now includes the unwired E1-E5 durable lifecycle checkpoint: one
 colocated fixed snapshot retains attempts, lifecycle intents, stable fake effect/instance

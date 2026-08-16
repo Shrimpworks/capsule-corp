@@ -28,9 +28,10 @@ early denial controls before stopping in the vsock-check family. Governed-runtim
 C2A, immutable C2B passive contracts, and the C2B
 v4 build/static materialization are `PASSED` only in their exact no-guest scopes. The first
 separately authorized [fixed benign owned guest](FIRST_OWNED_GUEST_EXECUTION_CHECKPOINT.md) is now
-`PASSED` only for its exact v19 experimental scope; hostile-source execution, typed transport, and
-runtime/profile admission remain `BLOCKED`. V25 no-connect/no-send vsock-diagnostic materialization
-is retained but its runtime path is `NO_GO` because socket creation is non-authoritative. V26
+`PASSED` only for its exact v19 experimental scope; hostile-source execution, controlled typed-
+transport, and runtime/profile admission remain `BLOCKED`. V25 no-connect/no-send vsock-diagnostic
+materialization is retained but its runtime path is `NO_GO` because socket creation is
+non-authoritative. V26
 then passed active local-CID/raw-block denial controls and localized the next stop to expected down
 `dummy0`. V27 corrected that policy and `PASSED` the complete exact fixed-denial corpus in one
 attempt-bound owned guest with exact completion/lifecycle/root/canary and zero-network evidence.
@@ -54,10 +55,16 @@ claims. The later
 [`C5b7` deterministic runtime root](https://github.com/Shrimpworks/capsule-experiments/tree/78485fb91a31733c568fe43e5fa295474e5956e1/experiments/typed-guest-transport-c5b7-deterministic-runtime-root)
 also `PASSED` its no-run scope with two byte-identical 100,663,296-byte roots, a closed 19-node
 inventory, and 15 mutation refusals. Its exact root is incompatible as-is with C5b5's historical
-134,217,728-byte contract. A reviewed size-compatible real effect implementation, complete
-immutable composite, controlled C5b transport execution, preferred-form libkrunfw/kernel source
-compliance, installed composition, and admission remain `BLOCKED`; the extracted kernel remains
-evidence-only and separate firmware is inapplicable under Accepted ADR-0041.
+134,217,728-byte contract. The reviewed
+[`C5b8` controlled-test/root-binding successors](https://github.com/Shrimpworks/capsule-experiments/tree/b0819d76883eb86cbbc03b2b7033fe55bedbf713/experiments/typed-guest-transport-c5b8-c5b7-root-binding-successor)
+resolve that root-size binding only for the sealed test-double path. The immutable
+[`C5b9` no-run composite](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite)
+then binds six exact retained component roles, closed static ABI/load and archive inventory, typed
+caps/completion-last/teardown data, nine unit tests, and 14 mutation refusals. Its fixed operation
+provider and all host/guest/authorization/effect fields remain absent. Controlled C5b transport
+execution, preferred-form libkrunfw/kernel source compliance, installed composition, and admission
+remain `BLOCKED`; the extracted kernel remains evidence-only and separate firmware is inapplicable
+under Accepted ADR-0041.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
@@ -397,8 +404,8 @@ now consumes those exact unchanged C1 bytes and freezes numeric host/guest descr
 256 MiB guest RAM, a 1,000 ms wall candidate, concurrency one, transport/drain caps, teardown,
 fixed known-answer bytes, artifact blockers, and the complete C2B/restoration matrix. C2A creates
 no guest or runtime and is `PASSED` only for passive preparation. Later C2B v4 and v19/v27 evidence
-closed exact build/static and controlled-guest slices, while C5a now closes only the passive typed-
-transport contract; controlled transport execution, installed
+closed exact build/static and controlled-guest slices, while C5a and C5b9 now close only the
+passive contract and immutable no-run composite; controlled transport execution, installed
 composition/recovery, broader lifecycle/platform evidence, and admission remain `BLOCKED`.
 `RUNTIME-001`/`VMM-001` remain unchanged.
 The historical [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
@@ -438,7 +445,8 @@ one fixed governed-runtime fixture through an evidence-led experimental successo
 rewriting v4. The later exact v27 successor passed its 30-marker fixed hostile-denial corpus. Both
 checkpoints are `PASSED` only in their controlled scopes; user-supplied hostile-source execution,
 controlled typed-transport execution, installed composition, and runtime/profile admission remain
-`BLOCKED`; passive C5a conformance is `PASSED` only in its generated scope.
+`BLOCKED`; passive C5a conformance and the immutable C5b9 composite are `PASSED` only in their
+generated/no-run scopes.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

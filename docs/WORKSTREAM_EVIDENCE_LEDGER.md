@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-14
+Date: 2026-08-16
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -14,6 +14,20 @@ from its parent workstream, ADR lifecycle, control-evidence state, and product a
 The historical Phase 2B/Gate C consolidated outcomes and exact known answers remain in the
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
+
+## 2026-08-16 C5b8/C5b9 immutable no-run reconciliation
+
+| Slice | Immutable result | Parent boundary |
+| --- | --- | --- |
+| C5b8 sealed controlled-test effects | `PASSED` at [`capsule-experiments` merge `e83614af34d5c39c12a4a3d6e6cda8dcf0304030`](https://github.com/Shrimpworks/capsule-experiments/tree/e83614af34d5c39c12a4a3d6e6cda8dcf0304030/experiments/typed-guest-transport-c5b8-controlled-test-effects): byte-equal no-run objects retain the narrow operation-sequencing layer and complete test-double success/fault/replay/cleanup coverage behind one fixed operation port. | Test-double `APPLIED` results prove only validation and ordering. No filesystem, durable-store, process-tree, root, libkrun, HVF, VM, or guest effect occurred; the singleton test session is not a product session manager. |
+| C5b8/C5b7 root-binding successor | `PASSED` at [`capsule-experiments` merge `b0819d76883eb86cbbc03b2b7033fe55bedbf713`](https://github.com/Shrimpworks/capsule-experiments/tree/b0819d76883eb86cbbc03b2b7033fe55bedbf713/experiments/typed-guest-transport-c5b8-c5b7-root-binding-successor): the successor binds the exact 100,663,296-byte C5b7 root, sealed C5b8 object, source/input frames, byte-equal composed objects, closed undefined surface, and ten verifier mutations. | This resolves C5b5's historical root-size incompatibility only through a new immutable test-double successor. No retained dylib/runtime was loaded and no backend, VM, guest, installation, or admission effect occurred. |
+| C5b9 immutable no-run composite | `PASSED` at [`capsule-experiments` merge `3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite): the packet binds six exact component roles, complete controller/13-symbol libkrun static closure, a 14-file archive inventory, exact typed fixtures/caps/completion-last/teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutation refusals. | `_c5b8_controlled_test_operation` has no provider; all host/guest/authorization/effect fields remain absent. The lost v19/v27 bytes remain unavailable and their identities were not reused. Controlled C5b execution, installed composition, runtime/profile admission, and product admission remain `BLOCKED`. |
+
+The next C5b step is no longer credential-free construction. It is a separately authorized
+controlled harness naming the exact C5b9 merge, real fixed operation provider, owner-confirmed
+host, owned disposable guest, retained fault/teardown/restoration evidence, stop conditions, and
+cleanup. This reconciliation does not satisfy the raw v10-v27 archive blocker or authorize that
+run.
 
 ## 2026-08-14 C5b no-run input, controller, and runtime-root reconciliation
 
@@ -32,6 +46,9 @@ separately reviewed size-compatible real effect implementation exercised through
 a complete immutable no-run composite with closed ABI/load/inventory/cap/completion/teardown/
 restoration verification. Controlled C5b execution, installed composition, runtime/profile
 admission, and product admission remain `BLOCKED` and require later exact authorization/evidence.
+
+This 2026-08-14 checkpoint is historical. The 2026-08-16 reconciliation above supersedes its
+next-step text without rewriting the immutable predecessor results.
 
 ## 2026-08-12 construction and platform-preflight reconciliation
 

@@ -2,8 +2,8 @@
 
 Date: 2026-08-16
 
-Work item: reconcile the Supervisor-authority adoption checkpoint and owner-only internal-alpha
-runtime-admission ordering without advancing either blocked product path.
+Work item: reconcile canonical control-evidence rows and distinguish implemented passive mechanics
+from blocked product activation without advancing any security claim.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -15,15 +15,16 @@ This is the current execution index. Detailed security claims remain in the link
 map, experiment checkpoints, and evidence ledger. A completed passive contract or controlled
 experiment is not an activated product path.
 
-This reconciliation addresses [issue #305](https://github.com/Shrimpworks/capsule-corp/issues/305)
-and [issue #307](https://github.com/Shrimpworks/capsule-corp/issues/307). It adds an explicit
-post-C3b ADR adoption decision before C6a and names C7 as the owner-only internal-alpha
-runtime/profile admission review. It changes no ADR lifecycle, control-evidence state, or product
-admission result.
+This reconciliation addresses [issue #306](https://github.com/Shrimpworks/capsule-corp/issues/306)
+and [issue #308](https://github.com/Shrimpworks/capsule-corp/issues/308). It updates
+`RUNTIME-001`, `SUPPLY-001`, and `SOURCE-000` in place, records the implemented passive
+proposal/plan/custody symbols, and keeps authenticated consumers, protected installed state, real
+adapters, runtime/profile admission, and product activation `BLOCKED`. It changes no ADR lifecycle,
+control-evidence state, workstream admission, or product admission result.
 
 ## Reconciled baseline
 
-This reconciliation starts from fetched `origin/main` commit
+The retained execution baseline begins at fetched `origin/main` commit
 `bd7cc9c98c07c91b4d96d3efa2f6261aba350971`, merge PR #256. PR #255 reconciled PR #254 at
 `e5401a81b727915ec01afe9012a77e7586a57c13` with the independently completed C3b
 profile/signature evidence without changing PR #254's historical input. This checkpoint adds the
@@ -101,6 +102,12 @@ This architecture-gate reconciliation starts from fetched `origin/main` commit
 only dependency and lifecycle clarity: C3b evidence must feed a separate C3c adoption decision
 before C6a, and Source Validator R4/R5 remains a gate for admitting that later product control
 rather than the owner-only internal-alpha runtime/profile candidate reviewed at C7.
+
+This control/documentation reconciliation starts from fetched `origin/main` commit
+`7576dfb69d75f6ef11ed9708c2ab407aec06e9be`, merge PR #310. It changes no mechanism or evidence
+state. It makes the existing fork-native C1 checkpoint canonical inside `RUNTIME-001` and
+`SUPPLY-001`, and aligns Architecture, Technical Design, the readiness dashboard, and `SOURCE-000`
+with the already-passed passive proposal, plan, and custody mechanics.
 
 These are immutable evidence pins, not product dependencies. None activates a runtime, governed
 profile, installed identity, service, product consumer, backend, VM, or guest.

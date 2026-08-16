@@ -96,8 +96,14 @@ canonical source manifest, and source bytes; Broker fetch reads defensive Superv
 copies. The passive source-byte/SourceManifest foundation and bounded Oxc parser/process selection
 are `PASSED`. Accepted ADR-0040 moves Product Source Validator R4/R5 off the internal-alpha
 critical path after exact R4-v1 candidates became `NO_GO`; the validator remains `BLOCKED` as later
-defense-in-depth. JobProposal narrowing, plan construction, atomic source custody, authenticated
-transport, runtime, backend, and guest remain unimplemented.
+defense-in-depth. The passive proposal-to-custody path is also implemented and `PASSED` in its
+unwired scope: TypeScript `decodeJobProposal`, `resolveJobProposal`, and
+`constructExecutionPlan` narrow and construct inert bytes, while the Go authority-plane
+`Facade.RegisterPlanV0` and `Facade.GetRegisteredPlanV0` atomically retain and defensively read
+back the exact plan, bindings, registration, manifest, and source. These are library and
+in-process mechanics with no product endpoint. Authenticated IPC, protected installed state,
+daemon and Broker consumers, real adapters, runtime/profile admission, backend, guest, and product
+activation remain `BLOCKED`; see the [alpha readiness map](ALPHA_VERTICAL_FLOW_READINESS.md).
 Proposed ADR-0032's separately enrolled
 Source Preparer is now only a conditional later TypeScript topology and is `BLOCKED` outside the
 first-release critical path.

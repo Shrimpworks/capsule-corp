@@ -420,8 +420,12 @@ Exit evidence:
   commits. Preserve the governed `deno_core` `PHYSICAL-OMISSION-PASS` as construction evidence only
   while closing packaging/provenance,
   restoration/backstop, ADR-0034's byte-exact `.mjs` source custody and no-loader evidence,
-  Accepted ADR-0035/0036's disposable validator R1-R5B product-evidence gates,
-  external-isolation, and profile-admission gaps before admitting a runtime. Carry the FD-native
+  external-isolation, and profile-admission gaps before admitting one ADR-0040 owner-only
+  internal-alpha runtime/profile. Accepted ADR-0040 explicitly removes ADR-0035/0036 Source
+  Validator R4/R5 from that admission path: R1-R5B remain the ordered gates for admitting the
+  later Product Source Validator itself, not the C7 runtime/profile candidate. Any external-alpha
+  requirement for that control must be frozen separately before the external-alpha admission path
+  opens. Carry the FD-native
   `PATCH-CANDIDATE` and direct-block-root `GOVERNED-PATCH` through independent review, closed
   APIs/routes, mutation tests, and composed final-profile reruns. Keep `RUNTIME-001` unsupported
   throughout.
@@ -502,6 +506,9 @@ Exit evidence:
 - Accepted ADR-0028 records the governed `deno_core` engineering selection and supersedes
   ADR-0003's Bun-first implementation choice; the runtime-neutral protocol remains intact. This
   exit item does not itself admit the runtime.
+- The owner-only internal-alpha admission record explicitly relies on guest runtime no-loader and
+  string-code-generation denial and does not claim Product Source Validator R4/R5. A later Source
+  Validator control remains independently `BLOCKED` until ADR-0035/0036's R1-R5B gates pass.
 - The exact guest-kernel and launcher profile matches its reviewed manifest, exposes no
   undocumented kernel authority, and records remaining facilities and completion-trust limitations.
 - The exact configuration passes the minimum development attack suite.

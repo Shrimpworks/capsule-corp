@@ -33,7 +33,9 @@ checkpoint is a separate engineering experiment, not product alpha. See the full
 The Oxc Source Validator's passive, artifact, and R3 signed inactive evidence remains retained.
 Product R4/R5 is `BLOCKED`, and exact R4-v1 candidates are `NO_GO`. ADR-0040 moves this control to
 post-alpha defense-in-depth; the internal alpha instead requires runtime-level syntax/module
-refusal and physical absence of host authority.
+refusal and physical absence of host authority. C7 is only the owner-only internal-alpha
+runtime/profile admission review and does not consume R4/R5; those gates admit the later Product
+Source Validator itself, not the C7 candidate.
 
 ## Dependency graph
 
@@ -59,12 +61,15 @@ governance promotions PASSED
   -> fixed denial-test v27 passive-network correction PASSED
   -> exact fixed denial-test v27 execution PASSED
 
+C3b identity-separation evidence
+  -> C3c ADR-0038/0045 adoption decision ------------------------+
+                                                                 |
 passive bounded CLI adapter + native dictionary prerequisite PASSED
-  -> native authenticated CLI adapter
+  -> native authenticated CLI adapter                            |
   -> exact main.mjs + SourceManifest
   -> narrow plan construction
   -> passive atomic custody/fetch PASSED
-  -> authenticated product registration/fetch
+  -> authenticated product registration/fetch <------------------+
   -> passive fixed rendering + public-key verification PASSED
   -> public-key grant + one-use AttemptID + no-guest FakeBackend PASSED
   -> authenticated Broker fetch + installed fixed rendering
@@ -104,17 +109,20 @@ one-use authorization; neither path alone is product alpha.
    evidence.
 2. Preserve the passed exact-one-`main.mjs` proposal, selected passive CLI adapter, and atomic
    custody/fetch oracle without restoring broad legacy acceptance.
-3. Preserve ADR-0043's passive projection/verifier and implement the frozen authenticated
+3. After C3b passes, complete C3c by accepting, amending, rejecting, or superseding ADR-0038 and
+   ADR-0045. Freeze the authority descriptor, bootstrap ceremony, transition/state-engine binding,
+   and create/open disposition before any C6a protected-state implementation.
+4. Preserve ADR-0043's passive projection/verifier and implement the frozen authenticated
    role-specific IPC, protected Supervisor state, native Broker UI, live signing, installed
-   verification, and the bounded fixed-store policy.
-4. Preserve the passed public-key approval/attempt/FakeBackend integration and connect the same
+   verification, and the bounded fixed-store policy only after C3c passes.
+5. Preserve the passed public-key approval/attempt/FakeBackend integration and connect the same
    ordering only through the admitted sealed real adapter.
-5. Preserve the passed completion/transcript/fixed-summary compositor and fixed-file/FakeBackend
+6. Preserve the passed completion/transcript/fixed-summary compositor and fixed-file/FakeBackend
    durable completion-last transaction without treating either as product evidence.
-6. Connect those mechanics to the selected Supervisor product engine only after implementing the
+7. Connect those mechanics to the selected Supervisor product engine only after implementing the
    real trusted-launcher integrity, runner identity, teardown, and authoritative absence facts they
    must consume.
-7. Run the minimum hostile source/authority/transport/root/lifecycle/restoration corpus in the exact
+8. Run the minimum hostile source/authority/transport/root/lifecycle/restoration corpus in the exact
    signed-installed profile.
 
 ## Honest exit condition

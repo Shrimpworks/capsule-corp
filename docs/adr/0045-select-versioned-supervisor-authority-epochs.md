@@ -250,6 +250,12 @@ rollback-resistance claim follows without ADR-0012's independent anchor or witne
   `PASSED`. Installed owner-lock G3/I2B remains `BLOCKED` on fresh separately authorized
   disposable-container nonmembership mutations, Coordinator/Supervisor service/session, Keychain,
   root, owner, state engine, restart, and retirement evidence.
+- C3b identity-separation evidence feeds a separate C3c adoption checkpoint. C3c must accept,
+  amend, reject, or supersede this ADR and ADR-0038 together before C6a begins. Any accepted result
+  must freeze the complete authority tuple, descriptor digest, transition/state-engine binding,
+  bootstrap ceremony, and create/open disposition consumed by C6a. If the exact C3b result is
+  insufficient, C3c remains `BLOCKED` and names the additional bounded evidence; product
+  installation cannot use C6a to implement around a still-Proposed authority epoch.
 - Apple Development evidence can support only the exact named host, OS, certificate, profiles, and
   development distribution posture. Developer ID, notarization, Gatekeeper, clean-host,
   translocation, minimum-OS, package/update, and shipping retirement claims remain separate I6

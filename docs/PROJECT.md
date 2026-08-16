@@ -61,10 +61,14 @@ resolve that root-size binding only for the sealed test-double path. The immutab
 [`C5b9` no-run composite](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite)
 then binds six exact retained component roles, closed static ABI/load and archive inventory, typed
 caps/completion-last/teardown data, nine unit tests, and 14 mutation refusals. Its fixed operation
-provider and all host/guest/authorization/effect fields remain absent. Controlled C5b transport
-execution, preferred-form libkrunfw/kernel source compliance, installed composition, and admission
-remain `BLOCKED`; the extracted kernel remains evidence-only and separate firmware is inapplicable
-under Accepted ADR-0041.
+provider and all host/guest/authorization/effect fields remain absent. The later
+[`C5b` compatibility preflight](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight)
+`PASSED` its static scope and makes only direct provider-only composition of the retained C5b9
+inputs `NO_GO`: runner/root identity, effect order, the per-effect ABI, and single-libkrun
+ownership are incompatible. No artifact executed. A versioned no-run fixed-runner successor,
+controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
+composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
+separate firmware is inapplicable under Accepted ADR-0041.
 Archive F5 coherent backup, read-only
 restore admission, explicit known-orphan cleanup,
 and offline reporting are `PASSED` in their owner-held local fixed-store scope. ADR-0040 permits a
@@ -404,10 +408,11 @@ now consumes those exact unchanged C1 bytes and freezes numeric host/guest descr
 256 MiB guest RAM, a 1,000 ms wall candidate, concurrency one, transport/drain caps, teardown,
 fixed known-answer bytes, artifact blockers, and the complete C2B/restoration matrix. C2A creates
 no guest or runtime and is `PASSED` only for passive preparation. Later C2B v4 and v19/v27 evidence
-closed exact build/static and controlled-guest slices, while C5a and C5b9 now close only the
-passive contract and immutable no-run composite; controlled transport execution, installed
+closed exact build/static and controlled-guest slices, while C5a/C5b9 and the compatibility
+preflight now close only the passive contract, immutable no-run composite, and direct-binding
+incompatibility; controlled transport execution, installed
 composition/recovery, broader lifecycle/platform evidence, and admission remain `BLOCKED`.
-`RUNTIME-001`/`VMM-001` remain unchanged.
+`RUNTIME-001` and `VMM-001` both remain unsupported.
 The historical [C2B fixed-fixture passive binding](protocol/GOVERNED_DENO_CORE_C2B_PASSIVE_BINDING.md)
 remains `PASSED` only for its immutable v1 reconciliation of unchanged C1/C2A with the exact
 governed-fork PR #2 and experiments PR #3 heads, fixed workload bytes, build evidence, and six-item
@@ -445,8 +450,9 @@ one fixed governed-runtime fixture through an evidence-led experimental successo
 rewriting v4. The later exact v27 successor passed its 30-marker fixed hostile-denial corpus. Both
 checkpoints are `PASSED` only in their controlled scopes; user-supplied hostile-source execution,
 controlled typed-transport execution, installed composition, and runtime/profile admission remain
-`BLOCKED`; passive C5a conformance and the immutable C5b9 composite are `PASSED` only in their
-generated/no-run scopes.
+`BLOCKED`; passive C5a conformance, the immutable C5b9 composite, and the direct-binding preflight
+are `PASSED` only in their generated/no-run/static scopes. The exact direct provider-only C5b9
+candidate is `NO_GO`.
 The decision supersedes ADR-0003's Bun-first
 ordering only; it does not admit a
 runtime, and `RUNTIME-001` remains unsupported. The

@@ -8,6 +8,7 @@ import {
   mkdtemp,
   readdir,
   readFile,
+  rename,
   rm,
   symlink,
   unlink,
@@ -136,6 +137,22 @@ test("Capsule-owned verifier rejects cross-copy substitution and symlinks", asyn
     /symlink forbidden/,
   );
 });
+
+for (const includedRoot of ["payloads", "source-bindings"]) {
+  test(`Capsule-owned verifier rejects symlinked ${includedRoot} root`, async (t) => {
+    const fixture = await createArchiveFixture();
+    t.after(() => rm(fixture.root, { recursive: true, force: true }));
+
+    const movedRoot = `${includedRoot}-real`;
+    await rename(join(fixture.root, includedRoot), join(fixture.root, movedRoot));
+    await symlink(movedRoot, join(fixture.root, includedRoot));
+
+    await assert.rejects(
+      () => verifyCompiledArtifactArchive(fixture.root, fixture.contract),
+      new RegExp(`${includedRoot}: symlink forbidden`),
+    );
+  });
+}
 
 async function writeExecutable(path, body) {
   await writeFile(path, body);

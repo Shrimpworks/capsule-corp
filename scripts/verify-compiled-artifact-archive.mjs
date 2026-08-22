@@ -130,6 +130,9 @@ async function inventory(archiveRoot, includedRoots) {
   const entries = [];
   for (const name of includedRoots) {
     const root = join(archiveRoot, name);
+    const stat = await lstat(root);
+    assert.equal(stat.isSymbolicLink(), false, `${name}: symlink forbidden`);
+    assert.equal(stat.isDirectory(), true, `${name}: directory required`);
     for (const entry of await walk(archiveRoot, root)) {
       entries.push({
         path: relative(archiveRoot, entry.path),

@@ -35,27 +35,28 @@ Work item: current documentation and executable work order.
 Status: `PASSED` for this documentation/planning reconciliation.
 
 Scope: compare the canonical plan, architecture, status dashboard, latest merged history, and open
-repository work. GitHub `main` remains exact commit
-`748fd0ef7a8fbf81a5c80f099c7592b88369d684`; no product mechanism or retained evidence has merged
-after the C5b compatibility-preflight reconciliation.
+repository work. The planning sync is accepted on GitHub `main` at exact commit
+`d54bd5a351ccfb2abe9956f07acbfdd6e96d07a5`; issue #314 is the first focused hardening slice after
+that baseline and changes no product mechanism or retained experiment evidence.
 
 Evidence or reason: the Source Validator's R1-R3 scopes and the `registrationstate`
-exported-contract batch are already complete, while issues
-[#314](https://github.com/Shrimpworks/capsule-corp/issues/314) through
-[#321](https://github.com/Shrimpworks/capsule-corp/issues/321) add one fail-closed archive-root
-verification gap, one contradictory test comment, one narrowed high-segment test path, and five
-bounded duplication/test-discovery cleanups. None changes an ADR lifecycle, control-evidence row,
-runtime/profile status, or product admission.
+exported-contract batch are already complete. Issue
+[#314](https://github.com/Shrimpworks/capsule-corp/issues/314) now has explicit `lstat` refusal and
+repository regression tests for both included archive roots. Issues
+[#315](https://github.com/Shrimpworks/capsule-corp/issues/315) through
+[#321](https://github.com/Shrimpworks/capsule-corp/issues/321) retain one contradictory test
+comment, one narrowed high-segment test path, and five bounded duplication/test-discovery cleanups.
+None changes an ADR lifecycle, control-evidence row, runtime/profile status, or product admission.
 
-Remaining work: implement and verify those issues in focused branches; construct and independently
-review the product-critical C5b versioned no-run fixed-runner successor; obtain separate exact
-authorization before any native XPC, container, live-signing, libkrun/HVF, VM, or guest execution.
+Remaining work: implement and verify issues #315-#321 in focused branches; construct and
+independently review the product-critical C5b versioned no-run fixed-runner successor; obtain
+separate exact authorization before any native XPC, container, live-signing, libkrun/HVF, VM, or
+guest execution.
 
-Next action: fix #314 first because the supply-chain-sensitive compiled-artifact verifier currently
-checks descendant symlinks but not the two included archive roots. Then take #320's deterministic
-test discovery/hash-helper cleanup, #315's contradictory test comment, and #316's high-segment
-production-pipeline coverage decision as separate bounded slices. In parallel, the next
-credential-free product slice remains the C5b no-run successor described below.
+Next action: take #320's deterministic test discovery/hash-helper cleanup, then #315's
+contradictory test comment and #316's high-segment production-pipeline coverage decision as
+separate bounded slices. In parallel, the next credential-free product slice remains the C5b
+no-run successor described below.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission and the installed security boundary remain
@@ -65,7 +66,7 @@ Parent status: owner-only hostile-`.mjs` internal alpha remains
 
 | Order | Work item | Status | Acceptance and verification | Blocker and next action |
 | --- | --- | --- | --- | --- |
-| Q1 | [#314 archive-root symlink refusal](https://github.com/Shrimpworks/capsule-corp/issues/314) | `BLOCKED` on assignment | `lstat` every included root before traversal; add a root-symlink mutation that fails closed; run the focused verifier test, `pnpm test`, and `pnpm lint`. | Owner: next implementation task. Assign one focused branch and preserve every existing archive identity/count. |
+| Q1 | [#314 archive-root symlink refusal](https://github.com/Shrimpworks/capsule-corp/issues/314) | `PASSED` | Both included roots are `lstat`-checked as real directories before traversal; root-symlink mutations fail closed; the focused verifier test, `pnpm test`, and `pnpm lint` pass without changing archive identities or counts. | Complete in the focused #314 hardening slice; no product admission or concurrent-mutation claim. |
 | Q2 | [#320 script test discovery and shared SHA-256 helper](https://github.com/Shrimpworks/capsule-corp/issues/320) | `BLOCKED` on assignment | New `scripts/*.test.mjs` files cannot be silently omitted; verifier and test reuse the shared byte helper; run the discovered script tests and ordinary pnpm gates. | Owner: repository tooling. Start after Q1; do not weaken any verifier. |
 | Q3 | [#315 contradictory lifecycle test comment](https://github.com/Shrimpworks/capsule-corp/issues/315) | `BLOCKED` on assignment | The comment names the existing duplicate-instance subtest and no nonexistent test or open defect; run the focused `registrationstate` test. | Owner: registration-state maintenance. Keep this documentation-only unless the focused test disproves the current behavior. |
 | Q4 | [#316 exact-64-segment pipeline coverage](https://github.com/Shrimpworks/capsule-corp/issues/316) | `BLOCKED` on test-policy decision | Preserve an authoritative disk-backed high-segment path without restoring the ordinary race-suite timeout; run focused archive growth/race verification. | Owner: archive test maintainer. Choose a short-mode, reduced-cap, or separately gated full-path corpus before implementation. |
@@ -335,7 +336,7 @@ one-package documentation batches after the now-passed `lifecyclestate` and `reg
 batches; issue #219 as sequential behavior-preserving archive refactors; and issue #216 only after
 its threshold/exemption policy is frozen. Issue #218 package/API reduction follows the high-churn
 #219 work. The Q1-Q8 intake above is ordered ahead of those broad backlogs where it closes a
-specific false-green or fail-closed gap; each issue remains a separate slice.
+specific false-green or fail-closed gap; each remaining issue remains a separate slice.
 
 ## Focused tasks for Claude
 

@@ -156,12 +156,14 @@ watermark with one direct child per launcher request, fixed cadence, bounded com
 concurrency, and process-group kill/drain/reap. It makes no hard peak/exact memory cap or host-
 availability claim, and chooses no threshold/cadence/overshoot before the signed corpus.
 
-The next slice is the
-[passive v1 role/version/ownership boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md),
-followed sequentially by unsigned construction, separately authorized signing/install,
-confinement/resource/residue evidence, daemon consumer, Broker consumer, and M2/S1 checkpoint.
-Private-XPC reachability, ambient authority, native loading, orphan cleanup, mixed update, and
-measured availability failures trigger ADR-0036's exact stops rather than a wider bus.
+The [passive v1 role/version/ownership boundary](protocol/MJS_SOURCE_VALIDATOR_PASSIVE_BOUNDARY_V1.md),
+unsigned R2 construction, and separately authorized signed inactive R3 composition are now
+`PASSED` in their exact scopes. Exact R4-v1 candidates are `NO_GO`; R4-v2 confinement/resource/
+residue work is unexecuted and `BLOCKED`, followed by the daemon and Broker consumers if that new
+lifetime/residue contract passes. Private-XPC reachability, ambient authority, native loading,
+orphan cleanup, mixed update, and measured availability failures trigger ADR-0036's exact stops
+rather than a wider bus. ADR-0040 keeps this sequence off the owner-only internal-alpha critical
+path while preserving it as the later Product Source Validator admission path.
 
 The Supervisor continues to own byte identity, manifest binding, atomic custody, and readback but
 does not parse rich source. The validator has no authority to approve, retain state, or launch a

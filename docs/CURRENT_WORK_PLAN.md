@@ -1,9 +1,10 @@
 # Current work plan
 
-Date: 2026-08-16
+Date: 2026-08-21
 
-Work item: reconcile the immutable C5b controlled-harness compatibility preflight and replace the
-stale direct-provider next step while preserving blocked execution and product activation.
+Work item: synchronize the active plan with the immutable C5b controlled-harness reconciliation,
+the completed `registrationstate` documentation batch, and the 2026-08-20 review intake without
+changing blocked execution or product activation.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -26,6 +27,52 @@ execution remains `BLOCKED` on a versioned no-run successor adapter/composition,
 review, and final exact authorization. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-08-21 planning sync
+
+Work item: current documentation and executable work order.
+
+Status: `PASSED` for this documentation/planning reconciliation.
+
+Scope: compare the canonical plan, architecture, status dashboard, latest merged history, and open
+repository work. GitHub `main` remains exact commit
+`748fd0ef7a8fbf81a5c80f099c7592b88369d684`; no product mechanism or retained evidence has merged
+after the C5b compatibility-preflight reconciliation.
+
+Evidence or reason: the Source Validator's R1-R3 scopes and the `registrationstate`
+exported-contract batch are already complete, while issues
+[#314](https://github.com/Shrimpworks/capsule-corp/issues/314) through
+[#321](https://github.com/Shrimpworks/capsule-corp/issues/321) add one fail-closed archive-root
+verification gap, one contradictory test comment, one narrowed high-segment test path, and five
+bounded duplication/test-discovery cleanups. None changes an ADR lifecycle, control-evidence row,
+runtime/profile status, or product admission.
+
+Remaining work: implement and verify those issues in focused branches; construct and independently
+review the product-critical C5b versioned no-run fixed-runner successor; obtain separate exact
+authorization before any native XPC, container, live-signing, libkrun/HVF, VM, or guest execution.
+
+Next action: fix #314 first because the supply-chain-sensitive compiled-artifact verifier currently
+checks descendant symlinks but not the two included archive roots. Then take #320's deterministic
+test discovery/hash-helper cleanup, #315's contradictory test comment, and #316's high-segment
+production-pipeline coverage decision as separate bounded slices. In parallel, the next
+credential-free product slice remains the C5b no-run successor described below.
+
+Parent status: owner-only hostile-`.mjs` internal alpha remains
+`IN_PROGRESS — TRENDING_GOOD`; product admission and the installed security boundary remain
+`BLOCKED`.
+
+### Immediate repository-quality order
+
+| Order | Work item | Status | Acceptance and verification | Blocker and next action |
+| --- | --- | --- | --- | --- |
+| Q1 | [#314 archive-root symlink refusal](https://github.com/Shrimpworks/capsule-corp/issues/314) | `BLOCKED` on assignment | `lstat` every included root before traversal; add a root-symlink mutation that fails closed; run the focused verifier test, `pnpm test`, and `pnpm lint`. | Owner: next implementation task. Assign one focused branch and preserve every existing archive identity/count. |
+| Q2 | [#320 script test discovery and shared SHA-256 helper](https://github.com/Shrimpworks/capsule-corp/issues/320) | `BLOCKED` on assignment | New `scripts/*.test.mjs` files cannot be silently omitted; verifier and test reuse the shared byte helper; run the discovered script tests and ordinary pnpm gates. | Owner: repository tooling. Start after Q1; do not weaken any verifier. |
+| Q3 | [#315 contradictory lifecycle test comment](https://github.com/Shrimpworks/capsule-corp/issues/315) | `BLOCKED` on assignment | The comment names the existing duplicate-instance subtest and no nonexistent test or open defect; run the focused `registrationstate` test. | Owner: registration-state maintenance. Keep this documentation-only unless the focused test disproves the current behavior. |
+| Q4 | [#316 exact-64-segment pipeline coverage](https://github.com/Shrimpworks/capsule-corp/issues/316) | `BLOCKED` on test-policy decision | Preserve an authoritative disk-backed high-segment path without restoring the ordinary race-suite timeout; run focused archive growth/race verification. | Owner: archive test maintainer. Choose a short-mode, reduced-cap, or separately gated full-path corpus before implementation. |
+| Q5 | [#317 completion result-cap duplication](https://github.com/Shrimpworks/capsule-corp/issues/317) | `BLOCKED` on assignment | Retain one cap calculation/classification and all completion-store refusal/replay tests. | Owner: completion-store maintenance. Take as a separate behavior-preserving refactor. |
+| Q6 | [#318 reconciliation quarantine duplication](https://github.com/Shrimpworks/capsule-corp/issues/318) | `BLOCKED` on assignment | Share quarantine field-setting without changing trust reason, reconciliation, recovery, or durable bytes; run focused lifecycle fault/reopen tests. | Owner: registration-state maintenance. Take after Q3 so its corrected test description remains the baseline. |
+| Q7 | [#319 archive marshal/digest duplication](https://github.com/Shrimpworks/capsule-corp/issues/319) | `BLOCKED` on assignment | Centralize marshal/digest handling while preserving exact bytes, digest classifications, and known answers. | Owner: archive maintenance. Coordinate with issue #219's staged refactor to avoid overlapping edits. |
+| Q8 | [#321 test-only CBOR helper duplication](https://github.com/Shrimpworks/capsule-corp/issues/321) | `BLOCKED` on assignment | Share test scan/head encoding helpers with no fixture, refusal, or known-answer change; run focused `v0candidate` mutation tests. | Owner: protocol-test maintenance. Keep production decoding out of scope. |
 
 ## Reconciled baseline
 
@@ -284,10 +331,11 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C9 | Run the installed hostile-`.mjs` admission corpus | `BLOCKED` | Requires C8. Response loss, restart, recovery, restoration, pressure, sleep/wake, update, and the minimum hostile source/authority/transport/root/lifecycle cases must converge in the exact signed-installed profile. |
 
 Independent repository-quality work may continue without changing security claims: issue #217 in
-one-package documentation batches, next `registrationstate`; issue #219 as sequential
-behavior-preserving archive refactors;
-and issue #216 only after its threshold/exemption policy is frozen. Issue #218 package/API
-reduction follows the high-churn #219 work.
+one-package documentation batches after the now-passed `lifecyclestate` and `registrationstate`
+batches; issue #219 as sequential behavior-preserving archive refactors; and issue #216 only after
+its threshold/exemption policy is frozen. Issue #218 package/API reduction follows the high-churn
+#219 work. The Q1-Q8 intake above is ordered ahead of those broad backlogs where it closes a
+specific false-green or fail-closed gap; each issue remains a separate slice.
 
 ## Focused tasks for Claude
 

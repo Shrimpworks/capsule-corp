@@ -714,12 +714,9 @@ func (store *FixedFileStoreV1) CompleteReconciliation(
 			// Quarantine the last durable checkpoint, not any instance or
 			// checkpoint tentatively adopted from the invalid result.
 			final = eligibleView
-			final.State = lifecyclestate.StateQuarantined
-			final.EffectStatus = lifecyclestate.EffectIndeterminate
+			applyIdentityQuarantine(&final)
 			final.LastReconciliation = lifecyclestate.ReconciliationIdentityMismatch
-			final.RecoveryFence = lifecyclestate.RecoveryFenceIdentityMismatch
 			final.NextRecoveryAt = lifecyclestate.OptionalUnixSeconds{}
-			setFirstFailure(&final, lifecyclestate.FailureBinding)
 		} else {
 			return lifecyclestate.Record{}, err
 		}
@@ -743,9 +740,7 @@ func (store *FixedFileStoreV1) CompleteReconciliation(
 				return ErrLifecycleVersionConflict
 			}
 			if final.State == lifecyclestate.StateQuarantined {
-				state.TrustPhase = TrustRepairRequired
-				state.TrustReason = "lifecycle-instance-identity-mismatch"
-				state.AttemptsDisabled = true
+				markIdentityQuarantineTrust(state, "lifecycle-instance-identity-mismatch")
 			}
 			(*records)[current] = finalRecord
 			return nil
@@ -1408,15 +1403,39 @@ func backendInstancesEqual(left, right lifecyclestate.BackendInstanceIdentity) b
 	return bytes.Equal(left.Value(), right.Value())
 }
 
+// applyIdentityQuarantine sets the record-level fields common to every
+// backend-instance-identity quarantine transition, whether it fires from
+// ConfirmEffect's identity-collision path (commitIdentityQuarantineLocked
+// below) or CompleteReconciliation's identity-mismatch path. Callers still
+// handle their own version-advance/commit sequencing and any
+// path-specific fields (CompleteReconciliation additionally resets
+// LastReconciliation/NextRecoveryAt); see markIdentityQuarantineTrust for
+// the accompanying installationState-side update.
+func applyIdentityQuarantine(view *lifecyclestate.RecordView) {
+	view.State = lifecyclestate.StateQuarantined
+	view.EffectStatus = lifecyclestate.EffectIndeterminate
+	view.RecoveryFence = lifecyclestate.RecoveryFenceIdentityMismatch
+	setFirstFailure(view, lifecyclestate.FailureBinding)
+}
+
+// markIdentityQuarantineTrust records the installation-wide trust fencing
+// that accompanies every identity quarantine transition applied via
+// applyIdentityQuarantine. reason distinguishes the call site
+// ("lifecycle-instance-identity-collision" for ConfirmEffect,
+// "lifecycle-instance-identity-mismatch" for CompleteReconciliation) for
+// anything keyed on TrustReason (monitoring, audit, recovery tooling).
+func markIdentityQuarantineTrust(state *installationState, reason string) {
+	state.TrustPhase = TrustRepairRequired
+	state.TrustReason = reason
+	state.AttemptsDisabled = true
+}
+
 func (store *FixedFileStoreV1) commitIdentityQuarantineLocked(
 	ctx context.Context,
 	position int,
 	view lifecyclestate.RecordView,
 ) (lifecyclestate.Record, error) {
-	view.State = lifecyclestate.StateQuarantined
-	view.EffectStatus = lifecyclestate.EffectIndeterminate
-	view.RecoveryFence = lifecyclestate.RecoveryFenceIdentityMismatch
-	setFirstFailure(&view, lifecyclestate.FailureBinding)
+	applyIdentityQuarantine(&view)
 	if err := advanceLifecycleVersion(&view, store.state.TimeHighWaterUnixSeconds); err != nil {
 		return lifecyclestate.Record{}, err
 	}
@@ -1436,9 +1455,7 @@ func (store *FixedFileStoreV1) commitIdentityQuarantineLocked(
 			if current != position {
 				return ErrLifecycleVersionConflict
 			}
-			state.TrustPhase = TrustRepairRequired
-			state.TrustReason = "lifecycle-instance-identity-collision"
-			state.AttemptsDisabled = true
+			markIdentityQuarantineTrust(state, "lifecycle-instance-identity-collision")
 			(*records)[current] = record
 			return nil
 		},

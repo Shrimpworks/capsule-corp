@@ -48,15 +48,20 @@ repository regression tests for both included archive roots. Issues
 comment, one narrowed high-segment test path, and five bounded duplication/test-discovery cleanups.
 None changes an ADR lifecycle, control-evidence row, runtime/profile status, or product admission.
 
-Remaining work: implement and verify issues #315-#321 in focused branches; construct and
-independently review the product-critical C5b versioned no-run fixed-runner successor; obtain
-separate exact authorization before any native XPC, container, live-signing, libkrun/HVF, VM, or
-guest execution.
+Remaining work: construct and independently review the product-critical C5b versioned no-run
+fixed-runner successor; obtain separate exact authorization before any native XPC, container,
+live-signing, libkrun/HVF, VM, or guest execution.
 
-Next action: take #320's deterministic test discovery/hash-helper cleanup, then #315's
-contradictory test comment and #316's high-segment production-pipeline coverage decision as
-separate bounded slices. In parallel, the next credential-free product slice remains the C5b
-no-run successor described below.
+### 2026-08-29 Q1-Q8 closure
+
+Issues #314-#321 (the full Q1-Q8 immediate repository-quality order below) are now `PASSED` and
+closed. #320 merged directly to `main` in [PR #329](https://github.com/Shrimpworks/capsule-corp/pull/329).
+#315-#319 and #321 merged as a stacked branch sequence ([PR #330](https://github.com/Shrimpworks/capsule-corp/pull/330)-[PR #335](https://github.com/Shrimpworks/capsule-corp/pull/335)) and landed on `main`
+via the consolidating [PR #336](https://github.com/Shrimpworks/capsule-corp/pull/336). Q4/#316's test-policy
+decision resolved to the `testing.Short()` gate: `main`'s `go` CI job now runs `go test -short`, and
+a new `go-full-suite` job runs the complete (non-`-short`) suite nightly plus on `workflow_dispatch`.
+None of the eight changes an ADR lifecycle, control-evidence row, runtime/profile status, or product
+admission. The next credential-free product slice remains the C5b no-run successor described below.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission and the installed security boundary remain
@@ -67,13 +72,13 @@ Parent status: owner-only hostile-`.mjs` internal alpha remains
 | Order | Work item | Status | Acceptance and verification | Blocker and next action |
 | --- | --- | --- | --- | --- |
 | Q1 | [#314 archive-root symlink refusal](https://github.com/Shrimpworks/capsule-corp/issues/314) | `PASSED` | Both included roots are `lstat`-checked as real directories before traversal; root-symlink mutations fail closed; the focused verifier test, `pnpm test`, and `pnpm lint` pass without changing archive identities or counts. | Complete in the focused #314 hardening slice; no product admission or concurrent-mutation claim. |
-| Q2 | [#320 script test discovery and shared SHA-256 helper](https://github.com/Shrimpworks/capsule-corp/issues/320) | `BLOCKED` on assignment | New `scripts/*.test.mjs` files cannot be silently omitted; verifier and test reuse the shared byte helper; run the discovered script tests and ordinary pnpm gates. | Owner: repository tooling. Start after Q1; do not weaken any verifier. |
-| Q3 | [#315 contradictory lifecycle test comment](https://github.com/Shrimpworks/capsule-corp/issues/315) | `BLOCKED` on assignment | The comment names the existing duplicate-instance subtest and no nonexistent test or open defect; run the focused `registrationstate` test. | Owner: registration-state maintenance. Keep this documentation-only unless the focused test disproves the current behavior. |
-| Q4 | [#316 exact-64-segment pipeline coverage](https://github.com/Shrimpworks/capsule-corp/issues/316) | `BLOCKED` on test-policy decision | Preserve an authoritative disk-backed high-segment path without restoring the ordinary race-suite timeout; run focused archive growth/race verification. | Owner: archive test maintainer. Choose a short-mode, reduced-cap, or separately gated full-path corpus before implementation. |
-| Q5 | [#317 completion result-cap duplication](https://github.com/Shrimpworks/capsule-corp/issues/317) | `BLOCKED` on assignment | Retain one cap calculation/classification and all completion-store refusal/replay tests. | Owner: completion-store maintenance. Take as a separate behavior-preserving refactor. |
-| Q6 | [#318 reconciliation quarantine duplication](https://github.com/Shrimpworks/capsule-corp/issues/318) | `BLOCKED` on assignment | Share quarantine field-setting without changing trust reason, reconciliation, recovery, or durable bytes; run focused lifecycle fault/reopen tests. | Owner: registration-state maintenance. Take after Q3 so its corrected test description remains the baseline. |
-| Q7 | [#319 archive marshal/digest duplication](https://github.com/Shrimpworks/capsule-corp/issues/319) | `BLOCKED` on assignment | Centralize marshal/digest handling while preserving exact bytes, digest classifications, and known answers. | Owner: archive maintenance. Coordinate with issue #219's staged refactor to avoid overlapping edits. |
-| Q8 | [#321 test-only CBOR helper duplication](https://github.com/Shrimpworks/capsule-corp/issues/321) | `BLOCKED` on assignment | Share test scan/head encoding helpers with no fixture, refusal, or known-answer change; run focused `v0candidate` mutation tests. | Owner: protocol-test maintenance. Keep production decoding out of scope. |
+| Q2 | [#320 script test discovery and shared SHA-256 helper](https://github.com/Shrimpworks/capsule-corp/issues/320) | `PASSED` | New `scripts/*.test.mjs` files cannot be silently omitted (`package.json`'s test script now globs); verifier and test reuse the shared `sha256Hex` byte helper; discovered script tests and ordinary pnpm gates pass. | Closed in [PR #329](https://github.com/Shrimpworks/capsule-corp/pull/329); no product admission or concurrent-mutation claim. |
+| Q3 | [#315 contradictory lifecycle test comment](https://github.com/Shrimpworks/capsule-corp/issues/315) | `PASSED` | The comment names the existing `duplicate-instance-on-applied-quarantines-without-adoption` subtest and no nonexistent test or open defect; the focused `registrationstate` test passes. | Closed in [PR #330](https://github.com/Shrimpworks/capsule-corp/pull/330); documentation-only. |
+| Q4 | [#316 exact-64-segment pipeline coverage](https://github.com/Shrimpworks/capsule-corp/issues/316) | `PASSED` | Restored the disk-backed full-pipeline test gated behind `testing.Short()`; `main`'s `go` CI job runs `go test -short`, a new `go-full-suite` job runs the complete suite nightly plus on `workflow_dispatch`. | Closed in [PR #331](https://github.com/Shrimpworks/capsule-corp/pull/331); resolves the test-policy decision as the gated full-path corpus option. |
+| Q5 | [#317 completion result-cap duplication](https://github.com/Shrimpworks/capsule-corp/issues/317) | `PASSED` | One cap calculation/classification retained (`CommitCompletion`'s pre-encode check); all completion-store refusal/replay tests pass unchanged. | Closed in [PR #332](https://github.com/Shrimpworks/capsule-corp/pull/332); behavior-preserving refactor. |
+| Q6 | [#318 reconciliation quarantine duplication](https://github.com/Shrimpworks/capsule-corp/issues/318) | `PASSED` | Quarantine field-setting shared via `applyIdentityQuarantine`/`markIdentityQuarantineTrust`; trust reason, reconciliation, recovery, and durable bytes unchanged; focused lifecycle fault/reopen tests pass. | Closed in [PR #333](https://github.com/Shrimpworks/capsule-corp/pull/333). |
+| Q7 | [#319 archive marshal/digest duplication](https://github.com/Shrimpworks/capsule-corp/issues/319) | `PASSED` | Centralized via `marshalAndDigestRecord`, preserving exact bytes, digest classifications, and known answers across all 8 call sites. | Closed in [PR #334](https://github.com/Shrimpworks/capsule-corp/pull/334); left issue #219's larger staged refactor unaffected. |
+| Q8 | [#321 test-only CBOR helper duplication](https://github.com/Shrimpworks/capsule-corp/issues/321) | `PASSED` | Shared test scan/head encoding helpers (`topLevelFieldRange`, `encodeCBORHead`) with no fixture, refusal, or known-answer change; focused `v0candidate` mutation tests pass. | Closed in [PR #335](https://github.com/Shrimpworks/capsule-corp/pull/335); production decoding untouched. |
 
 ## Reconciled baseline
 

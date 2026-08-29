@@ -673,10 +673,11 @@ func TestDurableLifecycleCreateIdentityCollisionQuarantinesWithoutAdoption(t *te
 // already-tested ConfirmEffect-side identity collision.
 //
 // The third disposition named in issue #271 - a duplicate instance observed
-// via a ReconciliationApplied create report - is deliberately not covered
-// here as a passing "quarantines" case. It uncovers a real defect; see
-// TestDurableLifecycleCompleteReconciliationDuplicateInstanceOnAppliedFailsClosedInstead
-// below and the accompanying report.
+// via a ReconciliationApplied create report - is covered by the
+// "duplicate-instance-on-applied-quarantines-without-adoption" subtest below
+// instead of as a standalone case here, since it needs two attempts sharing
+// one backend instance rather than the single-attempt setup shared by the
+// other subtests in this function.
 func TestDurableLifecycleCompleteReconciliationQuarantinesOnInstanceValidationFailure(t *testing.T) {
 	assertQuarantinedTrustState := func(t *testing.T, harness lifecycleTransactionHarness) {
 		t.Helper()

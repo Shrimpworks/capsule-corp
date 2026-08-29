@@ -546,55 +546,26 @@ func TestExecutionPlanBoundedTextFieldLengths(t *testing.T) {
 
 // spliceTextFieldValue replaces the CBOR-encoded value of one top-level
 // ExecutionPlan map key with a freshly encoded text string of newValue's
-// exact length, using the production predecode scanner to locate the
+// exact length, using the production predecode scanner (via
+// topLevelFieldRange in wrappers_field_mutation_test.go) to locate the
 // existing value's byte range so the replacement works regardless of the
 // field's current encoded length. Every other field, and every byte outside
 // the target value, is left untouched.
 func spliceTextFieldValue(t *testing.T, source []byte, targetKey uint64, newValue string) []byte {
 	t.Helper()
-	scanner := cborScanner{bytes: source, profile: executionPlanCBORProfile}
-	major, count, err := scanner.readHead()
-	if err != nil || major != 5 {
-		t.Fatalf("fixture is not a top-level CBOR map: %v", err)
-	}
-	for index := uint64(0); index < count; index++ {
-		keyStart := scanner.offset
-		if err := scanner.scanItem(1); err != nil {
-			t.Fatalf("scan key %d: %v", index, err)
-		}
-		keyReader := cborReader{bytes: source[keyStart:scanner.offset]}
-		key, err := keyReader.unsigned()
-		if err != nil {
-			t.Fatalf("decode key %d: %v", index, err)
-		}
-		valueStart := scanner.offset
-		if err := scanner.scanItem(1); err != nil {
-			t.Fatalf("scan value for key %d: %v", key, err)
-		}
-		if key != targetKey {
-			continue
-		}
-		result := make([]byte, 0, len(source)-(scanner.offset-valueStart)+len(newValue)+4)
-		result = append(result, source[:valueStart]...)
-		result = appendTextValue(result, newValue)
-		result = append(result, source[scanner.offset:]...)
-		return result
-	}
-	t.Fatalf("target key %d not found in fixture", targetKey)
-	return nil
+	_, valueStart, valueEnd := topLevelFieldRange(t, source, executionPlanCBORProfile, targetKey)
+	result := make([]byte, 0, len(source)-(valueEnd-valueStart)+len(newValue)+4)
+	result = append(result, source[:valueStart]...)
+	result = appendTextValue(result, newValue)
+	result = append(result, source[valueEnd:]...)
+	return result
 }
 
 // appendTextValue encodes a CBOR major-type-3 text string using the same
-// minimal/preferred length encoding the predecode scanner requires.
+// minimal/preferred length encoding the predecode scanner requires. See
+// encodeCBORHead in wrappers_field_mutation_test.go, which this and the
+// other CBOR head-encoding test helpers in this package share.
 func appendTextValue(destination []byte, value string) []byte {
-	length := len(value)
-	switch {
-	case length < 24:
-		destination = append(destination, 0x60|byte(length))
-	case length <= 0xff:
-		destination = append(destination, 0x78, byte(length))
-	default:
-		destination = append(destination, 0x79, byte(length>>8), byte(length))
-	}
+	destination = append(destination, encodeCBORHead(3, len(value))...)
 	return append(destination, value...)
 }

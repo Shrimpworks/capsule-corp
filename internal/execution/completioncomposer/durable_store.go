@@ -572,6 +572,16 @@ func validateStoreSnapshot(snapshot durableStoreSnapshot) (int, error) {
 // exists to avoid. Duplicate-AttemptID and installation-mismatch protection
 // against records elsewhere in the store is provided by CommitCompletion's
 // own pre-append scan and build-time checks, not repeated here.
+//
+// It also does not itself re-check the returned aggregate against
+// MaximumRetainedResultJSONBytes: stored is encodeStoredCompletion applied to
+// the exact record CommitCompletion already ran that same cap check against
+// (using the same baseResultJSONBytes plus that record's ResultJSON length),
+// so re-deriving and re-checking it here from a fresh decode could never
+// disagree with the caller's result — decode(encode(x)) preserves
+// ResultJSON's length exactly. CommitCompletion's pre-encode check is the
+// single source of truth for the cap; this function only needs the decoded
+// length to keep store.resultJSONBytes accurate.
 func validateAppendedCompletion(
 	installationID v0candidate.InstallationID,
 	baseRecords int,
@@ -588,11 +598,7 @@ func validateAppendedCompletion(
 	if record.View().Projection.InstallationID != installationID {
 		return 0, classified(ClassificationRecoveryRequired, "completion-store-record-installation")
 	}
-	aggregate := baseResultJSONBytes + len(record.CompletionRecord().View().ResultJSON)
-	if aggregate > MaximumRetainedResultJSONBytes {
-		return 0, classified(ClassificationRecoveryRequired, "completion-store-result-cap")
-	}
-	return aggregate, nil
+	return baseResultJSONBytes + len(record.CompletionRecord().View().ResultJSON), nil
 }
 
 func encodeStoredCompletion(record DurableCompletion) (storedDurableCompletion, error) {

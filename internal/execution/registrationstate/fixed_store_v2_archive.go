@@ -397,6 +397,26 @@ func planArchiveFromLoaded(
 	return plan, nil
 }
 
+// marshalAndDigestRecord canonically encodes value and digests the result
+// under kind, in the one sequence every archive record (registration,
+// approval, attempt, lifecycle) must go through before it can be selected
+// into a cohort or segment: selectorStateForHotWorld and segmentCohorts
+// each repeat this exact marshal-then-digest pair once per record kind, so
+// centralizing it here means a future change to how records are
+// marshaled-then-digested (a size cap, a different digest algorithm, richer
+// error context) only needs to change in one place.
+func marshalAndDigestRecord(kind archivestate.RecordKind, value any) ([]byte, archivestate.ArchiveRecordDigest, error) {
+	exact, err := json.Marshal(value)
+	if err != nil {
+		return nil, archivestate.ArchiveRecordDigest{}, err
+	}
+	digest, err := archivestate.DigestRecord(kind, exact)
+	if err != nil {
+		return nil, archivestate.ArchiveRecordDigest{}, err
+	}
+	return exact, digest, nil
+}
+
 func selectorStateForHotWorld(
 	loaded loadedV2State,
 	session lifecyclestate.OwnerSessionID,
@@ -424,11 +444,7 @@ func selectorStateForHotWorld(
 	cohorts := make([]archivestate.RegistrationCohortCandidate, 0, len(registrations))
 	recovery := make([]approvalattempt.AttemptID, 0)
 	for _, registration := range registrations {
-		registrationExact, err := json.Marshal(registration)
-		if err != nil {
-			return archivestate.ValidatedV1OrV2State{}, err
-		}
-		registrationDigest, err := archivestate.DigestRecord(archivestate.RecordRegistration, registrationExact)
+		registrationExact, registrationDigest, err := marshalAndDigestRecord(archivestate.RecordRegistration, registration)
 		if err != nil {
 			return archivestate.ValidatedV1OrV2State{}, err
 		}
@@ -445,13 +461,9 @@ func selectorStateForHotWorld(
 		lifecycleCandidates := make([]archivestate.LifecycleCandidate, len(attempts))
 		encodedLength := uint64(len(registrationExact))
 		for index, approval := range approvals {
-			exact, marshalErr := json.Marshal(approval)
-			if marshalErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, marshalErr
-			}
-			digest, digestErr := archivestate.DigestRecord(archivestate.RecordApproval, exact)
-			if digestErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, digestErr
+			exact, digest, err := marshalAndDigestRecord(archivestate.RecordApproval, approval)
+			if err != nil {
+				return archivestate.ValidatedV1OrV2State{}, err
 			}
 			approvalCandidates[index] = archivestate.ApprovalCandidate{
 				ApprovalID: approval.ApprovalID, AttemptNonce: approval.AttemptNonce,
@@ -462,13 +474,9 @@ func selectorStateForHotWorld(
 			encodedLength += uint64(len(exact))
 		}
 		for index, attempt := range attempts {
-			exact, marshalErr := json.Marshal(attempt)
-			if marshalErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, marshalErr
-			}
-			digest, digestErr := archivestate.DigestRecord(archivestate.RecordAttempt, exact)
-			if digestErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, digestErr
+			exact, digest, err := marshalAndDigestRecord(archivestate.RecordAttempt, attempt)
+			if err != nil {
+				return archivestate.ValidatedV1OrV2State{}, err
 			}
 			attemptCandidates[index] = archivestate.AttemptCandidate{
 				AttemptID: attempt.AttemptID, ApprovalID: attempt.ApprovalID,
@@ -481,13 +489,9 @@ func selectorStateForHotWorld(
 				return archivestate.ValidatedV1OrV2State{}, errors.New("archive selector cannot invent missing lifecycle history")
 			}
 			disk := lifecycleRecordToDisk(record)
-			lifecycleExact, marshalErr := json.Marshal(disk)
-			if marshalErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, marshalErr
-			}
-			lifecycleDigest, digestErr := archivestate.DigestRecord(archivestate.RecordLifecycle, lifecycleExact)
-			if digestErr != nil {
-				return archivestate.ValidatedV1OrV2State{}, digestErr
+			lifecycleExact, lifecycleDigest, err := marshalAndDigestRecord(archivestate.RecordLifecycle, disk)
+			if err != nil {
+				return archivestate.ValidatedV1OrV2State{}, err
 			}
 			recordView := record.View()
 			lifecycleCandidates[index] = archivestate.LifecycleCandidate{
@@ -925,38 +929,26 @@ func segmentCohorts(
 			return bytes.Compare(attempts[left].AttemptID[:], attempts[right].AttemptID[:]) < 0
 		})
 		lifecycleDisks := make([]lifecycleRecordDisk, len(attempts))
-		registrationExact, marshalErr := json.Marshal(registration)
-		if marshalErr != nil {
-			return nil, nil, marshalErr
-		}
-		registrationDigest, digestErr := archivestate.DigestRecord(archivestate.RecordRegistration, registrationExact)
-		if digestErr != nil {
-			return nil, nil, digestErr
+		registrationExact, registrationDigest, err := marshalAndDigestRecord(archivestate.RecordRegistration, registration)
+		if err != nil {
+			return nil, nil, err
 		}
 		approvalRefs := make([]archivestate.ArchiveRecordReference, len(approvals))
 		attemptRefs := make([]archivestate.ArchiveRecordReference, len(attempts))
 		lifecycleRefs := make([]archivestate.ArchiveRecordReference, len(attempts))
 		encodedLength := uint64(len(registrationExact))
 		for index, approval := range approvals {
-			exact, marshalErr := json.Marshal(approval)
-			if marshalErr != nil {
-				return nil, nil, marshalErr
-			}
-			digest, digestErr := archivestate.DigestRecord(archivestate.RecordApproval, exact)
-			if digestErr != nil {
-				return nil, nil, digestErr
+			exact, digest, err := marshalAndDigestRecord(archivestate.RecordApproval, approval)
+			if err != nil {
+				return nil, nil, err
 			}
 			approvalRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordApproval, Digest: digest}
 			encodedLength += uint64(len(exact))
 		}
 		for index, attempt := range attempts {
-			exact, marshalErr := json.Marshal(attempt)
-			if marshalErr != nil {
-				return nil, nil, marshalErr
-			}
-			digest, digestErr := archivestate.DigestRecord(archivestate.RecordAttempt, exact)
-			if digestErr != nil {
-				return nil, nil, digestErr
+			exact, digest, err := marshalAndDigestRecord(archivestate.RecordAttempt, attempt)
+			if err != nil {
+				return nil, nil, err
 			}
 			attemptRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordAttempt, Digest: digest}
 			encodedLength += uint64(len(exact))
@@ -965,13 +957,9 @@ func segmentCohorts(
 				return nil, nil, errors.New("archive segment cohort lacks lifecycle")
 			}
 			lifecycleDisks[index] = lifecycleRecordToDisk(record)
-			lifecycleExact, marshalErr := json.Marshal(lifecycleDisks[index])
-			if marshalErr != nil {
-				return nil, nil, marshalErr
-			}
-			lifecycleDigest, digestErr := archivestate.DigestRecord(archivestate.RecordLifecycle, lifecycleExact)
-			if digestErr != nil {
-				return nil, nil, digestErr
+			lifecycleExact, lifecycleDigest, err := marshalAndDigestRecord(archivestate.RecordLifecycle, lifecycleDisks[index])
+			if err != nil {
+				return nil, nil, err
 			}
 			lifecycleRefs[index] = archivestate.ArchiveRecordReference{Kind: archivestate.RecordLifecycle, Digest: lifecycleDigest}
 			encodedLength += uint64(len(lifecycleExact))

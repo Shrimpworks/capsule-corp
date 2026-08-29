@@ -107,43 +107,45 @@ func setTopLevelMapHeaderCount(t *testing.T, source []byte, count byte) []byte {
 	return result
 }
 
+// encodeCBORHead encodes a CBOR item head for majorType (0 = unsigned, 2 =
+// byte string, 3 = text string, 4 = array, ...) at length, using the same
+// preferred/minimal-length encoding rule every one of this package's CBOR
+// head-encoding test helpers needs: an immediate count under 24, a
+// one-byte-count marker for lengths up to 0xff, or a two-byte-count marker
+// for lengths up to 0xffff (sufficient for every count or marker these
+// tests need). appendTextValue in wrappers_test.go, and
+// encodeUnsignedValue/encodeByteStringValue/encodeArrayHeaderValue below,
+// all apply this exact branch to a different major type; centralizing it
+// here means the minimal-encoding rule only has to be right in one place.
+func encodeCBORHead(majorType byte, length int) []byte {
+	base := majorType << 5
+	switch {
+	case length < 24:
+		return []byte{base | byte(length)}
+	case length <= 0xff:
+		return []byte{base | 24, byte(length)}
+	default:
+		return []byte{base | 25, byte(length >> 8), byte(length)}
+	}
+}
+
 // encodeUnsignedValue encodes an unsigned integer using preferred/minimal
 // CBOR length encoding, sufficient for the small counts and markers these
 // tests need.
 func encodeUnsignedValue(value uint64) []byte {
-	switch {
-	case value < 24:
-		return []byte{byte(value)}
-	case value <= 0xff:
-		return []byte{0x18, byte(value)}
-	default:
-		return []byte{0x19, byte(value >> 8), byte(value)}
-	}
+	return encodeCBORHead(0, int(value))
 }
 
 // encodeByteStringValue encodes a CBOR major-type-2 byte string using
 // preferred/minimal length encoding.
 func encodeByteStringValue(value []byte) []byte {
-	length := len(value)
-	var head []byte
-	switch {
-	case length < 24:
-		head = []byte{0x40 | byte(length)}
-	case length <= 0xff:
-		head = []byte{0x58, byte(length)}
-	default:
-		head = []byte{0x59, byte(length >> 8), byte(length)}
-	}
-	return append(head, value...)
+	return append(encodeCBORHead(2, len(value)), value...)
 }
 
 // encodeArrayHeaderValue encodes a CBOR major-type-4 array header for count
 // elements, without any element bytes.
 func encodeArrayHeaderValue(count int) []byte {
-	if count < 24 {
-		return []byte{0x80 | byte(count)}
-	}
-	return []byte{0x98, byte(count)}
+	return encodeCBORHead(4, count)
 }
 
 var (

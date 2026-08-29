@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # Nightly run of the full (non -short) Go suite, including the
+    # disk-backed 64-segment archive-activation pipeline that the PR-gating
+    # `go` job below skips via -short to stay fast. See issue #316.
+    - cron: "17 7 * * *"
 
 permissions:
   contents: read
@@ -71,10 +76,31 @@ jobs:
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
 
       - name: Test
-        run: go test -cover ./...
+        # -short skips the slow disk-backed 64-segment archive-activation
+        # pipeline (~1 min alone); the `go-full-suite` job below runs the
+        # complete suite nightly instead. See issue #316.
+        run: go test -short -cover ./...
 
       - name: Build
         run: go build ./...
+
+  go-full-suite:
+    name: Go (full suite, nightly)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Test (full, no -short)
+        run: go test -cover ./...
 
   typescript:
     name: TypeScript

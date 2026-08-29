@@ -611,13 +611,52 @@ func activateNextArchiveSegment(t *testing.T, store *FixedFileStoreV2, owner Arc
 	return reopened
 }
 
+// TestFixedStoreV2Exact64SegmentsProductionPipelineAcceptAndSegment65Refuses
+// drives all 64 archive-segment activations through the real disk-backed
+// Plan/Prepare/Verify/Activate transaction pipeline, unlike
+// newExactArchiveCapacityStoreV2 below, which hand-assembles ordinals 1-63 in
+// memory to stay inside the package's race-test timeout. Replaying all five
+// full-verification phases 64 times is comparatively slow, so this is the
+// gated full-path corpus: it only runs outside `go test -short`, keeping one
+// authoritative construction path exercised (just not on every invocation)
+// per issue #316.
+func TestFixedStoreV2Exact64SegmentsProductionPipelineAcceptAndSegment65Refuses(t *testing.T) {
+	if testing.Short() {
+		t.Skip("full disk-backed 64-segment activation pipeline skipped in -short mode; see newExactArchiveCapacityStoreV2 for the fast in-memory equivalent")
+	}
+	path, store, owner, _ := newEligibleGrowthStoreV2(t, archivestate.MaxReferencedArchiveSegments+1)
+	for ordinal := 1; ordinal <= archivestate.MaxReferencedArchiveSegments; ordinal++ {
+		store = activateNextArchiveSegment(t, store, owner)
+		if got := len(store.segments); got != ordinal {
+			t.Fatalf("segment count after ordinal %d = %d", ordinal, got)
+		}
+	}
+	report, err := VerifyFixedFileStoreV2(path)
+	if err != nil || report.SegmentCount != archivestate.MaxReferencedArchiveSegments ||
+		report.ArchiveGeneration != archivestate.ArchiveGeneration(archivestate.MaxReferencedArchiveSegments+1) ||
+		report.HotCounts.Registrations != 1 {
+		t.Fatalf("exact 64-segment world = %#v, %v", report, err)
+	}
+	before := inventoryDigest(t, path)
+	if _, err := store.PlanArchive(context.Background(), owner, archiveOneCohortLimits(t)); err == nil ||
+		!bytes.Contains([]byte(err.Error()), []byte("CAPACITY")) {
+		t.Fatalf("segment 65 plan = %v", err)
+	}
+	after := inventoryDigest(t, path)
+	if before != after {
+		t.Fatal("segment 65 refusal rewrote, deleted, or evicted retained history")
+	}
+}
+
 // newExactArchiveCapacityStoreV2 constructs the closed 64-segment input shared
 // by the F4C capacity and F5 backup assertions. The ordinary activation, fault,
 // response-loss, and reopen paths are covered by the focused F3/F4C tests.
 // Replaying those five full-verification phases for every ordinal made this one
-// boundary fixture consume the package's entire race-test timeout. This helper
-// instead builds deterministic successors 1 through 63 in memory, publishes
-// their sealed segments before the active bytes, and performs one complete
+// boundary fixture consume the package's entire race-test timeout, so it stays
+// gated as TestFixedStoreV2Exact64SegmentsProductionPipelineAcceptAndSegment65Refuses
+// above instead of running here on every invocation. This helper instead
+// builds deterministic successors 1 through 63 in memory, publishes their
+// sealed segments before the active bytes, and performs one complete
 // closed-world load. It then uses the production Plan/Prepare/Verify/Activate
 // path for ordinal 64 so the load-bearing 63-to-64 boundary remains covered.
 func newExactArchiveCapacityStoreV2(t *testing.T) (string, *FixedFileStoreV2, *archiveOwnerStub) {

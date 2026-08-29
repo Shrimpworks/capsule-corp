@@ -3,10 +3,10 @@
 // 0944ffd8cfd01ec23e4ae99138b0931d56804077. Keep its closed contract changes under
 // Capsule review; fetched archive code is data and must never be executed here.
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { lstat, readdir, readFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 
 const expectedMachO = new Map([
   [
@@ -106,9 +106,7 @@ const productionArchiveContract = Object.freeze({
 });
 
 async function sha256(path) {
-  return createHash("sha256")
-    .update(await readFile(path))
-    .digest("hex");
+  return sha256Hex(await readFile(path));
 }
 
 async function walk(root, current = root) {

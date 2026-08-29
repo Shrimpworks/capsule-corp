@@ -1,6 +1,5 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import {
   chmod,
   lstat,
@@ -18,15 +17,12 @@ import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { sha256Hex } from "./lib/fixture-bytes.mjs";
 import { verifyCompiledArtifactArchive } from "./verify-compiled-artifact-archive.mjs";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const remoteScript = join(repositoryRoot, "scripts/verify-compiled-artifact-archive-remote.sh");
 const localVerifier = join(repositoryRoot, "scripts/verify-compiled-artifact-archive.mjs");
-
-function digest(bytes) {
-  return createHash("sha256").update(bytes).digest("hex");
-}
 
 async function inventory(root, current = root) {
   const entries = [];
@@ -39,7 +35,7 @@ async function inventory(root, current = root) {
         path: relative(root, path),
         mode: stat.mode & 0o777,
         bytes: stat.size,
-        sha256: digest(await readFile(path)),
+        sha256: sha256Hex(await readFile(path)),
       });
     }
   }
@@ -92,7 +88,7 @@ async function createArchiveFixture() {
       includedRoots: ["payloads", "source-bindings"],
       payloadRoot: "payloads/capsule-corp/artifacts",
       expectedFileCount: 4,
-      expectedMachO: new Map([["bin", [executable.length, digest(executable)]]]),
+      expectedMachO: new Map([["bin", [executable.length, sha256Hex(executable)]]]),
       crossCopies: new Map([["copy", "bin"]]),
       policyCopies: new Map(),
       signedEnrollment: "r3/evidence/signed-enrollment.json",

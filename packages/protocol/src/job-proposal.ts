@@ -22,8 +22,9 @@ declare const positiveSafeIntegerBrand: unique symbol;
 declare const safeJsonIntegerBrand: unique symbol;
 declare const decodedJobProposalCandidateBrand: unique symbol;
 
-/** The only source path and entrypoint admitted by JobProposal v0. */
+/** The only source path admitted by JobProposal v0. */
 export type SourcePath = typeof JOB_PROPOSAL_MAIN_PATH;
+/** The only entrypoint admitted by JobProposal v0; identical to {@link SourcePath} — there is exactly one file and it is the entrypoint. */
 export type SourceEntrypoint = typeof JOB_PROPOSAL_MAIN_PATH;
 /** A `name@version` runtime profile alias accepted by {@link asRuntimeProfileAlias}. */
 export type RuntimeProfileAlias = string & {

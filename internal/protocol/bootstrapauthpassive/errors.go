@@ -11,6 +11,8 @@ import (
 // package only ever produces the seven values below.
 type Classification = classification.Classification
 
+// Classification values this package can produce, aliased from the shared
+// internal/protocol/classification vocabulary.
 const (
 	ClassificationMalformed   = classification.Malformed
 	ClassificationUnsupported = classification.Unsupported

@@ -47,6 +47,7 @@ export const APPROVED_BYTE_OPTIONS = Object.freeze({
   outputMediaType: JAVASCRIPT_SOURCE_MEDIA_TYPE,
 });
 
+/** The fixed set of byte artifacts {@link ApprovedByteDigest} can be bound to. */
 export type ApprovedByteDigestRole =
   | "emitted-javascript"
   | "executable-javascript-source-manifest"
@@ -57,21 +58,25 @@ export type ApprovedByteDigestRole =
   | "transformer-profile";
 
 declare const approvedByteDigestBrand: unique symbol;
+/** A SHA-256 digest bound to exactly one {@link ApprovedByteDigestRole}, producible only via {@link asApprovedByteDigest}. */
 export type ApprovedByteDigest<Role extends ApprovedByteDigestRole> = readonly number[] & {
   readonly [approvedByteDigestBrand]: `sha256:${Role}:32`;
 };
 
+/** One source file's already-emitted bytes, supplied by the caller — never produced by a transformer call. */
 export type ApprovedByteFixtureSource = Readonly<{
   logicalPath: string;
   originalBytes: Uint8Array;
   emittedBytes: Uint8Array;
 }>;
 
+/** Input to {@link buildApprovedByteFixtureCandidate}: an entrypoint and its already-emitted source set. */
 export type ApprovedByteFixtureInput = Readonly<{
   entrypoint: string;
   sources: readonly [ApprovedByteFixtureSource, ...ApprovedByteFixtureSource[]];
 }>;
 
+/** The raw encoded byte arrays a built {@link ApprovedByteFixtureCandidate}'s digests are computed over. */
 export type ApprovedByteCandidateBytes = Readonly<{
   transformerProfile: readonly number[];
   normalizedOptions: readonly number[];
@@ -82,6 +87,7 @@ export type ApprovedByteCandidateBytes = Readonly<{
   planSourceBindings: readonly number[];
 }>;
 
+/** The SHA-256 digests computed over a built {@link ApprovedByteFixtureCandidate}'s {@link ApprovedByteCandidateBytes}. */
 export type ApprovedByteCandidateDigests = Readonly<{
   transformerProfile: ApprovedByteDigest<"transformer-profile">;
   normalizedOptions: ApprovedByteDigest<"normalized-options">;
@@ -90,11 +96,13 @@ export type ApprovedByteCandidateDigests = Readonly<{
   transformationRecordSet: ApprovedByteDigest<"transformation-record-set">;
 }>;
 
+/** The result of {@link buildApprovedByteFixtureCandidate}: encoded bytes paired with their digests. */
 export type ApprovedByteFixtureCandidate = Readonly<{
   bytes: ApprovedByteCandidateBytes;
   digests: ApprovedByteCandidateDigests;
 }>;
 
+/** The retained expected values {@link verifyApprovedByteFixtureKnownAnswers} checks a candidate against. */
 export type ApprovedByteKnownAnswers = Readonly<{
   transformerProfile: string;
   normalizedOptions: string;
@@ -120,6 +128,7 @@ export type ApprovedByteFixtureBuildRefusalCode =
   | "ORIGINAL_AGGREGATE_BYTES"
   | "EMITTED_AGGREGATE_BYTES";
 
+/** A classified refusal from {@link buildApprovedByteFixtureCandidate}. */
 export interface ApprovedByteFixtureBuildRefusal {
   readonly owner: "approved-byte-fixture-builder";
   readonly classification: "MALFORMED" | "SCHEMA" | "DOMAIN";
@@ -137,6 +146,7 @@ export type ApprovedByteFixtureVerifyRefusalCode =
   | "TRANSFORMATION_RECORD_MISMATCH"
   | "DIGEST_BINDING_MISMATCH";
 
+/** A classified refusal from {@link verifyApprovedByteFixtureKnownAnswers}. */
 export interface ApprovedByteFixtureVerifyRefusal {
   readonly owner: "approved-byte-fixture-verifier";
   readonly classification: "DOMAIN";
@@ -280,6 +290,7 @@ function buildCandidate(input: ApprovedByteFixtureInput): ApprovedByteFixtureCan
   });
 }
 
+/** Wraps a raw 32-byte SHA-256 digest as an {@link ApprovedByteDigest} bound to `_role`; throws if `value` is not exactly 32 bytes. */
 export function asApprovedByteDigest<Role extends ApprovedByteDigestRole>(
   value: Uint8Array,
   _role: Role,

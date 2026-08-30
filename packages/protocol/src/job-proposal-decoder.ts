@@ -51,6 +51,7 @@ export type JobProposalSchemaRefusalCode =
   | "OUTPUT_SLOT_DOMAIN"
   | "LABELS";
 
+/** A schema-stage refusal from {@link decodeJobProposal}'s second decode pass. */
 export interface JobProposalSchemaRefusal {
   readonly owner: "job-proposal-schema";
   readonly classification: JobProposalSchemaClassification;

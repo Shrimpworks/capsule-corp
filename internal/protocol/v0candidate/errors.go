@@ -3,19 +3,23 @@ package v0candidate
 import (
 	"errors"
 	"fmt"
+
+	"capsule.local/capsule/internal/protocol/classification"
 )
 
 // Classification is the internal conformance classification owned by the
 // first strict boundary that rejects candidate bytes. It is not a public error
-// code.
-type Classification string
+// code. It is the shared internal/protocol/classification vocabulary — see
+// that package for the full cross-package classification set. This package
+// only ever produces the five values below.
+type Classification = classification.Classification
 
 const (
-	ClassificationMalformed   Classification = "MALFORMED"
-	ClassificationUnsupported Classification = "UNSUPPORTED"
-	ClassificationSchema      Classification = "SCHEMA"
-	ClassificationSemantic    Classification = "SEMANTIC"
-	ClassificationDomain      Classification = "DOMAIN"
+	ClassificationMalformed   = classification.Malformed
+	ClassificationUnsupported = classification.Unsupported
+	ClassificationSchema      = classification.Schema
+	ClassificationSemantic    = classification.Semantic
+	ClassificationDomain      = classification.Domain
 )
 
 // DecodeError reports a bounded internal classification without including

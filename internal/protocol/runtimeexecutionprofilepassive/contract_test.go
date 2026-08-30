@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 func TestC2AKnownAnswerAndPassiveBoundary(t *testing.T) {
@@ -128,7 +130,7 @@ func TestRequireEOFAcceptsOnlyExactlyOneTrailingAbsence(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 			decoder := json.NewDecoder(strings.NewReader(testCase.body))
-			err := requireEOF(decoder)
+			err := strictjson.RequireEOF(decoder, "C2A_CONTRACT_MISMATCH")
 			if (err != nil) != testCase.wantErr {
 				t.Fatalf("requireEOF(%q) error = %v, want error = %v", testCase.body, err, testCase.wantErr)
 			}
@@ -152,7 +154,7 @@ func TestClonePanicsOnUnmarshalableRawMessage(t *testing.T) {
 			t.Fatal("clone did not panic on an invalid RawMessage field")
 		}
 	}()
-	clone(contract)
+	strictjson.Clone(contract)
 }
 
 // TestC2AValidateRejectsEveryDistinctFieldMismatch extends

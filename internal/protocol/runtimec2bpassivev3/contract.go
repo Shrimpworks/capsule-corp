@@ -7,7 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 const (
@@ -65,13 +66,13 @@ func Decode(exact []byte) (*Binding, error) {
 	if err := decoder.Decode(&binding); err != nil {
 		return nil, fmt.Errorf("C2B_V3_BINDING_DECODE: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := strictjson.RequireEOF(decoder, "C2B_V3_BINDING_TRAILING"); err != nil {
 		return nil, err
 	}
 	if err := Validate(&binding); err != nil {
 		return nil, err
 	}
-	return clone(&binding), nil
+	return strictjson.Clone(&binding), nil
 }
 
 func Validate(binding *Binding) error {
@@ -152,7 +153,7 @@ func rejectDuplicateJSON(exact []byte) error {
 	if err := readJSONValue(decoder); err != nil {
 		return err
 	}
-	return requireEOF(decoder)
+	return strictjson.RequireEOF(decoder, "C2B_V3_BINDING_TRAILING")
 }
 
 func readJSONValue(decoder *json.Decoder) error {
@@ -197,32 +198,4 @@ func readJSONValue(decoder *json.Decoder) error {
 	default:
 		return errors.New("unexpected JSON delimiter")
 	}
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var trailing any
-	if err := decoder.Decode(&trailing); err == io.EOF {
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("C2B_V3_BINDING_TRAILING: %w", err)
-	}
-	return errors.New("C2B_V3_BINDING_TRAILING: extra JSON value")
-}
-
-func clone(binding *Binding) *Binding {
-	copy := *binding
-	copy.Predecessors = append(json.RawMessage(nil), binding.Predecessors...)
-	copy.GovernedInputs = append(json.RawMessage(nil), binding.GovernedInputs...)
-	copy.ArtifactRoles = append(json.RawMessage(nil), binding.ArtifactRoles...)
-	copy.HostRunnerContract = append(json.RawMessage(nil), binding.HostRunnerContract...)
-	copy.DescriptorAndDeviceContract = append(json.RawMessage(nil), binding.DescriptorAndDeviceContract...)
-	copy.RuntimeContract = append(json.RawMessage(nil), binding.RuntimeContract...)
-	copy.ResourceContract = append(json.RawMessage(nil), binding.ResourceContract...)
-	copy.TransportContract = append(json.RawMessage(nil), binding.TransportContract...)
-	copy.TeardownContract = append(json.RawMessage(nil), binding.TeardownContract...)
-	copy.ComposedProfile = append(json.RawMessage(nil), binding.ComposedProfile...)
-	copy.WorkStatus = append(json.RawMessage(nil), binding.WorkStatus...)
-	copy.NextGuestGate = append(json.RawMessage(nil), binding.NextGuestGate...)
-	copy.Effects = append(json.RawMessage(nil), binding.Effects...)
-	return &copy
 }

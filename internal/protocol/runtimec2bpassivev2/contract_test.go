@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 func TestKnownAnswerNoGuestBuildClosure(t *testing.T) {
@@ -99,7 +101,7 @@ func TestSubstitutionNullOrderAndAdmissionMutationsRefuse(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			candidate := clone(original)
+			candidate := strictjson.Clone(original)
 			test.mutate(candidate)
 			if err := Validate(candidate); err == nil {
 				t.Fatal("mutation accepted")
@@ -158,7 +160,7 @@ func TestRequireEOFAcceptsOnlyExactlyOneTrailingAbsence(t *testing.T) {
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
 			decoder := json.NewDecoder(strings.NewReader(testCase.body))
-			err := requireEOF(decoder)
+			err := strictjson.RequireEOF(decoder, "C2B_V2_BINDING_TRAILING")
 			if (err != nil) != testCase.wantErr {
 				t.Fatalf("requireEOF(%q) error = %v, want error = %v", testCase.body, err, testCase.wantErr)
 			}

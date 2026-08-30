@@ -7,8 +7,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"slices"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 const (
@@ -299,13 +300,13 @@ func Decode(exact []byte) (*Contract, error) {
 	if err := decoder.Decode(&contract); err != nil {
 		return nil, fmt.Errorf("C1_CONTRACT_MISMATCH: decode: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := strictjson.RequireEOF(decoder, "C1_CONTRACT_MISMATCH"); err != nil {
 		return nil, err
 	}
 	if err := Validate(&contract); err != nil {
 		return nil, err
 	}
-	return clone(&contract), nil
+	return strictjson.Clone(&contract), nil
 }
 
 func Validate(contract *Contract) error {
@@ -365,26 +366,6 @@ func Validate(contract *Contract) error {
 		return errors.New("C1_RUNTIME_NOT_ADMITTED")
 	}
 	return nil
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var extra any
-	if err := decoder.Decode(&extra); !errors.Is(err, io.EOF) {
-		return errors.New("C1_CONTRACT_MISMATCH: trailing data")
-	}
-	return nil
-}
-
-func clone(contract *Contract) *Contract {
-	exact, err := json.Marshal(contract)
-	if err != nil {
-		panic(err)
-	}
-	var copied Contract
-	if err := json.Unmarshal(exact, &copied); err != nil {
-		panic(err)
-	}
-	return &copied
 }
 
 func equalStrings(left, right []string) bool {

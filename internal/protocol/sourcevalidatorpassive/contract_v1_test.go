@@ -100,7 +100,7 @@ func TestV1PassiveConformanceCorpus(t *testing.T) {
 			if err == nil {
 				t.Fatal("rejected case accepted")
 			}
-			if got := classification(err); got != candidate.Expected.Classification {
+			if got := errClassification(err); got != candidate.Expected.Classification {
 				t.Fatalf("classification = %q; want %q (%v)", got, candidate.Expected.Classification, err)
 			}
 			if candidate.Expected.Effects == nil || candidate.Expected.Effects.State || candidate.Expected.Effects.Approval ||
@@ -179,14 +179,14 @@ func TestV1RequestExactCapAndCrossFamilyRefusal(t *testing.T) {
 	if err != nil || len(encoded) != V1RequestMaximumBytes {
 		t.Fatalf("exact maximum encoding = %d, %v", len(encoded), err)
 	}
-	if _, err := DecodeV1Request(V1ApprovalBrokerRole, encoded); classification(err) != ClassificationDomain {
-		t.Fatalf("cross-role classification = %q (%v)", classification(err), err)
+	if _, err := DecodeV1Request(V1ApprovalBrokerRole, encoded); errClassification(err) != ClassificationDomain {
+		t.Fatalf("cross-role classification = %q (%v)", errClassification(err), err)
 	}
-	if _, err := DecodeV1Request(V1DaemonRole, append(encoded, 0)); classification(err) != ClassificationMalformed {
-		t.Fatalf("cap+1 classification = %q (%v)", classification(err), err)
+	if _, err := DecodeV1Request(V1DaemonRole, append(encoded, 0)); errClassification(err) != ClassificationMalformed {
+		t.Fatalf("cap+1 classification = %q (%v)", errClassification(err), err)
 	}
-	if _, err := DecodeV1Request(V1DaemonRole, readV0RequestFixture(t)); classification(err) != ClassificationUnsupported {
-		t.Fatalf("v0-as-v1 classification = %q (%v)", classification(err), err)
+	if _, err := DecodeV1Request(V1DaemonRole, readV0RequestFixture(t)); errClassification(err) != ClassificationUnsupported {
+		t.Fatalf("v0-as-v1 classification = %q (%v)", errClassification(err), err)
 	}
 }
 
@@ -207,8 +207,8 @@ func TestV1InactiveResourcePolicyRefusesInventedMeasurements(t *testing.T) {
 		}
 
 		policy.ObservedFootprintThreshold = 1
-		if _, err := EncodeV1ResourcePolicy(policy); classification(err) != ClassificationSchema {
-			t.Fatalf("invented measurement classification = %q (%v)", classification(err), err)
+		if _, err := EncodeV1ResourcePolicy(policy); errClassification(err) != ClassificationSchema {
+			t.Fatalf("invented measurement classification = %q (%v)", errClassification(err), err)
 		}
 	}
 }
@@ -231,14 +231,14 @@ func TestV1ProfileAndConsumerFamiliesAreRoleClosed(t *testing.T) {
 		}
 
 		other := role.Other()
-		if _, err := DecodeV1ProcessProfile(other, processBytes); classification(err) != ClassificationDomain {
-			t.Fatalf("cross-role process profile classification = %q", classification(err))
+		if _, err := DecodeV1ProcessProfile(other, processBytes); errClassification(err) != ClassificationDomain {
+			t.Fatalf("cross-role process profile classification = %q", errClassification(err))
 		}
-		if _, err := DecodeV1ArtifactProfile(other, artifactBytes); classification(err) != ClassificationDomain {
-			t.Fatalf("cross-role artifact profile classification = %q", classification(err))
+		if _, err := DecodeV1ArtifactProfile(other, artifactBytes); errClassification(err) != ClassificationDomain {
+			t.Fatalf("cross-role artifact profile classification = %q", errClassification(err))
 		}
-		if _, err := DecodeV1ConsumerProjection(other, consumerBytes); classification(err) != ClassificationDomain {
-			t.Fatalf("cross-role consumer classification = %q", classification(err))
+		if _, err := DecodeV1ConsumerProjection(other, consumerBytes); errClassification(err) != ClassificationDomain {
+			t.Fatalf("cross-role consumer classification = %q", errClassification(err))
 		}
 	}
 }
@@ -263,11 +263,11 @@ func TestV1ResultBindsExactRequestProfilesAndCleanup(t *testing.T) {
 		if err != nil || verified.CleanupDisposition != V1CleanupComplete || verified.RefusalDisposition != V1RefusalNone {
 			t.Fatalf("verify result: %v", err)
 		}
-		if _, err := VerifyV1Result(request, append(encoded, 0)); classification(err) != ClassificationMalformed {
-			t.Fatalf("trailing result classification = %q (%v)", classification(err), err)
+		if _, err := VerifyV1Result(request, append(encoded, 0)); errClassification(err) != ClassificationMalformed {
+			t.Fatalf("trailing result classification = %q (%v)", errClassification(err), err)
 		}
-		if _, err := DecodeV1Result(role.Other(), encoded); classification(err) != ClassificationDomain {
-			t.Fatalf("cross-role result classification = %q (%v)", classification(err), err)
+		if _, err := DecodeV1Result(role.Other(), encoded); errClassification(err) != ClassificationDomain {
+			t.Fatalf("cross-role result classification = %q (%v)", errClassification(err), err)
 		}
 	}
 }
@@ -313,7 +313,7 @@ func testV1ProfileSet(t *testing.T, role V1ConsumerRole) v1TestProfileSet {
 	return v1TestProfileSet{Process: process, Artifact: artifact, Consumer: consumer}
 }
 
-func classification(err error) string {
+func errClassification(err error) string {
 	value, _ := ErrorClassification(err)
 	return value
 }

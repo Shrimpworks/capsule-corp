@@ -1,17 +1,26 @@
 package bootstrapauthpassive
 
-import "fmt"
+import (
+	"fmt"
 
-type Classification string
+	"capsule.local/capsule/internal/protocol/classification"
+)
 
+// Classification is the shared internal/protocol/classification vocabulary
+// — see that package for the full cross-package classification set. This
+// package only ever produces the seven values below.
+type Classification = classification.Classification
+
+// Classification values this package can produce, aliased from the shared
+// internal/protocol/classification vocabulary.
 const (
-	ClassificationMalformed   Classification = "MALFORMED"
-	ClassificationUnsupported Classification = "UNSUPPORTED"
-	ClassificationSchema      Classification = "SCHEMA"
-	ClassificationBinding     Classification = "BINDING"
-	ClassificationSignature   Classification = "SIGNATURE"
-	ClassificationTime        Classification = "TIME"
-	ClassificationReplay      Classification = "REPLAY"
+	ClassificationMalformed   = classification.Malformed
+	ClassificationUnsupported = classification.Unsupported
+	ClassificationSchema      = classification.Schema
+	ClassificationBinding     = classification.Binding
+	ClassificationSignature   = classification.Signature
+	ClassificationTime        = classification.Time
+	ClassificationReplay      = classification.Replay
 )
 
 type VerificationError struct {

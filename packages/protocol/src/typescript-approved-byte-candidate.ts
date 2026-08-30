@@ -47,6 +47,7 @@ export const APPROVED_BYTE_OPTIONS = Object.freeze({
   outputMediaType: JAVASCRIPT_SOURCE_MEDIA_TYPE,
 });
 
+/** The fixed set of byte artifacts {@link ApprovedByteDigest} can be bound to. */
 export type ApprovedByteDigestRole =
   | "emitted-javascript"
   | "executable-javascript-source-manifest"
@@ -57,21 +58,25 @@ export type ApprovedByteDigestRole =
   | "transformer-profile";
 
 declare const approvedByteDigestBrand: unique symbol;
+/** A SHA-256 digest bound to exactly one {@link ApprovedByteDigestRole}, producible only via {@link asApprovedByteDigest}. */
 export type ApprovedByteDigest<Role extends ApprovedByteDigestRole> = readonly number[] & {
   readonly [approvedByteDigestBrand]: `sha256:${Role}:32`;
 };
 
+/** One source file's already-emitted bytes, supplied by the caller — never produced by a transformer call. */
 export type ApprovedByteFixtureSource = Readonly<{
   logicalPath: string;
   originalBytes: Uint8Array;
   emittedBytes: Uint8Array;
 }>;
 
+/** Input to {@link buildApprovedByteFixtureCandidate}: an entrypoint and its already-emitted source set. */
 export type ApprovedByteFixtureInput = Readonly<{
   entrypoint: string;
   sources: readonly [ApprovedByteFixtureSource, ...ApprovedByteFixtureSource[]];
 }>;
 
+/** The raw encoded byte arrays a built {@link ApprovedByteFixtureCandidate}'s digests are computed over. */
 export type ApprovedByteCandidateBytes = Readonly<{
   transformerProfile: readonly number[];
   normalizedOptions: readonly number[];
@@ -82,6 +87,7 @@ export type ApprovedByteCandidateBytes = Readonly<{
   planSourceBindings: readonly number[];
 }>;
 
+/** The SHA-256 digests computed over a built {@link ApprovedByteFixtureCandidate}'s {@link ApprovedByteCandidateBytes}. */
 export type ApprovedByteCandidateDigests = Readonly<{
   transformerProfile: ApprovedByteDigest<"transformer-profile">;
   normalizedOptions: ApprovedByteDigest<"normalized-options">;
@@ -90,11 +96,13 @@ export type ApprovedByteCandidateDigests = Readonly<{
   transformationRecordSet: ApprovedByteDigest<"transformation-record-set">;
 }>;
 
+/** The result of {@link buildApprovedByteFixtureCandidate}: encoded bytes paired with their digests. */
 export type ApprovedByteFixtureCandidate = Readonly<{
   bytes: ApprovedByteCandidateBytes;
   digests: ApprovedByteCandidateDigests;
 }>;
 
+/** The retained expected values {@link verifyApprovedByteFixtureKnownAnswers} checks a candidate against. */
 export type ApprovedByteKnownAnswers = Readonly<{
   transformerProfile: string;
   normalizedOptions: string;
@@ -104,6 +112,60 @@ export type ApprovedByteKnownAnswers = Readonly<{
   transformationRecordSet: string;
   planSourceBindings: string;
 }>;
+
+/** The exhaustive set of refusal codes {@link buildApprovedByteFixtureCandidate} can return. */
+export type ApprovedByteFixtureBuildRefusalCode =
+  | "SOURCE_FILE_COUNT"
+  | "SOURCE_PATH"
+  | "SOURCE_PATH_DUPLICATE"
+  | "SOURCE_ENTRYPOINT"
+  | "ORIGINAL_SOURCE_BYTES"
+  | "ORIGINAL_SOURCE_BOM"
+  | "ORIGINAL_SOURCE_UTF8"
+  | "EMITTED_SOURCE_BYTES"
+  | "EMITTED_SOURCE_BOM"
+  | "EMITTED_SOURCE_UTF8"
+  | "ORIGINAL_AGGREGATE_BYTES"
+  | "EMITTED_AGGREGATE_BYTES";
+
+/** A classified refusal from {@link buildApprovedByteFixtureCandidate}. */
+export interface ApprovedByteFixtureBuildRefusal {
+  readonly owner: "approved-byte-fixture-builder";
+  readonly classification: "MALFORMED" | "SCHEMA" | "DOMAIN";
+  readonly code: ApprovedByteFixtureBuildRefusalCode;
+}
+
+/** The outcome of {@link buildApprovedByteFixtureCandidate}: either the built candidate or a classified refusal. */
+export type ApprovedByteFixtureBuildResult =
+  | { readonly ok: true; readonly candidate: ApprovedByteFixtureCandidate }
+  | { readonly ok: false; readonly refusal: ApprovedByteFixtureBuildRefusal };
+
+/** The exhaustive set of refusal codes {@link verifyApprovedByteFixtureKnownAnswers} can return. */
+export type ApprovedByteFixtureVerifyRefusalCode =
+  | "KNOWN_ANSWER_MISMATCH"
+  | "TRANSFORMATION_RECORD_MISMATCH"
+  | "DIGEST_BINDING_MISMATCH";
+
+/** A classified refusal from {@link verifyApprovedByteFixtureKnownAnswers}. */
+export interface ApprovedByteFixtureVerifyRefusal {
+  readonly owner: "approved-byte-fixture-verifier";
+  readonly classification: "DOMAIN";
+  readonly code: ApprovedByteFixtureVerifyRefusalCode;
+}
+
+/** The outcome of {@link verifyApprovedByteFixtureKnownAnswers}: either a confirmed match or a classified refusal. */
+export type ApprovedByteFixtureVerifyResult =
+  | { readonly ok: true }
+  | { readonly ok: false; readonly refusal: ApprovedByteFixtureVerifyRefusal };
+
+class ApprovedByteFixtureBuildFailure extends Error {
+  constructor(
+    readonly classification: ApprovedByteFixtureBuildRefusal["classification"],
+    readonly code: ApprovedByteFixtureBuildRefusalCode,
+  ) {
+    super(code);
+  }
+}
 
 const sourcePathPattern =
   /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}(?:\/[A-Za-z0-9][A-Za-z0-9._-]{0,63})*$/u;
@@ -115,9 +177,20 @@ const strictUtf8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
  */
 export function buildApprovedByteFixtureCandidate(
   input: ApprovedByteFixtureInput,
-): ApprovedByteFixtureCandidate {
+): ApprovedByteFixtureBuildResult {
+  try {
+    return Object.freeze({ ok: true, candidate: buildCandidate(input) });
+  } catch (error) {
+    if (error instanceof ApprovedByteFixtureBuildFailure) {
+      return buildRejected(error.classification, error.code);
+    }
+    throw error;
+  }
+}
+
+function buildCandidate(input: ApprovedByteFixtureInput): ApprovedByteFixtureCandidate {
   if (input.sources.length > APPROVED_BYTE_CAPS.sourceFiles) {
-    throw new TypeError("source file count exceeds the approved-byte candidate cap");
+    buildFail("DOMAIN", "SOURCE_FILE_COUNT");
   }
   const copied = input.sources
     .map((source) => ({
@@ -128,11 +201,11 @@ export function buildApprovedByteFixtureCandidate(
     .sort((left, right) => compareAscii(left.logicalPath, right.logicalPath));
   for (let index = 1; index < copied.length; index += 1) {
     if (copied[index - 1]?.logicalPath === copied[index]?.logicalPath) {
-      throw new TypeError("source paths must be unique");
+      buildFail("DOMAIN", "SOURCE_PATH_DUPLICATE");
     }
   }
   if (!copied.some((source) => source.logicalPath === input.entrypoint)) {
-    throw new TypeError("entrypoint must be an exact source member");
+    buildFail("DOMAIN", "SOURCE_ENTRYPOINT");
   }
   const originalAggregate = copied.reduce(
     (total, source) => total + source.originalBytes.length,
@@ -140,10 +213,10 @@ export function buildApprovedByteFixtureCandidate(
   );
   const emittedAggregate = copied.reduce((total, source) => total + source.emittedBytes.length, 0);
   if (originalAggregate > APPROVED_BYTE_CAPS.originalAggregateBytes) {
-    throw new TypeError("original aggregate exceeds the approved-byte candidate cap");
+    buildFail("DOMAIN", "ORIGINAL_AGGREGATE_BYTES");
   }
   if (emittedAggregate > APPROVED_BYTE_CAPS.emittedAggregateBytes) {
-    throw new TypeError("emitted aggregate exceeds the approved-byte candidate cap");
+    buildFail("DOMAIN", "EMITTED_AGGREGATE_BYTES");
   }
 
   const transformerProfile = encodeTransformerProfile();
@@ -217,6 +290,7 @@ export function buildApprovedByteFixtureCandidate(
   });
 }
 
+/** Wraps a raw 32-byte SHA-256 digest as an {@link ApprovedByteDigest} bound to `_role`; throws if `value` is not exactly 32 bytes. */
 export function asApprovedByteDigest<Role extends ApprovedByteDigestRole>(
   value: Uint8Array,
   _role: Role,
@@ -234,7 +308,7 @@ export function asApprovedByteDigest<Role extends ApprovedByteDigestRole>(
 export function verifyApprovedByteFixtureKnownAnswers(
   candidate: ApprovedByteFixtureCandidate,
   expected: ApprovedByteKnownAnswers,
-): void {
+): ApprovedByteFixtureVerifyResult {
   const actual = {
     transformerProfile: hashHex(candidate.bytes.transformerProfile),
     normalizedOptions: hashHex(candidate.bytes.normalizedOptions),
@@ -253,7 +327,7 @@ export function verifyApprovedByteFixtureKnownAnswers(
     "planSourceBindings",
   ] as const) {
     if (actual[role] !== expected[role]) {
-      throw new TypeError(`approved-byte fixture ${role} known answer mismatch`);
+      return verifyRejected("KNOWN_ANSWER_MISMATCH");
     }
   }
   if (
@@ -262,7 +336,7 @@ export function verifyApprovedByteFixtureKnownAnswers(
       (value, index) => value !== expected.transformationRecords[index],
     )
   ) {
-    throw new TypeError("approved-byte fixture transformation record known answer mismatch");
+    return verifyRejected("TRANSFORMATION_RECORD_MISMATCH");
   }
   if (
     !Buffer.from(candidate.digests.transformerProfile).equals(
@@ -281,42 +355,74 @@ export function verifyApprovedByteFixtureKnownAnswers(
       Buffer.from(expected.transformationRecordSet, "hex"),
     )
   ) {
-    throw new TypeError("approved-byte fixture nominal digest binding mismatch");
+    return verifyRejected("DIGEST_BINDING_MISMATCH");
   }
+  return Object.freeze({ ok: true });
 }
 
 function validateSourcePath(value: string): string {
   if (value.length > 256 || !sourcePathPattern.test(value)) {
-    throw new TypeError("source path is outside the approved-byte candidate grammar");
+    buildFail("SCHEMA", "SOURCE_PATH");
   }
   return value;
 }
 
 function validateSourceBytes(value: Uint8Array): Uint8Array {
   if (value.length > APPROVED_BYTE_CAPS.originalFileBytes) {
-    throw new TypeError("original source exceeds the approved-byte candidate cap");
+    buildFail("DOMAIN", "ORIGINAL_SOURCE_BYTES");
   }
-  validateUtf8WithoutBom(value, "original source");
+  validateUtf8WithoutBom(value, "original");
   return Uint8Array.from(value);
 }
 
 function validateEmittedBytes(value: Uint8Array): Uint8Array {
   if (value.length > APPROVED_BYTE_CAPS.emittedFileBytes) {
-    throw new TypeError("emitted JavaScript exceeds the approved-byte candidate cap");
+    buildFail("DOMAIN", "EMITTED_SOURCE_BYTES");
   }
-  validateUtf8WithoutBom(value, "emitted JavaScript");
+  validateUtf8WithoutBom(value, "emitted");
   return Uint8Array.from(value);
 }
 
-function validateUtf8WithoutBom(value: Uint8Array, role: string): void {
+function validateUtf8WithoutBom(value: Uint8Array, role: "original" | "emitted"): void {
   if (value[0] === 0xef && value[1] === 0xbb && value[2] === 0xbf) {
-    throw new TypeError(`${role} must not contain a UTF-8 BOM`);
+    buildFail("MALFORMED", role === "original" ? "ORIGINAL_SOURCE_BOM" : "EMITTED_SOURCE_BOM");
   }
   try {
     strictUtf8.decode(value);
   } catch {
-    throw new TypeError(`${role} must contain strict UTF-8`);
+    buildFail("MALFORMED", role === "original" ? "ORIGINAL_SOURCE_UTF8" : "EMITTED_SOURCE_UTF8");
   }
+}
+
+function buildFail(
+  classification: ApprovedByteFixtureBuildRefusal["classification"],
+  code: ApprovedByteFixtureBuildRefusalCode,
+): never {
+  throw new ApprovedByteFixtureBuildFailure(classification, code);
+}
+
+function buildRejected(
+  classification: ApprovedByteFixtureBuildRefusal["classification"],
+  code: ApprovedByteFixtureBuildRefusalCode,
+): { readonly ok: false; readonly refusal: ApprovedByteFixtureBuildRefusal } {
+  return Object.freeze({
+    ok: false,
+    refusal: Object.freeze({ owner: "approved-byte-fixture-builder", classification, code }),
+  });
+}
+
+function verifyRejected(code: ApprovedByteFixtureVerifyRefusalCode): {
+  readonly ok: false;
+  readonly refusal: ApprovedByteFixtureVerifyRefusal;
+} {
+  return Object.freeze({
+    ok: false,
+    refusal: Object.freeze({
+      owner: "approved-byte-fixture-verifier",
+      classification: "DOMAIN",
+      code,
+    }),
+  });
 }
 
 function encodeTransformerProfile(): Uint8Array {

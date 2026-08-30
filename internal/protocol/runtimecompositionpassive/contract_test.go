@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 func TestC1KnownAnswerAndPassiveBoundary(t *testing.T) {
@@ -169,7 +171,7 @@ func decodeOnly(payload []byte) error {
 	if err := decoder.Decode(&contract); err != nil {
 		return err
 	}
-	return requireEOF(decoder)
+	return strictjson.RequireEOF(decoder, "C1_CONTRACT_MISMATCH")
 }
 
 func TestC1DecodedValueOwnsDefensiveCopies(t *testing.T) {

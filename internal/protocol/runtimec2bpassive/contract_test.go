@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 func TestKnownAnswerCrossLinksAllPassiveInputs(t *testing.T) {
@@ -52,7 +54,7 @@ func TestSemanticMutationClassesRefuse(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			candidate := clone(original)
+			candidate := strictjson.Clone(original)
 			test.mutate(candidate)
 			if err := Validate(candidate); err == nil {
 				t.Fatal("mutation accepted")

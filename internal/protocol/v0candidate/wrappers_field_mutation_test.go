@@ -3,6 +3,8 @@ package v0candidate
 import (
 	"bytes"
 	"testing"
+
+	"capsule.local/capsule/internal/protocol/cborscan"
 )
 
 // This file closes issue #273's branch-coverage gap on decodeExecutionPlan
@@ -60,27 +62,27 @@ func replaceTopLevelFieldValue(t *testing.T, source []byte, profile cborProfile,
 // package's tests, generalized to every field type rather than only text.
 func topLevelFieldRange(t *testing.T, source []byte, profile cborProfile, targetKey uint64) (keyStart, valueStart, valueEnd int) {
 	t.Helper()
-	scanner := cborScanner{bytes: source, profile: profile}
-	major, count, err := scanner.readHead()
+	scanner := cborscan.Scanner{Value: source, Profile: profile}
+	major, count, err := scanner.Head()
 	if err != nil || major != 5 {
 		t.Fatalf("fixture is not a top-level CBOR map: %v", err)
 	}
 	for index := uint64(0); index < count; index++ {
-		ks := scanner.offset
-		if err := scanner.scanItem(1); err != nil {
+		ks := scanner.Offset
+		if err := scanner.Item(1); err != nil {
 			t.Fatalf("scan key %d: %v", index, err)
 		}
-		keyReader := cborReader{bytes: source[ks:scanner.offset]}
+		keyReader := cborReader{bytes: source[ks:scanner.Offset]}
 		key, err := keyReader.unsigned()
 		if err != nil {
 			t.Fatalf("decode key %d: %v", index, err)
 		}
-		vs := scanner.offset
-		if err := scanner.scanItem(1); err != nil {
+		vs := scanner.Offset
+		if err := scanner.Item(1); err != nil {
 			t.Fatalf("scan value for key %d: %v", key, err)
 		}
 		if key == targetKey {
-			return ks, vs, scanner.offset
+			return ks, vs, scanner.Offset
 		}
 	}
 	t.Fatalf("target key %d not found in fixture", targetKey)

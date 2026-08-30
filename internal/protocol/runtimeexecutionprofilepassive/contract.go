@@ -7,8 +7,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"slices"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 const (
@@ -330,13 +331,13 @@ func Decode(exact []byte) (*Contract, error) {
 	if err := decoder.Decode(&contract); err != nil {
 		return nil, fmt.Errorf("C2A_CONTRACT_MISMATCH: decode: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := strictjson.RequireEOF(decoder, "C2A_CONTRACT_MISMATCH"); err != nil {
 		return nil, err
 	}
 	if err := Validate(&contract); err != nil {
 		return nil, err
 	}
-	return clone(&contract), nil
+	return strictjson.Clone(&contract), nil
 }
 
 func Validate(c *Contract) error {
@@ -472,26 +473,4 @@ func validateTransport(t TransportProfile) error {
 		return errors.New("C2A_TRANSPORT_MISMATCH")
 	}
 	return nil
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var extra any
-	if err := decoder.Decode(&extra); err == io.EOF {
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("C2A_CONTRACT_MISMATCH: trailing decode: %w", err)
-	}
-	return errors.New("C2A_CONTRACT_MISMATCH: trailing JSON value")
-}
-
-func clone(contract *Contract) *Contract {
-	exact, err := json.Marshal(contract)
-	if err != nil {
-		panic(err)
-	}
-	var copied Contract
-	if err := json.Unmarshal(exact, &copied); err != nil {
-		panic(err)
-	}
-	return &copied
 }

@@ -68,6 +68,24 @@ test("passive JobProposal candidate exposes only fixed first-slice roles", () =>
   assert.equal(proposal.kind, "JobProposal");
   assert.equal(proposal.input.slot, "primary-data");
   assert.equal(proposal.outputs[0].slot, "transformed-json");
+
+  // "only" fixed first-slice roles: no extra top-level fields, no extra
+  // input fields, and exactly one output carrying no extra fields either.
+  assert.deepEqual(
+    Object.keys(proposal).sort(),
+    [
+      "apiVersion",
+      "kind",
+      "source",
+      "runtimeProfile",
+      "input",
+      "requestedLimits",
+      "outputs",
+    ].sort(),
+  );
+  assert.deepEqual(Object.keys(proposal.input).sort(), ["slot", "kind", "value"].sort());
+  assert.equal(proposal.outputs.length, 1);
+  assert.deepEqual(Object.keys(proposal.outputs[0]).sort(), ["slot", "kind", "maxBytes"].sort());
 });
 
 test("candidate scalar constructors reject ambiguous or unsafe values", () => {
@@ -100,6 +118,27 @@ test("PlanRegistration candidate keeps identity domains distinct", () => {
   assert.equal(registration.objectType, "capsule.plan-registration");
   assert.equal(registration.planDigest.length, 32);
   assert.notDeepEqual(registration.registrationId, registration.installationId);
+
+  // Real cross-domain misuse: these candidate types carry no runtime role
+  // tag (asCandidateDigest/copyCandidateId only check width — see
+  // internal-contract-candidates.ts), so the *only* mechanism that keeps,
+  // say, a trust-epoch digest out of an execution-plan digest slot is the
+  // nominal branding TypeScript enforces at compile time. Exercise that
+  // mechanism directly: assigning a wrong-domain value must fail to
+  // compile. If a future change collapsed the brands (or dropped them),
+  // these assignments would silently type-check and `@ts-expect-error`
+  // would report an unused directive, failing `tsc`/`pnpm build`.
+  // @ts-expect-error - a trust-epoch digest must not satisfy an execution-plan digest slot
+  const misusedPlanDigest: PlanRegistrationCandidate["planDigest"] = registration.epochDigest;
+  // @ts-expect-error - a registration ID must not satisfy an installation ID slot
+  const misusedInstallationId: PlanRegistrationCandidate["installationId"] =
+    registration.registrationId;
+  // @ts-expect-error - a Supervisor ID must not satisfy a registration ID slot
+  const misusedRegistrationId: PlanRegistrationCandidate["registrationId"] =
+    registration.supervisorId;
+  void misusedPlanDigest;
+  void misusedInstallationId;
+  void misusedRegistrationId;
 });
 
 test("candidate internal scalar constructors copy and bound inputs", () => {

@@ -49,41 +49,6 @@ export type CandidatePositiveUInt53 = number & {
 };
 
 /**
- * Decoded view of the passive `ExecutionPlan` candidate object (ADR-0019,
- * ADR-0023). Field order here has no bearing on wire order; the canonical
- * CBOR map key order is owned by the Go/TypeScript encoders, not this type.
- */
-export interface ExecutionPlanCandidate {
-  objectType: "capsule.execution-plan";
-  objectVersion: 0;
-  installationId: CandidateInstallationId;
-  epochSequence: CandidateUInt53;
-  epochDigest: CandidateDigest<"trust-epoch">;
-  sourceManifestDigest: CandidateDigest<"source-manifest">;
-  sourceEntrypoint: string;
-  sourceByteLength: CandidateUInt53;
-  inputSlot: "primary-data";
-  inlineInputDigest: CandidateDigest<"inline-input">;
-  inlineInputByteLength: CandidateUInt53;
-  runtimeProfileAlias: string;
-  runtimeBundleManifestDigest: CandidateDigest<"runtime-bundle-manifest">;
-  profileReviewAttestationDigests: readonly [
-    CandidateDigest<"profile-review-attestation">,
-    ...CandidateDigest<"profile-review-attestation">[],
-  ];
-  profileRegistryEntryDigest: CandidateDigest<"profile-registry-entry">;
-  backendValidationRecordDigest: CandidateDigest<"backend-validation-record">;
-  backendConfigurationDigest: CandidateDigest<"backend-configuration">;
-  trustSnapshotDigest: CandidateDigest<"trust-snapshot">;
-  policyDecisionDigest: CandidateDigest<"policy-decision">;
-  wallTimeMs: CandidatePositiveUInt53;
-  wallTimeOrigin: "requested" | "trusted-default";
-  outputSlot: "transformed-json";
-  outputMaxJsonBytes: CandidatePositiveUInt53;
-  expiresAt: CandidateUInt53;
-}
-
-/**
  * Decoded view of the Supervisor-issued `PlanRegistration` candidate object.
  * Carries no replacement plan bytes — registration binds a caller's exact
  * submitted `ExecutionPlan` bytes to an ID/sequence/expiry, it never

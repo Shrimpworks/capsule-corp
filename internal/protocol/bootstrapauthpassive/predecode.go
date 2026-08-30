@@ -1,12 +1,11 @@
 package bootstrapauthpassive
 
 import (
-	"bytes"
 	"encoding/binary"
-	"unicode/utf8"
-)
+	"errors"
 
-const maxSafeInteger = uint64(9007199254740991)
+	"capsule.local/capsule/internal/protocol/cborscan"
+)
 
 type predecodeProfile struct {
 	maxBytes         int
@@ -19,163 +18,81 @@ type predecodeProfile struct {
 	allowFalse       bool
 }
 
+func (p predecodeProfile) sharedProfile() cborscan.Profile {
+	return cborscan.Profile{
+		MaxBytes:         p.maxBytes,
+		MaxDepth:         p.maxDepth,
+		MaxItems:         p.maxItems,
+		MaxMapEntries:    p.maxMapEntries,
+		MaxArrayElements: p.maxArrayElements,
+		AllowedTag:       p.allowedTag,
+		AllowTag:         p.allowTag,
+		AllowFalse:       p.allowFalse,
+	}
+}
+
 func predecode(value []byte, profile predecodeProfile) error {
-	if len(value) == 0 {
-		return rejected(ClassificationMalformed, "empty-cbor")
-	}
-	if len(value) > profile.maxBytes {
-		return rejected(ClassificationMalformed, "raw-byte-limit")
-	}
-	s := cborScanner{value: value, profile: profile}
-	if err := s.item(1); err != nil {
-		return err
-	}
-	if s.offset != len(value) {
-		return rejected(ClassificationMalformed, "trailing-cbor")
+	if err := cborscan.Predecode(value, profile.sharedProfile()); err != nil {
+		return rejected(ClassificationMalformed, predecodeRefusalCode(err))
 	}
 	return nil
 }
 
-type cborScanner struct {
-	value   []byte
-	offset  int
-	items   int
-	strings uint64
-	profile predecodeProfile
-}
-
-func (s *cborScanner) item(depth int) error {
-	if depth > s.profile.maxDepth {
-		return rejected(ClassificationMalformed, "cbor-depth")
+// predecodeRefusalCode maps a cborscan.Error's Reason to this package's
+// original predecoder code vocabulary. Every predecode refusal this package
+// observes is classified ClassificationMalformed, matching the predecoder
+// this replaces.
+func predecodeRefusalCode(err error) string {
+	var scanErr *cborscan.Error
+	if !errors.As(err, &scanErr) {
+		return "cbor-predecode"
 	}
-	s.items++
-	if s.items > s.profile.maxItems {
-		return rejected(ClassificationMalformed, "cbor-items")
-	}
-	major, argument, err := s.head()
-	if err != nil {
-		return err
-	}
-	switch major {
-	case 0:
-		if argument > maxSafeInteger {
-			return rejected(ClassificationMalformed, "unsafe-integer")
-		}
-	case 1:
-		if argument >= maxSafeInteger {
-			return rejected(ClassificationMalformed, "unsafe-negative-integer")
-		}
-	case 2, 3:
-		if argument > uint64(len(s.value)-s.offset) { // #nosec G115 -- the nonnegative remaining slice length widens losslessly.
-			return rejected(ClassificationMalformed, "truncated-string")
-		}
-		if s.strings > uint64(s.profile.maxBytes)-argument { // #nosec G115 -- every profile maximum is a reviewed positive constant.
-			return rejected(ClassificationMalformed, "decoded-string-limit")
-		}
-		s.strings += argument
-		end := s.offset + int(argument) // #nosec G115 -- the preceding comparison proves argument fits the remaining in-memory slice.
-		if major == 3 && !utf8.Valid(s.value[s.offset:end]) {
-			return rejected(ClassificationMalformed, "invalid-utf8")
-		}
-		s.offset = end
-	case 4:
-		if argument > s.profile.maxArrayElements {
-			return rejected(ClassificationMalformed, "array-elements")
-		}
-		for i := uint64(0); i < argument; i++ {
-			if err := s.item(depth + 1); err != nil {
-				return err
-			}
-		}
-	case 5:
-		if argument > s.profile.maxMapEntries {
-			return rejected(ClassificationMalformed, "map-entries")
-		}
-		var previous []byte
-		for i := uint64(0); i < argument; i++ {
-			start := s.offset
-			if err := s.item(depth + 1); err != nil {
-				return err
-			}
-			key := s.value[start:s.offset]
-			if previous != nil && deterministicCompare(previous, key) >= 0 {
-				return rejected(ClassificationMalformed, "duplicate-or-noncanonical-map-key")
-			}
-			previous = key
-			if err := s.item(depth + 1); err != nil {
-				return err
-			}
-		}
-	case 6:
-		if !s.profile.allowTag || argument != s.profile.allowedTag {
-			return rejected(ClassificationMalformed, "semantic-tag")
-		}
-		if err := s.item(depth + 1); err != nil {
-			return err
-		}
-	case 7:
-		if !s.profile.allowFalse || argument != 20 {
-			return rejected(ClassificationMalformed, "simple-or-float")
-		}
+	switch scanErr.Reason {
+	case cborscan.ReasonEmptyPayload:
+		return "empty-cbor"
+	case cborscan.ReasonRawByteLimit:
+		return "raw-byte-limit"
+	case cborscan.ReasonTrailingData:
+		return "trailing-cbor"
+	case cborscan.ReasonDepthLimit:
+		return "cbor-depth"
+	case cborscan.ReasonItemLimit:
+		return "cbor-items"
+	case cborscan.ReasonTruncatedItem:
+		return "truncated-cbor"
+	case cborscan.ReasonUnsafeInteger:
+		return "unsafe-integer"
+	case cborscan.ReasonUnsafeNegativeInteger:
+		return "unsafe-negative-integer"
+	case cborscan.ReasonTruncatedString:
+		return "truncated-string"
+	case cborscan.ReasonDecodedStringLimit:
+		return "decoded-string-limit"
+	case cborscan.ReasonInvalidUTF8:
+		return "invalid-utf8"
+	case cborscan.ReasonArrayElementLimit:
+		return "array-elements"
+	case cborscan.ReasonMapEntryLimit:
+		return "map-entries"
+	case cborscan.ReasonDuplicateMapKeyOrder:
+		return "duplicate-or-noncanonical-map-key"
+	case cborscan.ReasonSemanticTag:
+		return "semantic-tag"
+	case cborscan.ReasonSimpleOrFloat:
+		return "simple-or-float"
+	case cborscan.ReasonMajorType:
+		return "cbor-major-type"
+	case cborscan.ReasonInvalidItem:
+		return "cbor-item"
+	case cborscan.ReasonIndefiniteOrReserved:
+		return "indefinite-or-reserved"
+	case cborscan.ReasonTruncatedArgument:
+		return "truncated-argument"
+	case cborscan.ReasonNonpreferredArgument:
+		return "nonpreferred-argument"
 	default:
-		return rejected(ClassificationMalformed, "cbor-major-type")
+		return "cbor-predecode"
 	}
-	return nil
-}
-
-func (s *cborScanner) head() (byte, uint64, error) {
-	if s.offset >= len(s.value) {
-		return 0, 0, rejected(ClassificationMalformed, "truncated-cbor")
-	}
-	initial := s.value[s.offset]
-	s.offset++
-	major, additional := initial>>5, initial&0x1f
-	if additional < 24 {
-		return major, uint64(additional), nil
-	}
-	width := 0
-	switch additional {
-	case 24:
-		width = 1
-	case 25:
-		width = 2
-	case 26:
-		width = 4
-	case 27:
-		width = 8
-	default:
-		return 0, 0, rejected(ClassificationMalformed, "indefinite-or-reserved")
-	}
-	if width > len(s.value)-s.offset {
-		return 0, 0, rejected(ClassificationMalformed, "truncated-argument")
-	}
-	var argument uint64
-	switch width {
-	case 1:
-		argument = uint64(s.value[s.offset])
-	case 2:
-		argument = uint64(binary.BigEndian.Uint16(s.value[s.offset : s.offset+2]))
-	case 4:
-		argument = uint64(binary.BigEndian.Uint32(s.value[s.offset : s.offset+4]))
-	case 8:
-		argument = binary.BigEndian.Uint64(s.value[s.offset : s.offset+8])
-	}
-	s.offset += width
-	minimum := [...]uint64{0, 24, 1 << 8, 0, 1 << 16, 0, 0, 0, 1 << 32}[width]
-	if argument < minimum {
-		return 0, 0, rejected(ClassificationMalformed, "nonpreferred-argument")
-	}
-	return major, argument, nil
-}
-
-func deterministicCompare(left, right []byte) int {
-	if len(left) < len(right) {
-		return -1
-	}
-	if len(left) > len(right) {
-		return 1
-	}
-	return bytes.Compare(left, right)
 }
 
 type envelopeParts struct {

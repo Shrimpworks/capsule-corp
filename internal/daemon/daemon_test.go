@@ -1,12 +1,15 @@
 package daemon
 
 import (
+	"bufio"
 	"bytes"
 	"context"
+	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 	"syscall"
 	"testing"
@@ -122,9 +125,26 @@ func TestRun_StartsAndShutsDownCleanlyOnSignal(t *testing.T) {
 	}
 }
 
-func TestRun_RealSIGTERMShutsDownCleanly(t *testing.T) {
+// realSIGTERMHelperEnv gates TestHelperProcess_RealSIGTERM: set only in the
+// child process TestRun_RealSIGTERMShutsDownCleanly re-executes itself as, so
+// an ordinary `go test` run treats that function as a normal (no-op) test.
+const realSIGTERMHelperEnv = "CAPSULE_DAEMON_REAL_SIGTERM_HELPER"
+
+// TestHelperProcess_RealSIGTERM is not a real test on its own; it is a
+// well-known name TestRun_RealSIGTERMShutsDownCleanly re-executes the test
+// binary as (via `-test.run` and realSIGTERMHelperEnv) so the real default
+// signal.NotifyContext path can be exercised with a genuine SIGTERM sent to
+// an owned child process, instead of to os.Getpid() of the shared `go test`
+// process — which the signal could otherwise terminate outright, racing the
+// daemon's own handler (see #326). Run under plain `go test`, with the env
+// var unset, it does nothing and passes immediately.
+func TestHelperProcess_RealSIGTERM(t *testing.T) {
+	if os.Getenv(realSIGTERMHelperEnv) != "1" {
+		return
+	}
+
 	listener := listenLoopback(t)
-	logger, logs := newTestLogger(t)
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
 
 	runDone := make(chan int, 1)
 	go func() {
@@ -140,21 +160,75 @@ func TestRun_RealSIGTERMShutsDownCleanly(t *testing.T) {
 		})
 	}()
 
-	// Wait until the server is actually accepting connections before
-	// signaling, so the signal cannot race ahead of Serve starting.
-	waitUntilServing(t, listener.Addr().String())
+	// Wait for a completed HTTP round-trip, not just an accepted TCP
+	// connection: the OS backlog can accept a connection before Run's
+	// goroutine ever runs, but a response can only come back once
+	// server.Serve is actively looping — which happens strictly after
+	// Run registers the real signal.NotifyContext handler earlier in the
+	// same goroutine. That ordering is what makes this readiness signal
+	// safe to gate the SIGTERM on.
+	waitForHealthyResponse(t, listener.Addr().String())
 
-	if err := syscall.Kill(os.Getpid(), syscall.SIGTERM); err != nil {
-		t.Fatalf("send SIGTERM to self: %v", err)
+	// A single stdout line the parent scans for; anything else this process
+	// writes to stdout/stderr is incidental test-framework output.
+	fmt.Println("ready")
+
+	os.Exit(<-runDone)
+}
+
+func TestRun_RealSIGTERMShutsDownCleanly(t *testing.T) {
+	cmd := exec.Command(os.Args[0], "-test.run=^TestHelperProcess_RealSIGTERM$") // #nosec G204 G702 -- os.Args[0] is this same compiled test binary, a fixed self-reexec with a literal flag, not external/tainted input.
+	cmd.Env = append(os.Environ(), realSIGTERMHelperEnv+"=1")
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		t.Fatalf("create helper process stdout pipe: %v", err)
 	}
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	if err := cmd.Start(); err != nil {
+		t.Fatalf("start helper process: %v", err)
+	}
+	// Guarantees the helper process is never leaked if this test exits early
+	// via a Fatalf below; a no-op once the process has already been waited.
+	defer func() { _ = cmd.Process.Kill() }()
+
+	ready := make(chan error, 1)
+	go func() {
+		scanner := bufio.NewScanner(stdout)
+		for scanner.Scan() {
+			if scanner.Text() == "ready" {
+				ready <- nil
+				return
+			}
+		}
+		ready <- fmt.Errorf("helper process ended before signaling ready: %w", scanner.Err())
+	}()
 
 	select {
-	case code := <-runDone:
-		if code != 0 {
-			t.Fatalf("expected exit code 0 on SIGTERM shutdown, got %d; logs: %s", code, logs.String())
+	case err := <-ready:
+		if err != nil {
+			t.Fatalf("%v; helper stderr: %s", err, stderr.String())
 		}
 	case <-time.After(5 * time.Second):
-		t.Fatal("Run did not return after SIGTERM")
+		t.Fatalf("helper process never signaled ready; helper stderr: %s", stderr.String())
+	}
+
+	if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
+		t.Fatalf("send SIGTERM to helper process: %v", err)
+	}
+
+	waitErr := make(chan error, 1)
+	go func() { waitErr <- cmd.Wait() }()
+
+	select {
+	case err := <-waitErr:
+		if err != nil {
+			t.Fatalf("expected helper process to exit 0 on SIGTERM shutdown, got: %v; helper stderr: %s", err, stderr.String())
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatalf("helper process did not exit after SIGTERM; helper stderr: %s", stderr.String())
 	}
 }
 
@@ -307,4 +381,23 @@ func waitUntilServing(t *testing.T, addr string) {
 		time.Sleep(time.Millisecond)
 	}
 	t.Fatalf("server on %s never started accepting connections", addr)
+}
+
+// waitForHealthyResponse polls addr with real HTTP GETs until one completes,
+// or the test times out. Unlike waitUntilServing's bare TCP dial, a completed
+// HTTP round-trip proves server.Serve's accept loop is actively running, not
+// merely that the OS accepted a connection into its listen backlog.
+func waitForHealthyResponse(t *testing.T, addr string) {
+	t.Helper()
+
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		resp, err := http.Get("http://" + addr + "/")
+		if err == nil {
+			_ = resp.Body.Close()
+			return
+		}
+		time.Sleep(time.Millisecond)
+	}
+	t.Fatalf("server on %s never returned a response", addr)
 }

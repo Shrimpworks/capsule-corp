@@ -160,6 +160,14 @@ test("builder refuses copied or generic values with fixed provenance data", asyn
 });
 
 test("trusted binding construction enforces closed roles, widths, counts, and UInt53 bounds", () => {
+  assert.throws(
+    () => createTrustedExecutionPlanInstallationId("not-bytes" as unknown as Uint8Array),
+    /installation ID must be supplied as bytes/u,
+  );
+  assert.throws(
+    () => createTrustedExecutionPlanDigest(123 as unknown as Uint8Array, "trust-epoch"),
+    /trust-epoch digest must be supplied as bytes/u,
+  );
   assert.throws(() => createTrustedExecutionPlanInstallationId(new Uint8Array(16)), /nonzero/u);
   assert.throws(
     () => createTrustedExecutionPlanDigest(new Uint8Array(31), "trust-epoch"),

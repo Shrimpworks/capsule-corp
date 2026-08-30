@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 
+	"capsule.local/capsule/internal/protocol/classification"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 )
 
@@ -63,12 +64,18 @@ var (
 	profileMagic   = [8]byte{'C', 'A', 'P', 'M', 'J', 'S', 'A', 'P'}
 )
 
+// These constants are the shared internal/protocol/classification vocabulary
+// — see that package for the full cross-package classification set — kept as
+// plain strings (rather than the classification.Classification type
+// directly) so every existing reject(classification, code string) call site
+// in this file and contract_v1.go keeps compiling unchanged; each constant's
+// value is still sourced from the shared vocabulary, not reinvented here.
 const (
-	ClassificationMalformed   = "MALFORMED"
-	ClassificationUnsupported = "UNSUPPORTED"
-	ClassificationSchema      = "SCHEMA"
-	ClassificationDomain      = "DOMAIN"
-	ClassificationBinding     = "BINDING"
+	ClassificationMalformed   = string(classification.Malformed)
+	ClassificationUnsupported = string(classification.Unsupported)
+	ClassificationSchema      = string(classification.Schema)
+	ClassificationDomain      = string(classification.Domain)
+	ClassificationBinding     = string(classification.Binding)
 )
 
 type contractError struct {
@@ -86,8 +93,22 @@ func ErrorClassification(err error) (string, bool) {
 	return "", false
 }
 
-func reject(classification, code string) error {
-	return &contractError{classification: classification, code: code}
+func reject(class, code string) error {
+	return &contractError{classification: class, code: code}
+}
+
+// sourceProfileRejection reports the exact classification and code for a
+// v0candidate.NewMJSMainSource failure, preserving v0candidate's own
+// classification (which distinguishes MALFORMED from SEMANTIC, not only a
+// generic domain refusal) instead of flattening every failure to
+// ClassificationDomain. code is the caller's own refusal code, kept
+// independent of the underlying classification so each call site's existing
+// code string is unaffected.
+func sourceProfileRejection(err error, code string) error {
+	if underlying, ok := v0candidate.ErrorClassification(err); ok {
+		return reject(string(underlying), code)
+	}
+	return reject(ClassificationDomain, code)
 }
 
 type ValidationRequestID [16]byte
@@ -210,7 +231,7 @@ func NewValidationRequest(id ValidationRequestID, source []byte) (*ValidationReq
 	}
 	validated, err := v0candidate.NewMJSMainSource(source)
 	if err != nil {
-		return nil, reject(ClassificationDomain, "source-profile")
+		return nil, sourceProfileRejection(err, "source-profile")
 	}
 	exact := validated.AuthoritativeBytes()
 	digest := sha256.Sum256(exact)
@@ -234,8 +255,7 @@ func EncodeRequest(request *ValidationRequest) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, RequestHeaderBytes+len(request.sourceBytes))
-	putBodyLength(frame)
-	copy(frame[4:12], requestMagic[:])
+	putFrameHeader(frame, requestMagic)
 	putCommon(frame, RequestFrameKind, request.CorrelationID, request.SourceByteLength, request.SourceDigest)
 	copy(frame[RequestHeaderBytes:], request.sourceBytes)
 	return frame, nil
@@ -316,8 +336,7 @@ func EncodeResult(result *ValidationResult) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, ResultFrameBytes)
-	putBodyLength(frame)
-	copy(frame[4:12], resultMagic[:])
+	putFrameHeader(frame, resultMagic)
 	putCommon(frame, ResultFrameKind, result.CorrelationID, result.SourceByteLength, result.SourceDigest)
 	binary.BigEndian.PutUint16(frame[80:82], ArtifactProfileDomain)
 	copy(frame[82:114], result.ArtifactProfileDigest[:])
@@ -421,8 +440,7 @@ func EncodeEngineeringCandidate(candidate EngineeringCandidate) ([]byte, error) 
 		return nil, reject(ClassificationUnsupported, "engineering-candidate-identity")
 	}
 	frame := make([]byte, CandidateFrameBytes)
-	putBodyLength(frame)
-	copy(frame[4:12], candidateMagic[:])
+	putFrameHeader(frame, candidateMagic)
 	values := []uint16{candidate.RecordVersion, 1, candidate.OxcVersionMajor, candidate.OxcVersionMinor, candidate.OxcVersionPatch, candidate.RustToolchainMajor, candidate.RustToolchainMinor, candidate.RustToolchainPatch, candidate.SemanticMode, candidate.DirectCrateCount, candidate.LockedPackageCount, 0}
 	for index, value := range values {
 		binary.BigEndian.PutUint16(frame[12+index*2:14+index*2], value)
@@ -488,8 +506,7 @@ func EncodeArtifactProfile(profile EnrolledArtifactProfile) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, ArtifactProfileFrameBytes)
-	putBodyLength(frame)
-	copy(frame[4:12], profileMagic[:])
+	putFrameHeader(frame, profileMagic)
 	for index, value := range []uint16{profile.RecordVersion, ProtocolVersion, MethodTag, ValidatorProfileTag, SourceProfileTag, SourceMediaTypeTag} {
 		binary.BigEndian.PutUint16(frame[12+index*2:14+index*2], value)
 	}
@@ -558,7 +575,7 @@ func validateRequestValue(request *ValidationRequest) error {
 		return reject(ClassificationBinding, "source-digest")
 	}
 	if _, err := v0candidate.NewMJSMainSource(request.sourceBytes); err != nil {
-		return reject(ClassificationDomain, "source-profile")
+		return sourceProfileRejection(err, "source-profile")
 	}
 	return nil
 }
@@ -627,9 +644,7 @@ func validateArtifactProfile(profile EnrolledArtifactProfile) error {
 }
 
 func putCommon(frame []byte, kind uint16, id ValidationRequestID, length uint32, digest SourceDigest) {
-	for index, value := range []uint16{ProtocolVersion, kind, MethodTag, ValidatorProfileTag, SourceProfileTag, SourceMediaTypeTag, CorrelationDomainTag, SourceDigestDomainTag} {
-		binary.BigEndian.PutUint16(frame[12+index*2:14+index*2], value)
-	}
+	putSequentialTags(frame, 12, []uint16{ProtocolVersion, kind, MethodTag, ValidatorProfileTag, SourceProfileTag, SourceMediaTypeTag, CorrelationDomainTag, SourceDigestDomainTag})
 	copy(frame[28:44], id[:])
 	binary.BigEndian.PutUint32(frame[44:48], length)
 	copy(frame[48:80], digest[:])
@@ -637,25 +652,22 @@ func putCommon(frame []byte, kind uint16, id ValidationRequestID, length uint32,
 
 func validateCommon(frame []byte, kind uint16) error {
 	values := []uint16{ProtocolVersion, kind, MethodTag, ValidatorProfileTag, SourceProfileTag, SourceMediaTypeTag, CorrelationDomainTag, SourceDigestDomainTag}
-	for index, want := range values {
-		got := binary.BigEndian.Uint16(frame[12+index*2 : 14+index*2])
-		if got == want {
-			continue
-		}
-		classification := ClassificationUnsupported
-		if index == 6 || index == 7 {
-			classification = ClassificationDomain
-		}
-		return reject(classification, fmt.Sprintf("common-field-%d", index))
+	index := mismatchedTagIndex(frame, 12, values)
+	if index < 0 {
+		return nil
 	}
-	return nil
+	class := ClassificationUnsupported
+	if index == 6 || index == 7 {
+		class = ClassificationDomain
+	}
+	return reject(class, fmt.Sprintf("common-field-%d", index))
 }
 
 func validateFrame(frame []byte, magic [8]byte, minimum, maximum int) error {
 	if len(frame) < 4 {
 		return reject(ClassificationMalformed, "truncated-length")
 	}
-	declared := uint64(binary.BigEndian.Uint32(frame[:4])) + 4
+	declared := uint64(declaredBodyLength(frame)) + 4
 	// All callers supply fixed nonnegative contract constants no larger than 262,224.
 	maximum64 := uint64(maximum) // #nosec G115 -- fixed, reviewed frame maximum.
 	minimum64 := uint64(minimum) // #nosec G115 -- fixed, reviewed frame minimum.
@@ -671,12 +683,6 @@ func validateFrame(frame []byte, magic [8]byte, minimum, maximum int) error {
 		return reject(ClassificationDomain, "frame-domain")
 	}
 	return nil
-}
-
-func putBodyLength(frame []byte) {
-	// Encoders allocate only the fixed contract frames, whose largest body is 262,220 bytes.
-	bodyLength := uint32(len(frame) - 4) // #nosec G115 -- construction is contract-capped.
-	binary.BigEndian.PutUint32(frame[:4], bodyLength)
 }
 
 func domainHash(domain string, value []byte) [32]byte {

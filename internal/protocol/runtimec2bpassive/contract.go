@@ -7,7 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
+
+	"capsule.local/capsule/internal/protocol/strictjson"
 )
 
 const (
@@ -235,7 +236,7 @@ func Decode(exact []byte, inputs Inputs) (*Binding, error) {
 	if err := validateInputs(binding, inputs); err != nil {
 		return nil, err
 	}
-	return clone(binding), nil
+	return strictjson.Clone(binding), nil
 }
 
 func decodeClosed(exact []byte) (*Binding, error) {
@@ -248,7 +249,7 @@ func decodeClosed(exact []byte) (*Binding, error) {
 	if err := decoder.Decode(&binding); err != nil {
 		return nil, fmt.Errorf("C2B_BINDING_DECODE: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := strictjson.RequireEOF(decoder, "C2B_BINDING_TRAILING"); err != nil {
 		return nil, err
 	}
 	return &binding, nil
@@ -471,7 +472,7 @@ func rejectDuplicateJSON(exact []byte) error {
 	if err := readJSONValue(decoder); err != nil {
 		return err
 	}
-	return requireEOF(decoder)
+	return strictjson.RequireEOF(decoder, "C2B_BINDING_TRAILING")
 }
 
 func readJSONValue(decoder *json.Decoder) error {
@@ -516,28 +517,4 @@ func readJSONValue(decoder *json.Decoder) error {
 	default:
 		return errors.New("unexpected JSON delimiter")
 	}
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var trailing any
-	if err := decoder.Decode(&trailing); err == io.EOF {
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("C2B_BINDING_TRAILING: %w", err)
-	}
-	return errors.New("C2B_BINDING_TRAILING: extra JSON value")
-}
-
-func clone(binding *Binding) *Binding {
-	copy := *binding
-	copy.Artifacts = append([]Artifact(nil), binding.Artifacts...)
-	for index := range copy.Artifacts {
-		if binding.Artifacts[index].PackageCount != nil {
-			value := *binding.Artifacts[index].PackageCount
-			copy.Artifacts[index].PackageCount = &value
-		}
-	}
-	copy.DependencyMergePolicy.Dependencies = append([]Dependency(nil), binding.DependencyMergePolicy.Dependencies...)
-	copy.NextConsumerGate.Requirements = append([]string(nil), binding.NextConsumerGate.Requirements...)
-	return &copy
 }

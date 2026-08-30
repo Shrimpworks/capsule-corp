@@ -3,6 +3,14 @@
  * object until the coordinated protocol cutover is complete.
  */
 
+/**
+ * The apiVersion string for {@link JobProposal}, declared separately from
+ * `API_VERSION` in index.ts (which versions the deprecated pre-freeze `Job`
+ * model, not this one). Both happen to equal "capsule.dev/v0" today, but
+ * they version two unrelated object models that are expected to evolve
+ * independently as the coordinated protocol cutover proceeds (ADR-0026,
+ * ADR-0030); no compiler link is intended between them.
+ */
 export const JOB_PROPOSAL_API_VERSION = "capsule.dev/v0" as const;
 export const JOB_PROPOSAL_KIND = "JobProposal" as const;
 export const PRIMARY_DATA_INPUT_SLOT = "primary-data" as const;
@@ -14,8 +22,9 @@ declare const positiveSafeIntegerBrand: unique symbol;
 declare const safeJsonIntegerBrand: unique symbol;
 declare const decodedJobProposalCandidateBrand: unique symbol;
 
-/** The only source path and entrypoint admitted by JobProposal v0. */
+/** The only source path admitted by JobProposal v0. */
 export type SourcePath = typeof JOB_PROPOSAL_MAIN_PATH;
+/** The only entrypoint admitted by JobProposal v0; identical to {@link SourcePath} — there is exactly one file and it is the entrypoint. */
 export type SourceEntrypoint = typeof JOB_PROPOSAL_MAIN_PATH;
 /** A `name@version` runtime profile alias accepted by {@link asRuntimeProfileAlias}. */
 export type RuntimeProfileAlias = string & {

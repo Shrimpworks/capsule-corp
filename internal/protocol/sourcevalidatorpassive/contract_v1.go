@@ -131,7 +131,7 @@ func NewV1ValidationRequest(role V1ConsumerRole, bindings V1RequestBindings, sou
 	}
 	validated, err := v0candidate.NewMJSMainSource(source)
 	if err != nil {
-		return nil, reject(ClassificationDomain, "v1-source-profile")
+		return nil, sourceProfileRejection(err, "v1-source-profile")
 	}
 	exact := validated.AuthoritativeBytes()
 	digest := sha256.Sum256(exact)
@@ -160,7 +160,7 @@ func EncodeV1Request(request *V1ValidationRequest) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, V1RequestHeaderBytes+len(request.sourceBytes))
-	v1PutLengthMagic(frame, v1RequestMagic)
+	putFrameHeader(frame, v1RequestMagic)
 	v1PutRequestCommon(frame, request)
 	copy(frame[V1RequestHeaderBytes:], request.sourceBytes)
 	return frame, nil
@@ -293,7 +293,7 @@ func EncodeV1Result(result *V1ValidationResult) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, V1ResultFrameBytes)
-	v1PutLengthMagic(frame, v1ResultMagic)
+	putFrameHeader(frame, v1ResultMagic)
 	v1PutResultCommon(frame, result)
 	frame[216], frame[217], frame[218], frame[219] = byte(result.ParseDisposition), byte(result.PolicyDisposition), byte(result.Classification), byte(result.CleanupDisposition)
 	binary.BigEndian.PutUint16(frame[220:222], uint16(result.RefusalDisposition))
@@ -416,7 +416,7 @@ func EncodeV1ResourcePolicy(policy *V1ResourcePolicy) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, V1ResourcePolicyFrameBytes)
-	v1PutLengthMagic(frame, v1PolicyMagic)
+	putFrameHeader(frame, v1PolicyMagic)
 	binary.BigEndian.PutUint16(frame[12:14], V1ProtocolVersion)
 	binary.BigEndian.PutUint16(frame[14:16], V1ResourcePolicyFrameKind)
 	binary.BigEndian.PutUint16(frame[16:18], uint16(policy.Role))
@@ -593,7 +593,7 @@ func DecodeV1ConsumerProjection(role V1ConsumerRole, frame []byte) (*V1ConsumerP
 
 func encodeV1Profile(value any, kind uint16, magic [8]byte) ([]byte, error) {
 	frame := make([]byte, V1ProcessProfileFrameBytes)
-	v1PutLengthMagic(frame, magic)
+	putFrameHeader(frame, magic)
 	var role V1ConsumerRole
 	var digests []V1Digest
 	switch typed := value.(type) {
@@ -612,12 +612,12 @@ func encodeV1Profile(value any, kind uint16, magic [8]byte) ([]byte, error) {
 	default:
 		return nil, reject(ClassificationSchema, "v1-profile-type")
 	}
-	binary.BigEndian.PutUint16(frame[12:14], V1ProtocolVersion)
-	binary.BigEndian.PutUint16(frame[14:16], kind)
-	binary.BigEndian.PutUint16(frame[16:18], uint16(role))
+	tags := make([]uint16, 0, 9)
+	tags = append(tags, V1ProtocolVersion, kind, uint16(role))
 	for index := 0; index < 6; index++ {
-		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(role, uint16(index+1)))
+		tags = append(tags, v1RoleTag(role, uint16(index+1)))
 	}
+	putSequentialTags(frame, 12, tags)
 	for index, digest := range digests {
 		copy(frame[32+index*32:64+index*32], digest[:])
 	}
@@ -664,13 +664,13 @@ func encodeV1Consumer(value *V1ConsumerProjection) ([]byte, error) {
 		return nil, err
 	}
 	frame := make([]byte, V1ConsumerProjectionFrameBytes)
-	v1PutLengthMagic(frame, v1ConsumerMagic)
-	binary.BigEndian.PutUint16(frame[12:14], 1)
-	binary.BigEndian.PutUint16(frame[14:16], V1ConsumerProjectionFrameKind)
-	binary.BigEndian.PutUint16(frame[16:18], uint16(value.Role))
+	putFrameHeader(frame, v1ConsumerMagic)
+	tags := make([]uint16, 0, 9)
+	tags = append(tags, 1, V1ConsumerProjectionFrameKind, uint16(value.Role))
 	for index := 0; index < 6; index++ {
-		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(value.Role, uint16(index+1)))
+		tags = append(tags, v1RoleTag(value.Role, uint16(index+1)))
 	}
+	putSequentialTags(frame, 12, tags)
 	copy(frame[32:48], value.InstallationID[:])
 	binary.BigEndian.PutUint64(frame[48:56], value.EpochSequence)
 	copy(frame[56:88], value.EpochDigest[:])
@@ -724,12 +724,12 @@ type v1CommonFrameFields struct {
 }
 
 func v1PutCommonFrame(frame []byte, frameKind uint16, fields v1CommonFrameFields) {
-	binary.BigEndian.PutUint16(frame[12:14], 1)
-	binary.BigEndian.PutUint16(frame[14:16], frameKind)
-	binary.BigEndian.PutUint16(frame[16:18], uint16(fields.Role))
+	tags := make([]uint16, 0, 14)
+	tags = append(tags, 1, frameKind, uint16(fields.Role))
 	for index := 0; index < 11; index++ {
-		binary.BigEndian.PutUint16(frame[18+index*2:20+index*2], v1RoleTag(fields.Role, uint16(index+1)))
+		tags = append(tags, v1RoleTag(fields.Role, uint16(index+1)))
 	}
+	putSequentialTags(frame, 12, tags)
 	copy(frame[44:60], fields.CorrelationID[:])
 	copy(frame[60:76], fields.InstallationID[:])
 	binary.BigEndian.PutUint64(frame[76:84], fields.EpochSequence)
@@ -784,7 +784,7 @@ func validateV1Request(request *V1ValidationRequest) error {
 		return reject(ClassificationBinding, "v1-source-digest")
 	}
 	if _, err := v0candidate.NewMJSMainSource(request.sourceBytes); err != nil {
-		return reject(ClassificationDomain, "v1-source-profile")
+		return sourceProfileRejection(err, "v1-source-profile")
 	}
 	return nil
 }
@@ -911,7 +911,7 @@ func v1ValidateFrame(frame []byte, magic [8]byte, minimum, maximum int, kind uin
 	if !bytes.Equal(frame[4:12], magic[:]) {
 		return reject(ClassificationMalformed, "v1-frame-magic")
 	}
-	if int(binary.BigEndian.Uint32(frame[:4])) != len(frame)-4 {
+	if int(declaredBodyLength(frame)) != len(frame)-4 {
 		return reject(ClassificationMalformed, "v1-frame-length")
 	}
 	if binary.BigEndian.Uint16(frame[12:14]) != 1 {
@@ -941,10 +941,12 @@ func v1ValidateResultTags(frame []byte, role V1ConsumerRole) error {
 	return nil
 }
 func v1ValidateRoleTags(frame []byte, role V1ConsumerRole, count int) error {
-	for index := 0; index < count; index++ {
-		if binary.BigEndian.Uint16(frame[18+index*2:20+index*2]) != v1RoleTag(role, uint16(index+1)) {
-			return reject(ClassificationDomain, "v1-role-family-tag")
-		}
+	want := make([]uint16, count)
+	for index := range want {
+		want[index] = v1RoleTag(role, uint16(index+1))
+	}
+	if mismatchedTagIndex(frame, 18, want) >= 0 {
+		return reject(ClassificationDomain, "v1-role-family-tag")
 	}
 	return nil
 }
@@ -963,12 +965,6 @@ func v1ValidateProfileFrame(role V1ConsumerRole, frame []byte, magic [8]byte, ki
 		return reject(ClassificationSchema, "v1-profile-reserved")
 	}
 	return nil
-}
-func v1PutLengthMagic(frame []byte, magic [8]byte) {
-	// Every caller allocates one of the closed frame sizes, all of which are
-	// bounded by V1RequestMaximumBytes and therefore fit in uint32.
-	binary.BigEndian.PutUint32(frame[:4], uint32(len(frame)-4)) //nolint:gosec
-	copy(frame[4:12], magic[:])
 }
 func v1RoleTag(role V1ConsumerRole, field uint16) uint16 { return uint16(role)*0x100 + field }
 func validateV1Role(role V1ConsumerRole) error {

@@ -16,6 +16,18 @@ export * from "./mjs-source-candidate.js";
 export * from "./source-manifest-candidate.js";
 export * from "./typescript-approved-byte-candidate.js";
 
+/**
+ * The apiVersion string for the deprecated pre-freeze {@link Job} model
+ * below, not for {@link JobProposal}. It is declared separately from
+ * {@link JOB_PROPOSAL_API_VERSION} in job-proposal.ts — even though both
+ * currently equal "capsule.dev/v0" — because the two constants version two
+ * unrelated, independently evolving object models (this file's deprecated
+ * `Job`/`RuntimeSelector` scaffold vs. the ADR-0026/ADR-0030 `JobProposal`
+ * replacement). Deriving one from the other would wrongly imply the models
+ * are coupled and must move together; they are not, and the coordinated
+ * protocol cutover may retire this constant (with the `Job` model it
+ * belongs to) on its own schedule.
+ */
 export const API_VERSION = "capsule.dev/v0" as const;
 
 export type RuntimeName = "bun" | "node" | "deno";

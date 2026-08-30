@@ -202,4 +202,11 @@ function mutableAt(value: MutableJsonValue, path: readonly (string | number)[]):
   return current;
 }
 
-assert.equal(bindingExact.length, C2B_PASSIVE_BINDING_KNOWN_ANSWER.bytes);
+// v2/v3 place their equivalent known-answer byte-length check inside a
+// named test (see "rejects exact cap plus one and cross-version bytes" in
+// governed-deno-core-c2b-passive-binding-v2/v3.test.ts); keep v1 consistent
+// so a failure here attributes to a specific test rather than aborting
+// module evaluation before any test runs.
+test("known-answer fixture length matches C2B_PASSIVE_BINDING_KNOWN_ANSWER", () => {
+  assert.equal(bindingExact.length, C2B_PASSIVE_BINDING_KNOWN_ANSWER.bytes);
+});

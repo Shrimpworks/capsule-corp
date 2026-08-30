@@ -34,6 +34,7 @@ interface M1Case {
   readonly expected: {
     readonly decision: "accept" | "reject";
     readonly classification: string | null;
+    readonly owner: string;
   };
   readonly implementations: { readonly typescript: string };
 }
@@ -58,6 +59,10 @@ for (const entry of m1Cases) {
   test(`M1 TypeScript conformance: ${entry.id}`, async () => {
     const fixtureBytes = new Uint8Array(await readFile(new URL(entry.fixture.path, corpusRoot)));
     let accepted: boolean;
+    // Populated only for the raw-bytes/cbor branches below, whose validators
+    // return a Result with a refusal; the media-type branch's validators are
+    // plain `value is X` boolean type guards with no refusal to inspect.
+    let refusal: { readonly owner: string; readonly classification: string } | undefined;
     if (entry.wireFormat === "media-type") {
       const value = new TextDecoder().decode(fixtureBytes);
       accepted = entry.id.includes(".profile")
@@ -66,16 +71,27 @@ for (const entry of m1Cases) {
           ? validateMjsSourceMediaType(value)
           : validateSourceManifestMediaType(value);
     } else if (entry.object === "MjsSource") {
-      accepted = validateMjsSourceBytes(fixtureBytes).ok;
+      const result = validateMjsSourceBytes(fixtureBytes);
+      accepted = result.ok;
+      if (!result.ok) refusal = result.refusal;
     } else {
       assert.equal(entry.context.kind, "source-manifest");
       if (entry.context.kind !== "source-manifest") return;
       const sourceBytes = new Uint8Array(
         await readFile(new URL(entry.context.source.path, corpusRoot)),
       );
-      accepted = decodeSourceManifestV0(fixtureBytes, sourceBytes, entry.mediaType ?? "").ok;
+      const result = decodeSourceManifestV0(fixtureBytes, sourceBytes, entry.mediaType ?? "");
+      accepted = result.ok;
+      if (!result.ok) refusal = result.refusal;
     }
     assert.equal(accepted, entry.expected.decision === "accept", entry.id);
+    if (!accepted && refusal) {
+      assert.deepEqual(
+        [refusal.owner, refusal.classification],
+        [entry.expected.owner, entry.expected.classification],
+        entry.id,
+      );
+    }
   });
 }
 

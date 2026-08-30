@@ -4,7 +4,9 @@ import test from "node:test";
 
 import {
   APPROVED_BYTE_CAPS,
+  type ApprovedByteFixtureBuildRefusalCode,
   type ApprovedByteFixtureCandidate,
+  asApprovedByteDigest,
   buildApprovedByteFixtureCandidate,
   verifyApprovedByteFixtureKnownAnswers,
 } from "./typescript-approved-byte-candidate.js";
@@ -25,7 +27,8 @@ const knownAnswers = {
 
 test("passive approved-byte builder agrees with all retained known answers", async () => {
   const candidate = await ordinaryCandidate();
-  verifyApprovedByteFixtureKnownAnswers(candidate, knownAnswers);
+  const verified = verifyApprovedByteFixtureKnownAnswers(candidate, knownAnswers);
+  assert.equal(verified.ok, true);
   for (const [role, file] of [
     ["transformerProfile", "objects/transformer-profile.cbor"],
     ["normalizedOptions", "objects/normalized-options.cbor"],
@@ -45,28 +48,62 @@ test("passive approved-byte builder agrees with all retained known answers", asy
   );
 });
 
+test("asApprovedByteDigest accepts only exactly 32 bytes", () => {
+  assert.throws(
+    () => asApprovedByteDigest(new Uint8Array(31), "original-source"),
+    /must contain exactly 32 bytes/u,
+  );
+  assert.throws(
+    () => asApprovedByteDigest(new Uint8Array(33), "original-source"),
+    /must contain exactly 32 bytes/u,
+  );
+  const digest = asApprovedByteDigest(new Uint8Array(32), "original-source");
+  assert.equal(digest.length, 32);
+});
+
 test("candidate owns defensive copies and exact ASCII path order", () => {
   const first = Buffer.from("const a: number = 1;\n");
   const second = Buffer.from("const b: number = 2;\n");
-  const candidate = buildApprovedByteFixtureCandidate({
-    entrypoint: "A.ts",
+  const third = Buffer.from("const z: number = 3;\n");
+  const result = buildApprovedByteFixtureCandidate({
+    // The entrypoint is a third, distinct path so its own manifest field
+    // (encoded separately from the entries list) cannot mask an entry-order
+    // bug in "a.ts" vs "A.ts" below.
+    entrypoint: "z.ts",
     sources: [
       { logicalPath: "a.ts", originalBytes: second, emittedBytes: second },
       { logicalPath: "A.ts", originalBytes: first, emittedBytes: first },
+      { logicalPath: "z.ts", originalBytes: third, emittedBytes: third },
     ],
   });
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    return;
+  }
+  const candidate = result.candidate;
   const retained = candidate.bytes.originalManifest.slice();
   first.fill(0);
   second.fill(0);
+  third.fill(0);
   assert.deepEqual(candidate.bytes.originalManifest, retained);
   assert.throws(() => {
     (candidate.digests.originalManifest as unknown as number[])[0] = 0;
   }, TypeError);
+
+  // Sources were given out of ASCII order ("a.ts" before "A.ts"); the
+  // manifest's entries must be in exact ASCII order ("A.ts" = 0x41 before
+  // "a.ts" = 0x61), not input order.
+  const manifestBytes = Buffer.from(candidate.bytes.originalManifest);
+  const upperIndex = manifestBytes.indexOf("A.ts");
+  const lowerIndex = manifestBytes.indexOf("a.ts");
+  assert.ok(upperIndex >= 0, '"A.ts" must appear in the encoded manifest');
+  assert.ok(lowerIndex >= 0, '"a.ts" must appear in the encoded manifest');
+  assert.ok(upperIndex < lowerIndex, "manifest entries must be in exact ASCII path order");
 });
 
 test("Unicode, newline, BOM, and invalid UTF-8 remain byte distinctions", () => {
-  const lf = Buffer.from('const value: string = "é/é";\n');
-  const crlf = Buffer.from('const value: string = "é/é";\r\n');
+  const lf = Buffer.from('const value: string = "é/é";\n');
+  const crlf = Buffer.from('const value: string = "é/é";\r\n');
   const left = buildApprovedByteFixtureCandidate({
     entrypoint: "value.ts",
     sources: [{ logicalPath: "value.ts", originalBytes: lf, emittedBytes: lf }],
@@ -75,43 +112,49 @@ test("Unicode, newline, BOM, and invalid UTF-8 remain byte distinctions", () => 
     entrypoint: "value.ts",
     sources: [{ logicalPath: "value.ts", originalBytes: crlf, emittedBytes: crlf }],
   });
-  assert.notDeepEqual(left.digests.originalManifest, right.digests.originalManifest);
-  assert.throws(() => fixture(Buffer.from([0xef, 0xbb, 0xbf, 0x20])), /BOM/u);
-  assert.throws(() => fixture(Buffer.from([0xc3, 0x28])), /strict UTF-8/u);
+  assert.equal(left.ok, true);
+  assert.equal(right.ok, true);
+  if (!left.ok || !right.ok) {
+    return;
+  }
+  assert.notDeepEqual(
+    left.candidate.digests.originalManifest,
+    right.candidate.digests.originalManifest,
+  );
+  assertRefusal(fixture(Buffer.from([0xef, 0xbb, 0xbf, 0x20])), "ORIGINAL_SOURCE_BOM");
+  assertRefusal(fixture(Buffer.from([0xc3, 0x28])), "ORIGINAL_SOURCE_UTF8");
 });
 
 test("every retained cap is inclusive and cap-plus-one refuses", () => {
   const exact = Buffer.alloc(APPROVED_BYTE_CAPS.originalFileBytes, 0x20);
-  fixture(exact);
-  assert.throws(() => fixture(Buffer.alloc(exact.length + 1, 0x20)), /original source/u);
-  assert.throws(
-    () =>
-      buildApprovedByteFixtureCandidate({
-        entrypoint: "ordinary.ts",
-        sources: [
-          {
-            logicalPath: "ordinary.ts",
-            originalBytes: new Uint8Array(),
-            emittedBytes: Buffer.alloc(APPROVED_BYTE_CAPS.emittedFileBytes + 1, 0x20),
-          },
-        ],
-      }),
-    /emitted JavaScript/u,
-  );
-  assert.throws(
-    () =>
-      buildApprovedByteFixtureCandidate({
-        entrypoint: "f00.ts",
-        sources: Array.from({ length: APPROVED_BYTE_CAPS.sourceFiles + 1 }, (_, index) => ({
-          logicalPath: `f${String(index).padStart(2, "0")}.ts`,
+  assert.equal(fixture(exact).ok, true);
+  assertRefusal(fixture(Buffer.alloc(exact.length + 1, 0x20)), "ORIGINAL_SOURCE_BYTES");
+  assertRefusal(
+    buildApprovedByteFixtureCandidate({
+      entrypoint: "ordinary.ts",
+      sources: [
+        {
+          logicalPath: "ordinary.ts",
           originalBytes: new Uint8Array(),
-          emittedBytes: new Uint8Array(),
-        })) as never,
-      }),
-    /file count/u,
+          emittedBytes: Buffer.alloc(APPROVED_BYTE_CAPS.emittedFileBytes + 1, 0x20),
+        },
+      ],
+    }),
+    "EMITTED_SOURCE_BYTES",
+  );
+  assertRefusal(
+    buildApprovedByteFixtureCandidate({
+      entrypoint: "f00.ts",
+      sources: Array.from({ length: APPROVED_BYTE_CAPS.sourceFiles + 1 }, (_, index) => ({
+        logicalPath: `f${String(index).padStart(2, "0")}.ts`,
+        originalBytes: new Uint8Array(),
+        emittedBytes: new Uint8Array(),
+      })) as never,
+    }),
+    "SOURCE_FILE_COUNT",
   );
   const quarter = Buffer.alloc(APPROVED_BYTE_CAPS.originalAggregateBytes / 4, 0x20);
-  buildApprovedByteFixtureCandidate({
+  const withinAggregateCap = buildApprovedByteFixtureCandidate({
     entrypoint: "f0.ts",
     sources: [0, 1, 2, 3].map((index) => ({
       logicalPath: `f${index}.ts`,
@@ -119,29 +162,28 @@ test("every retained cap is inclusive and cap-plus-one refuses", () => {
       emittedBytes: quarter,
     })) as never,
   });
-  assert.throws(
-    () =>
-      buildApprovedByteFixtureCandidate({
-        entrypoint: "f0.ts",
-        sources: [0, 1, 2, 3, 4].map((index) => ({
-          logicalPath: `f${index}.ts`,
-          originalBytes: index === 4 ? Buffer.from(" ") : quarter,
-          emittedBytes: index === 4 ? new Uint8Array() : quarter,
-        })) as never,
-      }),
-    /original aggregate/u,
+  assert.equal(withinAggregateCap.ok, true);
+  assertRefusal(
+    buildApprovedByteFixtureCandidate({
+      entrypoint: "f0.ts",
+      sources: [0, 1, 2, 3, 4].map((index) => ({
+        logicalPath: `f${index}.ts`,
+        originalBytes: index === 4 ? Buffer.from(" ") : quarter,
+        emittedBytes: index === 4 ? new Uint8Array() : quarter,
+      })) as never,
+    }),
+    "ORIGINAL_AGGREGATE_BYTES",
   );
-  assert.throws(
-    () =>
-      buildApprovedByteFixtureCandidate({
-        entrypoint: "f0.ts",
-        sources: [0, 1, 2, 3, 4].map((index) => ({
-          logicalPath: `f${index}.ts`,
-          originalBytes: index === 4 ? new Uint8Array() : quarter,
-          emittedBytes: index === 4 ? Buffer.from(" ") : quarter,
-        })) as never,
-      }),
-    /emitted aggregate/u,
+  assertRefusal(
+    buildApprovedByteFixtureCandidate({
+      entrypoint: "f0.ts",
+      sources: [0, 1, 2, 3, 4].map((index) => ({
+        logicalPath: `f${index}.ts`,
+        originalBytes: index === 4 ? new Uint8Array() : quarter,
+        emittedBytes: index === 4 ? Buffer.from(" ") : quarter,
+      })) as never,
+    }),
+    "EMITTED_AGGREGATE_BYTES",
   );
 });
 
@@ -157,29 +199,37 @@ test("known-answer verification refuses object, disposition, and digest-domain m
   ] as const) {
     const mutated = cloneCandidate(ordinary);
     mutated.bytes[role][0] = (mutated.bytes[role][0] ?? 0) ^ 1;
-    assert.throws(
-      () =>
-        verifyApprovedByteFixtureKnownAnswers(
-          mutated as unknown as ApprovedByteFixtureCandidate,
-          knownAnswers,
-        ),
-      /mismatch/u,
+    const verified = verifyApprovedByteFixtureKnownAnswers(
+      mutated as unknown as ApprovedByteFixtureCandidate,
+      knownAnswers,
+    );
+    assert.equal(verified.ok, false);
+    if (verified.ok) {
+      continue;
+    }
+    assert.deepEqual(
+      [verified.refusal.owner, verified.refusal.classification, verified.refusal.code],
+      ["approved-byte-fixture-verifier", "DOMAIN", "KNOWN_ANSWER_MISMATCH"],
     );
   }
   const crossDomain = cloneCandidate(ordinary);
   crossDomain.digests.originalManifest = crossDomain.digests.executableManifest;
-  assert.throws(
-    () =>
-      verifyApprovedByteFixtureKnownAnswers(
-        crossDomain as unknown as ApprovedByteFixtureCandidate,
-        knownAnswers,
-      ),
-    /nominal digest binding/u,
+  const verified = verifyApprovedByteFixtureKnownAnswers(
+    crossDomain as unknown as ApprovedByteFixtureCandidate,
+    knownAnswers,
+  );
+  assert.equal(verified.ok, false);
+  if (verified.ok) {
+    return;
+  }
+  assert.deepEqual(
+    [verified.refusal.owner, verified.refusal.classification, verified.refusal.code],
+    ["approved-byte-fixture-verifier", "DOMAIN", "DIGEST_BINDING_MISMATCH"],
   );
 });
 
 async function ordinaryCandidate(): Promise<ApprovedByteFixtureCandidate> {
-  return buildApprovedByteFixtureCandidate({
+  const result = buildApprovedByteFixtureCandidate({
     entrypoint: "ordinary.ts",
     sources: [
       {
@@ -189,13 +239,30 @@ async function ordinaryCandidate(): Promise<ApprovedByteFixtureCandidate> {
       },
     ],
   });
+  assert.equal(result.ok, true);
+  if (!result.ok) {
+    throw new Error("expected ordinary fixture to build");
+  }
+  return result.candidate;
 }
 
-function fixture(bytes: Uint8Array): ApprovedByteFixtureCandidate {
+function fixture(bytes: Uint8Array) {
   return buildApprovedByteFixtureCandidate({
     entrypoint: "ordinary.ts",
     sources: [{ logicalPath: "ordinary.ts", originalBytes: bytes, emittedBytes: bytes }],
   });
+}
+
+function assertRefusal(
+  result: ReturnType<typeof buildApprovedByteFixtureCandidate>,
+  code: ApprovedByteFixtureBuildRefusalCode,
+): void {
+  assert.equal(result.ok, false);
+  if (result.ok) {
+    return;
+  }
+  assert.equal(result.refusal.owner, "approved-byte-fixture-builder");
+  assert.equal(result.refusal.code, code);
 }
 
 type MutableCandidate = {
@@ -231,8 +298,8 @@ function cloneCandidate(value: ApprovedByteFixtureCandidate): MutableCandidate {
     digests: {
       transformerProfile: [...value.digests.transformerProfile],
       normalizedOptions: [...value.digests.normalizedOptions],
-      originalManifest: [...value.digests.originalManifest],
       executableManifest: [...value.digests.executableManifest],
+      originalManifest: [...value.digests.originalManifest],
       transformationRecordSet: [...value.digests.transformationRecordSet],
     },
   };

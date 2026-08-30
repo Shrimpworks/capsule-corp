@@ -132,7 +132,7 @@ test("decoder copies caller bytes and freezes the passive candidate graph", () =
   bytes.fill(0);
 
   assert.equal(candidate.source.files["main.mjs"], "export {};\n");
-  assert.equal(candidate.input.value instanceof Object, true);
+  assert.deepEqual(candidate.input.value, { message: "hello" });
   assert.equal(Object.isFrozen(candidate), true);
   assert.equal(Object.isFrozen(candidate.source), true);
   assert.equal(Object.isFrozen(candidate.source.files), true);

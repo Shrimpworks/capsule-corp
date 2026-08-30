@@ -61,7 +61,10 @@ test("strict decoding rejects unknown, missing, duplicate, and trailing bytes", 
     `${source}{}`,
   ];
   for (const candidate of cases) {
-    assert.throws(() => decodeC2BPassiveBindingV2(new TextEncoder().encode(candidate)));
+    assert.throws(
+      () => decodeC2BPassiveBindingV2(new TextEncoder().encode(candidate)),
+      /C2B_V2_BINDING_/u,
+    );
   }
 });
 

@@ -11,6 +11,14 @@ test("health accepts an ok daemon response", async () => {
   assert.equal(await client.health(), "ok");
 });
 
+test("health rejects a non-2xx daemon response", async () => {
+  const client = new CapsuleClient({
+    fetch: async () => new Response("", { status: 503, statusText: "Service Unavailable" }),
+  });
+
+  await assert.rejects(() => client.health(), /capsule daemon returned HTTP 503/);
+});
+
 test("health rejects an unexpected daemon response", async () => {
   const client = new CapsuleClient({
     fetch: async () => Response.json({ status: "degraded" }),

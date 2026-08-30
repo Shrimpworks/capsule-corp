@@ -41,7 +41,6 @@ export type JobProposalSchemaRefusalCode =
   | "OBJECT_TYPE"
   | "FIELD_TYPE"
   | "FIELD_VALUE"
-  | "SOURCE_PATH"
   | "SOURCE_ENTRYPOINT"
   | "RUNTIME_PROFILE_ALIAS"
   | "POSITIVE_INTEGER"
@@ -159,11 +158,12 @@ function decodeSource(value: StrictJsonValue | undefined): JobProposal["source"]
 
   const filesValue = requireObject(source.files);
   const fileEntries = Object.entries(filesValue);
+  // A single-entry object with an own "main.mjs" property necessarily has
+  // that entry as its sole entry — there is no reachable case where the
+  // length/hasOwn check above passes but the entry's key differs, so no
+  // separate SOURCE_PATH mismatch check exists here.
   if (fileEntries.length !== 1 || !Object.hasOwn(filesValue, JOB_PROPOSAL_MAIN_PATH)) {
     schemaFail("SCHEMA", "FIELD_VALUE");
-  }
-  if (fileEntries[0]?.[0] !== JOB_PROPOSAL_MAIN_PATH) {
-    schemaFail("SCHEMA", "SOURCE_PATH");
   }
 
   return Object.freeze({

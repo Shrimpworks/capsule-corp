@@ -9,10 +9,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"slices"
 	"strings"
+
+	"capsule.local/capsule/internal/execution/hostrunnercontract"
 )
 
 const (
@@ -105,13 +106,13 @@ type BootRole struct {
 }
 
 type Runner struct {
-	Source           json.RawMessage `json:"source"`
-	Artifact         json.RawMessage `json:"artifact"`
-	Authority        Authority       `json:"authority"`
-	Preflight        Preflight       `json:"preflight"`
-	Ports            []Port          `json:"ports"`
-	OrderedCalls     []string        `json:"orderedCalls"`
-	ForbiddenImports []string        `json:"forbiddenImports"`
+	Source           json.RawMessage           `json:"source"`
+	Artifact         json.RawMessage           `json:"artifact"`
+	Authority        Authority                 `json:"authority"`
+	Preflight        Preflight                 `json:"preflight"`
+	Ports            []hostrunnercontract.Port `json:"ports"`
+	OrderedCalls     []string                  `json:"orderedCalls"`
+	ForbiddenImports []string                  `json:"forbiddenImports"`
 }
 
 type Authority struct {
@@ -137,14 +138,6 @@ type Preflight struct {
 	RootSHA256         string   `json:"rootSha256"`
 	ReadyByte          string   `json:"readyByte"`
 	StartAuthorization string   `json:"startAuthorization"`
-}
-
-type Port struct {
-	PortID    int    `json:"portId"`
-	Name      string `json:"name"`
-	InputFD   int    `json:"inputFd"`
-	OutputFD  int    `json:"outputFd"`
-	GuestNode string `json:"guestNode"`
 }
 
 type ComposedProfile struct {
@@ -222,7 +215,7 @@ func (verified *Verified) Profile() Profile {
 }
 
 func VerifyFixtureFS(fsys fs.FS) (*Verified, error) {
-	profileBytes, err := readBounded(fsys, "materialized-profile.json", ProfileMaximumBytes)
+	profileBytes, err := hostrunnercontract.ReadBounded(fsys, "materialized-profile.json", ProfileMaximumBytes)
 	if err != nil {
 		return nil, fmt.Errorf("C2B_V4_PROFILE_READ: %w", err)
 	}
@@ -237,7 +230,7 @@ func VerifyFixtureFS(fsys fs.FS) (*Verified, error) {
 		return nil, err
 	}
 	for _, answer := range artifactKnownAnswers {
-		exact, readErr := readBounded(fsys, answer.path, answer.bytes)
+		exact, readErr := hostrunnercontract.ReadBounded(fsys, answer.path, answer.bytes)
 		if readErr != nil {
 			return nil, fmt.Errorf("C2B_V4_ARTIFACT_READ_%s: %w", answer.path, readErr)
 		}
@@ -261,7 +254,7 @@ func decodeProfile(exact []byte) (Profile, error) {
 	if err := decoder.Decode(&profile); err != nil {
 		return Profile{}, fmt.Errorf("C2B_V4_PROFILE_DECODE: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := hostrunnercontract.RequireEOF(decoder, "C2B_V4_PROFILE_TRAILING"); err != nil {
 		return Profile{}, err
 	}
 	if err := ValidateProfile(profile); err != nil {
@@ -270,17 +263,47 @@ func decodeProfile(exact []byte) (Profile, error) {
 	return profile, nil
 }
 
+// ValidateProfile checks every field of a decoded Profile against the frozen
+// materialized C2B v4 known answer. It delegates to one validator per profile
+// section so each refusal reason stays independently testable and each
+// function stays small; the sections and their refusal codes are unchanged
+// from the original flat check.
 func ValidateProfile(profile Profile) error {
+	for _, validate := range []func(Profile) error{
+		validateIdentity,
+		validateBootRole,
+		validateRunnerAuthority,
+		validatePreflight,
+		validatePortsAndCalls,
+		validateComposedProfileAndStatus,
+		validateEffectsAndGuestGate,
+	} {
+		if err := validate(profile); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateIdentity(profile Profile) error {
 	if profile.Identity != "capsule.governed-deno-core.fixed-owned-guest-materialized/v4" ||
 		profile.Status != "PASSED" {
 		return errors.New("C2B_V4_IDENTITY")
 	}
+	return nil
+}
+
+func validateBootRole(profile Profile) error {
 	if profile.BootRole.Mode != "non-efi" ||
 		!slices.Equal(profile.BootRole.LibkrunFeatures, []string{"blk"}) ||
 		profile.BootRole.SeparateFirmware != "inapplicable-no-path-authority" ||
 		profile.BootRole.RunnerCallsKernelOrFirmwareSetter {
 		return errors.New("C2B_V4_BOOT_ROLE")
 	}
+	return nil
+}
+
+func validateRunnerAuthority(profile Profile) error {
 	wantAuthority := Authority{
 		Owner: "execution-supervisor", Cardinality: "exactly-one-runner-per-committed-AttemptID",
 		TeardownOwner: "execution-supervisor",
@@ -288,6 +311,10 @@ func ValidateProfile(profile Profile) error {
 	if profile.Runner.Authority != wantAuthority {
 		return errors.New("C2B_V4_RUNNER_AUTHORITY")
 	}
+	return nil
+}
+
+func validatePreflight(profile Profile) error {
 	wantFDs := []int{0, 1, 2, 3, 4, 5, 6, 7}
 	if !slices.Equal(profile.Runner.Preflight.Argv, []string{"capsule-host-runner"}) ||
 		profile.Runner.Preflight.Environment != "empty-after-removing-only-__CF_USER_TEXT_ENCODING" ||
@@ -299,14 +326,17 @@ func ValidateProfile(profile Profile) error {
 		profile.Runner.Preflight.StartAuthorization != "exact-one-byte-G-followed-by-eof" {
 		return errors.New("C2B_V4_PREFLIGHT")
 	}
-	wantPorts := []Port{
-		{0, "capsule.source", 5, -1, "/dev/hvc0"},
-		{1, "capsule.input", 6, -1, "/dev/vport0p1"},
-		{2, "capsule.completion", -1, 7, "/dev/vport0p2"},
-	}
-	if !slices.Equal(profile.Runner.Ports, wantPorts) || len(profile.Runner.OrderedCalls) != 16 {
+	return nil
+}
+
+func validatePortsAndCalls(profile Profile) error {
+	if !slices.Equal(profile.Runner.Ports, hostrunnercontract.ExpectedPorts()) || len(profile.Runner.OrderedCalls) != 16 {
 		return errors.New("C2B_V4_PORT_CALL_CONTRACT")
 	}
+	return nil
+}
+
+func validateComposedProfileAndStatus(profile Profile) error {
 	if profile.ComposedProfile.DigestSHA256 != ComposedSHA256 || profile.ComposedProfile.Admitted ||
 		profile.WorkStatus.MaterializationSlice != "PASSED" ||
 		profile.WorkStatus.FixedOwnedGuest != "BLOCKED" ||
@@ -315,6 +345,10 @@ func ValidateProfile(profile Profile) error {
 		profile.WorkStatus.Runtime001 != "unsupported" || profile.WorkStatus.VMM001 != "unsupported" {
 		return errors.New("C2B_V4_STATUS_OR_ADMISSION")
 	}
+	return nil
+}
+
+func validateEffectsAndGuestGate(profile Profile) error {
 	if profile.NextGuestGate.State != "BLOCKED" || profile.NextGuestGate.GuestAuthorization ||
 		profile.NextGuestGate.ConsumerImplemented ||
 		profile.Effects != (Effects{ControlledCompilation: true}) {
@@ -442,31 +476,7 @@ func hasCodeSignature(file *macho.File) bool {
 	return false
 }
 
-func readBounded(fsys fs.FS, path string, maximum int) ([]byte, error) {
-	file, err := fsys.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = file.Close() }()
-	value, err := io.ReadAll(io.LimitReader(file, int64(maximum)+1))
-	if err != nil {
-		return nil, err
-	}
-	if len(value) > maximum {
-		return nil, errors.New("maximum exceeded")
-	}
-	return value, nil
-}
-
 func digest(value []byte) string {
 	sum := sha256.Sum256(value)
 	return hex.EncodeToString(sum[:])
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var trailing json.RawMessage
-	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
-		return errors.New("C2B_V4_PROFILE_TRAILING")
-	}
-	return nil
 }

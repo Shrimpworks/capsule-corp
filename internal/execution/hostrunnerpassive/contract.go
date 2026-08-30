@@ -7,11 +7,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/fs"
 	"slices"
 	"strconv"
 	"strings"
+
+	"capsule.local/capsule/internal/execution/hostrunnercontract"
 )
 
 const (
@@ -64,19 +65,19 @@ var expectedBlockers = []string{
 }
 
 type Manifest struct {
-	Contract           string          `json:"contract"`
-	Status             string          `json:"status"`
-	Source             Source          `json:"source"`
-	Predecessor        Predecessor     `json:"predecessor"`
-	AcceptedLibkrun    AcceptedLibkrun `json:"acceptedLibkrun"`
-	LaunchAuthority    LaunchAuthority `json:"launchAuthority"`
-	Preflight          Preflight       `json:"preflight"`
-	Ports              []Port          `json:"ports"`
-	Devices            []string        `json:"devices"`
-	ForbiddenAuthority []string        `json:"forbiddenAuthority"`
-	Teardown           Teardown        `json:"teardown"`
-	Blockers           []string        `json:"blockers"`
-	Effects            Effects         `json:"effects"`
+	Contract           string                    `json:"contract"`
+	Status             string                    `json:"status"`
+	Source             Source                    `json:"source"`
+	Predecessor        Predecessor               `json:"predecessor"`
+	AcceptedLibkrun    AcceptedLibkrun           `json:"acceptedLibkrun"`
+	LaunchAuthority    LaunchAuthority           `json:"launchAuthority"`
+	Preflight          Preflight                 `json:"preflight"`
+	Ports              []hostrunnercontract.Port `json:"ports"`
+	Devices            []string                  `json:"devices"`
+	ForbiddenAuthority []string                  `json:"forbiddenAuthority"`
+	Teardown           Teardown                  `json:"teardown"`
+	Blockers           []string                  `json:"blockers"`
+	Effects            Effects                   `json:"effects"`
 }
 
 type Source struct {
@@ -128,14 +129,6 @@ type HostFD struct {
 	AccessMode string `json:"accessMode"`
 }
 
-type Port struct {
-	PortID    int    `json:"portId"`
-	Name      string `json:"name"`
-	InputFD   int    `json:"inputFd"`
-	OutputFD  int    `json:"outputFd"`
-	GuestNode string `json:"guestNode"`
-}
-
 type Teardown struct {
 	Owner                      string `json:"owner"`
 	RunnerExit                 string `json:"runnerExit"`
@@ -172,7 +165,7 @@ func (verified *Verified) Source() []byte {
 }
 
 func VerifyFixtureFS(fsys fs.FS) (*Verified, error) {
-	manifestBytes, err := readBounded(fsys, "manifest.json", ManifestMaximumBytes)
+	manifestBytes, err := hostrunnercontract.ReadBounded(fsys, "manifest.json", ManifestMaximumBytes)
 	if err != nil {
 		return nil, fmt.Errorf("C2B_RUNNER_MANIFEST_READ: %w", err)
 	}
@@ -180,7 +173,7 @@ func VerifyFixtureFS(fsys fs.FS) (*Verified, error) {
 	if err != nil {
 		return nil, err
 	}
-	source, err := readBounded(fsys, manifest.Source.Path, SourceMaximumBytes)
+	source, err := hostrunnercontract.ReadBounded(fsys, manifest.Source.Path, SourceMaximumBytes)
 	if err != nil {
 		return nil, fmt.Errorf("C2B_RUNNER_SOURCE_READ: %w", err)
 	}
@@ -201,7 +194,7 @@ func decodeManifest(exact []byte) (Manifest, error) {
 	if err := decoder.Decode(&manifest); err != nil {
 		return Manifest{}, fmt.Errorf("C2B_RUNNER_MANIFEST_DECODE: %w", err)
 	}
-	if err := requireEOF(decoder); err != nil {
+	if err := hostrunnercontract.RequireEOF(decoder, "C2B_RUNNER_MANIFEST_TRAILING"); err != nil {
 		return Manifest{}, err
 	}
 	if err := ValidateManifest(manifest); err != nil {
@@ -210,21 +203,61 @@ func decodeManifest(exact []byte) (Manifest, error) {
 	return manifest, nil
 }
 
+// ValidateManifest checks every field of a decoded Manifest against the
+// frozen passive host-runner known answer. It delegates to one validator per
+// manifest section so each refusal reason stays independently testable and
+// each function stays small; the sections and their refusal codes are
+// unchanged from the original flat check.
 func ValidateManifest(manifest Manifest) error {
+	for _, validate := range []func(Manifest) error{
+		validateIdentity,
+		validatePredecessor,
+		validateAcceptedLibkrun,
+		validateLaunchAuthority,
+		validatePreflight,
+		validatePortsAndDevices,
+		validateForbiddenAuthority,
+		validateTeardown,
+		validateBlockersAndEffects,
+	} {
+		if err := validate(manifest); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateIdentity(manifest Manifest) error {
 	if manifest.Contract != "capsule.c2b.host-runner-source-contract/v1" ||
 		manifest.Status != "PASSED-passive-static-source-contract-only" ||
 		manifest.Source != (Source{"capsule-host-runner-contract.c", "C17-passive-source-contract", SourceBytes, SourceSHA256, false, false}) {
 		return errors.New("C2B_RUNNER_IDENTITY")
 	}
+	return nil
+}
+
+func validatePredecessor(manifest Manifest) error {
 	if manifest.Predecessor != (Predecessor{18357, "d72327bba369484a56db7d543a32e8bbd4eac403230ac65d63709ac3ba3bbdfb", "8b1ec936a7b56370716d28557125e46866dea8f21a149704a01f251a0dddbcc1"}) {
 		return errors.New("C2B_RUNNER_PREDECESSOR")
 	}
+	return nil
+}
+
+func validateAcceptedLibkrun(manifest Manifest) error {
 	if manifest.AcceptedLibkrun != (AcceptedLibkrun{"Shrimpworks/libkrun", "728df8125077d0db44265f6e997c72b81b65c015", "7432eda5a49220976b0167005aa43ee622f9d632", "7671440cfbafa58fe20aebf8d4deb2a843ebe346", "BLOCKED-not-retained-locally-for-final-build"}) {
 		return errors.New("C2B_RUNNER_LIBKRUN_IDENTITY")
 	}
+	return nil
+}
+
+func validateLaunchAuthority(manifest Manifest) error {
 	if manifest.LaunchAuthority != (LaunchAuthority{"execution-supervisor", "exactly-one-runner-process-per-AttemptID", "sealed-supervisor-inherited-process-and-fd-manifest-only", false, false, false, false, false}) {
 		return errors.New("C2B_RUNNER_LAUNCH_AUTHORITY")
 	}
+	return nil
+}
+
+func validatePreflight(manifest Manifest) error {
 	expectedFDs := []HostFD{
 		{0, "runner-stdin-null", "O_RDONLY"}, {1, "runner-stdout", "O_WRONLY"},
 		{2, "runner-stderr", "O_WRONLY"}, {3, "record-before-start-control", "O_RDONLY"},
@@ -237,20 +270,32 @@ func ValidateManifest(manifest Manifest) error {
 		manifest.Preflight.Failure != "refuse-before-next-step-and-before-krun_start_enter" {
 		return errors.New("C2B_RUNNER_PREFLIGHT")
 	}
-	expectedPorts := []Port{
-		{0, "capsule.source", 5, -1, "/dev/hvc0"},
-		{1, "capsule.input", 6, -1, "/dev/vport0p1"},
-		{2, "capsule.completion", -1, 7, "/dev/vport0p2"},
-	}
-	if !slices.Equal(manifest.Ports, expectedPorts) || !slices.Equal(manifest.Devices, []string{"balloon", "rng", "console-multiport-with-three-fixed-ports", "block-root-vda-read-only"}) {
+	return nil
+}
+
+func validatePortsAndDevices(manifest Manifest) error {
+	if !slices.Equal(manifest.Ports, hostrunnercontract.ExpectedPorts()) ||
+		!slices.Equal(manifest.Devices, []string{"balloon", "rng", "console-multiport-with-three-fixed-ports", "block-root-vda-read-only"}) {
 		return errors.New("C2B_RUNNER_PORT_DEVICE_CONTRACT")
 	}
+	return nil
+}
+
+func validateForbiddenAuthority(manifest Manifest) error {
 	if !slices.Equal(manifest.ForbiddenAuthority, expectedForbiddenAuthority) {
 		return errors.New("C2B_RUNNER_FORBIDDEN_AUTHORITY")
 	}
+	return nil
+}
+
+func validateTeardown(manifest Manifest) error {
 	if manifest.Teardown != (Teardown{"execution-supervisor", "lifecycle-only-never-workload-success", "pid-start-uid-gid-executable-path-code-identity", "SIGKILL", 1000, 1200, "unresolved-no-signal-no-success", true}) {
 		return errors.New("C2B_RUNNER_TEARDOWN")
 	}
+	return nil
+}
+
+func validateBlockersAndEffects(manifest Manifest) error {
 	if !slices.Equal(manifest.Blockers, expectedBlockers) || manifest.Effects != (Effects{}) {
 		return errors.New("C2B_RUNNER_EFFECT_OR_BLOCKER")
 	}
@@ -326,35 +371,6 @@ func validateSourceContract(source []byte) error {
 		}
 	}
 	return nil
-}
-
-func readBounded(fsys fs.FS, path string, maximum int) ([]byte, error) {
-	file, err := fsys.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	value, readErr := io.ReadAll(io.LimitReader(file, int64(maximum)+1))
-	closeErr := file.Close()
-	if readErr != nil {
-		return nil, readErr
-	}
-	if closeErr != nil {
-		return nil, closeErr
-	}
-	if len(value) > maximum {
-		return nil, errors.New("bounded read exceeded")
-	}
-	return value, nil
-}
-
-func requireEOF(decoder *json.Decoder) error {
-	var trailing any
-	if err := decoder.Decode(&trailing); errors.Is(err, io.EOF) {
-		return nil
-	} else if err != nil {
-		return fmt.Errorf("C2B_RUNNER_MANIFEST_TRAILING: %w", err)
-	}
-	return errors.New("C2B_RUNNER_MANIFEST_TRAILING")
 }
 
 func digest(value []byte) string {

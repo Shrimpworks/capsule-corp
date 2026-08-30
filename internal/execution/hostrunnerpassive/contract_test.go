@@ -8,6 +8,8 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+
+	"capsule.local/capsule/internal/execution/hostrunnercontract"
 )
 
 func TestRetainedHostRunnerSourceContract(t *testing.T) {
@@ -62,16 +64,81 @@ func TestManifestAuthorityMutationsRefuse(t *testing.T) {
 		t.Fatal(err)
 	}
 	cases := map[string]func(*Manifest){
-		"two-runners":        func(value *Manifest) { value.LaunchAuthority.Cardinality = "two-runners-per-AttemptID" },
-		"replacement-values": func(value *Manifest) { value.LaunchAuthority.ExecuteTimeReplacementValues = true },
-		"daemon-route":       func(value *Manifest) { value.LaunchAuthority.DaemonRoute = true },
-		"fd-eight":           func(value *Manifest) { value.Preflight.CloseFromInclusive = 9 },
-		"writable-root":      func(value *Manifest) { value.Preflight.HostFDs[4].AccessMode = "O_RDWR" },
-		"fourth-port":        func(value *Manifest) { value.Ports = append(value.Ports, Port{PortID: 3}) },
-		"network-device":     func(value *Manifest) { value.Devices = append(value.Devices, "network") },
-		"runner-teardown":    func(value *Manifest) { value.Teardown.Owner = "runner" },
-		"guest-effect":       func(value *Manifest) { value.Effects.Guest = true },
-		"artifact-claim":     func(value *Manifest) { value.Source.FinalRunnerArtifact = true },
+		// validateIdentity
+		"contract-mismatch":        func(value *Manifest) { value.Contract = "other" },
+		"status-mismatch":          func(value *Manifest) { value.Status = "other" },
+		"source-path-mismatch":     func(value *Manifest) { value.Source.Path = "other.c" },
+		"source-language-mismatch": func(value *Manifest) { value.Source.Language = "other" },
+		"source-bytes-mismatch":    func(value *Manifest) { value.Source.Bytes = 1 },
+		"source-sha256-mismatch":   func(value *Manifest) { value.Source.SHA256 = "deadbeef" },
+		"source-calls-libkrun":     func(value *Manifest) { value.Source.CallsLibkrun = true },
+		"artifact-claim":           func(value *Manifest) { value.Source.FinalRunnerArtifact = true },
+
+		// validatePredecessor
+		"predecessor-bytes-mismatch":           func(value *Manifest) { value.Predecessor.C2BV3Bytes = 1 },
+		"predecessor-sha256-mismatch":          func(value *Manifest) { value.Predecessor.C2BV3SHA256 = "x" },
+		"predecessor-contract-sha256-mismatch": func(value *Manifest) { value.Predecessor.C2BV3ContractSHA256 = "x" },
+
+		// validateAcceptedLibkrun
+		"libkrun-repository-mismatch":      func(value *Manifest) { value.AcceptedLibkrun.Repository = "other/other" },
+		"libkrun-upstream-mismatch":        func(value *Manifest) { value.AcceptedLibkrun.Upstream = "x" },
+		"libkrun-accepted-commit-mismatch": func(value *Manifest) { value.AcceptedLibkrun.AcceptedCommit = "x" },
+		"libkrun-accepted-tree-mismatch":   func(value *Manifest) { value.AcceptedLibkrun.AcceptedTree = "x" },
+		"libkrun-header-state-mismatch":    func(value *Manifest) { value.AcceptedLibkrun.HeaderAndDylibState = "x" },
+
+		// validateLaunchAuthority
+		"two-runners":                  func(value *Manifest) { value.LaunchAuthority.Cardinality = "two-runners-per-AttemptID" },
+		"replacement-values":           func(value *Manifest) { value.LaunchAuthority.ExecuteTimeReplacementValues = true },
+		"daemon-route":                 func(value *Manifest) { value.LaunchAuthority.DaemonRoute = true },
+		"launch-authority-owner":       func(value *Manifest) { value.LaunchAuthority.Owner = "other" },
+		"launch-authority-descriptor":  func(value *Manifest) { value.LaunchAuthority.Descriptor = "other" },
+		"launch-authority-accepts-id":  func(value *Manifest) { value.LaunchAuthority.RunnerAcceptsAttemptIDBytes = true },
+		"launch-authority-service":     func(value *Manifest) { value.LaunchAuthority.Service = true },
+		"launch-authority-priv-helper": func(value *Manifest) { value.LaunchAuthority.PrivilegedHelper = true },
+
+		// validatePreflight
+		"fd-eight":                   func(value *Manifest) { value.Preflight.CloseFromInclusive = 9 },
+		"writable-root":              func(value *Manifest) { value.Preflight.HostFDs[4].AccessMode = "O_RDWR" },
+		"preflight-argv-mismatch":    func(value *Manifest) { value.Preflight.Argv = "other" },
+		"preflight-env-mismatch":     func(value *Manifest) { value.Preflight.Environment = "other" },
+		"preflight-hostfd-role":      func(value *Manifest) { value.Preflight.HostFDs[0].Role = "other" },
+		"preflight-hostfd-fd":        func(value *Manifest) { value.Preflight.HostFDs[0].FD = 99 },
+		"preflight-root-mismatch":    func(value *Manifest) { value.Preflight.Root = "other" },
+		"preflight-failure-mismatch": func(value *Manifest) { value.Preflight.Failure = "other" },
+
+		// validatePortsAndDevices
+		"fourth-port":              func(value *Manifest) { value.Ports = append(value.Ports, hostrunnercontract.Port{PortID: 3}) },
+		"port-id-mismatch":         func(value *Manifest) { value.Ports[0].PortID = 9 },
+		"port-name-mismatch":       func(value *Manifest) { value.Ports[0].Name = "other" },
+		"port-input-fd-mismatch":   func(value *Manifest) { value.Ports[0].InputFD = 99 },
+		"port-output-fd-mismatch":  func(value *Manifest) { value.Ports[2].OutputFD = 99 },
+		"port-guest-node-mismatch": func(value *Manifest) { value.Ports[0].GuestNode = "/dev/other" },
+		"network-device":           func(value *Manifest) { value.Devices = append(value.Devices, "network") },
+		"devices-content-mismatch": func(value *Manifest) { value.Devices[0] = "other" },
+
+		// validateForbiddenAuthority
+		"forbidden-authority-mismatch": func(value *Manifest) { value.ForbiddenAuthority[0] = "other" },
+
+		// validateTeardown
+		"runner-teardown":                  func(value *Manifest) { value.Teardown.Owner = "runner" },
+		"teardown-runner-exit":             func(value *Manifest) { value.Teardown.RunnerExit = "other" },
+		"teardown-identity-revalidation":   func(value *Manifest) { value.Teardown.IdentityRevalidation = "other" },
+		"teardown-forced-signal":           func(value *Manifest) { value.Teardown.ForcedSignal = "other" },
+		"teardown-forced-absence-deadline": func(value *Manifest) { value.Teardown.ForcedAbsenceDeadlineMs = 1 },
+		"teardown-max-action-to-absence":   func(value *Manifest) { value.Teardown.MaximumActionToAbsenceMs = 1 },
+		"teardown-identity-mismatch-field": func(value *Manifest) { value.Teardown.IdentityMismatch = "other" },
+		"teardown-authoritative-absence":   func(value *Manifest) { value.Teardown.AuthoritativeAbsenceNeeded = false },
+
+		// validateBlockersAndEffects
+		"blockers-mismatch":   func(value *Manifest) { value.Blockers[0] = "other" },
+		"guest-effect":        func(value *Manifest) { value.Effects.Guest = true },
+		"effect-process":      func(value *Manifest) { value.Effects.Process = true },
+		"effect-libkrun":      func(value *Manifest) { value.Effects.Libkrun = true },
+		"effect-hvf":          func(value *Manifest) { value.Effects.HVF = true },
+		"effect-vm":           func(value *Manifest) { value.Effects.VM = true },
+		"effect-signing":      func(value *Manifest) { value.Effects.Signing = true },
+		"effect-installation": func(value *Manifest) { value.Effects.Installation = true },
+		"effect-admission":    func(value *Manifest) { value.Effects.Admission = true },
 	}
 	for name, mutate := range cases {
 		t.Run(name, func(t *testing.T) {

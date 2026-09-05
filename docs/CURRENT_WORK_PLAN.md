@@ -1,10 +1,9 @@
 # Current work plan
 
-Date: 2026-08-21
+Date: 2026-09-05
 
-Work item: synchronize the active plan with the immutable C5b controlled-harness reconciliation,
-the completed `registrationstate` documentation batch, and the 2026-08-20 review intake without
-changing blocked execution or product activation.
+Work item: reconcile the omitted C5b10/C5b11 experiment merges and fresh C5b11 no-run verification,
+preserving historical review dispositions and the blocked provider/execution/product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -23,10 +22,27 @@ The preceding control reconciliation addressed
 proposal/plan/custody symbols. The preceding follow-up pinned the reviewed C5b8/C5b9 no-run
 experiment merges. This reconciliation pins the later build-only compatibility preflight: its
 static question `PASSED`, the exact provider-only binding candidate is `NO_GO`, and controlled C5b
-execution remains `BLOCKED` on a versioned no-run successor adapter/composition, independent
-review, and final exact authorization. Authenticated consumers, protected installed state,
+execution remains `BLOCKED`. The later C5b11 fixed-runner construction is now reconciled below;
+provider implementation/provenance, reviewed runnable composition, and final exact authorization
+remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-09-05 C5b11 reconciliation
+
+Status: `PASSED` for the [retained-successor checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md).
+
+Experiments PR #30 (C5b10) and PR #31 (C5b11) merged on August 18 but were omitted from the
+August 21 planning sync. C5b10 is preserved history, not accepted evidence. C5b11 merge
+`f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d` retains the reviewed-head descendant
+`27b9011fb80edc0f23c11b3f3fa76d00cebc2365`. Fresh local static, mutation, and unlinked-object
+reproduction checks pass. PR #31 reports the final exact-head review as `PASSED` / `Ready`;
+archived pre-review prose remains unchanged and is distinguished in the checkpoint.
+
+The next credential-free construction slice is the missing provider implementation/provenance
+behind C5b11's 24 closed Supervisor interfaces, followed by exact composition review. The
+fixed-runner no-run candidate itself no longer needs construction. Controlled execution,
+installed composition, runtime/profile admission, and product admission remain `BLOCKED`.
 
 ## 2026-08-21 planning sync
 
@@ -48,8 +64,9 @@ repository regression tests for both included archive roots. Issues
 comment, one narrowed high-segment test path, and five bounded duplication/test-discovery cleanups.
 None changes an ADR lifecycle, control-evidence row, runtime/profile status, or product admission.
 
-Remaining work: construct and independently review the product-critical C5b versioned no-run
-fixed-runner successor; obtain separate exact authorization before any native XPC, container,
+Remaining work at this historical sync: construct and independently review the C5b no-run
+fixed-runner successor (superseded by the September 5 C5b11 checkpoint above); obtain separate exact
+authorization before any native XPC, container,
 live-signing, libkrun/HVF, VM, or guest execution.
 
 ### 2026-08-29 Q1-Q8 closure
@@ -61,7 +78,8 @@ via the consolidating [PR #336](https://github.com/Shrimpworks/capsule-corp/pull
 decision resolved to the `testing.Short()` gate: `main`'s `go` CI job now runs `go test -short`, and
 a new `go-full-suite` job runs the complete (non-`-short`) suite nightly plus on `workflow_dispatch`.
 None of the eight changes an ADR lifecycle, control-evidence row, runtime/profile status, or product
-admission. The next credential-free product slice remains the C5b no-run successor described below.
+admission. The C5b next-action wording at this checkpoint is superseded by the September 5
+C5b11 reconciliation above.
 
 Parent status: owner-only hostile-`.mjs` internal alpha remains
 `IN_PROGRESS — TRENDING_GOOD`; product admission and the installed security boundary remain
@@ -223,9 +241,9 @@ platform execution or product authorization:
   fixture Deno runtime, libkrunfw, controller-core, descriptive adapter, size-compatible C5b8
   successor, runtime-root, and C5b9 composite identities are retained. C5b8 resolves C5b7's exact
   root-size binding only for the reviewed test-double path. Direct provider-only composition of
-  the retained C5b9 inputs is `NO_GO`. A versioned fixed-runner successor adapter/composition,
-  controlled C5b run, preferred-form libkrunfw/kernel source compliance, and admission remain
-  `BLOCKED`; and
+  the retained C5b9 inputs is `NO_GO`. The later C5b11 successor construction is `PASSED` in
+  its no-run scope; provider behavior/provenance, controlled C5b run, preferred-form
+  libkrunfw/kernel source compliance, and admission remain `BLOCKED`; and
 - C6b1a unsigned Broker-harness construction, C6b1b test-only Supervisor-seam construction, and
   C6b1c no-install identity/profile/signed-artifact readback are `PASSED`; C6b1d installed live
   signing remains `BLOCKED` on its own exact Keychain/LocalAuthentication authorization. Its
@@ -277,7 +295,7 @@ typed transport design -> passive contract (`PASSED`) -> v19/103-byte no-run pac
                                                    -> fresh executable construction (`PASSED`)
                                                    -> root/effects/composite (`PASSED`)
                                                    -> direct provider binding (`NO_GO`)
-                                                   -> successor no-run adapter -> controlled harness ----┐
+                                                   -> C5b11 no-run successor (`PASSED`) -> providers + review -> controlled harness ----┐
 installed service/identity evidence ------------------------------+-> pre-admission profile matrix
                                                                   -> admission review
                                                                   -> sealed real adapter
@@ -323,7 +341,9 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C5b8 | Implement sealed controlled-test effect sequencing | `PASSED` | Archive merges [`e83614af34d5c39c12a4a3d6e6cda8dcf0304030`](https://github.com/Shrimpworks/capsule-experiments/tree/e83614af34d5c39c12a4a3d6e6cda8dcf0304030/experiments/typed-guest-transport-c5b8-controlled-test-effects) and [`b0819d76883eb86cbbc03b2b7033fe55bedbf713`](https://github.com/Shrimpworks/capsule-experiments/tree/b0819d76883eb86cbbc03b2b7033fe55bedbf713/experiments/typed-guest-transport-c5b8-c5b7-root-binding-successor) retain the sealed operation-sequencing layer, byte-equal no-run objects, complete test-double success/fault/replay/cleanup coverage, and the exact C5b7-root binding. No caller-selected path, flag, image, mount, endpoint, backend configuration, retained dylib, runtime, libkrun, HVF, VM, or guest was used. The fixed real operation provider remains outside this passed scope. |
 | C5b9 | Bind the complete immutable no-run composite | `PASSED` | Archive merge [`3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite) binds the exact runner, libkrun, libkrunfw, 100,663,296-byte root, controller, and root-bound effects object. Static verification closes the controller and 13-symbol libkrun surfaces, 14-file archive inventory, typed caps and completion-last fixture, teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutations. `_c5b8_controlled_test_operation` deliberately has no provider; host, guest, authorization, and every effect remain absent. Nothing was loaded or executed, and no v19/v27 identity was reused. |
 | C5b compatibility preflight | Test direct provider-only composition | `PASSED`; exact candidate `NO_GO` | Archive merge [`7fc3af9c46895b340c3118a96cb50abb26b1d977`](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight) retains exact component identities, four closed contradictions, static source/Mach-O verification, ten mutations, and a closed archive inventory. It abandons only binding the retained C5b9 inputs by supplying the missing operation symbol: runner/root identity, effect order, operation ABI, and single-libkrun-owner requirements do not compose truthfully. No native artifact, libkrun/HVF, runner, VM, or guest executed. |
-| C5b | Run the controlled typed-transport harness | `BLOCKED` | First construct and independently review a versioned no-run successor adapter/composition in which one fixed host-runner process is the sole libkrun owner and the Supervisor owns only closed process/transport effects: fixed endpoints/spawn, ready verification, bounded frame writes, writer closure, start byte, completion drain/validation, terminal join, absence proof, fixed-root removal, and commit-before-delivery. Controlled execution then requires final owner authorization naming that exact immutable merge and manifest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
+| C5b11 | Bind the fault-convergent fixed-runner no-run successor | `PASSED` for construction/static evidence | [Immutable merge `f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d`](https://github.com/Shrimpworks/capsule-experiments/tree/f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d/experiments/typed-guest-transport-c5b11-bound-fault-convergent-no-run-successor) retains exact plan/payload/profile binding, one runner importing 13 libkrun symbols, a Supervisor driver importing zero libkrun and 24 closed providers, distinct restart cursors, and fault/replay/teardown models. PR #31 reports exact-head C5b-S5 review `PASSED` / `Ready`; the [checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md) separates that publication from archived pre-review prose and fresh verification. Providers and effects remain absent. C5b10 is not accepted evidence. |
+| C5b providers | Construct the missing fixed process/transport/recovery providers | `BLOCKED` on implementation | Start from the exact C5b11 ABI, attempt bindings, and independent recovery oracle. Freeze the bounded no-run source/provenance/test packet, implement real provider source with closed inputs/imports, reproduce its artifacts, and independently review the new composition. Declarations or test-double results cannot prove provider/platform behavior; no guest execution is authorized by this task row. |
+| C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires provider implementation/provenance and independent review of the complete exact composition, then final owner authorization naming its immutable merge and manifest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3c under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. C3c must supply Accepted ADR-0038/0045 decisions or accepted replacements that freeze the authority descriptor and state-engine binding. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |
 | C6b1a | Build the unsigned Broker evidence harness | `PASSED` | Archive merge [`4a2447d4bd0e03132dc616e608031ca313630cdd`](https://github.com/Shrimpworks/capsule-experiments/tree/4a2447d4bd0e03132dc616e608031ca313630cdd/experiments/broker-live-signing-c6b1) retains the unsigned Swift/Objective-C target, requested entitlement inputs, deterministic closed fixture corpus, public-only signature/binding checks, no-credential interaction double, independent verifier, and stable future seam interface. It used no Apple identity/profile, Keychain, LocalAuthentication, signing, installation, listener, runtime, backend, VM, guest, or product consumer. |
 | C6b1b | Build the test-only Supervisor evidence seam | `PASSED` | Archive merge [`067fe2beb40361bb714507cab1331004e0a656fa`](https://github.com/Shrimpworks/capsule-experiments/tree/067fe2beb40361bb714507cab1331004e0a656fa/experiments/broker-live-signing-c6b1-supervisor-seam) retains six ordered approval/attempt commit, replay, response-loss, reopen, and concurrency rows. Canonical payload plus resolved signer authorization is replay identity; the Supervisor experiment store is the only durable authority owner. The model is test-only and is never imported or promoted into product code. |
@@ -386,8 +406,10 @@ and return a canonical repository artifact before its conclusion drives implemen
 C2b0, C3b's complete no-launch profile/signature preflight, C5b1-C5b9 no-run construction, the
 C5b compatibility preflight, and C6b1c are now `PASSED` in the exact bounded scopes pinned above.
 The direct C5b9 provider-only binding candidate is `NO_GO`; C5b controlled execution remains
-`BLOCKED` on the versioned no-run successor adapter/composition, independent review, and final
-authorization naming its exact immutable merge and manifest. The immediate C3b step is a freshly
+`BLOCKED` on the missing C5b11 provider implementations/provenance, independent review of the
+complete composition, and final authorization naming its exact immutable merge and manifest.
+C5b11 construction/static re-verification is `PASSED`; see the September 5 checkpoint above.
+The immediate C3b step is a freshly
 authorized E1 container matrix
 over E1-01..E1-12 and E1-14..E1-15; E1-13 remains excluded. If C3b passes, C3c must reconcile that
 evidence and decide ADR-0038/0045 before C6a begins. C2b native execution, the C3b

@@ -1,18 +1,38 @@
 import { readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 const schemaDirectory = new URL("../schemas/", import.meta.url);
-const entries = (await readdir(schemaDirectory)).sort();
-const schemaFiles = [
-  ...entries.filter((entry) => entry.endsWith(".schema.json")),
-  "candidates/job-proposal-v0.schema.json",
-];
+// Walk the whole tree. A non-recursive read once found only the top level,
+// so every schema under schemas/authority/ and schemas/conformance/ escaped
+// the draft and $id checks below and never joined the shared Ajv instance.
+// Any schema deliberately kept out belongs in exemptSchemaFiles, named and
+// justified, rather than dropping out because of where it happens to live.
+const entries = (await readdir(schemaDirectory, { recursive: true }))
+  .map((entry) => entry.split(sep).join("/"))
+  .sort();
+
+/** Schemas intentionally excluded from the shared instance, each with a reason. */
+const exemptSchemaFiles = new Map();
+
+const discoveredSchemaFiles = entries.filter((entry) => entry.endsWith(".schema.json"));
+const schemaFiles = discoveredSchemaFiles.filter((entry) => !exemptSchemaFiles.has(entry));
 const schemas = new Map();
 
 if (schemaFiles.length === 0) {
   throw new Error("No JSON Schema files were found");
+}
+
+const staleExemptions = [...exemptSchemaFiles.keys()].filter(
+  (entry) => !discoveredSchemaFiles.includes(entry),
+);
+if (staleExemptions.length > 0) {
+  throw new Error(
+    `exemptSchemaFiles names schemas that no longer exist:\n${staleExemptions
+      .map((entry) => `  ${entry}`)
+      .join("\n")}`,
+  );
 }
 
 for (const filename of schemaFiles) {

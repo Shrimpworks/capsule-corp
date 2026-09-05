@@ -1,16 +1,29 @@
 import type { RuntimeProfileDescriptor } from "@capsule-corp/protocol";
 
+/**
+ * Construction options for {@link CapsuleClient}. Both fields are optional:
+ * `baseUrl` defaults to the daemon's loopback default, and `fetch` exists so
+ * tests can inject a stub without a live daemon.
+ */
 export interface CapsuleClientOptions {
   baseUrl?: string;
   fetch?: typeof globalThis.fetch;
 }
 
+/** Build-time identity reported by the daemon's `/v1/version` endpoint. */
 export interface VersionInfo {
   version: string;
   commit: string;
   buildDate: string;
 }
 
+/**
+ * Client for the capsule daemon's read-only local diagnostic endpoints
+ * (health, version, runtime listing). It carries no Approval, Supervisor, or
+ * execution authority — the daemon exposes none — and validates every
+ * response shape before returning it, because the daemon is a locally
+ * spawned process rather than a fully trusted peer.
+ */
 export class CapsuleClient {
   readonly #baseUrl: URL;
   readonly #fetch: typeof globalThis.fetch;
@@ -53,7 +66,11 @@ export class CapsuleClient {
     const response = await this.#fetch(new URL(path, this.#baseUrl), {
       headers: { Accept: "application/json" },
       method: "GET",
-      signal,
+      // RequestInit.signal is AbortSignal | null, so an absent signal has to
+      // be normalized rather than passed through as undefined: under
+      // exactOptionalPropertyTypes, present-but-undefined is not the same as
+      // absent. null and undefined both mean "no abort signal" to fetch.
+      signal: signal ?? null,
     });
 
     if (!response.ok) {

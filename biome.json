@@ -6,7 +6,6 @@
       "!!**/node_modules",
       "!!**/dist",
       "!!**/coverage",
-      "!!experiments",
       "!!artifacts/**/target",
       "!!schemas/conformance/v0/manifest.json",
       "!!schemas/conformance/v0/canonical-inline-input",

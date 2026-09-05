@@ -13,6 +13,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"testing"
 )
 
@@ -25,6 +26,7 @@ func permissiveProfile() Profile {
 		MaxItems:         64,
 		MaxMapEntries:    16,
 		MaxArrayElements: 16,
+		AllowArray:       true,
 	}
 }
 
@@ -110,6 +112,15 @@ func TestPredecodeRefusesEveryMalformedShape(t *testing.T) {
 		// class outright and when it allows a different member of it.
 		{"tag when disallowed", []byte{0xd2, 0x01}, permissiveProfile(), ReasonSemanticTag},
 		{"wrong tag number", []byte{0xd2, 0x01}, narrowed(func(p *Profile) { p.AllowTag = true; p.AllowedTag = 17 }), ReasonSemanticTag},
+		// Arrays are the third opt-in class. MaxArrayElements cannot express
+		// "no arrays": a cap of 0 still admits the empty array, so an object
+		// set that carries none has to leave AllowArray unset. Both an empty
+		// and a populated array must be refused, and as a type refusal rather
+		// than an element-count one.
+		{"empty array when disallowed", []byte{0x80}, narrowed(func(p *Profile) { p.AllowArray = false }), ReasonMajorType},
+		{"populated array when disallowed", []byte{0x81, 0x01}, narrowed(func(p *Profile) { p.AllowArray = false }), ReasonMajorType},
+		{"array under a zero element cap is still refused by AllowArray", []byte{0x80}, narrowed(func(p *Profile) { p.AllowArray = false; p.MaxArrayElements = 0 }), ReasonMajorType},
+
 		{"simple value when disallowed", []byte{0xf4}, permissiveProfile(), ReasonSimpleOrFloat},
 		{"true when only false allowed", []byte{0xf5}, narrowed(func(p *Profile) { p.AllowFalse = true }), ReasonSimpleOrFloat},
 		{"float when only false allowed", []byte{0xfb, 0x40, 0x09, 0x21, 0xfb, 0x54, 0x44, 0x2d, 0x18}, narrowed(func(p *Profile) { p.AllowFalse = true }), ReasonSimpleOrFloat},
@@ -276,18 +287,53 @@ func TestReadHeadReportsConsumedOffset(t *testing.T) {
 	}
 }
 
-// TestErrorMessage pins the refusal string. It is currently one constant for
-// every Reason, which is why nothing in the repository asserted on it and why
-// the opacity went unnoticed; issue #346 proposes making it reason-bearing, so
-// this assertion is what makes that a visible, intentional diff.
-func TestErrorMessage(t *testing.T) {
+// TestErrorMessageNamesItsReason pins the refusal string. It was one constant
+// shared by every Reason, so a log line or a test failure holding only the
+// error could not say which check fired.
+func TestErrorMessageNamesItsReason(t *testing.T) {
 	t.Parallel()
-	err := Predecode([]byte{}, permissiveProfile())
-	if err == nil {
-		t.Fatal("Predecode([]) accepted an empty payload; want refusal")
+	tests := []struct {
+		name     string
+		received []byte
+		want     string
+	}{
+		{"empty payload", []byte{}, "cborscan: predecode refused: empty-payload"},
+		{"trailing data", []byte{0x01, 0x02}, "cborscan: predecode refused: trailing-data"},
+		{"invalid utf8", []byte{0x61, 0xff}, "cborscan: predecode refused: invalid-utf8"},
 	}
-	if got := err.Error(); got != "cborscan: predecode refused" {
-		t.Fatalf("Error() = %q; want %q", got, "cborscan: predecode refused")
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			err := Predecode(test.received, permissiveProfile())
+			if err == nil {
+				t.Fatalf("Predecode(% x) accepted the payload; want refusal", test.received)
+			}
+			if got := err.Error(); got != test.want {
+				t.Fatalf("Error() = %q; want %q", got, test.want)
+			}
+		})
+	}
+}
+
+// TestReasonNamesCoverEveryReason fails when a Reason is added to the const
+// block without a matching entry in reasonNames, so a new refusal cannot
+// silently format as "unknown(N)".
+func TestReasonNamesCoverEveryReason(t *testing.T) {
+	t.Parallel()
+	// ReasonNonpreferredArgument is the last value in the iota block; if a
+	// Reason is appended after it, this bound moves with it.
+	for reason := ReasonEmptyPayload; reason <= ReasonNonpreferredArgument; reason++ {
+		name := reason.String()
+		if name == "" || name == fmt.Sprintf("unknown(%d)", int(reason)) {
+			t.Errorf("Reason(%d) has no name in reasonNames", int(reason))
+		}
+	}
+	if got := Reason(-1).String(); got != "unknown(-1)" {
+		t.Errorf("Reason(-1).String() = %q; want %q", got, "unknown(-1)")
+	}
+	if got := Reason(len(reasonNames)).String(); got != fmt.Sprintf("unknown(%d)", len(reasonNames)) {
+		t.Errorf("out-of-range Reason formatted as %q; want an unknown(N) form", got)
 	}
 }
 

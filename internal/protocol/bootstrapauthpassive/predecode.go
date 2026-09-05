@@ -28,6 +28,9 @@ func (p predecodeProfile) sharedProfile() cborscan.Profile {
 		AllowedTag:       p.allowedTag,
 		AllowTag:         p.allowTag,
 		AllowFalse:       p.allowFalse,
+		// Every profile in this package carries the COSE array body, so
+		// arrays are always admitted here; cborscan refuses them by default.
+		AllowArray: true,
 	}
 }
 

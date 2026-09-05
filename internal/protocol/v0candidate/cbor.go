@@ -28,8 +28,8 @@ const (
 // cborProfile bounds the allocation-independent predecoder for one object
 // kind: total byte/depth/item ceilings plus per-container map/array caps. It
 // is the shared cborscan.Profile — this package never allows a semantic tag
-// or a simple/float value, so it only ever sets the fields common to every
-// profile here.
+// or a simple/float value, so beyond the caps it only opts into arrays, which
+// cborscan refuses unless a profile asks for them.
 type cborProfile = cborscan.Profile
 
 var executionPlanCBORProfile = cborProfile{
@@ -38,6 +38,7 @@ var executionPlanCBORProfile = cborProfile{
 	MaxItems:         ExecutionPlanMaxCBORItems,
 	MaxMapEntries:    ExecutionPlanMaxCBORMapEntries,
 	MaxArrayElements: ExecutionPlanMaxCBORArrayElements,
+	AllowArray:       true,
 }
 
 var planRegistrationCBORProfile = cborProfile{
@@ -46,6 +47,7 @@ var planRegistrationCBORProfile = cborProfile{
 	MaxItems:         PlanRegistrationMaxCBORItems,
 	MaxMapEntries:    PlanRegistrationMaxCBORMapEntries,
 	MaxArrayElements: PlanRegistrationMaxCBORArrayElements,
+	AllowArray:       true,
 }
 
 var sourceManifestCBORProfile = cborProfile{
@@ -54,6 +56,7 @@ var sourceManifestCBORProfile = cborProfile{
 	MaxItems:         SourceManifestMaxCBORItems,
 	MaxMapEntries:    SourceManifestMaxCBORMapEntries,
 	MaxArrayElements: SourceManifestMaxCBORArrayElements,
+	AllowArray:       true,
 }
 
 // PredecodeExecutionPlanCBOR applies the allocation-independent deterministic

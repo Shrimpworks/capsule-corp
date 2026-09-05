@@ -54,16 +54,22 @@ jobs:
       - name: Vet
         run: go vet ./...
 
-      - name: Lint
+      - name: Lint security and correctness
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9
         with:
           version: v2.12.2
-          # revive's exported/package-comments rules (issue #217) have a
-          # repository-wide backlog (~825 pre-existing findings) that is
-          # tracked and remediated separately, not blocked on here.
-          # only-new-issues restricts every enabled linter's gate to lines
-          # touched by the current change; for the other linters, which
-          # already have zero repository-wide findings, this is a no-op.
+          # Keep all standard and gosec findings gating on every event,
+          # including unchanged code and scheduled/manual full-suite runs.
+          args: --disable revive ./...
+
+      - name: Lint new exported-contract documentation
+        # only-new-issues has a diff baseline for PR/push events only.
+        # Without one it runs a full scan of issue #217's existing backlog.
+        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9
+        with:
+          version: v2.12.2
+          args: --enable-only revive ./...
           only-new-issues: true
 
       - name: Vulnerability scan

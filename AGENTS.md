@@ -251,6 +251,7 @@ golangci-lint run ./...
 go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
 ```
 
-Use Node.js 22 or newer, pnpm 10, and Go 1.23 or newer for the current scaffold.
+Use Node.js 22 or newer, pnpm 10, and the Go version `go.mod` declares (1.25.13 at time of
+writing) for the current scaffold.
 Runtime and toolchain pins are provisional until the first implementation ADR
 locks them down.

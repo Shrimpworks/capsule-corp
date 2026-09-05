@@ -7,7 +7,9 @@ canonical reference for exact toolchain pins and common commands.
 
 ## Prerequisites
 
-- Go 1.23 or newer, as declared by `go.mod`
+- Go at the version `go.mod` declares (1.25.13 at time of writing). Read the pin from `go.mod`
+  rather than this list: the `go` directive is the single source of truth, and `go` selects a
+  matching toolchain automatically unless `GOTOOLCHAIN=local` is set
 - `golangci-lint` v2.12.2, matching the pin in `.github/workflows/ci.yml`, for `make check`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`
@@ -17,7 +19,9 @@ The runtime version used to execute guest jobs is independent of the Node.js ver
 repository tooling.
 
 Toolchain pins are part of the repository contract. Update their declarations, CI configuration,
-and documentation together.
+and documentation together. A `go` directive bump in particular must also update `README.md`'s
+prerequisite list and `AGENTS.md`'s toolchain line, which is how those two previously drifted two
+minor versions behind `go.mod`.
 
 ## Setup
 

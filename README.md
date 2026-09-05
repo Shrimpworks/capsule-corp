@@ -100,6 +100,9 @@ packages/sdk/          TypeScript client SDK
 packages/mcp-server/   MCP adapter scaffold
 profiles/              Draft runtime profile declarations
 schemas/               Current scaffold plus passive JSON/CDDL candidates and fixtures
+scripts/               Conformance fixture generators and verifiers run by `pnpm verify:schemas`
+artifacts/             Retained byte-frozen evidence bundles
+examples/              Example job and proposal documents validated against schemas/
 docs/                  Project, design, security, ADRs, spikes, and roadmap
 site/                  Minimal project overview site
 ```
@@ -136,11 +139,12 @@ The repository contains specifications and buildable scaffolding. It does not st
 Current schemas/types remain canonical for current tests but are explicitly not the intended final
 v0 protocol; see [Schema status](schemas/README.md).
 
-The exact passive/no-listener C4 authenticated-local-IPC evidence claim is `PASSED`: PR #248 is
-the canonical predecessor and the focused follow-up closes its 4,999/5,000/5,001-ms deadline,
-complete closed-dictionary/map, refusal, replay, cancellation, response-loss, and mutation-proof
-findings. CL4 remains `PASSED` with historical disposition `AMEND`, now closed. Installed IPC,
-signing, consumers, runtime/profile admission, and product admission remain `BLOCKED`.
+The exact passive/no-listener C4 authenticated-local-IPC evidence claim is `PASSED`. Installed
+IPC, signing, consumers, runtime/profile admission, and product admission remain `BLOCKED`. For
+the per-workstream detail behind those claims, see the
+[Current work plan](docs/CURRENT_WORK_PLAN.md) and the
+[Workstream evidence ledger](docs/WORKSTREAM_EVIDENCE_LEDGER.md); this section states durable
+status only and is not a change log.
 
 The ordered path is now:
 
@@ -161,7 +165,8 @@ See [Documentation](docs/README.md) for the complete design set.
 
 Prerequisites:
 
-- Go 1.23 or newer
+- Go at the version `go.mod` declares (1.25.13 at time of writing); `go` selects the matching
+  toolchain automatically unless `GOTOOLCHAIN=local` is set
 - Node.js 22.22.1 for repository tooling
 - pnpm 10.28.2
 - Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile

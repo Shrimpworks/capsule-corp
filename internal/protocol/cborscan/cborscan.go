@@ -13,6 +13,7 @@ package cborscan
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"unicode/utf8"
 )
 
@@ -22,10 +23,10 @@ import (
 const maxSafeInteger = uint64(9_007_199_254_740_991)
 
 // Profile bounds one predecode pass: total byte/depth/item ceilings, the
-// per-container map/array caps, and the one optional major-6/7 extension a
-// caller profile may opt into (both default closed — zero value rejects
-// every tag and every simple/float value, matching a predecoder that never
-// sets these fields).
+// per-container map/array caps, and the optional major-4/6/7 extensions a
+// caller profile may opt into. Every extension defaults closed, so the zero
+// value rejects every array, every tag, and every simple/float value; an
+// object set carrying any of them must say so explicitly.
 type Profile struct {
 	MaxBytes         int
 	MaxDepth         int
@@ -42,6 +43,14 @@ type Profile struct {
 	// AllowFalse, when set, accepts exactly the simple value `false`
 	// (major type 7, argument 20). Every other major-7 item is refused.
 	AllowFalse bool
+
+	// AllowArray, when set, accepts an array (major type 4) whose element
+	// count is within MaxArrayElements. Every array is otherwise refused
+	// with ReasonMajorType, including an empty one — MaxArrayElements: 0
+	// admits a zero-length array and so cannot express "no arrays at all".
+	// Object sets that carry no array must leave this unset rather than
+	// relying on the element cap.
+	AllowArray bool
 }
 
 // Reason identifies why Predecode (or ReadHead) refused the input. It
@@ -75,12 +84,50 @@ const (
 	ReasonNonpreferredArgument
 )
 
-// Error reports a predecode refusal. It intentionally has no caller-facing
-// message beyond identifying the package: callers extract Reason via
-// errors.As and own their own wording.
+// reasonNames gives each Reason a stable identifier. It is indexed by the
+// Reason's own iota value, so a Reason added to the block above without a
+// name here fails TestReasonNamesCoverEveryReason rather than silently
+// formatting as "unknown".
+var reasonNames = [...]string{
+	ReasonEmptyPayload:          "empty-payload",
+	ReasonRawByteLimit:          "raw-byte-limit",
+	ReasonTrailingData:          "trailing-data",
+	ReasonDepthLimit:            "depth-limit",
+	ReasonItemLimit:             "item-limit",
+	ReasonTruncatedItem:         "truncated-item",
+	ReasonUnsafeInteger:         "unsafe-integer",
+	ReasonUnsafeNegativeInteger: "unsafe-negative-integer",
+	ReasonTruncatedString:       "truncated-string",
+	ReasonDecodedStringLimit:    "decoded-string-limit",
+	ReasonInvalidUTF8:           "invalid-utf8",
+	ReasonArrayElementLimit:     "array-element-limit",
+	ReasonMapEntryLimit:         "map-entry-limit",
+	ReasonDuplicateMapKeyOrder:  "duplicate-map-key-order",
+	ReasonSemanticTag:           "semantic-tag",
+	ReasonSimpleOrFloat:         "simple-or-float",
+	ReasonMajorType:             "major-type",
+	ReasonInvalidItem:           "invalid-item",
+	ReasonIndefiniteOrReserved:  "indefinite-or-reserved",
+	ReasonTruncatedArgument:     "truncated-argument",
+	ReasonNonpreferredArgument:  "nonpreferred-argument",
+}
+
+// String returns a stable identifier for the Reason. It is diagnostic text
+// for logs and test failures, not protocol surface: callers still map Reason
+// values to their own refusal codes and classifications.
+func (r Reason) String() string {
+	if r < 0 || int(r) >= len(reasonNames) || reasonNames[r] == "" {
+		return fmt.Sprintf("unknown(%d)", int(r))
+	}
+	return reasonNames[r]
+}
+
+// Error reports a predecode refusal. Callers extract Reason via errors.As
+// and own their own wording; the message names the reason so a refusal is
+// still legible in a log line or a test failure that only has the error.
 type Error struct{ Reason Reason }
 
-func (e *Error) Error() string { return "cborscan: predecode refused" }
+func (e *Error) Error() string { return "cborscan: predecode refused: " + e.Reason.String() }
 
 func reject(reason Reason) error { return &Error{Reason: reason} }
 
@@ -159,7 +206,12 @@ func (s *Scanner) Item(depth int) error {
 		if argument > uint64(len(s.Value)-s.Offset) { // #nosec G115 -- the nonnegative remaining slice length widens losslessly.
 			return reject(ReasonTruncatedString)
 		}
-		if s.decodedStringLen > uint64(s.Profile.MaxBytes)-argument { // #nosec G115 -- every profile maximum is a reviewed positive constant.
+		// Compare additively rather than subtracting from MaxBytes: an
+		// argument larger than MaxBytes made the subtraction wrap near 2^64
+		// and the check pass. Predecode cannot produce that (it refuses any
+		// payload over MaxBytes first), but Scanner is exported and a caller
+		// driving it directly, or supplying a small MaxBytes, could.
+		if argument > uint64(max(s.Profile.MaxBytes, 0))-s.decodedStringLen { // #nosec G115 -- the max() above proves the operand is nonnegative.
 			return reject(ReasonDecodedStringLimit)
 		}
 		s.decodedStringLen += argument
@@ -169,6 +221,9 @@ func (s *Scanner) Item(depth int) error {
 		}
 		s.Offset = end
 	case 4:
+		if !s.Profile.AllowArray {
+			return reject(ReasonMajorType)
+		}
 		if argument > s.Profile.MaxArrayElements {
 			return reject(ReasonArrayElementLimit)
 		}
@@ -208,10 +263,11 @@ func (s *Scanner) Item(depth int) error {
 			return reject(ReasonSimpleOrFloat)
 		}
 	default:
-		// Unreachable: major is the top 3 bits of one byte (0-7), so every
-		// value is handled by one of the cases above. Kept as a defensive
-		// refusal rather than a panic, matching both predecoders this
-		// package replaces.
+		// Unreachable through this switch: major is the top 3 bits of one
+		// byte (0-7), so every value is handled by a case above. Kept as a
+		// defensive refusal rather than a panic, matching both predecoders
+		// this package replaces. ReasonMajorType itself is reachable — an
+		// array under a profile that does not set AllowArray returns it.
 		return reject(ReasonMajorType)
 	}
 	if s.Offset <= start {

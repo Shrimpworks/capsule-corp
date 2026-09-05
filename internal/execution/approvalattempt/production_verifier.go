@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
-	"unicode/utf8"
 
+	"capsule.local/capsule/internal/protocol/cborscan"
 	"capsule.local/capsule/internal/protocol/v0candidate"
 	"github.com/fxamacker/cbor/v2"
 )
@@ -577,6 +577,11 @@ func framedApprovalByteString(value []byte, offset int, capBytes uint64) (int, i
 	return offset, end, end, nil
 }
 
+// approvalPredecodeProfile is the approval object set's view of the shared
+// cborscan profile. The set carries only maps, integers, and byte/text
+// strings, so the cborscan.Profile built from it leaves AllowArray, AllowTag,
+// and AllowFalse unset and every array, tag, and simple/float value is
+// refused as a major-type error.
 type approvalPredecodeProfile struct {
 	maxBytes      int
 	maxDepth      int
@@ -584,139 +589,85 @@ type approvalPredecodeProfile struct {
 	maxMapEntries uint64
 }
 
+// sharedProfile projects this package's bounds onto cborscan's. Note that
+// MaxArrayElements is deliberately left at zero: it is unreachable, because
+// AllowArray being unset refuses every array before any element count is
+// considered.
+func (profile approvalPredecodeProfile) sharedProfile() cborscan.Profile {
+	return cborscan.Profile{
+		MaxBytes:      profile.maxBytes,
+		MaxDepth:      profile.maxDepth,
+		MaxItems:      profile.maxItems,
+		MaxMapEntries: profile.maxMapEntries,
+	}
+}
+
+// predecodeApprovalCBOR runs the shared deterministic-CBOR predecoder over an
+// approval envelope component and maps its refusal onto this package's own
+// code vocabulary. Every refusal here is ClassificationMalformed, matching the
+// hand-rolled scanner this replaces.
 func predecodeApprovalCBOR(value []byte, profile approvalPredecodeProfile) error {
-	if len(value) == 0 || len(value) > profile.maxBytes {
-		return classified(ClassificationMalformed, "approval-cbor-byte-limit")
-	}
-	scanner := approvalCBORScanner{value: value, profile: profile}
-	if err := scanner.item(1); err != nil {
-		return err
-	}
-	if scanner.offset != len(value) {
-		return classified(ClassificationMalformed, "approval-cbor-trailing")
+	if err := cborscan.Predecode(value, profile.sharedProfile()); err != nil {
+		return classified(ClassificationMalformed, approvalPredecodeRefusalCode(err))
 	}
 	return nil
 }
 
-type approvalCBORScanner struct {
-	value   []byte
-	offset  int
-	items   int
-	strings int
-	profile approvalPredecodeProfile
-}
-
-func (scanner *approvalCBORScanner) item(depth int) error {
-	if depth > scanner.profile.maxDepth {
-		return classified(ClassificationMalformed, "approval-cbor-depth")
+// approvalPredecodeRefusalCode maps a cborscan Reason onto the refusal code
+// this package emitted before the two predecoders were consolidated. The codes
+// are contract surface, so the mapping preserves two collapses cborscan itself
+// does not make: empty payload and over-limit both report a byte-limit
+// refusal, and a truncated head and a truncated argument both report a
+// truncation. TestApprovalPredecodeRefusalCodeCoversEveryReason fails if a
+// Reason is added to cborscan without a code here.
+func approvalPredecodeRefusalCode(err error) string {
+	var scanErr *cborscan.Error
+	if !errors.As(err, &scanErr) {
+		return approvalUnmappedPredecodeCode
 	}
-	scanner.items++
-	if scanner.items > scanner.profile.maxItems {
-		return classified(ClassificationMalformed, "approval-cbor-items")
-	}
-	major, argument, err := scanner.head()
-	if err != nil {
-		return err
-	}
-	switch major {
-	case 0:
-		if argument > v0candidate.MaxSafeInteger {
-			return classified(ClassificationMalformed, "approval-unsafe-integer")
-		}
-	case 1:
-		if argument >= v0candidate.MaxSafeInteger {
-			return classified(ClassificationMalformed, "approval-unsafe-negative-integer")
-		}
-	case 2, 3:
-		if argument > ApprovalEnvelopeRawMaxBytes {
-			return classified(ClassificationMalformed, "approval-string-limit")
-		}
-		argumentInt := int(argument)
-		if argumentInt > len(scanner.value)-scanner.offset || scanner.strings > scanner.profile.maxBytes-argumentInt {
-			return classified(ClassificationMalformed, "approval-string-limit")
-		}
-		scanner.strings += argumentInt
-		end := scanner.offset + argumentInt
-		if major == 3 && !utf8.Valid(scanner.value[scanner.offset:end]) {
-			return classified(ClassificationMalformed, "approval-invalid-utf8")
-		}
-		scanner.offset = end
-	case 5:
-		if argument > scanner.profile.maxMapEntries {
-			return classified(ClassificationMalformed, "approval-map-entries")
-		}
-		var previous []byte
-		for index := uint64(0); index < argument; index++ {
-			start := scanner.offset
-			if err := scanner.item(depth + 1); err != nil {
-				return err
-			}
-			key := scanner.value[start:scanner.offset]
-			if previous != nil && approvalDeterministicCompare(previous, key) >= 0 {
-				return classified(ClassificationMalformed, "approval-map-key-order")
-			}
-			previous = key
-			if err := scanner.item(depth + 1); err != nil {
-				return err
-			}
-		}
+	switch scanErr.Reason {
+	case cborscan.ReasonEmptyPayload, cborscan.ReasonRawByteLimit:
+		return "approval-cbor-byte-limit"
+	case cborscan.ReasonTrailingData:
+		return "approval-cbor-trailing"
+	case cborscan.ReasonDepthLimit:
+		return "approval-cbor-depth"
+	case cborscan.ReasonItemLimit:
+		return "approval-cbor-items"
+	case cborscan.ReasonTruncatedItem, cborscan.ReasonTruncatedArgument:
+		return "approval-cbor-truncated"
+	case cborscan.ReasonUnsafeInteger:
+		return "approval-unsafe-integer"
+	case cborscan.ReasonUnsafeNegativeInteger:
+		return "approval-unsafe-negative-integer"
+	case cborscan.ReasonTruncatedString, cborscan.ReasonDecodedStringLimit:
+		return "approval-string-limit"
+	case cborscan.ReasonInvalidUTF8:
+		return "approval-invalid-utf8"
+	case cborscan.ReasonMapEntryLimit:
+		return "approval-map-entries"
+	case cborscan.ReasonDuplicateMapKeyOrder:
+		return "approval-map-key-order"
+	case cborscan.ReasonMajorType, cborscan.ReasonArrayElementLimit,
+		cborscan.ReasonSemanticTag, cborscan.ReasonSimpleOrFloat,
+		cborscan.ReasonInvalidItem:
+		// Every major type the approval object set does not contain reports
+		// one type refusal. ReasonArrayElementLimit cannot be reached while
+		// AllowArray is unset, and ReasonInvalidItem is cborscan's own
+		// documented-unreachable guard; both are mapped so that enabling an
+		// array profile later cannot produce an unmapped code.
+		return "approval-cbor-type"
+	case cborscan.ReasonIndefiniteOrReserved:
+		return "approval-cbor-indefinite"
+	case cborscan.ReasonNonpreferredArgument:
+		return "approval-cbor-nonpreferred"
 	default:
-		return classified(ClassificationMalformed, "approval-cbor-type")
+		return approvalUnmappedPredecodeCode
 	}
-	return nil
 }
 
-func (scanner *approvalCBORScanner) head() (byte, uint64, error) {
-	if scanner.offset >= len(scanner.value) {
-		return 0, 0, classified(ClassificationMalformed, "approval-cbor-truncated")
-	}
-	initial := scanner.value[scanner.offset]
-	scanner.offset++
-	major, additional := initial>>5, initial&0x1f
-	if additional < 24 {
-		return major, uint64(additional), nil
-	}
-	width := 0
-	switch additional {
-	case 24:
-		width = 1
-	case 25:
-		width = 2
-	case 26:
-		width = 4
-	case 27:
-		width = 8
-	default:
-		return 0, 0, classified(ClassificationMalformed, "approval-cbor-indefinite")
-	}
-	if width > len(scanner.value)-scanner.offset {
-		return 0, 0, classified(ClassificationMalformed, "approval-cbor-truncated")
-	}
-	var argument uint64
-	switch width {
-	case 1:
-		argument = uint64(scanner.value[scanner.offset])
-	case 2:
-		argument = uint64(binary.BigEndian.Uint16(scanner.value[scanner.offset : scanner.offset+2]))
-	case 4:
-		argument = uint64(binary.BigEndian.Uint32(scanner.value[scanner.offset : scanner.offset+4]))
-	case 8:
-		argument = binary.BigEndian.Uint64(scanner.value[scanner.offset : scanner.offset+8])
-	}
-	scanner.offset += width
-	minimum := [...]uint64{0, 24, 1 << 8, 0, 1 << 16, 0, 0, 0, 1 << 32}[width]
-	if argument < minimum {
-		return 0, 0, classified(ClassificationMalformed, "approval-cbor-nonpreferred")
-	}
-	return major, argument, nil
-}
-
-func approvalDeterministicCompare(left, right []byte) int {
-	if len(left) < len(right) {
-		return -1
-	}
-	if len(left) > len(right) {
-		return 1
-	}
-	return bytes.Compare(left, right)
-}
+// approvalUnmappedPredecodeCode is returned only for a refusal this package
+// does not recognize. It is asserted unreachable by
+// TestApprovalPredecodeRefusalCodeCoversEveryReason; reaching it in production
+// would mean cborscan grew a Reason without a corresponding code here.
+const approvalUnmappedPredecodeCode = "approval-cbor-unmapped"

@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-08-16
+Date: 2026-09-05
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -15,6 +15,19 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-09-05 C5b11 fixed-runner reconciliation
+
+The [C5b11 checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md) reconciles the omitted August 18
+experiment merges. C5b10 remains unaccepted historical input. C5b11 at immutable merge
+[`f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d`](https://github.com/Shrimpworks/capsule-experiments/tree/f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d/experiments/typed-guest-transport-c5b11-bound-fault-convergent-no-run-successor)
+is `PASSED` for construction/static evidence. Fresh local checks pass 22 tests, 95 mutations,
+34-file inventory, and exact retained-object reproduction. The checkpoint distinguishes the
+published exact-head review summary from immutable pre-review wording. Providers and all real
+execution effects remain absent; controlled C5b execution and admission remain `BLOCKED`.
+
+Next work: bounded provider source/provenance construction and exact composition review, followed
+by separate controlled-execution authorization. No historical evidence packet is rewritten.
+
 ## 2026-08-16 C5b8/C5b9 no-run and controlled-harness preflight reconciliation
 
 | Slice | Immutable result | Parent boundary |
@@ -24,7 +37,8 @@ reconciliation and its next dependency boundary are recorded directly below.
 | C5b9 immutable no-run composite | `PASSED` at [`capsule-experiments` merge `3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite): the packet binds six exact component roles, complete controller/13-symbol libkrun static closure, a 14-file archive inventory, exact typed fixtures/caps/completion-last/teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutation refusals. | `_c5b8_controlled_test_operation` has no provider; all host/guest/authorization/effect fields remain absent. The lost v19/v27 bytes remain unavailable and their identities were not reused. Controlled C5b execution, installed composition, runtime/profile admission, and product admission remain `BLOCKED`. |
 | C5b controlled-harness compatibility preflight | Static compatibility question `PASSED` at [`capsule-experiments` merge `7fc3af9c46895b340c3118a96cb50abb26b1d977`](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight): exact source/component/Mach-O inspection, ten mutations, and closed inventory retain four contradictions. The exact candidate—make C5b9 runnable only by supplying `_c5b8_controlled_test_operation`—is `NO_GO`. | The retained runner/root identities disagree; effect order reaches `krun_start_enter` before source/input writes; the runner lacks the per-effect ABI; and both candidate owners import libkrun execution. The owner-confirmed host/guest scope authorized preparation only; `executionAuthorized` remains false. No native artifact, libkrun/HVF, runner, VM, guest, network, credential, or product effect occurred. |
 
-The next C5b step is a versioned no-run successor adapter/composition in which one fixed host-runner
+At this historical checkpoint, the next C5b step was a versioned no-run successor adapter/composition
+(now superseded by the C5b11 reconciliation above) in which one fixed host-runner
 process is the sole libkrun owner and the Supervisor owns only closed process/transport effects.
 It requires independent review before a later final authorization can name its exact immutable
 merge and manifest for controlled execution. This reconciliation does not satisfy the raw v10-v27

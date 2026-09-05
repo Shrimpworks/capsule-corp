@@ -65,8 +65,10 @@ provider and all host/guest/authorization/effect fields remain absent. The later
 [`C5b` compatibility preflight](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight)
 `PASSED` its static scope and makes only direct provider-only composition of the retained C5b9
 inputs `NO_GO`: runner/root identity, effect order, the per-effect ABI, and single-libkrun
-ownership are incompatible. No artifact executed. A versioned no-run fixed-runner successor,
-controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
+ownership are incompatible. No artifact executed. The later [C5b11 checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md)
+now closes the fixed-runner no-run construction/static scope with exact plan/payload bindings and
+fault-convergent cursors. Its 24 Supervisor provider implementations/provenance remain absent.
+Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.
 Archive F5 coherent backup, read-only

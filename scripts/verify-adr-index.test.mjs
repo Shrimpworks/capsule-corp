@@ -51,10 +51,49 @@ test("catches a README index entry with no backing file the verifier must reject
   }, /links to a file that does not exist/u);
 });
 
+test("counts an ADR whose slug contains a dot", async () => {
+  // Regression: the slug pattern once excluded ".", so
+  // 0039-license-capsule-under-apache-2.0.md was filtered out before any
+  // check ran and the script reported one ADR fewer than the directory held.
+  const { stdout } = await withFixture(async (adrDir) => {
+    await writeFile(join(adrDir, "0001-first.md"), "# ADR 1\n");
+    await writeFile(join(adrDir, "0002-license-under-apache-2.0.md"), "# ADR 2\n");
+    await writeFile(
+      join(adrDir, "README.md"),
+      "## Index\n\n- [First](0001-first.md)\n- [Second](0002-license-under-apache-2.0.md)\n",
+    );
+  });
+  assert.match(stdout, /^validated 2 ADR files against docs\/adr\/README\.md$/mu);
+});
+
+test("catches a numbered ADR filename the strict pattern cannot parse", async () => {
+  // A numbered file that fails the strict naming rule must fail the run
+  // rather than silently drop out of the index and duplicate-number checks.
+  await withFixture(async (adrDir) => {
+    await writeFile(join(adrDir, "0001-first.md"), "# ADR 1\n");
+    await writeFile(join(adrDir, "0002-Mixed_Case.md"), "# ADR 2\n");
+    await writeFile(join(adrDir, "README.md"), "## Index\n\n- [First](0001-first.md)\n");
+  }, /ADR filenames do not match/u);
+});
+
+test("catches a duplicate ADR number expressed with a dotted slug", async () => {
+  // The duplicate-number check is only as complete as the discovery feeding
+  // it: a slug shape the pattern skipped could not collide with anything.
+  await withFixture(async (adrDir) => {
+    await writeFile(join(adrDir, "0001-first.md"), "# ADR 1\n");
+    await writeFile(join(adrDir, "0001-second-2.0.md"), "# ADR 1 duplicate\n");
+    await writeFile(
+      join(adrDir, "README.md"),
+      "## Index\n\n- [First](0001-first.md)\n- [Second](0001-second-2.0.md)\n",
+    );
+  }, /Duplicate ADR numbers found/u);
+});
+
 /**
  * Runs `seed` against an isolated `docs/adr/` fixture backing an unmodified
- * copy of verify-adr-index.mjs, then asserts the script rejects with
- * `expectedMessage`.
+ * copy of verify-adr-index.mjs. With `expectedMessage`, asserts the script
+ * rejects with it; without one, asserts the script succeeds and returns its
+ * result so the caller can assert on stdout.
  */
 async function withFixture(seed, expectedMessage) {
   const dir = await mkdtemp(join(tmpdir(), "verify-adr-index-"));
@@ -66,10 +105,12 @@ async function withFixture(seed, expectedMessage) {
     await cp(scriptPath, join(scriptsDir, "verify-adr-index.mjs"));
     await seed(adrDir);
 
-    await assert.rejects(
-      () => execFileAsync(process.execPath, [join(scriptsDir, "verify-adr-index.mjs")]),
-      expectedMessage,
-    );
+    const run = () => execFileAsync(process.execPath, [join(scriptsDir, "verify-adr-index.mjs")]);
+    if (expectedMessage === undefined) {
+      return await run();
+    }
+    await assert.rejects(run, expectedMessage);
+    return undefined;
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

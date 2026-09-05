@@ -108,10 +108,18 @@ those apply. Where it is specific, the specifics here win for this repository.
 ## Lint and CI wiring
 
 - `gofmt` is mandatory and covers `cmd` and `internal` (`make fmt` / `make check`).
-- `.golangci.yml` enables the standard linter set plus `gosec`. `make check` (and therefore
-  `make ci`) runs `golangci-lint run ./...` and `govulncheck ./...` alongside `gofmt`/`go vet`, so
-  a clean `make ci` locally means the same thing as a clean Go job in CI (`.github/workflows/ci.yml`
-  pins `golangci-lint` to `v2.12.2` via `golangci-lint-action`; match that version locally).
+- `.golangci.yml` enables the standard linter set, `gosec`, and the `revive` exported/package
+  documentation rules. CI runs `golangci-lint run --disable revive ./...` on every event so
+  security and correctness findings always gate across the whole repository. A separate
+  `--enable-only revive` gate uses `only-new-issues` on PR/push events; scheduled and manual runs
+  have no change baseline and skip only that documentation gate. Existing documentation debt
+  remains tracked in issue #217 and is fixed in package-level batches.
+- `.github/workflows/ci.yml` pins `golangci-lint` to `v2.12.2` via `golangci-lint-action`; match
+  that version locally. To check a branch locally, run the full security/correctness command above
+  and `golangci-lint run --enable-only revive --new-from-rev=origin/main ./...` against an
+  up-to-date base. `make check` (and therefore `make ci`) still runs the unrestricted
+  `golangci-lint run ./...` documentation audit and can fail on the existing #217 backlog even
+  when CI passes; it also runs `govulncheck ./...` alongside `gofmt`/`go vet`.
 - If `golangci-lint run ./...` reports issues whose file paths don't match anything in your working
   tree, or that vanish after touching unrelated files, suspect a stale cache from a different git
   worktree sharing your `~/.cache/golangci-lint` (or platform equivalent) — run

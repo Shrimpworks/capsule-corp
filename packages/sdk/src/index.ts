@@ -53,7 +53,11 @@ export class CapsuleClient {
     const response = await this.#fetch(new URL(path, this.#baseUrl), {
       headers: { Accept: "application/json" },
       method: "GET",
-      signal,
+      // RequestInit.signal is AbortSignal | null, so an absent signal has to
+      // be normalized rather than passed through as undefined: under
+      // exactOptionalPropertyTypes, present-but-undefined is not the same as
+      // absent. null and undefined both mean "no abort signal" to fetch.
+      signal: signal ?? null,
     });
 
     if (!response.ok) {

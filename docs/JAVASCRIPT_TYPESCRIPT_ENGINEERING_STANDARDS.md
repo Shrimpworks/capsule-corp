@@ -112,10 +112,16 @@ This pattern is the strongest thing in this codebase and is not optional style �
   throughout `packages/protocol`, `packages/sdk`, and `packages/mcp-server` — do not introduce the
   first violation.
 - `tsc --noEmit` (`pnpm check`) against the shared `tsconfig.base.json`: `strict`,
-  `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, and `forceConsistentCasingInFileNames` all
-  stay on. Don't loosen a package's own `tsconfig.json` to work around a type error — fix the type,
-  or if the check is genuinely wrong for a specific case, say why in a comment at the suppression
-  site.
+  `noUncheckedIndexedAccess`, `verbatimModuleSyntax`, `forceConsistentCasingInFileNames`,
+  `exactOptionalPropertyTypes`, `noFallthroughCasesInSwitch`, `noImplicitOverride`,
+  `noUnusedLocals`, `noUnusedParameters`, and `isolatedModules` all stay on. Don't loosen a
+  package's own `tsconfig.json` to work around a type error — fix the type, or if the check is
+  genuinely wrong for a specific case, say why in a comment at the suppression site.
+  `noFallthroughCasesInSwitch` earns its place here specifically: this codebase decodes untrusted
+  input through closed-vocabulary `switch` statements over classification and refusal enums, where
+  an accidental fallthrough is a silent behavior change rather than a visible error.
+  `noPropertyAccessFromIndexSignature` is deliberately **not** enabled — it reported 54 errors in
+  `packages/protocol` when measured, so adopting it is a separate decision with real churn.
 - `pnpm verify:schemas`, `pnpm verify:adrs`, and the conformance-fixture generators run in CI
   (`.github/workflows/ci.yml`). A new schema or protocol object needs its own entry in that chain,
   not just a passing `tsc`.

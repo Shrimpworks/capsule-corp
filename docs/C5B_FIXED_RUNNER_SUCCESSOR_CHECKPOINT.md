@@ -71,10 +71,13 @@ it does not establish cross-host equality or behavior of absent providers.
 
 ## Next bounded implementation
 
-Provider implementations and their provenance are absent. Start the next no-run slice by mapping
+At this C5b11 checkpoint, provider implementations and their provenance were absent.
+The later [C5b12 native transport checkpoint](C5B_NATIVE_TRANSPORT_PROVIDER_CHECKPOINT.md)
+adds seven actual pipe providers and local fixture evidence; 17 lifecycle/root/store providers
+and complete composition remain blocked. The original next-slice requirement was to map
 the 24 declarations in `source/supervisor_effect_abi.h` to fixed implementation owners and the
-retained recovery oracle. Freeze the exact construction/test boundary before adding native
-effects. Preserve one libkrun owner, registration-only entry, independently durable restart
+retained recovery oracle. Each implementation must freeze its exact construction/test boundary
+before adding native effects. Preserve one libkrun owner, registration-only entry, independently durable restart
 cursors, completion-before-delivery, and authoritative absence before root removal.
 
 Completion of that slice requires actual provider source, closed inputs/imports and provenance,

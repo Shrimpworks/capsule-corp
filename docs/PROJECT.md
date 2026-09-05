@@ -67,7 +67,9 @@ provider and all host/guest/authorization/effect fields remain absent. The later
 inputs `NO_GO`: runner/root identity, effect order, the per-effect ABI, and single-libkrun
 ownership are incompatible. No artifact executed. The later [C5b11 checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md)
 now closes the fixed-runner no-run construction/static scope with exact plan/payload bindings and
-fault-convergent cursors. Its 24 Supervisor provider implementations/provenance remain absent.
+fault-convergent cursors. The [C5b12 native transport slice](C5B_NATIVE_TRANSPORT_PROVIDER_CHECKPOINT.md)
+now adds seven of its 24 Supervisor providers with bounded local pipe evidence. The remaining
+17 lifecycle/root/store providers and complete composition remain unimplemented.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.

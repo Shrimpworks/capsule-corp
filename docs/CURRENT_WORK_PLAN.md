@@ -2,8 +2,8 @@
 
 Date: 2026-09-05
 
-Work item: reconcile the omitted C5b10/C5b11 experiment merges and fresh C5b11 no-run verification,
-preserving historical review dispositions and the blocked provider/execution/product boundaries.
+Work item: retain the first seven native C5b transport providers and their local pipe evidence,
+preserving the blocked complete-provider, execution, and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -39,10 +39,32 @@ August 21 planning sync. C5b10 is preserved history, not accepted evidence. C5b1
 reproduction checks pass. PR #31 reports the final exact-head review as `PASSED` / `Ready`;
 archived pre-review prose remains unchanged and is distinguished in the checkpoint.
 
-The next credential-free construction slice is the missing provider implementation/provenance
-behind C5b11's 24 closed Supervisor interfaces, followed by exact composition review. The
-fixed-runner no-run candidate itself no longer needs construction. Controlled execution,
-installed composition, runtime/profile admission, and product admission remain `BLOCKED`.
+The first implementation slice is now the seven native transport providers in the
+[C5b12 checkpoint](C5B_NATIVE_TRANSPORT_PROVIDER_CHECKPOINT.md). The fixed-runner no-run candidate
+itself no longer needs construction. Seventeen lifecycle/root/durable-store providers remain
+unimplemented; complete composition, controlled execution, installed composition,
+runtime/profile admission, and product admission remain `BLOCKED`.
+
+## 2026-09-05 C5b12 native provider milestone
+
+Status: local transport implementation/checks and independent review `PASSED`.
+Parent complete-provider composition: `BLOCKED`.
+
+Seven actual Darwin pipe providers now cover endpoints, readiness, fixed source/input writes,
+writer closure, start, and exact known-answer completion. The retained source has no caller
+replacement bytes, paths, descriptors, or backend callbacks. Local tests link only transport code;
+no runner, driver, libkrun/HVF, VM, guest, signing, installed state, or protected store executes.
+
+Milestone order:
+
+1. Native transport mechanics: seven providers and local adversarial pipe evidence `PASSED`.
+2. Supervisor runner lifecycle and root custody: nine providers `BLOCKED` on implementation,
+   exact identity/FD transfer, terminal/absence evidence, and teardown/root reconciliation.
+3. Supervisor durable attempt/completion store: eight providers `BLOCKED` on implementation and
+   independently persisted fault/reopen cursors, one-shot teardown, and stored replay evidence.
+4. Complete immutable composition: `BLOCKED` on all owners, exact timing/identity/provenance and
+   independent review. Only then can a separately authorized controlled typed-transport guest
+   attempt be considered. That result would still not establish product admission.
 
 ## 2026-08-21 planning sync
 
@@ -242,7 +264,8 @@ platform execution or product authorization:
   successor, runtime-root, and C5b9 composite identities are retained. C5b8 resolves C5b7's exact
   root-size binding only for the reviewed test-double path. Direct provider-only composition of
   the retained C5b9 inputs is `NO_GO`. The later C5b11 successor construction is `PASSED` in
-  its no-run scope; provider behavior/provenance, controlled C5b run, preferred-form
+  its no-run scope. C5b12 adds seven native transport providers with local pipe evidence;
+  the remaining 17 providers, complete composition, controlled C5b run, preferred-form
   libkrunfw/kernel source compliance, and admission remain `BLOCKED`; and
 - C6b1a unsigned Broker-harness construction, C6b1b test-only Supervisor-seam construction, and
   C6b1c no-install identity/profile/signed-artifact readback are `PASSED`; C6b1d installed live

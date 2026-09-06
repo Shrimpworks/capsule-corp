@@ -79,7 +79,11 @@ The [C5b14B native durable owner](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connec
 composition differences. The [C5b16 timing probe](C5B_TIMING_FAULT_CHECKPOINT.md)
 now measures publication delay outside the cleanup clock and identifies the next
 total-deadline design gate; bounded verification and independent review are
-`PASSED`. Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
+`PASSED`. The [C5b17 passive design](C5B_TEARDOWN_DEADLINE_DESIGN.md) now compares
+teardown ordering and proposes precommitted cleanup obligations with storage-independent
+Supervisor stop control. ADR-0047 remains Proposed; passive review is `PASSED`,
+and successor specification/validation precedes any runnable implementation.
+Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.

@@ -2,11 +2,11 @@
 
 Date: 2026-09-06
 
-Next work item: prepare the passive teardown-intent/deadline design decision
-selected by C5b16 before further runnable composition.
+Next work item: C5b18 passive successor specification/model for the C5b17
+teardown-intent/deadline proposal, before runnable composition.
 
-Status: C5b16 construction, verification and review `PASSED`; next design work
-remains `IN_PROGRESS — TRENDING_GOOD` within the parent workstream.
+Status: C5b17 passive design, verification and independent review `PASSED`.
+Parent workstream remains `IN_PROGRESS — TRENDING_GOOD`; next model gate is pending.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -28,6 +28,24 @@ provider implementation/provenance, reviewed runnable composition, and final exa
 remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-09-06 C5b17 passive teardown/deadline proposal
+
+Status: passive proposal and independent review `PASSED` / **Ready** (1 of 3).
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) remains **Proposed**;
+runnable implementation and installed/guest/product admission remain `BLOCKED`.
+
+The [design packet](C5B_TEARDOWN_DEADLINE_DESIGN.md) maps storage waits before
+signal and absence, defines proposed clock anchors and pending/failure/restart
+cases, and compares ordering options. Proposed direction: durable attempt-bound
+cleanup preparation before creation, with Supervisor stop control independent of
+later storage work. Preparation never proves a signal or restores PID custody.
+
+Next bounded slice: C5b18 passive successor specification/model, including exact
+record/version and pending-write settlement, plus failure/restoration cases.
+Maintainer acceptance of the concrete ADR decision precedes runnable changes.
+C5b16 archive PR #37 and canonical PR #363 are merged; exact reviewed evidence
+remains pinned in their checkpoint.
 
 ## 2026-09-06 C5b16 timing/fault evidence
 

@@ -91,4 +91,8 @@ its core conclusion.
   — Accepted; C5a passive byte/state/restoration conformance `PASSED`, controlled C5b execution,
   installed composition, and admission remain `BLOCKED`
 
+- [ADR-0047: Prepare an attempt-bound teardown obligation before launch](0047-prepare-teardown-obligation-before-launch.md)
+  — Proposed; C5b17 passive design/review `PASSED`, successor specification, implementation
+  and installed/guest/product admission remain `BLOCKED`
+
 Use [the ADR template](TEMPLATE.md) for new decisions.

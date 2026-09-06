@@ -15,6 +15,17 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-09-06 C5b17 passive teardown/deadline proposal
+
+The [C5b17 design](C5B_TEARDOWN_DEADLINE_DESIGN.md) and
+[Proposed ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) retain the
+storage dependency map, proposed clock anchors, ordering alternatives and failure
+matrix. Passive design, canonical verification and review: `PASSED` / **Ready**
+(1 of 3), with the existing full-revive backlog reported separately. No new fixture
+runs or architecture activation. The next gate is a passive successor contract/model
+and explicit ADR acceptance before implementation; installed/guest/product admission
+remains `BLOCKED`.
+
 ## 2026-09-06 C5b16 timing/fault evidence
 
 The [C5b16 checkpoint](C5B_TIMING_FAULT_CHECKPOINT.md) records the versioned benign

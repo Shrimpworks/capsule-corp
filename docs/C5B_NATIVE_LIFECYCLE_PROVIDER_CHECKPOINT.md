@@ -87,3 +87,11 @@ for persisted intent. Teardown must persist cursor 17 before effect 16; lost com
 responses must reopen/replay stored bytes without re-execution or recommit. Installed
 identity/custody, preferred-form kernel/libkrunfw source compliance, missing raw v19/v27
 evidence and cross-host reproduction remain in their existing workstreams.
+
+## Later C5b14A successor
+
+The [C5b14A checkpoint](C5B_DURABLE_PROVIDER_STATE_CORE_CHECKPOINT.md) adds a storage-only
+Go core and local fault/reopen evidence. C5b13 native bodies, fixture identities and
+non-durable gate mocks remain unchanged. C5b14B must supply the eight native store
+providers, two gate bindings, exact observation/ABI ownership and complete driver
+evidence. The durable-owner parent milestone remains `BLOCKED`.

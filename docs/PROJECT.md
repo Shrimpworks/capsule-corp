@@ -74,7 +74,9 @@ bodies and real benign-child evidence using separate executable/root/plan/profil
 The [C5b14A storage core](C5B_DURABLE_PROVIDER_STATE_CORE_CHECKPOINT.md) adds local Go
 intent, recovery-cursor and immutable-replay evidence with separate storage-only identities.
 The [C5b14B native durable owner](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connects all
-24 benign-fixture providers, both durable gates and the registration-only driver. Complete
+24 benign-fixture providers, both durable gates and the registration-only driver. The
+[C5b15 reconciliation](C5B_RUNNER_RECONCILIATION_CHECKPOINT.md) records the remaining
+composition differences and selects a bounded benign timing/fault baseline next. Complete
 installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and

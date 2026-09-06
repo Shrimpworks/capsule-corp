@@ -76,3 +76,11 @@ Reuse decision: P0-3 fixed transport framing `BUILD-NARROWLY`, OS descriptor API
 `ADOPT-PLATFORM`, native instrumented tests `TEST-ONLY`; no package dependency or
 new Supervisor responsibility. The archive plan retains the dependency checklist.
 No ADR lifecycle or control-evidence state changes.
+
+## Later C5b13 successor
+
+The [C5b13 checkpoint](C5B_NATIVE_LIFECYCLE_PROVIDER_CHECKPOINT.md) adds nine lifecycle/root
+bodies to a separate benign fixture with new executable/root/plan/profile/frame identities.
+Its same-session launch, terminal/absence, teardown and cleanup checks pass; it does not
+alter this checkpoint's immutable object or original no-spawn scope. Eight store providers,
+two fixed durable gates, installed/restart identity and complete composition remain `BLOCKED`.

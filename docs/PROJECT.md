@@ -68,8 +68,11 @@ inputs `NO_GO`: runner/root identity, effect order, the per-effect ABI, and sing
 ownership are incompatible. No artifact executed. The later [C5b11 checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md)
 now closes the fixed-runner no-run construction/static scope with exact plan/payload bindings and
 fault-convergent cursors. The [C5b12 native transport slice](C5B_NATIVE_TRANSPORT_PROVIDER_CHECKPOINT.md)
-now adds seven of its 24 Supervisor providers with bounded local pipe evidence. The remaining
-17 lifecycle/root/store providers and complete composition remain unimplemented.
+adds seven of its 24 Supervisor providers with bounded local pipe evidence. The later
+[C5b13 lifecycle fixture](C5B_NATIVE_LIFECYCLE_PROVIDER_CHECKPOINT.md) adds nine lifecycle/root
+bodies and real benign-child evidence using separate executable/root/plan/profile identities.
+Eight store providers and two fixed durable gates remain absent; complete installed/restart
+lifecycle custody and immutable composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.

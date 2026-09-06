@@ -2,10 +2,11 @@
 
 Date: 2026-09-06
 
-Work item: retain the focused pre-C5b16 security audit and select the bounded
-C5b16 timing/fault baseline, preserving installed, guest and product boundaries.
+Next work item: prepare the passive teardown-intent/deadline design decision
+selected by C5b16 before further runnable composition.
 
-Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
+Status: C5b16 construction, verification and review `PASSED`; next design work
+remains `IN_PROGRESS — TRENDING_GOOD` within the parent workstream.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -28,10 +29,27 @@ remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
 
+## 2026-09-06 C5b16 timing/fault evidence
+
+Status: timing matrix, full regression checks and independent review `PASSED` /
+**Ready** (instance 2 of 3). Installed/guest/product admission remains `BLOCKED`.
+
+The [C5b16 checkpoint](C5B_TIMING_FAULT_CHECKPOINT.md) retains separate gate,
+post-gate and total elapsed observations on a versioned benign native C/Go fixture.
+The 1,200-ms and 1,600-ms publication delays exceed the selected total bound even
+when post-gate cleanup finishes within its local clock. Failed publication produces
+no signal and no native absence proof; harness-only self-alarm reap remains distinct.
+
+Next goalpost: a passive teardown-intent/deadline design decision covering live
+child custody during pending, failed and indeterminate durable publication. Preserve
+Supervisor-only authority and attempt binding; obtain the applicable explicit ADR
+and review before changing durability order, authority or recovery semantics. No
+remedy, wider deadline, installed service, guest or runnable promotion is selected.
+
 ## 2026-09-06 focused pre-C5b16 security audit
 
-Status: exact-scope audit `PASSED`; no reportable vulnerability found. C5b16
-implementation and review remain `BLOCKED`.
+Status: exact-scope audit `PASSED`; no reportable vulnerability found. At audit
+completion, C5b16 implementation and review were `BLOCKED`; see the successor above.
 
 The [focused audit](C5B_PRE_C5B16_SECURITY_AUDIT.md) reviewed canonical C5b11-C5b15
 contracts and exact owned archive source/evidence with independent architecture,
@@ -59,8 +77,9 @@ but root size, argv, symbol namespace and profile bindings prevent direct substi
 Only that exact unchanged-substitution path is `NO_GO`; a versioned composition
 remains `BLOCKED` on identity, custody, timing, provenance and candidate review.
 
-Next executable slice: **C5b16 timing/fault baseline** on the existing benign C/Go
-fixture. The cleanup clock starts after durable teardown publication returns, so
+Selected successor at this checkpoint: **C5b16 timing/fault baseline** on the
+existing benign C/Go fixture, now completed above. The cleanup clock starts after
+durable teardown publication returns, so
 that clock alone cannot bound a stalled write from initial action. Retain phase and
 total elapsed observations with finite delay injection and unchanged limits/gates,
 then resolve the applicable clock/architecture question before launch promotion.

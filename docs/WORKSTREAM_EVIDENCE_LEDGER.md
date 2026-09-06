@@ -15,6 +15,17 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-09-06 C5b16 timing/fault evidence
+
+The [C5b16 checkpoint](C5B_TIMING_FAULT_CHECKPOINT.md) records the versioned benign
+fixture timing matrix and its total-deadline design consequence. Construction,
+timing evidence, full regression and independent review are `PASSED` / **Ready**
+(instance 2 of 3).
+Publication delay is separately observed from post-gate cleanup; no-signal refusal
+and fixture-only self-alarm containment cannot become native absence evidence.
+Installed/guest/product admission remains `BLOCKED`.
+Exact [archive evidence](https://github.com/Shrimpworks/capsule-experiments/tree/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault) retains both reviews and corrected evidence.
+
 ## 2026-09-06 focused pre-C5b16 security audit
 
 The [focused audit](C5B_PRE_C5B16_SECURITY_AUDIT.md) at canonical baseline

@@ -76,8 +76,10 @@ intent, recovery-cursor and immutable-replay evidence with separate storage-only
 The [C5b14B native durable owner](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connects all
 24 benign-fixture providers, both durable gates and the registration-only driver. The
 [C5b15 reconciliation](C5B_RUNNER_RECONCILIATION_CHECKPOINT.md) records the remaining
-composition differences and selects a bounded benign timing/fault baseline next. Complete
-installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
+composition differences. The [C5b16 timing probe](C5B_TIMING_FAULT_CHECKPOINT.md)
+now measures publication delay outside the cleanup clock and identifies the next
+total-deadline design gate; bounded verification and independent review are
+`PASSED`. Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.

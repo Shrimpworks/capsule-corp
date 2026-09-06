@@ -2,8 +2,8 @@
 
 Date: 2026-09-05
 
-Work item: retain C5b13 native same-session lifecycle/root-custody fixture evidence,
-preserving the blocked durable-store, complete lifecycle, execution and product boundaries.
+Work item: retain C5b14A storage-only Go intent/recovery/completion evidence,
+preserving the blocked native durable-owner, lifecycle, execution and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -83,6 +83,26 @@ attempts, retain unresolved cleanup and reopen/replay completion without re-exec
 fixture's store acknowledgments are explicitly non-durable. Installed runner identity, restart
 custody, complete composition/timing/provenance, controlled guest execution and product admission
 remain `BLOCKED`. No product activation, ADR lifecycle or control-evidence claim changes.
+
+## 2026-09-05 C5b14A storage-core milestone
+
+Status: storage-only construction, local verification and independent review
+`PASSED`. Native durable owner and guest composition
+remain `BLOCKED`.
+
+The [C5b14A checkpoint](C5B_DURABLE_PROVIDER_STATE_CORE_CHECKPOINT.md) records the first
+storage increment: a one-attempt Go core with durable-before-effect intent,
+exclusive ownership, safe teardown/recovery cursors and immutable completion replay.
+16 top-level tests, 58 subtests, race/vet/build, two-directory reproduction and nine
+compiled assertion mutations pass. Fixed fixture observations are trusted test
+values; no native lifecycle or external-delivery evidence is inferred.
+
+Next goalpost is C5b14B: the eight native storage providers and two fixed gates,
+C/Go observation ownership, exact ABI/outcome translation, all recovery checkpoints,
+and full benign-driver fault/reopen composition. Existing C5b13 acknowledgments
+remain non-durable. Installed/restart custody, timing/provenance, controlled guest
+execution and product admission remain `BLOCKED`. Existing product storage formats,
+ADR lifecycles and control-evidence claims remain unchanged.
 
 ## 2026-08-21 planning sync
 

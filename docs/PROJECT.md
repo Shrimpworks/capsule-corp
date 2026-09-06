@@ -73,8 +73,9 @@ adds seven of its 24 Supervisor providers with bounded local pipe evidence. The 
 bodies and real benign-child evidence using separate executable/root/plan/profile identities.
 The [C5b14A storage core](C5B_DURABLE_PROVIDER_STATE_CORE_CHECKPOINT.md) adds local Go
 intent, recovery-cursor and immutable-replay evidence with separate storage-only identities.
-Eight native store providers and two fixed durable gates remain absent; their C5b14B bridge,
-complete installed/restart lifecycle custody and immutable composition remain `BLOCKED`.
+The [C5b14B native durable owner](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connects all
+24 benign-fixture providers, both durable gates and the registration-only driver. Complete
+installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and
 separate firmware is inapplicable under Accepted ADR-0041.

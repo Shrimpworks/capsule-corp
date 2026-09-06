@@ -92,3 +92,11 @@ driver before any guest claim. Completion of this core advances the storage
 milestone; it does not close that parent milestone. Existing preferred-form
 kernel/libkrunfw compliance, missing raw v19/v27 evidence and cross-host reproduction
 remain in their existing workstreams.
+
+## Later C5b14B successor
+
+The [C5b14B checkpoint](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connects a separately
+identified Go-store derivation to actual private native fixture observations, all
+24 providers, both gates and a complete registration-only benign driver. C5b14A's
+storage-only evidence and identities remain unchanged. Installed identity/custody,
+immutable runner composition, guest execution and product admission remain `BLOCKED`.

@@ -1,9 +1,9 @@
 # Current work plan
 
-Date: 2026-09-05
+Date: 2026-09-06
 
-Work item: retain C5b14A storage-only Go intent/recovery/completion evidence,
-preserving the blocked native durable-owner, lifecycle, execution and product boundaries.
+Work item: retain C5b14B native durable-owner integration evidence,
+preserving the blocked installed lifecycle, guest execution and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -27,6 +27,25 @@ provider implementation/provenance, reviewed runnable composition, and final exa
 remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-09-06 C5b14B native durable-owner milestone
+
+Status: construction, full local verification and independent review `PASSED` /
+**Ready** (review instance 1 of 3).
+Installed lifecycle, controlled guest execution and product admission remain `BLOCKED`.
+
+The [C5b14B checkpoint](C5B_NATIVE_DURABLE_OWNER_CHECKPOINT.md) connects the C5b13 native
+lifecycle to the derived C5b14A Go store: all 24 benign-fixture providers, both durable
+gates and the registration-only driver link. Actual private native observations
+gate completion; intent and safe recovery cursors precede effects; stored completion
+replays after response loss and process restart. Lost process custody stays unresolved
+without new endpoints, spawn, signaling or PID adoption.
+
+Next goalpost is the immutable runner candidate: reconcile remaining installed/launch
+identity, restart custody, timing/provenance and independent review requirements,
+then choose its next bounded implementation. Existing source-compliance, missing
+raw-evidence and cross-host workstreams remain open. No guest authorization, product
+activation, ADR lifecycle or control-evidence promotion follows from this fixture.
 
 ## 2026-09-05 C5b11 reconciliation
 

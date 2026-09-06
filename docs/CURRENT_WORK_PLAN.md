@@ -2,8 +2,8 @@
 
 Date: 2026-09-05
 
-Work item: retain the first seven native C5b transport providers and their local pipe evidence,
-preserving the blocked complete-provider, execution, and product boundaries.
+Work item: retain C5b13 native same-session lifecycle/root-custody fixture evidence,
+preserving the blocked durable-store, complete lifecycle, execution and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -41,7 +41,8 @@ archived pre-review prose remains unchanged and is distinguished in the checkpoi
 
 The first implementation slice is now the seven native transport providers in the
 [C5b12 checkpoint](C5B_NATIVE_TRANSPORT_PROVIDER_CHECKPOINT.md). The fixed-runner no-run candidate
-itself no longer needs construction. Seventeen lifecycle/root/durable-store providers remain
+itself no longer needs construction. The later C5b13 fixture below adds nine lifecycle/root
+bodies without completing the installed lifecycle boundary. Eight durable-store providers remain
 unimplemented; complete composition, controlled execution, installed composition,
 runtime/profile admission, and product admission remain `BLOCKED`.
 
@@ -58,13 +59,30 @@ no runner, driver, libkrun/HVF, VM, guest, signing, installed state, or protecte
 Milestone order:
 
 1. Native transport mechanics: seven providers and local adversarial pipe evidence `PASSED`.
-2. Supervisor runner lifecycle and root custody: nine providers `BLOCKED` on implementation,
-   exact identity/FD transfer, terminal/absence evidence, and teardown/root reconciliation.
+2. Supervisor runner lifecycle and root custody: C5b13 below passes same-session benign fixture
+   mechanics for nine bodies; complete installed identity/custody and restart boundary `BLOCKED`.
 3. Supervisor durable attempt/completion store: eight providers `BLOCKED` on implementation and
    independently persisted fault/reopen cursors, one-shot teardown, and stored replay evidence.
 4. Complete immutable composition: `BLOCKED` on all owners, exact timing/identity/provenance and
    independent review. Only then can a separately authorized controlled typed-transport guest
    attempt be considered. That result would still not establish product admission.
+
+## 2026-09-05 C5b13 native lifecycle fixture milestone
+
+Status: local native construction, fixture checks and independent review `PASSED`.
+Complete lifecycle, durable store and guest composition `BLOCKED`.
+
+The [C5b13 checkpoint](C5B_NATIVE_LIFECYCLE_PROVIDER_CHECKPOINT.md) adds fixed child launch,
+terminal/absence observation, one-shot teardown and root cleanup in a real benign local process
+fixture. Its executable/root/plan/profile identities are separate from the C5b11 VMM candidate.
+27 native and 27 sanitizer cases, four reproduced variants and nine assertion mutations pass.
+
+Next goalpost is the durable attempt/completion owner: eight providers and the two undefined
+before-spawn/before-teardown gates. It must persist intent and safe recovery cursors, fence failed
+attempts, retain unresolved cleanup and reopen/replay completion without re-execution. The current
+fixture's store acknowledgments are explicitly non-durable. Installed runner identity, restart
+custody, complete composition/timing/provenance, controlled guest execution and product admission
+remain `BLOCKED`. No product activation, ADR lifecycle or control-evidence claim changes.
 
 ## 2026-08-21 planning sync
 
@@ -265,7 +283,8 @@ platform execution or product authorization:
   root-size binding only for the reviewed test-double path. Direct provider-only composition of
   the retained C5b9 inputs is `NO_GO`. The later C5b11 successor construction is `PASSED` in
   its no-run scope. C5b12 adds seven native transport providers with local pipe evidence;
-  the remaining 17 providers, complete composition, controlled C5b run, preferred-form
+  C5b13 adds nine lifecycle/root bodies in a separate benign same-session fixture. Eight durable
+  providers, installed/restart custody, complete composition, controlled C5b run, preferred-form
   libkrunfw/kernel source compliance, and admission remain `BLOCKED`; and
 - C6b1a unsigned Broker-harness construction, C6b1b test-only Supervisor-seam construction, and
   C6b1c no-install identity/profile/signed-artifact readback are `PASSED`; C6b1d installed live

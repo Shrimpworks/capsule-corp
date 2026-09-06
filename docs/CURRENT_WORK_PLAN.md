@@ -2,7 +2,7 @@
 
 Date: 2026-09-06
 
-Work item: reconcile C5b15 immutable runner requirements and select the bounded
+Work item: retain the focused pre-C5b16 security audit and select the bounded
 C5b16 timing/fault baseline, preserving installed, guest and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
@@ -27,6 +27,25 @@ provider implementation/provenance, reviewed runnable composition, and final exa
 remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-09-06 focused pre-C5b16 security audit
+
+Status: exact-scope audit `PASSED`; no reportable vulnerability found. C5b16
+implementation and review remain `BLOCKED`.
+
+The [focused audit](C5B_PRE_C5B16_SECURITY_AUDIT.md) reviewed canonical C5b11-C5b15
+contracts and exact owned archive source/evidence with independent architecture,
+baseline and source-to-sink passes plus fresh deterministic execution. Supervisor
+authority, ABI bounds, durable ordering, restart refusal, completion observations
+and fixture/product claim separation held in the reviewed scope.
+
+C5b16 may proceed only as a bounded benign-fixture evidence slice. It must retain
+durable-gate, post-gate and total elapsed timing and begin with the reproduced
+teardown-gate pre-publication refusal (`spawn=1`, `kill=0`, unresolved cursor 17,
+no completion). Fixture self-alarm containment is not Supervisor-enforced absence.
+Any change to authority, durability order or architecture requires a separate
+decision gate. Installed lifecycle, controlled guest execution and product
+admission remain `BLOCKED`.
 
 ## 2026-09-06 C5b15 runner reconciliation
 

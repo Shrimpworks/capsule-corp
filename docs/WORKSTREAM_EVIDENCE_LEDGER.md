@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-09-05
+Date: 2026-09-06
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -14,6 +14,21 @@ from its parent workstream, ADR lifecycle, control-evidence state, and product a
 The historical Phase 2B/Gate C consolidated outcomes and exact known answers remain in the
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
+
+## 2026-09-06 focused pre-C5b16 security audit
+
+The [focused audit](C5B_PRE_C5B16_SECURITY_AUDIT.md) at canonical baseline
+`a26f83d5a99d46c7a4c7a1eb2c72bad290b7decc` and owned archive merge
+`cbfef30751f0a2dd8d8a71356c6b975b52d3e752` is `PASSED` for its exact scope.
+Independent architecture, baseline and source-to-sink passes plus fresh C5b14B
+and C5b15 execution found no reportable vulnerability. Existing immutable fixture
+case 7 reproduced conservative teardown-gate pre-publication refusal; no new
+archive harness or evidence packet was needed.
+
+C5b16 is selected as a bounded benign-fixture timing/fault evidence slice with
+separate gate, post-gate and total clocks. Installed executable/store protection,
+restart/process-tree custody, real parser/resource/IPC/approval/guest controls and
+product admission remain `BLOCKED`; the audit does not promote their evidence.
 
 ## 2026-09-05 C5b11 fixed-runner reconciliation
 

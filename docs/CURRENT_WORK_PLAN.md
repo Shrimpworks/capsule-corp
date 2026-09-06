@@ -2,8 +2,8 @@
 
 Date: 2026-09-06
 
-Work item: retain C5b14B native durable-owner integration evidence,
-preserving the blocked installed lifecycle, guest execution and product boundaries.
+Work item: reconcile C5b15 immutable runner requirements and select the bounded
+C5b16 timing/fault baseline, preserving installed, guest and product boundaries.
 
 Status: `PASSED` for this canonical reconciliation and the completed child scopes named below.
 
@@ -27,6 +27,25 @@ provider implementation/provenance, reviewed runnable composition, and final exa
 remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
+
+## 2026-09-06 C5b15 runner reconciliation
+
+Status: static reconciliation/tests and independent review `PASSED` / **Ready**
+(instance 2 of 3). Immutable runner, installed lifecycle and guest execution remain
+`BLOCKED`.
+
+The [C5b15 checkpoint](C5B_RUNNER_RECONCILIATION_CHECKPOINT.md) reconciles the merged
+C5b14B fixture with retained C5b11. All 24 logical provider roles share ABI lineage,
+but root size, argv, symbol namespace and profile bindings prevent direct substitution.
+Only that exact unchanged-substitution path is `NO_GO`; a versioned composition
+remains `BLOCKED` on identity, custody, timing, provenance and candidate review.
+
+Next executable slice: **C5b16 timing/fault baseline** on the existing benign C/Go
+fixture. The cleanup clock starts after durable teardown publication returns, so
+that clock alone cannot bound a stalled write from initial action. Retain phase and
+total elapsed observations with finite delay injection and unchanged limits/gates,
+then resolve the applicable clock/architecture question before launch promotion.
+No guest or installed-service execution follows from this reconciliation.
 
 ## 2026-09-06 C5b14B native durable-owner milestone
 

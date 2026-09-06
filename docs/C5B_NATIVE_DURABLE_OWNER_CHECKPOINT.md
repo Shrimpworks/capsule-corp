@@ -110,3 +110,10 @@ before selecting its next executable slice. Existing preferred-form kernel/libkr
 source compliance, missing raw v19/v27 evidence and cross-host reproduction remain
 in their existing workstreams. Completing this benign milestone grants no authority
 to execute a guest.
+
+## Later C5b15 reconciliation
+
+The [C5b15 checkpoint](C5B_RUNNER_RECONCILIATION_CHECKPOINT.md) reconciles this completed
+fixture with retained C5b11, records exact identity differences and the cleanup
+clock/publication ordering gap, and selects C5b16 benign timing/fault evidence next.
+This checkpoint's exact source/evidence pin and bounded result remain unchanged.

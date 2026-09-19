@@ -3,7 +3,7 @@
 Date: 2026-09-19
 
 Work item: documentation-only plan for a later bounded runnable experiment.
-Status: `IN_PROGRESS — TRENDING_GOOD` while exact mechanism and review are open.
+Status: `IN_PROGRESS — TRENDING_GOOD` while gates 2–6 remain open.
 Scope: defensive validation of ADR-0047's prepared-obligation ordering and
 storage-independent Supervisor stop path, using one pinned fixed benign direct
 child in owned disposable local directories on an explicitly authorized macOS
@@ -12,13 +12,12 @@ Evidence or reason: [C5b16](C5B_TIMING_FAULT_CHECKPOINT.md) found a controlled
 publication delay that exceeded the total teardown bound; [C5b18](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
 passed a no-effect ordering model; [ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md)
 is Accepted as architecture only.
-Remaining work: mechanism/source review, exact implementation-packet review,
-explicit implementation authorization, independent implemented-byte review,
+Remaining work: exact implementation-packet review, explicit implementation
+authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: independently review the concrete
-[gate-1 mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
-alongside the ownership/proof packet below; neither approves implementation
-or a first child run.
+Next action: freeze and independently review the exact gate-2 implementation
+packet after integration of the [reviewed gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
+The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
 `BLOCKED` pending the named review, authorization and separate later evidence.
@@ -50,13 +49,17 @@ profile and driver identities, never a reinterpretation of old evidence.
 2. **Single owner:** one native Supervisor control lane owns creation, exact
    current-lifetime child custody, cancellation/deadline ingress, stop latch,
    identity check, one signal attempt, reap and absence observation. A separate
-   bounded storage lane owns all store calls and their locks. The control lane
-   never acquires the storage lock, waits for its worker, joins drain/completion,
-   or invokes a synchronous bridge operation before stop/absence. One storage
-   operation and one attempt may be outstanding; the owner lock stays held while
-   its result is pending. The worker posts one exact result to a bounded mailbox;
-   only the control lane applies that result or authorizes start. A full mailbox
-   cannot block stop or grow into a queue. No helper or second lifecycle owner
+   bounded storage lane owns all store calls and their locks. After child
+   creation, while custody exists, the control lane never acquires the storage
+   lock, waits for its worker, joins drain/completion, or invokes a synchronous
+   bridge operation. Before creation it may await the exact prepared-obligation
+   confirmation because no child custody exists. One storage operation may be
+   pending in one attempt; the owner lock stays held while
+   its result is pending. Preparation, identity and terminal publication are
+   distinct sequential operations, not one operation for the whole attempt.
+   The worker posts each exact result through a fixed-frame reply pipe; only
+   the control lane applies it or authorizes start. A full pipe cannot block
+   stop or grow into an authorized queue. No helper or second lifecycle owner
    is introduced.
 3. **Direct-child custody candidate:** the fixed child cannot fork or exec and
    has no descendants. Candidate native custody uses the Supervisor's own
@@ -91,7 +94,7 @@ responsibility. ADR-0047 already selects the Supervisor-owned scheduling split;
 if mechanism review finds a helper, additional lifecycle owner, different
 authority or durable ordering necessary, stop and write a separate ADR before
 implementation. No external package is selected. The platform-clock and
-single-slot mailbox candidates still require gate-1 mechanism and custom-
+fixed-frame pipe-protocol candidates still require gate-1 mechanism and custom-
 primitive policy review; neither is product-admitted by this plan.
 
 Primary-source starting points (read 2026-09-19): Apple's archived
@@ -124,7 +127,7 @@ run. The possible later run host has not been named or authorized.
 
 Mechanism disposition: `IN_PROGRESS — TRENDING_GOOD` for source narrowing,
 not `PASSED` for runnable readiness. Before gate 1 closes, freeze a reviewable
-native/Go lane and mailbox call graph, check the existing source closure for
+native/Go lane and pipe-protocol call graph, check the existing source closure for
 competing waiters or signal-disposition changes, choose one clock and coherent
 awake/suspend policy, and specify exit-before-signal, `ECHILD`/`ESRCH` and
 blocked-store test oracles. After explicit implementation authorization, inspect
@@ -148,35 +151,43 @@ still prove that policy. Do not mix an uptime clock into its anchors.
 
 This is a design candidate, not executable source or a timing guarantee:
 
-1. Before creation, the storage lane confirms one exact prepared obligation.
-   Failure or unknown commit closes creation. Only a confirmed result reaches
-   the native control lane.
+1. Before creation, configure bounded pipes and construct the sole storage
+   worker. The control lane freezes one preparation request; only the worker
+   calls the bridge/store. Control awaits its exact confirmed durable result
+   while no child exists. Pending, failed, late or unknown commit closes
+   creation; setup expiry does not reset for this wait. A fresh setup/cancel
+   check immediately before spawn can still refuse creation.
 2. The control lane creates one child, retains its successful PID and sole
    wait/reap right, then submits one frozen runner-identity publication to a
    worker. The worker owns the bridge/store lock and writes one immutable reply
-   into a single-slot release/acquire mailbox; it never changes custody, stop,
-   clocks, start or capacity. No second write or attempt bypasses that slot.
+   through the fixed-frame pipe; it never changes custody, stop, clocks, start
+   or capacity. No second pending write or attempt bypasses the first.
 3. On each control iteration, sample the chosen clock and accept the fixed
    attempt-bound test cancellation slot; evaluate fatal/setup expiry and the
    wall bound **before** applying a ready store reply. Stop wins a same-tick
    race. Only this lane may apply an exact settled reply or write a start token.
-   A pending mailbox cannot block the iteration; worker completion cannot
-   directly wake or authorize the child.
+   After applying an identity reply, it samples and checks setup expiry and
+   accepted cancellation again at final start admission; a late sample refuses
+   start and latches stop. A stall after that sample is a timing violation, not
+   a timely start. A pending pipe reply cannot block the iteration; worker
+   completion cannot directly authorize the child.
 4. Once stop latches, check current-lifetime reaper ownership and observe the
    exact child via nonblocking `waitpid`. If still live, set the private signal-
    attempt latch **before** one positive-PID `kill`; then continue exact
    `waitpid` observation. `kill` return and `ECHILD`/`ESRCH` never substitute
    for absence. Keep polling/dispatch bounded independently of the worker;
    record actual service/signal/reap times, not a scheduled callback time.
-5. After exact absence, defer terminal publication until the prior operation
-   has settled and the exact frozen generation can advance. A stuck worker
+5. After exact absence, defer the distinct terminal publication until the
+   prior operation has settled, its reply has been consumed and the exact
+   frozen generation can advance under C5b18. A stuck worker
    retains owner lock and blocks durable completion/capacity indefinitely, not
    stop or absence. No result/output is released from this experiment.
 
 ### Gate-1 read-only ownership and proof packet
 
-Status: `IN_PROGRESS — TRENDING_GOOD` for a reviewable candidate, not a gate-1
-pass or runnable approval. The maintainer owns the mechanism decision. This
+Status: `PASSED` for prospective gate-1 design review at corrected head
+`5cc312907acbb7a74af009891f1089d4f73f57b0`, not runnable approval.
+The maintainer owns the mechanism decision. This
 packet compares the selected ADR-0047 scheduling split with the old synchronous
 chain; it inspects source and platform contracts only. No child or fault case
 was executed.
@@ -185,15 +196,16 @@ was executed.
 | --- | --- | --- |
 | Prepare before spawn | Storage lane confirms one frozen obligation; control receives only its exact confirmed result. | Pending/refused/indeterminate preparation never creates a child. Waiting here precedes custody, not a post-create stop. |
 | Create and publish | Control alone records successful current-lifetime custody and consumes creation; it submits one frozen identity-publication request carrying obligation, operation ID, generation, kind and candidate. | Worker receives no PID-targeting, start, stop or capacity authority. Failed/ambiguous spawn never supplies a signal target. |
-| Store settlement | Worker alone holds bridge/store locks and returns one immutable reply with the same tuple and outcome through a bounded slot. Control validates every field before applying it. | A full slot may stall the worker, not control. No second operation, attempt or generation bypasses it; a late reply cannot release start after stop. |
-| Start or stop | Control samples one continuous clock, records actual ingress/service, evaluates fatal/setup/wall stop first, then applies an exact ready reply and permits at most one start-token attempt. | Worker cannot wake or authorize the child. Control never calls `BridgeApply`, a store method, a blocking mailbox receive, a drain/completion join or a store lock while custody exists. |
+| Store settlement | Worker alone holds bridge/store locks and returns one immutable reply with the same tuple and outcome through the fixed reply pipe. Control validates every field before applying it. | A full pipe may stall the worker, not control. No second *pending* operation, attempt or generation bypasses it; a late reply cannot release start after stop. |
+| Start or stop | Control samples one continuous clock, records actual ingress/service, evaluates fatal/setup/wall stop before an exact ready reply, then rechecks setup expiry and cancellation at final start admission before its at-most-one start-token attempt. | Worker cannot authorize the child. Control never calls `BridgeApply`, a store method, a blocking worker-reply receive, a drain/completion join or a store lock while custody exists. A stall after the final sample is timing failure, not a timely start claim. |
 | Signal and absence | Control alone checks the same-parent exclusive-reaper premise and uses positive-PID `waitpid(..., WNOHANG)`. A matching terminal status proves absence. If still live, it latches the one signal attempt before `kill`, then continues exact child-status observation. | `kill` success, `ESRCH`, EOF, child alarm and root removal prove no absence. `ECHILD`, changed disposition, competing reaper or mismatched identity is custody failure, never permission to signal again. |
 
-The worker request/reply slot is a *candidate custom primitive*, not an adopted
+The worker request/reply protocol is a *candidate custom primitive*, not an adopted
 implementation. The [mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
-proposes two fixed-frame anonymous pipes and a one-outstanding-operation state
-limit; independent review must check C/Go ownership, kernel-transport semantics,
-fixed capacity, cancellation ingress and wake/poll behavior against the
+proposes two fixed-frame anonymous pipes and a one-pending-operation state
+limit across sequential preparation, identity and terminal writes; independent
+review must check C/Go ownership, kernel-transport semantics, fixed capacity,
+cancellation ingress and wake/poll behavior against the
 [ecosystem checklist](ECOSYSTEM_REUSE_AND_ADOPTION.md). A second thread is not
 a second lifecycle owner. An unbounded queue, a worker-controlled start, or
 blocking on worker completion in the control path rejects this candidate.
@@ -223,9 +235,10 @@ these prospective proofs; gate 4 separately checks the implemented bytes:
    child owners. Specify the same audit over the later complete linked source
    as a gate-4 condition. The pinned C5b16 `reaper_owned()` check is a useful
    guard, not a substitute for either closure.
-3. Specify the single-slot primitive and its producer/consumer ordering,
-   frozen tuple equality, no lost stop ingress, bounded control polling and
-   exact reply behavior when the worker is blocked, refused or returns late.
+3. Specify the fixed-frame pipe protocol, logical one-pending-operation rule
+   across sequential writes, frozen tuple equality, no lost stop ingress,
+   bounded control polling and exact reply behavior when the worker is blocked,
+   refused or returns late.
    Require code-level proof of these properties at gate 4.
 4. Freeze the `mach_continuous_time()` conversion rule and nondecreasing tick
    policy for a proposed supported macOS floor; gate 2 names the exact host.
@@ -338,8 +351,8 @@ trace and checker output, then restore the exact clean source.
 
 ## Ordered gates and acceptance
 
-1. **Mechanism review — `BLOCKED` on independent prospective call-graph,
-   mailbox and custody review.**
+1. **Mechanism review — `PASSED` for the prospective design only at reviewed
+   head `5cc312907acbb7a74af009891f1089d4f73f57b0`.**
    Specify current-host process/clock semantics, single-waiter custody, bounded
    worker and lock separation, exact frozen operation settlement, and the
    setup/stop race. The continuous-time policy is chosen for the candidate,
@@ -349,7 +362,8 @@ trace and checker output, then restore the exact clean source.
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact implementation-packet review — `BLOCKED` on gate 1.** Freeze the
+2. **Exact implementation-packet review — `BLOCKED` on the exact packet and
+   its independent review.** Freeze the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent
@@ -364,7 +378,7 @@ trace and checker output, then restore the exact clean source.
 4. **Implemented-byte review and first-run authorization — `BLOCKED` on gate 3.**
    Implement without running the child. Freeze the resulting native/Go source,
    fixture and harness source, generated bytes, build inputs and executable
-   digests; independently review the actual control/storage/mailbox call graph,
+   digests; independently review the actual control/storage/pipe call graph,
    waiter and signal-disposition closure, lock and clock paths, descriptor
    allowlist, test oracle and cleanup
    against gates 1–2. Read back the exact source and binary digests selected for

@@ -2,8 +2,8 @@
 
 Date: 2026-09-18
 
-Status: specification/model/local required verification `PASSED`; fresh-context
-independent review `BLOCKED` on a clean task.
+Status: review-instance-1 corrections `IN_PROGRESS — TRENDING_GOOD`; fresh-context
+review instance 2 of 3 and refreshed full verification pending.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -82,14 +82,17 @@ The model contains three separate projections.
 Durable facts are limited to:
 
 - the immutable obligation and its confirmed preparation outcome;
+- the monotonic consumed-creation fact after first exact custody observation;
 - confirmed runner-identity publication, when any;
-- a confirmed terminal join only after authoritative absence;
-- the latest settled storage generation and operation identity; and
+- a confirmed terminal record and its closed completed or timing-violated disposition
+  only after authoritative absence;
+- the latest settled operation ID, kind, generation and frozen candidate; and
 - explicit failed or indeterminate storage outcome.
 
 Preparation never stores a PID, process identity, signal, exit, absence or cleanup
-claim. Terminal confirmation is the only state that permits public completion,
-output release and capacity release.
+claim. Only the completed terminal disposition permits public completion, output
+release and capacity release. A confirmed timing-violated record remains unresolved
+and recovery-required.
 
 ### Current-lifetime control projection
 
@@ -103,7 +106,8 @@ Volatile facts are limited to:
 
 Restart clears custody and every live clock/signal/absence fact. It restores the
 durable obligation as conservative may-exist state and sets recovery required. V1
-has no operation that adopts a PID or restores custody after restart.
+has no operation that adopts a PID or restores custody after restart. Consumed
+creation never reopens after natural absence or restart.
 
 ### Pending storage projection
 
@@ -115,9 +119,11 @@ At most one bounded storage operation exists. It binds:
 - the exact candidate durable projection frozen when the operation began.
 
 No second operation, attempt or generation may bypass it. Settlement must match
-the exact operation ID, generation and kind. A failed or indeterminate outcome
-does not silently retry. Late success may retain its durable fact but cannot clear
-a stop latch, release start, replace first observations or release capacity.
+the exact operation ID, generation, kind and frozen candidate. Every settlement,
+including failed and indeterminate outcomes, retains those fields plus outcome.
+A failed or indeterminate outcome does not silently retry. Late success may retain
+its durable fact but cannot clear a stop latch, release start, replace first
+observations or release capacity.
 
 ## Transition contract
 
@@ -125,18 +131,24 @@ a stop latch, release start, replace first observations or release capacity.
 2. Refused or indeterminate preparation permits no create or start. Reopen may
    classify the complete old/new state only.
 3. Confirmed preparation permits one current-lifetime exact custody observation.
+   That observation consumes creation authority permanently for the attempt;
+   natural absence cannot authorize replacement custody.
 4. Runner identity publication begins after custody and holds start closed.
 5. Cancellation, wall or fatal fault may latch stop while any post-create write is
-   pending. Stop evaluation never depends on settlement of that write.
+   pending. Stop evaluation never depends on settlement of that write. No trigger
+   may latch or rewrite timing after authoritative absence.
 6. Start may be attempted once only after confirmed runner identity, with exact
    current-lifetime custody and no stop latch. `t_start` is captured immediately
    before that first attempt and never reset.
-7. Signal may be requested once only after stop is latched and exact custody is
-   present. A lost/uncertain response prohibits redrive.
-8. Authoritative absence may be recorded only for the exact current-lifetime
-   custody. Signal return, EOF, root removal and fixture alarm are not absence.
-9. Terminal publication may begin only after absence. Its success permits the
-   complete durable terminal join, output release and capacity release.
+7. Signal may be requested once only after stop is latched and the caller supplies
+   the exact current-lifetime custody identity. Zero, stale or substituted identity
+   refuses without mutation. A lost/uncertain response prohibits redrive.
+8. Authoritative absence may be recorded only with that same exact identity.
+   Signal return, EOF, root removal and fixture alarm are not absence.
+9. Terminal publication may begin only after absence and freezes one closed
+   disposition. `completed` permits durable completion, output and capacity release.
+   `timing-violated` records failure evidence, retains recovery required and permits
+   none of those releases.
 10. Restart preserves durable preparation and storage uncertainty, clears live
     authority, marks recovery required and permits no PID adoption, signal,
     start, replacement attempt or completion.
@@ -155,7 +167,9 @@ Every refusal leaves the prior model state unchanged.
 | Storage failure with exact live custody | cleanup remains available; completion/capacity stay withheld |
 | Signal response uncertain | second signal refused; exact custody may still reconcile absence |
 | Absence observed; terminal write fails | local absence retained; public completion/output/capacity withheld |
-| Restart, lost reaper, PID reuse or mismatch | recovery required; no custody adoption or signal |
+| Natural absence before stop | creation remains consumed; no replacement custody or late trigger |
+| Timing bound violated, later absence observed | timing failure remains unresolved; terminal evidence may persist but completion/output/capacity stay withheld |
+| Restart, lost reaper, PID reuse or mismatch | recovery required; exact identity mismatch mutates nothing; no custody adoption or signal |
 | Repeated cancel/wall/fatal race | earliest anchor retained; one stop latch and at most one signal |
 
 ## Test strategy
@@ -171,7 +185,11 @@ Required mutation sensitivity:
 4. forgetting confirmed preparation on restart;
 5. resetting the earliest deadline on a later trigger;
 6. adopting PID/process custody after restart; and
-7. beginning or committing terminal state before authoritative absence.
+7. beginning or committing terminal state before authoritative absence;
+8. reopening creation after natural absence;
+9. accepting a zero, stale or substituted signal/absence identity;
+10. releasing completion, output or capacity after a timing violation; and
+11. settling a mutated frozen candidate or losing its exact settled operation fields.
 
 Each mutation must fail a named assertion rather than time out or fail to compile.
 The independent decision oracle derives `mayCreate`, `mayStart`, `maySignal`,
@@ -189,18 +207,23 @@ go test ./internal/execution/teardownpassive
 Repository verification follows `AGENTS.md`: pnpm install/check/lint/test/schema/ADR
 verification, Go test/vet/build/lint and pinned `govulncheck`.
 
-Observed on 2026-09-18:
+The corrected head requires refreshed full results before review instance 2 begins.
 
-- `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm lint`, `pnpm test`,
-  `pnpm verify:schemas`, `pnpm verify:adrs`, `pnpm audit:dependencies` and
-  `pnpm site:build` passed;
-- `go test ./...`, `go vet ./...`, `go build ./...`, package race/coverage
-  (`84.3%` statements), formatting, CI security/correctness lint, new-code
-  `revive` lint and pinned `govulncheck@v1.6.0` passed; and
-- unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
-  exported-comment findings tracked in issue #217. No C5b18 finding remains.
+## Independent review loop
 
-Fresh-context independent review remains required before merge or ADR disposition.
+Review instance 1 of 3 inspected exact head `26fa5bc` and returned **Not ready**.
+The implementation task accepts all four findings:
+
+1. natural absence reopened creation for one consumed attempt;
+2. timing violation could publish success and release output/capacity;
+3. signal and absence did not compare exact process identity; and
+4. pending/settled storage projections omitted required candidate/operation fields.
+
+Commits `dacb95f`, `bffc71e`, `39cfe7b`, and `b459609` correct those findings;
+`5307e81` additionally prevents a post-absence trigger from reclassifying the first
+terminal observation. These corrections materially change authority and terminal
+state, so review instance 2 of 3 is mandatory after refreshed verification. No
+review verdict is claimed for the corrected head yet.
 
 ## Boundaries
 
@@ -219,7 +242,7 @@ guarantee, restored PID custody, or proof that cleanup occurred.
 
 - exact v1 bindings, clock policy and three state projections compile as a passive
   no-effect model;
-- every failure/restoration row and all seven mutations are executable and pass;
+- every failure/restoration row and all eleven mutations are executable and pass;
 - no product consumer imports the package;
 - ADR-0047 remains Proposed with the concrete packet linked for maintainer review;
 - canonical status documents distinguish scoped `PASSED` from blocked runnable,

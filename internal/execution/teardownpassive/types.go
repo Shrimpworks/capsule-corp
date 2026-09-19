@@ -126,7 +126,7 @@ const (
 	WritePreparation WriteKind = "preparation"
 	// WriteRunnerIdentity persists exact runner identity before start.
 	WriteRunnerIdentity WriteKind = "runner-identity"
-	// WriteTerminalJoin persists completion-last terminal state.
+	// WriteTerminalJoin persists completion or unresolved timing-failure evidence.
 	WriteTerminalJoin WriteKind = "terminal-join"
 )
 

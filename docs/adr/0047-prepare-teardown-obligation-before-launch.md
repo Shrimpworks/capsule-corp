@@ -87,16 +87,19 @@ The [C5b18 successor specification](../C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
 defines new `capsule.c5b18.teardown-successor-model/v1` and
 `capsule.c5b18.teardown-obligation/v1` identities. Its deterministic no-effect Go
 model separates immutable/durable facts, current-Supervisor-lifetime custody and
-one exact pending storage operation. Late settlement cannot release start or clear
-stop; restart preserves preparation and uncertainty while removing custody; one
-signal request cannot be redriven; and terminal release requires authoritative
-absence followed by confirmed durable join.
+one exact pending storage operation. Creation is consumed at first custody; signal
+and absence require its exact identity; pending and settled records retain exact
+frozen candidates; and restart preserves preparation and uncertainty while
+removing custody. A completed terminal record releases only after authoritative
+absence within the fixed bounds. Timing-violated terminal evidence stays unresolved
+and recovery-required without completion, output or capacity release.
 
-Focused local tests cover the C5b17 failure/restoration matrix and all required
-mutation guards. No product consumer imports the package and no storage, process,
+Review instance 1 returned **Not ready** and its four findings are accepted and
+corrected with focused tests. Refreshed full verification and review instance 2 of
+3 remain required. No product consumer imports the package and no storage, process,
 clock, service, backend, VM or guest effect exists. This supplies a concrete packet
-for the acceptance review below; it does not satisfy the required fresh-context
-independent review, accept this ADR or authorize runnable work.
+for the acceptance review below; it does not accept this ADR or authorize runnable
+work.
 
 ## Consequences and acceptance gate
 

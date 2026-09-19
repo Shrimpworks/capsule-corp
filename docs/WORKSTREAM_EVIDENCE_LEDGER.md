@@ -20,13 +20,14 @@ reconciliation and its next dependency boundary are recorded directly below.
 The [C5b18 specification](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) and no-effect
 `internal/execution/teardownpassive` model freeze versioned cleanup-obligation
 bindings, exact clock policy, durable/current-lifetime/pending-write separation,
-late settlement, restart custody loss and completion-last release. Local focused
-tests, race, repository suites, build, vet, CI lint profiles and vulnerability
-checks pass, including the seven required mutation-sensitive guards. Unrestricted
-lint retains only issue #217's 50 pre-existing exported-comment findings. The
-scoped specification/model result is `PASSED`;
-fresh-context independent review is `BLOCKED` on a clean task and no review verdict
-is claimed here. Proposed ADR-0047, runnable mechanics, installed custody, guest
+late settlement, restart custody loss and completion-last release. Review instance
+1 of 3 inspected head `26fa5bc` and returned **Not ready**: creation replay after
+natural absence, release after timing violation, missing exact identity comparison
+and incomplete frozen/settled write projection. The implementation task accepts
+all four findings. Commits `dacb95f`, `bffc71e`, `39cfe7b`, `b459609` and
+`5307e81` correct them; focused tests pass. Refreshed repository checks and review
+instance 2 remain `IN_PROGRESS — TRENDING_GOOD`. No corrected-head review verdict
+is claimed. Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 
 ## 2026-09-06 C5b17 passive teardown/deadline proposal

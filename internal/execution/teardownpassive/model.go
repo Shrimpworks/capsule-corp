@@ -123,8 +123,8 @@ func (model *Model) BeginRunnerIdentityWrite(operationID OperationID) (PendingWr
 	return pending, nil
 }
 
-// BeginTerminalWrite freezes the only completion-last publication candidate.
-// Authoritative absence must already be present.
+// BeginTerminalWrite freezes the only terminal-record candidate. Authoritative
+// absence must already be present; timing failure freezes an unresolved disposition.
 func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, error) {
 	if model.state.RecoveryRequired {
 		return PendingWrite{}, ErrRecovery

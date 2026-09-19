@@ -15,8 +15,9 @@ is Accepted as architecture only.
 Remaining work: exact implementation-packet review, explicit implementation
 authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: freeze and independently review the exact gate-2 implementation
-packet after integration of the [reviewed gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
+Next action: independently review the [gate-2 exact implementation packet
+candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
+[gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:

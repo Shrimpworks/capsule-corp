@@ -11,9 +11,13 @@ at `5cc312907acbb7a74af009891f1089d4f73f57b0`. Instance 2 returned
 **Ready** with no remaining actionable findings. Gate-1 prospective design
 review is `PASSED` at that exact head; PR #377 merged as
 `3fa386f8cbd9034e1ca90b3e2c99074cf6657fc9`. Gate 2 is
-`IN_PROGRESS — TRENDING_GOOD` while its exact packet is independently
-reviewed. Gates 3–6 are `BLOCKED`. No implementation or child run is
-authorized.
+`BLOCKED` on independent review of the corrected
+[exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md). Review instance 1 of 3
+on `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**
+with four accepted P2 design gaps: auxiliary encodings, watchdog custody,
+alarm setup, and trace ownership. Corrections await instance 2. Parent
+workstream remains `IN_PROGRESS — TRENDING_GOOD`; gates 3–6 are `BLOCKED`.
+No implementation or child run is authorized.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

@@ -15,8 +15,8 @@ is Accepted as architecture only.
 Remaining work: exact implementation-packet review, explicit implementation
 authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: independently review the [gate-2 exact implementation packet
-candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
+Next action: independently review the corrected [gate-2 exact implementation
+packet candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
 [gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
@@ -363,8 +363,11 @@ trace and checker output, then restore the exact clean source.
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact implementation-packet review — `BLOCKED` on the exact packet and
-   its independent review.** Freeze the
+2. **Exact implementation-packet review — `BLOCKED` on corrected-packet
+   independent review instance 2.** Instance 1 on
+   `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**;
+   its four accepted P2 design gaps are corrected in the candidate, not yet
+   independently accepted. Freeze the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent

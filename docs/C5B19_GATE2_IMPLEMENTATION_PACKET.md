@@ -1,8 +1,11 @@
 # C5b19 gate-2 exact implementation packet candidate
 
-Date: 2026-09-19. Decision owner: Capsule maintainer. Status:
-`IN_PROGRESS — TRENDING_GOOD` while independent packet review is open; gate 2
-is not `PASSED`. This freezes a proposed **benign, local-only experiment**; it
+Date: 2026-09-19. Decision owner: Capsule maintainer. Gate 2: `BLOCKED`
+until independent review of this corrected packet closes; parent workstream:
+`IN_PROGRESS — TRENDING_GOOD`. Review instance 1 of 3 on
+`6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready** with
+four accepted P2 packet gaps, corrected below and awaiting instance 2. This
+freezes a proposed **benign, local-only experiment**; it
 authorizes neither implementation nor a child run. Gates 3 and 4 require
 separate, explicit owner decisions. The parent owner-only hostile-`.mjs` alpha
 remains `IN_PROGRESS — TRENDING_GOOD`; runnable C5b19 evidence and product
@@ -72,23 +75,30 @@ signal or absence claim and no run.
 
 ### Fixture, process and descriptor caps
 
-`fixture.c` is one fixed, no-argument, no-network C executable. After reading
-exactly one `G` byte from descriptor 3, it waits inertly for Supervisor stop;
-before that it blocks at the gate. It never forks, execs, opens a path, reads an environment
-value or writes output. `alarm(4)` provides *harness-only containment*, never
-Supervisor absence evidence. Close all descriptors except 0/1/2 to
-`/dev/null` and read-only gate FD 3 in `posix_spawn` file actions; use
-`POSIX_SPAWN_CLOEXEC_DEFAULT`, verify the inherited set in a dedicated
-negative fixture test, and set an empty explicit environment. Any platform-
+`fixture.c` is one fixed, no-argument, no-network C executable. It arms
+`alarm(4)` **before** its first blocking gate read. After reading exactly one
+`G` byte from descriptor 3, it waits inertly for Supervisor stop; before that
+it blocks at the gate. It never forks, execs, opens a path, reads an
+environment value or writes output. The alarm provides *harness-only
+containment*, never Supervisor teardown evidence. `posix_spawn` uses
+`POSIX_SPAWN_CLOEXEC_DEFAULT`, `POSIX_SPAWN_SETSIGMASK` with an empty mask,
+and `POSIX_SPAWN_SETSIGDEF` explicitly including `SIGALRM`; verify those flags,
+default disposition and unblocked alarm before admission. This mirrors the
+pinned C5b16 containment premise, not its synchronous teardown call graph.
+Close all descriptors except 0/1/2 to `/dev/null` and read-only gate FD 3
+in file actions; verify the inherited set in a dedicated negative fixture
+test, and set an empty explicit environment. Any platform-
 synthesized environment entry must be inventoried at Gate 4; an unexpected
 entry fails admission. No pipe, lock, trace, directory or store FD enters the
 child. The fixed executable path lies under a private 0700 root and is
 read-only after hash readback. A pathname-to-inode swap or digest mismatch
 fails admission; this is test-only identity, not installed code signing.
 
-The record's 32-byte `ProcessIdentity` is SHA-256 over a domain-separated
-encoding of the consumed attempt ID, successful positive spawn PID, native
-creation-event sequence/tick and read-back fixture executable digest. This
+The record's 32-byte `ProcessIdentity` is SHA-256 over exact bytes
+`"capsule.c5b19.process-identity/v1\0" || AttemptID[16] || pid_u32_be ||
+creation_sequence_u64_be || creation_tick_u64_be || fixture_sha256[32]`.
+PID must be positive and fit signed Darwin `pid_t`; sequence/tick come from
+control's actual successful creation observation. This
 opaque record binding is **not** signal authority; only the same live parent,
 exclusive unreaped child status and retained positive PID support the
 conditional direct-child signal argument. A zero, mismatched or substituted
@@ -105,19 +115,41 @@ iteration count and named fault matrix are set before a campaign; test loops
 cannot create an unbounded number of children. Unexpected extra process,
 competing reaper, descriptor leak or escaped root stops the campaign.
 
+The process tree is exactly harness → Supervisor → fixture. Harness is the
+exclusive same-parent waiter for its **Supervisor** child; Supervisor is the
+exclusive same-parent waiter for its **fixture** child. Harness never signals,
+waits for or probes the fixture PID, even after Supervisor death. Harness may
+make at most one `SIGKILL` request for its own live, unreaped Supervisor after
+the 7-s watchdog, with its own `waitpid(WNOHANG)==0` and unchanged default
+`SIGCHLD`/exclusive-waiter premise checked first. That action is harness-only
+failure containment, not Supervisor stop or fixture absence. The fixture's
+pre-gate 4-s alarm separately contains an orphaned fixture. Negative tests
+before first run cover inherited ignored/blocked `SIGALRM`, alarm armed too
+late, wrong FD set, watchdog identity mismatch and already-reaped Supervisor.
+Any failed premise refuses the first run. A real alarm failure or unknown
+fixture residue ends the campaign and requires manual owner cleanup; no
+unsafe fallback PID action.
+
 The harness creates an owner-only 0700 directory under a user-approved
 disposable root, records its canonical path/device/inode, and refuses symlinks
 or pre-existing occupants. It cleans only its exact owned directory after
-authoritative child status (or clearly labeled harness containment), bounded
-worker termination and record snapshot. Never recursively delete a broad
-parent. If worker remains blocked or child custody is unresolved, stop the
-campaign, preserve evidence and require manual owner cleanup; never call a
-second PID-targeting fallback. The child self-alarm at 4 s, harness watchdog
-at 7 s, verifier timeout at 9 s are independent finite containment caps from
-C5b16, not evidence of the 1,000/1,200-ms Supervisor bounds. Harness timeout
-may kill its **owned fixture only** after explicit identity/readback and must
-record that as harness action, never Supervisor stop. Gate-4 review must prove
-the exact watchdog path cannot target an unrelated PID.
+authoritative child status, bounded worker shutdown and record snapshot.
+After exact fixture absence and its last permitted operation, control closes
+its request writer without waiting; worker finishes at most its current
+operation, observes request EOF, then closes its reply writer. Control waits
+at most 2 s for EOF on the nonblocking worker-reply pipe **after** consuming
+any exact final reply; that
+EOF is a shutdown observation, never a storage settlement. If no EOF, it
+records failure, serializes its own trace and
+terminates its **own** process without treating the pending write as settled.
+No unbounded join is allowed. If it fails to exit, the harness's 7-s direct-
+Supervisor watchdog applies as above. Never recursively delete a broad
+parent. If worker remains blocked, child custody is unresolved, or any
+harness-only containment fires, preserve the exact run directory and require
+manual owner review/cleanup; never call a second PID-targeting fallback.
+The child self-alarm at 4 s, harness watchdog at 7 s, verifier timeout at 9 s
+are independent finite containment caps from C5b16, not evidence of the
+1,000/1,200-ms Supervisor bounds.
 
 ### Fixed transport and operation identity
 
@@ -147,11 +179,29 @@ body (32), outcome (1), and durable-record digest (32): **98 bytes**. The
 worker's durable digest is never independent authority to start: control also
 requires the exact tuple, request hash, confirmed outcome and its frozen
 candidate. A failed or indeterminate reply's record digest is all zero and
-cannot be treated as confirmed evidence. The obligation digest commits to
-the complete versioned cleanup-only record including bindings and fixed
-policy; it is derived before preparation and is identical on all three
-operations. Every nonzero/different-ID, generation, candidate and digest
+cannot be treated as confirmed evidence. The obligation digest is SHA-256
+over the **immutable** preimage
+`"capsule.c5b19.obligation/v1\0" || record_version_u16_be(1) ||
+Bindings[240] || ClockPolicy[24] || permitted_trigger_mask_u8(0x07)`.
+Bindings use declaration order; the three policy u64s are big-endian
+`1000,1000,1200`; mask bits 0/1/2 mean cancel/wall/fatal and all other bits
+must be zero. The preimage excludes itself, process identity, operation,
+generation, evolving candidate, outcome and record digest; thus its 32-byte
+hash is identical across all three operations. Every nonzero/different-ID,
+generation, candidate and digest
 validation rule from C5b18 applies before a request is accepted.
+
+The one harness cancellation event has a fixed **57-byte** frame: ASCII
+`C5CN` (4), version 1 (u8), role 1 (u8), total length 57 (u16_be), consumed
+AttemptID[16], ApprovalID[16], RegistrationID[16], and trigger kind 1 (u8).
+Control accepts only exact equality with its frozen bindings from its
+dedicated precreated harness pipe, at most once; duplicate, truncation, extra
+byte, unknown role/kind or substitution is a fixture fault, not a second
+action. The event contains no timestamp, target PID, path or content
+authority. Its accepted ingress tick is sampled by control. Gate-3 TDD must
+include fixed known-answer bytes for this frame, immutable obligation
+preimage, process identity and durable record, plus mutation/refusal vectors
+for every field and trailing/short bytes before live child tests.
 
 These sizes are proposed **exact maxima**, not asserted implemented bytes.
 Gate 4 must compare generated C/Go encoders byte-for-byte against this schema
@@ -170,9 +220,17 @@ can block the post-create control iteration.
 ### Durable format and frozen fault sites
 
 Use a new `capsule.c5b19.teardown-obligation/v1` record in the owned private
-directory, not C5b16 cursor/record/24-provider ABI. It stores the exact
-bindings, obligation digest, fixed clock policy, last settled generation,
-operation ID/kind/candidate/outcome, and uncertainty/terminal disposition.
+directory, not C5b16 cursor/record/24-provider ABI. The **395-byte**
+evolving stored candidate is ASCII `C5R1` (4), record version u16_be(1),
+Bindings[240], obligation digest[32], ClockPolicy[24], generation u64_be,
+operation ID[16], kind u8 and DurableProjection[68], in that exact order
+(`4+2+240+32+24+8+16+1+68`). Its SHA-256 is the reply's record digest;
+the digest itself is not stored inside those 395 bytes. No outcome is stored
+in the candidate: confirmed means the worker observed successful file fsync,
+rename and directory fsync for the exact candidate and returned a matching
+reply. A present record after failed/unknown publication alone never proves
+confirmation; recovery retains uncertainty. Terminal disposition is inside
+the frozen projection, and no stored field grants public completion.
 One worker holds an exclusive owner lock; each operation writes a fixed
 candidate to a temp file in the same directory, fsyncs file, renames to the
 record name and fsyncs directory before confirmed reply. Recovery never
@@ -214,13 +272,34 @@ storage settlement or repeated trigger. Exact `waitpid` terminal status for
 the same unreaped child is the only absence event. `kill` return, `ESRCH`,
 `ECHILD`, pipe EOF, child alarm and harness cleanup are not.
 
-The raw append-only trace records sequence number, attempt/binding digest,
+Raw evidence has **separate writers**. Control owns a preallocated 384-entry
+fixed-size in-memory array and sequence counter; worker owns its own
+128-entry array and sequence counter. Neither lane reads or locks the other's
+array. Control does no allocation, file I/O, shared lock or worker call while
+it has child custody; each control event append is a bounded copy to its own
+next slot. Overflow latches case failure without overwriting earlier events.
+The control lane's nondecreasing tick watermark is private; worker timestamps
+are observations only and never advance/control that watermark. After exact
+child absence, control serializes its array to its own evidence file without
+waiting for worker. Worker separately flushes and fsyncs its own bounded
+evidence file **before** entering each configured fault delay; its logging
+failure fails the case but cannot block control. It may serialize its final
+array after store completion; a stuck worker leaves only the pre-fault events
+it already committed. Harness has a third independent containment log.
+No shared file append, mutex, global sequence or cross-lane clock state.
+
+Each fixed event records lane-local sequence number, attempt/binding digest,
 event kind, raw tick and ratio, operation/generation/request digest, process
 identity, syscall/result/errno, actual cancellation ingress and service,
-start-token attempt, signal-attempt latch before `kill`, each `waitpid`
-observation, store edge/outcome, and harness-only containment separately.
-Fixed capacity is 512 entries; trace overflow fails the case, not a truncated
-pass. `tests/oracle.go` computes transitions and bounds from this trace plus
+start-token attempt, signal-attempt latch before `kill`, every `waitpid`
+observation, and store edge/outcome as applicable. The aggregate cap is 512
+entries; absent/truncated/overflowed lane evidence is failure, not a pass.
+The oracle merges by exact operation/request identity and causal control
+events, **not** by assuming a total timestamp order between lanes. A same-
+tick stop/reply race is decided by the control lane's own stop-latch and
+reply-application sequence; worker timestamps cannot reorder it. Harness
+actions never enter the Supervisor trace or become Supervisor absence.
+`tests/oracle.go` computes transitions and bounds from these streams plus
 durable snapshot and executable digests; it ignores the Supervisor's claimed
 pass flag. Missing event is null/failure. It verifies preparation before
 spawn, identity confirmation before start, one pending operation, stop over

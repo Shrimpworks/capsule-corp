@@ -5,10 +5,12 @@ Date: 2026-09-18
 Status: causal-order correction, local verification and independent review
 `PASSED` / **Ready with non-blocking follow-ups** at `a985707`. Reviewer found
 no code defect; its P3 stale-progress wording finding is corrected in the
-documentation follow-up. Maintainer disposition remains pending.
+documentation follow-up. Maintainer later Accepted ADR-0047 as architecture;
+this passive model remains no-effect evidence only.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
-ADR-0047 lifecycle: **Proposed**, not Accepted.
+ADR-0047 lifecycle: **Accepted** after corrected-head review and explicit
+maintainer direction; no runnable implementation is authorized by acceptance.
 
 ## Objective
 
@@ -315,8 +317,9 @@ ordering, one-use attempt binding, no-redrive uncertainty and completion-last
 release.
 
 Any new dependency, store engine, helper, service, product consumer, schema/API,
-process effect, installed evidence, guest execution or ADR acceptance requires a
-separate reviewed task and authorization.
+process effect, installed evidence or guest execution requires a separate reviewed
+task and authorization. ADR acceptance was a later governance decision, not an
+effect or product-admission result of this passive model.
 
 Never treat this model as platform evidence, runtime/profile admission, a timing
 guarantee, restored PID custody, or proof that cleanup occurred.
@@ -327,7 +330,8 @@ guarantee, restored PID custody, or proof that cleanup occurred.
   no-effect model;
 - every failure/restoration row and twelve guard scenarios execute and pass;
 - no product consumer imports the package;
-- ADR-0047 remains Proposed with the concrete packet linked for maintainer review;
+- ADR-0047 remained Proposed during the passive model review; the later explicit
+  maintainer acceptance selected architecture only;
 - canonical status documents distinguish scoped `PASSED` from blocked runnable,
   installed, guest and product work; and
 - full required verification and an independent verdict on the corrected head

@@ -47,22 +47,24 @@ head `a985707` passed CI; successor-cycle review 2 found no code defect and
 returned **Ready with non-blocking follow-ups**. Its sole P3 stale-progress
 wording finding in `docs/PROJECT.md` is corrected in this documentation-only
 follow-up. The passive slice and independent review are `PASSED` for their
-scope; PR #371 is ready for maintainer review, while disposition of Proposed
-ADR-0047 remains.
+scope; PR #371 is ready for maintainer review, and explicit maintainer direction
+Accepted ADR-0047 as architecture only.
 
-Proposed ADR-0047, runnable mechanics, installed custody, guest
-execution and product admission remain unchanged and `BLOCKED` where applicable.
+Runnable mechanics, installed custody, guest execution and product admission
+remain unchanged and `BLOCKED`; ADR acceptance does not supply their evidence.
 
 ## 2026-09-06 C5b17 passive teardown/deadline proposal
 
 The [C5b17 design](C5B_TEARDOWN_DEADLINE_DESIGN.md) and
-[Proposed ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) retain the
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md), Proposed at
+C5b17 delivery and later Accepted after C5b18 review, retain the
 storage dependency map, proposed clock anchors, ordering alternatives and failure
 matrix. Passive design, canonical verification and review: `PASSED` / **Ready**
 (1 of 3), with the existing full-revive backlog reported separately. No new fixture
 runs or architecture activation. C5b18 now supplies the local passive successor
-contract/model; its independent review and explicit ADR disposition remain before
-runnable implementation. Installed/guest/product admission remains `BLOCKED`.
+contract/model; independent review and explicit ADR disposition closed the
+design-decision gate. A separately reviewed exact plan and authorization remain
+before runnable implementation. Installed/guest/product admission remains `BLOCKED`.
 
 ## 2026-09-06 C5b16 timing/fault evidence
 

@@ -7,7 +7,8 @@ Canonical verification: `PASSED` for required CI gates; existing full-revive bac
 reported below.
 Parent owner-only alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
-ADR-0047 lifecycle: **Proposed**, not Accepted.
+ADR-0047 lifecycle: **Accepted** after later C5b18 passive review and explicit
+maintainer direction; this C5b17 design was Proposed at delivery.
 
 ## Scope and acceptance
 
@@ -80,7 +81,8 @@ that gap.
 
 ## Ordering proposal
 
-[Proposed ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) proposes a
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md), Proposed at
+this design's delivery and later Accepted, selects a
 precommitted, attempt-bound cleanup obligation and a Supervisor control path whose
 progress is independent of store work. Preparation and later observed outcomes
 remain separate facts. Merely moving `BeforeTeardown` before spawn is insufficient:
@@ -131,8 +133,8 @@ this scheduling separation or durable record is selected by this document.
    Acceptance requires independent derivation and mutations restoring a storage
    wait, permitting late start, repeating a signal, forgetting preparation,
    resetting a deadline, adopting a PID after restart or committing before absence.
-   No process/guest execution. Maintainer acceptance of ADR-0047 is a separate gate
-   after that concrete packet is reviewable.
+   No process/guest execution. Maintainer acceptance of ADR-0047 was a separate gate
+   after that concrete packet became reviewable; it is now closed for architecture only.
 3. **Later bounded benign experiment:** only after the accepted decision and a
    reviewed exact implementation plan, validate the selected scheduling/custody
    mechanism with pinned fixed children in owned disposable local directories.
@@ -163,7 +165,8 @@ The following is a condensed record of the reviewer report, not new runtime evid
   settlement, complete clock policy and platform custody remain future obligations.
 - Orchestrator disposition: **Accept** the Ready verdict; no findings require
   correction or deferral. No further review instance is needed for status/publication
-  metadata updates. ADR-0047 remains Proposed.
+  metadata updates. ADR-0047 remained Proposed at this review and was accepted
+  later after C5b18 corrected-head review and explicit maintainer direction.
 
 Parent-run verification used Node 22.22.1, pnpm 10.28.2 and Go 1.25.13:
 `pnpm install`, `pnpm check`, `pnpm lint`, `pnpm test`, `pnpm verify:schemas`,
@@ -175,4 +178,5 @@ Parent-run verification used Node 22.22.1, pnpm 10.28.2 and Go 1.25.13:
 Final ADR verification covers 47 files; relative links and diff whitespace pass.
 
 Source conclusions reference immutable archive bytes; C5b16 timing runs have not
-been repeated for this passive task. Review/check completion does not accept ADR-0047.
+been repeated for this passive task. Review/check completion did not itself
+accept ADR-0047; later explicit maintainer direction did.

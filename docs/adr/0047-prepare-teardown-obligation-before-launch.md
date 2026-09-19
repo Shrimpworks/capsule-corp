@@ -1,8 +1,9 @@
 # ADR-0047: Prepare an attempt-bound teardown obligation before launch
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-09-06
-- Refines if accepted: ADR-0011, ADR-0025, ADR-0041, ADR-0042, and ADR-0046
+- Accepted: 2026-09-18, by explicit maintainer direction after C5b18 passive review
+- Refines: ADR-0011, ADR-0025, ADR-0041, ADR-0042, and ADR-0046
 
 ## Context
 
@@ -19,9 +20,9 @@ Moving one clock or one write cannot close that whole dependency chain.
 [C5b17](../C5B_TEARDOWN_DEADLINE_DESIGN.md) records exact sources, anchors, alternatives,
 failure cases and the next validation gate.
 
-## Proposed decision
+## Decision
 
-For a separately versioned successor, propose committing a closed cleanup
+For a separately versioned successor, select committing a closed cleanup
 obligation with the consumed attempt before any process creation. The obligation
 permits only termination and reconciliation of that attempt's exactly owned child;
 it is neither a new execution grant nor a claim that termination has occurred.
@@ -38,10 +39,10 @@ record-before-start identity publication remains required before releasing start
 After creation, one Supervisor-owned control path must service cancellation,
 deadlines, identity checks, signaling and authoritative reap/absence without
 waiting for store I/O, store locks, completion/drain joins, or a pending storage
-worker. A scheduling split inside the Supervisor is proposed; no separate helper,
-daemon-to-backend route, additional authority or concurrent lifecycle owner is
-selected. Exact scheduling, synchronization and platform custody mechanisms must
-be specified and validated before runnable implementation.
+worker. A scheduling split inside the Supervisor is selected as the direction;
+no separate helper, daemon-to-backend route, additional authority or concurrent
+lifecycle owner is selected. Exact scheduling, synchronization and platform
+custody mechanisms must be specified and validated before runnable implementation.
 
 At most one bounded storage operation may be outstanding. Its late response cannot
 release start after cancellation, clear a stop/fence latch, restore authority,
@@ -68,7 +69,7 @@ The existing exact C1/C2A/C2B/C5a contracts, C5b11 driver, C5b14B/C5b16 storage 
 24-provider ABI and accepted ADR lifecycles remain unchanged. A successor must use
 new format/profile/driver identities; it must not reinterpret cursor 17 as proof
 that the prepared obligation was discharged. No schema, API, dependency, service,
-process or product consumer is introduced by this proposed ADR.
+process or product consumer is introduced by this ADR.
 
 ## Alternatives
 
@@ -79,7 +80,7 @@ process or product consumer is introduced by this proposed ADR.
 | Change storage engine or improve normal latency | May improve latency; does not alone prove behavior for stalled or indeterminate publication. |
 | Signal first and record intent later | Rejected: removes durable-before-effect protection. |
 | Guest self-alarm, daemon watchdog, or independent cleanup helper | Rejected for this slice: lacks required Supervisor authority/custody or expands the architecture. |
-| Precommit the obligation and isolate the Supervisor control path | Proposed for passive validation; preserves prior durable intent while removing later publication from the stop dependency chain. |
+| Precommit the obligation and isolate the Supervisor control path | Selected as architecture after passive validation; preserves prior durable intent while removing later publication from the stop dependency chain. Runnable mechanism remains unproven. |
 
 ## C5b18 concrete passive packet
 
@@ -113,23 +114,26 @@ finding no code defect. Its sole P3 stale-status wording finding is corrected
 in the documentation follow-up. Guard tests are not executed mutant proof. No
 product consumer imports the package, and no storage, process, clock, service,
 backend, VM or guest effect exists. This supplies a concrete packet
-for the acceptance review below; it does not accept this ADR or authorize runnable
-work.
+for the acceptance review below. Maintainer acceptance selects the direction,
+not this passive model as a runnable mechanism.
 
 ## Consequences and acceptance gate
 
-The proposed ordering can remove one source of unbounded waiting; it is not a
+The selected ordering can remove one source of unbounded waiting; it is not a
 real-time guarantee. Identity checks, scheduler delay, kernel signaling, process
 reap and descendant absence still require exact platform evidence.
 
-Before accepting this ADR, require a reviewed passive successor contract/model
+Acceptance required a reviewed passive successor contract/model
 that distinguishes preparation, actual custody, stop latch, signal uncertainty,
 physical absence and durable completion; specifies pending-write settlement;
-reconciles every changed driver/cursor dependency; and passes the C5b17 failure
-matrix. Require explicit maintainer acceptance of that concrete decision.
+reconciles changed driver/cursor dependencies; and passes the C5b17 failure
+matrix. The C5b18 packet and corrected-head independent review supplied that
+passive evidence; explicit maintainer direction on 2026-09-18 accepted this
+architecture. Guard tests are not executed mutation proof or platform evidence.
 
-Only after that gate may a separately scoped benign fixture implement the selected
-mechanism. It must demonstrate deadline independence under controlled blocked
-publication and retain mutation sensitivity. Installed/guest/product promotion
-requires its own evidence and authorization. No architecture remedy is activated
-by proposing or merging this document while its status is Proposed.
+A separately scoped benign fixture still requires its own reviewed exact
+implementation plan and authorization before implementing the selected mechanism.
+It must demonstrate deadline independence under controlled blocked publication
+and retain mutation sensitivity. Installed/guest/product promotion requires its
+own evidence and authorization. Accepting this ADR does not activate a runnable
+or product path.

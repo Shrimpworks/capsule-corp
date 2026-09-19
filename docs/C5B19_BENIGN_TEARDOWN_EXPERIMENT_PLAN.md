@@ -3,26 +3,26 @@
 Date: 2026-09-19
 
 Work item: documentation-only plan for a later bounded runnable experiment.
-Status: `IN_PROGRESS — TRENDING_GOOD` while gates 2–6 remain open.
+Status: `IN_PROGRESS — TRENDING_GOOD` while gates 3–6 remain open.
 Scope: defensive validation of ADR-0047's prepared-obligation ordering and
 storage-independent Supervisor stop path, using one pinned fixed benign direct
 child in owned disposable local directories on an explicitly authorized macOS
-test host. This document authorizes no implementation or run.
+test host. This document alone authorizes no implementation or run.
 Evidence or reason: [C5b16](C5B_TIMING_FAULT_CHECKPOINT.md) found a controlled
 publication delay that exceeded the total teardown bound; [C5b18](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
 passed a no-effect ordering model; [ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md)
 is Accepted as architecture only.
-Remaining work: exact implementation-packet review, explicit implementation
-authorization, independent implemented-byte review,
-separate first-run authorization, bounded run, retained evidence and review.
-Next action: owner decides whether to authorize an additional fresh-context
-review of the corrected but unreviewed [gate-2 exact implementation packet
-candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
-[gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
+Remaining work: TDD implementation of the exact Gate-2 packet in the owned
+experiment archive, independent implemented-byte review, separate first-run
+authorization, bounded run, retained evidence and review.
+Next action: integrate the [independently reviewed Gate-2 exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)
+and begin implementation-only Gate 3 under the owner's conditional direction
+to continue after a passing review. First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
-`BLOCKED` pending the named review, authorization and separate later evidence.
+`BLOCKED` pending implementation, implemented-byte review, first-run
+authorization and separate later evidence.
 
 ## Decision question and boundary
 
@@ -364,17 +364,17 @@ trace and checker output, then restore the exact clean source.
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact implementation-packet review — `BLOCKED` after three independent
-   instances.** Instance 1 on
+2. **Exact implementation-packet review — `PASSED` for prospective design at
+   `e7b68c57d59abe66c68d849473e21fe74f4e31b7`.** Instance 1 on
    `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**;
    its four accepted P2 design gaps were corrected. Instance 2 on
    `ae2b42ba68b9efe81933654ffa855498a3fcfa81` also returned **Not ready**;
    its two further P2 trace-budget and harness/verifier-source gaps were
    corrected. Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1`
    returned **Not ready** with P2 causal-event encoding and P3 wait-slot
-   arithmetic findings. Their corrections in the candidate are **unreviewed**;
-   the configured review limit is exhausted. Another independent pass needs
-   an explicit owner decision. Freeze the
+   arithmetic findings. Owner authorized up to three more reviews; instance
+   4 of 6 returned **Ready** with no actionable findings on exact corrected
+   head above. The packet freezes the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent
@@ -382,10 +382,12 @@ trace and checker output, then restore the exact clean source.
    review of that exact packet. Close every blocking finding before requesting
    implementation authority.
    Future implementation and binary digests cannot be asserted at this gate.
-3. **Owner implementation authorization — `BLOCKED` on gate 2.** Owner explicitly
-   authorizes only implementing the frozen benign packet in the owned experiment
-   archive. Approval of ADR-0047, merge of this document, or this authorization
-   does not authorize a child run.
+3. **Owner implementation authorization — `PASSED` for implementation-only
+   scope after gate-2 integration.** The owner's 2026-09-19 conditional
+   direction to continue if review passes authorizes TDD implementation of the
+   exact reviewed packet in the owned experiment archive, not a child run.
+   Approval of ADR-0047, merge of this document, or this authorization does
+   not authorize execution.
 4. **Implemented-byte review and first-run authorization — `BLOCKED` on gate 3.**
    Implement without running the child. Freeze the resulting native/Go source,
    fixture and harness source, generated bytes, build inputs and executable

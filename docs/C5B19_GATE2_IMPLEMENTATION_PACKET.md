@@ -1,7 +1,8 @@
 # C5b19 gate-2 exact implementation packet candidate
 
-Date: 2026-09-19. Decision owner: Capsule maintainer. Gate 2: `BLOCKED`
-until independent review of this corrected packet closes; parent workstream:
+Date: 2026-09-19. Decision owner: Capsule maintainer. Gate 2: `PASSED`
+for prospective design only at exact reviewed head
+`e7b68c57d59abe66c68d849473e21fe74f4e31b7`; parent workstream:
 `IN_PROGRESS — TRENDING_GOOD`. Review instance 1 of 3 on
 `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready** with
 four accepted P2 packet gaps. Instance 2 on
@@ -9,12 +10,14 @@ four accepted P2 packet gaps. Instance 2 on
 two further accepted P2 trace-budget and harness/verifier-source gaps.
 Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1` returned
 **Not ready** with accepted P2 causal-event encoding and P3 wait-slot
-arithmetic findings. Corrections below are **unreviewed**: configured
-three-instance limit is exhausted, and another independent review requires
-an explicit owner decision. This
-freezes a proposed **benign, local-only experiment**; it
-authorizes neither implementation nor a child run. Gates 3 and 4 require
-separate, explicit owner decisions. The parent owner-only hostile-`.mjs` alpha
+arithmetic findings. Owner authorized up to three additional independent
+passes; instance 4 of 6 returned **Ready** with no actionable findings on the
+corrected exact head above. Its verdict covers this design packet, not future
+source or binaries. This freezes a proposed **benign, local-only experiment**.
+The owner's separate conditional direction to continue after a passing review
+permits TDD implementation of this exact packet in the owned archive after
+integration, not a child run. Gate 4 still requires implemented-byte review
+and separate explicit first-run authorization. The parent owner-only hostile-`.mjs` alpha
 remains `IN_PROGRESS — TRENDING_GOOD`; runnable C5b19 evidence and product
 admission remain `BLOCKED`.
 

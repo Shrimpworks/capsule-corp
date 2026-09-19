@@ -12,9 +12,11 @@ Evidence or reason: [C5b16](C5B_TIMING_FAULT_CHECKPOINT.md) found a controlled
 publication delay that exceeded the total teardown bound; [C5b18](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
 passed a no-effect ordering model; [ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md)
 is Accepted as architecture only.
-Remaining work: mechanism/source review, exact runnable-plan review, explicit
-owner authorization, implementation, bounded run, retained evidence and review.
-Next action: review this plan and close the pre-implementation decisions below.
+Remaining work: mechanism/source review, exact implementation-packet review,
+explicit implementation authorization, independent implemented-byte review,
+separate first-run authorization, bounded run, retained evidence and review.
+Next action: close the gate-1 mechanism premises below; this plan's review does
+not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
 `BLOCKED` pending the named review, authorization and separate later evidence.
@@ -86,7 +88,9 @@ This is a proposed division of work, not an approved new Supervisor
 responsibility. ADR-0047 already selects the Supervisor-owned scheduling split;
 if mechanism review finds a helper, additional lifecycle owner, different
 authority or durable ordering necessary, stop and write a separate ADR before
-implementation. No external dependency or new primitive is selected here.
+implementation. No external package is selected. The platform-clock and
+single-slot mailbox candidates still require gate-1 mechanism and custom-
+primitive policy review; neither is product-admitted by this plan.
 
 Primary-source starting points (read 2026-09-19): Apple's archived
 [`posix_spawn(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/posix_spawn.2.html)
@@ -127,6 +131,16 @@ custody, and no timing/completion claim on missing observations; it is not a
 daemon/helper watchdog. If direct-child exclusivity fails, revise the candidate
 and seek an ADR for any added lifecycle authority.
 
+The 2026-09-19 read-only source check confirmed the pinned C5b16
+`reaper_owned()` predicate and child-specific `waitpid` in `lifecycle.c`, and
+`bridgeMu` spanning `BridgeApply`'s store call in `owner.go`. It also confirmed
+that the current macOS 26.5 SDK declares `mach_continuous_time()` available since
+macOS 10.12 and advancing during sleep. These are observations of old source
+and local headers, not a closed successor call graph or a timing measurement.
+The design chooses continuous elapsed time for the first successor packet;
+the named host, checked conversion, actual call graph and implementation must
+still prove that policy. Do not mix an uptime clock into its anchors.
+
 ### Proposed first call graph for gate-1 review
 
 This is a design candidate, not executable source or a timing guarantee:
@@ -156,7 +170,7 @@ This is a design candidate, not executable source or a timing guarantee:
    retains owner lock and blocks durable completion/capacity indefinitely, not
    stop or absence. No result/output is released from this experiment.
 
-For the first clock candidate, use [`mach_continuous_time()`](https://developer.apple.com/documentation/driverkit/mach_continuous_time)
+For the first clock policy, use [`mach_continuous_time()`](https://developer.apple.com/documentation/driverkit/mach_continuous_time)
 plus checked [`mach_timebase_info()`](https://developer.apple.com/documentation/driverkit/mach_timebase_info-c.func)
 conversion for every same-lifetime anchor and observation: the SDK header and
 Apple's direct API description say it advances through sleep.
@@ -181,12 +195,24 @@ settlement. Record dispatch, identity-check, signal-call and reap/absence ticks
 separately. Signal return, EOF, child alarm, root removal and harness reap are
 not `t_absent`.
 
+For a child held before the first start-token attempt, `t_start` and `t_wall`
+do not exist. A blocked/refused identity publication must therefore remain a
+start refusal, not a synthetic wall-time pass. Accepted cancellation or detected
+fatal setup expiry supplies `t_action`; if exact custody permits a forced stop,
+measure both force-to-absence and action-to-absence against the same bounds.
+Missing action, force or authoritative absence is null/failure, never a passing
+latency sample. The independent oracle must distinguish this pre-start case
+from a started child whose wall callback was serviced late.
+
 Apple's [uptime-raw clock note](https://developer.apple.com/documentation/driverkit/kiotimerclockuptimeraw)
 distinguishes a monotonic clock that excludes sleep from a continuous clock
-that includes it. This is a clock-policy decision, not evidence of timely stop
-through suspend/wake. The runnable plan must specify the chosen Darwin clock's
-behavior across suspend/wake and identify scheduler stalls as timing failures
-or unmeasured conditions; it may not silently pause or reset a budget. Restart
+that includes it. An uptime clock could silently discount sleep and classify a
+late wake as on time; continuous elapsed time avoids that accounting error but
+does not force timely scheduling. This is a clock-policy decision, not evidence
+of timely stop through suspend/wake. The runnable plan must verify the chosen
+Darwin clock's behavior on its named host and identify scheduler stalls as
+timing failures or unmeasured conditions; it may not silently pause or reset a
+budget. Restart
 clears live custody/ticks, preserves preparation and uncertainty, blocks
 replacement and reports recovery required. Supervisor death, suspend/power loss
 and installed recovery remain separate gates; this single-child run makes no
@@ -238,36 +264,51 @@ trace and checker output, then restore the exact clean source.
 
 ## Ordered gates and acceptance
 
-1. **Mechanism review — `BLOCKED` on exact call graph and clock choice.**
+1. **Mechanism review — `BLOCKED` on exact call graph and custody proof.**
    Specify current-host process/clock semantics, single-waiter custody, bounded
    worker and lock separation, exact frozen operation settlement, and the
-   setup/stop race. Reject or revise candidate before implementation if any
-   premise fails.
+   setup/stop race. The continuous-time policy is chosen for the candidate,
+   not yet validated on a named host or implemented source. Reject or revise
+   the candidate before implementation if any premise fails.
    Check the native test/platform and narrow Supervisor-transport rows of
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact runnable-plan review — `BLOCKED` on gate 1.** Freeze source/toolchain/
-   OS/architecture, artifact hashes, directory and process caps, fault sites,
-   timeouts, cleanup procedure, descriptor allowlist, executable identity,
-   independent oracle and archive destination.
-   Obtain independent security/engineering review of that exact packet. Close
-   every blocking finding before requesting execution authority.
-3. **Owner authorization — `BLOCKED` on gate 2.** Owner explicitly authorizes
-   implementing and running the frozen benign packet on a named owned test host.
-   Approval of ADR-0047 or merge of this document is not that authorization.
-4. **Experiment and evidence — `BLOCKED` on gate 3.** Implement in the experiment
-   archive, run the bounded ordinary/sanitizer/fault/mutation corpus, reproduce
-   from a clean second directory, review raw evidence and publish an immutable
-   archive commit. A failed case produces an adverse result; do not widen clocks
-   or change the fixture after seeing it without a new reviewed packet.
-5. **Canonical conclusion — `BLOCKED` on gate 4.** Record exact pass/fail and
+2. **Exact implementation-packet review — `BLOCKED` on gate 1.** Freeze the
+   intended source inputs and call graph, toolchain/OS/architecture, fixture and
+   harness specifications, directory and process caps, fault sites, timeouts,
+   cleanup, descriptor allowlist, executable-identity policy, independent
+   oracle and archive destination. Obtain independent security/engineering
+   review of that exact packet. Close every blocking finding before requesting
+   implementation authority.
+   Future implementation and binary digests cannot be asserted at this gate.
+3. **Owner implementation authorization — `BLOCKED` on gate 2.** Owner explicitly
+   authorizes only implementing the frozen benign packet in the owned experiment
+   archive. Approval of ADR-0047, merge of this document, or this authorization
+   does not authorize a child run.
+4. **Implemented-byte review and first-run authorization — `BLOCKED` on gate 3.**
+   Implement without running the child. Freeze the resulting native/Go source,
+   fixture and harness source, generated bytes, build inputs and executable
+   digests; independently review the actual control/storage/mailbox call graph,
+   waiter and signal-disposition closure, lock and clock paths, descriptor
+   allowlist, test oracle and cleanup
+   against gates 1–2. Read back the exact source and binary digests selected for
+   the run. A material mismatch reopens packet review and owner implementation
+   authorization. Only after blocking findings close may the owner separately
+   authorize the first run on the named owned host; the run must refuse if its
+   digests or environment differ from the approved readback.
+5. **Experiment and evidence — `BLOCKED` on gate 4.** Run the bounded ordinary/
+   sanitizer/fault/mutation corpus, reproduce from a clean second directory,
+   review raw evidence and publish an immutable archive commit. A failed case
+   produces an adverse result; do not widen clocks or change the fixture after
+   seeing it without a new reviewed packet.
+6. **Canonical conclusion — `BLOCKED` on gate 5.** Record exact pass/fail and
    limitations here with commit-pinned evidence. The experiment passes only if
    ordering, storage-independent stop, exact same-lifetime custody, both timing
    bounds for every applicable case, fail-closed uncertainty and mutation
    sensitivity all hold. A passing benign single-child result still does not
    admit installed lifecycle, descendants, restart custody, a guest or product.
 
-Review checkpoints after gates 1, 2 and 4 prevent a failed premise from
+Review checkpoints after gates 1, 2, 4 and 5 prevent a failed premise from
 becoming runnable authority. Existing repo checks may validate this document;
 they do not execute or authorize the fixture.

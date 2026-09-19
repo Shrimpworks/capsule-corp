@@ -2,11 +2,14 @@
 
 Date: 2026-09-19
 
-Next work item: review the [C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
-under Accepted ADR-0047. Initial primary-source review is retained in that plan;
-the proposed scheduling/custody mechanism still needs an exact call graph,
-clock-policy and independent review. Do not implement or run it before an exact
-frozen packet and explicit owner authorization.
+Next work item: close gate 1 of the [C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
+under Accepted ADR-0047. PR #373 merged the documentation-only plan; its
+fresh-context review instance 1 of 3 was **Ready with non-blocking follow-ups**
+for that scope. The P2 follow-up requires independent review and digest readback
+of implemented bytes before a separately authorized first child run; the linked
+plan now makes that gate explicit. The proposed custody/worker call graph and
+continuous clock policy still need exact mechanism review. Do not implement or
+run before the successive packet, review and owner-authorization gates close.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

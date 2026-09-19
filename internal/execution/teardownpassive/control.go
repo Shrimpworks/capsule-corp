@@ -55,12 +55,18 @@ func (model *Model) AttemptStart(tick uint64) error {
 
 // RequestSignal records the sole current-lifetime destructive request. It does
 // not signal a process and never waits for a storage result.
-func (model *Model) RequestSignal(tick uint64) error {
+func (model *Model) RequestSignal(identity ProcessIdentity, tick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
 	if !validTick(tick) {
 		return ErrClock
+	}
+	if model.state.Custody != CustodyExact {
+		return ErrState
+	}
+	if zero32(identity) || identity != model.state.ProcessIdentity {
+		return ErrBinding
 	}
 	if !model.Decision().MaySignal || tick < model.state.Stop.ActionTick {
 		return ErrState
@@ -88,7 +94,7 @@ func (model *Model) MarkSignalUncertain() error {
 
 // ObserveAbsence records one authoritative same-lifetime absence observation
 // for the exact custody identity. It treats neither signal return nor EOF as absence.
-func (model *Model) ObserveAbsence(tick uint64) error {
+func (model *Model) ObserveAbsence(identity ProcessIdentity, tick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
@@ -97,6 +103,9 @@ func (model *Model) ObserveAbsence(tick uint64) error {
 	}
 	if model.state.Custody != CustodyExact || model.state.Absence.Observed {
 		return ErrState
+	}
+	if zero32(identity) || identity != model.state.ProcessIdentity {
+		return ErrBinding
 	}
 	if model.state.Stop.Latched && tick < model.state.Stop.ActionTick {
 		return ErrClock

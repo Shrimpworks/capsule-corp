@@ -57,7 +57,7 @@ func TestConfirmedPreparationAllowsOneExactCurrentLifetimeCustody(t *testing.T) 
 
 func TestMutationNaturalAbsenceCannotReopenCreation(t *testing.T) {
 	model := custodyModel(t)
-	if err := model.ObserveAbsence(80); err != nil {
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 80); err != nil {
 		t.Fatal(err)
 	}
 	if model.Decision().MayCreate {
@@ -101,7 +101,7 @@ func TestMutationStorageWaitCannotBlockStopOrFirstSignal(t *testing.T) {
 	if !decision.MaySignal || !decision.StopIndependentOfStorage || !model.Snapshot().Pending.Active {
 		t.Fatal("pending storage restored a dependency to the stop path")
 	}
-	if err := model.RequestSignal(101); err != nil {
+	if err := model.RequestSignal(model.Snapshot().ProcessIdentity, 101); err != nil {
 		t.Fatalf("first signal request waited for storage: %v", err)
 	}
 	if err := model.SettleWrite(pending, WriteConfirmed); err != nil {
@@ -172,20 +172,53 @@ func TestMutationUncertainSignalCannotBeRepeated(t *testing.T) {
 	if err := model.LatchStop(TriggerCancellation, 300); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.RequestSignal(301); err != nil {
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.RequestSignal(identity, 301); err != nil {
 		t.Fatal(err)
 	}
 	if err := model.MarkSignalUncertain(); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.RequestSignal(302); !errors.Is(err, ErrState) {
+	if err := model.RequestSignal(identity, 302); !errors.Is(err, ErrState) {
 		t.Fatalf("uncertain signal was redriven: %v", err)
 	}
 	if got := model.Snapshot().Signal.Attempts; got != 1 {
 		t.Fatalf("signal attempts = %d, want 1", got)
 	}
-	if err := model.ObserveAbsence(350); err != nil {
+	if err := model.ObserveAbsence(identity, 350); err != nil {
 		t.Fatalf("uncertain response blocked exact absence reconciliation: %v", err)
+	}
+}
+
+func TestMutationSignalAndAbsenceRequireExactCustodyIdentity(t *testing.T) {
+	model := runnerModel(t)
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.LatchStop(TriggerCancellation, 320); err != nil {
+		t.Fatal(err)
+	}
+	for _, candidate := range []ProcessIdentity{{}, processIdentity(0x42)} {
+		before := model.Snapshot()
+		if err := model.RequestSignal(candidate, 321); !errors.Is(err, ErrBinding) {
+			t.Fatalf("signal accepted invalid process identity: %v", err)
+		}
+		if model.Snapshot() != before {
+			t.Fatal("invalid signal identity mutated state")
+		}
+	}
+	if err := model.RequestSignal(identity, 321); err != nil {
+		t.Fatal(err)
+	}
+	for _, candidate := range []ProcessIdentity{{}, processIdentity(0x42)} {
+		before := model.Snapshot()
+		if err := model.ObserveAbsence(candidate, 350); !errors.Is(err, ErrBinding) {
+			t.Fatalf("absence accepted invalid process identity: %v", err)
+		}
+		if model.Snapshot() != before {
+			t.Fatal("invalid absence identity mutated state")
+		}
+	}
+	if err := model.ObserveAbsence(identity, 350); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -202,7 +235,7 @@ func TestMutationRestartRetainsPreparationButCannotAdoptPID(t *testing.T) {
 	if err := model.ObserveCreatedCustody(processIdentity(0x41)); !errors.Is(err, ErrRecovery) {
 		t.Fatalf("restart adopted a PID/process identity: %v", err)
 	}
-	if err := model.RequestSignal(400); !errors.Is(err, ErrRecovery) {
+	if err := model.RequestSignal(processIdentity(0x41), 400); !errors.Is(err, ErrRecovery) {
 		t.Fatalf("restart manufactured signal authority: %v", err)
 	}
 }
@@ -243,10 +276,11 @@ func TestMutationRepeatedTriggersRetainEarliestDeadline(t *testing.T) {
 	if stop.Trigger != TriggerFatalFault || stop.ActionTick != 250 {
 		t.Fatalf("earliest action reset: %+v", stop)
 	}
-	if err := model.RequestSignal(260); err != nil {
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.RequestSignal(identity, 260); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.ObserveAbsence(1201); err != nil {
+	if err := model.ObserveAbsence(identity, 1201); err != nil {
 		t.Fatal(err)
 	}
 	if got := model.Snapshot().Timing; got != TimingSatisfied {
@@ -275,10 +309,11 @@ func TestTimingViolationCannotBecomeSuccess(t *testing.T) {
 	if err := model.LatchStop(TriggerCancellation, 200); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.RequestSignal(300); err != nil {
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.RequestSignal(identity, 300); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.ObserveAbsence(1501); err != nil {
+	if err := model.ObserveAbsence(identity, 1501); err != nil {
 		t.Fatal(err)
 	}
 	if got := model.Snapshot().Timing; got != TimingViolated {
@@ -336,13 +371,14 @@ func TestMutationTerminalCannotBeginOrCommitBeforeAbsence(t *testing.T) {
 	if err := model.LatchStop(TriggerCancellation, 500); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.RequestSignal(501); err != nil {
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.RequestSignal(identity, 501); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := model.BeginTerminalWrite(operationID(0x33)); !errors.Is(err, ErrState) {
 		t.Fatalf("signal return substituted for absence: %v", err)
 	}
-	if err := model.ObserveAbsence(550); err != nil {
+	if err := model.ObserveAbsence(identity, 550); err != nil {
 		t.Fatal(err)
 	}
 	pending, err := model.BeginTerminalWrite(operationID(0x33))
@@ -360,7 +396,7 @@ func TestMutationTerminalCannotBeginOrCommitBeforeAbsence(t *testing.T) {
 
 func TestConfirmedTerminalJoinIsTheOnlyReleasePoint(t *testing.T) {
 	model := runnerModel(t)
-	if err := model.ObserveAbsence(600); err != nil {
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
 		t.Fatal(err)
 	}
 	pending, err := model.BeginTerminalWrite(operationID(0x33))
@@ -383,7 +419,7 @@ func TestConfirmedTerminalJoinIsTheOnlyReleasePoint(t *testing.T) {
 
 func TestRestartAfterConfirmedTerminalKeepsOnlyDurableRelease(t *testing.T) {
 	model := runnerModel(t)
-	if err := model.ObserveAbsence(600); err != nil {
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
 		t.Fatal(err)
 	}
 	pending, err := model.BeginTerminalWrite(operationID(0x33))
@@ -457,11 +493,12 @@ func TestDecisionMatchesIndependentSnapshotOracle(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertDecision(t, model)
-	if err := model.RequestSignal(701); err != nil {
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.RequestSignal(identity, 701); err != nil {
 		t.Fatal(err)
 	}
 	assertDecision(t, model)
-	if err := model.ObserveAbsence(750); err != nil {
+	if err := model.ObserveAbsence(identity, 750); err != nil {
 		t.Fatal(err)
 	}
 	assertDecision(t, model)

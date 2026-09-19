@@ -47,7 +47,8 @@ head `a985707` passed CI; successor-cycle review 2 found no code defect and
 returned **Ready with non-blocking follow-ups**. Its sole P3 stale-progress
 wording finding in `docs/PROJECT.md` is corrected in this documentation-only
 follow-up. The passive slice and independent review are `PASSED` for their
-scope; maintainer disposition of Proposed ADR-0047 and draft PR #371 remains.
+scope; PR #371 is ready for maintainer review, while disposition of Proposed
+ADR-0047 remains.
 
 Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.

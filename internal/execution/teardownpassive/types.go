@@ -230,6 +230,7 @@ type Snapshot struct {
 	RecordVersion           uint16
 	PreparationStarted      bool
 	Prepared                bool
+	CreationConsumed        bool
 	RunnerWriteStarted      bool
 	RunnerIdentityConfirmed bool
 	TerminalWriteStarted    bool

@@ -44,7 +44,8 @@ func (model *Model) Decision() Decision {
 	snapshot := model.state
 	blocked := snapshot.RecoveryRequired || snapshot.TerminalConfirmed
 	return Decision{
-		MayCreate: snapshot.Prepared && !blocked && snapshot.Custody == CustodyNone &&
+		MayCreate: snapshot.Prepared && !snapshot.CreationConsumed && !blocked &&
+			snapshot.Custody == CustodyNone &&
 			!snapshot.Stop.Latched && !snapshot.Pending.Active,
 		MayStart: snapshot.Prepared && !blocked && snapshot.Custody == CustodyExact &&
 			snapshot.RunnerIdentityConfirmed && !snapshot.Stop.Latched &&
@@ -90,6 +91,7 @@ func (model *Model) ObserveCreatedCustody(identity ProcessIdentity) error {
 	}
 	model.state.Custody = CustodyExact
 	model.state.ProcessIdentity = identity
+	model.state.CreationConsumed = true
 	return nil
 }
 

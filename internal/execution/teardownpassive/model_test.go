@@ -55,6 +55,19 @@ func TestConfirmedPreparationAllowsOneExactCurrentLifetimeCustody(t *testing.T) 
 	}
 }
 
+func TestMutationNaturalAbsenceCannotReopenCreation(t *testing.T) {
+	model := custodyModel(t)
+	if err := model.ObserveAbsence(80); err != nil {
+		t.Fatal(err)
+	}
+	if model.Decision().MayCreate {
+		t.Fatal("natural absence reopened creation authority for the consumed attempt")
+	}
+	if err := model.ObserveCreatedCustody(processIdentity(0x42)); !errors.Is(err, ErrState) {
+		t.Fatalf("replacement custody accepted after natural absence: %v", err)
+	}
+}
+
 func TestCancellationWhilePreparationPendingPreventsCreateAfterLateCommit(t *testing.T) {
 	model := newModel(t)
 	pending, err := model.BeginPreparation(operationID(0x30))
@@ -177,11 +190,11 @@ func TestMutationUncertainSignalCannotBeRepeated(t *testing.T) {
 }
 
 func TestMutationRestartRetainsPreparationButCannotAdoptPID(t *testing.T) {
-	model := preparedModel(t)
+	model := custodyModel(t)
 	model.Restart()
 	snapshot := model.Snapshot()
-	if !snapshot.Prepared {
-		t.Fatal("restart forgot confirmed preparation")
+	if !snapshot.Prepared || !snapshot.CreationConsumed {
+		t.Fatal("restart forgot confirmed preparation or consumed creation")
 	}
 	if !snapshot.RecoveryRequired || snapshot.Custody != CustodyNone || snapshot.ProcessIdentity != (ProcessIdentity{}) {
 		t.Fatal("restart restored live custody or omitted recovery requirement")
@@ -507,7 +520,8 @@ func assertDecision(t *testing.T, model *Model) {
 func independentDecision(snapshot Snapshot) Decision {
 	blocked := snapshot.RecoveryRequired || snapshot.TerminalConfirmed
 	return Decision{
-		MayCreate: snapshot.Prepared && !blocked && snapshot.Custody == CustodyNone &&
+		MayCreate: snapshot.Prepared && !snapshot.CreationConsumed && !blocked &&
+			snapshot.Custody == CustodyNone &&
 			!snapshot.Stop.Latched && !snapshot.Pending.Active,
 		MayStart: snapshot.Prepared && !blocked && snapshot.Custody == CustodyExact &&
 			snapshot.RunnerIdentityConfirmed && !snapshot.Stop.Latched &&

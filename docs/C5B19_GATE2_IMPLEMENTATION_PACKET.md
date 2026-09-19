@@ -6,8 +6,12 @@ until independent review of this corrected packet closes; parent workstream:
 `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready** with
 four accepted P2 packet gaps. Instance 2 on
 `ae2b42ba68b9efe81933654ffa855498a3fcfa81` returned **Not ready** with
-two further accepted P2 trace-budget and harness/verifier-source gaps. All
-six are corrected below and await final instance 3. This
+two further accepted P2 trace-budget and harness/verifier-source gaps.
+Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1` returned
+**Not ready** with accepted P2 causal-event encoding and P3 wait-slot
+arithmetic findings. Corrections below are **unreviewed**: configured
+three-instance limit is exhausted, and another independent review requires
+an explicit owner decision. This
 freezes a proposed **benign, local-only experiment**; it
 authorizes neither implementation nor a child run. Gates 3 and 4 require
 separate, explicit owner decisions. The parent owner-only hostile-`.mjs` alpha
@@ -137,6 +141,10 @@ The process tree is exactly harness → Supervisor → fixture. Harness is the
 exclusive same-parent waiter for its **Supervisor** child; Supervisor is the
 exclusive same-parent waiter for its **fixture** child. Harness never signals,
 waits for or probes the fixture PID, even after Supervisor death. Harness may
+bind its direct child in its own trace with SHA-256 over
+`"capsule.c5b19.harness-child/v1\0" || AttemptID[16] || pid_u32_be ||
+spawn_sequence_u64_be || spawn_tick_u64_be || supervisor_sha256[32]`.
+That 32-byte digest is evidence, not PID-targeting authority. Harness may
 make at most one `SIGKILL` request for its own live, unreaped Supervisor after
 the 7-s watchdog, with its own `waitpid(WNOHANG)==0` and unchanged default
 `SIGCHLD`/exclusive-waiter premise checked first. That action is harness-only
@@ -295,28 +303,95 @@ the same unreaped child is the only absence event. `kill` return, `ESRCH`,
 `ECHILD`, pipe EOF, child alarm and harness cleanup are not.
 
 Raw evidence has **separate writers**. Control owns a preallocated
-16,384-entry fixed-size in-memory array and sequence counter; worker owns its
-own 1,024-entry array and sequence counter. Each slot is exactly 256 bytes,
-so reserved slot memory is 4 MiB for control and 256 KiB for worker. A slot
-encodes magic `C5EV` (4), version u8(1), lane u8 (control=1, worker=2),
-event kind u16_be, sequence
-u64_be, tick u64_be, auxiliary tick u64_be, timebase numerator and denominator
-u32_be each, binding digest[32], operation ID[16], generation u64_be, request
-digest[32], process identity[32], PID u32_be, syscall result i32_be, errno
-i32_be, flags u32_be, wait-status u32_be, and 76 zero reserved bytes.
-Unknown kind, nonzero reserved byte or nonsequential lane index fails the
-oracle. Event-kind u16 values are closed, in this order: 1 endpoint-created,
-2 setup-check, 3 write-request, 4 write-reply, 5 spawn-call, 6 spawn-result,
-7 identity-frozen, 8 cancel-ingress, 9 start-admission, 10 start-token-call,
-11 wall-service, 12 fatal-service, 13 stop-latch, 14 signal-latch,
-15 signal-call, 16 signal-result, 17 wait-call, 18 wait-result, 19 absence,
-20 store-edge, 21 store-outcome, 22 trace-fault and 23 harness-containment.
-Kind 23 belongs only to the separate harness log; control/worker refuse it.
-`flags` and every field not applicable to a kind are zero in v1; wait-status
-is nonzero only for an exact terminal wait result. Neither lane reads or
-locks the other's
-array. Control does no allocation, file I/O, shared lock or worker call while
-it has child custody; each control event append is a bounded copy to its own
+32,768-entry fixed-size in-memory array and sequence counter; worker owns
+1,024 entries and harness owns 64. Each slot is exactly 256 bytes, so reserved
+memory is 8 MiB control, 256 KiB worker and 16 KiB harness. Slot bytes are
+explicitly encoded, not a native struct: magic `C5EV` (4), version u8(1),
+lane u8 (control=1, worker=2, harness=3), kind u16_be, sequence u64_be,
+tick u64_be, auxiliary tick u64_be, timebase numerator/denominator u32_be
+each, binding digest[32] (SHA-256 of exact Bindings[240]), operation ID[16],
+generation u64_be, request digest[32], process identity[32], PID u32_be,
+syscall result i32_be, errno i32_be, flags u32_be, wait-status u32_be,
+outcome u8, application result u8, durable-record digest[32], candidate
+digest[32] (SHA-256 of exact DurableProjection[68]), and 10 zero reserved
+bytes (`180+1+1+32+32+10=256`). Outcome codes are 0 none, 1 confirmed,
+2 failed, 3 indeterminate; application codes are 0 not applicable,
+1 accepted, 2 rejected. Unknown code, nonzero reserved bytes or nonsequential
+lane index fails the oracle.
+
+Kind u16 values are closed: 1 endpoint-created, 2 setup-check,
+3 write-request, 4 request-write-result, 5 worker-reply,
+6 worker-reply-write-result, 7 control-reply-received,
+8 control-reply-applied, 9 spawn-call, 10 spawn-result, 11 identity-frozen,
+12 cancel-ingress, 13 start-admission, 14 start-token-call,
+15 start-token-result, 16 start-post-service, 17 wall-service,
+18 fatal-service, 19 stop-latch, 20 signal-latch, 21 signal-call,
+22 signal-result, 23 wait-call, 24 wait-result, 25 absence,
+26 store-edge, 27 store-outcome, 28 trace-fault and
+29 harness-containment. Kind 29 is harness-only. `flags` is zero except
+store-edge's site code A=1/B=2/C=3/D=4; wait-status is populated only for
+an exact terminal wait result. Fields not named for an event kind are zero.
+
+`write-request` records the frozen operation ID, generation, request and
+candidate digests before the one request write; `request-write-result` records
+that syscall's returned byte count/errno. `worker-reply` records the same
+tuple plus outcome and record digest before reply publication; its write-
+result event records returned bytes/errno but has **no** control authority.
+`control-reply-received` records the complete exact frame read by control;
+`control-reply-applied` records the control validation decision:
+code 1 only after exact tuple/request/candidate validation and the C5b18-
+equivalent settle transition; code 2 for a rejected frame, which never
+changes durable projection and latches fatal fault. Each event carries its
+operation ID,
+generation, request and candidate digests; confirmed settlement additionally
+requires exact nonzero record digest matching the 395-byte stored candidate.
+Control also copies each of its at-most-three exact 397-byte request frames
+and at-most-three exact 98-byte complete reply frames to preallocated
+read-only-after-capture slots, then serializes them beside its trace **after**
+absence; worker separately retains its own received/sent frame slots before
+any fault delay. These sidecars are evidence only, not transport authority.
+The independent oracle decodes raw frames, recomputes request/candidate/
+record hashes and expected C5b18 projections from frozen bindings and raw
+process observations, then requires a received/applied pair for any claimed
+confirmation. It compares those bytes to worker reply and durable snapshot.
+A worker reply without control application never licenses start or terminal.
+
+Field-use rules for the 256-byte slot (all unmentioned fields are zero):
+
+| Kinds | Required non-common fields and refusal rule |
+| --- | --- |
+| 1–2 endpoint/setup | `tick`; setup check carries endpoint-creation tick in `auxiliary tick`. Missing or regressed observation fails. |
+| 3–8 write transport | Exact operation ID, generation, request and candidate digests. Kinds 4/6 carry syscall result/errno; 5–8 carry outcome and record digest (zero digest unless confirmed); only kind 8 carries application result 1 or 2. Kinds 3/5/7 must pair with their captured raw frame slot. |
+| 9–11 spawn/identity | Spawn result carries returned PID/result/errno; identity-frozen carries positive PID and exact `ProcessIdentity`. Failed spawn has no identity. |
+| 12 cancellation | `tick` is control's accepted ingress, frozen binding digest is mandatory; no supplied timestamp or PID field. |
+| 13–16 start | Kind 13 is `t_start`; 14 is actual write-call tick; 15 carries write result/errno and after-call tick; 16 carries final service tick and `t_start` as auxiliary tick. Missing 15 or 16 is not timely start evidence. |
+| 17–19 wall/fatal/stop | 17 carries scheduled wall anchor in auxiliary tick and actual service in tick; 18 carries actual fatal-service tick; 19 carries earliest action anchor in auxiliary tick and actual stop service in tick. |
+| 20–22 signal | Exact identity and positive PID; 20 is latch before call, 21 call, 22 return/errno. No second latch/call. |
+| 23–25 wait/absence | Exact identity and positive PID; 23 call, 24 result/errno and terminal wait status when returned PID matches, 25 authoritative absence tick linked to that exact result. `ECHILD`, `ESRCH` or zero return cannot produce kind 25. |
+| 26–27 store | Worker lane only; 26 carries one frozen A–D site in flags, 27 carries outcome and operation tuple. Neither may act as control reply application. |
+| 28–29 fault/containment | 28 records lane-local trace fault; 29 is harness lane only and never a Supervisor stop or absence event. |
+
+Every event includes its lane-local sequence, current-lane tick/timebase and
+binding digest. Kinds 3–8 and 26–27 additionally bind the exact operation;
+only control-lane kind 8 may mark a settled write in the oracle. Parser tests
+must reject any nonzero forbidden field, missing paired event, changed raw
+frame, outcome/digest substitution, and reversed same-tick stop/apply order.
+
+`start-admission` records final `t_start` sample. `start-token-call` records
+actual call entry; `start-token-result` records return/errno and tick
+immediately after the nonblocking write; `start-post-service` records the
+next continuous tick with `t_start` in auxiliary tick; the oracle derives
+setup-expiry/timing classification from those raw ticks. A delayed or missing
+post-service event fails the timing oracle even if prior admission was
+timely. `stop-latch` stores
+earliest action in auxiliary tick; wall/fatal service stores actual service
+tick. `wait-call` and `wait-result` are paired with the same positive PID,
+the latter carrying return/errno/status. The oracle rejects unpaired,
+out-of-order, substituted or omitted causal events.
+
+No lane reads or locks another's array. Control does no allocation, file I/O,
+shared lock or worker call while it has child custody; each control event
+append is a bounded copy to its own
 next slot. Overflow latches case failure without overwriting earlier events.
 The control lane's nondecreasing tick watermark is private; worker timestamps
 are observations only and never advance/control that watermark. After exact
@@ -325,8 +400,9 @@ waiting for worker. Worker separately flushes and fsyncs its own bounded
 evidence file **before** entering each configured fault delay; its logging
 failure fails the case but cannot block control. It may serialize its final
 array after store completion; a stuck worker leaves only the pre-fault events
-it already committed. Harness has a third independent containment log.
-No shared file append, mutex, global sequence or cross-lane clock state.
+it already committed. Harness serializes its own bounded containment log
+before replacing itself with the read-only oracle. No shared file append,
+mutex, global sequence or cross-lane clock state.
 
 Control records every actual `waitpid` call/result and each stop/start event,
 not just a final status. After a zero-return wait observation, it may not
@@ -335,15 +411,21 @@ cancel/reply event. A ready descriptor is consumed once; EOF/error closes
 that control endpoint and removes it from the poll set, so readiness cannot
 spin as an unbounded event source. `EINTR` immediately resamples as Gate 1
 requires; an interrupt storm or trace overflow is explicit failed/unmeasured
-evidence, never a pass. Under ordinary 1-ms pacing, the 4-s alarm and 7-s
-harness caps allow fewer than 7,000 wait iterations before containment;
-16,384 control slots leave more than 9,000 for other events. This is a
-capacity design, not a scheduler or latency guarantee. Pre-run simulated
-tests must exercise full-budget and overflow refusal, immediate-ready/EOF
-removal and `EINTR` storms without a child; the live oracle must distinguish
-real stop/timing failure from trace exhaustion. Aggregate cap is 17,408
-entries; absent/truncated/
-overflowed lane evidence is failure, not a pass.
+evidence, never a pass. Under ordinary 1-ms pacing, the 7-s harness cap
+allows fewer than 7,000 wait iterations. **Each iteration costs two slots**,
+`wait-call` and `wait-result`: 6,999 iterations cost 13,998 slots and leave
+18,770 of 32,768 control slots for all other events. The one-attempt
+protocol permits at most three operations, one cancellation, one start and
+one signal; its non-wait control event count is capped at 512 by pre-run
+simulation including reply-application and post-start events. An interrupt
+storm or repeated readiness beyond that cap fails as overflow/unmeasured
+rather than creating passing evidence. This is a capacity design, not a
+scheduler or latency guarantee. Pre-run simulated tests must exercise 6,999
+paired waits plus 512 other events, full-budget and overflow refusal,
+immediate-ready/EOF removal and `EINTR` storms without a child. The live
+oracle distinguishes real stop/timing failure from trace exhaustion.
+Aggregate cap is 33,856 entries; absent, truncated or overflowed lane
+evidence is failure, not a pass.
 The oracle merges by exact operation/request identity and causal control
 events, **not** by assuming a total timestamp order between lanes. A same-
 tick stop/reply race is decided by the control lane's own stop-latch and

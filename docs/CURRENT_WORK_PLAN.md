@@ -2,9 +2,10 @@
 
 Date: 2026-09-19
 
-Next work item: independently review the [C5b19 gate-2 exact implementation
-packet candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) after merged
-[gate-1 mechanism correction](C5B19_GATE1_MECHANISM_DECISION.md).
+Next work item: owner decides whether to authorize one additional fresh-context
+review of the [corrected but unreviewed C5b19 gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md).
+The merged [gate-1 mechanism correction](C5B19_GATE1_MECHANISM_DECISION.md)
+does not authorize implementation or execution.
 PRs #373–#376 merged the plan and prospective mechanism candidate. Independent
 review instance 1 of 3 returned **Not ready**; the three findings were corrected
 at `5cc312907acbb7a74af009891f1089d4f73f57b0`. Instance 2 returned
@@ -17,8 +18,12 @@ on `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**
 with four accepted P2 design gaps: auxiliary encodings, watchdog custody,
 alarm setup, and trace ownership. Instance 2 on
 `ae2b42ba68b9efe81933654ffa855498a3fcfa81` returned **Not ready** with
-two further accepted P2 trace-budget and harness/verifier-source gaps. All
-six corrections await final instance 3. Parent
+two further accepted P2 trace-budget and harness/verifier-source gaps.
+Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1` returned
+**Not ready** with accepted P2 causal-event encoding and P3 wait-slot
+arithmetic findings. The packet now contains **unreviewed** corrections;
+the three-review limit is exhausted. Gate 2 stays `BLOCKED` pending an
+explicit owner decision on an additional independent pass. Parent
 workstream remains `IN_PROGRESS — TRENDING_GOOD`; gates 3–6 are `BLOCKED`.
 No implementation or child run is authorized.
 

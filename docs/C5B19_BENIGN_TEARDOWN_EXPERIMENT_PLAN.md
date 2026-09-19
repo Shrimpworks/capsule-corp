@@ -15,8 +15,9 @@ is Accepted as architecture only.
 Remaining work: exact implementation-packet review, explicit implementation
 authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: independently review the corrected [gate-2 exact implementation
-packet candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
+Next action: owner decides whether to authorize an additional fresh-context
+review of the corrected but unreviewed [gate-2 exact implementation packet
+candidate](C5B19_GATE2_IMPLEMENTATION_PACKET.md) against the integrated
 [gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
@@ -363,13 +364,17 @@ trace and checker output, then restore the exact clean source.
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact implementation-packet review — `BLOCKED` on corrected-packet
-   independent review instance 3.** Instance 1 on
+2. **Exact implementation-packet review — `BLOCKED` after three independent
+   instances.** Instance 1 on
    `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**;
    its four accepted P2 design gaps were corrected. Instance 2 on
    `ae2b42ba68b9efe81933654ffa855498a3fcfa81` also returned **Not ready**;
-   its two further P2 trace-budget and harness/verifier-source gaps are
-   corrected in the candidate, not yet independently accepted. Freeze the
+   its two further P2 trace-budget and harness/verifier-source gaps were
+   corrected. Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1`
+   returned **Not ready** with P2 causal-event encoding and P3 wait-slot
+   arithmetic findings. Their corrections in the candidate are **unreviewed**;
+   the configured review limit is exhausted. Another independent pass needs
+   an explicit owner decision. Freeze the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent

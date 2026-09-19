@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-09-18
+Date: 2026-09-19
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -46,9 +46,13 @@ Go lint retains only the 50 pre-existing issue-#217 `revive` findings. Exact
 head `a985707` passed CI; successor-cycle review 2 found no code defect and
 returned **Ready with non-blocking follow-ups**. Its sole P3 stale-progress
 wording finding in `docs/PROJECT.md` is corrected in this documentation-only
-follow-up. The passive slice and independent review are `PASSED` for their
-scope; PR #371 is ready for maintainer review, and explicit maintainer direction
-Accepted ADR-0047 as architecture only.
+follow-up. PR #371 merged at `b52f7b9` and explicit maintainer direction
+Accepted ADR-0047 as architecture only. Post-merge successor-cycle review 3 of 3
+returned **Ready with non-blocking follow-ups**: no confirmed state-machine
+defect, with two P3 findings. This follow-up corrects the stale current-plan
+pointer and narrows the no-product-consumer test exclusion to the model package
+directory; a red-before-green similar-name fixture proves the guard change.
+The passive slice and read-only review are `PASSED` for their exact scopes.
 
 Runnable mechanics, installed custody, guest execution and product admission
 remain unchanged and `BLOCKED`; ADR acceptance does not supply their evidence.

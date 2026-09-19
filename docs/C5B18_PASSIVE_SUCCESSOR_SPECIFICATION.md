@@ -5,7 +5,10 @@ Date: 2026-09-18
 Status: causal-order correction, local verification and independent review
 `PASSED` / **Ready with non-blocking follow-ups** at `a985707`. Reviewer found
 no code defect; its P3 stale-progress wording finding is corrected in the
-documentation follow-up. Maintainer later Accepted ADR-0047 as architecture;
+documentation follow-up. Post-merge independent review 3 of 3 returned
+**Ready with non-blocking follow-ups** at `b52f7b9`, with no confirmed
+state-machine defect. Its two P3 documentation/import-guard findings are
+corrected in a follow-up. Maintainer Accepted ADR-0047 as architecture;
 this passive model remains no-effect evidence only.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
@@ -308,7 +311,11 @@ same-lifetime observation watermark and causally ordered repeated-trigger tests;
 review instance 2 assessed that exact correction at `a985707` and returned
 **Ready with non-blocking follow-ups**. Its only finding was stale “underway”
 wording in `docs/PROJECT.md`, accepted and corrected without changing model
-behavior. No further review instance is requested in this delivery.
+behavior. After PR #371 merged, successor-cycle review 3 of 3 assessed merge
+`b52f7b9` and returned **Ready with non-blocking follow-ups**. It found stale
+current-plan wording and an overbroad exclusion in the no-consumer test; the
+follow-up corrects both. This exhausts the review limit; no further instance
+starts for this passive delivery.
 
 ## Boundaries
 

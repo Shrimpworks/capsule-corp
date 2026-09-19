@@ -93,7 +93,10 @@ local gates and CI `PASSED` at `a985707`; successor-cycle review 2 returned
 **Ready with non-blocking follow-ups**, finding no code defect. Its sole P3
 stale-wording finding is corrected in this documentation follow-up. Explicit
 maintainer acceptance closed the design-decision gate; a separately reviewed
-exact implementation plan and authorization still precede runnable work.
+exact implementation plan and authorization still precede runnable work. PR #371
+merged at `b52f7b9`; post-merge independent review 3 of 3 returned **Ready with
+non-blocking follow-ups** without a confirmed state-machine defect. Its two P3
+current-index/import-guard findings are corrected in a follow-up.
 Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and

@@ -357,8 +357,8 @@ func TestTimingViolationCannotBecomeSuccess(t *testing.T) {
 	if got := model.Snapshot().Timing; got != TimingViolated {
 		t.Fatalf("timing = %s, want violated", got)
 	}
-	if err := model.LatchStop(TriggerCancellation, 1400); err != nil {
-		t.Fatal(err)
+	if err := model.LatchStop(TriggerCancellation, 1400); !errors.Is(err, ErrState) {
+		t.Fatalf("post-absence trigger accepted: %v", err)
 	}
 	if got := model.Snapshot().Timing; got != TimingViolated {
 		t.Fatalf("late trigger rewrote failed timing to %s", got)
@@ -398,6 +398,20 @@ func TestInvalidAndOverflowingClockInputsLeaveStateUnchanged(t *testing.T) {
 	}
 	if got := model.Snapshot(); got != before {
 		t.Fatal("failed trigger mutated state")
+	}
+}
+
+func TestLateStopCannotReclassifyNaturalAbsence(t *testing.T) {
+	model := custodyModel(t)
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
+		t.Fatal(err)
+	}
+	before := model.Snapshot()
+	if err := model.LatchStop(TriggerCancellation, 500); !errors.Is(err, ErrState) {
+		t.Fatalf("late stop reclassified natural absence: %v", err)
+	}
+	if model.Snapshot() != before {
+		t.Fatal("late stop mutated first absence observation")
 	}
 }
 

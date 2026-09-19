@@ -6,7 +6,8 @@ func (model *Model) LatchStop(trigger Trigger, tick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
-	if model.state.TerminalConfirmed {
+	if model.state.Absence.Observed || model.state.TerminalWriteStarted ||
+		model.state.TerminalConfirmed {
 		return ErrState
 	}
 	if !validTrigger(trigger) || !validTick(tick) {

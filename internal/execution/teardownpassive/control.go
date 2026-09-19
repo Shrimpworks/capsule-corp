@@ -134,10 +134,23 @@ func (model *Model) Restart() {
 	model.state.Absence = AbsenceSnapshot{}
 	model.state.Start = StartSnapshot{}
 	model.state.Timing = TimingUnknown
-	model.state.RecoveryRequired = model.state.TerminalDisposition != TerminalCompleted
+	// No serialized creation-consumption proof exists. Even preparation alone
+	// must conservatively close replacement creation after a restart.
+	if model.state.PreparationStarted {
+		model.state.CreationConsumed = true
+	}
+	model.state.RecoveryRequired = true
 }
 
 func (model *Model) updateTiming() {
+	if model.state.Start.Attempted && model.state.Absence.Observed {
+		wallTick, ok := addTick(model.state.Start.Tick, model.clock.WallAfterStartMS)
+		if !ok || (model.state.Absence.Tick > wallTick &&
+			(!model.state.Stop.Latched || model.state.Stop.ActionTick > wallTick)) {
+			model.state.Timing = TimingViolated
+			return
+		}
+	}
 	if !model.state.Stop.Latched || !model.state.Absence.Observed {
 		model.state.Timing = TimingUnknown
 		return

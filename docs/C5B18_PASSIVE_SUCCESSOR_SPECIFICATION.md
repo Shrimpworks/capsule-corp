@@ -2,8 +2,8 @@
 
 Date: 2026-09-18
 
-Status: review-instance-1 corrections and refreshed local required verification
-`PASSED`; fresh-context review instance 2 of 3 pending.
+Status: review instance 2 returned **Not ready**; accepted corrections
+`IN_PROGRESS — TRENDING_GOOD`; review instance 3 required on a new frozen head.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -26,8 +26,9 @@ process API, installed service or runnable composition.
 - Contract: `capsule.c5b18.teardown-successor-model/v1`.
 - Record: `capsule.c5b18.teardown-obligation/v1`.
 - Go package: `internal/execution/teardownpassive`.
-- Model tests remain in that package and exercise no filesystem, process, network,
-  clock, credential, backend, VM or guest.
+- Model transitions exercise no filesystem, process, network, real clock,
+  credential, backend, VM or guest. One structural test reads local repository Go
+  files to prove no product consumer imports the package.
 - Canonical specification and status remain in `docs/`; no product package may
   import the passive model.
 
@@ -79,33 +80,38 @@ The model contains three separate projections.
 
 ### Durable projection
 
-Durable facts are limited to:
+Candidate durable facts are limited to:
 
 - the immutable obligation and its confirmed preparation outcome;
-- the monotonic consumed-creation fact after first exact custody observation;
-- confirmed runner-identity publication, when any;
-- a confirmed terminal record and its closed completed or timing-violated disposition
+- confirmed runner-identity publication with exact process identity, when any;
+- a confirmed teardown/absence record and its closed absence-recorded or
+  timing-violated disposition
   only after authoritative absence;
 - the latest settled operation ID, kind, generation and frozen candidate; and
 - explicit failed or indeterminate storage outcome.
 
 Preparation never stores a PID, process identity, signal, exit, absence or cleanup
-claim. Only the completed terminal disposition permits public completion, output
-release and capacity release. A confirmed timing-violated record remains unresolved
-and recovery-required.
+claim. Runner publication freezes exact current-lifetime process identity. A
+teardown/absence record is never a full job terminal join: this model lacks typed
+result, lifecycle, cleanup and completion-last proof and therefore never grants
+public completion, output or capacity release. Both record dispositions remain
+recovery-required.
 
 ### Current-lifetime control projection
 
 Volatile facts are limited to:
 
+- one-use creation consumption observed after exact custody; this model has no
+  durable publication for that consumption;
 - exact live custody observed in the current Supervisor lifetime;
 - monotonic stop latch and earliest trigger/anchor;
 - first signal request and any uncertain response;
 - authoritative absence observation; and
 - same-lifetime clock observations.
 
-Restart clears custody and every live clock/signal/absence fact. It restores the
-durable obligation as conservative may-exist state and sets recovery required. V1
+Restart clears custody and every live clock/signal/absence fact. Even if creation
+was not observed before restart, confirmed preparation is treated conservatively
+as may-exist: creation is closed and recovery required. V1
 has no operation that adopts a PID or restores custody after restart. Consumed
 creation never reopens after natural absence or restart.
 
@@ -113,13 +119,15 @@ creation never reopens after natural absence or restart.
 
 At most one bounded storage operation exists. It binds:
 
-- a nonzero operation ID distinct from preparation identity;
+- exact immutable installation/epoch/Supervisor/attempt/approval/registration/
+  plan/profile/runner/preparation bindings plus a nonzero operation ID;
 - a strictly increasing generation;
 - one closed kind: preparation, runner identity or terminal join; and
-- the exact candidate durable projection frozen when the operation began.
+- the exact candidate durable projection frozen when the operation began,
+  including process identity for a runner-publication candidate.
 
 No second operation, attempt or generation may bypass it. Settlement must match
-the exact operation ID, generation, kind and frozen candidate. Every settlement,
+the exact bindings, operation ID, generation, kind and frozen candidate. Every settlement,
 including failed and indeterminate outcomes, retains those fields plus outcome.
 A failed or indeterminate outcome does not silently retry. Late success may retain
 its durable fact but cannot clear a stop latch, release start, replace first
@@ -145,10 +153,10 @@ observations or release capacity.
    refuses without mutation. A lost/uncertain response prohibits redrive.
 8. Authoritative absence may be recorded only with that same exact identity.
    Signal return, EOF, root removal and fixture alarm are not absence.
-9. Terminal publication may begin only after absence and freezes one closed
-   disposition. `completed` permits durable completion, output and capacity release.
-   `timing-violated` records failure evidence, retains recovery required and permits
-   none of those releases.
+9. Teardown/absence-record publication may begin only after authoritative absence
+   and freezes one closed disposition. Neither `absence-recorded` nor
+   `timing-violated` permits public completion, output or capacity release. A
+   started attempt missing its mandatory wall action at the bound is timing-violated.
 10. Restart preserves durable preparation and storage uncertainty, clears live
     authority, marks recovery required and permits no PID adoption, signal,
     start, replacement attempt or completion.
@@ -165,6 +173,7 @@ Every refusal leaves the prior model state unchanged.
 | Stop while a post-create write is pending | stop and first signal request progress without write settlement |
 | Late runner-publication success after stop | durable identity may settle; start stays closed; latch unchanged |
 | Storage failure with exact live custody | cleanup remains available; completion/capacity stay withheld |
+| Started attempt missing mandatory wall action | late absence is timing-violated; no public release |
 | Signal response uncertain | second signal refused; exact custody may still reconcile absence |
 | Absence observed; terminal write fails | local absence retained; public completion/output/capacity withheld |
 | Natural absence before stop | creation remains consumed; no replacement custody or late trigger |
@@ -177,7 +186,7 @@ Every refusal leaves the prior model state unchanged.
 Tests use a pure deterministic model and fixed byte values. They must cover every
 matrix row plus exact/capacity/domain validation and defensive copies.
 
-Required mutation sensitivity:
+Guard scenarios corresponding to future mutation targets:
 
 1. restoring a storage-settlement dependency to stop;
 2. permitting start after a stop latch;
@@ -191,7 +200,9 @@ Required mutation sensitivity:
 10. releasing completion, output or capacity after a timing violation; and
 11. settling a mutated frozen candidate or losing its exact settled operation fields.
 
-Each mutation must fail a named assertion rather than time out or fail to compile.
+The named Go tests assert these guards on the unmodified model. They are not an
+executed mutant campaign; actual mutation sensitivity remains unverified and is
+required before a mutation-proof claim.
 The independent decision oracle derives `mayCreate`, `mayStart`, `maySignal`,
 `mayPublishTerminal`, `mayRelease` and `recoveryRequired` only from the public
 snapshot; it does not call the model's transition guards.
@@ -207,18 +218,22 @@ go test ./internal/execution/teardownpassive
 Repository verification follows `AGENTS.md`: pnpm install/check/lint/test/schema/ADR
 verification, Go test/vet/build/lint and pinned `govulncheck`.
 
-Observed on the corrected head on 2026-09-18:
+Observed on the review-2 correction worktree on 2026-09-18 before head freeze:
 
 - `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm lint`, `pnpm test`,
   `pnpm verify:schemas`, `pnpm verify:adrs`, `pnpm audit:dependencies` and
   `pnpm site:build` passed;
 - `go test ./...`, `go vet ./...`, `go build ./...`, package race/coverage
-  (`85.5%` statements), formatting, CI security/correctness lint, new-code
-  `revive` lint and pinned `govulncheck@v1.6.0` passed; and
+  (`86.3%` statements), formatting, CI security/correctness lint, new-code
+  `revive` lint and pinned `govulncheck@v1.6.0` under the declared Go 1.25.13
+  toolchain passed; and
 - unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
   exported-comment findings tracked in issue #217. No C5b18 finding remains.
 
-Fresh-context review instance 2 remains required before merge or ADR disposition.
+Review instance 2 returned **Not ready**. CI and independent review instance 3
+remain required after freezing/pushing the corrected head, before merge or ADR
+disposition. The host's alternate Go 1.26.5 is vulnerable to three standard-library
+advisories; it is not the declared build toolchain. Do not use it for this candidate.
 
 ## Independent review loop
 
@@ -232,9 +247,12 @@ The implementation task accepts all four findings:
 
 Commits `dacb95f`, `bffc71e`, `39cfe7b`, and `b459609` correct those findings;
 `5307e81` additionally prevents a post-absence trigger from reclassifying the first
-terminal observation. These corrections materially change authority and terminal
-state, so review instance 2 of 3 is mandatory after refreshed verification. No
-review verdict is claimed for the corrected head yet.
+terminal observation. These corrections materially changed authority and terminal
+state. Review instance 2 examined `3dc70e6` and found absence-only public release,
+cross-attempt settlement-token substitution, an unpersisted creation fact called
+durable, and an unsupported executed-mutation claim. A second blind review of the
+same head also found a missed wall-action timing violation and a documented record
+identity absent from model state. All findings are accepted for correction.
 
 ## Boundaries
 
@@ -253,7 +271,7 @@ guarantee, restored PID custody, or proof that cleanup occurred.
 
 - exact v1 bindings, clock policy and three state projections compile as a passive
   no-effect model;
-- every failure/restoration row and all eleven mutations are executable and pass;
+- every failure/restoration row and eleven guard scenarios execute and pass;
 - no product consumer imports the package;
 - ADR-0047 remains Proposed with the concrete packet linked for maintainer review;
 - canonical status documents distinguish scoped `PASSED` from blocked runnable,

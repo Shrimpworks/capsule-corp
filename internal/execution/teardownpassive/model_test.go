@@ -240,6 +240,18 @@ func TestMutationRestartRetainsPreparationButCannotAdoptPID(t *testing.T) {
 	}
 }
 
+func TestRestartAfterPreparationWithoutCreationClosesUnknownCreation(t *testing.T) {
+	model := preparedModel(t)
+	if model.Snapshot().CreationConsumed {
+		t.Fatal("creation was observed before the restart")
+	}
+	model.Restart()
+	if !model.Snapshot().CreationConsumed || !model.Decision().RecoveryRequired ||
+		model.Decision().MayCreate {
+		t.Fatal("restart treated unpersisted creation observation as proof of non-creation")
+	}
+}
+
 func TestRestartMakesOutstandingWriteIndeterminate(t *testing.T) {
 	model := custodyModel(t)
 	pending, err := model.BeginRunnerIdentityWrite(operationID(0x32))
@@ -249,7 +261,7 @@ func TestRestartMakesOutstandingWriteIndeterminate(t *testing.T) {
 	model.Restart()
 	snapshot := model.Snapshot()
 	wantSettled := SettledWrite{
-		Present: true, OperationID: pending.OperationID, Generation: pending.Generation,
+		Present: true, Bindings: pending.Bindings, OperationID: pending.OperationID, Generation: pending.Generation,
 		Kind: pending.Kind, Candidate: pending.Candidate, Outcome: WriteIndeterminate,
 	}
 	if snapshot.Pending.Active || snapshot.LastSettled != wantSettled ||
@@ -269,8 +281,8 @@ func TestPendingAndSettledWritesRetainExactFrozenCandidate(t *testing.T) {
 	}
 	wantCandidate := DurableProjection{
 		Prepared:                true,
-		CreationConsumed:        true,
 		RunnerIdentityConfirmed: true,
+		RunnerIdentity:          processIdentity(0x41),
 		TerminalDisposition:     TerminalNone,
 	}
 	if pending.Candidate != wantCandidate {
@@ -281,15 +293,105 @@ func TestPendingAndSettledWritesRetainExactFrozenCandidate(t *testing.T) {
 	if err := model.SettleWrite(mutated, WriteFailed); !errors.Is(err, ErrPendingWrite) {
 		t.Fatalf("mutated candidate settled: %v", err)
 	}
+	mutated = pending
+	mutated.Candidate.RunnerIdentity = processIdentity(0x42)
+	if err := model.SettleWrite(mutated, WriteConfirmed); !errors.Is(err, ErrPendingWrite) {
+		t.Fatalf("substituted runner identity settled: %v", err)
+	}
 	if err := model.SettleWrite(pending, WriteFailed); err != nil {
 		t.Fatal(err)
 	}
 	wantSettled := SettledWrite{
-		Present: true, OperationID: pending.OperationID, Generation: pending.Generation,
+		Present: true, Bindings: pending.Bindings, OperationID: pending.OperationID, Generation: pending.Generation,
 		Kind: pending.Kind, Candidate: wantCandidate, Outcome: WriteFailed,
 	}
 	if got := model.Snapshot().LastSettled; got != wantSettled {
 		t.Fatalf("settled write = %+v, want %+v", got, wantSettled)
+	}
+}
+
+func TestSettlementTokenCannotCrossAttempt(t *testing.T) {
+	first := custodyModel(t)
+	secondBindings := validBindings()
+	secondBindings.AttemptID = attemptID(0x51)
+	second, err := NewModel(secondBindings)
+	if err != nil {
+		t.Fatal(err)
+	}
+	preparation, err := second.BeginPreparation(secondBindings.PreparationOperationID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := second.SettleWrite(preparation, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+	if err := second.ObserveCreatedCustody(processIdentity(0x41)); err != nil {
+		t.Fatal(err)
+	}
+	firstToken, err := first.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondToken, err := second.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if firstToken == secondToken {
+		t.Fatal("different attempts produced interchangeable settlement tokens")
+	}
+	if err := second.SettleWrite(firstToken, WriteConfirmed); !errors.Is(err, ErrPendingWrite) {
+		t.Fatalf("cross-attempt token settled runner identity: %v", err)
+	}
+	if err := second.SettleWrite(secondToken, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAbsenceAndFailedRunnerPublicationCannotReleaseJob(t *testing.T) {
+	model := custodyModel(t)
+	runner, err := model.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := model.SettleWrite(runner, WriteFailed); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
+		t.Fatal(err)
+	}
+	terminal, err := model.BeginTerminalWrite(operationID(0x33))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := model.SettleWrite(terminal, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+	snapshot := model.Snapshot()
+	if snapshot.TerminalDisposition != TerminalAbsenceRecorded ||
+		snapshot.OutputReleased || snapshot.CapacityReleased || model.Decision().MayRelease {
+		t.Fatal("absence-only teardown record released job without completion-last proof")
+	}
+}
+
+func TestMissedWallActionCannotBecomeTerminalSuccess(t *testing.T) {
+	model := runnerModel(t)
+	if err := model.AttemptStart(100); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 3000); err != nil {
+		t.Fatal(err)
+	}
+	terminal, err := model.BeginTerminalWrite(operationID(0x33))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := model.SettleWrite(terminal, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+	snapshot := model.Snapshot()
+	if snapshot.TerminalDisposition != TerminalTimingViolated ||
+		snapshot.OutputReleased || snapshot.CapacityReleased || model.Decision().MayRelease {
+		t.Fatal("missing wall action became terminal success or release")
 	}
 }
 
@@ -446,7 +548,7 @@ func TestMutationTerminalCannotBeginOrCommitBeforeAbsence(t *testing.T) {
 	}
 }
 
-func TestConfirmedTerminalJoinIsTheOnlyReleasePoint(t *testing.T) {
+func TestConfirmedAbsenceRecordNeverReleasesJob(t *testing.T) {
 	model := runnerModel(t)
 	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
 		t.Fatal(err)
@@ -463,13 +565,14 @@ func TestConfirmedTerminalJoinIsTheOnlyReleasePoint(t *testing.T) {
 	}
 	snapshot := model.Snapshot()
 	if !snapshot.TerminalConfirmed ||
-		snapshot.TerminalDisposition != TerminalCompleted ||
-		!snapshot.OutputReleased || !snapshot.CapacityReleased || !model.Decision().MayRelease {
-		t.Fatal("confirmed terminal join did not release all three projections")
+		snapshot.TerminalDisposition != TerminalAbsenceRecorded ||
+		snapshot.OutputReleased || snapshot.CapacityReleased || model.Decision().MayRelease ||
+		!snapshot.RecoveryRequired {
+		t.Fatal("absence record improperly released public job state")
 	}
 }
 
-func TestRestartAfterConfirmedTerminalKeepsOnlyDurableRelease(t *testing.T) {
+func TestRestartAfterConfirmedAbsenceRecordStillWithholdsRelease(t *testing.T) {
 	model := runnerModel(t)
 	if err := model.ObserveAbsence(model.Snapshot().ProcessIdentity, 600); err != nil {
 		t.Fatal(err)
@@ -481,14 +584,14 @@ func TestRestartAfterConfirmedTerminalKeepsOnlyDurableRelease(t *testing.T) {
 	if err := model.SettleWrite(pending, WriteConfirmed); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.LatchStop(TriggerCancellation, 700); !errors.Is(err, ErrState) {
+	if err := model.LatchStop(TriggerCancellation, 700); !errors.Is(err, ErrRecovery) {
 		t.Fatalf("terminal record accepted a new stop trigger: %v", err)
 	}
 	model.Restart()
 	snapshot := model.Snapshot()
-	if snapshot.RecoveryRequired || !snapshot.TerminalConfirmed ||
-		!snapshot.OutputReleased || !snapshot.CapacityReleased {
-		t.Fatal("restart lost confirmed durable terminal release")
+	if !snapshot.RecoveryRequired || !snapshot.TerminalConfirmed ||
+		snapshot.OutputReleased || snapshot.CapacityReleased {
+		t.Fatal("restart promoted absence record to public job release")
 	}
 	if snapshot.Custody != CustodyNone || snapshot.ProcessIdentity != (ProcessIdentity{}) ||
 		snapshot.Stop.Latched || snapshot.Signal.Requested || snapshot.Absence.Observed ||
@@ -567,7 +670,9 @@ func TestBindingsAndClockPolicyAreClosed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if model.Snapshot().Contract != ContractIdentity || model.Snapshot().RecordVersion != RecordVersionV1 {
+	if model.Snapshot().Contract != ContractIdentity ||
+		model.Snapshot().RecordIdentity != RecordIdentity ||
+		model.Snapshot().RecordVersion != RecordVersionV1 {
 		t.Fatal("model identity mismatch")
 	}
 	if got := model.ClockPolicy(); got != (ClockPolicy{WallAfterStartMS: 1000, ForceAbsenceMS: 1000, ActionToAbsenceMS: 1200}) {
@@ -645,8 +750,7 @@ func independentDecision(snapshot Snapshot) Decision {
 			!snapshot.Signal.Requested && !snapshot.Absence.Observed,
 		MayPublishTerminal: !blocked && snapshot.Absence.Observed &&
 			!snapshot.TerminalWriteStarted && !snapshot.Pending.Active,
-		MayRelease: snapshot.TerminalConfirmed &&
-			snapshot.TerminalDisposition == TerminalCompleted,
+		MayRelease:               false,
 		StopIndependentOfStorage: !blocked && snapshot.Custody == CustodyExact && snapshot.Stop.Latched,
 		RecoveryRequired:         snapshot.RecoveryRequired,
 	}

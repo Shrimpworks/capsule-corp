@@ -6,6 +6,8 @@ const (
 	// ContractIdentity distinguishes the passive C5b18 model from every
 	// existing lifecycle record, driver, and experiment identity.
 	ContractIdentity = "capsule.c5b18.teardown-successor-model/v1"
+	// RecordIdentity names the proposed, not yet serialized obligation record.
+	RecordIdentity = "capsule.c5b18.teardown-obligation/v1"
 	// RecordVersionV1 is the only record version accepted by this model.
 	RecordVersionV1 uint16 = 1
 	maxSafeTick            = uint64(1<<53 - 1)
@@ -126,7 +128,7 @@ const (
 	WritePreparation WriteKind = "preparation"
 	// WriteRunnerIdentity persists exact runner identity before start.
 	WriteRunnerIdentity WriteKind = "runner-identity"
-	// WriteTerminalJoin persists completion or unresolved timing-failure evidence.
+	// WriteTerminalJoin persists teardown/absence evidence only, not job completion.
 	WriteTerminalJoin WriteKind = "terminal-join"
 )
 
@@ -188,15 +190,15 @@ const (
 	TimingViolated TimingDisposition = "violated"
 )
 
-// TerminalDisposition separates successful completion from durable unresolved
-// timing-failure evidence.
+// TerminalDisposition separates teardown/absence evidence from timing failure;
+// neither is a full job completion proof.
 type TerminalDisposition string
 
 const (
-	// TerminalNone records that no terminal candidate has been confirmed.
+	// TerminalNone records that no teardown-record candidate has been confirmed.
 	TerminalNone TerminalDisposition = "none"
-	// TerminalCompleted records an absence-backed terminal success.
-	TerminalCompleted TerminalDisposition = "completed"
+	// TerminalAbsenceRecorded records teardown absence, not job completion.
+	TerminalAbsenceRecorded TerminalDisposition = "absence-recorded"
 	// TerminalTimingViolated records absence after a mandatory timing bound failed.
 	TerminalTimingViolated TerminalDisposition = "timing-violated"
 )
@@ -204,8 +206,8 @@ const (
 // DurableProjection is the immutable candidate frozen into one pending write.
 type DurableProjection struct {
 	Prepared                bool
-	CreationConsumed        bool
 	RunnerIdentityConfirmed bool
+	RunnerIdentity          ProcessIdentity
 	TerminalConfirmed       bool
 	TerminalDisposition     TerminalDisposition
 }
@@ -214,6 +216,7 @@ type DurableProjection struct {
 // required for exact settlement.
 type PendingWrite struct {
 	Active      bool
+	Bindings    Bindings
 	OperationID OperationID
 	Generation  uint64
 	Kind        WriteKind
@@ -224,6 +227,7 @@ type PendingWrite struct {
 // confirmed, failed, or indeterminate storage outcome.
 type SettledWrite struct {
 	Present     bool
+	Bindings    Bindings
 	OperationID OperationID
 	Generation  uint64
 	Kind        WriteKind
@@ -261,12 +265,14 @@ type StartSnapshot struct {
 // Snapshot is a defensive public projection used by the independent decision oracle.
 type Snapshot struct {
 	Contract                string
+	RecordIdentity          string
 	RecordVersion           uint16
 	PreparationStarted      bool
 	Prepared                bool
 	CreationConsumed        bool
 	RunnerWriteStarted      bool
 	RunnerIdentityConfirmed bool
+	RunnerIdentity          ProcessIdentity
 	TerminalWriteStarted    bool
 	TerminalConfirmed       bool
 	TerminalDisposition     TerminalDisposition

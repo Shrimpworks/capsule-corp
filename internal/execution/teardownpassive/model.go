@@ -20,6 +20,7 @@ func NewModel(bindings Bindings) (*Model, error) {
 		clock:    fixedClockPolicy,
 		state: Snapshot{
 			Contract:            ContractIdentity,
+			RecordIdentity:      RecordIdentity,
 			RecordVersion:       RecordVersionV1,
 			LastSettled:         SettledWrite{Outcome: WriteNone},
 			Custody:             CustodyNone,
@@ -55,8 +56,7 @@ func (model *Model) Decision() Decision {
 			!snapshot.Signal.Requested && !snapshot.Absence.Observed,
 		MayPublishTerminal: !blocked && snapshot.Absence.Observed &&
 			!snapshot.TerminalWriteStarted && !snapshot.Pending.Active,
-		MayRelease: snapshot.TerminalConfirmed &&
-			snapshot.TerminalDisposition == TerminalCompleted,
+		MayRelease:               false, // completion-last evidence is outside this passive model
 		StopIndependentOfStorage: !blocked && snapshot.Custody == CustodyExact && snapshot.Stop.Latched,
 		RecoveryRequired:         snapshot.RecoveryRequired,
 	}
@@ -115,6 +115,7 @@ func (model *Model) BeginRunnerIdentityWrite(operationID OperationID) (PendingWr
 	}
 	candidate := model.durableProjection()
 	candidate.RunnerIdentityConfirmed = true
+	candidate.RunnerIdentity = model.state.ProcessIdentity
 	pending, err := model.beginWrite(operationID, WriteRunnerIdentity, candidate)
 	if err != nil {
 		return PendingWrite{}, err
@@ -123,8 +124,9 @@ func (model *Model) BeginRunnerIdentityWrite(operationID OperationID) (PendingWr
 	return pending, nil
 }
 
-// BeginTerminalWrite freezes the only terminal-record candidate. Authoritative
-// absence must already be present; timing failure freezes an unresolved disposition.
+// BeginTerminalWrite freezes the only teardown/absence-record candidate. This
+// record is not job completion. Authoritative absence must already be present;
+// timing failure freezes an unresolved disposition.
 func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, error) {
 	if model.state.RecoveryRequired {
 		return PendingWrite{}, ErrRecovery
@@ -137,7 +139,7 @@ func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, e
 	}
 	candidate := model.durableProjection()
 	candidate.TerminalConfirmed = true
-	candidate.TerminalDisposition = TerminalCompleted
+	candidate.TerminalDisposition = TerminalAbsenceRecorded
 	if model.state.Timing == TimingViolated {
 		candidate.TerminalDisposition = TerminalTimingViolated
 	}
@@ -168,7 +170,8 @@ func (model *Model) beginWrite(
 		return PendingWrite{}, ErrState
 	}
 	pending := PendingWrite{
-		Active: true, OperationID: operationID, Generation: generation, Kind: kind,
+		Active: true, Bindings: model.bindings, OperationID: operationID,
+		Generation: generation, Kind: kind,
 		Candidate: candidate,
 	}
 	model.used[operationID] = struct{}{}
@@ -199,12 +202,9 @@ func (model *Model) SettleWrite(pending PendingWrite, outcome WriteOutcome) erro
 	}
 	model.applyDurableProjection(pending.Candidate)
 	if pending.Kind == WriteTerminalJoin {
-		if pending.Candidate.TerminalDisposition == TerminalCompleted {
-			model.state.OutputReleased = true
-			model.state.CapacityReleased = true
-		} else {
-			model.state.RecoveryRequired = true
-		}
+		// This passive model has no typed result/lifecycle/cleanup join. A settled
+		// absence record cannot authorize public completion or release.
+		model.state.RecoveryRequired = true
 	}
 	return nil
 }
@@ -212,8 +212,8 @@ func (model *Model) SettleWrite(pending PendingWrite, outcome WriteOutcome) erro
 func (model *Model) durableProjection() DurableProjection {
 	return DurableProjection{
 		Prepared:                model.state.Prepared,
-		CreationConsumed:        model.state.CreationConsumed,
 		RunnerIdentityConfirmed: model.state.RunnerIdentityConfirmed,
+		RunnerIdentity:          model.state.RunnerIdentity,
 		TerminalConfirmed:       model.state.TerminalConfirmed,
 		TerminalDisposition:     model.state.TerminalDisposition,
 	}
@@ -221,8 +221,8 @@ func (model *Model) durableProjection() DurableProjection {
 
 func (model *Model) applyDurableProjection(candidate DurableProjection) {
 	model.state.Prepared = candidate.Prepared
-	model.state.CreationConsumed = candidate.CreationConsumed
 	model.state.RunnerIdentityConfirmed = candidate.RunnerIdentityConfirmed
+	model.state.RunnerIdentity = candidate.RunnerIdentity
 	model.state.TerminalConfirmed = candidate.TerminalConfirmed
 	model.state.TerminalDisposition = candidate.TerminalDisposition
 }
@@ -234,6 +234,7 @@ func samePending(left, right PendingWrite) bool {
 func settledWrite(pending PendingWrite, outcome WriteOutcome) SettledWrite {
 	return SettledWrite{
 		Present:     true,
+		Bindings:    pending.Bindings,
 		OperationID: pending.OperationID,
 		Generation:  pending.Generation,
 		Kind:        pending.Kind,

@@ -90,13 +90,18 @@ model separates immutable/durable facts, current-Supervisor-lifetime custody and
 one exact pending storage operation. Creation is consumed at first custody; signal
 and absence require its exact identity; pending and settled records retain exact
 frozen candidates; and restart preserves preparation and uncertainty while
-removing custody. A completed terminal record releases only after authoritative
-absence within the fixed bounds. Timing-violated terminal evidence stays unresolved
-and recovery-required without completion, output or capacity release.
+removing custody. Review 2 showed absence alone cannot complete the full typed
+result/lifecycle/cleanup join. The corrected model treats either absence-recorded
+or timing-violated publication as teardown evidence only: public completion,
+output and capacity release remain closed and recovery-required. Missing mandatory
+wall action is timing-violated. Creation consumption is current-lifetime only;
+restart treats preparation as conservative may-exist. Pending/settled tokens bind
+the full immutable obligation and runner candidates bind exact process identity.
 
-Review instance 1 returned **Not ready** and its four findings are accepted and
-corrected; refreshed full local verification passes. Review instance 2 of 3 remains
-required. No product consumer imports the package and no storage, process,
+Review instances 1 and 2 returned **Not ready**. Review-2 corrections are
+`IN_PROGRESS — TRENDING_GOOD`; refreshed full verification and review 3 of 3 remain
+required. Guard tests are not executed mutant proof. No product consumer imports
+the package and no storage, process,
 clock, service, backend, VM or guest effect exists. This supplies a concrete packet
 for the acceptance review below; it does not accept this ADR or authorize runnable
 work.

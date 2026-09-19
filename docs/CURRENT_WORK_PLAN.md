@@ -1,12 +1,15 @@
 # Current work plan
 
-Date: 2026-09-06
+Date: 2026-09-18
 
-Next work item: C5b18 passive successor specification/model for the C5b17
-teardown-intent/deadline proposal, before runnable composition.
+Next work item: maintainer review of PR #371. Accepted ADR-0047 selects the
+architecture; separately review and authorize an exact benign runnable plan
+before implementing it.
 
-Status: C5b17 passive design, verification and independent review `PASSED`.
-Parent workstream remains `IN_PROGRESS — TRENDING_GOOD`; next model gate is pending.
+Status: C5b18 causal-clock correction and local gates `PASSED`; independent
+review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording
+finding is corrected in the documentation follow-up. ADR-0047 is Accepted by
+explicit maintainer direction; no runnable mechanism or product path is admitted.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -29,10 +32,54 @@ remain required. Authenticated consumers, protected installed state,
 runtime/profile admission, and product activation remain `BLOCKED`. No reconciliation changes an
 ADR lifecycle or product-admission result.
 
+## 2026-09-18 C5b18 passive teardown successor model
+
+Status: review-3 corrections, local verification and CI at `567c733` `PASSED`;
+successor-cycle review 1 returned **Not ready** at `0aa6cbc`, and its bounded
+causal-clock correction and local verification are `PASSED`; corrected-head
+review 2 returned **Ready with non-blocking follow-ups** at `a985707`.
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) is **Accepted**
+as a design direction after the reviewed passive packet and maintainer decision;
+runnable implementation and installed/guest/product admission remain `BLOCKED`.
+
+The [C5b18 specification](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) freezes new
+`capsule.c5b18.teardown-successor-model/v1` and teardown-record identities rather
+than reinterpreting an existing cursor or store. The no-effect
+`internal/execution/teardownpassive` package separates immutable/durable facts,
+current-Supervisor-lifetime custody and at most one pending write. It retains the
+earliest action anchor, distinct wall-service tick and nondecreasing observed-tick
+watermark. It consumes creation in the current lifetime at first custody,
+requires exact custody identity for signal,
+absence and terminal evidence, retains complete frozen/settled
+write candidates bound to the exact obligation, clears custody on restart and
+conservatively closes creation. The absence record is not public job completion:
+result/lifecycle/cleanup joins are absent, so output/capacity release stays closed.
+
+Review instance 1 returned **Not ready** at head `26fa5bc`: creation replay after
+natural absence, timing-failure release, missing exact identity comparison and
+incomplete storage projections were accepted. Commits `dacb95f` through `5307e81`
+correct them and add four mutation classes plus a post-absence ordering guard.
+Review instance 2 returned **Not ready** at `3dc70e6`: absence-only release,
+cross-attempt settlement substitution, overstated creation durability and mutation
+proof, missed wall action and missing record identity are accepted. The package has
+no product consumer and performs no storage, process, clock, service, backend, VM
+or guest effect. Review instance 3 returned **Not ready** at `cbaf84d`:
+late callback service could masquerade as its timely scheduled anchor, and
+failed runner publication left terminal absence evidence without process identity.
+Both are accepted. Human direction opened a successor review cycle: its first
+review at `0aa6cbc` returned **Not ready** after reproducing a backdated
+cancellation/signal/absence sequence following observed wall service. The finding
+is accepted; local gates and self-review pass. Successor-cycle review 2 found
+no code defect at `a985707` and returned **Ready with non-blocking follow-ups**;
+its sole P3 status-wording finding is corrected. Maintainer direction accepts
+ADR-0047 as architecture only. No benign runnable experiment is authorized by
+that acceptance; it needs a separately reviewed exact plan and authorization.
+
 ## 2026-09-06 C5b17 passive teardown/deadline proposal
 
 Status: passive proposal and independent review `PASSED` / **Ready** (1 of 3).
-[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) remains **Proposed**;
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) was **Proposed**
+at C5b17 delivery and is now **Accepted** after the C5b18 passive review;
 runnable implementation and installed/guest/product admission remain `BLOCKED`.
 
 The [design packet](C5B_TEARDOWN_DEADLINE_DESIGN.md) maps storage waits before
@@ -41,9 +88,10 @@ cases, and compares ordering options. Proposed direction: durable attempt-bound
 cleanup preparation before creation, with Supervisor stop control independent of
 later storage work. Preparation never proves a signal or restores PID custody.
 
-Next bounded slice: C5b18 passive successor specification/model, including exact
-record/version and pending-write settlement, plus failure/restoration cases.
-Maintainer acceptance of the concrete ADR decision precedes runnable changes.
+The C5b18 passive successor supplies a record/version and pending-write
+settlement/failure/restoration model; corrected-head independent review and
+explicit maintainer acceptance have closed the design-decision gate. A separately
+reviewed exact runnable plan and authorization remain required.
 C5b16 archive PR #37 and canonical PR #363 are merged; exact reviewed evidence
 remains pinned in their checkpoint.
 
@@ -498,6 +546,7 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C5b9 | Bind the complete immutable no-run composite | `PASSED` | Archive merge [`3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite) binds the exact runner, libkrun, libkrunfw, 100,663,296-byte root, controller, and root-bound effects object. Static verification closes the controller and 13-symbol libkrun surfaces, 14-file archive inventory, typed caps and completion-last fixture, teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutations. `_c5b8_controlled_test_operation` deliberately has no provider; host, guest, authorization, and every effect remain absent. Nothing was loaded or executed, and no v19/v27 identity was reused. |
 | C5b compatibility preflight | Test direct provider-only composition | `PASSED`; exact candidate `NO_GO` | Archive merge [`7fc3af9c46895b340c3118a96cb50abb26b1d977`](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight) retains exact component identities, four closed contradictions, static source/Mach-O verification, ten mutations, and a closed archive inventory. It abandons only binding the retained C5b9 inputs by supplying the missing operation symbol: runner/root identity, effect order, operation ABI, and single-libkrun-owner requirements do not compose truthfully. No native artifact, libkrun/HVF, runner, VM, or guest executed. |
 | C5b11 | Bind the fault-convergent fixed-runner no-run successor | `PASSED` for construction/static evidence | [Immutable merge `f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d`](https://github.com/Shrimpworks/capsule-experiments/tree/f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d/experiments/typed-guest-transport-c5b11-bound-fault-convergent-no-run-successor) retains exact plan/payload/profile binding, one runner importing 13 libkrun symbols, a Supervisor driver importing zero libkrun and 24 closed providers, distinct restart cursors, and fault/replay/teardown models. PR #31 reports exact-head C5b-S5 review `PASSED` / `Ready`; the [checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md) separates that publication from archived pre-review prose and fresh verification. Providers and effects remain absent. C5b10 is not accepted evidence. |
+| C5b18 | Freeze the passive teardown-obligation successor | Causal-clock correction, local gates and CI `PASSED`; independent review 2 **Ready with non-blocking follow-ups** at `a985707` | Reviewer found no code defect; sole P3 stale wording corrected in docs-only follow-up. PR #371 is ready for maintainer review; ADR-0047 is Accepted as architecture by explicit maintainer direction. No runnable fixture, process or guest is authorized. |
 | C5b providers | Construct the missing fixed process/transport/recovery providers | `BLOCKED` on implementation | Start from the exact C5b11 ABI, attempt bindings, and independent recovery oracle. Freeze the bounded no-run source/provenance/test packet, implement real provider source with closed inputs/imports, reproduce its artifacts, and independently review the new composition. Declarations or test-double results cannot prove provider/platform behavior; no guest execution is authorized by this task row. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires provider implementation/provenance and independent review of the complete exact composition, then final owner authorization naming its immutable merge and manifest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3c under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. C3c must supply Accepted ADR-0038/0045 decisions or accepted replacements that freeze the authority descriptor and state-engine binding. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |

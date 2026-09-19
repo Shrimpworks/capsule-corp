@@ -81,8 +81,19 @@ now measures publication delay outside the cleanup clock and identifies the next
 total-deadline design gate; bounded verification and independent review are
 `PASSED`. The [C5b17 passive design](C5B_TEARDOWN_DEADLINE_DESIGN.md) now compares
 teardown ordering and proposes precommitted cleanup obligations with storage-independent
-Supervisor stop control. ADR-0047 remains Proposed; passive review is `PASSED`,
-and successor specification/validation precedes any runnable implementation.
+Supervisor stop control. ADR-0047 is Accepted as the architecture direction;
+passive review is `PASSED`. The [C5b18 passive successor](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) now
+freezes proposed record/model identities plus candidate-durable, current-lifetime
+and pending-write separation. Its deterministic no-effect Go model has guard
+scenarios, not a completed mutant campaign. Review instances 1–3 returned
+**Not ready**. Review-3 corrections, refreshed local gates and CI at `567c733`
+`PASSED`; the first human-authorized successor review at `0aa6cbc` also returned
+**Not ready** on clock causality. Its nondecreasing observed-tick correction,
+local gates and CI `PASSED` at `a985707`; successor-cycle review 2 returned
+**Ready with non-blocking follow-ups**, finding no code defect. Its sole P3
+stale-wording finding is corrected in this documentation follow-up. Explicit
+maintainer acceptance closed the design-decision gate; a separately reviewed
+exact implementation plan and authorization still precede runnable work.
 Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and

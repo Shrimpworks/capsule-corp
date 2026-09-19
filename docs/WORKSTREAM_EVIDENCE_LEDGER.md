@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-09-06
+Date: 2026-09-18
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -15,16 +15,56 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-09-18 C5b18 passive teardown successor model
+
+The [C5b18 specification](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) and no-effect
+`internal/execution/teardownpassive` model freeze versioned cleanup-obligation
+bindings, exact clock policy, candidate-durable/current-lifetime/pending-write separation,
+late settlement, restart custody loss and completion-last refusal. Review instance
+1 of 3 inspected head `26fa5bc` and returned **Not ready**: creation replay after
+natural absence, release after timing violation, missing exact identity comparison
+and incomplete frozen/settled write projection. The implementation task accepts
+all four findings. Commits `dacb95f`, `bffc71e`, `39cfe7b`, `b459609` and
+`5307e81` correct them. Refreshed repository suites, build, vet, lint profiles,
+dependency/vulnerability scans and 85.5% package race coverage passed at `3dc70e6`.
+Review instance 2 returned **Not ready**: absence-only release, cross-attempt
+settlement, unpersisted creation consumption called durable, unsupported mutation
+proof, missed wall action and missing record identity. Those corrections were
+completed; review instance 3 at `cbaf84d` also returned
+**Not ready** because the scheduled wall anchor could stand in for actual late
+callback service and failed runner publication left the terminal candidate without
+exact absence identity. Both are corrected with focused regression cases and
+refreshed local gates and CI at `567c733` `PASSED`. Three review instances are
+exhausted. Human direction opened a successor review cycle. Its first pass at
+`0aa6cbc` returned **Not ready** after reproducing a later cancellation at tick
+250, signal at 260 and absence at 300 despite previously observed wall service
+at 1,100; the model falsely marked timing satisfied. The finding is accepted.
+The bounded correction retains a nondecreasing same-lifetime observed-tick
+watermark and tests backdated refusals. Local Go/TypeScript/schema/ADR gates,
+package race/coverage, blocking lint and dependency scans pass; unrestricted
+Go lint retains only the 50 pre-existing issue-#217 `revive` findings. Exact
+head `a985707` passed CI; successor-cycle review 2 found no code defect and
+returned **Ready with non-blocking follow-ups**. Its sole P3 stale-progress
+wording finding in `docs/PROJECT.md` is corrected in this documentation-only
+follow-up. The passive slice and independent review are `PASSED` for their
+scope; PR #371 is ready for maintainer review, and explicit maintainer direction
+Accepted ADR-0047 as architecture only.
+
+Runnable mechanics, installed custody, guest execution and product admission
+remain unchanged and `BLOCKED`; ADR acceptance does not supply their evidence.
+
 ## 2026-09-06 C5b17 passive teardown/deadline proposal
 
 The [C5b17 design](C5B_TEARDOWN_DEADLINE_DESIGN.md) and
-[Proposed ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) retain the
+[ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md), Proposed at
+C5b17 delivery and later Accepted after C5b18 review, retain the
 storage dependency map, proposed clock anchors, ordering alternatives and failure
 matrix. Passive design, canonical verification and review: `PASSED` / **Ready**
 (1 of 3), with the existing full-revive backlog reported separately. No new fixture
-runs or architecture activation. The next gate is a passive successor contract/model
-and explicit ADR acceptance before implementation; installed/guest/product admission
-remains `BLOCKED`.
+runs or architecture activation. C5b18 now supplies the local passive successor
+contract/model; independent review and explicit ADR disposition closed the
+design-decision gate. A separately reviewed exact plan and authorization remain
+before runnable implementation. Installed/guest/product admission remains `BLOCKED`.
 
 ## 2026-09-06 C5b16 timing/fault evidence
 

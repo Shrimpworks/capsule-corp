@@ -88,9 +88,11 @@ and pending-write separation. Its deterministic no-effect Go model has guard
 scenarios, not a completed mutant campaign. Review instances 1–3 returned
 **Not ready**. Review-3 corrections, refreshed local gates and CI at `567c733`
 `PASSED`; the first human-authorized successor review at `0aa6cbc` also returned
-**Not ready** on clock causality. A nondecreasing observed-tick correction is
-underway; corrected-head independent review, then maintainer disposition of
-ADR-0047, precede runnable work.
+**Not ready** on clock causality. Its nondecreasing observed-tick correction,
+local gates and CI `PASSED` at `a985707`; successor-cycle review 2 returned
+**Ready with non-blocking follow-ups**, finding no code defect. Its sole P3
+stale-wording finding is corrected in this documentation follow-up. Maintainer
+disposition of Proposed ADR-0047 precedes runnable work.
 Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and

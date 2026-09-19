@@ -2,10 +2,10 @@
 
 Date: 2026-09-18
 
-Status: first review in the human-authorized successor cycle returned **Not ready**
-at `0aa6cbc`: an observed service tick could be backdated by a later trigger.
-The causal-order correction, local verification and self-review are `PASSED`;
-independent review of the corrected head remains pending.
+Status: causal-order correction, local verification and independent review
+`PASSED` / **Ready with non-blocking follow-ups** at `a985707`. Reviewer found
+no code defect; its P3 stale-progress wording finding is corrected in the
+documentation follow-up. Maintainer disposition remains pending.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -258,15 +258,20 @@ fix and passes after it. Refreshed `pnpm install --frozen-lockfile`, `pnpm check
 build passed. Go test/vet/build, package race/coverage (87.5%), blocking lint,
 package `revive` and pinned `govulncheck@v1.6.0` under Go 1.25.13 passed. Full
 `golangci-lint run ./...` still reports only the 50 pre-existing issue-#217
-`revive` findings. An independent verdict on the corrected head is not yet claimed.
+`revive` findings. Independent review instance 2 in the human-authorized
+successor cycle returned **Ready with non-blocking follow-ups** on `a985707`;
+the reviewer independently reran scoped race/coverage (87.5%), vet, build,
+schema/ADR checks and diff check. Its full Go run could not bind loopback in
+the review sandbox; the author run with local loopback permission passed.
 
 Review instance 3 returned **Not ready** at `cbaf84d`; its two corrections,
 refreshed local verification and CI pass at `567c733`. A human-authorized fresh
 cycle began at `0aa6cbc`; its first reviewer returned **Not ready** on clock
 causality. The current correction rejects observations older than the latest
 accepted service tick, including when an earlier stop anchor remains selected.
-No independent verdict is claimed for the correction head. The
-host's alternate Go 1.26.5 is vulnerable to three standard-library
+Successor-cycle review 2 found no code defect and returned **Ready with
+non-blocking follow-ups** on `a985707`; its P3 wording finding is corrected.
+The host's alternate Go 1.26.5 is vulnerable to three standard-library
 advisories; it is not the declared build toolchain. Do not use it for this candidate.
 
 ## Independent review loop
@@ -298,7 +303,10 @@ The first review in the explicitly human-authorized successor cycle inspected
 then accepted cancellation at 250, signal at 260 and absence at 300, falsely
 classifying timing as satisfied. The finding is accepted. The correction uses a
 same-lifetime observation watermark and causally ordered repeated-trigger tests;
-its independent review is pending.
+review instance 2 assessed that exact correction at `a985707` and returned
+**Ready with non-blocking follow-ups**. Its only finding was stale “underway”
+wording in `docs/PROJECT.md`, accepted and corrected without changing model
+behavior. No further review instance is requested in this delivery.
 
 ## Boundaries
 

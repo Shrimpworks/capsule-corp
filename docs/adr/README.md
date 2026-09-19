@@ -92,7 +92,7 @@ its core conclusion.
   installed composition, and admission remain `BLOCKED`
 
 - [ADR-0047: Prepare an attempt-bound teardown obligation before launch](0047-prepare-teardown-obligation-before-launch.md)
-  — Proposed; successor-cycle review 1 returned **Not ready** at `0aa6cbc`,
-  causal-clock correction awaits independent review, and runnable/installed/guest/product work remains `BLOCKED`
+  — Proposed; causal-clock correction and CI `PASSED` at `a985707`, successor-cycle
+  review 2 **Ready with non-blocking follow-ups**, and runnable/installed/guest/product work remains `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

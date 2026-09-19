@@ -29,8 +29,8 @@ all four findings. Commits `dacb95f`, `bffc71e`, `39cfe7b`, `b459609` and
 dependency/vulnerability scans and 85.5% package race coverage passed at `3dc70e6`.
 Review instance 2 returned **Not ready**: absence-only release, cross-attempt
 settlement, unpersisted creation consumption called durable, unsupported mutation
-proof, missed wall action and missing record identity. Corrections are
-`IN_PROGRESS — TRENDING_GOOD`; review instance 3 at `cbaf84d` also returned
+proof, missed wall action and missing record identity. Those corrections were
+completed; review instance 3 at `cbaf84d` also returned
 **Not ready** because the scheduled wall anchor could stand in for actual late
 callback service and failed runner publication left the terminal candidate without
 exact absence identity. Both are corrected with focused regression cases and
@@ -42,8 +42,13 @@ at 1,100; the model falsely marked timing satisfied. The finding is accepted.
 The bounded correction retains a nondecreasing same-lifetime observed-tick
 watermark and tests backdated refusals. Local Go/TypeScript/schema/ADR gates,
 package race/coverage, blocking lint and dependency scans pass; unrestricted
-Go lint retains only the 50 pre-existing issue-#217 `revive` findings. An
-independent verdict on the corrected head remains pending.
+Go lint retains only the 50 pre-existing issue-#217 `revive` findings. Exact
+head `a985707` passed CI; successor-cycle review 2 found no code defect and
+returned **Ready with non-blocking follow-ups**. Its sole P3 stale-progress
+wording finding in `docs/PROJECT.md` is corrected in this documentation-only
+follow-up. The passive slice and independent review are `PASSED` for their
+scope; maintainer disposition of Proposed ADR-0047 and draft PR #371 remains.
+
 Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 

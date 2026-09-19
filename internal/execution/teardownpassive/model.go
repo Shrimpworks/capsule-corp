@@ -103,7 +103,8 @@ func (model *Model) BeginRunnerIdentityWrite(operationID OperationID) (PendingWr
 		return PendingWrite{}, ErrPendingWrite
 	}
 	if !model.state.Prepared || model.state.Custody != CustodyExact ||
-		model.state.RunnerWriteStarted || model.state.TerminalConfirmed {
+		model.state.RunnerWriteStarted || model.state.Stop.Latched ||
+		model.state.TerminalConfirmed {
 		return PendingWrite{}, ErrState
 	}
 	pending, err := model.beginWrite(operationID, WriteRunnerIdentity)

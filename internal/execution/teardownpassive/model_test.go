@@ -119,6 +119,19 @@ func TestMutationLateRunnerSuccessCannotReleaseStart(t *testing.T) {
 	}
 }
 
+func TestStopLatchPreventsNewRunnerPublication(t *testing.T) {
+	model := custodyModel(t)
+	if err := model.LatchStop(TriggerCancellation, 210); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := model.BeginRunnerIdentityWrite(operationID(0x32)); !errors.Is(err, ErrState) {
+		t.Fatalf("runner publication began after stop: %v", err)
+	}
+	if !model.Decision().MaySignal {
+		t.Fatal("runner-publication refusal removed cleanup authority")
+	}
+}
+
 func TestRunnerPublicationFailureRetainsCleanupButWithholdsStart(t *testing.T) {
 	for _, outcome := range []WriteOutcome{WriteFailed, WriteIndeterminate} {
 		t.Run(string(outcome), func(t *testing.T) {
@@ -401,7 +414,7 @@ func TestDecisionMatchesIndependentSnapshotOracle(t *testing.T) {
 	if err := model.ObserveCreatedCustody(processIdentity(0x41)); err != nil {
 		t.Fatal(err)
 	}
-	pending, err = model.BeginRunnerIdentityWrite(operationID(0x32))
+	_, err = model.BeginRunnerIdentityWrite(operationID(0x32))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -2,15 +2,33 @@
 
 Date: 2026-09-19
 
-Next work item: freeze and independently review the exact C5b19 gate-2
-implementation packet after merging the [gate-1 mechanism correction](C5B19_GATE1_MECHANISM_DECISION.md).
+Next work item: integrate the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md),
+then TDD-implement only that frozen benign packet in
+`Shrimpworks/capsule-experiments` under the owner's conditional direction to
+continue after a passing review. No child run is authorized.
 PRs #373–#376 merged the plan and prospective mechanism candidate. Independent
 review instance 1 of 3 returned **Not ready**; the three findings were corrected
 at `5cc312907acbb7a74af009891f1089d4f73f57b0`. Instance 2 returned
 **Ready** with no remaining actionable findings. Gate-1 prospective design
-review is `PASSED` at that exact head; PR #377 integration remains pending.
-Gate 2 is `BLOCKED` on its exact packet/review. No implementation or child run
-is authorized.
+review is `PASSED` at that exact head; PR #377 merged as
+`3fa386f8cbd9034e1ca90b3e2c99074cf6657fc9`. Gate 2 is
+`PASSED` for prospective design review at exact head
+`e7b68c57d59abe66c68d849473e21fe74f4e31b7` of the corrected
+[exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md). Review instance 1 of 3
+on `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**
+with four accepted P2 design gaps: auxiliary encodings, watchdog custody,
+alarm setup, and trace ownership. Instance 2 on
+`ae2b42ba68b9efe81933654ffa855498a3fcfa81` returned **Not ready** with
+two further accepted P2 trace-budget and harness/verifier-source gaps.
+Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1` returned
+**Not ready** with accepted P2 causal-event encoding and P3 wait-slot
+arithmetic findings. The owner authorized up to three additional passes;
+instance 4 of 6 returned **Ready** with no actionable findings on the
+corrected exact head. Gate-3 implementation-only authorization is `PASSED`
+conditionally on this packet's integration; implementation itself remains
+`IN_PROGRESS — TRENDING_GOOD` only once started. Parent workstream remains
+`IN_PROGRESS — TRENDING_GOOD`; Gate 4 first-run authorization and Gates 5–6
+remain `BLOCKED`. No child run is authorized.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

@@ -53,6 +53,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     convergence, and `AttemptID`-only no-guest fake lifecycle evidence
 23. [Current work plan](CURRENT_WORK_PLAN.md) — reconciled merged baseline, dependency graph,
     Codex/Claude/ChatGPT task groups, blockers, and the next orchestration checkpoint
+24. [C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md) —
+    documentation-only proposed Supervisor stop/custody mechanism, bounded fault matrix, and
+    review/authorization gates before any runnable experiment
 
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs

@@ -2,8 +2,11 @@
 
 Date: 2026-09-19
 
-Next work item: separately scope and review an exact benign runnable plan under
-Accepted ADR-0047. Do not implement or run it before explicit owner authorization.
+Next work item: review the [C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
+under Accepted ADR-0047. Initial primary-source review is retained in that plan;
+the proposed scheduling/custody mechanism still needs an exact call graph,
+clock-policy and independent review. Do not implement or run it before an exact
+frozen packet and explicit owner authorization.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

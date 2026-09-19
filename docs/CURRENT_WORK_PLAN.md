@@ -2,14 +2,17 @@
 
 Date: 2026-09-19
 
-Next work item: close gate 1 of the [C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
-under Accepted ADR-0047. PR #373 merged the documentation-only plan; its
-fresh-context review instance 1 of 3 was **Ready with non-blocking follow-ups**
-for that scope. The P2 follow-up requires independent review and digest readback
-of implemented bytes before a separately authorized first child run; the linked
-plan now makes that gate explicit. The proposed custody/worker call graph and
-continuous clock policy still need exact mechanism review. Do not implement or
-run before the successive packet, review and owner-authorization gates close.
+Next work item: independently review gate 1 of the
+[C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
+under Accepted ADR-0047. PR #373 merged the documentation-only plan and PR #374
+merged its independent-review P2 follow-up: implemented bytes require separate
+independent review and digest readback before owner first-run authorization.
+The read-only gate-1 packet now specifies a prospective control/storage ownership
+ledger, conditional direct-child custody argument, platform source index and
+code-level proof obligations. Gate 1 remains `BLOCKED` on independent mechanism
+review and closure of its prospective mailbox, waiter and clock decisions. Do
+not implement or run before the later packet, review and owner-authorization
+gates close.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

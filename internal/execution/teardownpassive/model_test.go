@@ -6,8 +6,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
+	"testing/fstest"
 )
 
 func TestPreparationOutcomesFailClosedBeforeCustody(t *testing.T) {
@@ -827,18 +827,48 @@ func TestBindingsAndClockPolicyAreClosed(t *testing.T) {
 
 func TestNoProductConsumerImportsPassiveTeardownModel(t *testing.T) {
 	root := os.DirFS(filepath.Join("..", "..", ".."))
+	consumers, err := passiveModelConsumers(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range consumers {
+		t.Errorf("product consumer imports passive teardown model: %s", path)
+	}
+}
+
+func TestPassiveImportGuardScansSimilarNamedConsumer(t *testing.T) {
+	const consumer = "internal/execution/product/teardownpassive_adapter.go"
+	fixture := fstest.MapFS{
+		"internal/execution/teardownpassive/model.go": {
+			Data: []byte("package teardownpassive\n// internal/execution/teardownpassive\n"),
+		},
+		consumer: {
+			Data: []byte("package product\nimport \"capsule.local/capsule/internal/execution/teardownpassive\"\n"),
+		},
+	}
+	consumers, err := passiveModelConsumers(fixture)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(consumers) != 1 || consumers[0] != consumer {
+		t.Fatalf("consumers = %v, want [%s]", consumers, consumer)
+	}
+}
+
+func passiveModelConsumers(root fs.FS) ([]string, error) {
 	needle := "internal/execution/teardownpassive"
+	var consumers []string
 	err := fs.WalkDir(root, ".", func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
 		if entry.IsDir() {
-			if entry.Name() == ".git" || entry.Name() == "node_modules" {
+			if entry.Name() == ".git" || entry.Name() == "node_modules" || path == "internal/execution/teardownpassive" {
 				return filepath.SkipDir
 			}
 			return nil
 		}
-		if filepath.Ext(path) != ".go" || strings.Contains(path, "teardownpassive") {
+		if filepath.Ext(path) != ".go" {
 			return nil
 		}
 		contents, readErr := fs.ReadFile(root, path)
@@ -846,13 +876,11 @@ func TestNoProductConsumerImportsPassiveTeardownModel(t *testing.T) {
 			return readErr
 		}
 		if bytes.Contains(contents, []byte(needle)) {
-			t.Errorf("product consumer imports passive teardown model: %s", path)
+			consumers = append(consumers, path)
 		}
 		return nil
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	return consumers, err
 }
 
 func assertDecision(t *testing.T, model *Model) {

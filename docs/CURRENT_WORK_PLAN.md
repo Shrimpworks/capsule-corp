@@ -15,7 +15,10 @@ review is `PASSED` at that exact head; PR #377 merged as
 [exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md). Review instance 1 of 3
 on `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**
 with four accepted P2 design gaps: auxiliary encodings, watchdog custody,
-alarm setup, and trace ownership. Corrections await instance 2. Parent
+alarm setup, and trace ownership. Instance 2 on
+`ae2b42ba68b9efe81933654ffa855498a3fcfa81` returned **Not ready** with
+two further accepted P2 trace-budget and harness/verifier-source gaps. All
+six corrections await final instance 3. Parent
 workstream remains `IN_PROGRESS — TRENDING_GOOD`; gates 3–6 are `BLOCKED`.
 No implementation or child run is authorized.
 

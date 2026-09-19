@@ -4,7 +4,10 @@ Date: 2026-09-19. Decision owner: Capsule maintainer. Gate 2: `BLOCKED`
 until independent review of this corrected packet closes; parent workstream:
 `IN_PROGRESS — TRENDING_GOOD`. Review instance 1 of 3 on
 `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready** with
-four accepted P2 packet gaps, corrected below and awaiting instance 2. This
+four accepted P2 packet gaps. Instance 2 on
+`ae2b42ba68b9efe81933654ffa855498a3fcfa81` returned **Not ready** with
+two further accepted P2 trace-budget and harness/verifier-source gaps. All
+six are corrected below and await final instance 3. This
 freezes a proposed **benign, local-only experiment**; it
 authorizes neither implementation nor a child run. Gates 3 and 4 require
 separate, explicit owner decisions. The parent owner-only hostile-`.mjs` alpha
@@ -39,17 +42,32 @@ offline from pinned local toolchains/modules; no new package or network fetch.
 ### Source and build closure
 
 Write a **new** experiment source tree, not imports from this repository's
-product packages or the C5b16 driver. Freeze this intended file manifest at
-gate 3: `PLAN.md`; `inputs/ORIGINS.json`; `inputs/fixture.c`;
-`inputs/supervisor.c`; `inputs/protocol.h`; `inputs/protocol.c`;
+product packages or the C5b16 driver. Gate 2 freezes this intended file
+manifest for Gate-3 implementation: `PLAN.md`; `go.mod` (Go 1.25.13, no
+external requirements; no `go.sum` unless a new reviewed dependency reopens
+Gate 2); `inputs/ORIGINS.json`; `inputs/fixture.c`;
+`inputs/supervisor.c`; `inputs/harness.c`; `inputs/protocol.h`;
+`inputs/protocol.c`;
 `inputs/clock.h`; `inputs/clock.c`; `inputs/bridge.h`;
 `source/bridge/bridge.go`; `source/store/store.go`;
 `source/store/store_test.go`; `tests/model_test.go`;
 `tests/oracle.go`; `tests/oracle_test.go`; and `scripts/build.sh`,
-`scripts/check.sh`, `scripts/run.sh`. A generated c-archive header and binary,
-the fixture and Supervisor executables, and raw run outputs are separately
-listed by hash in the later Gate-4 manifest. These names describe ownership,
-not pre-existing bytes. Any new linked source, generated unit, runtime module,
+`scripts/check.sh`, `scripts/run.sh`. Generated c-archive header and binary,
+fixture, Supervisor, harness and oracle executables are listed by hash in the
+later Gate-4 pre-run manifest; raw run outputs appear only in the Gate-5
+evidence manifest after authorization and execution. These names describe
+ownership,
+not pre-existing bytes. `inputs/harness.c` is the sole direct parent/waiter of
+Supervisor and sole writer of the fixed cancellation event. `scripts/run.sh`
+validates a preapproved case ID and uses `exec` to **replace itself** with the
+harness: it must not remain as a shell waiter or spawn a wrapper. Once its
+direct Supervisor child is reaped or contained, the harness writes its
+separate containment log and uses `exec` to replace itself with the compiled
+read-only oracle. That oracle runs post-Supervisor even if fixture residue is
+unknown, which is then a failure/manual-cleanup result. Neither script nor
+oracle may signal, wait for or probe any lifecycle target. Gate-4 review
+checks the actual `exec`/wait call graph. Any new linked source, generated
+unit, runtime module,
 signal handler or process waiter must be added to the manifest and reviewed
 before running. The C5b18
 [`types.go`](../internal/execution/teardownpassive/types.go) and
@@ -147,9 +165,13 @@ Supervisor watchdog applies as above. Never recursively delete a broad
 parent. If worker remains blocked, child custody is unresolved, or any
 harness-only containment fires, preserve the exact run directory and require
 manual owner review/cleanup; never call a second PID-targeting fallback.
-The child self-alarm at 4 s, harness watchdog at 7 s, verifier timeout at 9 s
-are independent finite containment caps from C5b16, not evidence of the
-1,000/1,200-ms Supervisor bounds.
+The child self-alarm at 4 s and harness watchdog at 7 s are independent
+finite containment caps from C5b16, not evidence of the 1,000/1,200-ms
+Supervisor bounds. The 9-s **verifier** timeout is a separate in-process
+limit on compiled `tests/oracle.go` after harness has reaped its Supervisor
+child and replaced itself. It records an incomplete verification on expiry
+and has no process-targeting, signal, wait or cleanup
+authority. It is not a third live-run watchdog or another parent of fixture.
 
 ### Fixed transport and operation identity
 
@@ -272,9 +294,27 @@ storage settlement or repeated trigger. Exact `waitpid` terminal status for
 the same unreaped child is the only absence event. `kill` return, `ESRCH`,
 `ECHILD`, pipe EOF, child alarm and harness cleanup are not.
 
-Raw evidence has **separate writers**. Control owns a preallocated 384-entry
-fixed-size in-memory array and sequence counter; worker owns its own
-128-entry array and sequence counter. Neither lane reads or locks the other's
+Raw evidence has **separate writers**. Control owns a preallocated
+16,384-entry fixed-size in-memory array and sequence counter; worker owns its
+own 1,024-entry array and sequence counter. Each slot is exactly 256 bytes,
+so reserved slot memory is 4 MiB for control and 256 KiB for worker. A slot
+encodes magic `C5EV` (4), version u8(1), lane u8 (control=1, worker=2),
+event kind u16_be, sequence
+u64_be, tick u64_be, auxiliary tick u64_be, timebase numerator and denominator
+u32_be each, binding digest[32], operation ID[16], generation u64_be, request
+digest[32], process identity[32], PID u32_be, syscall result i32_be, errno
+i32_be, flags u32_be, wait-status u32_be, and 76 zero reserved bytes.
+Unknown kind, nonzero reserved byte or nonsequential lane index fails the
+oracle. Event-kind u16 values are closed, in this order: 1 endpoint-created,
+2 setup-check, 3 write-request, 4 write-reply, 5 spawn-call, 6 spawn-result,
+7 identity-frozen, 8 cancel-ingress, 9 start-admission, 10 start-token-call,
+11 wall-service, 12 fatal-service, 13 stop-latch, 14 signal-latch,
+15 signal-call, 16 signal-result, 17 wait-call, 18 wait-result, 19 absence,
+20 store-edge, 21 store-outcome, 22 trace-fault and 23 harness-containment.
+Kind 23 belongs only to the separate harness log; control/worker refuse it.
+`flags` and every field not applicable to a kind are zero in v1; wait-status
+is nonzero only for an exact terminal wait result. Neither lane reads or
+locks the other's
 array. Control does no allocation, file I/O, shared lock or worker call while
 it has child custody; each control event append is a bounded copy to its own
 next slot. Overflow latches case failure without overwriting earlier events.
@@ -288,12 +328,22 @@ array after store completion; a stuck worker leaves only the pre-fault events
 it already committed. Harness has a third independent containment log.
 No shared file append, mutex, global sequence or cross-lane clock state.
 
-Each fixed event records lane-local sequence number, attempt/binding digest,
-event kind, raw tick and ratio, operation/generation/request digest, process
-identity, syscall/result/errno, actual cancellation ingress and service,
-start-token attempt, signal-attempt latch before `kill`, every `waitpid`
-observation, and store edge/outcome as applicable. The aggregate cap is 512
-entries; absent/truncated/overflowed lane evidence is failure, not a pass.
+Control records every actual `waitpid` call/result and each stop/start event,
+not just a final status. After a zero-return wait observation, it may not
+repeat `waitpid` until a 1-ms clock-paced `poll` iteration or an actual
+cancel/reply event. A ready descriptor is consumed once; EOF/error closes
+that control endpoint and removes it from the poll set, so readiness cannot
+spin as an unbounded event source. `EINTR` immediately resamples as Gate 1
+requires; an interrupt storm or trace overflow is explicit failed/unmeasured
+evidence, never a pass. Under ordinary 1-ms pacing, the 4-s alarm and 7-s
+harness caps allow fewer than 7,000 wait iterations before containment;
+16,384 control slots leave more than 9,000 for other events. This is a
+capacity design, not a scheduler or latency guarantee. Pre-run simulated
+tests must exercise full-budget and overflow refusal, immediate-ready/EOF
+removal and `EINTR` storms without a child; the live oracle must distinguish
+real stop/timing failure from trace exhaustion. Aggregate cap is 17,408
+entries; absent/truncated/
+overflowed lane evidence is failure, not a pass.
 The oracle merges by exact operation/request identity and causal control
 events, **not** by assuming a total timestamp order between lanes. A same-
 tick stop/reply race is decided by the control lane's own stop-latch and

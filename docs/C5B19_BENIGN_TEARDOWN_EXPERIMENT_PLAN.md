@@ -364,10 +364,12 @@ trace and checker output, then restore the exact clean source.
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
 2. **Exact implementation-packet review — `BLOCKED` on corrected-packet
-   independent review instance 2.** Instance 1 on
+   independent review instance 3.** Instance 1 on
    `6d3ad7be7319c0f3ac32691c1c56fff5df4d8702` returned **Not ready**;
-   its four accepted P2 design gaps are corrected in the candidate, not yet
-   independently accepted. Freeze the
+   its four accepted P2 design gaps were corrected. Instance 2 on
+   `ae2b42ba68b9efe81933654ffa855498a3fcfa81` also returned **Not ready**;
+   its two further P2 trace-budget and harness/verifier-source gaps are
+   corrected in the candidate, not yet independently accepted. Freeze the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent

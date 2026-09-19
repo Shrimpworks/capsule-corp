@@ -2,17 +2,15 @@
 
 Date: 2026-09-19
 
-Next work item: independently review gate 1 of the
-[C5b19 benign teardown experiment plan](C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md)
-under Accepted ADR-0047. PR #373 merged the documentation-only plan and PR #374
-merged its independent-review P2 follow-up: implemented bytes require separate
-independent review and digest readback before owner first-run authorization.
-The read-only gate-1 packet now specifies a prospective control/storage ownership
-ledger, conditional direct-child custody argument, platform source index and
-code-level proof obligations. Gate 1 remains `BLOCKED` on independent mechanism
-review and closure of its prospective mailbox, waiter and clock decisions. Do
-not implement or run before the later packet, review and owner-authorization
-gates close.
+Next work item: independently review the
+[C5b19 gate-1 mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
+under Accepted ADR-0047. PR #373 merged the documentation-only plan, PR #374
+merged its independent-review P2 follow-up, and PR #375 merged the read-only
+ownership/proof packet. The candidate now proposes fixed-frame anonymous pipes,
+one storage worker, direct-child exclusive reaping and one continuous clock.
+Gate 1 remains `BLOCKED` on independent prospective review and closure of its
+exact frame/call-graph, waiter and timer-pacing premises. Do not implement or
+run before later packet, review and owner-authorization gates close.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

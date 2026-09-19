@@ -92,7 +92,7 @@ its core conclusion.
   installed composition, and admission remain `BLOCKED`
 
 - [ADR-0047: Prepare an attempt-bound teardown obligation before launch](0047-prepare-teardown-obligation-before-launch.md)
-  — Proposed; C5b17 passive design/review `PASSED`, successor specification, implementation
-  and installed/guest/product admission remain `BLOCKED`
+  — Proposed; C5b17 design/review and C5b18 local passive specification/model `PASSED`,
+  C5b18 independent review plus runnable/installed/guest/product work remain `BLOCKED`
 
 Use [the ADR template](TEMPLATE.md) for new decisions.

@@ -1,6 +1,6 @@
 # Workstream and evidence ledger
 
-Date: 2026-09-06
+Date: 2026-09-18
 
 Status: durable coordination index. This ledger records where completed task conclusions were
 integrated; it is not independent security evidence, a posture promotion, or a replacement for the
@@ -15,6 +15,20 @@ The historical Phase 2B/Gate C consolidated outcomes and exact known answers rem
 [parallel-task checkpoint](PHASE_2B_GATE_C_TASK_GROUP_CHECKPOINT.md). The latest execution-readiness
 reconciliation and its next dependency boundary are recorded directly below.
 
+## 2026-09-18 C5b18 passive teardown successor model
+
+The [C5b18 specification](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) and no-effect
+`internal/execution/teardownpassive` model freeze versioned cleanup-obligation
+bindings, exact clock policy, durable/current-lifetime/pending-write separation,
+late settlement, restart custody loss and completion-last release. Local focused
+tests, race, repository suites, build, vet, CI lint profiles and vulnerability
+checks pass, including the seven required mutation-sensitive guards. Unrestricted
+lint retains only issue #217's 50 pre-existing exported-comment findings. The
+scoped specification/model result is `PASSED`;
+fresh-context independent review is `BLOCKED` on a clean task and no review verdict
+is claimed here. Proposed ADR-0047, runnable mechanics, installed custody, guest
+execution and product admission remain unchanged and `BLOCKED` where applicable.
+
 ## 2026-09-06 C5b17 passive teardown/deadline proposal
 
 The [C5b17 design](C5B_TEARDOWN_DEADLINE_DESIGN.md) and
@@ -22,9 +36,9 @@ The [C5b17 design](C5B_TEARDOWN_DEADLINE_DESIGN.md) and
 storage dependency map, proposed clock anchors, ordering alternatives and failure
 matrix. Passive design, canonical verification and review: `PASSED` / **Ready**
 (1 of 3), with the existing full-revive backlog reported separately. No new fixture
-runs or architecture activation. The next gate is a passive successor contract/model
-and explicit ADR acceptance before implementation; installed/guest/product admission
-remains `BLOCKED`.
+runs or architecture activation. C5b18 now supplies the local passive successor
+contract/model; its independent review and explicit ADR disposition remain before
+runnable implementation. Installed/guest/product admission remains `BLOCKED`.
 
 ## 2026-09-06 C5b16 timing/fault evidence
 

@@ -81,6 +81,23 @@ process or product consumer is introduced by this proposed ADR.
 | Guest self-alarm, daemon watchdog, or independent cleanup helper | Rejected for this slice: lacks required Supervisor authority/custody or expands the architecture. |
 | Precommit the obligation and isolate the Supervisor control path | Proposed for passive validation; preserves prior durable intent while removing later publication from the stop dependency chain. |
 
+## C5b18 concrete passive packet
+
+The [C5b18 successor specification](../C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
+defines new `capsule.c5b18.teardown-successor-model/v1` and
+`capsule.c5b18.teardown-obligation/v1` identities. Its deterministic no-effect Go
+model separates immutable/durable facts, current-Supervisor-lifetime custody and
+one exact pending storage operation. Late settlement cannot release start or clear
+stop; restart preserves preparation and uncertainty while removing custody; one
+signal request cannot be redriven; and terminal release requires authoritative
+absence followed by confirmed durable join.
+
+Focused local tests cover the C5b17 failure/restoration matrix and all required
+mutation guards. No product consumer imports the package and no storage, process,
+clock, service, backend, VM or guest effect exists. This supplies a concrete packet
+for the acceptance review below; it does not satisfy the required fresh-context
+independent review, accept this ADR or authorize runnable work.
+
 ## Consequences and acceptance gate
 
 The proposed ordering can remove one source of unbounded waiting; it is not a

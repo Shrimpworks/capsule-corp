@@ -15,8 +15,10 @@ is Accepted as architecture only.
 Remaining work: mechanism/source review, exact implementation-packet review,
 explicit implementation authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: independently review the gate-1 prospective mechanism packet
-below; this plan does not approve implementation or a first child run.
+Next action: independently review the concrete
+[gate-1 mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
+alongside the ownership/proof packet below; neither approves implementation
+or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
 `BLOCKED` pending the named review, authorization and separate later evidence.
@@ -188,9 +190,10 @@ was executed.
 | Signal and absence | Control alone checks the same-parent exclusive-reaper premise and uses positive-PID `waitpid(..., WNOHANG)`. A matching terminal status proves absence. If still live, it latches the one signal attempt before `kill`, then continues exact child-status observation. | `kill` success, `ESRCH`, EOF, child alarm and root removal prove no absence. `ECHILD`, changed disposition, competing reaper or mismatched identity is custody failure, never permission to signal again. |
 
 The worker request/reply slot is a *candidate custom primitive*, not an adopted
-implementation. Gate 1 must choose and review its concrete C/Go ownership,
-release/acquire or kernel-transport semantics, fixed capacity, cancellation
-ingress and wake/poll behavior against the
+implementation. The [mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
+proposes two fixed-frame anonymous pipes and a one-outstanding-operation state
+limit; independent review must check C/Go ownership, kernel-transport semantics,
+fixed capacity, cancellation ingress and wake/poll behavior against the
 [ecosystem checklist](ECOSYSTEM_REUSE_AND_ADOPTION.md). A second thread is not
 a second lifecycle owner. An unbounded queue, a worker-controlled start, or
 blocking on worker completion in the control path rejects this candidate.

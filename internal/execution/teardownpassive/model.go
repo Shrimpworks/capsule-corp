@@ -21,7 +21,7 @@ func NewModel(bindings Bindings) (*Model, error) {
 		state: Snapshot{
 			Contract:            ContractIdentity,
 			RecordVersion:       RecordVersionV1,
-			LastWriteOutcome:    WriteNone,
+			LastSettled:         SettledWrite{Outcome: WriteNone},
 			Custody:             CustodyNone,
 			Timing:              TimingUnknown,
 			TerminalDisposition: TerminalNone,
@@ -163,7 +163,7 @@ func (model *Model) beginWrite(
 	if _, exists := model.used[operationID]; exists {
 		return PendingWrite{}, ErrBinding
 	}
-	generation := model.state.LastSettledGeneration + 1
+	generation := model.state.LastSettled.Generation + 1
 	if generation == 0 || generation > maxSafeTick {
 		return PendingWrite{}, ErrState
 	}
@@ -186,8 +186,7 @@ func (model *Model) SettleWrite(pending PendingWrite, outcome WriteOutcome) erro
 		return ErrPendingWrite
 	}
 	model.state.Pending = PendingWrite{}
-	model.state.LastSettledGeneration = pending.Generation
-	model.state.LastWriteOutcome = outcome
+	model.state.LastSettled = settledWrite(pending, outcome)
 	if outcome != WriteConfirmed {
 		return nil
 	}
@@ -230,4 +229,15 @@ func (model *Model) applyDurableProjection(candidate DurableProjection) {
 
 func samePending(left, right PendingWrite) bool {
 	return left.Active && right.Active && left == right
+}
+
+func settledWrite(pending PendingWrite, outcome WriteOutcome) SettledWrite {
+	return SettledWrite{
+		Present:     true,
+		OperationID: pending.OperationID,
+		Generation:  pending.Generation,
+		Kind:        pending.Kind,
+		Candidate:   pending.Candidate,
+		Outcome:     outcome,
+	}
 }

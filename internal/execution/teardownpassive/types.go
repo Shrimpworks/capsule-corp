@@ -220,6 +220,17 @@ type PendingWrite struct {
 	Candidate   DurableProjection
 }
 
+// SettledWrite retains the exact operation and frozen candidate for the latest
+// confirmed, failed, or indeterminate storage outcome.
+type SettledWrite struct {
+	Present     bool
+	OperationID OperationID
+	Generation  uint64
+	Kind        WriteKind
+	Candidate   DurableProjection
+	Outcome     WriteOutcome
+}
+
 // StopSnapshot retains the monotonic latch and earliest accepted action anchor.
 type StopSnapshot struct {
 	Latched    bool
@@ -259,8 +270,7 @@ type Snapshot struct {
 	TerminalWriteStarted    bool
 	TerminalConfirmed       bool
 	TerminalDisposition     TerminalDisposition
-	LastSettledGeneration   uint64
-	LastWriteOutcome        WriteOutcome
+	LastSettled             SettledWrite
 	Pending                 PendingWrite
 	Custody                 Custody
 	ProcessIdentity         ProcessIdentity

@@ -123,8 +123,7 @@ func (model *Model) ObserveAbsence(identity ProcessIdentity, tick uint64) error 
 // current-lifetime custody, signal, absence, start, and clock observations.
 func (model *Model) Restart() {
 	if model.state.Pending.Active {
-		model.state.LastSettledGeneration = model.state.Pending.Generation
-		model.state.LastWriteOutcome = WriteIndeterminate
+		model.state.LastSettled = settledWrite(model.state.Pending, WriteIndeterminate)
 		model.state.Pending = PendingWrite{}
 	}
 	model.state.Custody = CustodyNone

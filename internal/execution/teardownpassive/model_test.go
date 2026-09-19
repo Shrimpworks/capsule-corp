@@ -242,16 +242,54 @@ func TestMutationRestartRetainsPreparationButCannotAdoptPID(t *testing.T) {
 
 func TestRestartMakesOutstandingWriteIndeterminate(t *testing.T) {
 	model := custodyModel(t)
-	if _, err := model.BeginRunnerIdentityWrite(operationID(0x32)); err != nil {
+	pending, err := model.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
 		t.Fatal(err)
 	}
 	model.Restart()
 	snapshot := model.Snapshot()
-	if snapshot.Pending.Active || snapshot.LastWriteOutcome != WriteIndeterminate || !snapshot.RecoveryRequired {
+	wantSettled := SettledWrite{
+		Present: true, OperationID: pending.OperationID, Generation: pending.Generation,
+		Kind: pending.Kind, Candidate: pending.Candidate, Outcome: WriteIndeterminate,
+	}
+	if snapshot.Pending.Active || snapshot.LastSettled != wantSettled ||
+		!snapshot.RecoveryRequired {
 		t.Fatal("restart failed to retain pending-write uncertainty")
 	}
 	if snapshot.Custody != CustodyNone || snapshot.RunnerIdentityConfirmed {
 		t.Fatal("restart invented custody or runner publication")
+	}
+}
+
+func TestPendingAndSettledWritesRetainExactFrozenCandidate(t *testing.T) {
+	model := custodyModel(t)
+	pending, err := model.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantCandidate := DurableProjection{
+		Prepared:                true,
+		CreationConsumed:        true,
+		RunnerIdentityConfirmed: true,
+		TerminalDisposition:     TerminalNone,
+	}
+	if pending.Candidate != wantCandidate {
+		t.Fatalf("pending candidate = %+v, want %+v", pending.Candidate, wantCandidate)
+	}
+	mutated := pending
+	mutated.Candidate.RunnerIdentityConfirmed = false
+	if err := model.SettleWrite(mutated, WriteFailed); !errors.Is(err, ErrPendingWrite) {
+		t.Fatalf("mutated candidate settled: %v", err)
+	}
+	if err := model.SettleWrite(pending, WriteFailed); err != nil {
+		t.Fatal(err)
+	}
+	wantSettled := SettledWrite{
+		Present: true, OperationID: pending.OperationID, Generation: pending.Generation,
+		Kind: pending.Kind, Candidate: wantCandidate, Outcome: WriteFailed,
+	}
+	if got := model.Snapshot().LastSettled; got != wantSettled {
+		t.Fatalf("settled write = %+v, want %+v", got, wantSettled)
 	}
 }
 
@@ -463,6 +501,11 @@ func TestOnlyOneExactStorageOperationMayBeOutstanding(t *testing.T) {
 	mutated.OperationID = operationID(0x34)
 	if err := model.SettleWrite(mutated, WriteConfirmed); !errors.Is(err, ErrPendingWrite) {
 		t.Fatalf("wrong operation settled pending write: %v", err)
+	}
+	mutated = pending
+	mutated.Kind = WriteTerminalJoin
+	if err := model.SettleWrite(mutated, WriteConfirmed); !errors.Is(err, ErrPendingWrite) {
+		t.Fatalf("wrong kind settled pending write: %v", err)
 	}
 	if !model.Snapshot().Pending.Active {
 		t.Fatal("mismatched settlement consumed pending write")

@@ -289,6 +289,7 @@ type Snapshot struct {
 	Signal                  SignalSnapshot
 	Absence                 AbsenceSnapshot
 	Start                   StartSnapshot
+	LastObservedTick        uint64
 	Timing                  TimingDisposition
 	WallServiceLate         bool
 	RecoveryRequired        bool

@@ -258,6 +258,9 @@ func TestRestartMakesOutstandingWriteIndeterminate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if err := model.LatchStop(TriggerFatalFault, 400); err != nil {
+		t.Fatal(err)
+	}
 	model.Restart()
 	snapshot := model.Snapshot()
 	wantSettled := SettledWrite{
@@ -268,8 +271,9 @@ func TestRestartMakesOutstandingWriteIndeterminate(t *testing.T) {
 		!snapshot.RecoveryRequired {
 		t.Fatal("restart failed to retain pending-write uncertainty")
 	}
-	if snapshot.Custody != CustodyNone || snapshot.RunnerIdentityConfirmed {
-		t.Fatal("restart invented custody or runner publication")
+	if snapshot.Custody != CustodyNone || snapshot.RunnerIdentityConfirmed ||
+		snapshot.LastObservedTick != 0 {
+		t.Fatal("restart invented custody, runner publication or a live clock")
 	}
 }
 
@@ -409,7 +413,7 @@ func TestLateWallServiceCannotMasqueradeAsOnTimeAction(t *testing.T) {
 	}
 	identity := model.Snapshot().ProcessIdentity
 	before := model.Snapshot()
-	if err := model.RequestSignal(identity, 1101); !errors.Is(err, ErrState) {
+	if err := model.RequestSignal(identity, 1101); !errors.Is(err, ErrClock) {
 		t.Fatalf("pre-service signal accepted: %v", err)
 	}
 	if model.Snapshot() != before {
@@ -472,24 +476,24 @@ func TestMutationRepeatedTriggersRetainEarliestDeadline(t *testing.T) {
 	if err := model.AttemptStart(100); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.LatchWallDeadline(1100); err != nil {
-		t.Fatal(err)
-	}
 	if err := model.LatchStop(TriggerCancellation, 300); err != nil {
 		t.Fatal(err)
 	}
 	if err := model.LatchStop(TriggerFatalFault, 450); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.LatchStop(TriggerFatalFault, 250); err != nil {
+	if err := model.LatchWallDeadline(1100); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.LatchStop(TriggerFatalFault, 1150); err != nil {
 		t.Fatal(err)
 	}
 	stop := model.Snapshot().Stop
-	if stop.Trigger != TriggerFatalFault || stop.ActionTick != 250 {
+	if stop.Trigger != TriggerCancellation || stop.ActionTick != 300 || stop.ServiceTick != 300 {
 		t.Fatalf("earliest action reset: %+v", stop)
 	}
 	identity := model.Snapshot().ProcessIdentity
-	if err := model.RequestSignal(identity, 260); err != nil {
+	if err := model.RequestSignal(identity, 1151); err != nil {
 		t.Fatal(err)
 	}
 	if err := model.ObserveAbsence(identity, 1201); err != nil {
@@ -497,6 +501,56 @@ func TestMutationRepeatedTriggersRetainEarliestDeadline(t *testing.T) {
 	}
 	if got := model.Snapshot().Timing; got != TimingSatisfied {
 		t.Fatalf("timing = %s, want satisfied", got)
+	}
+}
+
+func TestLateWallServiceRejectsBackdatedCancellation(t *testing.T) {
+	model := runnerModel(t)
+	if err := model.AttemptStart(100); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.LatchWallDeadline(1100); err != nil {
+		t.Fatal(err)
+	}
+	before := model.Snapshot()
+	if err := model.LatchStop(TriggerCancellation, 250); !errors.Is(err, ErrClock) {
+		t.Fatalf("backdated cancellation accepted after wall service: %v", err)
+	}
+	if got := model.Snapshot(); got != before {
+		t.Fatal("backdated cancellation mutated state")
+	}
+	identity := before.ProcessIdentity
+	if err := model.RequestSignal(identity, 260); !errors.Is(err, ErrClock) {
+		t.Fatalf("signal before observed wall service accepted: %v", err)
+	}
+	if err := model.ObserveAbsence(identity, 300); !errors.Is(err, ErrClock) {
+		t.Fatalf("absence before observed wall service accepted: %v", err)
+	}
+}
+
+func TestLaterTriggerCannotBackdateSignalWithoutReplacingStop(t *testing.T) {
+	model := runnerModel(t)
+	if err := model.AttemptStart(100); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.LatchStop(TriggerCancellation, 200); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.LatchStop(TriggerFatalFault, 400); err != nil {
+		t.Fatal(err)
+	}
+	before := model.Snapshot()
+	if before.Stop.ActionTick != 200 || before.LastObservedTick != 400 {
+		t.Fatalf("wrong action or service watermark: %+v", before)
+	}
+	if err := model.RequestSignal(before.ProcessIdentity, 300); !errors.Is(err, ErrClock) {
+		t.Fatalf("signal before later observed trigger accepted: %v", err)
+	}
+	if got := model.Snapshot(); got != before {
+		t.Fatal("backdated signal mutated state")
+	}
+	if err := model.RequestSignal(before.ProcessIdentity, 401); err != nil {
+		t.Fatal(err)
 	}
 }
 

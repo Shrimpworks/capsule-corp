@@ -2,10 +2,10 @@
 
 Date: 2026-09-18
 
-Status: review instance 3 returned **Not ready**; final two corrections,
-refreshed local verification and CI at `567c733` `PASSED`. Independent review remains `BLOCKED` on
-human direction after the three-instance limit;
-new review requires an explicit human decision.
+Status: first review in the human-authorized successor cycle returned **Not ready**
+at `0aa6cbc`: an observed service tick could be backdated by a later trigger.
+The causal-order correction, local verification and self-review are `PASSED`;
+independent review of the corrected head remains pending.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -71,6 +71,10 @@ The v1 policy is fixed:
 - absence no later than `t_action + 1,200 ms`;
 - `t_action` is the earliest accepted cancellation, wall or fatal-fault anchor;
 - repeated triggers never move `t_action` later;
+- same-lifetime service, start, signal and absence observations use a nondecreasing
+  observed-tick watermark; a delayed cancellation or fault presented without a
+  separate current service tick is refused if its tick predates an observation
+  already retained, while a wall action anchor may predate its actual service;
 - service later than the mandatory wall anchor is a timing violation, even if
   signal and absence follow promptly;
 - a pending or late storage response never resets a clock;
@@ -111,6 +115,8 @@ Volatile facts are limited to:
   durable publication for that consumption;
 - exact live custody observed in the current Supervisor lifetime;
 - monotonic stop latch, earliest trigger/anchor, and separate service observation;
+- latest accepted observed tick, even when a later trigger does not replace the
+  earliest stop anchor;
 - first signal request and any uncertain response;
 - authoritative absence observation with exact custody identity; and
 - same-lifetime clock observations.
@@ -151,8 +157,10 @@ observations or release capacity.
 5. Cancellation, wall or fatal fault may latch stop while any post-create write is
    pending. Stop evaluation never depends on settlement of that write. Wall
    latching requires an actual service tick distinct from its fixed start-derived
-   anchor; a late service remains a timing violation. No trigger may latch or
-   rewrite timing after authoritative absence.
+   anchor; a late service remains a timing violation. A trigger with a service
+   tick older than a retained observation is refused without mutation; the
+   earliest action anchor is not an excuse to backdate later signal or absence.
+   No trigger may latch or rewrite timing after authoritative absence.
 6. Start may be attempted once only after confirmed runner identity, with exact
    current-lifetime custody and no stop latch. `t_start` is captured immediately
    before that first attempt and never reset.
@@ -191,6 +199,8 @@ Every refusal leaves the prior model state unchanged.
 | Timing bound violated, later absence observed | timing failure remains unresolved; terminal evidence may persist but completion/output/capacity stay withheld |
 | Restart, lost reaper, PID reuse or mismatch | recovery required; exact identity mismatch mutates nothing; no custody adoption or signal |
 | Repeated cancel/wall/fatal race | earliest anchor retained; one stop latch and at most one signal |
+| Earlier cancellation delivered after observed wall service | Backdated trigger refused; signal/absence before that service refused without mutation |
+| Later trigger does not replace earliest anchor | Latest observed tick still fences signal/absence timestamps |
 
 ## Test strategy
 
@@ -209,7 +219,8 @@ Guard scenarios corresponding to future mutation targets:
 8. reopening creation after natural absence;
 9. accepting a zero, stale or substituted signal/absence identity;
 10. releasing completion, output or capacity after a timing violation; and
-11. settling a mutated frozen candidate or losing its exact settled operation fields.
+11. settling a mutated frozen candidate or losing its exact settled operation fields; and
+12. backdating a trigger, signal or absence behind any retained same-lifetime observation.
 
 The named Go tests assert these guards on the unmodified model. They are not an
 executed mutant campaign; actual mutation sensitivity remains unverified and is
@@ -229,7 +240,7 @@ go test ./internal/execution/teardownpassive
 Repository verification follows `AGENTS.md`: pnpm install/check/lint/test/schema/ADR
 verification, Go test/vet/build/lint and pinned `govulncheck`.
 
-Observed on the review-3 correction worktree on 2026-09-18 before head freeze:
+Observed on the review-3 correction worktree on 2026-09-18:
 
 - `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm lint`, `pnpm test`,
   `pnpm verify:schemas`, `pnpm verify:adrs`, `pnpm audit:dependencies` and
@@ -241,9 +252,20 @@ Observed on the review-3 correction worktree on 2026-09-18 before head freeze:
 - unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
   exported-comment findings tracked in issue #217. No C5b18 finding remains.
 
+For the causal-order correction, the new late-wall regression failed before the
+fix and passes after it. Refreshed `pnpm install --frozen-lockfile`, `pnpm check`,
+`pnpm lint`, `pnpm test`, schema/ADR verification, dependency audit and static-site
+build passed. Go test/vet/build, package race/coverage (87.5%), blocking lint,
+package `revive` and pinned `govulncheck@v1.6.0` under Go 1.25.13 passed. Full
+`golangci-lint run ./...` still reports only the 50 pre-existing issue-#217
+`revive` findings. An independent verdict on the corrected head is not yet claimed.
+
 Review instance 3 returned **Not ready** at `cbaf84d`; its two corrections,
-refreshed local verification and CI pass at `567c733`. Three review instances are exhausted; another independent
-review requires explicit human direction before merge or ADR disposition. The
+refreshed local verification and CI pass at `567c733`. A human-authorized fresh
+cycle began at `0aa6cbc`; its first reviewer returned **Not ready** on clock
+causality. The current correction rejects observations older than the latest
+accepted service tick, including when an earlier stop anchor remains selected.
+No independent verdict is claimed for the correction head. The
 host's alternate Go 1.26.5 is vulnerable to three standard-library
 advisories; it is not the declared build toolchain. Do not use it for this candidate.
 
@@ -271,6 +293,13 @@ could masquerade as actual late callback service, and terminal evidence after
 failed runner publication omitted exact observed absence identity. Both findings
 are accepted; no review verdict is claimed for the subsequent correction head.
 
+The first review in the explicitly human-authorized successor cycle inspected
+`0aa6cbc` and returned **Not ready**. It reproduced wall service at tick 1,100,
+then accepted cancellation at 250, signal at 260 and absence at 300, falsely
+classifying timing as satisfied. The finding is accepted. The correction uses a
+same-lifetime observation watermark and causally ordered repeated-trigger tests;
+its independent review is pending.
+
 ## Boundaries
 
 Always preserve Supervisor-only lifecycle ownership, durable-before-effect
@@ -288,10 +317,10 @@ guarantee, restored PID custody, or proof that cleanup occurred.
 
 - exact v1 bindings, clock policy and three state projections compile as a passive
   no-effect model;
-- every failure/restoration row and eleven guard scenarios execute and pass;
+- every failure/restoration row and twelve guard scenarios execute and pass;
 - no product consumer imports the package;
 - ADR-0047 remains Proposed with the concrete packet linked for maintainer review;
 - canonical status documents distinguish scoped `PASSED` from blocked runnable,
   installed, guest and product work; and
-- full required verification and a human-directed review decision after the
-  three-instance limit before merge.
+- full required verification and an independent verdict on the corrected head
+  before merge.

@@ -99,12 +99,16 @@ restart treats preparation as conservative may-exist. Pending/settled tokens bin
 the full immutable obligation, runner candidates bind exact process identity,
 and terminal evidence separately binds exact observed absence identity even when
 runner publication failed. Wall service observation remains separate from the
-fixed start-derived anchor; late service violates timing.
+fixed start-derived anchor; late service violates timing. A further corrected
+passive candidate fences all same-lifetime observed timestamps with a
+nondecreasing watermark; earlier delayed triggers without a separate current
+service tick are refused rather than backdating later signal or absence.
 
 Review instances 1–3 returned **Not ready**. Review-3 corrections and refreshed
-local verification and CI at `567c733` `PASSED`; a human-directed decision on further
-independent review remain required after the three-instance
-limit. Guard tests are not executed mutant proof. No product consumer imports
+local verification and CI at `567c733` `PASSED`. The first human-authorized
+successor review at `0aa6cbc` also returned **Not ready** on a backdated
+clock-observation sequence; its bounded correction awaits a new independent
+verdict. Guard tests are not executed mutant proof. No product consumer imports
 the package and no storage, process,
 clock, service, backend, VM or guest effect exists. This supplies a concrete packet
 for the acceptance review below; it does not accept this ADR or authorize runnable

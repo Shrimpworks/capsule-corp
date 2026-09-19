@@ -35,7 +35,15 @@ proof, missed wall action and missing record identity. Corrections are
 callback service and failed runner publication left the terminal candidate without
 exact absence identity. Both are corrected with focused regression cases and
 refreshed local gates and CI at `567c733` `PASSED`. Three review instances are
-exhausted; a human-directed independent verdict remains unclaimed.
+exhausted. Human direction opened a successor review cycle. Its first pass at
+`0aa6cbc` returned **Not ready** after reproducing a later cancellation at tick
+250, signal at 260 and absence at 300 despite previously observed wall service
+at 1,100; the model falsely marked timing satisfied. The finding is accepted.
+The bounded correction retains a nondecreasing same-lifetime observed-tick
+watermark and tests backdated refusals. Local Go/TypeScript/schema/ADR gates,
+package race/coverage, blocking lint and dependency scans pass; unrestricted
+Go lint retains only the 50 pre-existing issue-#217 `revive` findings. An
+independent verdict on the corrected head remains pending.
 Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 

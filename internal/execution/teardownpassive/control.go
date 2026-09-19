@@ -28,7 +28,8 @@ func (model *Model) latchStop(trigger Trigger, tick, serviceTick uint64) error {
 		model.state.TerminalConfirmed {
 		return ErrState
 	}
-	if !validTrigger(trigger) || !validTick(tick) || !validTick(serviceTick) || serviceTick < tick {
+	if !validTrigger(trigger) || !validTick(tick) || !validTick(serviceTick) ||
+		serviceTick < tick || serviceTick < model.state.LastObservedTick {
 		return ErrClock
 	}
 	switch trigger {
@@ -55,6 +56,7 @@ func (model *Model) latchStop(trigger Trigger, tick, serviceTick uint64) error {
 		}
 		model.updateTiming()
 	}
+	model.state.LastObservedTick = serviceTick
 	return nil
 }
 
@@ -64,7 +66,7 @@ func (model *Model) AttemptStart(tick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
-	if !validTick(tick) {
+	if !validTick(tick) || tick < model.state.LastObservedTick {
 		return ErrClock
 	}
 	if !model.Decision().MayStart {
@@ -74,6 +76,7 @@ func (model *Model) AttemptStart(tick uint64) error {
 		return ErrClock
 	}
 	model.state.Start = StartSnapshot{Attempted: true, Tick: tick}
+	model.state.LastObservedTick = tick
 	return nil
 }
 
@@ -83,7 +86,7 @@ func (model *Model) RequestSignal(identity ProcessIdentity, tick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
-	if !validTick(tick) {
+	if !validTick(tick) || tick < model.state.LastObservedTick {
 		return ErrClock
 	}
 	if model.state.Custody != CustodyExact {
@@ -99,6 +102,7 @@ func (model *Model) RequestSignal(identity ProcessIdentity, tick uint64) error {
 		return ErrClock
 	}
 	model.state.Signal = SignalSnapshot{Requested: true, Attempts: 1, ForceTick: tick}
+	model.state.LastObservedTick = tick
 	model.updateTiming()
 	return nil
 }
@@ -122,7 +126,7 @@ func (model *Model) ObserveAbsence(identity ProcessIdentity, tick uint64) error 
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
-	if !validTick(tick) {
+	if !validTick(tick) || tick < model.state.LastObservedTick {
 		return ErrClock
 	}
 	if model.state.Custody != CustodyExact || model.state.Absence.Observed {
@@ -139,6 +143,7 @@ func (model *Model) ObserveAbsence(identity ProcessIdentity, tick uint64) error 
 	}
 	model.state.Absence = AbsenceSnapshot{Observed: true, Tick: tick, Identity: identity}
 	model.state.Custody = CustodyNone
+	model.state.LastObservedTick = tick
 	model.updateTiming()
 	return nil
 }
@@ -156,6 +161,7 @@ func (model *Model) Restart() {
 	model.state.Signal = SignalSnapshot{}
 	model.state.Absence = AbsenceSnapshot{}
 	model.state.Start = StartSnapshot{}
+	model.state.LastObservedTick = 0
 	model.state.Timing = TimingUnknown
 	model.state.WallServiceLate = false
 	// No serialized creation-consumption proof exists. Even preparation alone

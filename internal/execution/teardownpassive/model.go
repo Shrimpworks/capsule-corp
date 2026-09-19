@@ -19,11 +19,12 @@ func NewModel(bindings Bindings) (*Model, error) {
 		bindings: bindings,
 		clock:    fixedClockPolicy,
 		state: Snapshot{
-			Contract:         ContractIdentity,
-			RecordVersion:    RecordVersionV1,
-			LastWriteOutcome: WriteNone,
-			Custody:          CustodyNone,
-			Timing:           TimingUnknown,
+			Contract:            ContractIdentity,
+			RecordVersion:       RecordVersionV1,
+			LastWriteOutcome:    WriteNone,
+			Custody:             CustodyNone,
+			Timing:              TimingUnknown,
+			TerminalDisposition: TerminalNone,
 		},
 		used: make(map[OperationID]struct{}, 3),
 	}, nil
@@ -54,7 +55,8 @@ func (model *Model) Decision() Decision {
 			!snapshot.Signal.Requested && !snapshot.Absence.Observed,
 		MayPublishTerminal: !blocked && snapshot.Absence.Observed &&
 			!snapshot.TerminalWriteStarted && !snapshot.Pending.Active,
-		MayRelease:               snapshot.TerminalConfirmed,
+		MayRelease: snapshot.TerminalConfirmed &&
+			snapshot.TerminalDisposition == TerminalCompleted,
 		StopIndependentOfStorage: !blocked && snapshot.Custody == CustodyExact && snapshot.Stop.Latched,
 		RecoveryRequired:         snapshot.RecoveryRequired,
 	}
@@ -69,7 +71,9 @@ func (model *Model) BeginPreparation(operationID OperationID) (PendingWrite, err
 	if model.state.PreparationStarted || operationID != model.bindings.PreparationOperationID {
 		return PendingWrite{}, ErrState
 	}
-	pending, err := model.beginWrite(operationID, WritePreparation)
+	candidate := model.durableProjection()
+	candidate.Prepared = true
+	pending, err := model.beginWrite(operationID, WritePreparation, candidate)
 	if err != nil {
 		return PendingWrite{}, err
 	}
@@ -109,7 +113,9 @@ func (model *Model) BeginRunnerIdentityWrite(operationID OperationID) (PendingWr
 		model.state.TerminalConfirmed {
 		return PendingWrite{}, ErrState
 	}
-	pending, err := model.beginWrite(operationID, WriteRunnerIdentity)
+	candidate := model.durableProjection()
+	candidate.RunnerIdentityConfirmed = true
+	pending, err := model.beginWrite(operationID, WriteRunnerIdentity, candidate)
 	if err != nil {
 		return PendingWrite{}, err
 	}
@@ -129,7 +135,13 @@ func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, e
 	if !model.Decision().MayPublishTerminal {
 		return PendingWrite{}, ErrState
 	}
-	pending, err := model.beginWrite(operationID, WriteTerminalJoin)
+	candidate := model.durableProjection()
+	candidate.TerminalConfirmed = true
+	candidate.TerminalDisposition = TerminalCompleted
+	if model.state.Timing == TimingViolated {
+		candidate.TerminalDisposition = TerminalTimingViolated
+	}
+	pending, err := model.beginWrite(operationID, WriteTerminalJoin, candidate)
 	if err != nil {
 		return PendingWrite{}, err
 	}
@@ -137,7 +149,11 @@ func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, e
 	return pending, nil
 }
 
-func (model *Model) beginWrite(operationID OperationID, kind WriteKind) (PendingWrite, error) {
+func (model *Model) beginWrite(
+	operationID OperationID,
+	kind WriteKind,
+	candidate DurableProjection,
+) (PendingWrite, error) {
 	if model.state.Pending.Active {
 		return PendingWrite{}, ErrPendingWrite
 	}
@@ -153,6 +169,7 @@ func (model *Model) beginWrite(operationID OperationID, kind WriteKind) (Pending
 	}
 	pending := PendingWrite{
 		Active: true, OperationID: operationID, Generation: generation, Kind: kind,
+		Candidate: candidate,
 	}
 	model.used[operationID] = struct{}{}
 	model.state.Pending = pending
@@ -176,17 +193,39 @@ func (model *Model) SettleWrite(pending PendingWrite, outcome WriteOutcome) erro
 	}
 	switch pending.Kind {
 	case WritePreparation:
-		model.state.Prepared = true
 	case WriteRunnerIdentity:
-		model.state.RunnerIdentityConfirmed = true
 	case WriteTerminalJoin:
-		model.state.TerminalConfirmed = true
-		model.state.OutputReleased = true
-		model.state.CapacityReleased = true
 	default:
 		return ErrState
 	}
+	model.applyDurableProjection(pending.Candidate)
+	if pending.Kind == WriteTerminalJoin {
+		if pending.Candidate.TerminalDisposition == TerminalCompleted {
+			model.state.OutputReleased = true
+			model.state.CapacityReleased = true
+		} else {
+			model.state.RecoveryRequired = true
+		}
+	}
 	return nil
+}
+
+func (model *Model) durableProjection() DurableProjection {
+	return DurableProjection{
+		Prepared:                model.state.Prepared,
+		CreationConsumed:        model.state.CreationConsumed,
+		RunnerIdentityConfirmed: model.state.RunnerIdentityConfirmed,
+		TerminalConfirmed:       model.state.TerminalConfirmed,
+		TerminalDisposition:     model.state.TerminalDisposition,
+	}
+}
+
+func (model *Model) applyDurableProjection(candidate DurableProjection) {
+	model.state.Prepared = candidate.Prepared
+	model.state.CreationConsumed = candidate.CreationConsumed
+	model.state.RunnerIdentityConfirmed = candidate.RunnerIdentityConfirmed
+	model.state.TerminalConfirmed = candidate.TerminalConfirmed
+	model.state.TerminalDisposition = candidate.TerminalDisposition
 }
 
 func samePending(left, right PendingWrite) bool {

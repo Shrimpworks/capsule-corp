@@ -125,7 +125,7 @@ func (model *Model) Restart() {
 	model.state.Absence = AbsenceSnapshot{}
 	model.state.Start = StartSnapshot{}
 	model.state.Timing = TimingUnknown
-	model.state.RecoveryRequired = !model.state.TerminalConfirmed
+	model.state.RecoveryRequired = model.state.TerminalDisposition != TerminalCompleted
 }
 
 func (model *Model) updateTiming() {

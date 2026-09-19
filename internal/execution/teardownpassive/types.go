@@ -188,6 +188,28 @@ const (
 	TimingViolated TimingDisposition = "violated"
 )
 
+// TerminalDisposition separates successful completion from durable unresolved
+// timing-failure evidence.
+type TerminalDisposition string
+
+const (
+	// TerminalNone records that no terminal candidate has been confirmed.
+	TerminalNone TerminalDisposition = "none"
+	// TerminalCompleted records an absence-backed terminal success.
+	TerminalCompleted TerminalDisposition = "completed"
+	// TerminalTimingViolated records absence after a mandatory timing bound failed.
+	TerminalTimingViolated TerminalDisposition = "timing-violated"
+)
+
+// DurableProjection is the immutable candidate frozen into one pending write.
+type DurableProjection struct {
+	Prepared                bool
+	CreationConsumed        bool
+	RunnerIdentityConfirmed bool
+	TerminalConfirmed       bool
+	TerminalDisposition     TerminalDisposition
+}
+
 // PendingWrite binds the sole outstanding operation. Its fields form the token
 // required for exact settlement.
 type PendingWrite struct {
@@ -195,6 +217,7 @@ type PendingWrite struct {
 	OperationID OperationID
 	Generation  uint64
 	Kind        WriteKind
+	Candidate   DurableProjection
 }
 
 // StopSnapshot retains the monotonic latch and earliest accepted action anchor.
@@ -235,6 +258,7 @@ type Snapshot struct {
 	RunnerIdentityConfirmed bool
 	TerminalWriteStarted    bool
 	TerminalConfirmed       bool
+	TerminalDisposition     TerminalDisposition
 	LastSettledGeneration   uint64
 	LastWriteOutcome        WriteOutcome
 	Pending                 PendingWrite

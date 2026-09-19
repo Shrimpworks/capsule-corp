@@ -290,6 +290,25 @@ func TestTimingViolationCannotBecomeSuccess(t *testing.T) {
 	if got := model.Snapshot().Timing; got != TimingViolated {
 		t.Fatalf("late trigger rewrote failed timing to %s", got)
 	}
+	pending, err := model.BeginTerminalWrite(operationID(0x33))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := model.SettleWrite(pending, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+	snapshot := model.Snapshot()
+	if !snapshot.TerminalConfirmed ||
+		snapshot.TerminalDisposition != TerminalTimingViolated ||
+		!snapshot.RecoveryRequired || snapshot.OutputReleased ||
+		snapshot.CapacityReleased || model.Decision().MayRelease {
+		t.Fatal("timing violation became public completion or release")
+	}
+	model.Restart()
+	snapshot = model.Snapshot()
+	if !snapshot.RecoveryRequired || snapshot.OutputReleased || snapshot.CapacityReleased {
+		t.Fatal("restart converted durable timing failure into release")
+	}
 }
 
 func TestInvalidAndOverflowingClockInputsLeaveStateUnchanged(t *testing.T) {
@@ -355,7 +374,9 @@ func TestConfirmedTerminalJoinIsTheOnlyReleasePoint(t *testing.T) {
 		t.Fatal(err)
 	}
 	snapshot := model.Snapshot()
-	if !snapshot.TerminalConfirmed || !snapshot.OutputReleased || !snapshot.CapacityReleased || !model.Decision().MayRelease {
+	if !snapshot.TerminalConfirmed ||
+		snapshot.TerminalDisposition != TerminalCompleted ||
+		!snapshot.OutputReleased || !snapshot.CapacityReleased || !model.Decision().MayRelease {
 		t.Fatal("confirmed terminal join did not release all three projections")
 	}
 }
@@ -530,7 +551,8 @@ func independentDecision(snapshot Snapshot) Decision {
 			!snapshot.Signal.Requested && !snapshot.Absence.Observed,
 		MayPublishTerminal: !blocked && snapshot.Absence.Observed &&
 			!snapshot.TerminalWriteStarted && !snapshot.Pending.Active,
-		MayRelease:               snapshot.TerminalConfirmed,
+		MayRelease: snapshot.TerminalConfirmed &&
+			snapshot.TerminalDisposition == TerminalCompleted,
 		StopIndependentOfStorage: !blocked && snapshot.Custody == CustodyExact && snapshot.Stop.Latched,
 		RecoveryRequired:         snapshot.RecoveryRequired,
 	}

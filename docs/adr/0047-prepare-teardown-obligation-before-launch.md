@@ -95,8 +95,8 @@ absence within the fixed bounds. Timing-violated terminal evidence stays unresol
 and recovery-required without completion, output or capacity release.
 
 Review instance 1 returned **Not ready** and its four findings are accepted and
-corrected with focused tests. Refreshed full verification and review instance 2 of
-3 remain required. No product consumer imports the package and no storage, process,
+corrected; refreshed full local verification passes. Review instance 2 of 3 remains
+required. No product consumer imports the package and no storage, process,
 clock, service, backend, VM or guest effect exists. This supplies a concrete packet
 for the acceptance review below; it does not accept this ADR or authorize runnable
 work.

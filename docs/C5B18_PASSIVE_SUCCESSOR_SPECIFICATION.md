@@ -2,8 +2,8 @@
 
 Date: 2026-09-18
 
-Status: review-instance-1 corrections `IN_PROGRESS — TRENDING_GOOD`; fresh-context
-review instance 2 of 3 and refreshed full verification pending.
+Status: review-instance-1 corrections and refreshed local required verification
+`PASSED`; fresh-context review instance 2 of 3 pending.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -207,7 +207,18 @@ go test ./internal/execution/teardownpassive
 Repository verification follows `AGENTS.md`: pnpm install/check/lint/test/schema/ADR
 verification, Go test/vet/build/lint and pinned `govulncheck`.
 
-The corrected head requires refreshed full results before review instance 2 begins.
+Observed on the corrected head on 2026-09-18:
+
+- `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm lint`, `pnpm test`,
+  `pnpm verify:schemas`, `pnpm verify:adrs`, `pnpm audit:dependencies` and
+  `pnpm site:build` passed;
+- `go test ./...`, `go vet ./...`, `go build ./...`, package race/coverage
+  (`85.5%` statements), formatting, CI security/correctness lint, new-code
+  `revive` lint and pinned `govulncheck@v1.6.0` passed; and
+- unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
+  exported-comment findings tracked in issue #217. No C5b18 finding remains.
+
+Fresh-context review instance 2 remains required before merge or ADR disposition.
 
 ## Independent review loop
 

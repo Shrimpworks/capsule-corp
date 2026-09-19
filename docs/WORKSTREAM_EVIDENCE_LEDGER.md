@@ -25,8 +25,9 @@ late settlement, restart custody loss and completion-last release. Review instan
 natural absence, release after timing violation, missing exact identity comparison
 and incomplete frozen/settled write projection. The implementation task accepts
 all four findings. Commits `dacb95f`, `bffc71e`, `39cfe7b`, `b459609` and
-`5307e81` correct them; focused tests pass. Refreshed repository checks and review
-instance 2 remain `IN_PROGRESS — TRENDING_GOOD`. No corrected-head review verdict
+`5307e81` correct them. Refreshed repository suites, build, vet, lint profiles,
+dependency/vulnerability scans and 85.5% package race coverage pass. Review
+instance 2 remains `IN_PROGRESS — TRENDING_GOOD`; no corrected-head review verdict
 is claimed. Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 

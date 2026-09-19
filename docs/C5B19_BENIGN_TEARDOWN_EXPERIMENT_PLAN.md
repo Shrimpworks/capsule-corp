@@ -3,7 +3,7 @@
 Date: 2026-09-19
 
 Work item: documentation-only plan for a later bounded runnable experiment.
-Status: `IN_PROGRESS — TRENDING_GOOD` while exact mechanism and review are open.
+Status: `IN_PROGRESS — TRENDING_GOOD` while gates 2–6 remain open.
 Scope: defensive validation of ADR-0047's prepared-obligation ordering and
 storage-independent Supervisor stop path, using one pinned fixed benign direct
 child in owned disposable local directories on an explicitly authorized macOS
@@ -12,13 +12,12 @@ Evidence or reason: [C5b16](C5B_TIMING_FAULT_CHECKPOINT.md) found a controlled
 publication delay that exceeded the total teardown bound; [C5b18](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md)
 passed a no-effect ordering model; [ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md)
 is Accepted as architecture only.
-Remaining work: mechanism/source review, exact implementation-packet review,
-explicit implementation authorization, independent implemented-byte review,
+Remaining work: exact implementation-packet review, explicit implementation
+authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: independently review the concrete
-[gate-1 mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
-alongside the ownership/proof packet below; neither approves implementation
-or a first child run.
+Next action: freeze and independently review the exact gate-2 implementation
+packet after integration of the [reviewed gate-1 mechanism decision](C5B19_GATE1_MECHANISM_DECISION.md).
+The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
 `BLOCKED` pending the named review, authorization and separate later evidence.
@@ -186,8 +185,9 @@ This is a design candidate, not executable source or a timing guarantee:
 
 ### Gate-1 read-only ownership and proof packet
 
-Status: `IN_PROGRESS — TRENDING_GOOD` for a reviewable candidate, not a gate-1
-pass or runnable approval. The maintainer owns the mechanism decision. This
+Status: `PASSED` for prospective gate-1 design review at corrected head
+`5cc312907acbb7a74af009891f1089d4f73f57b0`, not runnable approval.
+The maintainer owns the mechanism decision. This
 packet compares the selected ADR-0047 scheduling split with the old synchronous
 chain; it inspects source and platform contracts only. No child or fault case
 was executed.
@@ -351,8 +351,8 @@ trace and checker output, then restore the exact clean source.
 
 ## Ordered gates and acceptance
 
-1. **Mechanism review — `BLOCKED` on independent prospective call-graph,
-   pipe-protocol and custody review.**
+1. **Mechanism review — `PASSED` for the prospective design only at reviewed
+   head `5cc312907acbb7a74af009891f1089d4f73f57b0`.**
    Specify current-host process/clock semantics, single-waiter custody, bounded
    worker and lock separation, exact frozen operation settlement, and the
    setup/stop race. The continuous-time policy is chosen for the candidate,
@@ -362,7 +362,8 @@ trace and checker output, then restore the exact clean source.
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is
    assumed.
-2. **Exact implementation-packet review — `BLOCKED` on gate 1.** Freeze the
+2. **Exact implementation-packet review — `BLOCKED` on the exact packet and
+   its independent review.** Freeze the
    intended source inputs and call graph, toolchain/OS/architecture, fixture and
    harness specifications, directory and process caps, fault sites, timeouts,
    cleanup, descriptor allowlist, executable-identity policy, independent

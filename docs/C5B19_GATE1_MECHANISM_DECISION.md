@@ -1,6 +1,6 @@
 # C5b19 gate-1 mechanism decision candidate
 
-Date: 2026-09-19. Owner: Capsule maintainer. Status: `IN_PROGRESS — TRENDING_GOOD` for this prospective design; gate 1 remains `BLOCKED` on independent review. Review instance 1 of 3 was **Not ready**; its two P2 and one P3 findings are accepted and amended below for instance 2. This is a documentation-only decision packet, not implementation or child-run authorization.
+Date: 2026-09-19. Owner: Capsule maintainer. Gate-1 prospective design review: `PASSED` at reviewed head `5cc312907acbb7a74af009891f1089d4f73f57b0` (independent instance 2 of 3: **Ready**). The parent C5b19 experiment remains `IN_PROGRESS — TRENDING_GOOD`; gates 2–6 and runnable/product admission remain `BLOCKED`. This is a documentation-only decision packet, not implementation or child-run authorization.
 
 ## Question and authorized boundary
 
@@ -77,7 +77,12 @@ and separating the three ordered operations under one pending slot. The second
 P2 is addressed by the fresh final setup/cancellation check and the explicit
 late-service oracle; this does not promise scheduler timeliness. The P3 stale
 release/acquire-mailbox wording is replaced with pipe-specific ordering in the
-experiment plan. These corrections are **proposed**, not independently passed;
-review instance 2 must challenge them before Gate 1 can change status.
+experiment plan. Review instance 2 independently challenged the exact corrected
+head and returned **Ready** with no remaining actionable findings. It verified
+the three sequential C5b18 write transitions, conditional custody argument,
+changed-doc links, frame worksheet and relevant platform/source contracts
+read-only. It did not execute the fixture or reproduce the full local suite;
+those limits remain separate from its prospective design verdict. No third
+review is needed for this status-only recording.
 
-**Gate-1 outcome requested:** independent reviewer instance 2 assesses these accepted instance-1 corrections against ADR-0047 and the five proof obligations in the experiment plan. Until review closes blocking findings, gate 1 is `BLOCKED`; gates 2–6 remain `BLOCKED`. No implementation, child execution or security/product claim follows from merging this packet.
+**Gate-1 outcome:** `PASSED` for the prospective design at the reviewed head only. Exact frame schemas, host/timer/cleanup packet, linked-source implementation proof, owner authorizations and bounded run remain gates 2–6. Merge of this packet does not authorize implementation, child execution or a security/product claim.

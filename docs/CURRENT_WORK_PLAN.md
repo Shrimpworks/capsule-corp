@@ -2,15 +2,15 @@
 
 Date: 2026-09-19
 
-Next work item: independently review instance-1 corrections to the
-[C5b19 gate-1 mechanism decision candidate](C5B19_GATE1_MECHANISM_DECISION.md)
-under Accepted ADR-0047. PRs #373–#376 merged the plan, review follow-up,
-ownership packet and concrete mechanism candidate. Independent review instance
-1 of 3 returned **Not ready** with two P2 ownership/start-admission gaps and
-one P3 stale transport phrase; all three are accepted and corrected in the
-current follow-up. Gate 1 remains `BLOCKED` pending review instance 2 of the
-exact corrected packet. Gate 2 exact implementation-packet work follows only
-after Gate 1 closes. No implementation or child run is authorized.
+Next work item: freeze and independently review the exact C5b19 gate-2
+implementation packet after merging the [gate-1 mechanism correction](C5B19_GATE1_MECHANISM_DECISION.md).
+PRs #373–#376 merged the plan and prospective mechanism candidate. Independent
+review instance 1 of 3 returned **Not ready**; the three findings were corrected
+at `5cc312907acbb7a74af009891f1089d4f73f57b0`. Instance 2 returned
+**Ready** with no remaining actionable findings. Gate-1 prospective design
+review is `PASSED` at that exact head; PR #377 integration remains pending.
+Gate 2 is `BLOCKED` on its exact packet/review. No implementation or child run
+is authorized.
 
 Status: C5b18 causal-clock correction and local gates `PASSED`; independent
 review of `a985707` **Ready with non-blocking follow-ups**. Its sole P3 wording

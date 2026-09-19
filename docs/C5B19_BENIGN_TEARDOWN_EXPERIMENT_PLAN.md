@@ -100,6 +100,73 @@ actual native source before approving custody. Freeze the child's descriptor
 allowlist and close-on-exec behavior; a start pipe must not carry other host
 authority into the fixture.
 
+## Mechanism source review: evidence, inference and open gate
+
+Read-only review on 2026-09-19 used macOS 26.6.2 (build 25G83), Xcode 26.6,
+macOS SDK 26.5, and the immutable C5b16 archive commit
+`0efd03def6bc333a92c8b9809bc56b7b3ce9ea80`. No child or fault fixture was
+run. The possible later run host has not been named or authorized.
+
+| Class | Evidence and consequence |
+| --- | --- |
+| Documented fact | Apple's [`posix_spawn(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/posix_spawn.2.html) returns a child PID on success, leaves its output undefined on failure, and can inherit descriptors. Apple's [`wait(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/wait.2.html) supports positive-PID child-specific `waitpid(..., WNOHANG)` and makes `ECHILD` an error, not absence proof. [`kill(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/kill.2.html) addresses a positive PID, but its success or `ESRCH` is not a reap observation. |
+| Documented fact | Apple's [`sigaction(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/sigaction.2.html) says `SA_NOCLDWAIT` suppresses zombies. [POSIX process-ID reuse](https://pubs.opengroup.org/onlinepubs/009696699/basedefs/xbd_chap04.html#tag_04_12) prohibits reuse until process lifetime ends; [POSIX exit](https://pubs.opengroup.org/onlinepubs/009695299/functions/exit.html) retains an unwaited child as a zombie absent `SIGCHLD` ignore/`SA_NOCLDWAIT`. These support only a conditional same-parent, exclusive-waiter direct-child argument. |
+| Source observation | Pinned [C5b16 native lifecycle](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/native/lifecycle.c) checks default `SIGCHLD` without `SA_NOCLDWAIT`, uses `POSIX_SPAWN_CLOEXEC_DEFAULT`, retains a successful returned PID, and uses child-specific `waitpid(WNOHANG)`. It assumes one serialized caller and exclusive reaper. Its effect 16 still waits for `BeforeTeardown` before signaling, and effects 17–19 checkpoint before reap/absence; it is not the successor mechanism. Pinned [Go bridge](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/bridge/owner.go) holds one mutex across store calls. |
+| Inference | If one live Supervisor lane is the exclusive waiter, `SIGCHLD` remains at default without `SA_NOCLDWAIT`, and no other code reaps the child, an exit between `waitpid(WNOHANG)==0` and positive-PID `kill` should not redirect the signal to a reused PID: an exited child remains unreaped. Still latch the signal attempt before calling `kill`; regardless of return, use exact `waitpid` status for absence. This is not a proved property of a future concurrent implementation. |
+| Source conflict / unknown | Apple's [continuous-time page](https://developer.apple.com/documentation/driverkit/mach_continuous_time) says `mach_continuous_time()` advances during sleep and suggests `CLOCK_MONOTONIC_RAW` as equivalent, while its [uptime-raw page](https://developer.apple.com/documentation/driverkit/kiotimerclockuptimeraw) says `CLOCK_MONOTONIC_RAW` excludes sleep. SDK 26.5 `mach/mach_time.h` explicitly describes `mach_continuous_time()` as advancing during sleep; C5b16's [trace](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/native/timing.h) uses `CLOCK_MONOTONIC` for observation only. Do not select a clock by treating the contradictory aliases as settled. |
+
+Mechanism disposition: `IN_PROGRESS — TRENDING_GOOD` for source narrowing,
+not `PASSED` for runnable readiness. Before gate 1 closes, freeze a reviewable
+native/Go lane and mailbox call graph, check the existing source closure for
+competing waiters or signal-disposition changes, choose one clock and coherent
+awake/suspend policy, and specify exit-before-signal, `ECHILD`/`ESRCH` and
+blocked-store test oracles. After explicit implementation authorization, inspect
+the resulting code and prove those assumptions before its first child run; a
+mismatch stops the experiment. The fallback is no signal or start on lost
+custody, and no timing/completion claim on missing observations; it is not a
+daemon/helper watchdog. If direct-child exclusivity fails, revise the candidate
+and seek an ADR for any added lifecycle authority.
+
+### Proposed first call graph for gate-1 review
+
+This is a design candidate, not executable source or a timing guarantee:
+
+1. Before creation, the storage lane confirms one exact prepared obligation.
+   Failure or unknown commit closes creation. Only a confirmed result reaches
+   the native control lane.
+2. The control lane creates one child, retains its successful PID and sole
+   wait/reap right, then submits one frozen runner-identity publication to a
+   worker. The worker owns the bridge/store lock and writes one immutable reply
+   into a single-slot release/acquire mailbox; it never changes custody, stop,
+   clocks, start or capacity. No second write or attempt bypasses that slot.
+3. On each control iteration, sample the chosen clock and accept the fixed
+   attempt-bound test cancellation slot; evaluate fatal/setup expiry and the
+   wall bound **before** applying a ready store reply. Stop wins a same-tick
+   race. Only this lane may apply an exact settled reply or write a start token.
+   A pending mailbox cannot block the iteration; worker completion cannot
+   directly wake or authorize the child.
+4. Once stop latches, check current-lifetime reaper ownership and observe the
+   exact child via nonblocking `waitpid`. If still live, set the private signal-
+   attempt latch **before** one positive-PID `kill`; then continue exact
+   `waitpid` observation. `kill` return and `ECHILD`/`ESRCH` never substitute
+   for absence. Keep polling/dispatch bounded independently of the worker;
+   record actual service/signal/reap times, not a scheduled callback time.
+5. After exact absence, defer terminal publication until the prior operation
+   has settled and the exact frozen generation can advance. A stuck worker
+   retains owner lock and blocks durable completion/capacity indefinitely, not
+   stop or absence. No result/output is released from this experiment.
+
+For the first clock candidate, use [`mach_continuous_time()`](https://developer.apple.com/documentation/driverkit/mach_continuous_time)
+plus checked [`mach_timebase_info()`](https://developer.apple.com/documentation/driverkit/mach_timebase_info-c.func)
+conversion for every same-lifetime anchor and observation: the SDK header and
+Apple's direct API description say it advances through sleep.
+On wake, a serviced wall callback after its original anchor is a timing failure;
+sleep never grants a new budget. The later exact packet must confirm API support
+on its named macOS floor and test the conversion/overflow and callback-service
+oracles. The contradictory `CLOCK_MONOTONIC_RAW` documentation above is not used
+to infer an alias or mix two clocks. The test harness supplies only fixed,
+attempt-bound cancellation fixtures; it does not prove product authentication.
+
 ## Clock and observation contract
 
 Use the [C5b17 anchors](C5B_TEARDOWN_DEADLINE_DESIGN.md#proposed-clock-anchors)
@@ -120,10 +187,10 @@ that includes it. This is a clock-policy decision, not evidence of timely stop
 through suspend/wake. The runnable plan must specify the chosen Darwin clock's
 behavior across suspend/wake and identify scheduler stalls as timing failures
 or unmeasured conditions; it may not silently pause or reset a budget. Restart
-clears live custody/ticks,
-preserves preparation and uncertainty, blocks replacement and reports recovery
-required. Supervisor death, suspend/power loss and installed recovery remain
-separate gates; this single-child run makes no success claim for them.
+clears live custody/ticks, preserves preparation and uncertainty, blocks
+replacement and reports recovery required. Supervisor death, suspend/power loss
+and installed recovery remain separate gates; this single-child run makes no
+success claim for them.
 
 ## Bounded cases and independent oracles
 
@@ -171,10 +238,11 @@ trace and checker output, then restore the exact clean source.
 
 ## Ordered gates and acceptance
 
-1. **Mechanism review — `BLOCKED` on primary-source and local source evidence.**
-   Confirm Darwin process/clock semantics, single-waiter custody, bounded worker
-   and lock separation, exact frozen operation settlement, and the setup/stop
-   race. Reject or revise candidate before implementation if any premise fails.
+1. **Mechanism review — `BLOCKED` on exact call graph and clock choice.**
+   Specify current-host process/clock semantics, single-waiter custody, bounded
+   worker and lock separation, exact frozen operation settlement, and the
+   setup/stop race. Reject or revise candidate before implementation if any
+   premise fails.
    Check the native test/platform and narrow Supervisor-transport rows of
    [ecosystem reuse map](ECOSYSTEM_REUSE_AND_ADOPTION.md); complete its policy
    checklist for any proposed dependency or custom primitive. No new package is

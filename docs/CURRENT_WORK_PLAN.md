@@ -5,9 +5,9 @@ Date: 2026-09-18
 Next work item: obtain explicit human direction for a fresh C5b18 independent
 review after its three-instance limit; keep the corrected PR draft meanwhile.
 
-Status: review instance 3 returned **Not ready**; its two findings and refreshed
-local verification `PASSED`. Independent review is `BLOCKED` on human direction;
-new-head CI remains pending.
+Status: review instance 3 returned **Not ready**; its two findings, refreshed
+local verification and CI at `567c733` `PASSED`. Independent review is `BLOCKED`
+on human direction.
 
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 
@@ -32,8 +32,8 @@ ADR lifecycle or product-admission result.
 
 ## 2026-09-18 C5b18 passive teardown successor model
 
-Status: review-3 corrections and local verification `PASSED`; prior-head CI
-`PASSED`, new-head CI and human-directed review decision pending.
+Status: review-3 corrections, local verification and CI at `567c733` `PASSED`;
+human-directed independent review decision pending.
 [ADR-0047](adr/0047-prepare-teardown-obligation-before-launch.md) remains **Proposed**;
 runnable implementation and installed/guest/product admission remain `BLOCKED`.
 
@@ -534,7 +534,7 @@ branch and pull request unless the orchestrator explicitly groups it before work
 | C5b9 | Bind the complete immutable no-run composite | `PASSED` | Archive merge [`3965e6b5cc87d476da7f431d7ed8a5758011a1b8`](https://github.com/Shrimpworks/capsule-experiments/tree/3965e6b5cc87d476da7f431d7ed8a5758011a1b8/experiments/typed-guest-transport-c5b9-immutable-no-run-composite) binds the exact runner, libkrun, libkrunfw, 100,663,296-byte root, controller, and root-bound effects object. Static verification closes the controller and 13-symbol libkrun surfaces, 14-file archive inventory, typed caps and completion-last fixture, teardown ordering, all predecessor verifiers, nine unit tests, and 14 mutations. `_c5b8_controlled_test_operation` deliberately has no provider; host, guest, authorization, and every effect remain absent. Nothing was loaded or executed, and no v19/v27 identity was reused. |
 | C5b compatibility preflight | Test direct provider-only composition | `PASSED`; exact candidate `NO_GO` | Archive merge [`7fc3af9c46895b340c3118a96cb50abb26b1d977`](https://github.com/Shrimpworks/capsule-experiments/tree/7fc3af9c46895b340c3118a96cb50abb26b1d977/experiments/typed-guest-transport-c5b-controlled-harness-preflight) retains exact component identities, four closed contradictions, static source/Mach-O verification, ten mutations, and a closed archive inventory. It abandons only binding the retained C5b9 inputs by supplying the missing operation symbol: runner/root identity, effect order, operation ABI, and single-libkrun-owner requirements do not compose truthfully. No native artifact, libkrun/HVF, runner, VM, or guest executed. |
 | C5b11 | Bind the fault-convergent fixed-runner no-run successor | `PASSED` for construction/static evidence | [Immutable merge `f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d`](https://github.com/Shrimpworks/capsule-experiments/tree/f206e4ef2cd326ee74e5b7b2739c62efe6da7d6d/experiments/typed-guest-transport-c5b11-bound-fault-convergent-no-run-successor) retains exact plan/payload/profile binding, one runner importing 13 libkrun symbols, a Supervisor driver importing zero libkrun and 24 closed providers, distinct restart cursors, and fault/replay/teardown models. PR #31 reports exact-head C5b-S5 review `PASSED` / `Ready`; the [checkpoint](C5B_FIXED_RUNNER_SUCCESSOR_CHECKPOINT.md) separates that publication from archived pre-review prose and fresh verification. Providers and effects remain absent. C5b10 is not accepted evidence. |
-| C5b18 | Freeze the passive teardown-obligation successor | Review-3 corrections and local verification `PASSED`; independent review `BLOCKED` on human direction | Reviews 1–3 were **Not ready**. Actual wall-service tick and exact terminal absence identity now have guard tests; new-head CI and human-directed fresh review remain before any maintainer disposition of Proposed ADR-0047. No runnable fixture, process or guest is authorized. |
+| C5b18 | Freeze the passive teardown-obligation successor | Review-3 corrections, local verification and CI at `567c733` `PASSED`; independent review `BLOCKED` on human direction | Reviews 1–3 were **Not ready**. Actual wall-service tick and exact terminal absence identity now have guard tests; human-directed fresh review remains before any maintainer disposition of Proposed ADR-0047. No runnable fixture, process or guest is authorized. |
 | C5b providers | Construct the missing fixed process/transport/recovery providers | `BLOCKED` on implementation | Start from the exact C5b11 ABI, attempt bindings, and independent recovery oracle. Freeze the bounded no-run source/provenance/test packet, implement real provider source with closed inputs/imports, reproduce its artifacts, and independently review the new composition. Declarations or test-double results cannot prove provider/platform behavior; no guest execution is authorized by this task row. |
 | C5b | Run the controlled typed-transport harness | `BLOCKED` | Requires provider implementation/provenance and independent review of the complete exact composition, then final owner authorization naming its immutable merge and manifest. Retain directional copy, chunk/cap+1, stall/reset/cancel, descriptor substitution, response-loss, completion-last, teardown, and restoration evidence without making an admission decision. |
 | C6a | Build the installed authenticated service and protected-state boundary | `BLOCKED` | Requires passed C2b and C3c under Accepted ADR-0029, then separate authorization for the Keychain/service/protected-root corpus. C3c must supply Accepted ADR-0038/0045 decisions or accepted replacements that freeze the authority descriptor and state-engine binding. Implement only method-specific listeners, peer authentication, owner/store startup, and the four passively frozen Supervisor consumers. |

@@ -86,8 +86,8 @@ and the [C5b18 passive successor](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) now
 freezes proposed record/model identities plus candidate-durable, current-lifetime
 and pending-write separation. Its deterministic no-effect Go model has guard
 scenarios, not a completed mutant campaign. Review instances 1–3 returned
-**Not ready**; review-3 corrections and refreshed local gates `PASSED`. Previous-head
-CI passed; new-head CI and an explicit human-directed decision on review after
+**Not ready**; review-3 corrections, refreshed local gates and CI at `567c733`
+`PASSED`. An explicit human-directed decision on review after
 the three-instance limit, then maintainer disposition of ADR-0047, precede runnable work.
 Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed

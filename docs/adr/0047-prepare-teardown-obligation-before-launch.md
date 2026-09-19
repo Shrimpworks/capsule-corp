@@ -102,7 +102,7 @@ runner publication failed. Wall service observation remains separate from the
 fixed start-derived anchor; late service violates timing.
 
 Review instances 1–3 returned **Not ready**. Review-3 corrections and refreshed
-local verification `PASSED`; new-head CI and a human-directed decision on further
+local verification and CI at `567c733` `PASSED`; a human-directed decision on further
 independent review remain required after the three-instance
 limit. Guard tests are not executed mutant proof. No product consumer imports
 the package and no storage, process,

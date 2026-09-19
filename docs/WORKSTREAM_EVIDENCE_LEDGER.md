@@ -34,8 +34,8 @@ proof, missed wall action and missing record identity. Corrections are
 **Not ready** because the scheduled wall anchor could stand in for actual late
 callback service and failed runner publication left the terminal candidate without
 exact absence identity. Both are corrected with focused regression cases and
-refreshed local gates `PASSED`. Three review instances are exhausted; new-head CI
-and a human-directed independent verdict remain unclaimed.
+refreshed local gates and CI at `567c733` `PASSED`. Three review instances are
+exhausted; a human-directed independent verdict remains unclaimed.
 Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 

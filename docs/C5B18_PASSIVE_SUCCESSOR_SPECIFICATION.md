@@ -2,8 +2,8 @@
 
 Date: 2026-09-18
 
-Status: review instance 3 returned **Not ready**; final two corrections and
-refreshed local verification `PASSED`. Independent review remains `BLOCKED` on
+Status: review instance 3 returned **Not ready**; final two corrections,
+refreshed local verification and CI at `567c733` `PASSED`. Independent review remains `BLOCKED` on
 human direction after the three-instance limit;
 new review requires an explicit human decision.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
@@ -241,8 +241,8 @@ Observed on the review-3 correction worktree on 2026-09-18 before head freeze:
 - unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
   exported-comment findings tracked in issue #217. No C5b18 finding remains.
 
-Review instance 3 returned **Not ready** at `cbaf84d`; its two corrections and
-refreshed local verification pass. Three review instances are exhausted; another independent
+Review instance 3 returned **Not ready** at `cbaf84d`; its two corrections,
+refreshed local verification and CI pass at `567c733`. Three review instances are exhausted; another independent
 review requires explicit human direction before merge or ADR disposition. The
 host's alternate Go 1.26.5 is vulnerable to three standard-library
 advisories; it is not the declared build toolchain. Do not use it for this candidate.

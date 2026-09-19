@@ -15,8 +15,8 @@ is Accepted as architecture only.
 Remaining work: mechanism/source review, exact implementation-packet review,
 explicit implementation authorization, independent implemented-byte review,
 separate first-run authorization, bounded run, retained evidence and review.
-Next action: close the gate-1 mechanism premises below; this plan's review does
-not approve implementation or a first child run.
+Next action: independently review the gate-1 prospective mechanism packet
+below; this plan does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable experiment, installed lifecycle, guest execution and product admission:
 `BLOCKED` pending the named review, authorization and separate later evidence.
@@ -114,7 +114,8 @@ run. The possible later run host has not been named or authorized.
 | Class | Evidence and consequence |
 | --- | --- |
 | Documented fact | Apple's [`posix_spawn(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/posix_spawn.2.html) returns a child PID on success, leaves its output undefined on failure, and can inherit descriptors. Apple's [`wait(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/wait.2.html) supports positive-PID child-specific `waitpid(..., WNOHANG)` and makes `ECHILD` an error, not absence proof. [`kill(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/kill.2.html) addresses a positive PID, but its success or `ESRCH` is not a reap observation. |
-| Documented fact | Apple's [`sigaction(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/sigaction.2.html) says `SA_NOCLDWAIT` suppresses zombies. [POSIX process-ID reuse](https://pubs.opengroup.org/onlinepubs/009696699/basedefs/xbd_chap04.html#tag_04_12) prohibits reuse until process lifetime ends; [POSIX exit](https://pubs.opengroup.org/onlinepubs/009695299/functions/exit.html) retains an unwaited child as a zombie absent `SIGCHLD` ignore/`SA_NOCLDWAIT`. These support only a conditional same-parent, exclusive-waiter direct-child argument. |
+| Documented fact | Apple's [`sigaction(2)`](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/sigaction.2.html) says `SA_NOCLDWAIT` suppresses zombies. [POSIX.1-2024 process-ID reuse](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap04.html) prohibits reuse until process lifetime ends; [POSIX.1-2024 process termination](https://pubs.opengroup.org/onlinepubs/9799919799/functions/_exit.html) retains unwaited child status absent `SIGCHLD` ignore/`SA_NOCLDWAIT`. These support only a conditional same-parent, exclusive-waiter direct-child argument. |
+| Documented fact | Go's [`os/signal` documentation](https://go.dev/src/os/signal/doc.go) says `-buildmode=c-archive` does not install asynchronous signal handlers by default, but `signal.Notify` can install one. A future archive's imports, initialization and linked native code still need source closure; the build mode alone does not prove default `SIGCHLD` or exclusive reaping. |
 | Source observation | Pinned [C5b16 native lifecycle](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/native/lifecycle.c) checks default `SIGCHLD` without `SA_NOCLDWAIT`, uses `POSIX_SPAWN_CLOEXEC_DEFAULT`, retains a successful returned PID, and uses child-specific `waitpid(WNOHANG)`. It assumes one serialized caller and exclusive reaper. Its effect 16 still waits for `BeforeTeardown` before signaling, and effects 17–19 checkpoint before reap/absence; it is not the successor mechanism. Pinned [Go bridge](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/bridge/owner.go) holds one mutex across store calls. |
 | Inference | If one live Supervisor lane is the exclusive waiter, `SIGCHLD` remains at default without `SA_NOCLDWAIT`, and no other code reaps the child, an exit between `waitpid(WNOHANG)==0` and positive-PID `kill` should not redirect the signal to a reused PID: an exited child remains unreaped. Still latch the signal attempt before calling `kill`; regardless of return, use exact `waitpid` status for absence. This is not a proved property of a future concurrent implementation. |
 | Source conflict / unknown | Apple's [continuous-time page](https://developer.apple.com/documentation/driverkit/mach_continuous_time) says `mach_continuous_time()` advances during sleep and suggests `CLOCK_MONOTONIC_RAW` as equivalent, while its [uptime-raw page](https://developer.apple.com/documentation/driverkit/kiotimerclockuptimeraw) says `CLOCK_MONOTONIC_RAW` excludes sleep. SDK 26.5 `mach/mach_time.h` explicitly describes `mach_continuous_time()` as advancing during sleep; C5b16's [trace](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/native/timing.h) uses `CLOCK_MONOTONIC` for observation only. Do not select a clock by treating the contradictory aliases as settled. |
@@ -169,6 +170,76 @@ This is a design candidate, not executable source or a timing guarantee:
    has settled and the exact frozen generation can advance. A stuck worker
    retains owner lock and blocks durable completion/capacity indefinitely, not
    stop or absence. No result/output is released from this experiment.
+
+### Gate-1 read-only ownership and proof packet
+
+Status: `IN_PROGRESS — TRENDING_GOOD` for a reviewable candidate, not a gate-1
+pass or runnable approval. The maintainer owns the mechanism decision. This
+packet compares the selected ADR-0047 scheduling split with the old synchronous
+chain; it inspects source and platform contracts only. No child or fault case
+was executed.
+
+| Step | Sole owner and data crossing | Forbidden dependency or result |
+| --- | --- | --- |
+| Prepare before spawn | Storage lane confirms one frozen obligation; control receives only its exact confirmed result. | Pending/refused/indeterminate preparation never creates a child. Waiting here precedes custody, not a post-create stop. |
+| Create and publish | Control alone records successful current-lifetime custody and consumes creation; it submits one frozen identity-publication request carrying obligation, operation ID, generation, kind and candidate. | Worker receives no PID-targeting, start, stop or capacity authority. Failed/ambiguous spawn never supplies a signal target. |
+| Store settlement | Worker alone holds bridge/store locks and returns one immutable reply with the same tuple and outcome through a bounded slot. Control validates every field before applying it. | A full slot may stall the worker, not control. No second operation, attempt or generation bypasses it; a late reply cannot release start after stop. |
+| Start or stop | Control samples one continuous clock, records actual ingress/service, evaluates fatal/setup/wall stop first, then applies an exact ready reply and permits at most one start-token attempt. | Worker cannot wake or authorize the child. Control never calls `BridgeApply`, a store method, a blocking mailbox receive, a drain/completion join or a store lock while custody exists. |
+| Signal and absence | Control alone checks the same-parent exclusive-reaper premise and uses positive-PID `waitpid(..., WNOHANG)`. A matching terminal status proves absence. If still live, it latches the one signal attempt before `kill`, then continues exact child-status observation. | `kill` success, `ESRCH`, EOF, child alarm and root removal prove no absence. `ECHILD`, changed disposition, competing reaper or mismatched identity is custody failure, never permission to signal again. |
+
+The worker request/reply slot is a *candidate custom primitive*, not an adopted
+implementation. Gate 1 must choose and review its concrete C/Go ownership,
+release/acquire or kernel-transport semantics, fixed capacity, cancellation
+ingress and wake/poll behavior against the
+[ecosystem checklist](ECOSYSTEM_REUSE_AND_ADOPTION.md). A second thread is not
+a second lifecycle owner. An unbounded queue, a worker-controlled start, or
+blocking on worker completion in the control path rejects this candidate.
+
+The direct-child exit-before-signal argument is conditional: a successful
+`posix_spawn` supplies a positive PID; the same parent retains it; `SIGCHLD`
+stays at default without `SA_NOCLDWAIT`; no other code waits or reaps; and
+`waitpid` has not reaped the child when it returns zero. Under
+[POSIX.1-2024's process lifetime and PID-reuse rules](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap04.html),
+an exit before `kill` then leaves status for that parent and should not redirect
+the signal to a reused PID. This is an inference, not proof that future linked
+Go/native code or its host satisfies those premises. A matching `waitpid`
+return may instead observe natural exit and must suppress the signal. After a
+zero return, the signal attempt stays latched even if `kill` returns an error;
+only the same-child status can later establish absence. If the premise or
+observation fails, stop the run with unresolved custody and harness-only
+containment, not a PID probe or second signal.
+
+Before gate 1's design decision can pass, an independent reviewer must close
+these prospective proofs; gate 4 separately checks the implemented bytes:
+
+1. Trace every prospective native/Go entry point from cancellation, deadline,
+   setup expiry and identity-publication reply to start, signal and reap. Show
+   that no post-create path acquires a bridge/store lock or waits for the worker.
+2. Inventory the pinned native/Go source for `wait`, `waitpid`, `waitid`,
+   process-wide `SIGCHLD` changes, `signal.Notify`, auto-reaping and competing
+   child owners. Specify the same audit over the later complete linked source
+   as a gate-4 condition. The pinned C5b16 `reaper_owned()` check is a useful
+   guard, not a substitute for either closure.
+3. Specify the single-slot primitive and its producer/consumer ordering,
+   frozen tuple equality, no lost stop ingress, bounded control polling and
+   exact reply behavior when the worker is blocked, refused or returns late.
+   Require code-level proof of these properties at gate 4.
+4. Freeze the `mach_continuous_time()` conversion rule and nondecreasing tick
+   policy for a proposed supported macOS floor; gate 2 names the exact host.
+   Late wall service, suspend/wake and scheduler stalls must fail timing rather
+   than replenish a budget.
+5. Define independent raw-event oracles for blocked publication, child exit
+   before signal, `ECHILD`/`ESRCH`, lost signal response, stop/start same-tick
+   race and late reply. Each missing authoritative event remains null/failure;
+   C5b16's self-alarm never counts as Supervisor absence.
+
+The pinned [C5b16 driver](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/inputs/supervisor_effect_driver.c)
+still fences and looks up the attempt before effect 16; pinned
+[`lifecycle.c`](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/native/lifecycle.c)
+still calls `BeforeTeardown` before signal and checkpoints before reap; pinned
+[`owner.go`](https://github.com/Shrimpworks/capsule-experiments/blob/0efd03def6bc333a92c8b9809bc56b7b3ce9ea80/experiments/typed-guest-transport-c5b16-timing-fault/source/bridge/owner.go)
+holds `bridgeMu` across the store call. These observations reject reusing that
+call chain unchanged. They do not demonstrate the successor's independence.
 
 For the first clock policy, use [`mach_continuous_time()`](https://developer.apple.com/documentation/driverkit/mach_continuous_time)
 plus checked [`mach_timebase_info()`](https://developer.apple.com/documentation/driverkit/mach_timebase_info-c.func)
@@ -264,7 +335,8 @@ trace and checker output, then restore the exact clean source.
 
 ## Ordered gates and acceptance
 
-1. **Mechanism review — `BLOCKED` on exact call graph and custody proof.**
+1. **Mechanism review — `BLOCKED` on independent prospective call-graph,
+   mailbox and custody review.**
    Specify current-host process/clock semantics, single-waiter custody, bounded
    worker and lock separation, exact frozen operation settlement, and the
    setup/stop race. The continuous-time policy is chosen for the candidate,

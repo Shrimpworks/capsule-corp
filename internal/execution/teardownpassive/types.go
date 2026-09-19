@@ -208,6 +208,7 @@ type DurableProjection struct {
 	Prepared                bool
 	RunnerIdentityConfirmed bool
 	RunnerIdentity          ProcessIdentity
+	AbsenceIdentity         ProcessIdentity
 	TerminalConfirmed       bool
 	TerminalDisposition     TerminalDisposition
 }
@@ -235,11 +236,13 @@ type SettledWrite struct {
 	Outcome     WriteOutcome
 }
 
-// StopSnapshot retains the monotonic latch and earliest accepted action anchor.
+// StopSnapshot retains the earliest accepted action anchor and separately
+// observed service tick; a scheduled wall anchor is not service evidence.
 type StopSnapshot struct {
-	Latched    bool
-	Trigger    Trigger
-	ActionTick uint64
+	Latched     bool
+	Trigger     Trigger
+	ActionTick  uint64
+	ServiceTick uint64
 }
 
 // SignalSnapshot retains only the first current-lifetime request and uncertainty.
@@ -254,6 +257,7 @@ type SignalSnapshot struct {
 type AbsenceSnapshot struct {
 	Observed bool
 	Tick     uint64
+	Identity ProcessIdentity
 }
 
 // StartSnapshot retains the sole start-token attempt and its original anchor.
@@ -273,6 +277,7 @@ type Snapshot struct {
 	RunnerWriteStarted      bool
 	RunnerIdentityConfirmed bool
 	RunnerIdentity          ProcessIdentity
+	AbsenceIdentity         ProcessIdentity
 	TerminalWriteStarted    bool
 	TerminalConfirmed       bool
 	TerminalDisposition     TerminalDisposition
@@ -285,6 +290,7 @@ type Snapshot struct {
 	Absence                 AbsenceSnapshot
 	Start                   StartSnapshot
 	Timing                  TimingDisposition
+	WallServiceLate         bool
 	RecoveryRequired        bool
 	OutputReleased          bool
 	CapacityReleased        bool

@@ -395,12 +395,84 @@ func TestMissedWallActionCannotBecomeTerminalSuccess(t *testing.T) {
 	}
 }
 
+func TestLateWallServiceCannotMasqueradeAsOnTimeAction(t *testing.T) {
+	model := runnerModel(t)
+	if err := model.AttemptStart(100); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.LatchWallDeadline(1150); err != nil {
+		t.Fatal(err)
+	}
+	stop := model.Snapshot().Stop
+	if stop.ActionTick != 1100 || stop.ServiceTick != 1150 {
+		t.Fatalf("wall anchor/service distinction lost: %+v", stop)
+	}
+	identity := model.Snapshot().ProcessIdentity
+	before := model.Snapshot()
+	if err := model.RequestSignal(identity, 1101); !errors.Is(err, ErrState) {
+		t.Fatalf("pre-service signal accepted: %v", err)
+	}
+	if model.Snapshot() != before {
+		t.Fatal("pre-service signal mutated state")
+	}
+	if err := model.RequestSignal(identity, 1151); err != nil {
+		t.Fatal(err)
+	}
+	if err := model.ObserveAbsence(identity, 1160); err != nil {
+		t.Fatal(err)
+	}
+	if model.Snapshot().Timing != TimingViolated {
+		t.Fatal("late wall service appeared timely")
+	}
+	terminal, err := model.BeginTerminalWrite(operationID(0x33))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if terminal.Candidate.TerminalDisposition != TerminalTimingViolated {
+		t.Fatal("late wall service froze a non-violated record")
+	}
+}
+
+func TestFailedRunnerWriteStillBindsTerminalAbsenceIdentity(t *testing.T) {
+	model := custodyModel(t)
+	runner, err := model.BeginRunnerIdentityWrite(operationID(0x32))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := model.SettleWrite(runner, WriteFailed); err != nil {
+		t.Fatal(err)
+	}
+	identity := model.Snapshot().ProcessIdentity
+	if err := model.ObserveAbsence(identity, 600); err != nil {
+		t.Fatal(err)
+	}
+	terminal, err := model.BeginTerminalWrite(operationID(0x33))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if terminal.Candidate.RunnerIdentityConfirmed ||
+		terminal.Candidate.AbsenceIdentity != identity {
+		t.Fatal("terminal evidence dropped exact absence identity or forged runner publication")
+	}
+	mutated := terminal
+	mutated.Candidate.AbsenceIdentity = processIdentity(0x42)
+	if err := model.SettleWrite(mutated, WriteConfirmed); !errors.Is(err, ErrPendingWrite) {
+		t.Fatalf("substituted absence identity settled: %v", err)
+	}
+	if err := model.SettleWrite(terminal, WriteConfirmed); err != nil {
+		t.Fatal(err)
+	}
+	if model.Snapshot().LastSettled.Candidate.AbsenceIdentity != identity {
+		t.Fatal("settled teardown evidence lost exact absence identity")
+	}
+}
+
 func TestMutationRepeatedTriggersRetainEarliestDeadline(t *testing.T) {
 	model := runnerModel(t)
 	if err := model.AttemptStart(100); err != nil {
 		t.Fatal(err)
 	}
-	if err := model.LatchStop(TriggerWallDeadline, 1100); err != nil {
+	if err := model.LatchWallDeadline(1100); err != nil {
 		t.Fatal(err)
 	}
 	if err := model.LatchStop(TriggerCancellation, 300); err != nil {
@@ -434,9 +506,9 @@ func TestWallDeadlineMustUseOriginalStartAnchor(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := model.LatchStop(TriggerWallDeadline, 1101); !errors.Is(err, ErrClock) {
-		t.Fatalf("shifted wall deadline accepted: %v", err)
+		t.Fatalf("caller-supplied wall anchor accepted: %v", err)
 	}
-	if err := model.LatchStop(TriggerWallDeadline, 1100); err != nil {
+	if err := model.LatchWallDeadline(1100); err != nil {
 		t.Fatal(err)
 	}
 }

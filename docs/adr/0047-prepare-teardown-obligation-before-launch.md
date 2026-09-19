@@ -96,11 +96,15 @@ or timing-violated publication as teardown evidence only: public completion,
 output and capacity release remain closed and recovery-required. Missing mandatory
 wall action is timing-violated. Creation consumption is current-lifetime only;
 restart treats preparation as conservative may-exist. Pending/settled tokens bind
-the full immutable obligation and runner candidates bind exact process identity.
+the full immutable obligation, runner candidates bind exact process identity,
+and terminal evidence separately binds exact observed absence identity even when
+runner publication failed. Wall service observation remains separate from the
+fixed start-derived anchor; late service violates timing.
 
-Review instances 1 and 2 returned **Not ready**. Review-2 corrections are
-`IN_PROGRESS — TRENDING_GOOD`; refreshed full verification and review 3 of 3 remain
-required. Guard tests are not executed mutant proof. No product consumer imports
+Review instances 1–3 returned **Not ready**. Review-3 corrections and refreshed
+local verification `PASSED`; new-head CI and a human-directed decision on further
+independent review remain required after the three-instance
+limit. Guard tests are not executed mutant proof. No product consumer imports
 the package and no storage, process,
 clock, service, backend, VM or guest effect exists. This supplies a concrete packet
 for the acceptance review below; it does not accept this ADR or authorize runnable

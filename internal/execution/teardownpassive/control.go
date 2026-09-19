@@ -3,6 +3,24 @@ package teardownpassive
 // LatchStop retains the earliest accepted teardown trigger without consulting
 // or mutating the pending storage operation.
 func (model *Model) LatchStop(trigger Trigger, tick uint64) error {
+	if trigger == TriggerWallDeadline {
+		// A deadline anchor is not evidence of when its callback was serviced.
+		return ErrClock
+	}
+	return model.latchStop(trigger, tick, tick)
+}
+
+// LatchWallDeadline retains the fixed start-derived action anchor separately
+// from the actual same-lifetime callback service observation.
+func (model *Model) LatchWallDeadline(serviceTick uint64) error {
+	wallTick, ok := addTick(model.state.Start.Tick, model.clock.WallAfterStartMS)
+	if !model.state.Start.Attempted || !ok {
+		return ErrClock
+	}
+	return model.latchStop(TriggerWallDeadline, wallTick, serviceTick)
+}
+
+func (model *Model) latchStop(trigger Trigger, tick, serviceTick uint64) error {
 	if model.state.RecoveryRequired {
 		return ErrRecovery
 	}
@@ -10,7 +28,7 @@ func (model *Model) LatchStop(trigger Trigger, tick uint64) error {
 		model.state.TerminalConfirmed {
 		return ErrState
 	}
-	if !validTrigger(trigger) || !validTick(tick) {
+	if !validTrigger(trigger) || !validTick(tick) || !validTick(serviceTick) || serviceTick < tick {
 		return ErrClock
 	}
 	switch trigger {
@@ -28,8 +46,13 @@ func (model *Model) LatchStop(trigger Trigger, tick uint64) error {
 			return ErrState
 		}
 	}
+	if trigger == TriggerWallDeadline && serviceTick > tick {
+		model.state.WallServiceLate = true
+	}
 	if !model.state.Stop.Latched || tick < model.state.Stop.ActionTick {
-		model.state.Stop = StopSnapshot{Latched: true, Trigger: trigger, ActionTick: tick}
+		model.state.Stop = StopSnapshot{
+			Latched: true, Trigger: trigger, ActionTick: tick, ServiceTick: serviceTick,
+		}
 		model.updateTiming()
 	}
 	return nil
@@ -69,7 +92,7 @@ func (model *Model) RequestSignal(identity ProcessIdentity, tick uint64) error {
 	if zero32(identity) || identity != model.state.ProcessIdentity {
 		return ErrBinding
 	}
-	if !model.Decision().MaySignal || tick < model.state.Stop.ActionTick {
+	if !model.Decision().MaySignal || tick < model.state.Stop.ServiceTick {
 		return ErrState
 	}
 	if _, ok := addTick(tick, model.clock.ForceAbsenceMS); !ok {
@@ -108,13 +131,13 @@ func (model *Model) ObserveAbsence(identity ProcessIdentity, tick uint64) error 
 	if zero32(identity) || identity != model.state.ProcessIdentity {
 		return ErrBinding
 	}
-	if model.state.Stop.Latched && tick < model.state.Stop.ActionTick {
+	if model.state.Stop.Latched && tick < model.state.Stop.ServiceTick {
 		return ErrClock
 	}
 	if model.state.Signal.Requested && tick < model.state.Signal.ForceTick {
 		return ErrClock
 	}
-	model.state.Absence = AbsenceSnapshot{Observed: true, Tick: tick}
+	model.state.Absence = AbsenceSnapshot{Observed: true, Tick: tick, Identity: identity}
 	model.state.Custody = CustodyNone
 	model.updateTiming()
 	return nil
@@ -134,6 +157,7 @@ func (model *Model) Restart() {
 	model.state.Absence = AbsenceSnapshot{}
 	model.state.Start = StartSnapshot{}
 	model.state.Timing = TimingUnknown
+	model.state.WallServiceLate = false
 	// No serialized creation-consumption proof exists. Even preparation alone
 	// must conservatively close replacement creation after a restart.
 	if model.state.PreparationStarted {
@@ -143,6 +167,10 @@ func (model *Model) Restart() {
 }
 
 func (model *Model) updateTiming() {
+	if model.state.WallServiceLate && model.state.Absence.Observed {
+		model.state.Timing = TimingViolated
+		return
+	}
 	if model.state.Start.Attempted && model.state.Absence.Observed {
 		wallTick, ok := addTick(model.state.Start.Tick, model.clock.WallAfterStartMS)
 		if !ok || (model.state.Absence.Tick > wallTick &&

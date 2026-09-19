@@ -30,7 +30,12 @@ dependency/vulnerability scans and 85.5% package race coverage passed at `3dc70e
 Review instance 2 returned **Not ready**: absence-only release, cross-attempt
 settlement, unpersisted creation consumption called durable, unsupported mutation
 proof, missed wall action and missing record identity. Corrections are
-`IN_PROGRESS — TRENDING_GOOD`; no new-head verification or verdict is claimed.
+`IN_PROGRESS — TRENDING_GOOD`; review instance 3 at `cbaf84d` also returned
+**Not ready** because the scheduled wall anchor could stand in for actual late
+callback service and failed runner publication left the terminal candidate without
+exact absence identity. Both are corrected with focused regression cases and
+refreshed local gates `PASSED`. Three review instances are exhausted; new-head CI
+and a human-directed independent verdict remain unclaimed.
 Proposed ADR-0047, runnable mechanics, installed custody, guest
 execution and product admission remain unchanged and `BLOCKED` where applicable.
 

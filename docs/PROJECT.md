@@ -85,10 +85,10 @@ Supervisor stop control. ADR-0047 remains Proposed; passive review is `PASSED`,
 and the [C5b18 passive successor](C5B18_PASSIVE_SUCCESSOR_SPECIFICATION.md) now
 freezes proposed record/model identities plus candidate-durable, current-lifetime
 and pending-write separation. Its deterministic no-effect Go model has guard
-scenarios, not a completed mutant campaign. Review instances 1 and 2 returned
-**Not ready**; review-2 corrections are `IN_PROGRESS — TRENDING_GOOD`. Previous-head
-full local verification passed; new-head gates and fresh-context review instance
-3 of 3, then explicit maintainer disposition of ADR-0047, precede runnable work.
+scenarios, not a completed mutant campaign. Review instances 1–3 returned
+**Not ready**; review-3 corrections and refreshed local gates `PASSED`. Previous-head
+CI passed; new-head CI and an explicit human-directed decision on review after
+the three-instance limit, then maintainer disposition of ADR-0047, precede runnable work.
 Complete installed/restart lifecycle custody and immutable runner composition remain `BLOCKED`.
 Controlled C5b transport execution, preferred-form libkrunfw/kernel source compliance, installed
 composition, and admission remain `BLOCKED`; the extracted kernel remains evidence-only and

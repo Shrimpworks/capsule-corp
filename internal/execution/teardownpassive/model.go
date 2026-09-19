@@ -139,6 +139,7 @@ func (model *Model) BeginTerminalWrite(operationID OperationID) (PendingWrite, e
 	}
 	candidate := model.durableProjection()
 	candidate.TerminalConfirmed = true
+	candidate.AbsenceIdentity = model.state.Absence.Identity
 	candidate.TerminalDisposition = TerminalAbsenceRecorded
 	if model.state.Timing == TimingViolated {
 		candidate.TerminalDisposition = TerminalTimingViolated
@@ -214,6 +215,7 @@ func (model *Model) durableProjection() DurableProjection {
 		Prepared:                model.state.Prepared,
 		RunnerIdentityConfirmed: model.state.RunnerIdentityConfirmed,
 		RunnerIdentity:          model.state.RunnerIdentity,
+		AbsenceIdentity:         model.state.AbsenceIdentity,
 		TerminalConfirmed:       model.state.TerminalConfirmed,
 		TerminalDisposition:     model.state.TerminalDisposition,
 	}
@@ -223,6 +225,7 @@ func (model *Model) applyDurableProjection(candidate DurableProjection) {
 	model.state.Prepared = candidate.Prepared
 	model.state.RunnerIdentityConfirmed = candidate.RunnerIdentityConfirmed
 	model.state.RunnerIdentity = candidate.RunnerIdentity
+	model.state.AbsenceIdentity = candidate.AbsenceIdentity
 	model.state.TerminalConfirmed = candidate.TerminalConfirmed
 	model.state.TerminalDisposition = candidate.TerminalDisposition
 }

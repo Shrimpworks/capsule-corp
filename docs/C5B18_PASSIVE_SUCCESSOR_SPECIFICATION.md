@@ -2,8 +2,10 @@
 
 Date: 2026-09-18
 
-Status: review instance 2 returned **Not ready**; accepted corrections
-`IN_PROGRESS — TRENDING_GOOD`; review instance 3 required on a new frozen head.
+Status: review instance 3 returned **Not ready**; final two corrections and
+refreshed local verification `PASSED`. Independent review remains `BLOCKED` on
+human direction after the three-instance limit;
+new review requires an explicit human decision.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.
 Runnable successor, installed lifecycle, guest execution and product admission: `BLOCKED`.
 ADR-0047 lifecycle: **Proposed**, not Accepted.
@@ -62,12 +64,15 @@ observe, result-release or replacement-attempt authority.
 The v1 policy is fixed:
 
 - monotonic ticks only within one Supervisor lifetime;
-- wall action at `t_start + 1,000 ms`;
+- wall action anchored at `t_start + 1,000 ms`; retain separately the observed
+  callback-service tick, never substitute the scheduled anchor for service;
 - no graceful-teardown extension in this successor;
 - forced absence no later than `t_force + 1,000 ms`;
 - absence no later than `t_action + 1,200 ms`;
 - `t_action` is the earliest accepted cancellation, wall or fatal-fault anchor;
 - repeated triggers never move `t_action` later;
+- service later than the mandatory wall anchor is a timing violation, even if
+  signal and absence follow promptly;
 - a pending or late storage response never resets a clock;
 - restart invalidates live ticks and supplies no fresh budget.
 
@@ -84,7 +89,8 @@ Candidate durable facts are limited to:
 
 - the immutable obligation and its confirmed preparation outcome;
 - confirmed runner-identity publication with exact process identity, when any;
-- a confirmed teardown/absence record and its closed absence-recorded or
+- a confirmed teardown/absence record bound to exact observed process identity,
+  including when runner publication failed, and its closed absence-recorded or
   timing-violated disposition
   only after authoritative absence;
 - the latest settled operation ID, kind, generation and frozen candidate; and
@@ -104,9 +110,9 @@ Volatile facts are limited to:
 - one-use creation consumption observed after exact custody; this model has no
   durable publication for that consumption;
 - exact live custody observed in the current Supervisor lifetime;
-- monotonic stop latch and earliest trigger/anchor;
+- monotonic stop latch, earliest trigger/anchor, and separate service observation;
 - first signal request and any uncertain response;
-- authoritative absence observation; and
+- authoritative absence observation with exact custody identity; and
 - same-lifetime clock observations.
 
 Restart clears custody and every live clock/signal/absence fact. Even if creation
@@ -143,15 +149,18 @@ observations or release capacity.
    natural absence cannot authorize replacement custody.
 4. Runner identity publication begins after custody and holds start closed.
 5. Cancellation, wall or fatal fault may latch stop while any post-create write is
-   pending. Stop evaluation never depends on settlement of that write. No trigger
-   may latch or rewrite timing after authoritative absence.
+   pending. Stop evaluation never depends on settlement of that write. Wall
+   latching requires an actual service tick distinct from its fixed start-derived
+   anchor; a late service remains a timing violation. No trigger may latch or
+   rewrite timing after authoritative absence.
 6. Start may be attempted once only after confirmed runner identity, with exact
    current-lifetime custody and no stop latch. `t_start` is captured immediately
    before that first attempt and never reset.
 7. Signal may be requested once only after stop is latched and the caller supplies
    the exact current-lifetime custody identity. Zero, stale or substituted identity
    refuses without mutation. A lost/uncertain response prohibits redrive.
-8. Authoritative absence may be recorded only with that same exact identity.
+8. Authoritative absence may be recorded only with that same exact identity, and
+   terminal evidence freezes it even if runner identity publication failed.
    Signal return, EOF, root removal and fixture alarm are not absence.
 9. Teardown/absence-record publication may begin only after authoritative absence
    and freezes one closed disposition. Neither `absence-recorded` nor
@@ -174,6 +183,8 @@ Every refusal leaves the prior model state unchanged.
 | Late runner-publication success after stop | durable identity may settle; start stays closed; latch unchanged |
 | Storage failure with exact live custody | cleanup remains available; completion/capacity stay withheld |
 | Started attempt missing mandatory wall action | late absence is timing-violated; no public release |
+| Wall callback serviced after its fixed anchor | retain actual service tick; late action is timing-violated |
+| Runner publication failed before exact absence | teardown record retains observed process identity without forging runner success |
 | Signal response uncertain | second signal refused; exact custody may still reconcile absence |
 | Absence observed; terminal write fails | local absence retained; public completion/output/capacity withheld |
 | Natural absence before stop | creation remains consumed; no replacement custody or late trigger |
@@ -218,7 +229,7 @@ go test ./internal/execution/teardownpassive
 Repository verification follows `AGENTS.md`: pnpm install/check/lint/test/schema/ADR
 verification, Go test/vet/build/lint and pinned `govulncheck`.
 
-Observed on the review-2 correction worktree on 2026-09-18 before head freeze:
+Observed on the review-3 correction worktree on 2026-09-18 before head freeze:
 
 - `pnpm install --frozen-lockfile`, `pnpm check`, `pnpm lint`, `pnpm test`,
   `pnpm verify:schemas`, `pnpm verify:adrs`, `pnpm audit:dependencies` and
@@ -230,9 +241,10 @@ Observed on the review-2 correction worktree on 2026-09-18 before head freeze:
 - unrestricted `golangci-lint run ./...` reports only the 50 pre-existing
   exported-comment findings tracked in issue #217. No C5b18 finding remains.
 
-Review instance 2 returned **Not ready**. CI and independent review instance 3
-remain required after freezing/pushing the corrected head, before merge or ADR
-disposition. The host's alternate Go 1.26.5 is vulnerable to three standard-library
+Review instance 3 returned **Not ready** at `cbaf84d`; its two corrections and
+refreshed local verification pass. Three review instances are exhausted; another independent
+review requires explicit human direction before merge or ADR disposition. The
+host's alternate Go 1.26.5 is vulnerable to three standard-library
 advisories; it is not the declared build toolchain. Do not use it for this candidate.
 
 ## Independent review loop
@@ -253,6 +265,11 @@ cross-attempt settlement-token substitution, an unpersisted creation fact called
 durable, and an unsupported executed-mutation claim. A second blind review of the
 same head also found a missed wall-action timing violation and a documented record
 identity absent from model state. All findings are accepted for correction.
+
+Review instance 3 inspected `cbaf84d` and found that a scheduled wall anchor
+could masquerade as actual late callback service, and terminal evidence after
+failed runner publication omitted exact observed absence identity. Both findings
+are accepted; no review verdict is claimed for the subsequent correction head.
 
 ## Boundaries
 
@@ -276,4 +293,5 @@ guarantee, restored PID custody, or proof that cleanup occurred.
 - ADR-0047 remains Proposed with the concrete packet linked for maintainer review;
 - canonical status documents distinguish scoped `PASSED` from blocked runnable,
   installed, guest and product work; and
-- full required verification and independent review pass before merge.
+- full required verification and a human-directed review decision after the
+  three-instance limit before merge.

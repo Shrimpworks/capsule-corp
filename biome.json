@@ -20,6 +20,7 @@
       "!!schemas/conformance/macos-i2b2-unsigned-installation/profile.schema.json",
       "!!.claude/worktrees",
       "!!**/.codex/skills",
+      "!!**/.agents/skills",
       "!!.codex/steering/javascript-esm-steering.md"
     ]
   },

@@ -94,3 +94,42 @@ test("evaluatePin classifies unpinned, matching, mismatched, and non-git states"
   assert.equal(evaluatePin({ expectedCommit: "abc" }, "def").status, "mismatch");
   assert.equal(evaluatePin({ expectedCommit: "abc" }, undefined).status, "not-git");
 });
+
+test("curated dry run delegates to the pinned installer and rejects source drift", async () => {
+  await withTempDir(async (root) => {
+    const project = join(root, "project");
+    const central = join(root, "ai-central");
+    const commit = await makeGitCheckout(central);
+    await mkdir(join(central, "templates", "skills"), { recursive: true });
+    await mkdir(join(central, "scripts"));
+    await writeFile(
+      join(central, "scripts", "install-skill-bundle.sh"),
+      'printf "installer:"\nprintf "[%s]" "$@"\nprintf "\\n"\n',
+    );
+    await mkdir(join(project, "scripts"), { recursive: true });
+    await mkdir(join(project, ".codex"));
+    const script = join(project, "scripts", "setup-codex-links.mjs");
+    await writeFile(script, await readFile(new URL("./setup-codex-links.mjs", import.meta.url)));
+    const pinPath = join(project, ".codex", "ai-central-pin.json");
+    await writePin(pinPath, commit);
+    await writeFile(
+      join(project, ".codex", "ai-central-skills.json"),
+      JSON.stringify({ bundles: ["core", "security-testing"] }),
+    );
+    const options = { env: { ...process.env, AI_CENTRAL_HOME: central } };
+    const { stdout } = await execFileAsync(process.execPath, [script, "--dry-run"], options);
+    assert.ok(stdout.includes("[--bundle][core,security-testing]"));
+    assert.ok(stdout.includes("[--mode][link][--sync][--dry-run]"));
+    await assert.rejects(readFile(join(project, ".codex", "skills")), { code: "ENOENT" });
+
+    await writePin(pinPath, "different-commit");
+    await assert.rejects(
+      execFileAsync(process.execPath, [script, "--dry-run"], options),
+      (error) => {
+        assert.match(error.stderr, /does not match the recorded pin/u);
+        assert.equal(error.stdout, "");
+        return true;
+      },
+    );
+  });
+});

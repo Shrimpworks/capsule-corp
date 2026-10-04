@@ -11,7 +11,7 @@ const execFileAsync = promisify(execFile);
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 const codexDirectory = path.join(repositoryRoot, ".codex");
-const skillsDirectory = path.join(codexDirectory, "skills");
+const selectionPath = path.join(codexDirectory, "ai-central-skills.json");
 const steeringDirectory = path.join(codexDirectory, "steering");
 const pinPath = path.join(codexDirectory, "ai-central-pin.json");
 const templatesRoot = resolveTemplatesRoot();
@@ -19,7 +19,7 @@ const dryRun = process.argv.includes("--dry-run");
 const recordPin = process.argv.includes("--record-pin");
 const sharedSteeringFiles = ["javascript-esm-steering.md"];
 const isEntrypoint = Boolean(
-  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href,
+  process.argv[1] && import.meta.url === pathToFileURL(await fs.realpath(process.argv[1])).href,
 );
 
 function usage() {
@@ -162,88 +162,6 @@ async function pathExists(target) {
   }
 }
 
-async function* walkDirectories(root) {
-  let entries;
-
-  try {
-    entries = await fs.readdir(root, { withFileTypes: true });
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return;
-    }
-
-    if (["EACCES", "EPERM"].includes(error.code)) {
-      process.stderr.write(`warning: permission denied reading ${root}, skipping\n`);
-      return;
-    }
-
-    throw error;
-  }
-
-  yield root;
-
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      yield* walkDirectories(path.join(root, entry.name));
-    }
-  }
-}
-
-function skillLinkName(parts, name) {
-  if (!name || parts[0] === undefined) {
-    return undefined;
-  }
-
-  if (parts[0] === "adapted" || parts[0] !== "imported") {
-    return name;
-  }
-
-  switch (parts[1]) {
-    case "agent-skills":
-      return name;
-    case "pm-skills":
-      return `pm-${name}`;
-    case "claude-skills":
-      return `claude-${name}`;
-    case "agent-toolkit":
-      return `toolkit-${name}`;
-    case "web-quality-skills":
-      return `web-${name}`;
-    default:
-      return name;
-  }
-}
-
-async function findSkillLinks() {
-  const skillRoot = path.join(templatesRoot, "skills");
-  const links = new Map();
-
-  for await (const directory of walkDirectories(skillRoot)) {
-    if (!(await pathExists(path.join(directory, "SKILL.md")))) {
-      continue;
-    }
-
-    const relativeDirectory = path.relative(skillRoot, directory);
-    const parts = relativeDirectory.split(path.sep);
-    const linkName = skillLinkName(parts, parts.at(-1));
-
-    if (!linkName) {
-      continue;
-    }
-
-    const existingTarget = links.get(linkName);
-    if (existingTarget && existingTarget !== directory) {
-      throw new Error(`AI Central has duplicate skill link name '${linkName}'`);
-    }
-
-    links.set(linkName, directory);
-  }
-
-  return [...links.entries()]
-    .map(([linkName, target]) => ({ linkName, target }))
-    .sort((left, right) => left.linkName.localeCompare(right.linkName));
-}
-
 async function findSteeringLinks() {
   const root = path.join(templatesRoot, "steering");
   const links = [];
@@ -346,14 +264,26 @@ async function main() {
   }
 
   if (!dryRun) {
-    await fs.mkdir(skillsDirectory, { recursive: true });
     await fs.mkdir(steeringDirectory, { recursive: true });
   }
 
-  const links = [
-    ...(await findSkillLinks()).map((link) => ({ ...link, directory: skillsDirectory })),
-    ...(await findSteeringLinks()).map((link) => ({ ...link, directory: steeringDirectory })),
-  ];
+  const selection = JSON.parse(await fs.readFile(selectionPath, "utf8"));
+  const installer = path.join(path.dirname(templatesRoot), "scripts/install-skill-bundle.sh");
+  const { stdout } = await execFileAsync("sh", [
+    installer,
+    repositoryRoot,
+    "--bundle",
+    selection.bundles.join(","),
+    "--mode",
+    "link",
+    "--sync",
+    ...(dryRun ? ["--dry-run"] : []),
+  ]);
+  process.stdout.write(stdout);
+  const links = (await findSteeringLinks()).map((link) => ({
+    ...link,
+    directory: steeringDirectory,
+  }));
   const results = [];
 
   for (const link of links) {

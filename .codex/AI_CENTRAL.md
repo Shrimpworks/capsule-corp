@@ -7,11 +7,13 @@ repository.
 
 - Install mode: local symlinks ignored by Git
 - Shared steering: `javascript-esm-steering.md`
-- Skills: all reviewed skills currently exposed by AI Central
+- Skills: curated bundles in `ai-central-skills.json`: core, node, orchestration, documentation,
+  delivery, engineering, rust, security-testing, and planning
 
-This matches the Wap Labs and Reef pattern. Repository-specific instructions and steering remain
-real, tracked files. Reusable skills and shared steering are recreated locally and do not become
-part of the GitHub repository.
+This uses the shared-checkout pattern. Repository-specific instructions and steering remain
+real, tracked files. Reusable skills are installed canonically under `.agents/skills/` with
+`.codex/skills/` compatibility links. Shared skills and steering do not become part of the GitHub
+repository.
 
 The existing root `AGENTS.md` remains authoritative for repository-specific security guidance.
 Files under `steering/` supplement it. If generic AI Central content conflicts with `AGENTS.md`, the
@@ -34,10 +36,11 @@ Preview without writing:
 pnpm codex:links -- --dry-run
 ```
 
-The setup command preserves real repo-owned files, repairs stale or broken managed symlinks, and
-links the full reviewed AI Central catalog. That includes Caveman, Cavecrew, Caveman Stats, and
-Hallmark. Source attribution and licenses remain owned by AI Central because these links are local
-and ignored by Git.
+The setup command preserves real repo-owned files and
+delegates skill selection and pruning to AI Central's maintained `install-skill-bundle.sh --sync`.
+The selection retains engineering and security-testing workflows and omits product strategy,
+framework-specific frontend, infrastructure, and brevity bundles. Source attribution and licenses
+remain owned by AI Central because these links are local and ignored by Git.
 
 ## Provenance pin
 
@@ -66,3 +69,18 @@ codex:links` run compares the checkout's current commit against that pin:
 
 This detects a drifted or substituted `ai-central` source directory; it does not vet AI Central's
 own content, and it does not apply retroactively to content already linked before a pin existed.
+
+## Language and code graph tooling
+
+Serena reads `.serena/project.yml`: Go, TypeScript/JavaScript, C, Swift, shell, YAML, and JSON.
+Caches, logs, and onboarding memories remain local. Run `serena project index .`,
+`serena project health-check .`, and `serena memories check .` after setup. Restart an already
+running Serena MCP session after changing its language selection; project activation alone can
+reuse its cached configuration. YAML/JSON servers provide symbols but do not support every
+reference-search operation.
+
+Codebase Memory is optional contributor tooling. Index this checkout in `full` mode to include
+scripts and test sources, check `index_status`, and use `check_index_coverage` before relying on
+cited paths. Invalid UTF-8 adversarial fixtures intentionally cannot parse; partial Markdown
+coverage and ignored/generated/binary files require source fallback. Neither MCP is a CI or
+product dependency.

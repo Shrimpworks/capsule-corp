@@ -1,0 +1,13 @@
+{
+  "bundles": [
+    "core",
+    "node",
+    "orchestration",
+    "documentation",
+    "delivery",
+    "engineering",
+    "rust",
+    "security-testing",
+    "planning"
+  ]
+}

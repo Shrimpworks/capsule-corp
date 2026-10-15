@@ -1,6 +1,6 @@
 # CI parity recovery slice — issue #265
 
-Work item: CI265. Status: IN_PROGRESS — TRENDING_GOOD.
+Work item: CI265 implementation/verification. Status: PASSED; PR #385 pending merge.
 Scope: contributor Make/CI command parity, unchanged security gates, one emitted TypeScript build
 and one test-suite execution, reproducible exported-documentation checks and tool-version clarity.
 Parent: initial recovery delivered; owner-only alpha IN_PROGRESS — TRENDING_GOOD, admission BLOCKED.
@@ -57,6 +57,13 @@ Historical recovery reports remain historical. Current instructions are updated 
   Default cache is per-checkout Git metadata; caller cache parents are namespaced. No cache deletion.
 - PASSED: corrected full make ci; 177 workspace tests and 132 script tests; full audit still exposes #217 debt.
 - PASSED: independent review instance 2 of 3 returned Ready; no remaining actionable findings.
-- IN_PROGRESS — TRENDING_GOOD: publish reviewed branch, verify hosted jobs and exact compiler count.
-- Remaining: reconcile design, execute gates, independent review, publish and verify final PR.
-- Next action: commit/push and publish draft PR, collect hosted evidence, then mark ready.
+- PASSED: implementation 80a6efeddda24308ebe595b2abe1825277be1be5 pushed; PR #385 published
+  with body/newline and branch/draft readback. CI 38783476966 and CodeQL 38783476875 green.
+- PASSED: hosted TypeScript job116589384544 emits once/package (3 total vs baseline9) and no coverage rerun.
+- Evidence-only follow-up records hosted results; exact-head CI and ready state readback are the final
+  publication checks. No independently reviewed implementation changed after instance2.
+- Remaining delivery action: maintainer merge of PR #385; #265 closes on merge.
+- Deferred: optional Dependabot grouping; full documentation debt #217; GitHub-only service gates
+  remain distinct from local CI; owner-only alpha remains IN_PROGRESS — TRENDING_GOOD/admission BLOCKED.
+- Integration destination: https://github.com/Shrimpworks/capsule-corp/pull/385 for all retained commits.
+- Next action: finish exact-head readback and ready transition, then report completion to the user.

@@ -7,7 +7,7 @@ bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
 Acceptance: PR #384 merged at `9a495bc404a6f2dde67b34e72409a909d2964dd1`;
 CI parity PR #385 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600`, closing #265.
-Next action: accept the published G3a2 increment, then scope the next remaining Gate-3 component.
+Next action: accept published G3a3 write-history conformance, then scope the next Gate-3 component.
 The initial baseline below remains historical; the continuation checkpoint records current work.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
@@ -122,7 +122,7 @@ these are engineering estimates, not dates. Each child reports scope separately 
 | R4B / P0 / internal baseline worker | Restore Go vulnerability gate; R2 and upstream advisories | Repository Go declaration and current onboarding; no module dependency or historical experiment rewrite | Same scanner old/new comparison; full Go tests/vet/build, lint accounting, unchanged schema/crypto/restoration fixtures; PR CI | Go release semantics/platform differences; S; PASSED, including required hosted CI and merged PR #384 |
 | R5 / P0 / Brain + fresh reviewer | Deliver recovery evidence and repairs; R4A/R4B | One shared branch/PR, canonical index and onboarding reconciliation | Independent review max three attempts; required checks; commit/push/body/state readback | Avoid overstated health; S; PASSED, reviewed and merged PR #384 |
 | NEXT-1 / P1 / Brain + contributor worker | Reproduce CI locally; R5 | Issue #265 local gates, one TypeScript emission per package, checkout-isolated Go lint cache; no protection exceptions | 18 focused and 4 real-linter regressions, full local CI, fresh review 2/3 Ready, hosted emission count 9→3 | PASSED; PR #385 merged and #265 closed; #217 full-audit debt remains |
-| NEXT-2 / P1 / Brain + archive implementation worker | Resume C5b19 implementation-only lane; R5 and archive-state readback | Exact frozen packet in named archive; no child run, guest, installed service or product activation | Inventory source state; TDD no-effect storage/oracle checks; exact source/build manifest; actual-byte independent review before Gate 4 | Frozen host/toolchain mismatch reopens packet review; M; G3a2 PASSED for implementation/review/publication in archive PR #38; full Gate 3 IN_PROGRESS — TRENDING_GOOD |
+| NEXT-2 / P1 / Brain + archive implementation worker | Resume C5b19 implementation-only lane; R5 and archive-state readback | Exact frozen packet in named archive; no child run, guest, installed service or product activation | Inventory source state; TDD no-effect storage/oracle checks; exact source/build manifest; actual-byte independent review before Gate 4 | Frozen host/toolchain mismatch reopens packet review; M; G3a2/G3a3 PASSED for their bounded implementation/review/publication in archive PR #38; full Gate 3 IN_PROGRESS — TRENDING_GOOD |
 | NEXT-3 / P1 / evidence owner | Resolve #309 independently of implementation | Exact authorized backup/snapshot evidence recovery; no recreated historical identities | Recovered manifest/raw evidence verified and pinned immutably, or explicit owner decision for a new versioned experiment | Backup availability unknown; M; BLOCKED on owner-supplied evidence location or separate run decision |
 | NEXT-4 / P1 / Brain + platform owners | Close installed authority composition in readiness-map order | C3 identity/root, C2 IPC, C6 signing, real adapter/transport, then C7 admission; no wholesale redesign | Exact named environments, independent review, rejection/restoration/fault corpora and retained immutable evidence per gate | Highest authority risk; L; BLOCKED on named platform/evidence/authorization gates |
 | NEXT-5 / P2 / maintenance owner | Reduce #217/#216 and storage/protocol debt when touched | Small changed-component batches; no broad storage rewrite | No new lint debt; contract tests and independent review for behavioral changes | Cleanup can obscure boundary changes; M; BLOCKED on prioritization after critical lanes |
@@ -188,9 +188,57 @@ checks; the exact local evidence is not relabeled as hosted or runtime evidence.
 frozen install, `make ci` and standalone tests passed; unfiltered revive debt remains #217.
 The [validation ledger](../.planning/c5b19-foundation/validation.json) and
 [implementation handoff](../.planning/c5b19-foundation/implementation-handoff.md) bound those claims.
-Next: after acceptance of this increment, scope stateful settlement/trace or another remaining
-manifest component under the same no-child boundary; do not infer full Gate-3 completion.
+Canonical [PR #386](https://github.com/Shrimpworks/capsule-corp/pull/386) merged normally at
+`080e9203c6c96d1494ea3a52e8855816fec3fa38` on 2026-10-15T22:38:46Z. Exact reviewed
+head `36bc83f` had passing CI38803053712 and CodeQL38803053865, with no canceled
+duplicate suite. No protection setting or administrator bypass was used.
+Next: bounded G3a3 pending-write/settlement conformance under the same no-child boundary;
+do not infer full Gate-3 completion.
 [Continuation ledger](../.planning/c5b19-foundation/plan.md) tracks assignments and acceptance.
+
+## G3a3 write-history continuation after #386
+
+Status: `PASSED` for bounded G3a3 implementation, verification and independent review. Brain owns
+canonical branch `codex/c5b19-settlement-conformance`; the archive worker continues
+`codex/c5b19-benign-teardown` in existing draft PR #38 from `2274a6c`.
+Post-merge main [CI38818521284](https://github.com/Shrimpworks/capsule-corp/actions/runs/38818521284)
+passed. The latest observed scheduled run still predates the repairs; no new nightly
+result is inferred from this push run.
+The [scope and acceptance](../.planning/c5b19-settlement/scope.md) select pure
+write-history conformance before the larger event/timing oracle.
+
+This checker retains one exact pending request, fresh operation IDs and the next
+settlement generation. Only an exact explicitly simulated control application
+may settle it; failed/indeterminate outcomes cannot alter confirmed projections.
+Terminal candidates preserve confirmed runner facts and, when runner publication
+was attempted, bind the same attempted identity even if publication failed.
+Preparation→terminal without a runner write remains permitted in this projection.
+That path's absence identity is a synthetic assertion until the future control
+and trace oracle checks actual creation/absence observations.
+
+The checker has no permission, stop, clock, process or store API. Passing synthetic
+history is insufficient evidence of custody, durable publication, start, timely
+stop, public completion or release. Full Gate3 remains open; Gate4–6 and product
+admission remain `BLOCKED`, and child execution remains separately gated.
+Exact offline Go1.25.13, the frozen source manifest and prior review histories
+remain unchanged. [Delivery ledger](../.planning/c5b19-settlement/plan.md) records
+TDD, mutations, review and immutable publication evidence.
+
+Published archive head:
+[`6575898`](https://github.com/Shrimpworks/capsule-experiments/tree/6575898a32ff4a3d24ca4c757f42b1807798a372/experiments/typed-guest-transport-c5b19-benign-teardown).
+[Fresh review instance 1/3](../.planning/c5b19-settlement/review-1.md) returned **Ready**
+with no actionable findings; the implementation was unchanged after its explicit working-diff
+freeze. Only acceptance metadata was appended before commit. The reviewer independently
+ran offline Go1.25.13 test/race/vet/build and verified source/reference/log hashes.
+The 24 runner/terminal/disposition cases, uncertain preparations, overlap/replay/refusal,
+ownership and identity-continuity tests passed. Six targeted guard mutants were caught and
+restored; the reviewer inspected their logs rather than rerunning them.
+
+Canonical frozen install, `make ci` and standalone workspace tests passed. Unfiltered lint
+still reports capped #217 revive debt. Archive PR #38 remains deliberately draft, with no
+hosted checks. Synthetic history and local test success do not establish runtime evidence.
+Next: accept this bounded increment, then scope raw event/trace conformance or another
+remaining manifest component under the unchanged no-child boundary.
 
 ## R4B evidence-backed dependency/toolchain decision
 

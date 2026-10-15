@@ -9,8 +9,13 @@ are merged in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384) at
 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600` and issue #265 is closed.
 C5b19 G3a2 pure wire/record conformance is `PASSED` for local tests, fresh review 1/3
 (**Ready**) and publication in existing draft archive PR #38 at
-`2274a6c7c751ded537541438f473e81ccd293457`. Next: accept that increment and scope the
-next remaining Gate-3 component. Full Gate 3 and the historical evidence gaps remain open.
+`2274a6c7c751ded537541438f473e81ccd293457`. Canonical [PR #386](https://github.com/Shrimpworks/capsule-corp/pull/386)
+merged at `080e9203c6c96d1494ea3a52e8855816fec3fa38` after green exact-head checks.
+G3a3 pending-write/settlement conformance is `PASSED` for local tests, fresh review 1/3
+(**Ready**) and publication in draft archive PR #38 at
+`6575898a32ff4a3d24ca4c757f42b1807798a372`. Next: accept this increment, then scope
+raw event/trace conformance or another remaining frozen-manifest component. Full Gate 3
+and the historical evidence gaps remain open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 
 Next security experiment: the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)

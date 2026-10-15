@@ -74,10 +74,8 @@ jobs:
 
       - name: Vulnerability scan
         env:
-          # This pinned govulncheck version requires a newer Go than go.mod
-          # pins for the project itself; let `go run` fetch a matching
-          # toolchain just for this tool instead of restricting it to the
-          # local one.
+          # Let the pinned scanner select a compatible Go toolchain if its
+          # requirement changes; project builds still use go.mod's version.
           GOTOOLCHAIN: auto
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
 
@@ -145,8 +143,11 @@ jobs:
       - name: Validate ADR index
         run: pnpm verify:adrs
 
+      - name: Build
+        run: pnpm build
+
       - name: Check
-        run: pnpm check
+        run: pnpm check:built
 
       - name: Check formatting and lint
         run: pnpm lint
@@ -157,27 +158,12 @@ jobs:
         # pull_request, where a stable base commit is available to diff
         # against.
         if: github.event_name == 'pull_request'
-        run: |
-          changed=()
-          while IFS= read -r path; do
-            changed+=("$path")
-          done < <(git diff --name-only --diff-filter=d "${{ github.event.pull_request.base.sha }}"...HEAD -- 'packages/**/*.ts' 'packages/**/*.tsx' | grep -v '\.test\.tsx\?$' || true)
-          if [ ${#changed[@]} -eq 0 ]; then
-            echo "no changed TypeScript source files"
-            exit 0
-          fi
-          printf '%s\n' "${changed[@]}"
-          node scripts/verify-exported-jsdoc.mjs "${changed[@]}"
+        env:
+          JSDOC_BASE: ${{ github.event.pull_request.base.sha }}
+        run: pnpm verify:jsdoc --changed-since "$JSDOC_BASE"
 
       - name: Test
-        run: pnpm test
-
-      - name: Test coverage (informational)
-        run: pnpm --recursive exec -- sh -c 'node --experimental-test-coverage --test dist/*.test.js'
-        continue-on-error: true
-
-      - name: Build
-        run: pnpm build
+        run: pnpm test:built
 
   dependency-review:
     name: Dependency review

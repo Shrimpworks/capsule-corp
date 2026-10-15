@@ -60,10 +60,11 @@ Do this on any Mac before touching the repository.
    ```sh
    make ci
    ```
-   Compare results with [Development](DEVELOPMENT.md#common-commands) and the
-   [recovery baseline](PROJECT_RECOVERY_2026_10_15.md). `make ci` is not full CI parity; its
-   unfiltered Go lint currently exposes the known issue #217 backlog. Distinguish that backlog
-   from toolchain errors and new findings, and run the additional documented CI gates.
+   Follow [Development](DEVELOPMENT.md#common-commands) for the comparison base, exact
+   linter version, and changed-code documentation policy. Stage new Go files before this
+   check; local CI refuses to omit untracked Go sources. See the
+   [CI parity evidence](CI_PARITY_2026_10_15.md) for covered gates and GitHub-only checks.
+   Full documentation audits remain separate and expose the known issue #217 backlog.
 9. Rust is needed only if you work on the Source Validator artifacts under
    `artifacts/mjs-source-validator-*`. There is currently no `Cargo.toml` or `rust-toolchain.toml`
    committed to this repository — those artifacts are disposable spikes retained in the separate

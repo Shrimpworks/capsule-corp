@@ -1,0 +1,286 @@
+{
+  "date": "2026-10-15",
+  "base": "fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1",
+  "raw_logs": "Temporary /tmp/capsule-recovery-logs; hashes identify observed outputs, not durable raw-log availability.",
+  "groups": {
+    "results": [
+      {
+        "label": "pnpm-check",
+        "command": "pnpm check",
+        "exit_code": 0,
+        "seconds": 10.43,
+        "log_name": "pnpm-check.log",
+        "log_sha256": "a947c21efcb65507c6504114643d568cdbc8c72b3a7a23c547e3f023dd269de4"
+      },
+      {
+        "label": "pnpm-lint",
+        "command": "pnpm lint",
+        "exit_code": 0,
+        "seconds": 1.81,
+        "log_name": "pnpm-lint.log",
+        "log_sha256": "19e919e5f3847860d90691810c3a5de7b32c568ca28b95ce8d540c7e3ae965e3"
+      },
+      {
+        "label": "pnpm-test",
+        "command": "pnpm test",
+        "exit_code": 0,
+        "seconds": 13.76,
+        "log_name": "pnpm-test.log",
+        "log_sha256": "79ac3e48823ac77310882876511d0c6a54e5a47a96448adc19e0e0ae36c21a04"
+      },
+      {
+        "label": "pnpm-verify-schemas",
+        "command": "pnpm verify:schemas",
+        "exit_code": 0,
+        "seconds": 1.54,
+        "log_name": "pnpm-verify-schemas.log",
+        "log_sha256": "38b0af82cbe62aa84839893d01267c70954b44f2639747f06f134d6cb5baaa2a"
+      },
+      {
+        "label": "pnpm-verify-adrs",
+        "command": "pnpm verify:adrs",
+        "exit_code": 0,
+        "seconds": 0.23,
+        "log_name": "pnpm-verify-adrs.log",
+        "log_sha256": "e4b84d9994263c5fe2715834acbc6c2595dd7792b8b18a7d2481189b13862576"
+      },
+      {
+        "label": "go-test",
+        "command": "go test ./...",
+        "exit_code": 0,
+        "seconds": 168.55,
+        "log_name": "go-test.log",
+        "log_sha256": "910d0646e75dab86c9c615a6f6b6b2232c00e78a32875d3bf2f4e0bbdc4cd390"
+      },
+      {
+        "label": "go-vet",
+        "command": "go vet ./...",
+        "exit_code": 0,
+        "seconds": 1.64,
+        "log_name": "go-vet.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "go-build",
+        "command": "go build ./...",
+        "exit_code": 0,
+        "seconds": 0.83,
+        "log_name": "go-build.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "golangci-lint",
+        "command": "golangci-lint run ./...",
+        "exit_code": 1,
+        "seconds": 3.86,
+        "log_name": "golangci-lint.log",
+        "log_sha256": "a71f17577192513e71038161be4919c27dea093895840d26c8be759fd97c4b95"
+      },
+      {
+        "label": "govulncheck",
+        "command": "go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...",
+        "exit_code": 1,
+        "seconds": 6.72,
+        "log_name": "govulncheck.log",
+        "log_sha256": "92c1ecb32f2167407c48cd1ba877a501c91a3b22ec06c5c561d63b6f58772163"
+      },
+      {
+        "label": "pnpm-audit",
+        "command": "pnpm audit:dependencies",
+        "exit_code": 0,
+        "seconds": 0.67,
+        "log_name": "pnpm-audit.log",
+        "log_sha256": "624b6ac1e6cc82830012cbc824ae99e78ff49ec9dade4fd091b328af533d0071"
+      }
+    ],
+    "candidate-results": [
+      {
+        "label": "candidate-go-version",
+        "command": "go version",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 0.06,
+        "log_name": "candidate-go-version.log",
+        "log_sha256": "50dfaf2b461be90c530e329b6ae9c3159961579c2fb4848bbf472fe7af282db3"
+      },
+      {
+        "label": "scanner-build",
+        "command": "go install golang.org/x/vuln/cmd/govulncheck@v1.6.0",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 3.57,
+        "log_name": "scanner-build.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "scanner-go12513",
+        "command": "/tmp/capsule-recovery-tools/govulncheck ./...",
+        "GOTOOLCHAIN": "go1.25.13",
+        "exit_code": 3,
+        "seconds": 2.61,
+        "log_name": "scanner-go12513.log",
+        "log_sha256": "09f4eb2b60d2bc975db1c2bad306e269389727804959073a0faa464e1357e4bd"
+      },
+      {
+        "label": "scanner-go1269",
+        "command": "/tmp/capsule-recovery-tools/govulncheck ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 1.73,
+        "log_name": "scanner-go1269.log",
+        "log_sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5"
+      },
+      {
+        "label": "candidate-go-vet",
+        "command": "go vet ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 2.09,
+        "log_name": "candidate-go-vet.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "candidate-go-build",
+        "command": "go build ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 0.6,
+        "log_name": "candidate-go-build.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "candidate-golangci-security",
+        "command": "golangci-lint run --disable revive ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 4.58,
+        "log_name": "candidate-golangci-security.log",
+        "log_sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47"
+      },
+      {
+        "label": "candidate-go-module-provenance",
+        "command": "go list -m -json all",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 0.02,
+        "log_name": "candidate-go-module-provenance.log",
+        "log_sha256": "051d9315a1b9813551f0b798b2493f319d58c7d89639c91ba12ba21ea2721688"
+      }
+    ],
+    "postpin-results": [
+      {
+        "label": "postpin-go-test",
+        "command": "go test ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 167.57,
+        "log_name": "postpin-go-test.log",
+        "log_sha256": "34b96d394c362b78a8bfe4fb26525cf2a65fec643c9e8d5221130962e4c55a2c"
+      },
+      {
+        "label": "postpin-go-vet",
+        "command": "go vet ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 2.66,
+        "log_name": "postpin-go-vet.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "postpin-go-build",
+        "command": "go build ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 1.0,
+        "log_name": "postpin-go-build.log",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "postpin-golangci-lint",
+        "command": "golangci-lint run ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 1,
+        "seconds": 3.42,
+        "log_name": "postpin-golangci-lint.log",
+        "log_sha256": "1358258479d8b427b8905c034e842011acc9d98e73edb55d731ef7cd150a08c0"
+      },
+      {
+        "label": "postpin-golangci-security",
+        "command": "golangci-lint run --disable revive ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 1.46,
+        "log_name": "postpin-golangci-security.log",
+        "log_sha256": "e92606b0bf483111dff0a120c315ea165821348f31365020e2468a0059095c47"
+      },
+      {
+        "label": "postpin-govulncheck",
+        "command": "go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 2.83,
+        "log_name": "postpin-govulncheck.log",
+        "log_sha256": "3016e51e4eac0d421674d2128bbbdefb2924b4646e0c14a1ab034977ad73fae5"
+      },
+      {
+        "label": "postpin-go-mod-verify",
+        "command": "go mod verify",
+        "GOTOOLCHAIN": "go1.26.9",
+        "exit_code": 0,
+        "seconds": 0.11,
+        "log_name": "postpin-go-mod-verify.log",
+        "log_sha256": "b4537ed75f533f993f371954de47e42a793b8e5b0587577de7e27fb3e50696bd"
+      }
+    ],
+    "final-js-results": [
+      {
+        "label": "final-pnpm-check",
+        "command": "pnpm check",
+        "exit_code": 0,
+        "seconds": 8.45,
+        "log_name": "final-pnpm-check.log",
+        "log_sha256": "a947c21efcb65507c6504114643d568cdbc8c72b3a7a23c547e3f023dd269de4"
+      },
+      {
+        "label": "final-pnpm-lint",
+        "command": "pnpm lint",
+        "exit_code": 0,
+        "seconds": 0.32,
+        "log_name": "final-pnpm-lint.log",
+        "log_sha256": "183e303997e34f58ec280d2891fbbe6a3bb0192cc9f8fe87943bf0dafa0fe71b"
+      },
+      {
+        "label": "final-pnpm-test",
+        "command": "pnpm test",
+        "exit_code": 0,
+        "seconds": 13.23,
+        "log_name": "final-pnpm-test.log",
+        "log_sha256": "cf777e074cff4ed66d1a0a9fed59286ca30f5d583553c1c252cf2f810d8ec015"
+      },
+      {
+        "label": "final-pnpm-verify-schemas",
+        "command": "pnpm verify:schemas",
+        "exit_code": 0,
+        "seconds": 1.37,
+        "log_name": "final-pnpm-verify-schemas.log",
+        "log_sha256": "38b0af82cbe62aa84839893d01267c70954b44f2639747f06f134d6cb5baaa2a"
+      },
+      {
+        "label": "final-pnpm-verify-adrs",
+        "command": "pnpm verify:adrs",
+        "exit_code": 0,
+        "seconds": 0.21,
+        "log_name": "final-pnpm-verify-adrs.log",
+        "log_sha256": "e4b84d9994263c5fe2715834acbc6c2595dd7792b8b18a7d2481189b13862576"
+      },
+      {
+        "label": "final-pnpm-site-build",
+        "command": "pnpm site:build",
+        "exit_code": 0,
+        "seconds": 0.21,
+        "log_name": "final-pnpm-site-build.log",
+        "log_sha256": "198149bc8cd29d5959ebe14aaa0721396f6a4b1bc52d5737f767ca97aaa9b464"
+      }
+    ]
+  }
+}

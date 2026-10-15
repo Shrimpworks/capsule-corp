@@ -57,6 +57,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     documentation-only proposed Supervisor stop/custody mechanism, bounded fault matrix, and
     review/authorization gates before any runnable experiment
 
+The [2026-10-15 project recovery report](PROJECT_RECOVERY_2026_10_15.md) records contributor-tool
+readiness, the reproduced baseline, prioritized repairs and the initial execution plan.
+
 For live per-item status, see the
 [current workstream dashboard](STATUS_LANGUAGE.md#current-workstream-dashboard). The paragraphs
 below are a reading guide to the underlying decision and evidence documents, not a status

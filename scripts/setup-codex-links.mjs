@@ -17,7 +17,11 @@ const pinPath = path.join(codexDirectory, "ai-central-pin.json");
 const templatesRoot = resolveTemplatesRoot();
 const dryRun = process.argv.includes("--dry-run");
 const recordPin = process.argv.includes("--record-pin");
-const sharedSteeringFiles = ["javascript-esm-steering.md"];
+const sharedSteeringFiles = [
+  "javascript-typescript-steering.md",
+  "rust-steering.md",
+  "shell-scripting-steering.md",
+];
 const isEntrypoint = Boolean(
   process.argv[1] && import.meta.url === pathToFileURL(await fs.realpath(process.argv[1])).href,
 );
@@ -169,9 +173,18 @@ async function findSteeringLinks() {
   for (const fileName of sharedSteeringFiles) {
     const target = path.join(root, fileName);
 
-    if (await pathExists(target)) {
-      links.push({ linkName: fileName, target });
+    let stat;
+    try {
+      stat = await fs.stat(target);
+    } catch (error) {
+      throw new Error(`Cannot access required AI Central steering file: ${target}`, {
+        cause: error,
+      });
     }
+    if (!stat.isFile()) {
+      throw new Error(`Not a regular file: required AI Central steering file ${target}`);
+    }
+    links.push({ linkName: fileName, target });
   }
 
   return links;
@@ -263,6 +276,12 @@ async function main() {
     );
   }
 
+  // Validate every required source before the installer or link refresh can write.
+  const links = (await findSteeringLinks()).map((link) => ({
+    ...link,
+    directory: steeringDirectory,
+  }));
+
   if (!dryRun) {
     await fs.mkdir(steeringDirectory, { recursive: true });
   }
@@ -280,10 +299,6 @@ async function main() {
     ...(dryRun ? ["--dry-run"] : []),
   ]);
   process.stdout.write(stdout);
-  const links = (await findSteeringLinks()).map((link) => ({
-    ...link,
-    directory: steeringDirectory,
-  }));
   const results = [];
 
   for (const link of links) {

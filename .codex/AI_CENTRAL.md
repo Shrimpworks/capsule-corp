@@ -6,7 +6,8 @@ repository.
 ## Installed selection
 
 - Install mode: local symlinks ignored by Git
-- Shared steering: `javascript-esm-steering.md`
+- Shared steering: `javascript-typescript-steering.md`, `rust-steering.md`, and
+  `shell-scripting-steering.md`
 - Skills: curated bundles in `ai-central-skills.json`: core, node, orchestration, documentation,
   delivery, engineering, rust, security-testing, and planning
 
@@ -38,6 +39,10 @@ pnpm codex:links -- --dry-run
 
 The setup command preserves real repo-owned files and
 delegates skill selection and pruning to AI Central's maintained `install-skill-bundle.sh --sync`.
+It validates every selected steering source as a regular file before the skill installer or
+steering refresh writes anything. A missing or non-file source fails both normal and dry-run
+commands with its path, instead of silently omitting the selected guidance. Unrelated steering
+links are preserved.
 The selection retains engineering and security-testing workflows and omits product strategy,
 framework-specific frontend, infrastructure, and brevity bundles. Source attribution and licenses
 remain owned by AI Central because these links are local and ignored by Git.

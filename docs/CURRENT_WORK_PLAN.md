@@ -1,9 +1,13 @@
 # Current work plan
 
-Date: 2026-09-19
+Date: 2026-10-15
 
-Next work item: integrate the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md),
-then TDD-implement only that frozen benign packet in
+Recovery checkpoint: [Project recovery assessment and roadmap](PROJECT_RECOVERY_2026_10_15.md).
+Contributor readiness and the Go vulnerability-scan failure are the immediate repair scope.
+The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
+
+Next security experiment: the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)
+was integrated by PR #378. TDD-implement only that frozen benign packet in
 `Shrimpworks/capsule-experiments` under the owner's conditional direction to
 continue after a passing review. No child run is authorized.
 PRs #373–#376 merged the plan and prospective mechanism candidate. Independent
@@ -637,9 +641,10 @@ and return a canonical repository artifact before its conclusion drives implemen
 C2b0, C3b's complete no-launch profile/signature preflight, C5b1-C5b9 no-run construction, the
 C5b compatibility preflight, and C6b1c are now `PASSED` in the exact bounded scopes pinned above.
 The direct C5b9 provider-only binding candidate is `NO_GO`; C5b controlled execution remains
-`BLOCKED` on the missing C5b11 provider implementations/provenance, independent review of the
-complete composition, and final authorization naming its exact immutable merge and manifest.
-C5b11 construction/static re-verification is `PASSED`; see the September 5 checkpoint above.
+`BLOCKED` on the separately reviewed successor implementation/composition and exact first-run
+authorization. C5b12–C5b14B supplied bounded benign provider/storage evidence; C5b16 exposed the
+cleanup timing issue, and C5b18/C5b19 define the reviewed successor direction and packet. Those
+scopes do not establish controlled guest transport. See the dated checkpoints above.
 The immediate C3b step is a freshly
 authorized E1 container matrix
 over E1-01..E1-12 and E1-14..E1-15; E1-13 remains excluded. If C3b passes, C3c must reconcile that

@@ -5,3 +5,5 @@
 - 2026-10-15: Collected three readiness/architecture/baseline handoffs. Same scanner old Go failed seven findings, new Go passed. Both full Go suites passed. AI steering red/green regression completed. Fresh-context review instance 1/3 dispatched; final JS gates running. Product/experiment gates unchanged.
 
 - 2026-10-15: Final JS gates passed; review instance 1/3 Ready with no actionable findings. Reviewer confirmed all 32 log hashes and independently reran 13 linker tests/real-source dry run. Preparing commits and PR; no product admission change.
+
+- 2026-10-15: Published ready PR #384 and attached it to chat; verified head/base/commit/draft state and actual Markdown newlines. Initial archive/dependency jobs passed; other jobs pending. Initial recovery delivery PASSED; remote acceptance and product work remain separate.

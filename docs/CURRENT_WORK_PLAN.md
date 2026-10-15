@@ -3,7 +3,9 @@
 Date: 2026-10-15
 
 Recovery checkpoint: [Project recovery assessment and roadmap](PROJECT_RECOVERY_2026_10_15.md).
-Contributor readiness and the Go vulnerability-scan failure are the immediate repair scope.
+Contributor readiness repairs, the Go 1.26.9 security update and initial recovery deliverables
+are reviewed and published in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384).
+Complete its CI/merge acceptance, then assign the next bounded roadmap item.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 
 Next security experiment: the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)

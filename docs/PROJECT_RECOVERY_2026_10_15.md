@@ -1,11 +1,12 @@
 # Project recovery — 2026-10-15
 
-Work item: RECOVERY-20261015. Status: `IN_PROGRESS — TRENDING_GOOD`.
+Work item: RECOVERY-20261015. Status: `PASSED` for initial recovery deliverables and reviewed
+maintenance repairs published in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384).
 Scope: contributor tooling, reproducible baseline, implementation/plan reconciliation and two
 bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
-Remaining work: publish the reviewed branch and read back remote PR/CI state.
-Next action: commit and publish the integrated R4A/R4B results.
+Remaining work outside this delivery: remote CI/merge and the separately scoped roadmap lanes.
+Next action: complete PR acceptance, then assign the next bounded roadmap item.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
 
@@ -116,9 +117,9 @@ these are engineering estimates, not dates. Each child reports scope separately 
 | ID / priority / owner | Outcome and dependencies | Scope / exclusions | Acceptance and verification | Risk / effort / status |
 | --- | --- | --- | --- | --- |
 | R4A / P0 / internal tooling worker | Reliable pinned AI Central refresh; R0 | Linker, existing tests and integration documentation; no upstream or pin changes | Red/green missing-steering regression; all selected files validated before mutation; dry-run, owned-file preservation, curated sync and pin-refusal tests | Local link regression; S; PASSED |
-| R4B / P0 / internal baseline worker | Restore Go vulnerability gate; R2 and upstream advisories | Repository Go declaration and current onboarding; no module dependency or historical experiment rewrite | Same scanner old/new comparison; full Go tests/vet/build, lint accounting, unchanged schema/crypto/restoration fixtures; PR CI | Go release semantics/platform differences; S; PASSED locally; remote CI pending |
-| R5 / P0 / Brain + fresh reviewer | Deliver recovery evidence and repairs; R4A/R4B | One shared branch/PR, canonical index and onboarding reconciliation | Independent review max three attempts; required checks; commit/push/body/state readback | Avoid overstated health; S; IN_PROGRESS — TRENDING_GOOD |
-| NEXT-1 / P1 / next bounded contributor task | Reproduce CI locally; R5 | Issue #265: JSDoc entrypoint first, then explicit CI/Make parity; no permissions/advisory exceptions | Positive/negative exported-doc fixture, unchanged file selection, inventory all local/CI differences before deduplicating builds | Full-audit backlog differs from PR scope; S–M; BLOCKED on R5 delivery/assignment |
+| R4B / P0 / internal baseline worker | Restore Go vulnerability gate; R2 and upstream advisories | Repository Go declaration and current onboarding; no module dependency or historical experiment rewrite | Same scanner old/new comparison; full Go tests/vet/build, lint accounting, unchanged schema/crypto/restoration fixtures; PR CI | Go release semantics/platform differences; S; PASSED locally; remote CI is a separate acceptance gate |
+| R5 / P0 / Brain + fresh reviewer | Deliver recovery evidence and repairs; R4A/R4B | One shared branch/PR, canonical index and onboarding reconciliation | Independent review max three attempts; required checks; commit/push/body/state readback | Avoid overstated health; S; PASSED for review and PR publication |
+| NEXT-1 / P1 / next bounded contributor task | Reproduce CI locally; R5 | Issue #265: JSDoc entrypoint first, then explicit CI/Make parity; no permissions/advisory exceptions | Positive/negative exported-doc fixture, unchanged file selection, inventory all local/CI differences before deduplicating builds | Full-audit backlog differs from PR scope; S–M; BLOCKED on next bounded task assignment |
 | NEXT-2 / P1 / Brain + archive implementation worker | Resume C5b19 implementation-only lane; R5 and archive-state readback | Exact frozen packet in named archive; no child run, guest, installed service or product activation | Inventory source state; TDD no-effect storage/oracle checks; exact source/build manifest; actual-byte independent review before Gate 4 | Frozen host/toolchain mismatch reopens packet review; M; BLOCKED on archive reconciliation and scoped dispatch |
 | NEXT-3 / P1 / evidence owner | Resolve #309 independently of implementation | Exact authorized backup/snapshot evidence recovery; no recreated historical identities | Recovered manifest/raw evidence verified and pinned immutably, or explicit owner decision for a new versioned experiment | Backup availability unknown; M; BLOCKED on owner-supplied evidence location or separate run decision |
 | NEXT-4 / P1 / Brain + platform owners | Close installed authority composition in readiness-map order | C3 identity/root, C2 IPC, C6 signing, real adapter/transport, then C7 admission; no wholesale redesign | Exact named environments, independent review, rejection/restoration/fault corpora and retained immutable evidence per gate | Highest authority risk; L; BLOCKED on named platform/evidence/authorization gates |
@@ -168,7 +169,7 @@ used for product admission. Historical experiment toolchains require their own r
 
 Baseline characterization: `PASSED`; baseline all-gates result: `BLOCKED` by old-pin advisories
 and preexisting documentation lint debt. R4A/R4B local repair verification: `PASSED` for their
-bounded scopes; independent review is `PASSED`; publication remains `IN_PROGRESS — TRENDING_GOOD`.
+bounded scopes; independent review and PR publication are `PASSED`. Remote CI/merge is separate.
 
 | Command/evidence | Initial base | Repaired tree |
 | --- | --- | --- |
@@ -212,3 +213,12 @@ Full Go suite evidence was inspected, not independently reexecuted. The prelimin
 author rationale, but no separate preliminary ledger was saved; this process limitation is
 retained in the [review report](../.planning/project-recovery-20261015/review.md). No review budget
 from an older C5b workstream is reused.
+
+Publication: branch `codex/project-recovery-20261015`, reviewed implementation commit
+`22aad310d60009642097c21cf4b822b13bd14069`, intentionally ready PR #384 (`isDraft=false`), base
+`main`. Stored body read back as real multiline Markdown; base/head/commit/state verified.
+Initial [CI run 38762955023](https://github.com/Shrimpworks/capsule-corp/actions/runs/38762955023)
+passed compiled-archive and dependency review; remaining jobs were pending at this retained
+snapshot. Latest GitHub checks, rather than this historical snapshot, govern merge. No merge,
+guest/installed operation or product-admission decision was performed by recovery. This closing
+status record is documentation-only follow-up to the reviewed implementation.

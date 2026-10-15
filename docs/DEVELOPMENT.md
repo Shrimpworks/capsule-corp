@@ -41,12 +41,41 @@ make build
 make ci
 ```
 
-`make ci` runs the local Makefile checks, tests and builds. It does not yet mirror all GitHub
-Actions gates: dependency audit, site build, ADR verification and changed-file exported JSDoc
-need separate checks (issue #265). Unfiltered local Go lint also reports the existing exported-
-contract backlog (issue #217), whereas CI gates new documentation findings separately. Run
-`make fmt` separately when formatting changes are needed. See the
-[2026-10-15 recovery baseline](PROJECT_RECOVERY_2026_10_15.md) for exact results and limitations.
+`make ci` runs dependency audit, site/schema/ADR validation, type and formatting checks,
+changed-file exported JSDoc, Go format/vet/security/vulnerability checks, tests and builds.
+Install dependencies with the frozen lockfile first. The aggregate emits TypeScript once and
+uses `pnpm test:built` afterward; standalone `pnpm check` and `pnpm test` prepare their own
+build output. Run `make fmt` separately when formatting changes are needed.
+
+The default comparison base is `origin/main`. Fetch it before a branch check, or supply the
+exact PR base to reproduce its scope:
+
+```bash
+git fetch origin main
+make ci CI_BASE=<base-commit>
+pnpm verify:jsdoc --changed-since <base-commit> --include-worktree
+```
+
+Changed-file JSDoc checks whole TypeScript source files under `packages/`, including local
+staged, unstaged and untracked files; tests, declarations and deletions are excluded. Local
+Go documentation lint checks changed lines relative to the merge base, including tracked
+working-tree edits. Stage new Go files before running it: untracked Go files cause an explicit
+failure. Invalid bases fail instead of silently skipping documentation checks.
+
+`golangci-lint` must be version 2.12.2. Security and correctness checks always cover all Go code;
+only revive documentation findings use the change scope, matching CI's issue #217 policy.
+The wrapper isolates linter caches by canonical checkout path: by default it uses Git's
+per-checkout metadata directory; `GOLANGCI_LINT_CACHE` selects a parent directory with a
+checkout-specific child. This prevents cached absolute finding paths from another worktree
+from being dropped by changed-line filtering. It does not clear your shared linter cache.
+Use `make lint-go-full` and `pnpm verify:jsdoc` for full documentation audits. These still expose
+the existing backlog; passing the changed-code gates does not close #217.
+
+GitHub-only dependency review, CodeQL, immutable-archive retrieval and nightly scheduling
+remain separate. Local full Go tests cover more than the normal hosted `-short` job. To match
+hosted documentation results, compare the same tree and event base; local dirty-tree checks
+are an additional safeguard. See the [CI parity evidence](CI_PARITY_2026_10_15.md) and the
+historical [recovery baseline](PROJECT_RECOVERY_2026_10_15.md).
 
 ## Local AI context
 

@@ -11,7 +11,7 @@
   "scripts": {
     "audit:dependencies": "pnpm audit --audit-level high",
     "build": "pnpm --recursive build",
-    "check": "pnpm build && pnpm --recursive check",
+    "check": "pnpm build && pnpm check:built",
     "clean": "pnpm --recursive clean",
     "codex:links": "node scripts/setup-codex-links.mjs",
     "format": "biome format --write .",
@@ -20,12 +20,15 @@
     "generate:typed-guest-transport": "node scripts/generate-typed-guest-transport-fixtures.mjs",
     "lint": "biome check .",
     "site:build": "node scripts/build-site.mjs",
-    "test": "pnpm --recursive test && node --test scripts/*.test.mjs && node scripts/verify-control-evidence-matrix.mjs && node scripts/verify-typed-guest-transport-fixtures.mjs && pnpm verify:i2b-bootstrap",
+    "test": "pnpm build && pnpm test:built",
     "verify:control-matrix": "node scripts/verify-control-evidence-matrix.mjs",
     "verify:i2b-bootstrap": "node scripts/generate-i2b-bootstrap-conformance.mjs --check",
     "verify:i2b-bootstrap:swift": "node scripts/generate-i2b-bootstrap-conformance.mjs --check && SWIFT_MODULECACHE_PATH=/tmp/capsule-i2b-swift-module-cache CLANG_MODULE_CACHE_PATH=/tmp/capsule-i2b-clang-module-cache swift scripts/verify-i2b-bootstrap-fixtures.swift",
     "verify:adrs": "node scripts/verify-adr-index.mjs",
-    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/generate-contract-conformance-fixtures.mjs --check && node scripts/generate-authority-plane-conformance.mjs --check && node scripts/verify-authority-plane-conformance.mjs && node scripts/generate-authenticated-local-ipc-conformance.mjs --check && node scripts/verify-authenticated-local-ipc-conformance.mjs && node scripts/verify-contract-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs --check && node scripts/generate-i2b-bootstrap-conformance.mjs --check && node scripts/generate-macos-i2b2-profile.mjs --check && node scripts/generate-typed-guest-transport-fixtures.mjs --check && node scripts/verify-typed-guest-transport-fixtures.mjs && node scripts/verify-field-authority-manifest.mjs"
+    "verify:schemas": "node scripts/verify-schemas.mjs && node scripts/verify-cddl-fixtures.mjs && node scripts/generate-contract-conformance-fixtures.mjs --check && node scripts/generate-authority-plane-conformance.mjs --check && node scripts/verify-authority-plane-conformance.mjs && node scripts/generate-authenticated-local-ipc-conformance.mjs --check && node scripts/verify-authenticated-local-ipc-conformance.mjs && node scripts/verify-contract-conformance.mjs && node scripts/generate-typescript-approved-byte-conformance.mjs --check && node scripts/generate-i2b-bootstrap-conformance.mjs --check && node scripts/generate-macos-i2b2-profile.mjs --check && node scripts/generate-typed-guest-transport-fixtures.mjs --check && node scripts/verify-typed-guest-transport-fixtures.mjs && node scripts/verify-field-authority-manifest.mjs",
+    "check:built": "pnpm --recursive check",
+    "test:built": "pnpm --recursive test:built && node --test scripts/*.test.mjs && node scripts/verify-control-evidence-matrix.mjs && node scripts/verify-typed-guest-transport-fixtures.mjs && pnpm verify:i2b-bootstrap",
+    "verify:jsdoc": "node scripts/verify-exported-jsdoc.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.12",

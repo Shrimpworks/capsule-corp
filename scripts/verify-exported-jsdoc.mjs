@@ -23,6 +23,7 @@ import { pathToFileURL } from "node:url";
 import ts from "typescript";
 
 import { listInScopeFiles } from "./lib/exported-jsdoc-files.mjs";
+import { changedTypeScriptFiles } from "./lib/git-baseline.mjs";
 
 /**
  * @param {ts.SourceFile} sourceFile
@@ -96,8 +97,26 @@ export function findViolations(path, text) {
 }
 
 async function main() {
-  const explicitFiles = process.argv.slice(2);
-  const files = explicitFiles.length > 0 ? explicitFiles : await listInScopeFiles();
+  const args = process.argv.slice(2);
+  let files;
+  if (args[0] === "--changed-since") {
+    if (
+      !args[1] ||
+      args[1].startsWith("-") ||
+      args.length > 3 ||
+      (args.length === 3 && args[2] !== "--include-worktree")
+    ) {
+      throw new Error(
+        "Usage: verify:jsdoc --changed-since REF [--include-worktree]; baseline required",
+      );
+    }
+    files = changedTypeScriptFiles(args[1], args[2] === "--include-worktree");
+  } else {
+    if (args.some((arg) => arg.startsWith("--"))) {
+      throw new Error("Usage: verify:jsdoc [files...] | --changed-since REF [--include-worktree]");
+    }
+    files = args.length > 0 ? args : await listInScopeFiles();
+  }
 
   if (files.length === 0) {
     console.log("verify-exported-jsdoc: no in-scope .ts files to check");

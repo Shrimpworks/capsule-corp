@@ -4,8 +4,13 @@ Date: 2026-10-15
 
 Recovery checkpoint: [Project recovery assessment and roadmap](PROJECT_RECOVERY_2026_10_15.md).
 Contributor readiness repairs, the Go 1.26.9 security update and initial recovery deliverables
-are reviewed and published in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384).
-Complete its CI/merge acceptance, then assign the next bounded roadmap item.
+are merged in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384) at
+`9a495bc404a6f2dde67b34e72409a909d2964dd1`. CI parity is `PASSED`: [PR #385](https://github.com/Shrimpworks/capsule-corp/pull/385)
+merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600` and issue #265 is closed.
+C5b19 G3a2 pure wire/record conformance is `PASSED` for local tests, fresh review 1/3
+(**Ready**) and publication in existing draft archive PR #38 at
+`2274a6c7c751ded537541438f473e81ccd293457`. Next: accept that increment and scope the
+next remaining Gate-3 component. Full Gate 3 and the historical evidence gaps remain open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 
 Next security experiment: the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)
@@ -31,8 +36,11 @@ Instance 3 on `f7c9016982a319ad56fc4853968501d1af46f3d1` returned
 arithmetic findings. The owner authorized up to three additional passes;
 instance 4 of 6 returned **Ready** with no actionable findings on the
 corrected exact head. Gate-3 implementation-only authorization is `PASSED`
-conditionally on this packet's integration; implementation itself remains
-`IN_PROGRESS — TRENDING_GOOD` only once started. Parent workstream remains
+conditionally on this packet's integration; implementation is now
+`IN_PROGRESS — TRENDING_GOOD` in archive PR #38. The initial pure primitives exist at
+`1e3f3bb154d0ef24412002ac47adef22ba3c46a9`; the recovery continuation adds bounded
+request/reply/record conformance. See the [current recovery checkpoint](PROJECT_RECOVERY_2026_10_15.md#recovery-continuation-after-265)
+for review-provenance limitations and exact subset boundaries. Parent workstream remains
 `IN_PROGRESS — TRENDING_GOOD`; Gate 4 first-run authorization and Gates 5–6
 remain `BLOCKED`. No child run is authorized.
 

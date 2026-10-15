@@ -5,8 +5,10 @@ maintenance repairs published in [PR #384](https://github.com/Shrimpworks/capsul
 Scope: contributor tooling, reproducible baseline, implementation/plan reconciliation and two
 bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
-Remaining work outside this delivery: remote CI/merge and the separately scoped roadmap lanes.
-Next action: complete PR acceptance, then assign the next bounded roadmap item.
+Acceptance: PR #384 merged at `9a495bc404a6f2dde67b34e72409a909d2964dd1`;
+CI parity PR #385 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600`, closing #265.
+Next action: accept the published G3a2 increment, then scope the next remaining Gate-3 component.
+The initial baseline below remains historical; the continuation checkpoint records current work.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
 
@@ -117,16 +119,17 @@ these are engineering estimates, not dates. Each child reports scope separately 
 | ID / priority / owner | Outcome and dependencies | Scope / exclusions | Acceptance and verification | Risk / effort / status |
 | --- | --- | --- | --- | --- |
 | R4A / P0 / internal tooling worker | Reliable pinned AI Central refresh; R0 | Linker, existing tests and integration documentation; no upstream or pin changes | Red/green missing-steering regression; all selected files validated before mutation; dry-run, owned-file preservation, curated sync and pin-refusal tests | Local link regression; S; PASSED |
-| R4B / P0 / internal baseline worker | Restore Go vulnerability gate; R2 and upstream advisories | Repository Go declaration and current onboarding; no module dependency or historical experiment rewrite | Same scanner old/new comparison; full Go tests/vet/build, lint accounting, unchanged schema/crypto/restoration fixtures; PR CI | Go release semantics/platform differences; S; PASSED locally; remote CI is a separate acceptance gate |
-| R5 / P0 / Brain + fresh reviewer | Deliver recovery evidence and repairs; R4A/R4B | One shared branch/PR, canonical index and onboarding reconciliation | Independent review max three attempts; required checks; commit/push/body/state readback | Avoid overstated health; S; PASSED for review and PR publication |
-| NEXT-1 / P1 / next bounded contributor task | Reproduce CI locally; R5 | Issue #265: JSDoc entrypoint first, then explicit CI/Make parity; no permissions/advisory exceptions | Positive/negative exported-doc fixture, unchanged file selection, inventory all local/CI differences before deduplicating builds | Full-audit backlog differs from PR scope; S–M; BLOCKED on next bounded task assignment |
-| NEXT-2 / P1 / Brain + archive implementation worker | Resume C5b19 implementation-only lane; R5 and archive-state readback | Exact frozen packet in named archive; no child run, guest, installed service or product activation | Inventory source state; TDD no-effect storage/oracle checks; exact source/build manifest; actual-byte independent review before Gate 4 | Frozen host/toolchain mismatch reopens packet review; M; BLOCKED on archive reconciliation and scoped dispatch |
+| R4B / P0 / internal baseline worker | Restore Go vulnerability gate; R2 and upstream advisories | Repository Go declaration and current onboarding; no module dependency or historical experiment rewrite | Same scanner old/new comparison; full Go tests/vet/build, lint accounting, unchanged schema/crypto/restoration fixtures; PR CI | Go release semantics/platform differences; S; PASSED, including required hosted CI and merged PR #384 |
+| R5 / P0 / Brain + fresh reviewer | Deliver recovery evidence and repairs; R4A/R4B | One shared branch/PR, canonical index and onboarding reconciliation | Independent review max three attempts; required checks; commit/push/body/state readback | Avoid overstated health; S; PASSED, reviewed and merged PR #384 |
+| NEXT-1 / P1 / Brain + contributor worker | Reproduce CI locally; R5 | Issue #265 local gates, one TypeScript emission per package, checkout-isolated Go lint cache; no protection exceptions | 18 focused and 4 real-linter regressions, full local CI, fresh review 2/3 Ready, hosted emission count 9→3 | PASSED; PR #385 merged and #265 closed; #217 full-audit debt remains |
+| NEXT-2 / P1 / Brain + archive implementation worker | Resume C5b19 implementation-only lane; R5 and archive-state readback | Exact frozen packet in named archive; no child run, guest, installed service or product activation | Inventory source state; TDD no-effect storage/oracle checks; exact source/build manifest; actual-byte independent review before Gate 4 | Frozen host/toolchain mismatch reopens packet review; M; G3a2 PASSED for implementation/review/publication in archive PR #38; full Gate 3 IN_PROGRESS — TRENDING_GOOD |
 | NEXT-3 / P1 / evidence owner | Resolve #309 independently of implementation | Exact authorized backup/snapshot evidence recovery; no recreated historical identities | Recovered manifest/raw evidence verified and pinned immutably, or explicit owner decision for a new versioned experiment | Backup availability unknown; M; BLOCKED on owner-supplied evidence location or separate run decision |
 | NEXT-4 / P1 / Brain + platform owners | Close installed authority composition in readiness-map order | C3 identity/root, C2 IPC, C6 signing, real adapter/transport, then C7 admission; no wholesale redesign | Exact named environments, independent review, rejection/restoration/fault corpora and retained immutable evidence per gate | Highest authority risk; L; BLOCKED on named platform/evidence/authorization gates |
 | NEXT-5 / P2 / maintenance owner | Reduce #217/#216 and storage/protocol debt when touched | Small changed-component batches; no broad storage rewrite | No new lint debt; contract tests and independent review for behavioral changes | Cleanup can obscure boundary changes; M; BLOCKED on prioritization after critical lanes |
 
-The Brain owns integration and the next assignment. All current workers are internal subagents on
-`codex/project-recovery-20261015`; none independently commits or publishes. Review attempts are
+The Brain owns integration. Initial recovery workers shared `codex/project-recovery-20261015`;
+continuation workers use the lead-owned destinations in the checkpoint below. None independently
+commits or publishes. Review attempts are
 recorded below. Three failed implementation/review attempts stop the cycle and require a focused
 research/alignment decision; this recovery does not reset historical C5b review counts.
 
@@ -136,6 +139,58 @@ PR published. Sustained progress is measured at subsequent acceptance checkpoint
 activity. At each merge, update CURRENT_WORK_PLAN with owner, next runnable scope and evidence;
 recheck the existing nightly CI signal, archive claims and remaining dependencies. No new
 recurring automation or background execution is established by this document.
+
+## Recovery continuation after #265
+
+Status: G3a2 wire/record implementation and review `PASSED`; NEXT-2 / full C5b19 Gate 3
+remains `IN_PROGRESS — TRENDING_GOOD`.
+Merged maintenance and CI parity are `PASSED`; alpha and product admission retain their
+separate statuses above. [CI parity closeout](CI_PARITY_2026_10_15.md) records the canceled
+workflow-suite blocker and its genuine rerun without branch-protection changes.
+Post-merge main CI [38791235518](https://github.com/Shrimpworks/capsule-corp/actions/runs/38791235518)
+passed at the #385 merge. The latest scheduled run remains the historical failing run
+38736586664 at `fc8af2d`; no scheduled run on the repaired head was observed. Local full
+Go-suite coverage passed, but does not establish a new hosted nightly result.
+
+Archive reconciliation found existing [draft PR #38](https://github.com/Shrimpworks/capsule-experiments/pull/38)
+at `1e3f3bb154d0ef24412002ac47adef22ba3c46a9`, based on archive main
+`d8fd74a158f2227277ccfce5532e9bd8ad3e714e`. It already supplies pure cancellation,
+process-identity and obligation primitives. Continue it; do not recreate that foundation.
+Its third historical review is reported Ready in the PR body but pending in retained PLAN;
+no reviewer report was recovered. Preserve that provenance limitation and all three attempts.
+
+The new G3a2 increment adds exact 397-byte request, 98-byte reply and 395-byte record
+validation/correspondence using only inert in-memory vectors in the frozen oracle files.
+It also consolidates the unlisted obligation test file into a listed test file. This increment
+has its own maximum-three review budget for new behavior and integration; it is not a fourth
+retry or retrospective certification of the historical foundation. Tests must exercise fixed
+known answers, malformed and substituted fields, uncertainty and terminal authority limits.
+
+The archive retains Go 1.25.13 with offline tests and no dependencies. Capsule's Go 1.26.9
+maintenance upgrade does not revise that packet. No lifecycle fixture, native bridge, store,
+full trace oracle or host/binary admission is supplied by this increment. Gate 4–6 and product
+admission remain `BLOCKED`; exact host/toolchain closure precedes any separately authorized run.
+
+Brain owns canonical branch `codex/recovery-c5b19-foundation` and archive branch
+`codex/c5b19-benign-teardown`; archive PR #38 receives all retained experiment changes.
+The archive increment is published at
+[`2274a6c`](https://github.com/Shrimpworks/capsule-experiments/tree/2274a6c7c751ded537541438f473e81ccd293457/experiments/typed-guest-transport-c5b19-benign-teardown),
+with reviewed implementation `c4d3c33ed04c1dff213e2c69064a6113892d9653`; the later commit
+only records review acceptance. [Fresh review 1/3](../.planning/c5b19-foundation/review-1.md)
+returned **Ready**, with the sole stale canonical merge sentence corrected and verified in-pass.
+Exact offline Go1.25.13 test/race/vet/build pass, including independent reruns; retained tests
+cover 890 byte substitutions, every short length, fixed literal hashes, invalid frozen bindings
+and terminal/uncertain outcomes. Three controlled guard mutants were caught and restored.
+The reviewer inspected those mutation logs rather than rerunning the mutants.
+
+Archive PR #38 remains deliberately draft for the unfinished full experiment. It has no hosted
+checks; the exact local evidence is not relabeled as hosted or runtime evidence. Canonical
+frozen install, `make ci` and standalone tests passed; unfiltered revive debt remains #217.
+The [validation ledger](../.planning/c5b19-foundation/validation.json) and
+[implementation handoff](../.planning/c5b19-foundation/implementation-handoff.md) bound those claims.
+Next: after acceptance of this increment, scope stateful settlement/trace or another remaining
+manifest component under the same no-child boundary; do not infer full Gate-3 completion.
+[Continuation ledger](../.planning/c5b19-foundation/plan.md) tracks assignments and acceptance.
 
 ## R4B evidence-backed dependency/toolchain decision
 

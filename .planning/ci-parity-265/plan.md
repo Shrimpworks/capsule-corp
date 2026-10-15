@@ -1,6 +1,6 @@
 # CI parity recovery slice — issue #265
 
-Work item: CI265 implementation/verification. Status: PASSED; PR #385 pending merge.
+Work item: CI265 implementation/verification. Status: PASSED; PR #385 merged at ba28f9c0b33c2366ccb892c2cf5bc33dcf792600; #265 closed.
 Scope: contributor Make/CI command parity, unchanged security gates, one emitted TypeScript build
 and one test-suite execution, reproducible exported-documentation checks and tool-version clarity.
 Parent: initial recovery delivered; owner-only alpha IN_PROGRESS — TRENDING_GOOD, admission BLOCKED.
@@ -62,8 +62,9 @@ Historical recovery reports remain historical. Current instructions are updated 
 - PASSED: hosted TypeScript job116589384544 emits once/package (3 total vs baseline9) and no coverage rerun.
 - Evidence-only follow-up records hosted results; exact-head CI and ready state readback are the final
   publication checks. No independently reviewed implementation changed after instance2.
-- Remaining delivery action: maintainer merge of PR #385; #265 closes on merge.
+- PASSED: PR #385 merged 2026-10-15T19:06:57Z; #265 closed two seconds later.
+  Canceled duplicate run38783982642 rerun attempt2 passed; normal pinned-head squash, protections unchanged.
 - Deferred: optional Dependabot grouping; full documentation debt #217; GitHub-only service gates
   remain distinct from local CI; owner-only alpha remains IN_PROGRESS — TRENDING_GOOD/admission BLOCKED.
 - Integration destination: https://github.com/Shrimpworks/capsule-corp/pull/385 for all retained commits.
-- Next action: finish exact-head readback and ready transition, then report completion to the user.
+- Next action: NEXT-2 C5b19 bounded implementation-only continuation; this CI slice is complete.

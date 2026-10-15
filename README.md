@@ -165,8 +165,8 @@ See [Documentation](docs/README.md) for the complete design set.
 
 Prerequisites:
 
-- Go at the version `go.mod` declares (1.25.13 at time of writing); `go` selects the matching
-  toolchain automatically unless `GOTOOLCHAIN=local` is set
+- Go at the version `go.mod` declares (1.26.9 at time of writing); `go` selects at least that
+  version automatically unless `GOTOOLCHAIN=local` is set; use `GOTOOLCHAIN=go1.26.9` for exact reproduction
 - Node.js 22.22.1 for repository tooling
 - pnpm 10.28.2
 - Bun 1.3.14 for runtime-profile experiments; it is not an admitted workload profile

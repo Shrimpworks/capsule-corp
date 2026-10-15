@@ -37,7 +37,7 @@ Do this on any Mac before touching the repository.
    exact version you install (`xcodebuild -version`) in your own notes; there is no product Xcode
    project yet to pin a version against (see
    [Deferred and trigger-based gaps](#deferred-and-trigger-based-gaps) below).
-2. Install Go, matching `go.mod` (currently 1.23 or newer).
+2. Install Go matching `go.mod` (currently 1.26.9). Use `GOTOOLCHAIN=go1.26.9` for exact reproduction.
 3. Install Node.js, matching `.node-version` (currently 22.22.1).
 4. Enable pnpm via Corepack, matching `package.json`'s `packageManager` pin (currently 10.28.2):
    ```sh
@@ -60,8 +60,10 @@ Do this on any Mac before touching the repository.
    ```sh
    make ci
    ```
-   A clean `make ci` run is the acceptance bar for Part A. If it fails, fix the toolchain before
-   writing code — do not chase test failures caused by a wrong Go/Node/pnpm version.
+   Compare results with [Development](DEVELOPMENT.md#common-commands) and the
+   [recovery baseline](PROJECT_RECOVERY_2026_10_15.md). `make ci` is not full CI parity; its
+   unfiltered Go lint currently exposes the known issue #217 backlog. Distinguish that backlog
+   from toolchain errors and new findings, and run the additional documented CI gates.
 9. Rust is needed only if you work on the Source Validator artifacts under
    `artifacts/mjs-source-validator-*`. There is currently no `Cargo.toml` or `rust-toolchain.toml`
    committed to this repository — those artifacts are disposable spikes retained in the separate

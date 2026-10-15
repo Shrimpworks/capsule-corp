@@ -7,9 +7,10 @@ canonical reference for exact toolchain pins and common commands.
 
 ## Prerequisites
 
-- Go at the version `go.mod` declares (1.25.13 at time of writing). Read the pin from `go.mod`
-  rather than this list: the `go` directive is the single source of truth, and `go` selects a
-  matching toolchain automatically unless `GOTOOLCHAIN=local` is set
+- Go at the version `go.mod` declares (1.26.9 at time of writing). Read the pin from `go.mod`
+  rather than this list: the `go` directive is the single source of truth, and `go` selects at least that
+  version automatically unless `GOTOOLCHAIN=local` is set. For exact reproduction use
+  `GOTOOLCHAIN=go1.26.9`; a newer host default otherwise remains selected
 - `golangci-lint` v2.12.2, matching the pin in `.github/workflows/ci.yml`, for `make check`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`
@@ -40,8 +41,12 @@ make build
 make ci
 ```
 
-`make ci` runs the complete verification suite used for handoff. Run `make fmt` separately when
-formatting changes are needed.
+`make ci` runs the local Makefile checks, tests and builds. It does not yet mirror all GitHub
+Actions gates: dependency audit, site build, ADR verification and changed-file exported JSDoc
+need separate checks (issue #265). Unfiltered local Go lint also reports the existing exported-
+contract backlog (issue #217), whereas CI gates new documentation findings separately. Run
+`make fmt` separately when formatting changes are needed. See the
+[2026-10-15 recovery baseline](PROJECT_RECOVERY_2026_10_15.md) for exact results and limitations.
 
 ## Local AI context
 
@@ -55,8 +60,9 @@ The command expects `../ai-central/templates` by default. Set `AI_CENTRAL_HOME` 
 repository or its `templates` directory when it lives elsewhere. Use
 `pnpm codex:links -- --dry-run` to preview changes.
 
-Repository-specific `AGENTS.md` and steering remain tracked. Shared steering and the full reviewed
-AI Central skill catalog—including Caveman and Hallmark—remain local and are ignored by Git.
+Repository-specific `AGENTS.md` and steering remain tracked. Shared steering and the curated
+AI Central bundles selected by `.codex/ai-central-skills.json` remain local and ignored by Git.
+The selection and provenance checks are documented in [AI Central integration](../.codex/AI_CENTRAL.md).
 
 ## Packages
 

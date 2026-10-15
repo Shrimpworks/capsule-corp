@@ -1,6 +1,16 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  lstat,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  readlink,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -14,6 +24,11 @@ import {
 } from "./setup-codex-links.mjs";
 
 const execFileAsync = promisify(execFile);
+const steeringFiles = [
+  "javascript-typescript-steering.md",
+  "rust-steering.md",
+  "shell-scripting-steering.md",
+];
 
 async function makeGitCheckout(root) {
   await mkdir(root, { recursive: true });
@@ -36,6 +51,35 @@ async function withTempDir(run) {
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+}
+
+async function makeLinkFixture(root) {
+  const project = join(root, "project");
+  const central = join(root, "ai-central");
+  const commit = await makeGitCheckout(central);
+  await mkdir(join(central, "templates", "skills"), { recursive: true });
+  await mkdir(join(central, "templates", "steering"));
+  for (const name of steeringFiles) {
+    await writeFile(join(central, "templates", "steering", name), `# ${name}\n`);
+  }
+  await mkdir(join(central, "scripts"));
+  await writeFile(
+    join(central, "scripts", "install-skill-bundle.sh"),
+    'printf "installer:"\nprintf "[%s]" "$@"\nprintf "\\n"\n' +
+      'case "$*" in *--dry-run*) ;; *) mkdir -p "$1/.agents" ;; esac\n',
+  );
+  await mkdir(join(project, "scripts"), { recursive: true });
+  await mkdir(join(project, ".codex"));
+  const script = join(project, "scripts", "setup-codex-links.mjs");
+  await writeFile(script, await readFile(new URL("./setup-codex-links.mjs", import.meta.url)));
+  const pinPath = join(project, ".codex", "ai-central-pin.json");
+  await writePin(pinPath, commit);
+  await writeFile(
+    join(project, ".codex", "ai-central-skills.json"),
+    JSON.stringify({ bundles: ["core", "security-testing"] }),
+  );
+  const options = { env: { ...process.env, AI_CENTRAL_HOME: central } };
+  return { project, central, script, pinPath, options };
 }
 
 test("findGitRoot walks up from a nested directory to the checkout root", async () => {
@@ -97,30 +141,17 @@ test("evaluatePin classifies unpinned, matching, mismatched, and non-git states"
 
 test("curated dry run delegates to the pinned installer and rejects source drift", async () => {
   await withTempDir(async (root) => {
-    const project = join(root, "project");
-    const central = join(root, "ai-central");
-    const commit = await makeGitCheckout(central);
-    await mkdir(join(central, "templates", "skills"), { recursive: true });
-    await mkdir(join(central, "scripts"));
-    await writeFile(
-      join(central, "scripts", "install-skill-bundle.sh"),
-      'printf "installer:"\nprintf "[%s]" "$@"\nprintf "\\n"\n',
-    );
-    await mkdir(join(project, "scripts"), { recursive: true });
-    await mkdir(join(project, ".codex"));
-    const script = join(project, "scripts", "setup-codex-links.mjs");
-    await writeFile(script, await readFile(new URL("./setup-codex-links.mjs", import.meta.url)));
-    const pinPath = join(project, ".codex", "ai-central-pin.json");
-    await writePin(pinPath, commit);
-    await writeFile(
-      join(project, ".codex", "ai-central-skills.json"),
-      JSON.stringify({ bundles: ["core", "security-testing"] }),
-    );
-    const options = { env: { ...process.env, AI_CENTRAL_HOME: central } };
+    const { project, script, pinPath, options } = await makeLinkFixture(root);
     const { stdout } = await execFileAsync(process.execPath, [script, "--dry-run"], options);
     assert.ok(stdout.includes("[--bundle][core,security-testing]"));
     assert.ok(stdout.includes("[--mode][link][--sync][--dry-run]"));
-    await assert.rejects(readFile(join(project, ".codex", "skills")), { code: "ENOENT" });
+    assert.match(stdout, /AI Central links checked: 3 \(created 3/u);
+    for (const name of steeringFiles) assert.ok(stdout.includes(name));
+    assert.deepEqual((await readdir(join(project, ".codex"))).sort(), [
+      "ai-central-pin.json",
+      "ai-central-skills.json",
+    ]);
+    await assert.rejects(lstat(join(project, ".agents")), { code: "ENOENT" });
 
     await writePin(pinPath, "different-commit");
     await assert.rejects(
@@ -133,3 +164,59 @@ test("curated dry run delegates to the pinned installer and rejects source drift
     );
   });
 });
+
+test("link refresh preserves owned files and unrelated links while updating selected steering", async () => {
+  await withTempDir(async (root) => {
+    const { project, central, script, options } = await makeLinkFixture(root);
+    const steering = join(project, ".codex", "steering");
+    await mkdir(steering);
+    await writeFile(join(steering, steeringFiles[0]), "project-owned guidance\n");
+    const previous = join(root, "previous.md");
+    await writeFile(previous, "previous guidance\n");
+    await symlink(previous, join(steering, steeringFiles[1]));
+    await symlink(previous, join(steering, "unrelated.md"));
+
+    const { stdout } = await execFileAsync(process.execPath, [script], options);
+    assert.match(stdout, /created 1, updated 1, unchanged 0, preserved 1/u);
+    assert.equal(
+      await readFile(join(steering, steeringFiles[0]), "utf8"),
+      "project-owned guidance\n",
+    );
+    assert.equal((await lstat(join(steering, steeringFiles[0]))).isSymbolicLink(), false);
+    for (const name of steeringFiles.slice(1)) {
+      assert.equal(
+        await readlink(join(steering, name)),
+        join(central, "templates", "steering", name),
+      );
+    }
+    assert.equal(await readlink(join(steering, "unrelated.md")), previous);
+  });
+});
+
+for (const mode of [[], ["--dry-run"]]) {
+  for (const invalidSource of ["missing", "directory"]) {
+    test(`${mode.length ? "dry run" : "link refresh"} refuses ${invalidSource} required steering before writes`, async () => {
+      await withTempDir(async (root) => {
+        const { project, central, script, options } = await makeLinkFixture(root);
+        const required = join(central, "templates", "steering", steeringFiles[2]);
+        await rm(required);
+        if (invalidSource === "directory") await mkdir(required);
+        await assert.rejects(
+          execFileAsync(process.execPath, [script, ...mode], options),
+          (error) => {
+            assert.notEqual(error.code, 0);
+            assert.match(error.stderr, /required AI Central steering file/u);
+            assert.ok(error.stderr.includes(required));
+            assert.equal(error.stdout, "");
+            return true;
+          },
+        );
+        assert.deepEqual((await readdir(join(project, ".codex"))).sort(), [
+          "ai-central-pin.json",
+          "ai-central-skills.json",
+        ]);
+        await assert.rejects(lstat(join(project, ".agents")), { code: "ENOENT" });
+      });
+    });
+  }
+}

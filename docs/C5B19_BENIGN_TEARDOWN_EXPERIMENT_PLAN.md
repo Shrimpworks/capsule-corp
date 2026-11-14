@@ -25,8 +25,10 @@ The [G3a4 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a4-event-envelope-conti
 records passed bounded synthetic event-envelope/lane-framing conformance and its exact evidence.
 Merged PR #402 accepts that increment. The [G3a5 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a5-fieldlane-continuation-after-402)
 records the passed bounded kind-specific field/lane layer, exact source pin and review.
-Captured-frame sidecars and causal/timing composition remain later components. Per-kind semantic, causal
-and timing checks remain later components under the owner's conditional implementation-only direction.
+Merged PR #403 accepts G3a5. The [G3a6 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a6-sidecar-correspondence-continuation-after-403)
+records passed bounded captured-frame sidecar correspondence, exact archive pin and review
+under implementation-only authority.
+Control application, durable snapshot and causal/timing composition remain later components.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

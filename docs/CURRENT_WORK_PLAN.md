@@ -2,6 +2,24 @@
 
 Date: 2026-11-13
 
+## Current C5b19 delivery checkpoint
+
+Gate-3 implementation authorization is `PASSED`; implementation is
+`IN_PROGRESS — TRENDING_BAD` at the reset because repeated partial-validator
+increments have not closed integrated lifecycle or native implementation.
+The [Gate-3 completion plan](C5B19_GATE3_COMPLETION_PLAN.md) is the authoritative
+remaining-work schedule: **D1 integrated offline oracle; D2 wire/bridge/store;
+D3 native control/clocks/trace; D4 containment/build/Gate-4 handoff**.
+D1 is next. Each has explicit tests, independent review and exit criteria.
+Six of twenty required source paths exist, mostly partially; this is inventory,
+not a completion percentage. Gate 4, child execution and admission remain `BLOCKED`.
+PR #410 was open at reset; this documentation reset is stacked on its branch.
+
+## Historical recovery and increment evidence
+
+The C5b19 increment sequence below preserves evidence. Its next-slice suggestions
+are superseded by the completion plan above; passed helpers do not close Gate 3.
+
 Recovery checkpoint: [Project recovery assessment and roadmap](PROJECT_RECOVERY_2026_10_15.md).
 Contributor readiness repairs, the Go 1.26.9 security update and initial recovery deliverables
 are merged in [PR #384](https://github.com/Shrimpworks/capsule-corp/pull/384) at
@@ -65,8 +83,8 @@ keeps raw count/errno observations distinct from transport success.
 G3a12 supplied transport lane consistency is `PASSED` for local checks and fresh
 independent review 1/3 (**Ready**), published in draft archive PR #38 at
 `a9c457cb3b89a4ecd8c38684fd3d804d2089214c`. Its [delivery plan](../.planning/c5b19-transport-lanes/plan.md)
-preserves partial selections and independent lanes. Next recommended bounded slice:
-supplied same-operation control transport ordering. PR #409 merged normally at `f1ded569af4a6ae20f2a93b7e476825959f97143`;
+preserves partial selections and independent lanes. The former same-operation control
+transport ordering recommendation is absorbed into completion-plan D1. PR #409 merged normally at `f1ded569af4a6ae20f2a93b7e476825959f97143`;
 post-merge CI and CodeQL passed. PR #408 merged normally at
 `d042e53a877e494bd2eb0e325ec084d4b9cc692a`; post-merge CI and CodeQL passed.
 PR #407 merged normally at `fe9009d5398a883735219e2a3a33c351c79aa54c`; post-merge

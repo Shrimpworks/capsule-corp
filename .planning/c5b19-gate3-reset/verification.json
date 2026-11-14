@@ -1,0 +1,66 @@
+[
+  {
+    "name": "install",
+    "command": [
+      "pnpm",
+      "install",
+      "--frozen-lockfile"
+    ],
+    "exit": 0,
+    "start": "2026-11-14T05:02:05.964808+00:00",
+    "end": "2026-11-14T05:02:06.407279+00:00",
+    "log": "/tmp/c5b19-reset-install.log",
+    "sha256": "5c5a65b8482045a5774aa9a265ca37538021175743ceae9c2067dc5f08a46e6c"
+  },
+  {
+    "name": "ci",
+    "command": [
+      "make",
+      "ci",
+      "CI_BASE=a9e1d32afbb1fa1ef9c94175321c9c3bbb3d3361"
+    ],
+    "exit": 0,
+    "start": "2026-11-14T05:02:06.407519+00:00",
+    "end": "2026-11-14T05:02:45.846829+00:00",
+    "log": "/tmp/c5b19-reset-ci.log",
+    "sha256": "b2f8118ded16a620b4192852102a054814422fb2bfea4fbf4b023d606e269a81"
+  },
+  {
+    "name": "pnpm-test",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "exit": 0,
+    "start": "2026-11-14T05:02:45.847109+00:00",
+    "end": "2026-11-14T05:03:07.436911+00:00",
+    "log": "/tmp/c5b19-reset-pnpm-test.log",
+    "sha256": "089c9b71c2b0e0dac95a680abff5c1f6fc310fad52d0232d7d55c88372ec536a"
+  },
+  {
+    "name": "lint-full",
+    "command": [
+      "golangci-lint",
+      "run",
+      "./..."
+    ],
+    "exit": 1,
+    "start": "2026-11-14T05:03:07.437219+00:00",
+    "end": "2026-11-14T05:03:08.077148+00:00",
+    "log": "/tmp/c5b19-reset-lint-full.log",
+    "sha256": "0fb76eb87a316246b04433e0591e1ac0b04c5e2817c41253ee1605114c899468"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit": 0,
+    "start": "2026-11-14T05:03:08.077384+00:00",
+    "end": "2026-11-14T05:03:08.112099+00:00",
+    "log": "/tmp/c5b19-reset-diff-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

@@ -57,6 +57,9 @@ policy, execution, identity, content, runtimes, backends, updates, or evidence:
     documentation-only proposed Supervisor stop/custody mechanism, bounded fault matrix, and
     review/authorization gates before any runnable experiment
 
+25. [C5b19 Gate-3 completion plan](C5B19_GATE3_COMPLETION_PLAN.md) — implemented/partial/
+    missing inventory, four remaining deliverables, measurable exits and child-run gate
+
 The [2026-10-15 project recovery report](PROJECT_RECOVERY_2026_10_15.md) records contributor-tool
 readiness, the reproduced baseline, prioritized repairs and the initial execution plan.
 

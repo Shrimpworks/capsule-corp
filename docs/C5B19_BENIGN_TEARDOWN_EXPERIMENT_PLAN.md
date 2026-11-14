@@ -3,7 +3,8 @@
 Date: 2026-09-19
 
 Work item: documentation-only plan for a later bounded runnable experiment.
-Status: `IN_PROGRESS — TRENDING_GOOD` while gates 3–6 remain open.
+Status: Gate-3 implementation authorization `PASSED`; implementation
+`IN_PROGRESS — TRENDING_BAD` at the 2026-11-13 delivery reset; Gates 4–6 `BLOCKED`.
 Scope: defensive validation of ADR-0047's prepared-obligation ordering and
 storage-independent Supervisor stop path, using one pinned fixed benign direct
 child in owned disposable local directories on an explicitly authorized macOS
@@ -15,9 +16,15 @@ is Accepted as architecture only.
 Remaining work: TDD implementation of the exact Gate-2 packet in the owned
 experiment archive, independent implemented-byte review, separate first-run
 authorization, bounded run, retained evidence and review.
-Next action: continue implementation-only Gate 3 in existing archive PR #38; the
-[independently reviewed Gate-2 exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md) was
-integrated by PR #378. The 2026-10-15 [recovery continuation](PROJECT_RECOVERY_2026_10_15.md#recovery-continuation-after-265)
+Next action: D1 of the [Gate-3 completion plan](C5B19_GATE3_COMPLETION_PLAN.md),
+then D2 wire/bridge/store, D3 native control/clocks/trace and D4 containment/build
+handoff in existing archive PR #38. The plan maps implemented, partial and missing
+work and replaces public helper-by-helper scheduling with four acceptance outcomes.
+The [independently reviewed Gate-2 exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)
+was integrated by PR #378. Ordered authorization gates below remain unchanged.
+
+The following increment ledger is historical; its next-slice recommendations are
+superseded by the completion plan. The 2026-10-15 [recovery continuation](PROJECT_RECOVERY_2026_10_15.md#recovery-continuation-after-265)
 records the passed G3a2 pure wire/record increment and its exact archive/review evidence.
 The [G3a3 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a3-write-history-continuation-after-386)
 records the passed pure write-history/settlement conformance increment, accepted by merged PR #387.

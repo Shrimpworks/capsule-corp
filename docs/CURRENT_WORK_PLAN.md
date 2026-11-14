@@ -58,7 +58,12 @@ G3a10 supplied worker-received/sent sidecar correspondence is `PASSED` for local
 checks and fresh independent review 1/3 (**Ready**), published in draft archive
 PR #38 at `d698bd9332a000ad3c2b9f23f87d0353dc5964b4`. Its [delivery plan](../.planning/c5b19-worker-sidecars/plan.md)
 keeps independent capture roles, partial evidence and accepted outcomes distinct.
-Next recommended bounded slice: supplied write/result correspondence.
+G3a11 supplied write/result correspondence is `PASSED` for local checks and fresh
+independent review 1/3 (**Ready**), published in draft archive PR #38 at
+`7ec433aa17c623f58a81118bab87f1ada49770f3`. Its [delivery plan](../.planning/c5b19-write-results/plan.md)
+keeps raw count/errno observations distinct from transport success. Next recommended
+bounded slice: supplied transport lane consistency. PR #408 merged normally at
+`d042e53a877e494bd2eb0e325ec084d4b9cc692a`; post-merge CI and CodeQL passed.
 PR #407 merged normally at `fe9009d5398a883735219e2a3a33c351c79aa54c`; post-merge
 CI and CodeQL passed. Full control admission and causal/timing remain deferred. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.

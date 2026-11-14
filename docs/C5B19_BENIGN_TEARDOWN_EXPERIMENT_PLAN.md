@@ -38,8 +38,10 @@ tracks bounded supplied snapshot correspondence without promoting visible bytes 
 confirmation. Merged PR #407 accepts G3a9. The
 [G3a10 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a10-worker-sidecar-continuation-after-407)
 records passed supplied worker-received/sent sidecar correspondence with independent capture
-roles and partial evidence preserved. Full control admission and full causal/timing
-composition remain later components.
+roles and partial evidence preserved. Merged PR #408 accepts G3a10. The
+[G3a11 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a11-write-result-continuation-after-408)
+records passed supplied write/result correspondence and raw count/errno observations.
+Full control admission and full causal/timing composition remain later components.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

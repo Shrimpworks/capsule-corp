@@ -1,0 +1,87 @@
+{
+  "scope": "G3a6 canonical baseline",
+  "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+  "base": "e1a966e7c6f18665784984e97b6697cc472cb288",
+  "branch": "codex/c5b19-frame-sidecars",
+  "started_utc": "2026-11-14T01:17:07.144457+00:00",
+  "toolchain_path": "/Users/dsteele/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.11.darwin-arm64/bin",
+  "GOTOOLCHAIN": "local",
+  "versions": {
+    "node": {
+      "exit": 0,
+      "output": "v22.23.3"
+    },
+    "pnpm": {
+      "exit": 0,
+      "output": "10.28.2"
+    },
+    "go": {
+      "exit": 0,
+      "output": "go version go1.26.11 darwin/arm64"
+    },
+    "golangci-lint": {
+      "exit": 0,
+      "output": "golangci-lint has version 2.12.2 built with go1.26.2 from c0d3ddc on 2026-05-06T11:01:25Z"
+    }
+  },
+  "commands": [
+    {
+      "name": "install",
+      "argv": ["pnpm", "install", "--frozen-lockfile"],
+      "exit": 0,
+      "started_utc": "2026-11-14T01:17:07.803086+00:00",
+      "completed_utc": "2026-11-14T01:17:08.196533+00:00",
+      "log": "/tmp/c5b19-g3a6-install.log",
+      "sha256": "6fc261a7f154e871facf2248a6dc160978c1824cb744a2a8067f999d9a3ca589"
+    },
+    {
+      "name": "ci",
+      "argv": ["make", "ci"],
+      "exit": 0,
+      "started_utc": "2026-11-14T01:17:08.197004+00:00",
+      "completed_utc": "2026-11-14T01:17:42.089084+00:00",
+      "log": "/tmp/c5b19-g3a6-ci.log",
+      "sha256": "8be51156fe3c7654fc3aa969d736ea59822ac26c907a1570452ca9382925b41f"
+    },
+    {
+      "name": "pnpm-test",
+      "argv": ["pnpm", "test"],
+      "exit": 0,
+      "started_utc": "2026-11-14T01:17:42.089905+00:00",
+      "completed_utc": "2026-11-14T01:18:04.704395+00:00",
+      "log": "/tmp/c5b19-g3a6-pnpm-test.log",
+      "sha256": "d6e7c1f4501b432bcc390766c7b90ba7835ccfc941c1d2dac666ed222a941baa"
+    },
+    {
+      "name": "lint-full",
+      "argv": ["golangci-lint", "run", "./..."],
+      "exit": 1,
+      "started_utc": "2026-11-14T01:18:04.705242+00:00",
+      "completed_utc": "2026-11-14T01:18:05.286729+00:00",
+      "log": "/tmp/c5b19-g3a6-lint-full.log",
+      "sha256": "44829f3e16725109ca6748363d744259b4d8e6d93304201888a5071c824bc519"
+    }
+  ],
+  "completed_utc": "2026-11-14T01:18:05.287179+00:00",
+  "summary": {
+    "required_checks": "PASSED",
+    "workspace_tests": 177,
+    "script_tests": 132,
+    "govulncheck_findings": 0,
+    "dependency_audit": {
+      "low": 2,
+      "moderate": 2,
+      "threshold": "high (unchanged)"
+    },
+    "unfiltered_lint": {
+      "exit": 1,
+      "displayed_revive_findings": 50,
+      "limitation": "output-capped; not complete debt count",
+      "tracking_issue": "#217"
+    },
+    "diff_check_exit": 0,
+    "final_json_formatting": "Brain-owned after retention; not certified here",
+    "run_authorized": false,
+    "product_admitted": false
+  }
+}

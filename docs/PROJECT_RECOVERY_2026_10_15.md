@@ -356,6 +356,51 @@ final metadata checks and hosted acceptance. Next: bounded captured-frame sideca
 correspondence before causal/timing composition. Child execution, Gates 4–6 and
 product admission remain `BLOCKED`; no child fixture was executed.
 
+## G3a6 sidecar correspondence continuation after #403
+
+PR #403 merged normally at `e1a966e7c6f18665784984e97b6697cc472cb288`, matching
+reviewed head `659957b43164a9beaa5a7e081b6433414b75e61f`. Exact-head CI43538774023
+and CodeQL43538773803 passed; post-merge main CI43539502238 and CodeQL43539502302
+also passed. No protection changes or bypass were used.
+
+G3a6 is `PASSED` for bounded implementation, local checks and fresh independent
+review1/3 (**Ready**, no actionable findings). Published archive head is
+[`14365fb4ba5d1525285406ae90feb1abdcc46269`](https://github.com/Shrimpworks/capsule-experiments/tree/14365fb4ba5d1525285406ae90feb1abdcc46269/experiments/typed-guest-transport-c5b19-benign-teardown).
+The [accepted scope](../.planning/c5b19-frame-sidecars/scope.md)
+and [execution plan](../.planning/c5b19-frame-sidecars/plan.md) define a pure,
+opt-in in-memory correspondence layer for events3/5/7 and exact397-byte request /
+98-byte reply captures. Existing decoders validate frozen bindings and recompute
+request-body, candidate and confirmed-record hashes; event operation/generation,
+outcome and record digest must agree with the raw bytes. A bounded supplied
+selection has at most3 pairs per category,9 total and3 distinct request anchors;
+missing members, duplicate per-category operations, inconsistent request anchors
+and conflicting worker/control peer replies refuse.
+
+This introduces no serialized sidecar format. A request anchor supplies decoding
+context and is not worker-receipt evidence. Request-only and dropped/pending reply
+selections remain representable. Empty or wholly omitted pairs cannot prove full
+capture completeness. Kind8 application/received pairing, expected model projection,
+durable snapshots, sequence/capture origin and causal/timing composition remain
+later work. Arbitrary malformed-reply diagnostics and optional harness-identity
+encoding retain their earlier unsupported boundaries.
+
+The archive remains non-production and frozen to offline Go1.25.13. Tests use
+owned synthetic in-memory bytes only; no native fixture, child or guest execution.
+Local implementation checks are `PASSED`: compiler-red preceded green; exact offline
+Go1.25.13 test/race/vet/build passed; eleven compiled guard mutants failed intended
+assertions and were restored byte-for-byte. The [review report](../.planning/c5b19-frame-sidecars/review-1.md)
+records independent offline checks, source/provenance/hash verification and the
+limits of inspected mutation evidence; combined cap mutation does not independently
+prove each redundant cap. Canonical frozen install, exact Go1.26.11 `make ci` and standalone
+`pnpm test` passed (177 workspace and132 script tests); known #217 unfiltered revive
+debt, two low/two moderate audit findings and local Node patch difference remain
+recorded in the [verification handoff](../.planning/c5b19-frame-sidecars/canonical-verification.md).
+Archive PR38 remains draft with no hosted checks. The canonical PR body records
+final metadata checks and hosted acceptance. Next bounded scope: received/applied
+correspondence before full model and timing composition. Full Gate3 remains
+`IN_PROGRESS — TRENDING_GOOD`; child execution, Gates4–6 and product admission
+remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

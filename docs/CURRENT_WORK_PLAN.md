@@ -25,7 +25,14 @@ Canonical [PR #402](https://github.com/Shrimpworks/capsule-corp/pull/402) merged
 is `PASSED` for local checks and independent review 1/3 (**Ready**), published in
 draft archive PR38 at `7aac77de36e33059ef0759b44ca02ab5ad080343`.
 [Delivery plan](../.planning/c5b19-event-fields/plan.md) retains its supported subset
-and evidence. Next: bounded captured-frame sidecar correspondence. Full Gate 3 remains
+and evidence. Canonical [PR #403](https://github.com/Shrimpworks/capsule-corp/pull/403)
+merged normally at `e1a966e7c6f18665784984e97b6697cc472cb288`.
+G3a6 captured-frame sidecar correspondence is `PASSED` for local checks and fresh
+independent review1/3 (**Ready**), published in draft archive PR38 at
+`14365fb4ba5d1525285406ae90feb1abdcc46269`.
+[Delivery plan](../.planning/c5b19-frame-sidecars/plan.md) retains the bounded
+in-memory selection, tests, review and limitations. Next: received/applied
+correspondence before full model and timing composition. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

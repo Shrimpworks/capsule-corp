@@ -1,0 +1,89 @@
+{
+  "scope": "G3a9 canonical baseline",
+  "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+  "base": "f3f2e0755c0c284dd28019225bef0cf8482d3cdd",
+  "branch": "codex/c5b19-snapshot-correspondence",
+  "started_utc": "2026-11-14T02:30:10.824090+00:00",
+  "toolchain_path": "/Users/dsteele/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.11.darwin-arm64/bin",
+  "GOTOOLCHAIN": "local",
+  "versions": {
+    "node": {
+      "exit": 0,
+      "output": "v22.23.3"
+    },
+    "pnpm": {
+      "exit": 0,
+      "output": "10.28.2"
+    },
+    "go": {
+      "exit": 0,
+      "output": "go version go1.26.11 darwin/arm64"
+    },
+    "golangci-lint": {
+      "exit": 0,
+      "output": "golangci-lint has version 2.12.2 built with go1.26.2 from c0d3ddc on 2026-05-06T11:01:25Z"
+    }
+  },
+  "commands": [
+    {
+      "name": "install",
+      "argv": ["pnpm", "install", "--frozen-lockfile"],
+      "exit": 0,
+      "started_utc": "2026-11-14T02:30:11.342084+00:00",
+      "completed_utc": "2026-11-14T02:30:11.806305+00:00",
+      "log": "/tmp/c5b19-g3a9-install.log",
+      "sha256": "665010577978fedf41608da33b6ee3b6892ab208ff54a6df4f7b394a6de6806d"
+    },
+    {
+      "name": "ci",
+      "argv": ["make", "ci"],
+      "exit": 0,
+      "started_utc": "2026-11-14T02:30:11.806923+00:00",
+      "completed_utc": "2026-11-14T02:30:51.406570+00:00",
+      "log": "/tmp/c5b19-g3a9-ci.log",
+      "sha256": "0b991975c98449f0741bae51141f79327bdbe977733326d96e2b88370671f435"
+    },
+    {
+      "name": "pnpm-test",
+      "argv": ["pnpm", "test"],
+      "exit": 0,
+      "started_utc": "2026-11-14T02:30:51.408210+00:00",
+      "completed_utc": "2026-11-14T02:31:14.274275+00:00",
+      "log": "/tmp/c5b19-g3a9-pnpm-test.log",
+      "sha256": "65c1faae21a458d513d71d5b202f43e9f5b1f955c3e8b6edc1a038ce224c4712"
+    },
+    {
+      "name": "lint-full",
+      "argv": ["golangci-lint", "run", "./..."],
+      "exit": 1,
+      "started_utc": "2026-11-14T02:31:14.274992+00:00",
+      "completed_utc": "2026-11-14T02:31:15.095878+00:00",
+      "log": "/tmp/c5b19-g3a9-lint-full.log",
+      "sha256": "b12416c706c0ba0f921ded07b90baf9c6d078c2d02ae8dcd36461e468f078425"
+    }
+  ],
+  "diff_check_exit": 0,
+  "diff_check_output": "",
+  "dependency_files_diff": "",
+  "completed_utc": "2026-11-14T02:31:15.149642+00:00",
+  "final_status": " M .serena/project.yml\n M docs/C5B19_BENIGN_TEARDOWN_EXPERIMENT_PLAN.md\n M docs/CURRENT_WORK_PLAN.md\n M docs/PROJECT_RECOVERY_2026_10_15.md\n?? .planning/c5b19-snapshot-correspondence/\n",
+  "summary": {
+    "required_checks": "PASSED",
+    "workspace_tests": 177,
+    "script_tests": 132,
+    "govulncheck_findings": 0,
+    "dependency_audit": {
+      "low": 2,
+      "moderate": 2,
+      "threshold": "high (unchanged)"
+    },
+    "unfiltered_lint": {
+      "exit": 1,
+      "displayed_revive_findings": 50,
+      "limitation": "output-capped, not total debt count",
+      "tracking_issue": "#217"
+    },
+    "final_metadata_checks": "Brain-owned after retention; not certified here",
+    "child_executed": false
+  }
+}

@@ -53,8 +53,14 @@ Post-fix canonical `make ci` and standalone tests passed. Canonical
 G3a9 supplied durable-snapshot correspondence is `PASSED` for local checks and
 fresh independent review1/3 (**Ready**), published in draft archive PR38 at
 `7646d8faabb670ce8b5ff1b213c414d91deda2d9`. The [delivery plan](../.planning/c5b19-snapshot-correspondence/plan.md)
-keeps visible record bytes distinct from accepted confirmation. Next recommended
-bounded scope: supplied worker-received/sent sidecar correspondence. Full control admission and causal/timing remain deferred. Full Gate 3 remains
+keeps visible record bytes distinct from accepted confirmation.
+G3a10 supplied worker-received/sent sidecar correspondence is `PASSED` for local
+checks and fresh independent review 1/3 (**Ready**), published in draft archive
+PR #38 at `d698bd9332a000ad3c2b9f23f87d0353dc5964b4`. Its [delivery plan](../.planning/c5b19-worker-sidecars/plan.md)
+keeps independent capture roles, partial evidence and accepted outcomes distinct.
+Next recommended bounded slice: supplied write/result correspondence.
+PR #407 merged normally at `fe9009d5398a883735219e2a3a33c351c79aa54c`; post-merge
+CI and CodeQL passed. Full control admission and causal/timing remain deferred. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

@@ -1,0 +1,42 @@
+{
+  "scope": "canonical G3a3 documentation continuation at base080e9203c6c96d1494ea3a52e8855816fec3fa38",
+  "toolchains": {
+    "node": "22.22.1",
+    "pnpm": "10.28.2",
+    "go": "1.26.9",
+    "golangci-lint": "2.12.2"
+  },
+  "results": [
+    {
+      "command": "pnpm install --frozen-lockfile",
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a3-canonical-install.log",
+      "sha256": "b514ca85ac55393342eb7e3ff753d6a67db5a45efa96aae1ccef3c0a36bdb63c"
+    },
+    {
+      "command": "make ci",
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a3-canonical-ci.log",
+      "sha256": "a1fd15cd5785f232802647d2aabbc8ad4d73849da8ff42317c1778a469a420b0"
+    },
+    {
+      "command": "pnpm test",
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a3-canonical-pnpm-test.log",
+      "sha256": "a5c6945ec6ad3a83992896f8e8cfd282393e90e2b69cd2ab7b014b245469bde5"
+    },
+    {
+      "command": "golangci-lint run ./...",
+      "exit_code": 1,
+      "log": "/tmp/c5b19-g3a3-canonical-full-lint.log",
+      "sha256": "bf1b2b59d5d97475eb89f63a745dc543efd466f364e59bcb97775059dcc2d646"
+    },
+    {
+      "command": "pnpm site:build (final documentation and review links)",
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a3-canonical-final-site.log",
+      "sha256": "198149bc8cd29d5959ebe14aaa0721396f6a4b1bc52d5737f767ca97aaa9b464"
+    }
+  ],
+  "limitation": "Unfiltered lint reports 50 capped revive findings for pre-existing #217, not the total backlog. Temporary logs are not durable runtime evidence. Full local CI passes, but GitHub-only checks remain separate."
+}

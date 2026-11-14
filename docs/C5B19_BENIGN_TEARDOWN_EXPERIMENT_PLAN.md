@@ -19,7 +19,9 @@ Next action: continue implementation-only Gate 3 in existing archive PR #38; the
 [independently reviewed Gate-2 exact packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md) was
 integrated by PR #378. The 2026-10-15 [recovery continuation](PROJECT_RECOVERY_2026_10_15.md#recovery-continuation-after-265)
 records the passed G3a2 pure wire/record increment and its exact archive/review evidence.
-The remaining Gate-3 components stay under the owner's conditional implementation-only direction.
+The [G3a3 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a3-write-history-continuation-after-386)
+records the passed pure write-history/settlement conformance increment. Remaining Gate-3 components
+stay under the owner's conditional implementation-only direction.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

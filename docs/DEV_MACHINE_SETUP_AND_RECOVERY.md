@@ -37,7 +37,7 @@ Do this on any Mac before touching the repository.
    exact version you install (`xcodebuild -version`) in your own notes; there is no product Xcode
    project yet to pin a version against (see
    [Deferred and trigger-based gaps](#deferred-and-trigger-based-gaps) below).
-2. Install Go matching `go.mod` (currently 1.26.9). Use `GOTOOLCHAIN=go1.26.9` for exact reproduction.
+2. Install Go matching `go.mod` (currently 1.26.11). Use `GOTOOLCHAIN=go1.26.11` for exact reproduction.
 3. Install Node.js, matching `.node-version` (currently 22.22.1).
 4. Enable pnpm via Corepack, matching `package.json`'s `packageManager` pin (currently 10.28.2):
    ```sh

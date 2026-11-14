@@ -1,0 +1,106 @@
+{
+  "status": "PASSED scoped CI/security prerequisite; BLOCKED existing unfiltered lint debt #217",
+  "base": "2aefb15ee45018bb1045e711c77a0c7bc9f4c54d",
+  "branch": "codex/c5b19-event-conformance",
+  "before": {
+    "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+    "base": "2aefb15ee45018bb1045e711c77a0c7bc9f4c54d",
+    "environment": {
+      "go": "1.26.9",
+      "node": "22.23.3",
+      "pnpm": "10.28.2",
+      "golangci-lint": "2.12.2",
+      "GOTOOLCHAIN": "local (make scanner explicitly auto)"
+    },
+    "results": [
+      {
+        "name": "install",
+        "command": ["pnpm", "install", "--frozen-lockfile"],
+        "exit_code": 0,
+        "log": "/tmp/c5b19-g3a4-install.log",
+        "sha256": "67140bb6f67cbaebc82fd2897d60bb131ad23680faff5fc984b238cc67d78d04"
+      },
+      {
+        "name": "ci",
+        "command": ["make", "ci"],
+        "exit_code": 2,
+        "log": "/tmp/c5b19-g3a4-ci.log",
+        "sha256": "21a21bada4351a56d20ffdacb25458ff897c71ed07cd8f3a62efe80355c62aa0"
+      },
+      {
+        "name": "pnpm-test",
+        "command": ["pnpm", "test"],
+        "exit_code": 0,
+        "log": "/tmp/c5b19-g3a4-pnpm-test.log",
+        "sha256": "d6cd7c5730ea8319ba2dcb677d160b71a9eb6ff29ba9061fe6a02d7352fe9678"
+      },
+      {
+        "name": "lint-full",
+        "command": ["golangci-lint", "run", "./..."],
+        "exit_code": 1,
+        "log": "/tmp/c5b19-g3a4-lint-full.log",
+        "sha256": "583fa6c1a8e5d11471e46491ba16a3c02dda4cd31077c14921be88c1a21c157b"
+      }
+    ]
+  },
+  "after": {
+    "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+    "base": "2aefb15ee45018bb1045e711c77a0c7bc9f4c54d",
+    "environment": {
+      "go": "1.26.11",
+      "node": "22.23.3",
+      "pnpm": "10.28.2",
+      "golangci-lint": "2.12.2",
+      "GOTOOLCHAIN": "local (make scanner explicitly auto)"
+    },
+    "results": [
+      {
+        "name": "ci",
+        "command": ["make", "ci"],
+        "exit_code": 0,
+        "log": "/tmp/c5b19-g3a4-final-ci.log",
+        "sha256": "7dd0b2c867725e484c3c98e70cf3b49329fb2d0b61c57c356ed8d90c821368ce"
+      },
+      {
+        "name": "pnpm-test",
+        "command": ["pnpm", "test"],
+        "exit_code": 0,
+        "log": "/tmp/c5b19-g3a4-final-pnpm-test.log",
+        "sha256": "c7d4f8bf07b0cb9ddac6f7fd3cf72df1e01cd1ee5e6ad86e90279f28d40ff5f7"
+      },
+      {
+        "name": "lint-full",
+        "command": ["golangci-lint", "run", "./..."],
+        "exit_code": 1,
+        "log": "/tmp/c5b19-g3a4-final-lint-full.log",
+        "sha256": "cc4b6f0d7950789ec1bce13d769dc1c05ec89ed984201251752f050feb64bd94"
+      }
+    ]
+  },
+  "changed_file_sha256": {
+    "go.mod": "6ae967254a877684d94f0fdb3f7eb3fc9934c7d8b1d625fedc0e38c543bbb96d",
+    "AGENTS.md": "653eb6b34470cd51396a378c4d478ef3bad598020cf5d5940ece6f6e4626c90c",
+    "README.md": "0b56f454ab5675a5db08aadea3810726d7ccf71946a94468b040ad9274a5a6af",
+    "docs/DEVELOPMENT.md": "a2c9c01238c28d58b10dd90a45a7221b64e4a17bd783f0ac50bf87c436e51d39",
+    "docs/DEV_MACHINE_SETUP_AND_RECOVERY.md": "fd3a6405ba12ee3b97299588c0e37f279ef682beac8d10f29d23949ecfc6ba04"
+  },
+  "limitations": [
+    "Node22.23.3 observed versus documented22.22.1; package engines satisfied",
+    "2low and2moderate dependency audit findings below existing high threshold",
+    "50 displayed revive findings are capped, not total backlog",
+    "No C5b19 child execution; archive frozen Go1.25.13 unchanged",
+    "No hosted verification or independent review claim by this worker"
+  ],
+  "publication_documentation_check": {
+    "command": "pnpm site:build",
+    "exit_code": 0,
+    "log": "/tmp/c5b19-g3a4-final-site.log",
+    "sha256": "198149bc8cd29d5959ebe14aaa0721396f6a4b1bc52d5737f767ca97aaa9b464"
+  },
+  "archive_commit": "3e26b809a40832a3351fdc6b5e0ffc1ef0094792",
+  "review": {
+    "instance": "1 of 3",
+    "verdict": "Ready",
+    "sha256": "9b4a00d4eaedfe9abfe17de33d5fcef38dc6849086f8212f13b826d794647f64"
+  }
+}

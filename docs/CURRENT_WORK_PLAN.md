@@ -1,6 +1,6 @@
 # Current work plan
 
-Date: 2026-10-15
+Date: 2026-11-13
 
 Recovery checkpoint: [Project recovery assessment and roadmap](PROJECT_RECOVERY_2026_10_15.md).
 Contributor readiness repairs, the Go 1.26.9 security update and initial recovery deliverables
@@ -13,9 +13,15 @@ C5b19 G3a2 pure wire/record conformance is `PASSED` for local tests, fresh revie
 merged at `080e9203c6c96d1494ea3a52e8855816fec3fa38` after green exact-head checks.
 G3a3 pending-write/settlement conformance is `PASSED` for local tests, fresh review 1/3
 (**Ready**) and publication in draft archive PR #38 at
-`6575898a32ff4a3d24ca4c757f42b1807798a372`. Next: accept this increment, then scope
-raw event/trace conformance or another remaining frozen-manifest component. Full Gate 3
-and the historical evidence gaps remain open.
+`6575898a32ff4a3d24ca4c757f42b1807798a372`. Canonical [PR #387](https://github.com/Shrimpworks/capsule-corp/pull/387)
+merged normally at `2aefb15ee45018bb1045e711c77a0c7bc9f4c54d`. G3a4 event-envelope/lane-framing
+conformance is `PASSED` for local tests and independent review1/3 (**Ready**),
+published in draft archive PR38 at `3e26b809a40832a3351fdc6b5e0ffc1ef0094792`.
+[Delivery plan](../.planning/c5b19-events/plan.md) records its synthetic-byte scope.
+The post-merge scanner exposed Go1.26.9 advisories; the minimal canonical Go1.26.11
+patch passes local checks and independent review. Archive Go1.25.13 stays frozen.
+Next: bounded kind-specific field/lane conformance. Full Gate 3 remains
+`IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 
 Next security experiment: the [independently reviewed C5b19 Gate-2 packet](C5B19_GATE2_IMPLEMENTATION_PACKET.md)

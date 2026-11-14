@@ -28,7 +28,10 @@ records the passed bounded kind-specific field/lane layer, exact source pin and 
 Merged PR #403 accepts G3a5. The [G3a6 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a6-sidecar-correspondence-continuation-after-403)
 records passed bounded captured-frame sidecar correspondence, exact archive pin and review
 under implementation-only authority.
-Control application, durable snapshot and causal/timing composition remain later components.
+Merged PR #404 accepts G3a6. The [G3a7 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a7-receivedapplied-continuation-after-404)
+records passed bounded received/applied correspondence, exact source pin and review.
+Control-state decision validity,
+durable snapshots and full causal/timing composition remain later components.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

@@ -15,42 +15,28 @@
     "results": [
       {
         "name": "install",
-        "command": [
-          "pnpm",
-          "install",
-          "--frozen-lockfile"
-        ],
+        "command": ["pnpm", "install", "--frozen-lockfile"],
         "exit_code": 0,
         "log": "/tmp/c5b19-g3a4-install.log",
         "sha256": "67140bb6f67cbaebc82fd2897d60bb131ad23680faff5fc984b238cc67d78d04"
       },
       {
         "name": "ci",
-        "command": [
-          "make",
-          "ci"
-        ],
+        "command": ["make", "ci"],
         "exit_code": 2,
         "log": "/tmp/c5b19-g3a4-ci.log",
         "sha256": "21a21bada4351a56d20ffdacb25458ff897c71ed07cd8f3a62efe80355c62aa0"
       },
       {
         "name": "pnpm-test",
-        "command": [
-          "pnpm",
-          "test"
-        ],
+        "command": ["pnpm", "test"],
         "exit_code": 0,
         "log": "/tmp/c5b19-g3a4-pnpm-test.log",
         "sha256": "d6cd7c5730ea8319ba2dcb677d160b71a9eb6ff29ba9061fe6a02d7352fe9678"
       },
       {
         "name": "lint-full",
-        "command": [
-          "golangci-lint",
-          "run",
-          "./..."
-        ],
+        "command": ["golangci-lint", "run", "./..."],
         "exit_code": 1,
         "log": "/tmp/c5b19-g3a4-lint-full.log",
         "sha256": "583fa6c1a8e5d11471e46491ba16a3c02dda4cd31077c14921be88c1a21c157b"
@@ -70,31 +56,21 @@
     "results": [
       {
         "name": "ci",
-        "command": [
-          "make",
-          "ci"
-        ],
+        "command": ["make", "ci"],
         "exit_code": 0,
         "log": "/tmp/c5b19-g3a4-final-ci.log",
         "sha256": "7dd0b2c867725e484c3c98e70cf3b49329fb2d0b61c57c356ed8d90c821368ce"
       },
       {
         "name": "pnpm-test",
-        "command": [
-          "pnpm",
-          "test"
-        ],
+        "command": ["pnpm", "test"],
         "exit_code": 0,
         "log": "/tmp/c5b19-g3a4-final-pnpm-test.log",
         "sha256": "c7d4f8bf07b0cb9ddac6f7fd3cf72df1e01cd1ee5e6ad86e90279f28d40ff5f7"
       },
       {
         "name": "lint-full",
-        "command": [
-          "golangci-lint",
-          "run",
-          "./..."
-        ],
+        "command": ["golangci-lint", "run", "./..."],
         "exit_code": 1,
         "log": "/tmp/c5b19-g3a4-final-lint-full.log",
         "sha256": "cc4b6f0d7950789ec1bce13d769dc1c05ec89ed984201251752f050feb64bd94"

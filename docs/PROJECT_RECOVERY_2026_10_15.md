@@ -7,7 +7,7 @@ bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
 Acceptance: PR #384 merged at `9a495bc404a6f2dde67b34e72409a909d2964dd1`;
 CI parity PR #385 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600`, closing #265.
-Next action: accept published G3a5 field/lane validation, then scope captured-frame sidecar correspondence.
+Next action: D1 integrated offline oracle in the [four-deliverable Gate-3 completion plan](C5B19_GATE3_COMPLETION_PLAN.md).
 The initial baseline below remains historical; the continuation checkpoint records current work.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
@@ -16,6 +16,25 @@ This is an initial recovery checkpoint, not a security audit or a declaration th
 is ready. Evidence labels mean **verified** (direct source/tool/test observation), **inferred**
 (engineering judgment from that evidence), or **unresolved** (not established). Historical
 experiment summaries do not become newly verified run evidence by being read here.
+
+## Gate-3 delivery reset — 2026-11-13
+
+Inventory and requirements audits: `PASSED` for read-only inspection of immutable
+archive `a9c457cb3b89a4ecd8c38684fd3d804d2089214c`. Six of twenty manifest paths
+exist; fourteen native/bridge/store/script paths are absent. Existing pure parser,
+all-29-kind field/lane and supplied-correspondence checks are useful foundations;
+complete lifecycle/evidence judgment, native behavior and build closure are missing.
+File presence is not a completion percentage or a new validation claim.
+
+Gate-3 owner implementation authorization is `PASSED`; implementation is
+`IN_PROGRESS — TRENDING_BAD` at reset because repeated fragmentation has not closed
+integrated outcomes. The [completion plan](C5B19_GATE3_COMPLETION_PLAN.md) defines
+D1 integrated offline oracle, D2 wire/bridge/store, D3 native control/clocks/trace
+and D4 containment/build/Gate-4 handoff, with dependencies and measurable exits.
+D1 is next; per-helper follow-ons below are historical and superseded as scheduling.
+Their exact pins and review limitations remain unchanged. PR #410 was open at
+reset, and the reset PR is stacked on its branch; neither merge is implied.
+Gate 4, first child execution, Gates 5–6 and product admission remain `BLOCKED`.
 
 ## Tooling readiness report
 

@@ -401,6 +401,49 @@ correspondence before full model and timing composition. Full Gate3 remains
 `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates4–6 and product admission
 remain `BLOCKED`.
 
+## G3a7 received/applied continuation after #404
+
+PR #404 merged normally at `041b6d4e04df9667e6217f57df26f04eec7d2ddc`, matching
+reviewed head `14be904a8a4047749f14ba1d30dfc608974db399`. Exact-head CI43541077397
+and CodeQL43541077408 passed; post-merge main CI43541449146 and CodeQL43541449121
+also passed. No protection changes or bypass were used.
+
+G3a7 is `PASSED` for bounded implementation, local checks and fresh independent
+review1/3 (**Ready**, no actionable findings). Published archive head is
+[`5d0e53cbccae3d4f587205df70253b776eae63e5`](https://github.com/Shrimpworks/capsule-experiments/tree/5d0e53cbccae3d4f587205df70253b776eae63e5/experiments/typed-guest-transport-c5b19-benign-teardown).
+The [execution plan](../.planning/c5b19-received-applied/plan.md)
+defines pure received/applied pair correspondence: a strict kind7 event with
+captured request/reply bytes and strict kind8 must agree on operation, generation,
+request/candidate digests, outcome and record digest. Received sequence precedes
+applied sequence; received tick cannot exceed applied tick. Same-tick observations
+are allowed in sequence order without adjacency or origin assumptions.
+
+A supplied selection is capped at3 pairs, refuses duplicate operation/control
+sequence, and requires nondecreasing ticks by sequence across all represented
+control events. This is local ordinal/numeric consistency, not a timing bound or
+complete causal trace. Both recorded decision codes remain structurally supported;
+success does not validate the decision, settle history, change durable projection,
+establish a rejected-frame fatal latch or grant execution authority.
+
+Missing members refuse; empty or wholly omitted pairs prove no completeness.
+Malformed diagnostic mapping, worker-received-request mapping, optional harness
+identity, model transitions/expected projections, durable snapshots, full causal/
+timing and native semantics remain deferred. Tests are owned inert in-memory
+fixtures only, using frozen offline Go1.25.13. Local checks are `PASSED`: seven new
+tests, exact offline test/race/vet/build and fourteen compiled guard mutants with
+exact restoration. A rejected mutation construction is excluded from that evidence.
+Canonical frozen install, exact Go1.26.11 `make ci` and standalone `pnpm test`
+passed (177 workspace and132 script tests); existing lint/audit limitations remain
+in the [verification handoff](../.planning/c5b19-received-applied/canonical-verification.md).
+The [independent report](../.planning/c5b19-received-applied/review-1.md) records
+rerun offline checks, source/provenance/hash verification and limits of inspected
+mutation/baseline evidence. Archive PR38 remains draft with no hosted checks.
+Final metadata checks and hosted acceptance are recorded in the canonical PR body.
+Next bounded scope: pending-write/control-state decision reconciliation before
+full causal/timing and snapshot composition. Full Gate3 stays
+`IN_PROGRESS — TRENDING_GOOD`; child execution, Gates4–6 and product admission
+remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

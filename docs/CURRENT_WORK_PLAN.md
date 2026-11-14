@@ -31,8 +31,14 @@ G3a6 captured-frame sidecar correspondence is `PASSED` for local checks and fres
 independent review1/3 (**Ready**), published in draft archive PR38 at
 `14365fb4ba5d1525285406ae90feb1abdcc46269`.
 [Delivery plan](../.planning/c5b19-frame-sidecars/plan.md) retains the bounded
-in-memory selection, tests, review and limitations. Next: received/applied
-correspondence before full model and timing composition. Full Gate 3 remains
+in-memory selection, tests, review and limitations. Canonical [PR #404](https://github.com/Shrimpworks/capsule-corp/pull/404)
+merged normally at `041b6d4e04df9667e6217f57df26f04eec7d2ddc`.
+G3a7 received/applied correspondence is `PASSED` for local checks and fresh
+independent review1/3 (**Ready**), published in draft archive PR38 at
+`5d0e53cbccae3d4f587205df70253b776eae63e5`.
+[Delivery plan](../.planning/c5b19-received-applied/plan.md) retains bounded pairing,
+local ordering and evidence. Next: pending-write/control-state decision reconciliation
+before full causal/timing and snapshot composition. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

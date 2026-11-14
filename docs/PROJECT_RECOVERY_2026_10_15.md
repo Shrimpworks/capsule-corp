@@ -7,7 +7,7 @@ bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
 Acceptance: PR #384 merged at `9a495bc404a6f2dde67b34e72409a909d2964dd1`;
 CI parity PR #385 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600`, closing #265.
-Next action: accept published G3a4 event-envelope conformance, then scope kind-specific field/lane validation.
+Next action: accept published G3a5 field/lane validation, then scope captured-frame sidecar correspondence.
 The initial baseline below remains historical; the continuation checkpoint records current work.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
@@ -291,8 +291,70 @@ high threshold. Local Node22.23.3 differs from documented22.22.1; hosted CI uses
 Archive PR38 remains draft, with no hosted checks. Canonical PR hosted acceptance is
 recorded in its body; local results do not imply a new nightly result.
 
-Next: bounded kind-specific field/lane conformance, then raw sidecar and causal/timing
-composition. Child execution, Gate4–6 and product admission remain `BLOCKED`.
+Canonical [PR #402](https://github.com/Shrimpworks/capsule-corp/pull/402) merged normally
+at `fe3d22c84b5d41e0a4edbfacb531563040e16995` on 2026-11-13 America/Toronto
+(`2026-11-14T00:50:43Z`). Exact reviewed head b381f683 had green CI43535826940 and
+CodeQL43535826875. No protection change or bypass was used. Child execution,
+Gate4–6 and product admission remain `BLOCKED`.
+
+## G3a5 field/lane continuation after #402
+
+Status: `PASSED` for bounded G3a5 implementation, local verification and independent
+review. Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD` and unfinished.
+Brain owns canonical branch `codex/c5b19-event-fields`;
+archive work continues existing draft PR38 from
+`3e26b809a40832a3351fdc6b5e0ffc1ef0094792`.
+[Execution index](../.planning/c5b19-event-fields/plan.md) records the scope,
+assignments, acceptance and remaining gates.
+
+The next pure layer checks the frozen event kinds' allowed/required fields and
+lane ownership. Its acceptance matrix distinguishes a locally well-formed record
+from paired raw-frame correspondence, syscall semantics, causal transitions,
+timing, actual custody/absence and complete-case success. Optional or ambiguous
+encodings must be stated explicitly rather than inferred. No native, live store,
+clock, fixture or child execution is introduced. Exact archive Go1.25.13 and the
+source/host/ABI packet remain frozen; canonical checks use Go1.26.11.
+
+The accepted [29-kind matrix](../.planning/c5b19-event-fields/scope.md) makes
+unmentioned non-common fields zero, binds writer lanes, and checks required
+operation/identity presence, reply outcome/digest coupling, store sites and the
+necessary wait-status/returned-PID relation. Store-outcome27 has no record digest.
+Zero scalar observations, including zero terminal exit status, are not rejected
+as missing evidence. The existing envelope API remains syntax-only; the new layer
+is an explicit opt-in and cannot settle write history.
+
+Two representations remain unsupported pending an exact mapping: the optional
+harness-child identity variant (only payload-free kind29 is in this subset), and
+arbitrary malformed-reply diagnostics (kind8 supports complete represented replies
+for accepted/rejected decisions). These are limits of this bounded layer, not new
+claims that the whole packet prohibits those variants. Native syscall interpretation,
+sidecar correspondence, causal/timing composition and all execution gates stay deferred.
+
+Published archive head:
+[`7aac77d`](https://github.com/Shrimpworks/capsule-experiments/tree/7aac77de36e33059ef0759b44ca02ab5ad080343/experiments/typed-guest-transport-c5b19-benign-teardown).
+[Fresh review instance 1/3](../.planning/c5b19-event-fields/review-1.md) returned **Ready**,
+no actionable findings. Exact offline Go 1.25.13 test/race/vet/build passed. All 29
+kinds are tested against all three lanes, including 31 supported combinations;
+forbidden fields, required tuples/identities, scalar boundaries, outcome/digest
+relations, store sites, wait/PID consistency, refusal and ownership are covered.
+Eight targeted guard mutants failed their intended assertions and were restored.
+The reviewer independently reran the archive checks and inspected mutation logs;
+prior APIs and historical provenance are preserved. Only acceptance metadata was
+appended after source freeze.
+
+Canonical frozen install, exact Go 1.26.11 `make ci` and standalone tests passed:
+177 workspace plus 132 script tests and the full Go checks. Post-merge main
+[CI43536982093](https://github.com/Shrimpworks/capsule-corp/actions/runs/43536982093)
+and CodeQL43536982271 passed; these are push results, not new nightly evidence.
+[Verification ledger](../.planning/c5b19-event-fields/validation.json) retains exact
+local results. Existing #217 unfiltered revive debt remains (50-output cap, not total);
+audit retains two low/two moderate findings below its unchanged high threshold.
+Local Node 22.23.3 differs from documented 22.22.1; hosted CI uses its pin.
+
+Archive PR38 remains draft with no hosted checks. The canonical PR body records
+final metadata checks and hosted acceptance. Next: bounded captured-frame sidecar
+correspondence before causal/timing composition. Child execution, Gates 4–6 and
+product admission remain `BLOCKED`; no child fixture was executed.
 
 ## R4B evidence-backed dependency/toolchain decision
 

@@ -1,0 +1,66 @@
+{
+  "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+  "base": "fe3d22c84b5d41e0a4edbfacb531563040e16995",
+  "branch": "codex/c5b19-event-fields",
+  "environment": {
+    "go": "1.26.11",
+    "node": "22.23.3",
+    "pnpm": "10.28.2",
+    "golangci-lint": "2.12.2",
+    "GOTOOLCHAIN": "local (make scanner explicitly auto)"
+  },
+  "results": [
+    {
+      "name": "install",
+      "command": ["pnpm", "install", "--frozen-lockfile"],
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a5-install.log",
+      "sha256": "8bb7491be1262e14400b996750fb575332df0d2ed37ba8d5a681491b16c45956"
+    },
+    {
+      "name": "ci",
+      "command": ["make", "ci"],
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a5-ci.log",
+      "sha256": "6b2a178e7a9f48b74a2f89d78ee57ad59bbb6b723d82f55fdcfba9a3005fd963"
+    },
+    {
+      "name": "pnpm-test",
+      "command": ["pnpm", "test"],
+      "exit_code": 0,
+      "log": "/tmp/c5b19-g3a5-pnpm-test.log",
+      "sha256": "5a3d9cdd4034c105727b8da3c348e9579c1c76bd925666c62ca3b0c72305e94d"
+    },
+    {
+      "name": "lint-full",
+      "command": ["golangci-lint", "run", "./..."],
+      "exit_code": 1,
+      "log": "/tmp/c5b19-g3a5-lint-full.log",
+      "sha256": "f2e2396820d2e5b7e74cc8d3234b9c3e643e0d1dbf251e4786729bb78a0075e0"
+    }
+  ],
+  "status": "PASSED canonical baseline CI; BLOCKED existing unfiltered lint debt #217",
+  "limitations": [
+    "Unfiltered lint exits1 with50output-capped revive findings; not total debt count",
+    "Dependency audit reports2low+2moderate below unchanged high threshold",
+    "Node22.23.3 observed versus documented22.22.1; package engines satisfied",
+    "New planning JSON did not exist at baseline completion; root owns explicit final Biome check after retention",
+    "No archive child execution, hosted CI or independent review claim"
+  ],
+  "diff_check": {
+    "command": ["git", "diff", "--check"],
+    "exit_code": 0
+  },
+  "archive_commit": "7aac77de36e33059ef0759b44ca02ab5ad080343",
+  "review": {
+    "instance": "1 of 3",
+    "verdict": "Ready",
+    "sha256": "2d3d7cba6b135a4dc42d6ae7dfadc1927e257482dd5127d909f1f5a9acc1c940"
+  },
+  "final_documentation_check": {
+    "command": "pnpm site:build",
+    "exit_code": 0,
+    "log": "/tmp/c5b19-g3a5-final-site.log",
+    "sha256": "198149bc8cd29d5959ebe14aaa0721396f6a4b1bc52d5737f767ca97aaa9b464"
+  }
+}

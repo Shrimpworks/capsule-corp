@@ -20,7 +20,12 @@ published in draft archive PR38 at `3e26b809a40832a3351fdc6b5e0ffc1ef0094792`.
 [Delivery plan](../.planning/c5b19-events/plan.md) records its synthetic-byte scope.
 The post-merge scanner exposed Go1.26.9 advisories; the minimal canonical Go1.26.11
 patch passes local checks and independent review. Archive Go1.25.13 stays frozen.
-Next: bounded kind-specific field/lane conformance. Full Gate 3 remains
+Canonical [PR #402](https://github.com/Shrimpworks/capsule-corp/pull/402) merged normally at
+`fe3d22c84b5d41e0a4edbfacb531563040e16995`. G3a5 kind-specific field/lane validation
+is `PASSED` for local checks and independent review 1/3 (**Ready**), published in
+draft archive PR38 at `7aac77de36e33059ef0759b44ca02ab5ad080343`.
+[Delivery plan](../.planning/c5b19-event-fields/plan.md) retains its supported subset
+and evidence. Next: bounded captured-frame sidecar correspondence. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

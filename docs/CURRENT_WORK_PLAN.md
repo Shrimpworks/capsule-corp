@@ -37,8 +37,19 @@ G3a7 received/applied correspondence is `PASSED` for local checks and fresh
 independent review1/3 (**Ready**), published in draft archive PR38 at
 `5d0e53cbccae3d4f587205df70253b776eae63e5`.
 [Delivery plan](../.planning/c5b19-received-applied/plan.md) retains bounded pairing,
-local ordering and evidence. Next: pending-write/control-state decision reconciliation
-before full causal/timing and snapshot composition. Full Gate 3 remains
+local ordering and evidence. Canonical [PR #405](https://github.com/Shrimpworks/capsule-corp/pull/405)
+merged normally at `8e4fd22cc00cd5e961544f6a803974600dc0e751`.
+G3a8 pending-write/control-state decision reconciliation is `PASSED` for local
+checks and fresh independent review2/3 (**Ready**), published in draft archive
+PR38 at `febb88d6421058f048f75319baae7cf9bd5a0cbb`. Review1's mutation-evidence finding
+is resolved and retained in the [delivery ledger](../.planning/c5b19-decision-reconciliation/plan.md).
+Post-merge CI exposed an existing passive adapter result/cleanup cancellation race;
+its correction and tests are grouped in this delivery. The regression was red
+before the fix; focused tests passed100 repetitions and the package race check
+passed. G3a8 resumed after targeted verification.
+Post-fix canonical `make ci` and standalone tests passed. Next recommended bounded
+scope is supplied durable-snapshot correspondence, keeping visible bytes distinct
+from accepted confirmation. Full control admission and causal/timing remain deferred. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

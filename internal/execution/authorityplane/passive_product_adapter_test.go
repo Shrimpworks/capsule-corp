@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -389,6 +390,83 @@ func TestPassiveProductAdapterRoutesOnlyMethodSpecificSupervisorCalls(t *testing
 	}
 	if core.registerCalls != 1 || core.getCalls != 1 {
 		t.Fatalf("method-specific core calls = register %d, fetch %d", core.registerCalls, core.getCalls)
+	}
+}
+
+// passiveSelectAfterCleanupContext holds select evaluation until the worker has
+// published its result and completed method-context cleanup. It never cancels
+// the caller; both the result and cleanup notification are ready for selection.
+type passiveSelectAfterCleanupContext struct {
+	context.Context
+	methodContext <-chan context.Context
+	once          sync.Once
+}
+
+func (c *passiveSelectAfterCleanupContext) Done() <-chan struct{} {
+	c.once.Do(func() {
+		methodContext := <-c.methodContext
+		<-methodContext.Done()
+	})
+	return nil
+}
+
+func TestPassiveCompletedResultSurvivesMethodContextCleanup(t *testing.T) {
+	wantErr := errors.New("synthetic completed method error")
+	for _, callErr := range []error{nil, wantErr} {
+		// Selection among ready cases is randomized. Synchronizing readiness
+		// and using bounded trials exposes either choice without timing sleeps.
+		for attempt := range 128 {
+			methodContext := make(chan context.Context, 1)
+			caller := &passiveSelectAfterCleanupContext{Context: context.Background(), methodContext: methodContext}
+			value, err := runPassiveAdmitted(caller, newPassiveAdmissionPool(), passiveDaemonProcess,
+				SubmitMainMJSV0Service, repeatedID[PassiveConnectionID](0x41), 1,
+				flowLimitsForSubmit(ExpectedSubmitMainMJSV0MethodRecord()), time.Minute,
+				func(ctx context.Context) (int, error) {
+					methodContext <- ctx
+					return 73, callErr
+				})
+			if value != 73 || err != callErr {
+				t.Fatalf("completed result on attempt %d = (%d, %v), want (73, %v)", attempt, value, err, callErr)
+			}
+		}
+	}
+}
+
+func TestPassiveCallerCancellationRetainsMethodContextAndSlot(t *testing.T) {
+	caller, cancelCaller := context.WithCancel(context.Background())
+	defer cancelCaller()
+	pool := newPassiveAdmissionPool()
+	connection := repeatedID[PassiveConnectionID](0x41)
+	limits := flowLimitsForSubmit(ExpectedSubmitMainMJSV0MethodRecord())
+	started := make(chan context.Context, 1)
+	release := make(chan struct{})
+	result := make(chan error, 1)
+	go func() {
+		_, err := runPassiveAdmitted(caller, pool, passiveDaemonProcess, SubmitMainMJSV0Service,
+			connection, 1, limits, time.Minute, func(ctx context.Context) (int, error) {
+				started <- ctx
+				<-release
+				return 73, nil
+			})
+		result <- err
+	}()
+	methodContext := <-started
+	defer func() {
+		close(release)
+		<-methodContext.Done()
+	}()
+	cancelCaller()
+	if err := <-result; dispositionOf(err) != "caller-cancelled-after-dispatch-response-unknown" {
+		t.Fatalf("caller cancellation = %v", err)
+	}
+	if err := methodContext.Err(); err != nil {
+		t.Fatalf("caller cancellation ended dispatched method: %v", err)
+	}
+	if releaseSlot, err := pool.acquire(passiveDaemonProcess, SubmitMainMJSV0Service, connection, 1, limits); err == nil {
+		releaseSlot()
+		t.Fatal("caller cancellation released running method's admission slot")
+	} else if errorCodeOf(err) != "ipc-connection-in-flight" {
+		t.Fatalf("running method slot refusal = %v", err)
 	}
 }
 

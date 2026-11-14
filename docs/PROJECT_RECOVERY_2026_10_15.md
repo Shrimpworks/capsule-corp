@@ -631,6 +631,45 @@ That consuming scope and implementation remain deferred.
 Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates 4–6 and
 product admission remain `BLOCKED`.
 
+## G3a12 transport lane continuation after #409
+
+PR #409 merged normally at `f1ded569af4a6ae20f2a93b7e476825959f97143`, matching
+reviewed head `89bc26e2e26c36dde523df2ce583c5ef0b85452f`. Exact-head CI 43555552764
+and CodeQL 43555552868 passed; post-merge CI 43556084854 and CodeQL 43556084828
+also passed. No protection changes or bypass were used.
+
+G3a12 supplied transport lane consistency is `PASSED` for bounded local checks
+and fresh independent review 1/3 (**Ready**, no actionable findings). Published
+archive head is [`a9c457cb3b89a4ecd8c38684fd3d804d2089214c`](https://github.com/Shrimpworks/capsule-experiments/tree/a9c457cb3b89a4ecd8c38684fd3d804d2089214c/experiments/typed-guest-transport-c5b19-benign-teardown).
+The accepted [scope](../.planning/c5b19-transport-lanes/scope.md) and
+[delivery plan](../.planning/c5b19-transport-lanes/plan.md) bound it to a pure
+error-only validator over strict kind 3–8 events. It validates context even for an
+empty selection and caps the selection at 18 events, three per kind and three
+operation IDs, refusing duplicate kind/operation. Every supplied same-lane pair
+must have distinct sequence values and nondecreasing ticks in sequence order,
+regardless of input order. Equal ticks, partial gaps and independent cross-lane
+sequences/ticks remain valid. No implicit frame, tuple, pair or decision-history
+composition or complete-stream verdict is introduced.
+
+Ten test groups and exact offline Go 1.25.13 test/race/vet/build passed. Twelve
+compiled selected mutations reached seventeen intended assertions, with exact
+restoration and no invalid attempts or survivors reported. The
+[independent report](../.planning/c5b19-transport-lanes/review-1.md) records rerun
+offline checks and separates inspected mutation/canonical evidence from reviewer
+execution. Prior source/test prefixes and provenance remain preserved. Canonical
+frozen install, exact Go 1.26.11 `make ci` and standalone tests passed (177 workspace
+and 132 script tests); known #217 lint debt and audit limits remain in the
+[verification handoff](../.planning/c5b19-transport-lanes/canonical-verification.md).
+Archive PR #38 stays draft with no hosted checks. Final metadata and hosted canonical
+acceptance are recorded in the canonical PR body.
+The [next-slice recommendation](../.planning/c5b19-transport-lanes/next-scope.md) is
+supplied same-operation control transport ordering across kinds 3/4/7/8. Producer
+order edges and the exact partial-composition contract must be verified in that
+later scope; no implementation is included here.
+
+Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates 4–6 and
+product admission remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

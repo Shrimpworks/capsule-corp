@@ -61,8 +61,13 @@ keeps independent capture roles, partial evidence and accepted outcomes distinct
 G3a11 supplied write/result correspondence is `PASSED` for local checks and fresh
 independent review 1/3 (**Ready**), published in draft archive PR #38 at
 `7ec433aa17c623f58a81118bab87f1ada49770f3`. Its [delivery plan](../.planning/c5b19-write-results/plan.md)
-keeps raw count/errno observations distinct from transport success. Next recommended
-bounded slice: supplied transport lane consistency. PR #408 merged normally at
+keeps raw count/errno observations distinct from transport success.
+G3a12 supplied transport lane consistency is `PASSED` for local checks and fresh
+independent review 1/3 (**Ready**), published in draft archive PR #38 at
+`a9c457cb3b89a4ecd8c38684fd3d804d2089214c`. Its [delivery plan](../.planning/c5b19-transport-lanes/plan.md)
+preserves partial selections and independent lanes. Next recommended bounded slice:
+supplied same-operation control transport ordering. PR #409 merged normally at `f1ded569af4a6ae20f2a93b7e476825959f97143`;
+post-merge CI and CodeQL passed. PR #408 merged normally at
 `d042e53a877e494bd2eb0e325ec084d4b9cc692a`; post-merge CI and CodeQL passed.
 PR #407 merged normally at `fe9009d5398a883735219e2a3a33c351c79aa54c`; post-merge
 CI and CodeQL passed. Full control admission and causal/timing remain deferred. Full Gate 3 remains

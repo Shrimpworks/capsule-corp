@@ -542,6 +542,51 @@ Full control admission, complete trace/timing and native semantics stay
 outside this increment. Full Gate3 remains `IN_PROGRESS — TRENDING_GOOD`; child
 execution, Gates4–6 and admission remain `BLOCKED`.
 
+## G3a10 worker sidecar continuation after #407
+
+PR #407 merged normally at `fe9009d5398a883735219e2a3a33c351c79aa54c`, matching
+reviewed head `f61e2a0dfdf7cb89b35747d1dc598c59ee5d8070`. Exact-head CI 43548608076
+and CodeQL 43548608135 passed; post-merge CI 43548933421 and CodeQL 43548933564
+also passed. No protection changes or bypass were used.
+
+G3a10 supplied worker-received/sent sidecar correspondence is `PASSED` for bounded
+local checks and fresh independent review 1/3 (**Ready**, no actionable findings).
+Published archive head is [`d698bd9332a000ad3c2b9f23f87d0353dc5964b4`](https://github.com/Shrimpworks/capsule-experiments/tree/d698bd9332a000ad3c2b9f23f87d0353dc5964b4/experiments/typed-guest-transport-c5b19-benign-teardown).
+The accepted [scope](../.planning/c5b19-worker-sidecars/scope.md) and
+[delivery plan](../.planning/c5b19-worker-sidecars/plan.md) bound this to pure queries
+over owned inert fixtures. The query selects up to three distinct retained requests
+using independently supplied 397-byte worker receipt slots. An optional 98-byte
+sent reply requires a strict kind 5 capture; optional kind 7 control receipt requires
+that pair. Each capture must agree with the independent slots, and a supplied sent
+reply must equal any retained accepted reply. Received-only and sent-without-control
+rows remain partial evidence. Empty selections supply no evidence; nil/uninitialized
+history and malformed or unsupported member combinations refuse atomically.
+
+Returned values separate worker presence/outcome from accepted outcome, with no
+aliases or history mutation. Historical selections do not consult the current
+control watermark or establish lane order. No correspondence fact can settle
+history, authenticate captures, prove a complete round trip or grant execution
+authority. Full control admission and causal/timing composition remain deferred.
+
+Ten new test groups and exact offline Go 1.25.13 test/race/vet/build passed.
+Fourteen corrected compiled mutants reached seventeen intended assertions, followed
+by byte-exact restoration. Two invalid constructions are retained and excluded;
+overlapping control request/reply guards use a disclosed combined mutation. The
+[independent report](../.planning/c5b19-worker-sidecars/review-1.md) records rerun
+offline checks and distinguishes inspected mutation/canonical evidence from reviewer
+execution. Prior source/test prefixes and provenance are preserved. Canonical
+frozen install, exact Go 1.26.11 `make ci` and standalone tests passed (177 workspace
+and 132 script tests); known #217 lint debt and audit limits remain in the
+[verification handoff](../.planning/c5b19-worker-sidecars/canonical-verification.md).
+Archive PR #38 remains draft with no hosted checks. Final metadata and hosted
+canonical acceptance are recorded in the canonical PR body.
+The [next-slice recommendation](../.planning/c5b19-worker-sidecars/next-scope.md)
+is supplied write/result pairing (kind 3→4 and kind 5→6), pending a frozen consuming
+scope and errno representation.
+
+Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates 4–6 and
+product admission remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

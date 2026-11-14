@@ -32,8 +32,10 @@ Merged PR #404 accepts G3a6. The [G3a7 continuation](PROJECT_RECOVERY_2026_10_15
 records passed bounded received/applied correspondence, exact source pin and review.
 Merged PR #405 accepts G3a7. The [G3a8 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a8-decision-reconciliation-continuation-after-405)
 tracks bounded private pending-write decision reconciliation and a rejection-derived
-modeled fatal latch. Full control admission, durable snapshots and full causal/timing
-composition remain later components.
+modeled fatal latch. Merged PR #406 accepts G3a8. The
+[G3a9 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a9-supplied-snapshot-continuation-after-406)
+tracks bounded supplied snapshot correspondence without promoting visible bytes to
+confirmation. Full control admission and full causal/timing composition remain later components.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

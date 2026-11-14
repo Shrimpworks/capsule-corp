@@ -502,6 +502,46 @@ full control admission, durable snapshots, full causal/timing and native semanti
 remain deferred. Full Gate3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution,
 Gates4–6 and product admission remain `BLOCKED`.
 
+## G3a9 supplied snapshot continuation after #406
+
+PR #406 merged normally at `f3f2e0755c0c284dd28019225bef0cf8482d3cdd`, matching
+reviewed head `8ba5c6809fdd5d1d7357cdfa03eb378136920be6`. Exact-head CI43546021065
+and CodeQL43546021007 passed; post-merge CI43546467978 and CodeQL43546468003 also
+passed. No protection changes or bypass were used.
+
+G3a9 supplied durable-snapshot correspondence is `PASSED` for bounded local checks
+and fresh independent review1/3 (**Ready**, no actionable findings). Published
+archive head is [`7646d8faabb670ce8b5ff1b213c414d91deda2d9`](https://github.com/Shrimpworks/capsule-experiments/tree/7646d8faabb670ce8b5ff1b213c414d91deda2d9/experiments/typed-guest-transport-c5b19-benign-teardown).
+The accepted [scope](../.planning/c5b19-snapshot-correspondence/scope.md) and
+[delivery plan](../.planning/c5b19-snapshot-correspondence/plan.md) bound this to
+owned inert supplied records and captured evidence. A new value-owned wrapper
+retains up to three exact submitted requests and their accepted replies while
+composing unchanged G3a8 transitions. Nonmutating queries strictly match present
+395-byte records to retained submissions, separately report accepted and optional
+worker outcomes, and require supplied worker evidence to agree with accepted replies.
+A visible candidate has no outcome field and cannot establish confirmation.
+LaterSubmitted means selection order only; older candidates remain queryable.
+Supplied absence preserves all history and does not prove a consistent final store.
+No query returns full-confirmation, admission or final-case authority.
+
+Ten tests and exact offline Go1.25.13 full test/race/vet/build passed. Twelve compiled
+mutants reached their intended assertions, followed by exact restoration. Overlapping
+membership/confirmed-digest guards use a disclosed combined bypass; no isolated
+necessity claim is made. Prior source/provenance remains preserved. The
+[independent report](../.planning/c5b19-snapshot-correspondence/review-1.md) records
+rerun offline checks and distinguishes inspected mutation/canonical evidence from
+reviewer execution. Archive PR38 remains draft with no hosted checks. Final metadata
+and hosted canonical acceptance are recorded in the canonical PR body. Canonical frozen
+install, exact Go1.26.11 `make ci` and standalone tests passed (177 workspace and132
+script tests); known#217 unfiltered lint debt and audit limitations remain in the
+[verification handoff](../.planning/c5b19-snapshot-correspondence/canonical-verification.md).
+Next recommended bounded scope is [worker-received/sent sidecar correspondence](../.planning/c5b19-snapshot-correspondence/next-scope.md),
+keeping independently supplied capture roles and partial evidence distinct.
+
+Full control admission, complete trace/timing and native semantics stay
+outside this increment. Full Gate3 remains `IN_PROGRESS — TRENDING_GOOD`; child
+execution, Gates4–6 and admission remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

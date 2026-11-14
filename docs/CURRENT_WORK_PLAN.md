@@ -47,9 +47,14 @@ Post-merge CI exposed an existing passive adapter result/cleanup cancellation ra
 its correction and tests are grouped in this delivery. The regression was red
 before the fix; focused tests passed100 repetitions and the package race check
 passed. G3a8 resumed after targeted verification.
-Post-fix canonical `make ci` and standalone tests passed. Next recommended bounded
-scope is supplied durable-snapshot correspondence, keeping visible bytes distinct
-from accepted confirmation. Full control admission and causal/timing remain deferred. Full Gate 3 remains
+Post-fix canonical `make ci` and standalone tests passed. Canonical
+[PR #406](https://github.com/Shrimpworks/capsule-corp/pull/406) merged normally at
+`f3f2e0755c0c284dd28019225bef0cf8482d3cdd`; post-merge CI and CodeQL passed.
+G3a9 supplied durable-snapshot correspondence is `PASSED` for local checks and
+fresh independent review1/3 (**Ready**), published in draft archive PR38 at
+`7646d8faabb670ce8b5ff1b213c414d91deda2d9`. The [delivery plan](../.planning/c5b19-snapshot-correspondence/plan.md)
+keeps visible record bytes distinct from accepted confirmation. Next recommended
+bounded scope: supplied worker-received/sent sidecar correspondence. Full control admission and causal/timing remain deferred. Full Gate 3 remains
 `IN_PROGRESS — TRENDING_GOOD`; historical evidence gaps and later gates stay open.
 The product parent remains `IN_PROGRESS — TRENDING_GOOD`; admission remains `BLOCKED`.
 

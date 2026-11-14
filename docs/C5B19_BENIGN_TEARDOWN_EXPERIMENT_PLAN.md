@@ -41,7 +41,10 @@ records passed supplied worker-received/sent sidecar correspondence with indepen
 roles and partial evidence preserved. Merged PR #408 accepts G3a10. The
 [G3a11 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a11-write-result-continuation-after-408)
 records passed supplied write/result correspondence and raw count/errno observations.
-Full control admission and full causal/timing composition remain later components.
+Merged PR #409 accepts G3a11. The
+[G3a12 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a12-transport-lane-continuation-after-409)
+records passed supplied transport lane consistency without promoting partial selections
+to complete traces. Full control admission and full causal/timing composition remain later components.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

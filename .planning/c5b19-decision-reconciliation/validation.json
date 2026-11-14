@@ -1,0 +1,103 @@
+{
+  "scope": "G3a8 verification-only after CI-RACE fix; standard local repository checks; child execution blocked",
+  "root": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+  "started_utc": "2026-11-14T02:05:17.132094+00:00",
+  "toolchain_path": "/Users/dsteele/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.11.darwin-arm64/bin",
+  "GOTOOLCHAIN": "local",
+  "branch": "codex/c5b19-decision-reconciliation",
+  "base": "8e4fd22cc00cd5e961544f6a803974600dc0e751",
+  "source_hashes_start": {
+    "internal/execution/authorityplane/passive_product_adapter.go": "785ac54438cea50838b39d8de8a4cf1b8f9b0dd6b887bfedd51beea5543cc9f4",
+    "internal/execution/authorityplane/passive_product_adapter_test.go": "4621e65f44dd4fcc1ded6f553d8ba29e2c38245fdd6550a51ef89a09274f9484"
+  },
+  "source_freeze_confirmed_by": "/root/c5b19_ci_race",
+  "versions": {
+    "node": {
+      "exit": 0,
+      "output": "v22.23.3"
+    },
+    "pnpm": {
+      "exit": 0,
+      "output": "10.28.2"
+    },
+    "go": {
+      "exit": 0,
+      "output": "go version go1.26.11 darwin/arm64"
+    },
+    "golangci-lint": {
+      "exit": 0,
+      "output": "golangci-lint has version 2.12.2 built with go1.26.2 from c0d3ddc on 2026-05-06T11:01:25Z"
+    }
+  },
+  "commands": [
+    {
+      "name": "ci",
+      "argv": ["make", "ci"],
+      "started_utc": "2026-11-14T02:05:17.658383+00:00",
+      "log": "/tmp/c5b19-g3a8-postfix-ci.log",
+      "exit": 0,
+      "completed_utc": "2026-11-14T02:06:00.001788+00:00",
+      "sha256": "387e67562766619e5da287f3d97e2e9f546f3651e7e4ac962506c8f5cb4d0593",
+      "test_counts": [164, 10, 3, 132],
+      "failure_counts": [0, 0, 0, 0]
+    },
+    {
+      "name": "pnpm-test",
+      "argv": ["pnpm", "test"],
+      "started_utc": "2026-11-14T02:06:00.002472+00:00",
+      "log": "/tmp/c5b19-g3a8-postfix-pnpm-test.log",
+      "exit": 0,
+      "completed_utc": "2026-11-14T02:06:39.363959+00:00",
+      "sha256": "98c3a8f19b26736ddb09354b361c50495793d608d117afad008c476557871160",
+      "test_counts": [164, 10, 3, 132],
+      "failure_counts": [0, 0, 0, 0]
+    }
+  ],
+  "prior_baseline": "/tmp/c5b19-g3a8-baseline.json",
+  "carried_limitations": {
+    "required_checks": "PASSED",
+    "workspace_tests": 177,
+    "script_tests": 132,
+    "govulncheck_findings": 0,
+    "dependency_audit": {
+      "low": 2,
+      "moderate": 2,
+      "threshold": "high (unchanged)"
+    },
+    "unfiltered_lint": {
+      "exit": 1,
+      "displayed_revive_findings": 50,
+      "limitation": "output-capped, not total debt count",
+      "tracking_issue": "#217"
+    },
+    "final_metadata_checks": "Brain-owned after retention; not certified here",
+    "child_executed": false
+  },
+  "diff_check": {
+    "exit": 0,
+    "output": ""
+  },
+  "source_hashes_end": {
+    "internal/execution/authorityplane/passive_product_adapter.go": "785ac54438cea50838b39d8de8a4cf1b8f9b0dd6b887bfedd51beea5543cc9f4",
+    "internal/execution/authorityplane/passive_product_adapter_test.go": "4621e65f44dd4fcc1ded6f553d8ba29e2c38245fdd6550a51ef89a09274f9484"
+  },
+  "source_unchanged": true,
+  "completed_utc": "2026-11-14T02:06:39.395815+00:00",
+  "summary": {
+    "required_postfix_checks": "PASSED",
+    "workspace_tests": 177,
+    "script_tests": 132,
+    "source_unchanged": true,
+    "govulncheck_findings": 0,
+    "dependency_audit": {
+      "low": 2,
+      "moderate": 2,
+      "threshold": "high (unchanged)"
+    },
+    "prior_frozen_install": "PASSED; not repeated per assignment",
+    "prior_unfiltered_lint": "exit 1; known #217 revive debt, 50 displayed under output cap; not repeated",
+    "final_metadata_checks": "Brain-owned after retention; not certified here",
+    "child_executed": false,
+    "active_owned_processes": 0
+  }
+}

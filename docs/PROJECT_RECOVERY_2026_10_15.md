@@ -444,6 +444,64 @@ full causal/timing and snapshot composition. Full Gate3 stays
 `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates4–6 and product admission
 remain `BLOCKED`.
 
+## G3a8 decision reconciliation continuation after #405
+
+PR #405 merged normally at `8e4fd22cc00cd5e961544f6a803974600dc0e751`, matching
+reviewed head `1198bbae9e8f40173371e1a7beda7bea3aee8ae2`. Exact-head CI43542813931
+and CodeQL43542814060 passed. No protection changes or bypass were used.
+Post-merge CodeQL43543205196 passed, but CI43543205245 exposed an existing passive
+adapter race: worker cleanup could be selected as method deadline expiry after
+its result was already published. The narrow correction distinguishes worker
+cleanup cancellation from deadline expiry. The new regression failed before the
+fix; it and the caller-cancellation/slot-lifetime regression plus the original
+semantics test passed100 repetitions, and the package race check passed. G3a8
+resumed after targeted verification. Deadline policy and gates are unchanged;
+[CI-race evidence](../.planning/c5b19-decision-reconciliation/ci-race-handoff.md)
+discloses randomized select choice and local/hosted limitations.
+
+G3a8 is `PASSED` for bounded implementation, local verification and fresh review2/3
+(**Ready**, no actionable findings). Published archive head is
+[`febb88d6421058f048f75319baae7cf9bd5a0cbb`](https://github.com/Shrimpworks/capsule-experiments/tree/febb88d6421058f048f75319baae7cf9bd5a0cbb/experiments/typed-guest-transport-c5b19-benign-teardown).
+The accepted [scope](../.planning/c5b19-decision-reconciliation/scope.md) and
+[delivery plan](../.planning/c5b19-decision-reconciliation/plan.md) retain the contract.
+The inert reconciler owns private pending history and checks the recorded decision
+against exact request bytes and trial settlement. Well-formed represented rejection
+preserves all history and latches modeled fatal; invalid evidence refuses atomically.
+Late exact settlement preserves fatal. At most three represented decisions and
+strict control sequence/nondecreasing tick watermarks bound serial action groups.
+History recording supplies no permission to submit, start or publish.
+
+Nine focused tests and exact offline Go1.25.13 test/race/vet/build passed.
+Thirteen initial compiled mutants failed assertions with exact restoration, but
+review1/3 found the combined pending-match mutant failed during setup before its
+claimed mismatch assertion. The corrected targeted mutant preserves exact
+settlement and all12 valid substitution/outcome cases now fail at the intended
+false-acceptance assertion, never setup. Source was restored byte-exact and the
+same targeted test passed. The original mutant remains retained and excluded
+from wrong-pending sensitivity; twelve other mutants plus this correction supply
+thirteen targeted sensitivity results. The [independent report](../.planning/c5b19-decision-reconciliation/review-2.md)
+closes review1's P2, records independently rerun race checks and distinguishes
+inspected mutation/full-check evidence from reviewer execution. Archive PR38
+remains draft with no hosted checks; final metadata and hosted canonical acceptance
+are recorded in the canonical PR body.
+Exact-anchor equality and private settlement are redundant protections for
+well-formed differing anchors; isolated sensitivity is not claimed. A frozen clock-policy
+fixture initially failed as malformed and was reclassified accordingly; it is not
+counted as a valid mismatched-anchor example. Earlier source/provenance is preserved.
+Post-fix canonical exact Go1.26.11 `make ci` and standalone `pnpm test` passed,
+with177 workspace and132 script tests; prior unfiltered lint debt#217 and audit
+limitations remain in the
+[verification handoff](../.planning/c5b19-decision-reconciliation/canonical-verification.md).
+Next recommended bounded scope is supplied durable-snapshot correspondence,
+keeping record presence distinct from accepted confirmation; the
+[scope recommendation](../.planning/c5b19-decision-reconciliation/next-scope.md)
+retains the uncertain-publication boundary.
+
+Interleaved receive/begin/apply groups, malformed diagnostic mapping, external stop,
+full control admission, durable snapshots, full causal/timing and native semantics
+remain deferred. Full Gate3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution,
+Gates4–6 and product admission remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

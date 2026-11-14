@@ -376,6 +376,13 @@ func runPassiveAdmitted[T any](
 	case <-caller.Done():
 		return zero, &passiveTransportError{disposition: "caller-cancelled-after-dispatch-response-unknown"}
 	case <-methodContext.Done():
+		// Only worker cleanup can cancel this context before its deadline,
+		// and that cleanup follows publication of the buffered result. Do
+		// not mistake a completed call for a deadline when both are ready.
+		if methodContext.Err() == context.Canceled {
+			completed := <-result
+			return completed.value, completed.err
+		}
 		return zero, &passiveTransportError{disposition: "method-deadline-after-dispatch-response-unknown"}
 	}
 }

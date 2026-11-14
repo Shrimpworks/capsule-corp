@@ -1,0 +1,141 @@
+{
+  "worktree": "/Users/dsteele/.codex/worktrees/project-recovery/capsule-corp",
+  "started_at": "2026-11-14T03:57:53.250047+00:00",
+  "environment": {
+    "PATH_prefix": "/Users/dsteele/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.11.darwin-arm64/bin",
+    "GOTOOLCHAIN": "local"
+  },
+  "identity": {
+    "branch": {
+      "command": ["git", "branch", "--show-current"],
+      "exit_code": 0,
+      "output": "codex/c5b19-write-results"
+    },
+    "head": {
+      "command": ["git", "rev-parse", "HEAD"],
+      "exit_code": 0,
+      "output": "d042e53a877e494bd2eb0e325ec084d4b9cc692a"
+    },
+    "status_before": {
+      "command": ["git", "status", "--short"],
+      "exit_code": 0,
+      "output": "M .serena/project.yml\n?? .planning/c5b19-write-results/"
+    }
+  },
+  "versions": {
+    "go": {
+      "command": ["go", "version"],
+      "exit_code": 0,
+      "output": "go version go1.26.11 darwin/arm64"
+    },
+    "node": {
+      "command": ["node", "--version"],
+      "exit_code": 0,
+      "output": "v22.23.3"
+    },
+    "pnpm": {
+      "command": ["pnpm", "--version"],
+      "exit_code": 0,
+      "output": "10.28.2"
+    },
+    "golangci-lint": {
+      "command": ["golangci-lint", "version"],
+      "exit_code": 0,
+      "output": "golangci-lint has version 2.12.2 built with go1.26.2 from c0d3ddc on 2026-05-06T11:01:25Z"
+    }
+  },
+  "checks": [
+    {
+      "name": "install",
+      "command": ["pnpm", "install", "--frozen-lockfile"],
+      "started_at": "2026-11-14T03:57:53.675546+00:00",
+      "completed_at": "2026-11-14T03:57:54.065075+00:00",
+      "exit_code": 0,
+      "log_path": "/tmp/c5b19-g3a11-install.log",
+      "sha256": "b060e90e5ec372a9a236ba107f313eee32fbd2f55eedcfbfefed7fa8f8d5a3b1"
+    },
+    {
+      "name": "ci",
+      "command": ["make", "ci"],
+      "started_at": "2026-11-14T03:57:54.065186+00:00",
+      "completed_at": "2026-11-14T03:58:32.316403+00:00",
+      "exit_code": 0,
+      "log_path": "/tmp/c5b19-g3a11-ci.log",
+      "sha256": "3eeba71dac97b94e986356d186c985c9a3fd02c717447cf424bc1095c330f507"
+    },
+    {
+      "name": "pnpm-test",
+      "command": ["pnpm", "test"],
+      "started_at": "2026-11-14T03:58:32.316526+00:00",
+      "completed_at": "2026-11-14T03:58:55.376670+00:00",
+      "exit_code": 0,
+      "log_path": "/tmp/c5b19-g3a11-pnpm-test.log",
+      "sha256": "6f92b92b444e2fcf902166ce7ec814b57fe7d3d5b1e2ca6e0b6d0c287fa8e846"
+    },
+    {
+      "name": "lint-full",
+      "command": ["golangci-lint", "run", "./..."],
+      "started_at": "2026-11-14T03:58:55.376801+00:00",
+      "completed_at": "2026-11-14T03:58:56.054939+00:00",
+      "exit_code": 1,
+      "log_path": "/tmp/c5b19-g3a11-lint-full.log",
+      "sha256": "88584e1b606d6b3a2ac30421370ffda306685a095e4824a9f25ca95a527056c6"
+    },
+    {
+      "name": "diff-check",
+      "command": ["git", "diff", "--check"],
+      "started_at": "2026-11-14T03:58:56.055068+00:00",
+      "completed_at": "2026-11-14T03:58:56.080000+00:00",
+      "exit_code": 0,
+      "log_path": "/tmp/c5b19-g3a11-diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "status_after": {
+    "command": ["git", "status", "--short"],
+    "exit_code": 0,
+    "output": "M .serena/project.yml\n?? .planning/c5b19-write-results/"
+  },
+  "dependency_manifest_diff": {
+    "command": ["git", "diff", "--name-only", "--", "pnpm-lock.yaml", "go.mod", "go.sum"],
+    "exit_code": 0,
+    "output": ""
+  },
+  "completed_at": "2026-11-14T03:58:56.129713+00:00",
+  "summary": {
+    "required_baseline_status": "PASSED",
+    "existing_unfiltered_lint_debt_status": "BLOCKED",
+    "parent_gate3_status": "IN_PROGRESS \u2014 TRENDING_GOOD",
+    "child_execution": "BLOCKED",
+    "product_admission": "BLOCKED",
+    "workspace_tests_per_run": 177,
+    "workspace_breakdown": {
+      "protocol": 164,
+      "sdk": 10,
+      "mcp-server": 3
+    },
+    "script_tests_per_run": 132,
+    "govulncheck": "No vulnerabilities found.",
+    "dependency_audit": {
+      "low": 2,
+      "moderate": 2,
+      "unchanged_failure_threshold": "high"
+    },
+    "unfiltered_lint": {
+      "exit_code": 1,
+      "displayed_revive_findings": 50,
+      "count_is_total": false,
+      "known_issue": 217
+    },
+    "all_log_hashes_verified": true,
+    "all_owned_processes_completed": true,
+    "repository_edits_by_worker": false,
+    "graph_index": "2026-10-04T22:18:10Z primary checkout, old/not watched; exact target-worktree config reads used",
+    "limitations": [
+      "Baseline only; future G3a11 archive code, final metadata and hosted checks are not certified",
+      "Raw /tmp logs are ephemeral; Brain owns retention",
+      "Go package results include cache hits",
+      "Node22.23.3 differs from documented22.22.1 patch; no upgrade attempted"
+    ]
+  }
+}

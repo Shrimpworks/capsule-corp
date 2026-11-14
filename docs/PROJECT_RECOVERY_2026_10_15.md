@@ -587,6 +587,50 @@ scope and errno representation.
 Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates 4–6 and
 product admission remain `BLOCKED`.
 
+## G3a11 write result continuation after #408
+
+PR #408 merged normally at `d042e53a877e494bd2eb0e325ec084d4b9cc692a`, matching
+reviewed head `70c7f9f9a2b55538346fb8abd0fc098a244eb2f1`. Exact-head CI 43550849222
+and CodeQL 43550849228 passed; post-merge CI 43554157395 and CodeQL 43554157515
+also passed. No protection changes or bypass were used.
+
+G3a11 supplied write/result correspondence is `PASSED` for bounded local checks
+and fresh independent review 1/3 (**Ready**, no actionable findings). Published
+archive head is [`7ec433aa17c623f58a81118bab87f1ada49770f3`](https://github.com/Shrimpworks/capsule-experiments/tree/7ec433aa17c623f58a81118bab87f1ada49770f3/experiments/typed-guest-transport-c5b19-benign-teardown).
+The accepted [scope](../.planning/c5b19-write-results/scope.md) and
+[delivery plan](../.planning/c5b19-write-results/plan.md) bound it to pure pair
+validation over inert fixtures. Kind 3→4 request-write and kind 5→6 worker-reply-write
+pairs require strict context, exact identity/outcome/digest correspondence, increasing
+sequence and nondecreasing tick within the pair. The bounded selection permits six
+pairs, three per category and three distinct operations, refusing duplicate category/
+operation and inconsistent request bytes across categories. Omitted pairs remain
+unknown; no inter-pair lane ordering or cross-lane causal claim follows.
+
+The packet does not define normalized errno on success. Raw signed result/errno
+values remain diagnostic observations; ExactFrameCount reports only equality to
+397 request bytes or 98 reply bytes, independently of errno. No successful-syscall
+or transport-progress verdict is exposed. Results own their values and refusal
+returns no partial evidence; history and caller inputs remain unchanged.
+
+Nine new test groups and exact offline Go 1.25.13 test/race/vet/build passed.
+Eighteen compiled mutations reached twenty-seven intended assertions, followed
+by byte-exact restoration; no invalid constructions or survivors were reported.
+The [independent report](../.planning/c5b19-write-results/review-1.md) records rerun
+offline checks and distinguishes inspected historical mutation/canonical evidence
+from reviewer execution. Prior source/test prefixes and provenance remain preserved.
+Canonical frozen install, exact Go 1.26.11 `make ci` and standalone tests passed
+(177 workspace and 132 script tests); known #217 lint debt and audit limits remain
+in the [verification handoff](../.planning/c5b19-write-results/canonical-verification.md).
+Archive PR #38 remains draft with no hosted checks. Final metadata and hosted
+canonical acceptance are recorded in the canonical PR body.
+The [next-slice recommendation](../.planning/c5b19-write-results/next-scope.md) is
+bounded transport lane consistency across supplied kind 3–8 events, detecting
+sequence reuse and tick regression between pairs while preserving partial gaps.
+That consuming scope and implementation remain deferred.
+
+Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD`; child execution, Gates 4–6 and
+product admission remain `BLOCKED`.
+
 ## R4B evidence-backed dependency/toolchain decision
 
 Capability: maintain existing Go scaffold and its CI security feedback. Reuse-map rows GO-3

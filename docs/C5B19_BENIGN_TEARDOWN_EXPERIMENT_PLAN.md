@@ -20,8 +20,10 @@ Next action: continue implementation-only Gate 3 in existing archive PR #38; the
 integrated by PR #378. The 2026-10-15 [recovery continuation](PROJECT_RECOVERY_2026_10_15.md#recovery-continuation-after-265)
 records the passed G3a2 pure wire/record increment and its exact archive/review evidence.
 The [G3a3 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a3-write-history-continuation-after-386)
-records the passed pure write-history/settlement conformance increment. Remaining Gate-3 components
-stay under the owner's conditional implementation-only direction.
+records the passed pure write-history/settlement conformance increment, accepted by merged PR #387.
+The [G3a4 continuation](PROJECT_RECOVERY_2026_10_15.md#g3a4-event-envelope-continuation-after-387)
+records passed bounded synthetic event-envelope/lane-framing conformance and its exact evidence. Per-kind semantic, causal
+and timing checks remain later components under the owner's conditional implementation-only direction.
 First child run remains separately gated.
 The gate-1 design review does not approve implementation or a first child run.
 Parent owner-only hostile-`.mjs` internal alpha: `IN_PROGRESS — TRENDING_GOOD`.

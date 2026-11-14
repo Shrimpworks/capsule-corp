@@ -7,10 +7,10 @@ canonical reference for exact toolchain pins and common commands.
 
 ## Prerequisites
 
-- Go at the version `go.mod` declares (1.26.9 at time of writing). Read the pin from `go.mod`
+- Go at the version `go.mod` declares (1.26.11 at time of writing). Read the pin from `go.mod`
   rather than this list: the `go` directive is the single source of truth, and `go` selects at least that
   version automatically unless `GOTOOLCHAIN=local` is set. For exact reproduction use
-  `GOTOOLCHAIN=go1.26.9`; a newer host default otherwise remains selected
+  `GOTOOLCHAIN=go1.26.11`; a newer host default otherwise remains selected
 - `golangci-lint` v2.12.2, matching the pin in `.github/workflows/ci.yml`, for `make check`
 - Node.js 22.22.1, as declared by `.node-version`
 - pnpm 10.28.2, as declared by `package.json`

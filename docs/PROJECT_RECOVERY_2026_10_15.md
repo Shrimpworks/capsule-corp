@@ -7,7 +7,7 @@ bounded maintenance repairs. Base: `fc8af2df91d443f52a7677c2bf9f7dc1d96f9ab1`.
 Owner: Brain orchestrator; internal agents supply readiness, architecture, validation and review.
 Acceptance: PR #384 merged at `9a495bc404a6f2dde67b34e72409a909d2964dd1`;
 CI parity PR #385 merged at `ba28f9c0b33c2366ccb892c2cf5bc33dcf792600`, closing #265.
-Next action: accept published G3a3 write-history conformance, then scope the next Gate-3 component.
+Next action: accept published G3a4 event-envelope conformance, then scope kind-specific field/lane validation.
 The initial baseline below remains historical; the continuation checkpoint records current work.
 Parent: owner-only internal alpha remains `IN_PROGRESS — TRENDING_GOOD`; installed security
 boundary and product/runtime/profile admission remain `BLOCKED`.
@@ -237,8 +237,62 @@ restored; the reviewer inspected their logs rather than rerunning them.
 Canonical frozen install, `make ci` and standalone workspace tests passed. Unfiltered lint
 still reports capped #217 revive debt. Archive PR #38 remains deliberately draft, with no
 hosted checks. Synthetic history and local test success do not establish runtime evidence.
-Next: accept this bounded increment, then scope raw event/trace conformance or another
-remaining manifest component under the unchanged no-child boundary.
+Canonical [PR #387](https://github.com/Shrimpworks/capsule-corp/pull/387) merged normally at
+`2aefb15ee45018bb1045e711c77a0c7bc9f4c54d` on 2026-11-13 America/Toronto
+(`2026-11-14T00:23:03Z`). Reviewed head4ff7edda retained passing CI38820204405 and
+CodeQL38820204303. No protection change or bypass was used. The next bounded
+G3a4 increment follows below; no child execution is authorized.
+
+## G3a4 event-envelope continuation after #387
+
+Status: `PASSED` for bounded G3a4 implementation, verification and independent review.
+Full Gate 3 remains `IN_PROGRESS — TRENDING_GOOD` and unfinished. Brain owns canonical branch `codex/c5b19-event-conformance`; archive work
+continues existing draft PR38 from `6575898a32ff4a3d24ca4c757f42b1807798a372`.
+[Execution index](../.planning/c5b19-events/plan.md) records assignments and acceptance.
+
+The selected direction is pure fixed-size event-envelope and bounded per-lane framing
+conformance. A syntactically accepted envelope is not a semantically valid event or a
+passing trace. Kind-specific fields, captured-frame pairing, causal transitions, timing,
+real custody/absence and all runtime evidence remain deferred. No fixture/child runs,
+new source-manifest files, dependencies, native host assumptions or authority are added.
+
+The dated canonical prerequisite is separate from the frozen archive toolchain.
+Post-merge [CI43533822264](https://github.com/Shrimpworks/capsule-corp/actions/runs/43533822264)
+failed the unchanged scanner on Go1.26.9: GO-2026-6859 (net/http, fixed1.26.11) and
+GO-2026-6809 (crypto/x509, fixed1.26.10). CodeQL43533822342 passed. Local baseline
+reproduced the vulnerability failure. The minimal same-minor patch is Go1.26.11;
+[official release history](https://go.dev/doc/devel/release#go1.26.11) records its
+2026-11-10 security release and the [x509 advisory](https://pkg.go.dev/vuln/GO-2026-6809)
+confirms the affected range. Active canonical pins/docs advance together; historical
+verification and Gate2's archive Go1.25.13 pin remain unchanged. The same fresh
+independent review covered this prerequisite and the bounded archive delta.
+
+Published archive head:
+[`3e26b80`](https://github.com/Shrimpworks/capsule-experiments/tree/3e26b809a40832a3351fdc6b5e0ffc1ef0094792/experiments/typed-guest-transport-c5b19-benign-teardown).
+[Review instance1/3](../.planning/c5b19-events/review-1.md) returned **Ready**, no actionable
+findings. Exact offline Go1.25.13 test/race/vet/build passed; six targeted mutants failed
+their intended assertions and were restored byte-exactly. The reviewer independently
+reran the archive checks and inspected the mutation logs. Prior source and provenance
+remain unchanged; acceptance metadata was appended after source freeze.
+
+The decoder covers the256-byte layout, binding digest, closed common codes, reserved
+zeros, matching timebase and owned values. Lane checks enforce32768/1024/64 caps,
+explicit trusted first sequence, overflow-safe continuity and control tick order.
+The packet does not freeze a sequence origin; this API cannot prove capture completeness.
+All1044 known code combinations are syntax tests, including combinations a later semantic
+checker must reject. No write-history settlement or lifecycle authority follows.
+
+Canonical exact Go1.26.11 `make ci` and standalone tests passed, including177 workspace
+and132 script tests. [Verification ledger](../.planning/c5b19-events/validation.json)
+and [toolchain decision](../.planning/c5b19-events/toolchain-prerequisite.md) retain
+before/after evidence. Existing unfiltered #217 revive debt remains (50-output cap,
+not total backlog); dependency audit has2low/2moderate findings below its unchanged
+high threshold. Local Node22.23.3 differs from documented22.22.1; hosted CI uses its pin.
+Archive PR38 remains draft, with no hosted checks. Canonical PR hosted acceptance is
+recorded in its body; local results do not imply a new nightly result.
+
+Next: bounded kind-specific field/lane conformance, then raw sidecar and causal/timing
+composition. Child execution, Gate4–6 and product admission remain `BLOCKED`.
 
 ## R4B evidence-backed dependency/toolchain decision
 

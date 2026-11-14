@@ -1,6 +1,6 @@
 module capsule.local/capsule
 
-go 1.26.9
+go 1.26.11
 
 require (
 	github.com/fxamacker/cbor/v2 v2.9.2

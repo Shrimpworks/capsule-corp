@@ -1,11 +1,7 @@
 [
   {
     "name": "install",
-    "command": [
-      "pnpm",
-      "install",
-      "--frozen-lockfile"
-    ],
+    "command": ["pnpm", "install", "--frozen-lockfile"],
     "exit": 0,
     "start": "2026-11-14T05:02:05.964808+00:00",
     "end": "2026-11-14T05:02:06.407279+00:00",
@@ -14,11 +10,7 @@
   },
   {
     "name": "ci",
-    "command": [
-      "make",
-      "ci",
-      "CI_BASE=a9e1d32afbb1fa1ef9c94175321c9c3bbb3d3361"
-    ],
+    "command": ["make", "ci", "CI_BASE=a9e1d32afbb1fa1ef9c94175321c9c3bbb3d3361"],
     "exit": 0,
     "start": "2026-11-14T05:02:06.407519+00:00",
     "end": "2026-11-14T05:02:45.846829+00:00",
@@ -27,10 +19,7 @@
   },
   {
     "name": "pnpm-test",
-    "command": [
-      "pnpm",
-      "test"
-    ],
+    "command": ["pnpm", "test"],
     "exit": 0,
     "start": "2026-11-14T05:02:45.847109+00:00",
     "end": "2026-11-14T05:03:07.436911+00:00",
@@ -39,11 +28,7 @@
   },
   {
     "name": "lint-full",
-    "command": [
-      "golangci-lint",
-      "run",
-      "./..."
-    ],
+    "command": ["golangci-lint", "run", "./..."],
     "exit": 1,
     "start": "2026-11-14T05:03:07.437219+00:00",
     "end": "2026-11-14T05:03:08.077148+00:00",
@@ -52,11 +37,7 @@
   },
   {
     "name": "diff-check",
-    "command": [
-      "git",
-      "diff",
-      "--check"
-    ],
+    "command": ["git", "diff", "--check"],
     "exit": 0,
     "start": "2026-11-14T05:03:08.077384+00:00",
     "end": "2026-11-14T05:03:08.112099+00:00",

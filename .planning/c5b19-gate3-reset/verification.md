@@ -38,3 +38,13 @@ the map; historical archive tests/mutations are not rerun or recertified here.
 Archive tree was clean at `a9c457cb3b89a4ecd8c38684fd3d804d2089214c` after checks.
 Unrelated `.serena/project.yml` remains excluded. Independent review and publication
 acceptance are recorded separately in the delivery plan.
+
+## Hosted metadata correction
+
+Initial CI run 43559875578 failed TypeScript lint solely because verification.json,
+retained after the local baseline checks, used expanded JSON arrays rather than the
+repository formatter's output. Applied Biome formatting and asserted parsed JSON
+identity with the reviewed commit. No evidence values, roadmap or behavior changed.
+Final `pnpm lint` and `git diff --check` passed after this correction; subsequent
+hosted results are recorded in the PR acceptance readback. This metadata-only fix
+does not require another independent review instance.

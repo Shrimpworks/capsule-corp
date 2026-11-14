@@ -63,3 +63,9 @@ The final PR body/readback will record the actual commit, hosted check results a
 stack dependency. No Gate-3 implementation completion is claimed; implementation
 remains IN_PROGRESS — TRENDING_BAD at reset. Next implementation deliverable is D1;
 no automatic helper slice or child run follows this documentation-only task.
+
+
+Initial hosted CI exposed formatting in post-check verification.json. The correction
+is formatting-only with parsed JSON equality asserted; final lint/diff checks cover
+all retained metadata. No substantive plan change or new review instance. Publication
+continues under the same PR #411 and explicit #410 dependency.
